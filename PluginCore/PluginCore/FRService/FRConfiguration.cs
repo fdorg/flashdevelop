@@ -186,7 +186,6 @@ namespace PluginCore.FRService
                 OperationType.FindInSource => (files ??= new List<string> {path}),
                 OperationType.FindInFile => (files ??= new List<string> {path}),
                 OperationType.FindInPath => (files ??= new PathWalker(path, mask, recursive).GetFiles()),
-                _ => null
             };
         }
     }

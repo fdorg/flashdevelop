@@ -890,20 +890,15 @@ namespace System.Windows.Forms
 
 		private StringFormat GetStringFormat()
 		{
-			StringFormat format = null;
-			
-			//	Rotate Text by 90 degrees for left and right tabs
-			switch (this.Alignment) {
-				case TabAlignment.Top:
-				case TabAlignment.Bottom:
-					format = new StringFormat();
-					break;
-				case TabAlignment.Left:
-				case TabAlignment.Right:
-					format = new StringFormat(StringFormatFlags.DirectionVertical);
-					break;
-			}
-			format.Alignment = StringAlignment.Center;
+            //	Rotate Text by 90 degrees for left and right tabs
+            var format = Alignment switch
+            {
+                TabAlignment.Top => new StringFormat(),
+                TabAlignment.Bottom => new StringFormat(),
+                TabAlignment.Left => new StringFormat(StringFormatFlags.DirectionVertical),
+                TabAlignment.Right => new StringFormat(StringFormatFlags.DirectionVertical),
+            };
+            format.Alignment = StringAlignment.Center;
 			format.LineAlignment = StringAlignment.Center;
 			if (this.FindForm() != null && this.FindForm().KeyPreview){
 				format.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.Show;

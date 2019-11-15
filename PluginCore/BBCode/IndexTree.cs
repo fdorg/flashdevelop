@@ -237,13 +237,12 @@ namespace PluginCore.BBCode
 
             if (tree.data != null && tree.data.GetType().GetMethod("clone") != null)
                 clone.data = tree.data.GetType().InvokeMember("clone", BindingFlags.InvokeMethod, null, tree.data, new object[] { });
-                    
-            IndexTree cloneNode;
+
             int i = -1;
             int l = tree.nodes.Count;
             while( ++i < l )
             {
-                cloneNode = cloneTree( tree.nodes[i] );
+                var cloneNode = cloneTree( tree.nodes[i] );
                 cloneNode.parentNode = clone;
 
                 clone.nodes.Add(cloneNode);

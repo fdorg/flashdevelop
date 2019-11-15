@@ -682,11 +682,11 @@ namespace ASCompletion
                     path = Path.Combine(node.Text, path);
                     node = node.Parent;
                 }
-                if (node != null) path = Path.Combine((node as ClasspathTreeNode).Path, path);
+                if (node != null) path = Path.Combine(((ClasspathTreeNode) node).Path, path);
             }
             else if (node is TypeTreeNode)
             {
-                return (node.Tag as string).Split('@')[0];
+                return ((string) node.Tag).Split('@')[0];
             }
 
             while (path.Length > 2 && !Directory.Exists(path)) path = Path.GetDirectoryName(path);
