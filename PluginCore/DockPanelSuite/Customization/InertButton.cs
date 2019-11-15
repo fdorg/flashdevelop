@@ -468,11 +468,8 @@ namespace WeifenLuo.WinFormsUI
 
         private void DrawText(Graphics g)
         {
-            if (Text == string.Empty)
-                return;
-
-            Rectangle rect = ClientRectangle;
-
+            if (Text.Length == 0) return;
+            var rect = ClientRectangle;
             rect.X += BorderWidth;
             rect.Y += BorderWidth;
             rect.Width -= 2 * BorderWidth;

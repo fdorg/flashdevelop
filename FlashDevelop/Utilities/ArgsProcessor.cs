@@ -297,7 +297,7 @@ namespace FlashDevelop.Utilities
         {
             try
             {
-                string result = args;
+                var result = args;
                 if (result is null) return string.Empty;
                 result = ProcessCodeStyleLineBreaks(result);
                 if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, ReplaceTabs);
@@ -388,7 +388,7 @@ namespace FlashDevelop.Utilities
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
-                using ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs);
+                using var rvd = new ArgReplaceDialog(args, reUserArgs);
                 userArgs = rvd.Dictionary; // Save dictionary temporarily...
                 if (rvd.ShowDialog() == DialogResult.OK)
                 {

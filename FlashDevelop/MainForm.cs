@@ -4011,9 +4011,9 @@ namespace FlashDevelop
         /// </summary>
         public void Debug(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string args = ProcessArgString(((ItemData)button.Tag).Tag);
-            if (args == string.Empty) ErrorManager.ShowError(new Exception("Debug"));
+            var button = (ToolStripItem)sender;
+            var args = ProcessArgString(((ItemData)button.Tag).Tag);
+            if (args.Length == 0) ErrorManager.ShowError(new Exception("Debug"));
             else ErrorManager.ShowInfo(args);
         }
 

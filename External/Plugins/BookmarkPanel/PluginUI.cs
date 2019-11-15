@@ -16,20 +16,20 @@ namespace BookmarkPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListViewEx listView;
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ColumnHeader columnLine;
-        private System.Windows.Forms.ColumnHeader columnText;
-        private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.ToolStripButton searchButton;
-        private System.Windows.Forms.ToolStripSpringComboBox searchBox;
-        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
-        private System.Windows.Forms.ToolStripMenuItem removeBookmarksItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private ImageListManager imageList;
-        private System.Windows.Forms.Timer updateTimer;
-        private TimeoutManager timeoutManager;
-        private PluginMain pluginMain;
+        System.Windows.Forms.ListViewEx listView;
+        System.Windows.Forms.ToolStrip toolStrip;
+        System.Windows.Forms.ColumnHeader columnLine;
+        System.Windows.Forms.ColumnHeader columnText;
+        System.Windows.Forms.StatusStrip statusStrip;
+        System.Windows.Forms.ToolStripButton searchButton;
+        System.Windows.Forms.ToolStripSpringComboBox searchBox;
+        System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        System.Windows.Forms.ToolStripMenuItem removeBookmarksItem;
+        System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        ImageListManager imageList;
+        System.Windows.Forms.Timer updateTimer;
+        TimeoutManager timeoutManager;
+        PluginMain pluginMain;
         
         public PluginUI(PluginMain pluginMain)
         {
@@ -51,7 +51,7 @@ namespace BookmarkPanel
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent() 
+        void InitializeComponent() 
         {
             this.listView = new System.Windows.Forms.ListViewEx();
             this.columnLine = new System.Windows.Forms.ColumnHeader();
@@ -195,7 +195,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Initializes the timers
         /// </summary>
-        private void InitializeTimers()
+        void InitializeTimers()
         {
             this.timeoutManager = new TimeoutManager();
             this.updateTimer = new System.Windows.Forms.Timer();
@@ -208,7 +208,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Initializes the localized texts
         /// </summary>
-        private void InitializeTexts()
+        void InitializeTexts()
         {
             this.columnLine.Text = TextHelper.GetString("ColumnHeader.Line");
             this.columnText.Text = TextHelper.GetString("ColumnHeader.Text");
@@ -220,7 +220,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             this.imageList = new ImageListManager();
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
@@ -231,7 +231,7 @@ namespace BookmarkPanel
             this.searchButton.Image = PluginBase.MainForm.FindImage("484|26|-4|4");
         }
 
-        private void ImageList_Populate(object sender, EventArgs e)
+        void ImageList_Populate(object sender, EventArgs e)
         {
             this.imageList.Images.Add("Bookmark", PluginBase.MainForm.FindImageAndSetAdjust("559|26|0|1"));
             this.imageList.Images.Add("Info", PluginBase.MainForm.FindImageAndSetAdjust("229"));
@@ -251,7 +251,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Initializes the custom rendering
         /// </summary>
-        private void InitializeLayout()
+        void InitializeLayout()
         {
             this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.toolStrip.Font = PluginBase.Settings.DefaultFont;
@@ -272,7 +272,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Removes bookmarks on context menu item clicking
         /// </summary>
-        private void RemoveBookmarksItemClick(object sender, EventArgs e)
+        void RemoveBookmarksItemClick(object sender, EventArgs e)
         {
             this.DeleteMarkers(false);
         }
@@ -280,7 +280,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Starts bookmarks searching on search button ckicking
         /// </summary>
-        private void SearchButtonClick(object sender, EventArgs e)
+        void SearchButtonClick(object sender, EventArgs e)
         {
             this.SearchBookmarks();
         }
@@ -288,7 +288,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Removes bookmarks on Delete key
         /// </summary>
-        private void ListViewKeyUp(object sender, KeyEventArgs e)
+        void ListViewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -299,7 +299,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Starts bookmarks searching on Enter key
         /// </summary>
-        private void SearchBoxKeyUp(object sender, KeyEventArgs e)
+        void SearchBoxKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -310,7 +310,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Double click on an item in the list view
         /// </summary>
-        private void ListViewDoubleClick(object sender, EventArgs e)
+        void ListViewDoubleClick(object sender, EventArgs e)
         {
             if (this.listView.SelectedItems.Count > 0)
             {
@@ -329,7 +329,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Updates context menu on opening
         /// </summary>
-        private void ContextMenuStripOpening(object sender, CancelEventArgs e)
+        void ContextMenuStripOpening(object sender, CancelEventArgs e)
         {
             int count = this.listView.SelectedItems.Count;
             if (count > 0) this.removeBookmarksItem.Text = TextHelper.GetString((count > 1) ? "Label.RemoveBookmarks" : "Label.RemoveBookmark");
@@ -339,7 +339,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Searches bookmarks by pattern and shows status
         /// </summary>
-        private void SearchBookmarks()
+        void SearchBookmarks()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document != null && document.IsEditable)
@@ -363,7 +363,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Shows or hides status strip message
         /// </summary>
-        private void SetStatus(string message)
+        void SetStatus(string message)
         {
             if (message != null)
             {
@@ -383,7 +383,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Clear status on timeout
         /// </summary>
-        private void ClearStatusTimeout(object tag)
+        void ClearStatusTimeout(object tag)
         {
             this.SetStatus(null);
         }
@@ -391,9 +391,9 @@ namespace BookmarkPanel
         /// <summary>
         /// Gets search results for a document
         /// </summary>
-        private List<SearchMatch> GetResults(ScintillaControl sci)
+        List<SearchMatch> GetResults(ScintillaControl sci)
         {
-            if (this.searchBox.Text != string.Empty)
+            if (this.searchBox.Text.Length != 0)
             {
                 string pattern = this.searchBox.Text;
                 FRSearch search = new FRSearch(pattern);
@@ -411,7 +411,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Bookmarks a search match
         /// </summary>
-        private void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)
+        void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)
         {
             for (int i = 0; i < matches.Count; i++)
             {
@@ -428,7 +428,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Document text changed
         /// </summary>
-        private void ManagerOnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        void ManagerOnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             ListViewGroup group = this.FindGroup(sender.FileName);
             if (group is null) return;
@@ -440,7 +440,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Document markers changed
         /// </summary>
-        private void ManagerOnMarkerChanged(ScintillaControl sender, int line)
+        void ManagerOnMarkerChanged(ScintillaControl sender, int line)
         {
             ListViewGroup group = this.FindGroup(sender.FileName);
             if (group is null) return;
@@ -452,7 +452,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Check all documents markers
         /// </summary>
-        private void UpdateTimerTick(object sender, EventArgs e)
+        void UpdateTimerTick(object sender, EventArgs e)
         {
             updateTimer.Stop();
             List<ListViewGroup> groups = new List<ListViewGroup>();
@@ -469,7 +469,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Update document bookmarks
         /// </summary>
-        private void UpdateMarkers(string filename)
+        void UpdateMarkers(string filename)
         {
             ITabbedDocument document = DocumentManager.FindDocument(filename);
             if (document is null || !document.IsEditable) return;
@@ -504,7 +504,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Checks if bookmark list view needs updating
         /// </summary>
-        private bool NeedRefresh(ScintillaControl sci, List<int> markers, ListView.ListViewItemCollection items)
+        bool NeedRefresh(ScintillaControl sci, List<int> markers, ListView.ListViewItemCollection items)
         {
             if (items.Count != markers.Count) return true;
             foreach (ListViewItem item in items)
@@ -519,7 +519,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Return all the bookmark markers from a scintilla document
         /// </summary>
-        private List<int> GetMarkers(ScintillaControl sci)
+        List<int> GetMarkers(ScintillaControl sci)
         {
             int line = -1;
             List<int> markerLines = new List<int>();
@@ -535,7 +535,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Remove from the ListView all the items contained in a ListViewGroup
         /// </summary>
-        private void RemoveItemsFromGroup(ListViewGroup group)
+        void RemoveItemsFromGroup(ListViewGroup group)
         {
             ListViewItem[] items = new ListViewItem[group.Items.Count];
             group.Items.CopyTo(items, 0);
@@ -545,7 +545,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Remove selected bookmarks from opened documents
         /// </summary>
-        private void DeleteMarkers(bool confirm)
+        void DeleteMarkers(bool confirm)
         {
             string message = TextHelper.GetString("Info.RemoveBookmarks");
             string title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
@@ -661,7 +661,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Handles the elapsed event
         /// </summary>
-        private void TimerElapsed(object sender, EventArgs e)
+        void TimerElapsed(object sender, EventArgs e)
         {
             TagTimer timer = ((TagTimer)sender);
             timer.Enabled = false;
@@ -669,7 +669,7 @@ namespace BookmarkPanel
             timer.TimeoutHandler(timer.Tag as string);
         }
 
-        private class TagTimer : System.Windows.Forms.Timer
+        class TagTimer : System.Windows.Forms.Timer
         {
             public TimeoutDelegate TimeoutHandler;
         }
