@@ -19,29 +19,29 @@ namespace ScintillaNet
 {
     public class ScintillaControl : Control, IEventHandler
     {
-        private bool saveBOM;
-        private Encoding encoding;
-        private readonly IntPtr directPointer;
-        private readonly Perform _sciFunction;
-        private bool hasHighlights;
-        private bool isBraceMatching = true;
-        private bool isHiliteSelected = true;
-        private bool useHighlightGuides = true;
-        private System.Timers.Timer highlightDelay;
-        private static readonly Dictionary<string, ShortcutOverride> shortcutOverrides = new Dictionary<string, ShortcutOverride>();
-        private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
-        private readonly Hashtable ignoredKeys = new Hashtable();
-        private string configLanguage = string.Empty;
-        private string fileName = string.Empty;
-        private int lastSelectionLength;
-        private int lastSelectionStart;
-        private int lastSelectionEnd;
+        bool saveBOM;
+        Encoding encoding;
+        readonly IntPtr directPointer;
+        readonly Perform _sciFunction;
+        bool hasHighlights;
+        bool isBraceMatching = true;
+        bool isHiliteSelected = true;
+        bool useHighlightGuides = true;
+        System.Timers.Timer highlightDelay;
+        static readonly Dictionary<string, ShortcutOverride> shortcutOverrides = new Dictionary<string, ShortcutOverride>();
+        Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
+        readonly Hashtable ignoredKeys = new Hashtable();
+        string configLanguage = string.Empty;
+        string fileName = string.Empty;
+        int lastSelectionLength;
+        int lastSelectionStart;
+        int lastSelectionEnd;
 
         #region ScrollBars
 
-        private ScrollBarEx vScrollBar;
-        private ScrollBarEx hScrollBar;
-        private Control scrollerCorner;
+        ScrollBarEx vScrollBar;
+        ScrollBarEx hScrollBar;
+        Control scrollerCorner;
 
         /// <summary>
         /// Is the vertical scroll bar visible?
@@ -98,7 +98,7 @@ namespace ScintillaNet
         /// <summary>
         /// Updates the scrollbar theme and applies old defaults
         /// </summary>
-        private void UpdateScrollBarTheme(ScintillaControl sender)
+        void UpdateScrollBarTheme(ScintillaControl sender)
         {
             PluginBase.MainForm.ThemeControls(sender.vScrollBar);
             PluginBase.MainForm.ThemeControls(sender.hScrollBar);
@@ -117,7 +117,7 @@ namespace ScintillaNet
         /// <summary>
         /// Init the custom scrollbars
         /// </summary>
-        private void InitScrollBars(ScintillaControl sender)
+        void InitScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar = new ScrollBarEx();
             sender.vScrollBar.Width = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
@@ -142,7 +142,7 @@ namespace ScintillaNet
         /// <summary>
         /// Update the scrollbars on sci control ui update
         /// </summary>
-        private void OnScrollUpdate(ScintillaControl sender)
+        void OnScrollUpdate(ScintillaControl sender)
         {
             var vTotal = sender.LinesVisible;
             var vPage = sender.LinesOnScreen;
@@ -167,7 +167,7 @@ namespace ScintillaNet
         /// <summary>
         /// Update the sci control on scrollbar scroll
         /// </summary>
-        private void OnScrollBarScroll(object sender, ScrollEventArgs e)
+        void OnScrollBarScroll(object sender, ScrollEventArgs e)
         {
             Painted -= OnScrollUpdate;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -181,7 +181,7 @@ namespace ScintillaNet
         /// <summary>
         /// Add controls to container
         /// </summary>
-        private void AddScrollBars(ScintillaControl sender)
+        void AddScrollBars(ScintillaControl sender)
         {
             sender.IsVScrollBar = false; // Hide builtin
             sender.IsHScrollBar = false; // Hide builtin
@@ -201,7 +201,7 @@ namespace ScintillaNet
         /// <summary>
         /// Remove controls from container
         /// </summary>
-        private void RemoveScrollBars(ScintillaControl sender)
+        void RemoveScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar.VisibleChanged -= OnResize;
             sender.hScrollBar.VisibleChanged -= OnResize;
@@ -393,7 +393,7 @@ namespace ScintillaNet
             }
         }
 
-        private void SetLanguage(string value)
+        void SetLanguage(string value)
         {
             Language lang = Configuration.GetLanguage(value);
             if (lang is null) return;
@@ -3667,17 +3667,17 @@ namespace ScintillaNet
         #region Scintilla Constants
 
         public const int MAXDWELLTIME = 10000000;
-        private const int WM_NOTIFY = 0x004e;
-        private const int WM_SYSCHAR = 0x106;
-        private const int WM_COMMAND = 0x0111;
-        private const int WM_KEYDOWN = 0x0100;
-        private const int WM_SYSKEYDOWN = 0x0104;
-        private const int WM_DROPFILES = 0x0233;
-        private const uint WS_CHILD = (uint)0x40000000L;
-        private const uint WS_VISIBLE = (uint)0x10000000L;
-        private const uint WS_TABSTOP = (uint)0x00010000L;
-        private const uint WS_CHILD_VISIBLE_TABSTOP = WS_CHILD | WS_VISIBLE | WS_TABSTOP;
-        private const int PATH_LEN = 1024;
+        const int WM_NOTIFY = 0x004e;
+        const int WM_SYSCHAR = 0x106;
+        const int WM_COMMAND = 0x0111;
+        const int WM_KEYDOWN = 0x0100;
+        const int WM_SYSKEYDOWN = 0x0104;
+        const int WM_DROPFILES = 0x0233;
+        const uint WS_CHILD = (uint)0x40000000L;
+        const uint WS_VISIBLE = (uint)0x10000000L;
+        const uint WS_TABSTOP = (uint)0x00010000L;
+        const uint WS_CHILD_VISIBLE_TABSTOP = WS_CHILD | WS_VISIBLE | WS_TABSTOP;
+        const int PATH_LEN = 1024;
 
         #endregion
 
@@ -3697,7 +3697,7 @@ namespace ScintillaNet
         /// <summary>
         /// Adds a new shortcut override
         /// </summary>
-        private static void AddShortcut(string displayName, Keys keys, Action<ScintillaControl> action)
+        static void AddShortcut(string displayName, Keys keys, Action<ScintillaControl> action)
         {
             shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
             PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
@@ -3714,11 +3714,11 @@ namespace ScintillaNet
         /// <summary>
         /// Execute the shortcut override using reflection
         /// </summary>
-        private bool ExecuteShortcut(int keys)
+        bool ExecuteShortcut(int keys)
         {
             try
             {
-                foreach (ShortcutOverride shortcut in shortcutOverrides.Values)
+                foreach (var shortcut in shortcutOverrides.Values)
                 {
                     if ((Keys)keys == shortcut.keys)
                     {
@@ -3728,13 +3728,13 @@ namespace ScintillaNet
                 }
                 return false;
             }
-            catch (Exception) { return false; }
+            catch { return false; }
         }
 
         /// <summary>
         /// Shortcut override object
         /// </summary>
-        private class ShortcutOverride
+        class ShortcutOverride
         {
             public Keys keys;
             public readonly Action<ScintillaControl> action;
@@ -4055,7 +4055,7 @@ namespace ScintillaNet
         /// <summary>
         /// Support for selection highlighting and selection changed event
         /// </summary>
-        private void OnUpdateUI(ScintillaControl sci)
+        void OnUpdateUI(ScintillaControl sci)
         {
             if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelText.Length)
             {
@@ -4085,7 +4085,7 @@ namespace ScintillaNet
         /// <summary>
         /// Use timer for aggressive selection highlighting
         /// </summary>
-        private void StartHighlightSelectionTimer()
+        void StartHighlightSelectionTimer()
         {
             if (highlightDelay is null)
             {
@@ -4110,7 +4110,7 @@ namespace ScintillaNet
         /// <summary>
         /// Provides basic highlighting of selected text
         /// </summary>
-        private void HighlightWordsMatchingSelected()
+        void HighlightWordsMatchingSelected()
         {
             if (TextLength == 0 || TextLength > 64 * 1024) return;
             var word = GetWordFromPosition(CurrentPos);
@@ -4138,7 +4138,7 @@ namespace ScintillaNet
         /// <summary>
         /// Cancel highlights if not using aggressive highlighting
         /// </summary>
-        private void OnCancelHighlight(ScintillaControl sci)
+        void OnCancelHighlight(ScintillaControl sci)
         {
             if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0
                 && PluginBase.MainForm.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
@@ -4151,7 +4151,7 @@ namespace ScintillaNet
         /// <summary>
         /// Provides the support for code block selection
         /// </summary>
-        private void OnBlockSelect(ScintillaControl sci)
+        void OnBlockSelect(ScintillaControl sci)
         {
             int position = CurrentPos - 1;
             char character = (char)CharAt(position);
@@ -4165,7 +4165,7 @@ namespace ScintillaNet
         /// <summary>
         /// Provides the support for brace matching
         /// </summary>
-        private void OnBraceMatch(ScintillaControl sci)
+        void OnBraceMatch(ScintillaControl sci)
         {
             if (!isBraceMatching || sci.SelText.Length != 0) return;
             var position = CurrentPos - 1;
@@ -4386,7 +4386,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the amount of lines visible (ie. not folded)
         /// </summary>
-        private int LinesVisible
+        int LinesVisible
         {
             get
             {
@@ -4427,7 +4427,7 @@ namespace ScintillaNet
         /// <summary>
         /// Populates the RangeToFormat struct
         /// </summary>
-        private RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
+        RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
         {
             RangeToFormat frPrint;
             var pageWidth = GetDeviceCaps(hdc, 110);
@@ -4748,7 +4748,7 @@ namespace ScintillaNet
         /// Checks that if the specified position is in string.
         /// You may need to manually update coloring: <see cref="Colourise(int, int)"/>.
         /// </summary>
-        private bool PositionIsInString(int position, int lexer)
+        bool PositionIsInString(int position, int lexer)
         {
             int style = BaseStyleAt(position);
             

@@ -12,7 +12,7 @@ namespace FlashDebugger.Helpers
 {
     public class DefaultDataTreeExporter : IDataTreeExporter
     {
-        private static readonly string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
+        static readonly string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
         public int CopyTreeMaxRecursion { get; set; }
 
@@ -20,7 +20,7 @@ namespace FlashDebugger.Helpers
 
         public string GetTreeAsText(ValueNode dataNode, string levelSep, DataTreeControl control, int levelLimit)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             // ensure expanded
             control.ListChildItems(dataNode);
@@ -31,7 +31,7 @@ namespace FlashDebugger.Helpers
             return sb.ToString();
         }
 
-        private void GetTreeItemsAsText(IList<Node> dataNodes, ISet<string> visited, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
+        void GetTreeItemsAsText(IList<Node> dataNodes, ISet<string> visited, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
         {
             // per node
             int len = dataNodes.Count;
@@ -108,7 +108,7 @@ namespace FlashDebugger.Helpers
                             {
                                 GetTreeItemsAsText(child.Nodes, visited, levelSep, level + 1, sb, control, levelLimit);
                             }
-                            catch (Exception) { }
+                            catch { }
                         }
                     }
 
@@ -124,7 +124,7 @@ namespace FlashDebugger.Helpers
             }
         }
 
-        private static bool IsWantedParent(Node parent)
+        static bool IsWantedParent(Node parent)
         {
             try
             {
@@ -146,20 +146,16 @@ namespace FlashDebugger.Helpers
                 // catch "cannot cast Aga.TreeNode to DataNode" 
                 // TODO : fix this instead of just catching it
             }
-            catch (Exception) { }
+            catch { }
             return true;
         }
 
-        private static bool IsWantedChild(DataNode child)
+        static bool IsWantedChild(Node child)
         {
             try
             {
                 // skip if static
-                if (child.Text == "[static]")
-                {
-                    return false;
-                }
-
+                if (child.Text == "[static]") return false;
                 var parent = child.Parent as ValueNode;
                 if (parent?.ClassPath != null)
                 {
@@ -198,11 +194,11 @@ namespace FlashDebugger.Helpers
                 // catch "cannot cast Aga.TreeNode to DataNode" 
                 // TODO : fix this instead of just catching it
             }
-            catch (Exception) { }
+            catch { }
             return true;
         }
 
-        private static void AppendTimes(StringBuilder sb, string append, int times)
+        static void AppendTimes(StringBuilder sb, string append, int times)
         {
             for (int t = 0; t < times; t++)
             {

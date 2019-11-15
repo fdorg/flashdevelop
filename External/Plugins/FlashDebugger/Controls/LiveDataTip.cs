@@ -95,8 +95,8 @@ namespace FlashDebugger
                     return;
                 }
                 position = sci.WordEndPosition(position, true);
-                string leftword = GetWordAtPosition(sci, position);
-                if (leftword != string.Empty)
+                var leftword = GetWordAtPosition(sci, position);
+                if (leftword.Length != 0)
                 {
                     try
                     {
@@ -114,14 +114,13 @@ namespace FlashDebugger
             }
         }
 
-        private string GetWordAtPosition(ScintillaControl sci, int position)
+        static string GetWordAtPosition(ScintillaControl sci, int position)
         {
-            int insideBrackets = 0;
-            char c;
-            StringBuilder sb = new StringBuilder();
+            var insideBrackets = 0;
+            var sb = new StringBuilder();
             for (int startPosition = position - 1; startPosition >= 0; startPosition--)
             {
-                c = (char)sci.CharAt(startPosition);
+                var c = (char)sci.CharAt(startPosition);
                 if (c == ')')
                 {
                     insideBrackets++;

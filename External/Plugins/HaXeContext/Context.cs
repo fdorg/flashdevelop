@@ -307,7 +307,7 @@ namespace HaXeContext
                         if (Directory.Exists(line))
                             paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
                     }
-                    catch (Exception) { }
+                    catch { }
                 }
                 isPathExpected = line == "-cp";
             }

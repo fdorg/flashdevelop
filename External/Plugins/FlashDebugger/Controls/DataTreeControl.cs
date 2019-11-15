@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore.Managers;
 using flash.tools.debugger;
+using flash.tools.debugger.concrete;
 using FlashDebugger.Controls.DataTree;
 using PluginCore.Localization;
 using PluginCore;
@@ -161,15 +162,17 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_DrawText(object sender, DrawEventArgs e)
         {
-            Color grayText = PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
             if (e.Node.IsSelected && ContainsFocus) e.TextColor = hiliteText;
             try
             {
-                if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
+                if (e.Node.Tag is ErrorNode)
+                    e.TextColor = e.Node.IsSelected
+                        ? hiliteText
+                        : PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         void NameNodeTextBox_EditorHided(object sender, EventArgs e)
@@ -458,11 +461,11 @@ namespace FlashDebugger.Controls
                             try
                             {
                                 IASTBuilder b = new ASTBuilder(false);
-                                string cmd = node.GetVariablePath() + ".getChildAt(" + i + ")";
-                                ValueExp exp = b.parse(new java.io.StringReader(cmd));
+                                var cmd = node.GetVariablePath() + ".getChildAt(" + i + ")";
+                                var exp = b.parse(new java.io.StringReader(cmd));
                                 var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                                 var obj = exp.evaluate(ctx);
-                                if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
+                                if (obj is DValue value) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", value, value.getIsolateId());
                                 DataNode childNode = new VariableNode((Variable) obj)
                                 {
                                     HideClassId = PluginMain.settingObject.HideClassIds,
@@ -471,7 +474,7 @@ namespace FlashDebugger.Controls
                                 childNode.Text = "child_" + i;
                                 childrenNode.Nodes.Add(childNode);
                             }
-                            catch (Exception) { }
+                            catch { }
                         }
                         node.Nodes.Add(childrenNode);
                     }
@@ -496,7 +499,7 @@ namespace FlashDebugger.Controls
                                 DataNode childNode = new DataNode((Variable)obj);
                                 childrenNode.Nodes.Add(childNode);
                             }
-                            catch (Exception) { }
+                            catch { }
                         }
                         node.Nodes.Add(childrenNode);
                         */

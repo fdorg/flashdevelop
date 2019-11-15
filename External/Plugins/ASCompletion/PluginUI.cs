@@ -602,7 +602,7 @@ namespace ASCompletion
                 OutlineTree.Nodes.Clear();
 
                 // If text == "" then the field has the focus and it's already empty, no need to dispatch unneeded events
-                if (findTextTxt.Text != searchInvitation && findTextTxt.Text != string.Empty)
+                if (findTextTxt.Text != searchInvitation && findTextTxt.Text.Length != 0)
                 {
                     findTextTxt.Clear();
                     FindProcTxtLeave(null, null);

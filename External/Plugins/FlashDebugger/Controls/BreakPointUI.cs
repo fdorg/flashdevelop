@@ -470,7 +470,7 @@ namespace FlashDebugger
                     dgv.Rows.Clear();
                     foreach (var row in rows)
                     {
-                        if (tstxtFilter.Text == string.Empty) row.Visible = true;
+                        if (tstxtFilter.Text.Length == 0) row.Visible = true;
                         else
                         {
                             bool matches = false;
