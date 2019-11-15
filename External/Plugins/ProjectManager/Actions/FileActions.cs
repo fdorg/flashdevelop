@@ -46,7 +46,7 @@ namespace ProjectManager.Actions
         public event FileMovedHandler FileMoved;
         public event FileMovedHandler FileCopied;
 
-        public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
+        public FileActions(IMainForm mainForm)
         {
             this.mainForm = mainForm;
         }

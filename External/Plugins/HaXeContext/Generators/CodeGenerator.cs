@@ -159,7 +159,7 @@ namespace HaXeContext.Generators
         /// <inheritdoc />
         protected override bool CanShowGetSetList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            var inClass = expr.RelClass ?? found.InClass;
+            var inClass = expr.RelClass ?? found.InClass ?? ClassModel.VoidClass;
             return !inClass.Flags.HasFlag(FlagType.Abstract) && base.CanShowGetSetList(sci, position, expr, found);
         }
 
