@@ -129,7 +129,7 @@ namespace AirProperties
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "29.0")) MajorVersion = AirVersion.V290;
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "30.0")) MajorVersion = AirVersion.V300;
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "31.0")) MajorVersion = AirVersion.V310;
-                else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "32.0")) MajorVersion = AirVersion.V320;
+                //else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "32.0")) MajorVersion = AirVersion.V320;
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "32.0")) MajorVersion = AirVersion.V330;
                 else
                 {
