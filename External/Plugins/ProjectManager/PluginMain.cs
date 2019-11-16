@@ -74,7 +74,6 @@ namespace ProjectManager
         FileActions fileActions;
         BuildActions buildActions;
         ProjectActions projectActions;
-        FlashDevelopActions flashDevelopActions;
         Queue<string> openFileQueue;
         DockContent pluginPanel;
         PluginUI pluginUI;
@@ -218,8 +217,6 @@ namespace ProjectManager
             buildActions = new BuildActions(MainForm, this);
             buildActions.BuildComplete += BuildComplete;
             buildActions.BuildFailed += BuildFailed;
-
-            flashDevelopActions = new FlashDevelopActions(MainForm);
 
             fileActions = new FileActions(MainForm);
             fileActions.OpenFile += OpenFile;
@@ -609,7 +606,7 @@ namespace ProjectManager
                 TreeSyncToCurrentFile();
             }
             // Handle tree-level simple shortcuts like copy/paste/del
-            else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
+            else if (Tree.Focused && !pluginUI.IsEditingLabel)
             {
                 if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
                 else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
@@ -1072,14 +1069,14 @@ namespace ProjectManager
 
         void OpenFolder()
         {
-            Project project = projectActions.OpenFolder();
+            var project = projectActions.OpenFolder();
             if (project != null) SetProject(project);
         }
 
         void OpenFolderSilent(string path)
         {
-            Project project = projectActions.OpenFolderSilent(path);
-            if (project != null) SetProject(project);
+            var project = projectActions.OpenFolderSilent(path);
+            SetProject(project);
         }
 
         void ImportProject(object sender, EventArgs eventArgs)

@@ -347,14 +347,13 @@ namespace ProjectManager.Actions
                     if (major > 0) score += 10;
                     else
                     {
-                        int minor = int.Parse(pa[1]) - int.Parse(pb[1]);
+                        var minor = int.Parse(pa[1]) - int.Parse(pb[1]);
                         if (minor < 0) score += 5;
                         else if (minor > 0) score += 2;
                         else
                         {
-                            int detail = int.Parse(pa[2]) - int.Parse(pb[2]);
+                            var detail = int.Parse(pa[2]) - int.Parse(pb[2]);
                             if (detail < 0) score += 2;
-                            else if (minor > 0) score += 1;
                         }
                     }
                 }
