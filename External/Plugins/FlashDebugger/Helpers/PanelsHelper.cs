@@ -52,7 +52,7 @@ namespace FlashDebugger
             watchPanel = PluginBase.MainForm.CreateDockablePanel(watchUI, watchGuid, pluginImage, DockState.DockLeft);
             watchPanel.Hide();
 
-            breakPointUI = new BreakPointUI(pluginMain, PluginMain.breakPointManager);
+            breakPointUI = new BreakPointUI(PluginMain.breakPointManager);
             breakPointUI.Text = TextHelper.GetString("Title.Breakpoints");
             breakPointPanel = PluginBase.MainForm.CreateDockablePanel(breakPointUI, breakPointGuid, pluginImage, DockState.DockLeft);
             breakPointPanel.Hide();
