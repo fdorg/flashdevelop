@@ -3623,10 +3623,10 @@ namespace ASCompletion.Completion
                             if (parCount < 0)
                             {
                                 expression.Separator = ";";
-                                int testPos = position - 1;
-                                string testWord = GetWordLeft(sci, ref testPos); // anonymous function
+                                var testPos = position - 1;
+                                var testWord = GetWordLeft(sci, ref testPos); // anonymous function
                                 var pos = testPos;
-                                string testWord2 = GetWordLeft(sci, ref pos) ?? "null"; // regular function
+                                var testWord2 = GetWordLeft(sci, ref pos); // regular function
                                 if (testWord == features.functionKey || testWord == "catch"
                                     || testWord2 == features.functionKey
                                     || testWord2 == features.getKey || testWord2 == features.setKey)

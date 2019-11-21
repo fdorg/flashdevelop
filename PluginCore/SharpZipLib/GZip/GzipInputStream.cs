@@ -268,9 +268,8 @@ namespace ICSharpCode.SharpZipLib.GZip
                     throw new EndOfStreamException("EOS reading GZIP header");
                 }
 
-                int len1, len2;
-                len1 = inputBuffer.ReadLeByte();
-                len2 = inputBuffer.ReadLeByte();
+                var len1 = inputBuffer.ReadLeByte();
+                var len2 = inputBuffer.ReadLeByte();
                 if ((len1 < 0) || (len2 < 0)) {
                     throw new EndOfStreamException("EOS reading GZIP header");
                 }
@@ -317,13 +316,12 @@ namespace ICSharpCode.SharpZipLib.GZip
 
             // 10. Read header CRC
             if ((flags & GZipConstants.FHCRC) != 0) {
-                int tempByte;
                 int crcval = inputBuffer.ReadLeByte();
                 if (crcval < 0) {
                     throw new EndOfStreamException("EOS reading GZIP header");
                 }
 
-                tempByte = inputBuffer.ReadLeByte();
+                var tempByte = inputBuffer.ReadLeByte();
                 if (tempByte < 0) {
                     throw new EndOfStreamException("EOS reading GZIP header");
                 }

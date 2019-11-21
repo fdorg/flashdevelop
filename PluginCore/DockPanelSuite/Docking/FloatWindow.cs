@@ -366,18 +366,15 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (panel != DockPanel)
                 throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, nameof(panel));
 
-            NestedPaneCollection nestedPanesTo = null;
-
-            if (dockStyle == DockStyle.Top)
-                nestedPanesTo = DockPanel.DockWindows[DockState.DockTop].NestedPanes;
-            else if (dockStyle == DockStyle.Bottom)
-                nestedPanesTo = DockPanel.DockWindows[DockState.DockBottom].NestedPanes;
-            else if (dockStyle == DockStyle.Left)
-                nestedPanesTo = DockPanel.DockWindows[DockState.DockLeft].NestedPanes;
-            else if (dockStyle == DockStyle.Right)
-                nestedPanesTo = DockPanel.DockWindows[DockState.DockRight].NestedPanes;
-            else if (dockStyle == DockStyle.Fill)
-                nestedPanesTo = DockPanel.DockWindows[DockState.Document].NestedPanes;
+            var nestedPanesTo = dockStyle switch
+            {
+                DockStyle.Top => DockPanel.DockWindows[DockState.DockTop].NestedPanes,
+                DockStyle.Bottom => DockPanel.DockWindows[DockState.DockBottom].NestedPanes,
+                DockStyle.Left => DockPanel.DockWindows[DockState.DockLeft].NestedPanes,
+                DockStyle.Right => DockPanel.DockWindows[DockState.DockRight].NestedPanes,
+                DockStyle.Fill => DockPanel.DockWindows[DockState.Document].NestedPanes,
+                _ => null
+            };
 
             DockPane prevPane = null;
             for (int i = nestedPanesTo.Count - 1; i >= 0; i--)

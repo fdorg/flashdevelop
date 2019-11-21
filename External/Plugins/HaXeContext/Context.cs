@@ -615,7 +615,7 @@ namespace HaXeContext
                 OnCompletionModeChange();
         }
 
-        string GetHaxeTarget(string platformName)
+        public string GetHaxeTarget(string platformName)
         {
             if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
             var haxeLang = PlatformData.SupportedLanguages["haxe"];
@@ -625,7 +625,7 @@ namespace HaXeContext
             return null;
         }
 
-        void AppendPath(ContextSetupInfos contextSetup, string path)
+        static void AppendPath(ContextSetupInfos contextSetup, string path)
         {
             foreach(string cp in contextSetup.Classpath) 
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
@@ -1920,7 +1920,7 @@ namespace HaXeContext
                 else return null;
 
             // empty expression
-            if (exprValue != "")
+            if (exprValue.Length != 0)
             {
                 // async processing
                 var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.COMPLETION);
@@ -1990,7 +1990,7 @@ namespace HaXeContext
             if (exprValue.Length >= 3)
             {
                 var first = exprValue[0];
-                if ((first == '\"' || first == '\'') && expression.Context.SubExpressions != null && expression.Context.SubExpressions.Count == 1)
+                if ((first == '"' || first == '\'') && expression.Context.SubExpressions != null && expression.Context.SubExpressions.Count == 1)
                 {
                     var s = exprValue.Replace(".#0~.", string.Empty);
                     if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
@@ -2003,7 +2003,7 @@ namespace HaXeContext
         {
             if (file?.Classes != null)
             {
-                var module = file.Module == "" ? Path.GetFileNameWithoutExtension(file.FileName) : file.Module;
+                var module = file.Module.IsNullOrEmpty() ? Path.GetFileNameWithoutExtension(file.FileName) : file.Module;
                 foreach (var model in file.Classes)
                     if ((model.Flags & (FlagType.Class | FlagType.Interface | FlagType.Enum)) != 0 && model.Name == module)
                     {

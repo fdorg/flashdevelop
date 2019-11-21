@@ -25,7 +25,7 @@ namespace PluginCore.Controls
         /// </summary>
         public static IDisposable Attach(object obj)
         {
-            return ScrollBarEx.Attach(obj, false);
+            return Attach(obj, false);
         }
         public static IDisposable Attach(object obj, bool childrenToo)
         {
@@ -64,27 +64,27 @@ namespace PluginCore.Controls
         /// <summary>
         /// Auto-repeat delay.
         /// </summary>
-        private const int PROGRESS_TIMER_DELAY = 300;
+        const int PROGRESS_TIMER_DELAY = 300;
 
         /// <summary>
         /// Auto-repeat interval.
         /// </summary>
-        private const int PROGRESS_TIMER_TICK = 33;
+        const int PROGRESS_TIMER_TICK = 33;
         #endregion
 
         #region Drawing
 
-        private Color curPosColor = Color.DarkBlue;
-        private Color foreColor = SystemColors.ControlDarkDark;
-        private Color foreColorHot = SystemColors.Highlight;
-        private Color foreColorPressed = SystemColors.HotTrack;
-        private Color arrowColor = SystemColors.ControlDarkDark;
-        private Color arrowColorHot = SystemColors.Highlight;
-        private Color arrowColorPressed = SystemColors.HotTrack;
-        private Color backColor = SystemColors.ActiveBorder;
-        private Color backColorDisabled = SystemColors.ControlLight;
-        private Color borderColor = SystemColors.ActiveBorder;
-        private Color borderColorDisabled = SystemColors.Control;
+        Color curPosColor = Color.DarkBlue;
+        Color foreColor = SystemColors.ControlDarkDark;
+        Color foreColorHot = SystemColors.Highlight;
+        Color foreColorPressed = SystemColors.HotTrack;
+        Color arrowColor = SystemColors.ControlDarkDark;
+        Color arrowColorHot = SystemColors.Highlight;
+        Color arrowColorPressed = SystemColors.HotTrack;
+        Color backColor = SystemColors.ActiveBorder;
+        Color backColorDisabled = SystemColors.ControlLight;
+        Color borderColor = SystemColors.ActiveBorder;
+        Color borderColorDisabled = SystemColors.Control;
 
         /// <summary>
         /// Draws the background.
@@ -92,7 +92,7 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
-        private void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
+        void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
         {
             if (g is null) throw new ArgumentNullException(nameof(g));
 
@@ -117,7 +117,7 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="state">The <see cref="ScrollBarState"/> of the thumb.</param>
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
-        private void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
+        void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
         {
             if (g is null) throw new ArgumentNullException(nameof(g));
 
@@ -148,7 +148,7 @@ namespace PluginCore.Controls
         /// <param name="state">The <see cref="ScrollBarArrowButtonState"/> of the arrow button.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
-        private void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
+        void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
         {
             if (g is null) throw new ArgumentNullException(nameof(g));
 
@@ -179,9 +179,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
-        private void DrawBackgroundVertical(Graphics g, Rectangle rect)
+        void DrawBackgroundVertical(Graphics g, Rectangle rect)
         {
-            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            using Brush brush = new SolidBrush(Enabled ? backColor : backColorDisabled);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             g.FillRectangle(brush, rect);
         }
@@ -191,9 +191,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
-        private void DrawBackgroundHorizontal(Graphics g, Rectangle rect)
+        void DrawBackgroundHorizontal(Graphics g, Rectangle rect)
         {
-            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            using Brush brush = new SolidBrush(Enabled ? backColor : backColorDisabled);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             g.FillRectangle(brush, rect);
         }
@@ -204,7 +204,7 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the thumb with.</param>
-        private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
+        static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
             using Brush brush = new SolidBrush(color);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
@@ -217,7 +217,7 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the thumb with.</param>
-        private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
+        static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
             using Brush brush = new SolidBrush(color);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
@@ -231,7 +231,7 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the arrow buttons with.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
-        private static void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
+        static void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
             using Brush brush = new SolidBrush(color);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -253,7 +253,7 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the arrow buttons with.</param>
         /// <param name="arrowLeft">true for a left arrow, false otherwise.</param>
-        private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowLeft)
+        static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowLeft)
         {
             using Brush brush = new SolidBrush(color);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -275,237 +275,242 @@ namespace PluginCore.Controls
         /// <summary>
         /// Indicates many changes to the scrollbar are happening, so stop painting till finished.
         /// </summary>
-        private bool inUpdate;
+        bool inUpdate;
 
         /// <summary>
         /// Highlights the current line if: value > -1
         /// </summary>
-        private int curPos = -1;
+        int curPos = -1;
 
         /// <summary>
         /// The maximum value of curPos. If overScroll (EndAtLastLine) is disabled, it is greater than the maximum scrollbar value, otherwise they are equal.
         /// </summary>
-        private int maxCurPos = 100;
+        int maxCurPos = 100;
 
         /// <summary>
         /// The scrollbar orientation - horizontal / vertical.
         /// </summary>
-        private ScrollBarOrientation orientation = ScrollBarOrientation.Vertical;
+        ScrollBarOrientation orientation = ScrollBarOrientation.Vertical;
 
         /// <summary>
         /// The scroll orientation in scroll events.
         /// </summary>
-        private ScrollOrientation scrollOrientation = ScrollOrientation.VerticalScroll;
+        ScrollOrientation scrollOrientation = ScrollOrientation.VerticalScroll;
 
         /// <summary>
         /// The thumb rectangle.
         /// </summary>
-        private Rectangle thumbRectangle;
+        Rectangle thumbRectangle;
 
         /// <summary>
         /// The top arrow rectangle.
         /// </summary>
-        private Rectangle topArrowRectangle;
+        Rectangle topArrowRectangle;
 
         /// <summary>
         /// The bottom arrow rectangle.
         /// </summary>
-        private Rectangle bottomArrowRectangle;
+        Rectangle bottomArrowRectangle;
 
         /// <summary>
         /// Indicates if top arrow was clicked.
         /// </summary>
-        private bool topArrowClicked;
+        bool topArrowClicked;
 
         /// <summary>
         /// Indicates if bottom arrow was clicked.
         /// </summary>
-        private bool bottomArrowClicked;
+        bool bottomArrowClicked;
 
         /// <summary>
         /// Indicates if channel rectangle above the thumb was clicked.
         /// </summary>
-        private bool topBarClicked;
+        bool topBarClicked;
 
         /// <summary>
         /// Indicates if channel rectangle under the thumb was clicked.
         /// </summary>
-        private bool bottomBarClicked;
+        bool bottomBarClicked;
 
         /// <summary>
         /// Indicates if the thumb was clicked.
         /// </summary>
-        private bool thumbClicked;
+        bool thumbClicked;
 
         /// <summary>
         /// The state of the thumb.
         /// </summary>
-        private ScrollBarState thumbState = ScrollBarState.Normal;
+        ScrollBarState thumbState = ScrollBarState.Normal;
 
         /// <summary>
         /// The state of the top arrow.
         /// </summary>
-        private ScrollBarArrowButtonState topButtonState = ScrollBarArrowButtonState.UpNormal;
+        ScrollBarArrowButtonState topButtonState = ScrollBarArrowButtonState.UpNormal;
 
         /// <summary>
         /// The state of the bottom arrow.
         /// </summary>
-        private ScrollBarArrowButtonState bottomButtonState = ScrollBarArrowButtonState.DownNormal;
+        ScrollBarArrowButtonState bottomButtonState = ScrollBarArrowButtonState.DownNormal;
 
         /// <summary>
         /// The scrollbar value minimum.
         /// </summary>
-        private int minimum;
+        int minimum;
 
         /// <summary>
         /// The scrollbar value maximum.
         /// </summary>
-        private int maximum = 100;
+        int maximum = 100;
 
         /// <summary>
         /// The view port size (page size) in relation to the maximum and minimum value.
         /// </summary>
-        private int viewPortSize = 100;
+        int viewPortSize = 100;
 
         /// <summary>
         /// The small change value.
         /// </summary>
-        private int smallChange = 1;
+        int smallChange = 1;
 
         /// <summary>
         /// The large change value.
         /// </summary>
-        private int largeChange = 10;
+        int largeChange = 10;
 
         /// <summary>
         /// The value of the scrollbar.
         /// </summary>
-        private int value;
+        int value;
 
         /// <summary>
         /// The thickness of the thumb.
         /// </summary>
-        private const int THUMB_THICKNESS = 9;
-        private int thumbThickness;
+        const int THUMB_THICKNESS = 9;
+
+        int thumbThickness;
 
         /// <summary>
         /// The thickness of an arrow (base length).
         /// </summary>
-        private const int ARROW_THICKNESS = THUMB_THICKNESS;
-        private int arrowThickness;
+        const int ARROW_THICKNESS = THUMB_THICKNESS;
+
+        int arrowThickness;
 
         /// <summary>
         /// The length of an arrow (point-to-base distance).
         /// </summary>
-        private const int ARROW_LENGTH = 5;
-        private int arrowLength;
+        const int ARROW_LENGTH = 5;
+
+        int arrowLength;
 
         /// <summary>
         /// The padding between an arrow's point and the nearest edge.
         /// </summary>
-        private const int ARROW_PADDING = 6;
-        private int arrowPadding;
+        const int ARROW_PADDING = 6;
+
+        int arrowPadding;
 
         /// <summary>
         /// The gap between an arrow and the thumb.
         /// </summary>
-        private const int ARROW_THUMB_GAP = ARROW_PADDING;
-        private int arrowThumbGap;
+        const int ARROW_THUMB_GAP = ARROW_PADDING;
+
+        int arrowThumbGap;
 
         /// <summary>
         /// The length of an arrow, arrow padding and arrow-thumb gap
         /// </summary>
-        private int arrowPaddedLength;
+        int arrowPaddedLength;
 
         /// <summary>
         /// The bottom limit for the thumb bottom.
         /// </summary>
-        private int thumbBottomLimitBottom;
+        int thumbBottomLimitBottom;
 
         /// <summary>
         /// The bottom limit for the thumb top.
         /// </summary>
-        private int thumbBottomLimitTop;
+        int thumbBottomLimitTop;
 
         /// <summary>
         /// The top limit for the thumb top.
         /// </summary>
-        private int thumbTopLimit;
+        int thumbTopLimit;
 
         /// <summary>
         /// The current position of the thumb.
         /// </summary>
-        private int thumbPosition;
+        int thumbPosition;
 
         /// <summary>
         /// The track position.
         /// </summary>
-        private int trackPosition;
+        int trackPosition;
 
         /// <summary>
         /// The progress timer for moving the thumb.
         /// </summary>
-        private readonly Timer progressTimer = new Timer();
+        readonly Timer progressTimer = new Timer();
 
         /// <summary>
         /// Context menu strip.
         /// </summary>
-        private ContextMenuStrip contextMenu;
+        ContextMenuStrip contextMenu;
 
         /// <summary>
         /// Container for components.
         /// </summary>
-        private IContainer components;
+        IContainer components;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiScrollHere;
+        ToolStripMenuItem tsmiScrollHere;
 
         /// <summary>
         /// Menu separator.
         /// </summary>
-        private ToolStripSeparator toolStripSeparator1;
+        ToolStripSeparator toolStripSeparator1;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiTop;
+        ToolStripMenuItem tsmiTop;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiBottom;
+        ToolStripMenuItem tsmiBottom;
 
         /// <summary>
         /// Menu separator.
         /// </summary>
-        private ToolStripSeparator toolStripSeparator2;
+        ToolStripSeparator toolStripSeparator2;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiLargeUp;
+        ToolStripMenuItem tsmiLargeUp;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiLargeDown;
+        ToolStripMenuItem tsmiLargeDown;
 
         /// <summary>
         /// Menu separator.
         /// </summary>
-        private ToolStripSeparator toolStripSeparator3;
+        ToolStripSeparator toolStripSeparator3;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiSmallUp;
+        ToolStripMenuItem tsmiSmallUp;
 
         /// <summary>
         /// Menu item.
         /// </summary>
-        private ToolStripMenuItem tsmiSmallDown;
+        ToolStripMenuItem tsmiSmallDown;
 
         #endregion
 
@@ -523,16 +528,16 @@ namespace PluginCore.Controls
                 | ControlStyles.AllPaintingInWmPaint 
                 | ControlStyles.UserPaint, true);
             // initializes the context menu
-            this.InitializeComponent();
-            this.Width = ScaleOddUp(17);
-            this.Height = ScaleHelper.Scale(200);
+            InitializeComponent();
+            Width = ScaleOddUp(17);
+            Height = ScaleHelper.Scale(200);
             // sets the scrollbar up
-            this.SetUpScrollBar();
+            SetUpScrollBar();
             // timer for clicking and holding the mouse buttonь
             // over/below the thumb and on the arrow buttons
-            this.progressTimer.Interval = PROGRESS_TIMER_TICK;
-            this.progressTimer.Tick += this.ProgressTimerTick;
-            this.ContextMenuStrip = this.contextMenu;
+            progressTimer.Interval = PROGRESS_TIMER_TICK;
+            progressTimer.Tick += ProgressTimerTick;
+            ContextMenuStrip = contextMenu;
         }
 
         #endregion
@@ -558,16 +563,16 @@ namespace PluginCore.Controls
         [DefaultValue(-1)]
         public int CurrentPosition
         {
-            get => this.curPos;
+            get => curPos;
             set
             {
                 // no change, return
-                if (this.curPos == value)
+                if (curPos == value)
                 {
                     return;
                 }
-                this.curPos = value;
-                this.Invalidate();
+                curPos = value;
+                Invalidate();
             }
         }
 
@@ -579,16 +584,16 @@ namespace PluginCore.Controls
         [DefaultValue(-1)]
         public int MaxCurrentPosition
         {
-            get => this.maxCurPos;
+            get => maxCurPos;
             set
             {
                 // no change, return
-                if (this.maxCurPos == value)
+                if (maxCurPos == value)
                 {
                     return;
                 }
-                this.maxCurPos = value;
-                this.Invalidate();
+                maxCurPos = value;
+                Invalidate();
             }
         }
 
@@ -600,26 +605,26 @@ namespace PluginCore.Controls
         [DefaultValue(ScrollBarOrientation.Vertical)]
         public ScrollBarOrientation Orientation
         {
-            get => this.orientation;
+            get => orientation;
             set
             {
                 // no change - return
-                if (value == this.orientation)
+                if (value == orientation)
                 {
                     return;
                 }
-                this.orientation = value;
+                orientation = value;
                 // change text of context menu entries
-                this.ChangeContextMenuItems();
+                ChangeContextMenuItems();
                 // save scroll orientation for scroll event
-                this.scrollOrientation = value == ScrollBarOrientation.Vertical ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll;
+                scrollOrientation = value == ScrollBarOrientation.Vertical ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll;
                 // only in DesignMode switch width and height
-                if (this.DesignMode)
+                if (DesignMode)
                 {
-                    this.Size = new Size(this.Height, this.Width);
+                    Size = new Size(Height, Width);
                 }
                 // sets the scrollbar up
-                this.SetUpScrollBar();
+                SetUpScrollBar();
             }
         }
 
@@ -631,35 +636,35 @@ namespace PluginCore.Controls
         [DefaultValue(0)]
         public int Minimum
         {
-            get => this.minimum;
+            get => minimum;
             set
             {
                 // no change or value invalid - return
-                if (this.minimum == value || value < 0 || value >= this.maximum)
+                if (minimum == value || value < 0 || value >= maximum)
                 {
                     return;
                 }
-                this.minimum = value;
+                minimum = value;
                 // current value less than new minimum value - adjust
                 if (this.value < value)
                 {
                     this.value = value;
                 }
                 // is current large change value invalid - adjust
-                if (this.largeChange > this.maximum - this.minimum)
+                if (largeChange > maximum - minimum)
                 {
-                    this.largeChange = this.maximum - this.minimum;
+                    largeChange = maximum - minimum;
                 }
-                this.SetUpScrollBar();
+                SetUpScrollBar();
                 // current value less than new minimum value - adjust
                 if (this.value < value)
                 {
-                    this.Value = value;
+                    Value = value;
                 }
                 else
                 {
                     // current value is valid - adjust thumb position (already done by SetUpScrollBar())
-                    this.Refresh();
+                    Refresh();
                 }
             }
         }
@@ -672,30 +677,30 @@ namespace PluginCore.Controls
         [DefaultValue(100)]
         public int Maximum
         {
-            get => this.maximum;
+            get => maximum;
             set
             {
                 // no change or new max. value invalid - return
-                if (value == this.maximum || value < 1 || value <= this.minimum)
+                if (value == maximum || value < 1 || value <= minimum)
                 {
                     return;
                 }
-                this.maximum = value;
+                maximum = value;
                 // is large change value invalid - adjust
-                if (this.largeChange > this.maximum - this.minimum)
+                if (largeChange > maximum - minimum)
                 {
-                    this.largeChange = this.maximum - this.minimum;
+                    largeChange = maximum - minimum;
                 }
-                this.SetUpScrollBar();
+                SetUpScrollBar();
                 // is current value greater than new maximum value - adjust
                 if (this.value > value)
                 {
-                    this.Value = this.maximum;
+                    Value = maximum;
                 }
                 else
                 {
                     // current value is valid - adjust thumb position (already done by SetUpScrollBar())
-                    this.Refresh();
+                    Refresh();
                 }
             }
         }
@@ -708,18 +713,18 @@ namespace PluginCore.Controls
         [DefaultValue(10)]
         public int ViewPortSize
         {
-            get => this.viewPortSize;
+            get => viewPortSize;
             set
             {
                 // no change or new value invalid - return
-                if (value == this.viewPortSize || viewPortSize < 1)
+                if (value == viewPortSize || viewPortSize < 1)
                 {
                     return;
                 }
-                this.viewPortSize = value;
-                this.SetUpScrollBar();
+                viewPortSize = value;
+                SetUpScrollBar();
                 // adjust thumb position (already done by SetUpScrollBar())
-                this.Refresh();
+                Refresh();
             }
         }
 
@@ -731,16 +736,16 @@ namespace PluginCore.Controls
         [DefaultValue(1)]
         public int SmallChange
         {
-            get => this.smallChange;
+            get => smallChange;
             set
             {
                 // no change or new small change value invalid - return
-                if (value == this.smallChange || value < 1 || value >= this.largeChange)
+                if (value == smallChange || value < 1 || value >= largeChange)
                 {
                     return;
                 }
-                this.smallChange = value;
-                this.SetUpScrollBar();
+                smallChange = value;
+                SetUpScrollBar();
             }
         }
 
@@ -752,25 +757,25 @@ namespace PluginCore.Controls
         [DefaultValue(10)]
         public int LargeChange
         {
-            get => this.largeChange;
+            get => largeChange;
             set
             {
                 // no change or new large change value is invalid - return
-                if (value == this.largeChange || value < this.smallChange || value < 2)
+                if (value == largeChange || value < smallChange || value < 2)
                 {
                     return;
                 }
                 // if value is greater than scroll area - adjust
-                if (value > this.maximum - this.minimum)
+                if (value > maximum - minimum)
                 {
-                    this.largeChange = this.maximum - this.minimum;
+                    largeChange = maximum - minimum;
                 }
                 else
                 {
                     // set new value
-                    this.largeChange = value;
+                    largeChange = value;
                 }
-                this.SetUpScrollBar();
+                SetUpScrollBar();
             }
         }
 
@@ -782,20 +787,20 @@ namespace PluginCore.Controls
         [DefaultValue(0)]
         public int Value
         {
-            get => this.value;
+            get => value;
             set
             {
                 // no change or invalid value - return
-                if (this.value == value || value < this.minimum || value > this.maximum)
+                if (this.value == value || value < minimum || value > maximum)
                 {
                     return;
                 }
                 this.value = value;
                 // adjust thumb position
-                this.ChangeThumbPosition(this.GetThumbPosition());
+                ChangeThumbPosition(GetThumbPosition());
                 // raise scroll event
-                this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, -1, this.value, this.scrollOrientation));
-                this.Refresh();
+                OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, -1, this.value, scrollOrientation));
+                Refresh();
             }
         }
 
@@ -807,11 +812,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ActiveBorder")]
         public Color BorderColor
         {
-            get => this.borderColor;
+            get => borderColor;
             set
             {
-                this.borderColor = value;
-                this.Invalidate();
+                borderColor = value;
+                Invalidate();
             }
         }
 
@@ -823,11 +828,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "InactiveBorder")]
         public Color DisabledBorderColor
         {
-            get => this.borderColorDisabled;
+            get => borderColorDisabled;
             set
             {
-                this.borderColorDisabled = value;
-                this.Invalidate();
+                borderColorDisabled = value;
+                Invalidate();
             }
         }
 
@@ -839,11 +844,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "Control")]
         public override Color BackColor
         {
-            get => this.backColor;
+            get => backColor;
             set
             {
-                this.backColor = value;
-                this.Invalidate();
+                backColor = value;
+                Invalidate();
             }
         }
 
@@ -855,11 +860,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlLight")]
         public Color DisabledBackColor
         {
-            get => this.backColorDisabled;
+            get => backColorDisabled;
             set
             {
-                this.backColorDisabled = value;
-                this.Invalidate();
+                backColorDisabled = value;
+                Invalidate();
             }
         }
 
@@ -871,11 +876,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ScrollBar")]
         public override Color ForeColor
         {
-            get => this.foreColor;
+            get => foreColor;
             set
             {
-                this.foreColor = value;
-                this.Invalidate();
+                foreColor = value;
+                Invalidate();
             }
         }
 
@@ -887,11 +892,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDark")]
         public Color HotForeColor
         {
-            get => this.foreColorHot;
+            get => foreColorHot;
             set
             {
-                this.foreColorHot = value;
-                this.Invalidate();
+                foreColorHot = value;
+                Invalidate();
             }
         }
 
@@ -903,11 +908,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDarkDark")]
         public Color ActiveForeColor
         {
-            get => this.foreColorPressed;
+            get => foreColorPressed;
             set
             {
-                this.foreColorPressed = value;
-                this.Invalidate();
+                foreColorPressed = value;
+                Invalidate();
             }
         }
 
@@ -919,11 +924,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDark")]
         public Color ArrowColor
         {
-            get => this.arrowColor;
+            get => arrowColor;
             set
             {
-                this.arrowColor = value;
-                this.Invalidate();
+                arrowColor = value;
+                Invalidate();
             }
         }
 
@@ -935,11 +940,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "Highlight")]
         public Color HotArrowColor
         {
-            get => this.arrowColorHot;
+            get => arrowColorHot;
             set
             {
-                this.arrowColorHot = value;
-                this.Invalidate();
+                arrowColorHot = value;
+                Invalidate();
             }
         }
 
@@ -951,11 +956,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "HotTrack")]
         public Color ActiveArrowColor
         {
-            get => this.arrowColorPressed;
+            get => arrowColorPressed;
             set
             {
-                this.arrowColorPressed = value;
-                this.Invalidate();
+                arrowColorPressed = value;
+                Invalidate();
             }
         }
 
@@ -967,11 +972,11 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(Color), "DarkBlue")]
         public Color CurrentPositionColor
         {
-            get => this.curPosColor;
+            get => curPosColor;
             set
             {
-                this.curPosColor = value;
-                this.Invalidate();
+                curPosColor = value;
+                Invalidate();
             }
         }
 
@@ -983,16 +988,16 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(double), "1")]
         public double Opacity
         {
-            get => this.contextMenu.Opacity;
+            get => contextMenu.Opacity;
             set
             {
                 // no change - return
-                if (value == this.contextMenu.Opacity)
+                if (value == contextMenu.Opacity)
                 {
                     return;
                 }
-                this.contextMenu.AllowTransparency = value != 1;
-                this.contextMenu.Opacity = value;
+                contextMenu.AllowTransparency = value != 1;
+                contextMenu.Opacity = value;
             }
         }
 
@@ -1005,8 +1010,8 @@ namespace PluginCore.Controls
         /// </summary>
         public void BeginUpdate()
         {
-            Win32.SendMessage(this.Handle, Win32.WM_SETREDRAW, 0, 0);
-            this.inUpdate = true;
+            Win32.SendMessage(Handle, Win32.WM_SETREDRAW, 0, 0);
+            inUpdate = true;
         }
 
         /// <summary>
@@ -1014,10 +1019,10 @@ namespace PluginCore.Controls
         /// </summary>
         public void EndUpdate()
         {
-            Win32.SendMessage(this.Handle, Win32.WM_SETREDRAW, 1, 0);
-            this.inUpdate = false;
-            this.SetUpScrollBar();
-            this.Refresh();
+            Win32.SendMessage(Handle, Win32.WM_SETREDRAW, 1, 0);
+            inUpdate = false;
+            SetUpScrollBar();
+            Refresh();
         }
 
         /// <summary>
@@ -1049,53 +1054,53 @@ namespace PluginCore.Controls
             DrawBackground(
                e.Graphics,
                ClientRectangle,
-               this.orientation);
+               orientation);
             // draw thumb and grip
             DrawThumb(
                e.Graphics,
-               this.thumbRectangle,
-               this.thumbState,
-               this.orientation);
+               thumbRectangle,
+               thumbState,
+               orientation);
 
             // draw arrows
             DrawArrowButton(
                e.Graphics,
-               this.topArrowRectangle,
-               this.topButtonState,
+               topArrowRectangle,
+               topButtonState,
                true,
-               this.orientation);
+               orientation);
             DrawArrowButton(
                e.Graphics,
-               this.bottomArrowRectangle,
-               this.bottomButtonState,
+               bottomArrowRectangle,
+               bottomButtonState,
                false,
-               this.orientation);
+               orientation);
 
             // draw current line
-            if (this.curPos > -1 && this.orientation == ScrollBarOrientation.Vertical)
+            if (curPos > -1 && orientation == ScrollBarOrientation.Vertical)
             {
-                using SolidBrush brush = new SolidBrush(this.curPosColor);
+                using SolidBrush brush = new SolidBrush(curPosColor);
                 e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
+                e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, Width, ScaleHelper.Scale(2f));
             }
 
             // draw border
-            using Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled));
+            using Pen pen = new Pen((Enabled ? borderColor : borderColorDisabled));
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-            e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
+            e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
         }
 
         /// <summary>
         /// Calculates the current position.
         /// </summary>
         /// <returns>The current position.</returns>
-        private float GetCurPosition()
+        float GetCurPosition()
         {
-            int bottomLimit = (this.maxCurPos > this.maximum) ? thumbBottomLimitBottom : this.thumbBottomLimitTop;
-            int pixelRange = bottomLimit - this.thumbTopLimit; // == size - (overScroll ? thumbSize : 0) - arrows - paddings
-            int realRange = this.maxCurPos - this.minimum;
-            float perc = (realRange != 0) ? ((this.curPos - this.minimum) / (float)realRange) : 0f;
-            return Math.Max(this.thumbTopLimit, Math.Min(bottomLimit, perc * pixelRange + this.arrowPaddedLength));
+            int bottomLimit = (maxCurPos > maximum) ? thumbBottomLimitBottom : thumbBottomLimitTop;
+            int pixelRange = bottomLimit - thumbTopLimit; // == size - (overScroll ? thumbSize : 0) - arrows - paddings
+            int realRange = maxCurPos - minimum;
+            float perc = (realRange != 0) ? ((curPos - minimum) / (float)realRange) : 0f;
+            return Math.Max(thumbTopLimit, Math.Min(bottomLimit, perc * pixelRange + arrowPaddedLength));
         }
 
         /// <summary>
@@ -1110,42 +1115,42 @@ namespace PluginCore.Controls
             {
                 // prevents showing the context menu if pressing the right mouse
                 // button while holding the left
-                this.ContextMenuStrip = null;
+                ContextMenuStrip = null;
                 Point mouseLocation = e.Location;
-                if (this.thumbRectangle.Contains(mouseLocation))
+                if (thumbRectangle.Contains(mouseLocation))
                 {
-                    this.thumbClicked = true;
-                    this.thumbPosition = this.orientation == ScrollBarOrientation.Vertical ? mouseLocation.Y - this.thumbRectangle.Y : mouseLocation.X - this.thumbRectangle.X;
-                    this.thumbState = ScrollBarState.Pressed;
-                    Invalidate(this.thumbRectangle);
+                    thumbClicked = true;
+                    thumbPosition = orientation == ScrollBarOrientation.Vertical ? mouseLocation.Y - thumbRectangle.Y : mouseLocation.X - thumbRectangle.X;
+                    thumbState = ScrollBarState.Pressed;
+                    Invalidate(thumbRectangle);
                 }
-                else if (this.topArrowRectangle.Contains(mouseLocation))
+                else if (topArrowRectangle.Contains(mouseLocation))
                 {
-                    this.topArrowClicked = true;
-                    this.topButtonState = ScrollBarArrowButtonState.UpPressed;
-                    this.Invalidate(this.topArrowRectangle);
-                    this.ProgressThumb(true);
+                    topArrowClicked = true;
+                    topButtonState = ScrollBarArrowButtonState.UpPressed;
+                    Invalidate(topArrowRectangle);
+                    ProgressThumb(true);
                 }
-                else if (this.bottomArrowRectangle.Contains(mouseLocation))
+                else if (bottomArrowRectangle.Contains(mouseLocation))
                 {
-                    this.bottomArrowClicked = true;
-                    this.bottomButtonState = ScrollBarArrowButtonState.DownPressed;
-                    this.Invalidate(this.bottomArrowRectangle);
-                    this.ProgressThumb(true);
+                    bottomArrowClicked = true;
+                    bottomButtonState = ScrollBarArrowButtonState.DownPressed;
+                    Invalidate(bottomArrowRectangle);
+                    ProgressThumb(true);
                 }
                 else
                 {
-                    this.trackPosition = this.orientation == ScrollBarOrientation.Vertical ? mouseLocation.Y : mouseLocation.X;
-                    if (this.trackPosition < (this.orientation == ScrollBarOrientation.Vertical ? this.thumbRectangle.Y : this.thumbRectangle.X))
-                        this.topBarClicked = true;
+                    trackPosition = orientation == ScrollBarOrientation.Vertical ? mouseLocation.Y : mouseLocation.X;
+                    if (trackPosition < (orientation == ScrollBarOrientation.Vertical ? thumbRectangle.Y : thumbRectangle.X))
+                        topBarClicked = true;
                     else
-                        this.bottomBarClicked = true;
-                    this.ProgressThumb(true);
+                        bottomBarClicked = true;
+                    ProgressThumb(true);
                 }
             }
             else if (e.Button == MouseButtons.Right)
             {
-                this.trackPosition = this.orientation == ScrollBarOrientation.Vertical ? e.Y : e.X;
+                trackPosition = orientation == ScrollBarOrientation.Vertical ? e.Y : e.X;
             }
         }
 
@@ -1158,34 +1163,34 @@ namespace PluginCore.Controls
             base.OnMouseUp(e);
             if (e.Button == MouseButtons.Left)
             {
-                this.ContextMenuStrip = this.contextMenu;
-                if (this.thumbClicked)
+                ContextMenuStrip = contextMenu;
+                if (thumbClicked)
                 {
-                    this.thumbClicked = false;
-                    this.thumbState = ScrollBarState.Normal;
-                    this.OnScroll(new ScrollEventArgs(ScrollEventType.EndScroll, -1, this.value, this.scrollOrientation));
+                    thumbClicked = false;
+                    thumbState = ScrollBarState.Normal;
+                    OnScroll(new ScrollEventArgs(ScrollEventType.EndScroll, -1, value, scrollOrientation));
                 }
-                else if (this.topArrowClicked)
+                else if (topArrowClicked)
                 {
-                    this.topArrowClicked = false;
-                    this.topButtonState = ScrollBarArrowButtonState.UpNormal;
-                    this.StopTimer();
+                    topArrowClicked = false;
+                    topButtonState = ScrollBarArrowButtonState.UpNormal;
+                    StopTimer();
                 }
-                else if (this.bottomArrowClicked)
+                else if (bottomArrowClicked)
                 {
-                    this.bottomArrowClicked = false;
-                    this.bottomButtonState = ScrollBarArrowButtonState.DownNormal;
-                    this.StopTimer();
+                    bottomArrowClicked = false;
+                    bottomButtonState = ScrollBarArrowButtonState.DownNormal;
+                    StopTimer();
                 }
-                else if (this.topBarClicked)
+                else if (topBarClicked)
                 {
-                    this.topBarClicked = false;
-                    this.StopTimer();
+                    topBarClicked = false;
+                    StopTimer();
                 }
-                else if (this.bottomBarClicked)
+                else if (bottomBarClicked)
                 {
-                    this.bottomBarClicked = false;
-                    this.StopTimer();
+                    bottomBarClicked = false;
+                    StopTimer();
                 }
                 Invalidate();
             }
@@ -1198,9 +1203,9 @@ namespace PluginCore.Controls
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
-            this.bottomButtonState = ScrollBarArrowButtonState.DownActive;
-            this.topButtonState = ScrollBarArrowButtonState.UpActive;
-            this.thumbState = ScrollBarState.Active;
+            bottomButtonState = ScrollBarArrowButtonState.DownActive;
+            topButtonState = ScrollBarArrowButtonState.UpActive;
+            thumbState = ScrollBarState.Active;
             Invalidate();
         }
 
@@ -1211,7 +1216,7 @@ namespace PluginCore.Controls
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
-            this.ResetScrollStatus();
+            ResetScrollStatus();
         }
 
         /// <summary>
@@ -1225,81 +1230,81 @@ namespace PluginCore.Controls
             if (e.Button == MouseButtons.Left)
             {
                 // Update the thumb position, if the new location is within the bounds.
-                if (this.thumbClicked)
+                if (thumbClicked)
                 {
-                    int oldThumbLocation = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X;
-                    int oldScrollValue = this.value;
-                    this.topButtonState = ScrollBarArrowButtonState.UpActive;
-                    this.bottomButtonState = ScrollBarArrowButtonState.DownActive;
-                    int pos = (this.orientation == ScrollBarOrientation.Vertical ? e.Location.Y : e.Location.X) - thumbPosition;
+                    int oldThumbLocation = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Y : thumbRectangle.X;
+                    int oldScrollValue = value;
+                    topButtonState = ScrollBarArrowButtonState.UpActive;
+                    bottomButtonState = ScrollBarArrowButtonState.DownActive;
+                    int pos = (orientation == ScrollBarOrientation.Vertical ? e.Location.Y : e.Location.X) - thumbPosition;
                     // The thumb is all the way to the top
-                    if (pos <= this.thumbTopLimit)
+                    if (pos <= thumbTopLimit)
                     {
-                        this.ChangeThumbPosition(this.thumbTopLimit);
-                        this.value = this.minimum;
+                        ChangeThumbPosition(thumbTopLimit);
+                        value = minimum;
                     }
-                    else if (pos >= this.thumbBottomLimitTop)
+                    else if (pos >= thumbBottomLimitTop)
                     {
                         // The thumb is all the way to the bottom
-                        this.ChangeThumbPosition(this.thumbBottomLimitTop);
-                        this.value = this.maximum;
+                        ChangeThumbPosition(thumbBottomLimitTop);
+                        value = maximum;
                     }
                     else
                     {
                         // The thumb is between the ends of the track.
-                        this.ChangeThumbPosition(pos);
-                        int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
-                        int position = ((this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X) - this.arrowPaddedLength;
+                        ChangeThumbPosition(pos);
+                        int pixelRange = thumbBottomLimitTop - thumbTopLimit; // == size - thumbSize - arrows - paddings
+                        int position = ((orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Y : thumbRectangle.X) - arrowPaddedLength;
                         // percent of the new position
                         float perc = (pixelRange != 0) ? (position / (float)pixelRange) : 0f;
                         // the new value is somewhere between max and min, starting
                         // at min position
-                        this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
+                        value = Convert.ToInt32((perc * (maximum - minimum)) + minimum);
                     }
 
                     // raise scroll event if value has changed
-                    if (oldScrollValue != this.value)
+                    if (oldScrollValue != value)
                     {
-                        this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbTrack, oldScrollValue, this.value, this.scrollOrientation));
-                        this.Refresh();
+                        OnScroll(new ScrollEventArgs(ScrollEventType.ThumbTrack, oldScrollValue, value, scrollOrientation));
+                        Refresh();
                     }
                     else
                     {
-                        int newThumbLocation = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X;
+                        int newThumbLocation = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Y : thumbRectangle.X;
                         // repaint if thumb location has changed, but only at the top and bottom, to prevent thumb jumping around
                         if ((oldThumbLocation != newThumbLocation) && ((newThumbLocation == thumbTopLimit) || (newThumbLocation == thumbBottomLimitTop)))
                         {
-                            this.Refresh();
+                            Refresh();
                         }
                     }
                 }
             }
-            else if (!this.ClientRectangle.Contains(e.Location))
+            else if (!ClientRectangle.Contains(e.Location))
             {
-                this.ResetScrollStatus();
+                ResetScrollStatus();
             }
             else if (e.Button == MouseButtons.None) // only moving the mouse
             {
-                if (this.topArrowRectangle.Contains(e.Location))
+                if (topArrowRectangle.Contains(e.Location))
                 {
-                    this.topButtonState = ScrollBarArrowButtonState.UpHot;
-                    this.Invalidate(this.topArrowRectangle);
+                    topButtonState = ScrollBarArrowButtonState.UpHot;
+                    Invalidate(topArrowRectangle);
                 }
-                else if (this.bottomArrowRectangle.Contains(e.Location))
+                else if (bottomArrowRectangle.Contains(e.Location))
                 {
-                    this.bottomButtonState = ScrollBarArrowButtonState.DownHot;
-                    Invalidate(this.bottomArrowRectangle);
+                    bottomButtonState = ScrollBarArrowButtonState.DownHot;
+                    Invalidate(bottomArrowRectangle);
                 }
-                else if (this.thumbRectangle.Contains(e.Location))
+                else if (thumbRectangle.Contains(e.Location))
                 {
-                    this.thumbState = ScrollBarState.Hot;
-                    this.Invalidate(this.thumbRectangle);
+                    thumbState = ScrollBarState.Hot;
+                    Invalidate(thumbRectangle);
                 }
-                else if (this.ClientRectangle.Contains(e.Location))
+                else if (ClientRectangle.Contains(e.Location))
                 {
-                    this.topButtonState = ScrollBarArrowButtonState.UpActive;
-                    this.bottomButtonState = ScrollBarArrowButtonState.DownActive;
-                    this.thumbState = ScrollBarState.Active;
+                    topButtonState = ScrollBarArrowButtonState.UpActive;
+                    bottomButtonState = ScrollBarArrowButtonState.DownActive;
+                    thumbState = ScrollBarState.Active;
                     Invalidate();
                 }
             }
@@ -1316,26 +1321,26 @@ namespace PluginCore.Controls
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             // only in design mode - constrain size
-            if (this.DesignMode)
+            if (DesignMode)
             {
                 var pad = ScaleHelper.Scale(10);
-                if (this.orientation == ScrollBarOrientation.Vertical)
+                if (orientation == ScrollBarOrientation.Vertical)
                 {
-                    if (height < 2 * this.arrowPaddedLength)
-                        height = 2 * this.arrowPaddedLength;
+                    if (height < 2 * arrowPaddedLength)
+                        height = 2 * arrowPaddedLength;
                     width = ScaleOddUp(17);
                 }
                 else
                 {
-                    if (width < 2 * this.arrowPaddedLength)
-                        width = 2 * this.arrowPaddedLength;
+                    if (width < 2 * arrowPaddedLength)
+                        width = 2 * arrowPaddedLength;
                     height = ScaleOddUp(17);
                 }
             }
             base.SetBoundsCore(x, y, width, height, specified);
-            if (this.DesignMode)
+            if (DesignMode)
             {
-                this.SetUpScrollBar();
+                SetUpScrollBar();
             }
         }
 
@@ -1346,7 +1351,7 @@ namespace PluginCore.Controls
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            this.SetUpScrollBar();
+            SetUpScrollBar();
         }
 
         /// <summary>
@@ -1360,29 +1365,29 @@ namespace PluginCore.Controls
             // Up&Down or Left&Right, PageUp, PageDown, Home, End
             Keys keyUp = Keys.Up;
             Keys keyDown = Keys.Down;
-            if (this.orientation == ScrollBarOrientation.Horizontal)
+            if (orientation == ScrollBarOrientation.Horizontal)
             {
                 keyUp = Keys.Left;
                 keyDown = Keys.Right;
             }
             if ((keyData == keyUp) || (keyData == keyDown))
             {
-                this.Value = this.GetValue(true, keyData == keyUp);
+                Value = GetValue(true, keyData == keyUp);
                 return true;
             }
             if ((keyData == Keys.PageUp) || (keyData == Keys.PageDown))
             {
-                this.Value = this.GetValue(false, keyData == Keys.PageUp);
+                Value = GetValue(false, keyData == Keys.PageUp);
                 return true;
             }
             if (keyData == Keys.Home)
             {
-                this.Value = this.minimum;
+                Value = minimum;
                 return true;
             }
             if (keyData == Keys.End)
             {
-                this.Value = this.maximum;
+                Value = maximum;
                 return true;
             }
             return base.ProcessDialogKey(keyData);
@@ -1396,20 +1401,20 @@ namespace PluginCore.Controls
         {
             base.OnEnabledChanged(e);
 
-            if (this.Enabled)
+            if (Enabled)
             {
-                this.thumbState = ScrollBarState.Normal;
-                this.topButtonState = ScrollBarArrowButtonState.UpNormal;
-                this.bottomButtonState = ScrollBarArrowButtonState.DownNormal;
+                thumbState = ScrollBarState.Normal;
+                topButtonState = ScrollBarArrowButtonState.UpNormal;
+                bottomButtonState = ScrollBarArrowButtonState.DownNormal;
             }
             else
             {
-                this.thumbState = ScrollBarState.Disabled;
-                this.topButtonState = ScrollBarArrowButtonState.UpDisabled;
-                this.bottomButtonState = ScrollBarArrowButtonState.DownDisabled;
+                thumbState = ScrollBarState.Disabled;
+                topButtonState = ScrollBarArrowButtonState.UpDisabled;
+                bottomButtonState = ScrollBarArrowButtonState.DownDisabled;
             }
 
-            this.Refresh();
+            Refresh();
         }
 
         #endregion
@@ -1419,10 +1424,10 @@ namespace PluginCore.Controls
         /// <summary>
         /// Sets up the scrollbar.
         /// </summary>
-        private void SetUpScrollBar()
+        void SetUpScrollBar()
         {
             // if no drawing - return
-            if (this.inUpdate)
+            if (inUpdate)
             {
                 return;
             }
@@ -1430,72 +1435,72 @@ namespace PluginCore.Controls
             Rectangle rect = ClientRectangle;
             // set up the width's, height's and rectangles for the different
             // elements
-            this.thumbThickness = ScaleOddUp(THUMB_THICKNESS); // Should be odd for the thumb to be perfectly centered (since scrollbar width is odd)
-            this.arrowThickness = ScaleOddUp(ARROW_THICKNESS); // Should be odd for nice and crisp arrow points.
-            this.arrowLength = ScaleHelper.Scale(ARROW_LENGTH);
-            this.arrowPadding = ScaleHelper.Scale(ARROW_PADDING);
-            this.arrowThumbGap = ScaleHelper.Scale(ARROW_THUMB_GAP);
-            this.arrowPaddedLength = this.arrowLength + this.arrowPadding + this.arrowThumbGap;
-            if (this.orientation == ScrollBarOrientation.Vertical)
+            thumbThickness = ScaleOddUp(THUMB_THICKNESS); // Should be odd for the thumb to be perfectly centered (since scrollbar width is odd)
+            arrowThickness = ScaleOddUp(ARROW_THICKNESS); // Should be odd for nice and crisp arrow points.
+            arrowLength = ScaleHelper.Scale(ARROW_LENGTH);
+            arrowPadding = ScaleHelper.Scale(ARROW_PADDING);
+            arrowThumbGap = ScaleHelper.Scale(ARROW_THUMB_GAP);
+            arrowPaddedLength = arrowLength + arrowPadding + arrowThumbGap;
+            if (orientation == ScrollBarOrientation.Vertical)
             {
-                this.thumbRectangle = new Rectangle(
-                   rect.X + (rect.Width - this.thumbThickness) / 2, // Assuming rect.Width and this.thumbThickness are both odd, so that (rect.Width - this.thumbThickness) is even.
-                   rect.Y + this.arrowPaddedLength,
-                   this.thumbThickness,
-                   this.GetThumbSize()
+                thumbRectangle = new Rectangle(
+                   rect.X + (rect.Width - thumbThickness) / 2, // Assuming rect.Width and this.thumbThickness are both odd, so that (rect.Width - this.thumbThickness) is even.
+                   rect.Y + arrowPaddedLength,
+                   thumbThickness,
+                   GetThumbSize()
                 );
-                this.topArrowRectangle = new Rectangle(
-                   rect.X + (rect.Width - this.arrowThickness) / 2, // Assuming rect.Width and this.arrowThickness are both odd, so that (rect.Width - this.arrowThickness) is even.
-                   rect.Y + this.arrowPadding,
-                   this.arrowThickness,
-                   this.arrowLength
+                topArrowRectangle = new Rectangle(
+                   rect.X + (rect.Width - arrowThickness) / 2, // Assuming rect.Width and this.arrowThickness are both odd, so that (rect.Width - this.arrowThickness) is even.
+                   rect.Y + arrowPadding,
+                   arrowThickness,
+                   arrowLength
                 );
-                this.bottomArrowRectangle = new Rectangle(
-                   rect.X + (rect.Width - this.arrowThickness) / 2, // Assuming rect.Width and this.arrowThickness are both odd, so that (rect.Width - this.arrowThickness) is even.
-                   rect.Bottom - this.arrowPadding - this.arrowLength,
-                   this.arrowThickness,
-                   this.arrowLength
+                bottomArrowRectangle = new Rectangle(
+                   rect.X + (rect.Width - arrowThickness) / 2, // Assuming rect.Width and this.arrowThickness are both odd, so that (rect.Width - this.arrowThickness) is even.
+                   rect.Bottom - arrowPadding - arrowLength,
+                   arrowThickness,
+                   arrowLength
                 );
                 // Set the default starting thumb position.
                 //this.thumbPosition = this.thumbRectangle.Height / 2;
                 // Set the bottom limit of the thumb's bottom border.
-                this.thumbBottomLimitBottom = rect.Bottom - this.arrowPaddedLength;
+                thumbBottomLimitBottom = rect.Bottom - arrowPaddedLength;
                 // Set the bottom limit of the thumb's top border.
-                this.thumbBottomLimitTop = this.thumbBottomLimitBottom - this.thumbRectangle.Height;
+                thumbBottomLimitTop = thumbBottomLimitBottom - thumbRectangle.Height;
                 // Set the top limit of the thumb's top border.
-                this.thumbTopLimit = rect.Y + this.arrowPaddedLength;
+                thumbTopLimit = rect.Y + arrowPaddedLength;
             }
             else
             {
-                this.thumbRectangle = new Rectangle(
-                   rect.X + this.arrowPaddedLength,
-                   rect.Y + (rect.Height - this.thumbThickness) / 2, // Assuming rect.Height and this.thumbThickness are both odd, so that (rect.Height - this.thumbThickness) is even.
-                   this.GetThumbSize(),
-                   this.thumbThickness
+                thumbRectangle = new Rectangle(
+                   rect.X + arrowPaddedLength,
+                   rect.Y + (rect.Height - thumbThickness) / 2, // Assuming rect.Height and this.thumbThickness are both odd, so that (rect.Height - this.thumbThickness) is even.
+                   GetThumbSize(),
+                   thumbThickness
                 );
-                this.topArrowRectangle = new Rectangle(
-                   rect.X + this.arrowPadding,
-                   rect.Y + (rect.Height - this.arrowThickness) / 2, // Assuming rect.Height and this.arrowThickness are both odd, so that (rect.Height - this.arrowThickness) is even.
-                   this.arrowLength,
-                   this.arrowThickness
+                topArrowRectangle = new Rectangle(
+                   rect.X + arrowPadding,
+                   rect.Y + (rect.Height - arrowThickness) / 2, // Assuming rect.Height and this.arrowThickness are both odd, so that (rect.Height - this.arrowThickness) is even.
+                   arrowLength,
+                   arrowThickness
                 );
-                this.bottomArrowRectangle = new Rectangle(
-                   rect.Right - this.arrowPadding - this.arrowLength,
-                   rect.Y + (rect.Height - this.arrowThickness) / 2, // Assuming rect.Height and this.arrowThickness are both odd, so that (rect.Height - this.arrowThickness) is even.
-                   this.arrowLength,
-                   this.arrowThickness
+                bottomArrowRectangle = new Rectangle(
+                   rect.Right - arrowPadding - arrowLength,
+                   rect.Y + (rect.Height - arrowThickness) / 2, // Assuming rect.Height and this.arrowThickness are both odd, so that (rect.Height - this.arrowThickness) is even.
+                   arrowLength,
+                   arrowThickness
                 );
                 // Set the default starting thumb position.
                 //this.thumbPosition = this.thumbRectangle.Width / 2;
                 // Set the bottom limit of the thumb's bottom border.
-                this.thumbBottomLimitBottom = rect.Right - this.arrowPaddedLength;
+                thumbBottomLimitBottom = rect.Right - arrowPaddedLength;
                 // Set the bottom limit of the thumb's top border.
-                this.thumbBottomLimitTop = this.thumbBottomLimitBottom - this.thumbRectangle.Width;
+                thumbBottomLimitTop = thumbBottomLimitBottom - thumbRectangle.Width;
                 // Set the top limit of the thumb's top border.
-                this.thumbTopLimit = rect.X + this.arrowPaddedLength;
+                thumbTopLimit = rect.X + arrowPaddedLength;
             }
-            this.ChangeThumbPosition(this.GetThumbPosition());
-            this.Refresh();
+            ChangeThumbPosition(GetThumbPosition());
+            Refresh();
         }
 
         /// <summary>
@@ -1503,35 +1508,35 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">An object that contains the event data.</param>
-        private void ProgressTimerTick(object sender, EventArgs e)
+        void ProgressTimerTick(object sender, EventArgs e)
         {
-            this.ProgressThumb(true);
+            ProgressThumb(true);
         }
 
         /// <summary>
         /// Resets the scroll status of the scrollbar.
         /// </summary>
-        private void ResetScrollStatus()
+        void ResetScrollStatus()
         {
             // get current mouse position
-            Point pos = this.PointToClient(Cursor.Position);
+            Point pos = PointToClient(Cursor.Position);
             // set appearance of buttons in relation to where the mouse is -
             // outside or inside the control
-            if (this.ClientRectangle.Contains(pos))
+            if (ClientRectangle.Contains(pos))
             {
-                this.bottomButtonState = ScrollBarArrowButtonState.DownActive;
-                this.topButtonState = ScrollBarArrowButtonState.UpActive;
+                bottomButtonState = ScrollBarArrowButtonState.DownActive;
+                topButtonState = ScrollBarArrowButtonState.UpActive;
             }
             else
             {
-                this.bottomButtonState = ScrollBarArrowButtonState.DownNormal;
-                this.topButtonState = ScrollBarArrowButtonState.UpNormal;
+                bottomButtonState = ScrollBarArrowButtonState.DownNormal;
+                topButtonState = ScrollBarArrowButtonState.UpNormal;
             }
             // set appearance of thumb
-            this.thumbState = this.thumbRectangle.Contains(pos) ? ScrollBarState.Hot : ScrollBarState.Normal;
-            this.bottomArrowClicked = this.bottomBarClicked = this.topArrowClicked = this.topBarClicked = false;
-            this.StopTimer();
-            this.Refresh();
+            thumbState = thumbRectangle.Contains(pos) ? ScrollBarState.Hot : ScrollBarState.Normal;
+            bottomArrowClicked = bottomBarClicked = topArrowClicked = topBarClicked = false;
+            StopTimer();
+            Refresh();
         }
 
         /// <summary>
@@ -1540,158 +1545,157 @@ namespace PluginCore.Controls
         /// <param name="smallIncrement">true for a small change, false otherwise.</param>
         /// <param name="up">true for up movement, false otherwise.</param>
         /// <returns>The new scrollbar value.</returns>
-        private int GetValue(bool smallIncrement, bool up)
+        int GetValue(bool smallIncrement, bool up)
         {
             // calculate the new value of the scrollbar
             // with checking if new value is in bounds (min/max)
             if (up)
-                return Math.Max(this.minimum, this.value - (smallIncrement ? this.smallChange : this.largeChange));
-            return Math.Min(this.maximum, this.value + (smallIncrement ? this.smallChange : this.largeChange));
+                return Math.Max(minimum, value - (smallIncrement ? smallChange : largeChange));
+            return Math.Min(maximum, value + (smallIncrement ? smallChange : largeChange));
         }
 
         /// <summary>
         /// Calculates the new thumb position.
         /// </summary>
         /// <returns>The new thumb position.</returns>
-        private int GetThumbPosition()
+        int GetThumbPosition()
         {
-            int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
-            int realRange = this.maximum - this.minimum;
-            float perc = (realRange != 0) ? ((this.value - this.minimum) / (float)realRange) : 0f;
-            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + this.arrowPaddedLength)));
+            int pixelRange = thumbBottomLimitTop - thumbTopLimit; // == size - thumbSize - arrows - paddings
+            int realRange = maximum - minimum;
+            float perc = (realRange != 0) ? ((value - minimum) / (float)realRange) : 0f;
+            return Math.Max(thumbTopLimit, Math.Min(thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + arrowPaddedLength)));
         }
 
         /// <summary>
         /// Calculates the length of the thumb.
         /// </summary>
         /// <returns>The length of the thumb.</returns>
-        private int GetThumbSize()
+        int GetThumbSize()
         {
-            int trackSize = (this.orientation == ScrollBarOrientation.Vertical ? this.Height : this.Width) - 2 * this.arrowPaddedLength;
-            float newThumbSize = this.viewPortSize * (float)trackSize / (this.maximum - this.minimum + this.viewPortSize);
+            int trackSize = (orientation == ScrollBarOrientation.Vertical ? Height : Width) - 2 * arrowPaddedLength;
+            float newThumbSize = viewPortSize * (float)trackSize / (maximum - minimum + viewPortSize);
             return Convert.ToInt32(Math.Min(trackSize, Math.Max(newThumbSize, ScaleHelper.Scale(8))));
         }
 
         /// <summary>
         /// Enables the timer.
         /// </summary>
-        private void EnableTimer()
+        void EnableTimer()
         {
             // if timer is not already enabled - enable it
-            if (!this.progressTimer.Enabled)
+            if (!progressTimer.Enabled)
             {
-                this.progressTimer.Interval = PROGRESS_TIMER_DELAY;
-                this.progressTimer.Start();
+                progressTimer.Interval = PROGRESS_TIMER_DELAY;
+                progressTimer.Start();
             }
             else
             {
                 // if already enabled, change tick time
-                this.progressTimer.Interval = PROGRESS_TIMER_TICK;
+                progressTimer.Interval = PROGRESS_TIMER_TICK;
             }
         }
 
         /// <summary>
         /// Stops the progress timer.
         /// </summary>
-        private void StopTimer()
+        void StopTimer()
         {
-            this.progressTimer.Stop();
+            progressTimer.Stop();
         }
 
         /// <summary>
         /// Changes the position of the thumb.
         /// </summary>
         /// <param name="position">The new position.</param>
-        private void ChangeThumbPosition(int position)
+        void ChangeThumbPosition(int position)
         {
-            if (this.orientation == ScrollBarOrientation.Vertical)
-                this.thumbRectangle.Y = position;
+            if (orientation == ScrollBarOrientation.Vertical)
+                thumbRectangle.Y = position;
             else
-                this.thumbRectangle.X = position;
+                thumbRectangle.X = position;
         }
 
         /// <summary>
         /// Controls the movement of the thumb.
         /// </summary>
         /// <param name="enableTimer">true for enabling the timer, false otherwise.</param>
-        private void ProgressThumb(bool enableTimer)
+        void ProgressThumb(bool enableTimer)
         {
-            int scrollOldValue = this.value;
+            int scrollOldValue = value;
             ScrollEventType type = ScrollEventType.First;
-            int thumbSize, thumbPos;
-            thumbPos = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X;
-            thumbSize = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Height : this.thumbRectangle.Width;
+            var thumbPos = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Y : thumbRectangle.X;
+            var thumbSize = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Height : thumbRectangle.Width;
             // arrow down or shaft down clicked
-            if (this.bottomArrowClicked || (this.bottomBarClicked && (thumbPos + thumbSize) < this.trackPosition))
+            if (bottomArrowClicked || (bottomBarClicked && (thumbPos + thumbSize) < trackPosition))
             {
-                type = this.bottomArrowClicked ? ScrollEventType.SmallIncrement : ScrollEventType.LargeIncrement;
-                this.value = this.GetValue(this.bottomArrowClicked, false);
-                if (this.value == this.maximum)
+                type = bottomArrowClicked ? ScrollEventType.SmallIncrement : ScrollEventType.LargeIncrement;
+                value = GetValue(bottomArrowClicked, false);
+                if (value == maximum)
                 {
-                    this.ChangeThumbPosition(this.thumbBottomLimitTop);
+                    ChangeThumbPosition(thumbBottomLimitTop);
 
                     type = ScrollEventType.Last;
                 }
-                else this.ChangeThumbPosition(Math.Min(this.thumbBottomLimitTop, this.GetThumbPosition()));
+                else ChangeThumbPosition(Math.Min(thumbBottomLimitTop, GetThumbPosition()));
             }
-            else if (this.topArrowClicked || (this.topBarClicked && thumbPos > this.trackPosition))
+            else if (topArrowClicked || (topBarClicked && thumbPos > trackPosition))
             {
-                type = this.topArrowClicked ? ScrollEventType.SmallDecrement : ScrollEventType.LargeDecrement;
+                type = topArrowClicked ? ScrollEventType.SmallDecrement : ScrollEventType.LargeDecrement;
                 // arrow up or shaft up clicked
-                this.value = this.GetValue(this.topArrowClicked, true);
-                if (this.value == this.minimum)
+                value = GetValue(topArrowClicked, true);
+                if (value == minimum)
                 {
-                    this.ChangeThumbPosition(this.thumbTopLimit);
+                    ChangeThumbPosition(thumbTopLimit);
                     type = ScrollEventType.First;
                 }
-                else this.ChangeThumbPosition(Math.Max(this.thumbTopLimit, this.GetThumbPosition()));
+                else ChangeThumbPosition(Math.Max(thumbTopLimit, GetThumbPosition()));
             }
-            else if (!((this.topArrowClicked && thumbPos == this.thumbTopLimit) || (this.bottomArrowClicked && thumbPos == this.thumbBottomLimitTop)))
+            else if (!((topArrowClicked && thumbPos == thumbTopLimit) || (bottomArrowClicked && thumbPos == thumbBottomLimitTop)))
             {
-                this.ResetScrollStatus();
+                ResetScrollStatus();
                 return;
             }
-            if (scrollOldValue != this.value)
+            if (scrollOldValue != value)
             {
-                this.OnScroll(new ScrollEventArgs(type, scrollOldValue, this.value, this.scrollOrientation));
-                this.Refresh();
+                OnScroll(new ScrollEventArgs(type, scrollOldValue, value, scrollOrientation));
+                Refresh();
                 if (enableTimer)
-                    this.EnableTimer();
+                    EnableTimer();
             }
             else
             {
-                if (this.topArrowClicked)
+                if (topArrowClicked)
                     type = ScrollEventType.SmallDecrement;
-                else if (this.bottomArrowClicked)
+                else if (bottomArrowClicked)
                     type = ScrollEventType.SmallIncrement;
-                this.OnScroll(new ScrollEventArgs(type, this.value));
+                OnScroll(new ScrollEventArgs(type, value));
             }
         }
 
         /// <summary>
         /// Changes the displayed text of the context menu items dependent of the current <see cref="ScrollBarOrientation"/>.
         /// </summary>
-        private void ChangeContextMenuItems()
+        void ChangeContextMenuItems()
         {
-            if (this.orientation == ScrollBarOrientation.Vertical)
+            if (orientation == ScrollBarOrientation.Vertical)
             {
-                this.tsmiTop.Text = "Top";
-                this.tsmiBottom.Text = "Bottom";
-                this.tsmiLargeDown.Text = "Page Down";
-                this.tsmiLargeUp.Text = "Page Up";
-                this.tsmiSmallDown.Text = "Scroll Down";
-                this.tsmiSmallUp.Text = "Scroll Up";
-                this.tsmiScrollHere.Text = "Scroll Here";
+                tsmiTop.Text = "Top";
+                tsmiBottom.Text = "Bottom";
+                tsmiLargeDown.Text = "Page Down";
+                tsmiLargeUp.Text = "Page Up";
+                tsmiSmallDown.Text = "Scroll Down";
+                tsmiSmallUp.Text = "Scroll Up";
+                tsmiScrollHere.Text = "Scroll Here";
             }
             else
             {
-                this.tsmiTop.Text = "Left";
-                this.tsmiBottom.Text = "Right";
-                this.tsmiLargeDown.Text = "Page Left";
-                this.tsmiLargeUp.Text = "Page Right";
-                this.tsmiSmallDown.Text = "Scroll Right";
-                this.tsmiSmallUp.Text = "Scroll Left";
-                this.tsmiScrollHere.Text = "Scroll Here";
+                tsmiTop.Text = "Left";
+                tsmiBottom.Text = "Right";
+                tsmiLargeDown.Text = "Page Left";
+                tsmiLargeUp.Text = "Page Right";
+                tsmiSmallDown.Text = "Scroll Right";
+                tsmiSmallUp.Text = "Scroll Left";
+                tsmiScrollHere.Text = "Scroll Here";
             }
         }
 
@@ -1702,111 +1706,111 @@ namespace PluginCore.Controls
         /// <summary>
         /// Initializes the context menu.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.tsmiScrollHere = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiTop = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiBottom = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiLargeUp = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiLargeDown = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiSmallUp = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiSmallDown = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenu.SuspendLayout();
-            this.SuspendLayout();
+            components = new Container();
+            contextMenu = new ContextMenuStrip(components);
+            tsmiScrollHere = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            tsmiTop = new ToolStripMenuItem();
+            tsmiBottom = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            tsmiLargeUp = new ToolStripMenuItem();
+            tsmiLargeDown = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            tsmiSmallUp = new ToolStripMenuItem();
+            tsmiSmallDown = new ToolStripMenuItem();
+            contextMenu.SuspendLayout();
+            SuspendLayout();
             // 
             // contextMenu
             // 
-            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiScrollHere,
-            this.toolStripSeparator1,
-            this.tsmiTop,
-            this.tsmiBottom,
-            this.toolStripSeparator2,
-            this.tsmiLargeUp,
-            this.tsmiLargeDown,
-            this.toolStripSeparator3,
-            this.tsmiSmallUp,
-            this.tsmiSmallDown});
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(151, 176);
+            contextMenu.Items.AddRange(new ToolStripItem[] {
+            tsmiScrollHere,
+            toolStripSeparator1,
+            tsmiTop,
+            tsmiBottom,
+            toolStripSeparator2,
+            tsmiLargeUp,
+            tsmiLargeDown,
+            toolStripSeparator3,
+            tsmiSmallUp,
+            tsmiSmallDown});
+            contextMenu.Name = "contextMenu";
+            contextMenu.Size = new Size(151, 176);
             // 
             // tsmiScrollHere
             // 
-            this.tsmiScrollHere.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiScrollHere.Name = "tsmiScrollHere";
-            this.tsmiScrollHere.Size = new System.Drawing.Size(150, 22);
-            this.tsmiScrollHere.Text = "Scroll Here";
-            this.tsmiScrollHere.Click += ScrollHereClick;
+            tsmiScrollHere.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiScrollHere.Name = "tsmiScrollHere";
+            tsmiScrollHere.Size = new Size(150, 22);
+            tsmiScrollHere.Text = "Scroll Here";
+            tsmiScrollHere.Click += ScrollHereClick;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(147, 6);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(147, 6);
             // 
             // tsmiTop
             // 
-            this.tsmiTop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiTop.Name = "tsmiTop";
-            this.tsmiTop.Size = new System.Drawing.Size(150, 22);
-            this.tsmiTop.Text = "Top";
-            this.tsmiTop.Click += this.TopClick;
+            tsmiTop.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiTop.Name = "tsmiTop";
+            tsmiTop.Size = new Size(150, 22);
+            tsmiTop.Text = "Top";
+            tsmiTop.Click += TopClick;
             // 
             // tsmiBottom
             // 
-            this.tsmiBottom.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiBottom.Name = "tsmiBottom";
-            this.tsmiBottom.Size = new System.Drawing.Size(150, 22);
-            this.tsmiBottom.Text = "Bottom";
-            this.tsmiBottom.Click += this.BottomClick;
+            tsmiBottom.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiBottom.Name = "tsmiBottom";
+            tsmiBottom.Size = new Size(150, 22);
+            tsmiBottom.Text = "Bottom";
+            tsmiBottom.Click += BottomClick;
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(147, 6);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(147, 6);
             // 
             // tsmiLargeUp
             // 
-            this.tsmiLargeUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiLargeUp.Name = "tsmiLargeUp";
-            this.tsmiLargeUp.Size = new System.Drawing.Size(150, 22);
-            this.tsmiLargeUp.Text = "Page Up";
-            this.tsmiLargeUp.Click += this.LargeUpClick;
+            tsmiLargeUp.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiLargeUp.Name = "tsmiLargeUp";
+            tsmiLargeUp.Size = new Size(150, 22);
+            tsmiLargeUp.Text = "Page Up";
+            tsmiLargeUp.Click += LargeUpClick;
             // 
             // tsmiLargeDown
             // 
-            this.tsmiLargeDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiLargeDown.Name = "tsmiLargeDown";
-            this.tsmiLargeDown.Size = new System.Drawing.Size(150, 22);
-            this.tsmiLargeDown.Text = "Page Down";
-            this.tsmiLargeDown.Click += this.LargeDownClick;
+            tsmiLargeDown.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiLargeDown.Name = "tsmiLargeDown";
+            tsmiLargeDown.Size = new Size(150, 22);
+            tsmiLargeDown.Text = "Page Down";
+            tsmiLargeDown.Click += LargeDownClick;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(147, 6);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(147, 6);
             // 
             // tsmiSmallUp
             // 
-            this.tsmiSmallUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiSmallUp.Name = "tsmiSmallUp";
-            this.tsmiSmallUp.Size = new System.Drawing.Size(150, 22);
-            this.tsmiSmallUp.Text = "Scroll Up";
-            this.tsmiSmallUp.Click += this.SmallUpClick;
+            tsmiSmallUp.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiSmallUp.Name = "tsmiSmallUp";
+            tsmiSmallUp.Size = new Size(150, 22);
+            tsmiSmallUp.Text = "Scroll Up";
+            tsmiSmallUp.Click += SmallUpClick;
             // 
             // tsmiSmallDown
             // 
-            this.tsmiSmallDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsmiSmallDown.Name = "tsmiSmallDown";
-            this.tsmiSmallDown.Size = new System.Drawing.Size(150, 22);
-            this.tsmiSmallDown.Text = "Scroll Down";
-            this.tsmiSmallDown.Click += this.SmallDownClick;
-            this.contextMenu.ResumeLayout(false);
-            this.ResumeLayout(false);
+            tsmiSmallDown.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsmiSmallDown.Name = "tsmiSmallDown";
+            tsmiSmallDown.Size = new Size(150, 22);
+            tsmiSmallDown.Text = "Scroll Down";
+            tsmiSmallDown.Click += SmallDownClick;
+            contextMenu.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         /// <summary>
@@ -1814,18 +1818,18 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void ScrollHereClick(object sender, EventArgs e)
+        void ScrollHereClick(object sender, EventArgs e)
         {
-            int thumbSize = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Height : this.thumbRectangle.Width;
-            this.ChangeThumbPosition(Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, this.trackPosition - (thumbSize / 2))));
-            int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
-            int position = ((this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X) - this.arrowPaddedLength;
+            int thumbSize = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Height : thumbRectangle.Width;
+            ChangeThumbPosition(Math.Max(thumbTopLimit, Math.Min(thumbBottomLimitTop, trackPosition - (thumbSize / 2))));
+            int pixelRange = thumbBottomLimitTop - thumbTopLimit; // == size - thumbSize - arrows - paddings
+            int position = ((orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Y : thumbRectangle.X) - arrowPaddedLength;
             // percent of the new position
             float perc = (pixelRange != 0) ? (position / (float)pixelRange) : 0f;
-            int oldValue = this.value;
-            this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
-            this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, oldValue, this.value, this.scrollOrientation));
-            this.Refresh();
+            int oldValue = value;
+            value = Convert.ToInt32((perc * (maximum - minimum)) + minimum);
+            OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, oldValue, value, scrollOrientation));
+            Refresh();
         }
 
         /// <summary>
@@ -1833,9 +1837,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void TopClick(object sender, EventArgs e)
+        void TopClick(object sender, EventArgs e)
         {
-            this.Value = this.minimum;
+            Value = minimum;
         }
 
         /// <summary>
@@ -1843,9 +1847,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void BottomClick(object sender, EventArgs e)
+        void BottomClick(object sender, EventArgs e)
         {
-            this.Value = this.maximum;
+            Value = maximum;
         }
 
         /// <summary>
@@ -1853,9 +1857,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void LargeUpClick(object sender, EventArgs e)
+        void LargeUpClick(object sender, EventArgs e)
         {
-            this.Value = this.GetValue(false, true);
+            Value = GetValue(false, true);
         }
 
         /// <summary>
@@ -1863,9 +1867,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void LargeDownClick(object sender, EventArgs e)
+        void LargeDownClick(object sender, EventArgs e)
         {
-            this.Value = this.GetValue(false, false);
+            Value = GetValue(false, false);
         }
 
         /// <summary>
@@ -1873,9 +1877,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void SmallUpClick(object sender, EventArgs e)
+        void SmallUpClick(object sender, EventArgs e)
         {
-            this.Value = this.GetValue(true, true);
+            Value = GetValue(true, true);
         }
 
         /// <summary>
@@ -1883,9 +1887,9 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void SmallDownClick(object sender, EventArgs e)
+        void SmallDownClick(object sender, EventArgs e)
         {
-            this.Value = this.GetValue(true, false);
+            Value = GetValue(true, false);
         }
 
         #endregion
@@ -1900,7 +1904,7 @@ namespace PluginCore.Controls
         protected ScrollBarEx vScrollBar;
         protected ScrollBarEx hScrollBar;
         protected Control scrollerCorner;
-        private bool disposed = false;
+        bool disposed = false;
 
         /// <summary>
         /// Initialize ScrollerBase
@@ -1915,19 +1919,17 @@ namespace PluginCore.Controls
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            if (e.Type == EventType.ApplyTheme)
+            if (e.Type != EventType.ApplyTheme) return;
+            if (control.Parent is null) return;
+            var enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
+            if (enabled)
             {
-                bool enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
-                if (control.Parent is null) return;
-                if (enabled)
-                {
-                    if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();
-                    UpdateScrollBarTheme();
-                }
-                else if (!enabled && control.Parent.Controls.Contains(vScrollBar))
-                {
-                    RemoveScrollBars();
-                }
+                if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();
+                UpdateScrollBarTheme();
+            }
+            else if (control.Parent.Controls.Contains(vScrollBar))
+            {
+                RemoveScrollBars();
             }
         }
 
@@ -2042,25 +2044,23 @@ namespace PluginCore.Controls
         /// </summary>
         protected virtual void UpdateScrollState()
         {
-            Win32.SCROLLINFO vScroll = Win32.GetFullScrollInfo(control, false);
-            Win32.SCROLLINFO hScroll = Win32.GetFullScrollInfo(control, true);
-            if (vScroll != null && hScroll != null)
-            {
-                vScrollBar.Visible = vScroll.nMax > (vScroll.nPage - 1) && vScroll.nPage > 0;
-                hScrollBar.Visible = hScroll.nMax > (hScroll.nPage - 1) && hScroll.nPage > 0;
-                vScrollBar.Scroll -= OnScroll;
-                vScrollBar.Minimum = vScroll.nMin;
-                vScrollBar.Maximum = vScroll.nMax - (vScroll.nPage - 1);
-                vScrollBar.ViewPortSize = vScrollBar.LargeChange = (vScroll.nPage - 1);
-                vScrollBar.Value = vScroll.nPos;
-                vScrollBar.Scroll += OnScroll;
-                hScrollBar.Scroll -= OnScroll;
-                hScrollBar.Minimum = hScroll.nMin;
-                hScrollBar.Maximum = hScroll.nMax - (hScroll.nPage - 1);
-                hScrollBar.ViewPortSize = hScrollBar.LargeChange = (hScroll.nPage - 1);
-                hScrollBar.Value = hScroll.nPos;
-                hScrollBar.Scroll += OnScroll;
-            }
+            var vScroll = Win32.GetFullScrollInfo(control, false);
+            var hScroll = Win32.GetFullScrollInfo(control, true);
+            if (vScroll is null || hScroll is null) return;
+            vScrollBar.Visible = vScroll.nMax > (vScroll.nPage - 1) && vScroll.nPage > 0;
+            hScrollBar.Visible = hScroll.nMax > (hScroll.nPage - 1) && hScroll.nPage > 0;
+            vScrollBar.Scroll -= OnScroll;
+            vScrollBar.Minimum = vScroll.nMin;
+            vScrollBar.Maximum = vScroll.nMax - (vScroll.nPage - 1);
+            vScrollBar.ViewPortSize = vScrollBar.LargeChange = (vScroll.nPage - 1);
+            vScrollBar.Value = vScroll.nPos;
+            vScrollBar.Scroll += OnScroll;
+            hScrollBar.Scroll -= OnScroll;
+            hScrollBar.Minimum = hScroll.nMin;
+            hScrollBar.Maximum = hScroll.nMax - (hScroll.nPage - 1);
+            hScrollBar.ViewPortSize = hScrollBar.LargeChange = (hScroll.nPage - 1);
+            hScrollBar.Value = hScroll.nPos;
+            hScrollBar.Scroll += OnScroll;
         }
 
         /// <summary>
@@ -2112,8 +2112,8 @@ namespace PluginCore.Controls
 
     public class TextBoxScroller : ScrollerBase
     {
-        private bool disposed = false;
-        private TextBox textBox;
+        bool disposed = false;
+        TextBox textBox;
 
         /// <summary>
         /// Initialize TextBoxScroller
@@ -2181,10 +2181,10 @@ namespace PluginCore.Controls
             int vScrollMax = GetLineCount();
             int vScrollPos = GetFirstVisibleLine();
             int vScrollPage = GetVisibleLines();
-            if (this.textBox.ScrollBars != ScrollBars.Vertical)
+            if (textBox.ScrollBars != ScrollBars.Vertical)
             {
                 // Force scrollbar so that content is displayed correctly...
-                this.textBox.ScrollBars = ScrollBars.Vertical;
+                textBox.ScrollBars = ScrollBars.Vertical;
             }
             vScrollBar.Visible = vScrollMax > (vScrollPage - 1) && vScrollMax != vScrollPage;
             vScrollBar.Scroll -= OnScroll;
@@ -2212,8 +2212,8 @@ namespace PluginCore.Controls
 
     public class RichTextBoxScroller : ScrollerBase
     {
-        private bool disposed = false;
-        private RichTextBox textBox;
+        bool disposed = false;
+        RichTextBox textBox;
 
         /// <summary>
         /// Initialize RichTextBoxScroller
@@ -2259,8 +2259,8 @@ namespace PluginCore.Controls
 
     public class PropertyGridScroller : ScrollerBase
     {
-        private bool disposed = false;
-        private PropertyGrid propertyGrid;
+        bool disposed = false;
+        PropertyGrid propertyGrid;
 
         /// <summary>
         /// Initialize PropertyGridScroller
@@ -2288,7 +2288,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the amount of visible rows
         /// </summary>
-        private int GetVisibleRows()
+        int GetVisibleRows()
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2305,7 +2305,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the scroll position of the scrollbar
         /// </summary>
-        private void SetScrollOffset(int value)
+        void SetScrollOffset(int value)
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2322,7 +2322,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the scrollbar reference
         /// </summary>
-        private ScrollBar GetScrollBar()
+        ScrollBar GetScrollBar()
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2373,8 +2373,8 @@ namespace PluginCore.Controls
 
     public class TreeViewScroller : ScrollerBase
     {
-        private bool disposed = false;
-        private TreeView treeView;
+        bool disposed = false;
+        TreeView treeView;
 
         /// <summary>
         /// Initialize TreeViewScroller
@@ -2439,7 +2439,7 @@ namespace PluginCore.Controls
 
     public class ListViewScroller : ScrollerBase
     {
-        private bool disposed = false;
+        bool disposed = false;
         protected ListView listView;
 
         /// <summary>
@@ -2493,8 +2493,8 @@ namespace PluginCore.Controls
 
     public class ListBoxScroller : ScrollerBase
     {
-        private bool disposed = false;
-        private ListBox listBox;
+        bool disposed = false;
+        ListBox listBox;
 
         /// <summary>
         /// Initialize ListBoxScroller
@@ -2538,8 +2538,8 @@ namespace PluginCore.Controls
 
     public class DataGridViewScroller : ScrollerBase
     {
-        private bool disposed = false;
-        private DataGridView dataGridView;
+        bool disposed = false;
+        DataGridView dataGridView;
 
         /// <summary>
         /// Initialize DataGridViewScroller
@@ -2620,12 +2620,12 @@ namespace PluginCore.Controls
             get
             {
                 // gets the property descriptor for the property "Orientation"
-                PropertyDescriptor propDescriptor = TypeDescriptor.GetProperties(this.Component)["Orientation"];
+                PropertyDescriptor propDescriptor = TypeDescriptor.GetProperties(Component)["Orientation"];
                 // if not null - we can read the current orientation of the scroll bar
                 if (propDescriptor != null)
                 {
                     // get the current orientation
-                    ScrollBarOrientation orientation = (ScrollBarOrientation)propDescriptor.GetValue(this.Component);
+                    ScrollBarOrientation orientation = (ScrollBarOrientation)propDescriptor.GetValue(Component);
                     // if vertical orientation
                     if (orientation == ScrollBarOrientation.Vertical)
                     {

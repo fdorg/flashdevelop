@@ -14,32 +14,30 @@ using PluginCore.Controls;
 
 namespace FlashDebugger
 {
-    class BreakPointUI : DockPanelControl
+    internal class BreakPointUI : DockPanelControl
     {
-        private DataGridView dgv;
-        private PluginMain pluginMain;
-        private readonly BreakPointManager breakPointManager;
-        private DataGridViewCheckBoxColumn ColumnBreakPointEnable;
-        private DataGridViewTextBoxColumn ColumnBreakPointFilePath;
-        private DataGridViewTextBoxColumn ColumnBreakPointFileName;
-        private DataGridViewTextBoxColumn ColumnBreakPointLine;
-        private DataGridViewTextBoxColumn ColumnBreakPointExp;
-        private ToolStripEx tsActions;
-        private ToolStripButton tsbRemoveSelected;
-        private ToolStripButton tsbRemoveFiltered;
-        private ToolStripButton tsbAlternateFiltered;
-        private ToolStripSeparator tsSeparator;
-        private ToolStripButton tsbExportFiltered;
-        private ToolStripButton tsbImport;
-        private ToolStripTextBox tstxtFilter;
-        private ToolStripComboBoxEx tscbFilterColumns;
-        private Color defaultColor;
+        DataGridView dgv;
+        readonly BreakPointManager breakPointManager;
+        DataGridViewCheckBoxColumn ColumnBreakPointEnable;
+        DataGridViewTextBoxColumn ColumnBreakPointFilePath;
+        DataGridViewTextBoxColumn ColumnBreakPointFileName;
+        DataGridViewTextBoxColumn ColumnBreakPointLine;
+        DataGridViewTextBoxColumn ColumnBreakPointExp;
+        ToolStripEx tsActions;
+        ToolStripButton tsbRemoveSelected;
+        ToolStripButton tsbRemoveFiltered;
+        ToolStripButton tsbAlternateFiltered;
+        ToolStripSeparator tsSeparator;
+        ToolStripButton tsbExportFiltered;
+        ToolStripButton tsbImport;
+        ToolStripTextBox tstxtFilter;
+        ToolStripComboBoxEx tscbFilterColumns;
+        Color defaultColor;
 
-        public BreakPointUI(PluginMain pluginMain, BreakPointManager breakPointManager)
+        public BreakPointUI(BreakPointManager breakPointManager)
         {
             init();
             InitializeLocalization();
-            this.pluginMain = pluginMain;
             this.breakPointManager = breakPointManager;
             this.breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
             this.breakPointManager.UpdateBreakPointEvent += breakPointManager_UpdateBreakPointEvent;
@@ -60,7 +58,7 @@ namespace FlashDebugger
             else AddItem(e.FileFullPath, e.Line + 1, e.Exp, e.Enable);
         }
 
-        private void init()
+        void init()
         {
             AutoKeyHandling = true;
             dgv = new DataGridViewEx();
@@ -142,13 +140,13 @@ namespace FlashDebugger
                 if (doc != null)
                 {
                     // This logic should be handled by BPManager, so we'll just work arround bad BPs and ignore them
-                    if (line < 0 || (doc.SciControl != null && line >= doc.SciControl.LineCount)) return;
-                    int marker = value ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled;
-                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, marker, line);
-                    if (!m)
+                    var sci = doc.SciControl;
+                    if (line < 0 || (sci != null && line >= sci.LineCount)) return;
+                    var marker = value ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled;
+                    if (!ScintillaHelper.IsMarkerSet(sci, marker, line))
                     {
-                        doc.SciControl.MarkerAdd(line, marker);
-                        doc.SciControl.MarkerDelete(line, value ? ScintillaHelper.markerBPDisabled : ScintillaHelper.markerBPEnabled);
+                        sci.MarkerAdd(line, marker);
+                        sci.MarkerDelete(line, value ? ScintillaHelper.markerBPDisabled : ScintillaHelper.markerBPEnabled);
                     }
                 }
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, false, value);
@@ -194,12 +192,10 @@ namespace FlashDebugger
             set => dgv.Enabled = value;
         }
 
-        private void AddItem(string filename, int line, string exp, bool enable)
+        void AddItem(string filename, int line, string exp, bool enable)
         {
-            DataGridViewRow dgvrow;
             int i = ItemIndex(filename, line);
-            if (i >= 0) dgvrow = dgv.Rows[i];
-            else dgvrow = dgv.Rows[dgv.Rows.Add()];
+            var dgvrow = i >= 0 ? dgv.Rows[i] : dgv.Rows[dgv.Rows.Add()];
             dgvrow.Cells["Enable"].Value = enable;
             dgvrow.Cells["FilePath"].Value = filename;
             dgvrow.Cells["FileName"].Value = Path.GetFileName(filename);
@@ -207,16 +203,13 @@ namespace FlashDebugger
             dgvrow.Cells["Exp"].Value = exp;
         }
 
-        private void DeleteItem(string filename, int line)
+        void DeleteItem(string filename, int line)
         {
             int i = ItemIndex(filename, line);
-            if (i >= 0)
-            {
-                dgv.Rows.RemoveAt(i);
-            }
+            if (i >= 0) dgv.Rows.RemoveAt(i);
         }
 
-        private int ItemIndex(string filename, int line)
+        int ItemIndex(string filename, int line)
         {
             for (int i = 0, count = dgv.Rows.Count; i < count; i++)
             {
@@ -228,7 +221,7 @@ namespace FlashDebugger
             return -1;
         }
 
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             tsActions = new ToolStripEx();
             tsbRemoveSelected = new ToolStripButton();
@@ -333,7 +326,7 @@ namespace FlashDebugger
             PerformLayout();
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             tsbRemoveSelected.ToolTipText = TextHelper.GetString("BreakPoints.RemoveSelected");
             tsbRemoveFiltered.ToolTipText = TextHelper.GetString("BreakPoints.RemoveAll");
@@ -348,7 +341,7 @@ namespace FlashDebugger
             tscbFilterColumns.SelectedIndex = 0;
         }
 
-        private void TsbRemoveSelected_Click(object sender, EventArgs e)
+        void TsbRemoveSelected_Click(object sender, EventArgs e)
         {
             if (dgv.SelectedCells.Count == 0) return;
             breakPointManager.ChangeBreakPointEvent -= breakPointManager_ChangeBreakPointEvent;
@@ -358,9 +351,9 @@ namespace FlashDebugger
                 var selected = selectedCell.OwningRow;
                 if (processedRows.Contains(selected)) continue;
                 processedRows.Add(selected);
-                string filefullpath = (string)selected.Cells["FilePath"].Value;
-                int line = int.Parse((string)selected.Cells["Line"].Value) - 1;
-                ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
+                var filefullpath = (string)selected.Cells["FilePath"].Value;
+                var line = int.Parse((string)selected.Cells["Line"].Value) - 1;
+                var doc = ScintillaHelper.GetDocument(filefullpath);
                 if (doc != null)
                 {
                     bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
@@ -373,18 +366,18 @@ namespace FlashDebugger
             breakPointManager.Save();
         }
 
-        private void TsbRemoveFiltered_Click(object sender, EventArgs e)
+        void TsbRemoveFiltered_Click(object sender, EventArgs e)
         {
             if (dgv.Rows.Count == 0) return;
             breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
             foreach (DataGridViewRow row in dgv.Rows)
             {
-                string filefullpath = (string)row.Cells["FilePath"].Value;
-                int line = int.Parse((string)row.Cells["Line"].Value) - 1;
-                ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
+                var filefullpath = (string)row.Cells["FilePath"].Value;
+                var line = int.Parse((string)row.Cells["Line"].Value) - 1;
+                var doc = ScintillaHelper.GetDocument(filefullpath);
                 if (doc != null)
                 {
-                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
+                    var m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
                     doc.SciControl.MarkerDelete(line, m ? ScintillaHelper.markerBPDisabled : ScintillaHelper.markerBPEnabled);
                 }
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, true, false);
@@ -394,21 +387,20 @@ namespace FlashDebugger
             breakPointManager.Save();
         }
 
-        private void TsbAlternateFiltered_Click(object sender, EventArgs e)
+        void TsbAlternateFiltered_Click(object sender, EventArgs e)
         {
             if (dgv.Rows.Count == 0) return;
             breakPointManager.ChangeBreakPointEvent -= breakPointManager_ChangeBreakPointEvent;
             foreach (DataGridViewRow row in dgv.Rows)
             {
-                string filefullpath = (string)row.Cells["FilePath"].Value;
-                int line = int.Parse((string)row.Cells["Line"].Value) - 1;
-                bool value = !(bool) row.Cells["Enable"].Value;
-                ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
+                var filefullpath = (string)row.Cells["FilePath"].Value;
+                var line = int.Parse((string)row.Cells["Line"].Value) - 1;
+                var value = !(bool) row.Cells["Enable"].Value;
+                var doc = ScintillaHelper.GetDocument(filefullpath);
                 if (doc != null)
                 {
                     int newMarker = value ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled;
-                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, newMarker, line);
-                    if (!m)
+                    if (!ScintillaHelper.IsMarkerSet(doc.SciControl, newMarker, line))
                     {
                         doc.SciControl.MarkerAdd(line, newMarker);
                         doc.SciControl.MarkerDelete(line, value ? ScintillaHelper.markerBPDisabled : ScintillaHelper.markerBPEnabled);
@@ -422,44 +414,40 @@ namespace FlashDebugger
             breakPointManager.Save();
         }
 
-        private void TsbExportFiltered_Click(object sender, EventArgs e)
+        void TsbExportFiltered_Click(object sender, EventArgs e)
         {
             using var fileDialog = new SaveFileDialog();
             fileDialog.OverwritePrompt = true;
             fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
-            if (fileDialog.ShowDialog(this) == DialogResult.OK)
+            if (fileDialog.ShowDialog(this) != DialogResult.OK) return;
+            try
             {
-                try
-                {
-                    breakPointManager.Save(fileDialog.FileName);
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowError(ex);
-                }
+                breakPointManager.Save(fileDialog.FileName);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
             }
         }
 
-        private void TsbImport_Click(object sender, EventArgs e)
+        void TsbImport_Click(object sender, EventArgs e)
         {
             using var fileDialog = new OpenFileDialog();
             fileDialog.CheckFileExists = true;
             fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
-            if (fileDialog.ShowDialog(this) == DialogResult.OK)
+            if (fileDialog.ShowDialog(this) != DialogResult.OK) return;
+            try
             {
-                try
-                {
-                    breakPointManager.Import(fileDialog.FileName);
-                    breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowWarning(TextHelper.GetString("Error.InvalidFile"), ex);
-                }
+                breakPointManager.Import(fileDialog.FileName);
+                breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowWarning(TextHelper.GetString("Error.InvalidFile"), ex);
             }
         }
 
-        private void TstxtFilter_KeyDown(object sender, KeyEventArgs e)
+        void TstxtFilter_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -494,7 +482,5 @@ namespace FlashDebugger
                 }
             }
         }
-
     }
-
 }

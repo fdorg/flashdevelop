@@ -140,10 +140,9 @@ namespace PluginCore.FRService
         {
             if (results is null) return;
             int len = src.Length;
-            foreach (SearchMatch sm in results)
+            foreach (var sm in results)
             {
-                if (sm.LineStart > len || sm.LineEnd > len) 
-                    break;
+                if (sm.LineStart > len || sm.LineEnd > len) break;
                 sm.LineText = src.Substring(sm.LineStart, sm.LineEnd - sm.LineStart);
             }
         }
@@ -231,7 +230,7 @@ namespace PluginCore.FRService
         string ReplaceOneMatch(string src, string replacement, List<SearchMatch> matches, int matchIndex)
         {
             if (matches.IsNullOrEmpty()) return src;
-            SearchMatch match = matches[matchIndex];
+            var match = matches[matchIndex];
 
             // replace text
             if (isEscaped) replacement = Unescape(replacement);

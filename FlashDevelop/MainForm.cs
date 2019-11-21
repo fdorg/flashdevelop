@@ -453,8 +453,6 @@ namespace FlashDevelop
         /// </summary>
         public DockContent OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
         {
-            DockContent createdDoc;
-            EncodingFileInfo info;
             string file = PathHelper.GetPhysicalPathName(org);
             TextEvent te = new TextEvent(EventType.FileOpening, file);
             EventManager.DispatchEvent(this, te);
@@ -463,7 +461,6 @@ namespace FlashDevelop
                 if (Documents.Length == 0) SmartNew(null, null);
                 return null;
             }
-
             if (file.EndsWithOrdinal(".delete.fdz"))
             {
                 CallCommand("RemoveZip", file);
@@ -484,7 +481,6 @@ namespace FlashDevelop
                 }
                 return null;
             }
-
             try
             {
                 foreach (ITabbedDocument doc in Documents)
@@ -496,7 +492,9 @@ namespace FlashDevelop
                     }
                 }
             }
-            catch {}
+            catch { }
+            DockContent createdDoc;
+            EncodingFileInfo info;
             if (encoding is null)
             {
                 info = FileHelper.GetEncodingFileInfo(file);
@@ -533,7 +531,7 @@ namespace FlashDevelop
                 createdDoc = CreateEditableDocument(file, info.Contents, info.CodePage);
                 ButtonManager.AddNewReopenMenuItem(file);
             }
-            TabbedDocument document = (TabbedDocument)createdDoc;
+            var document = (TabbedDocument)createdDoc;
             document.SciControl.SaveBOM = info.ContainsBOM;
             document.SciControl.BeginInvoke((MethodInvoker)(() =>
             {

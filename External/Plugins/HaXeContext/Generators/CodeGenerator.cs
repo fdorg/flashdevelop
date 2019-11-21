@@ -157,7 +157,7 @@ namespace HaXeContext.Generators
         /// <inheritdoc />
         protected override bool CanShowGetSetList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            var inClass = expr.RelClass ?? found.InClass;
+            var inClass = expr.RelClass ?? found.InClass ?? ClassModel.VoidClass;
             return !inClass.Flags.HasFlag(FlagType.Abstract) && base.CanShowGetSetList(sci, position, expr, found);
         }
 
@@ -286,60 +286,53 @@ namespace HaXeContext.Generators
         static string GetGenericDeclaration(ScintillaControl sci, int position)
         {
             position = ASComplete.ExpressionEndPosition(sci, position, true);
-            if (ASComplete.GetCharRight(sci, ref position) == '<')
+            if (ASComplete.GetCharRight(sci, ref position) != '<') return null;
+            var endTemplatePosition = ((Context)ASContext.GetLanguageContext("haxe")).BraceMatch(sci, position);
+            if (endTemplatePosition == -1) return null;
+            var parCount = 0;
+            var braCount = 0;
+            var genCount = 0;
+            var numTypes = 1;
+            for (var i = position + 1; i < endTemplatePosition; i++)
             {
-                var ctx = (Context)ASContext.GetLanguageContext("haxe");
-                var endTemplatePosition = ctx.BraceMatch(sci, position);
-                if (endTemplatePosition != -1)
+                if (sci.PositionIsOnComment(i)) continue;
+                var c = (char)sci.CharAt(i);
+                if (c == ' ') continue;
+                if (c == '(')
                 {
-                    var parCount = 0;
-                    var braCount = 0;
-                    var genCount = 0;
-                    var numTypes = 1;
-                    for (var i = position + 1; i < endTemplatePosition; i++)
-                    {
-                        if (sci.PositionIsOnComment(i)) continue;
-                        var c = (char)sci.CharAt(i);
-                        if (c == ' ') continue;
-                        if (c == '(')
-                        {
-                            if (braCount == 0 && genCount == 0) parCount++;
-                        }
-                        else if (c == ')')
-                        {
-                            if (braCount == 0 && genCount == 0) parCount--;
-                        }
-                        else if (c == '{')
-                        {
-                            if (parCount == 0 && genCount == 0) braCount++;
-                        }
-                        else if (c == '}')
-                        {
-                            if (parCount == 0 && genCount == 0) braCount--;
-                        }
-                        else if (c == '<')
-                        {
-                            if (braCount == 0 && parCount == 0) genCount++;
-                        }
-                        else if (c == '>')
-                        {
-                            if (braCount == 0 && parCount == 0) genCount--;
-                        }
-                        else if (c == ',' && parCount == 0 && braCount == 0 && genCount == 0) numTypes++;
-                    }
-
-                    if (numTypes == 1) return "<T>";
-                    var sb = new StringBuilder("<T1");
-                    for (var i = 1; i < numTypes; i++)
-                    {
-                        sb.Append(", T");
-                        sb.Append((i + 1).ToString());
-                    }
-                    sb.Append(">");
-                    return sb.ToString();
+                    if (braCount == 0 && genCount == 0) parCount++;
                 }
+                else if (c == ')')
+                {
+                    if (braCount == 0 && genCount == 0) parCount--;
+                }
+                else if (c == '{')
+                {
+                    if (parCount == 0 && genCount == 0) braCount++;
+                }
+                else if (c == '}')
+                {
+                    if (parCount == 0 && genCount == 0) braCount--;
+                }
+                else if (c == '<')
+                {
+                    if (braCount == 0 && parCount == 0) genCount++;
+                }
+                else if (c == '>')
+                {
+                    if (braCount == 0 && parCount == 0) genCount--;
+                }
+                else if (c == ',' && parCount == 0 && braCount == 0 && genCount == 0) numTypes++;
             }
-            return null;
+            if (numTypes == 1) return "<T>";
+            var sb = new StringBuilder("<T1");
+            for (var i = 1; i < numTypes; i++)
+            {
+                sb.Append(", T");
+                sb.Append((i + 1).ToString());
+            }
+            sb.Append(">");
+            return sb.ToString();
         }
 
         protected override void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)
