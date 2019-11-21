@@ -62,9 +62,9 @@ namespace FlashDevelop.Managers
             }
             catch
             {
-                var separator = Path.DirectorySeparatorChar.ToString();
-                var filename = path.Replace(separator, ".");
-                filename = path.Replace(" ", "_");
+                var separator = Path.DirectorySeparatorChar;
+                var filename = path.Replace(separator, '.');
+                filename = filename.Replace(' ', '_');
                 return filename;
             }
         }

@@ -20,13 +20,13 @@ using Keys = System.Windows.Forms.Keys;
 
 namespace FlashDevelop.Managers
 {
-    class ScintillaManager
+    internal class ScintillaManager
     {
         public static Bitmap Bookmark;
-        private static bool initialized;
-        private static Scintilla sciConfig;
-        private static ConfigurationUtility sciConfigUtil;
-        private static readonly object initializationLock = new object();
+        static bool initialized;
+        static Scintilla sciConfig;
+        static ConfigurationUtility sciConfigUtil;
+        static readonly object initializationLock = new object();
         public static event Action ConfigurationLoaded;
 
         internal const int LineMargin = 2;
@@ -41,7 +41,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Initializes the config loading
         /// </summary>
-        private static void Initialize()
+        static void Initialize()
         {
             if (!initialized)
             {
@@ -330,7 +330,7 @@ namespace FlashDevelop.Managers
                 /**
                 * Add missing ignored keys
                 */
-                foreach (Keys keys in ShortcutManager.AllShortcuts)
+                foreach (var keys in ShortcutManager.AllShortcuts)
                 {
                     if (keys != Keys.None && !sci.ContainsIgnoredKeys(keys))
                     {
@@ -354,16 +354,16 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Scale the control area based on font size and DPI
         /// </summary>
-        private static int ScaleArea(ScintillaControl sci, int size)
+        static int ScaleArea(ScintillaControl sci, int size)
         {
-            int value = ScaleHelper.Scale(size);
-            Language lang = SciConfig.GetLanguage(sci.ConfigurationLanguage);
+            var value = ScaleHelper.Scale(size);
+            var lang = SciConfig.GetLanguage(sci.ConfigurationLanguage);
             if (lang != null && !lang.usestyles.IsNullOrEmpty())
             {
                 // Only larger fonts need scaling...
                 if (lang.usestyles[0].FontSize < 11) return value;
                 double multi = lang.usestyles[0].FontSize / 9f;
-                double adjusted = Convert.ToDouble(value) * (multi < 1 ? 1 : multi);
+                var adjusted = Convert.ToDouble(value) * (multi < 1 ? 1 : multi);
                 value = Convert.ToInt32(Math.Floor(adjusted));
             }
             return value;

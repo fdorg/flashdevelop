@@ -1,5 +1,8 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
+using System;
+
 namespace ScintillaNet.Enums
 {
     public enum Position
@@ -268,12 +271,13 @@ namespace ScintillaNet.Enums
         ReverseArror = 7
     }
     
+    [Flags]
     public enum CaretPolicy
     {    
         Slop = 0x01,
         Strict = 0x04,
+        Even = 0x08,
         Jumps = 0x10,
-        Even = 0x08
     }
 
     public enum CaretStyle
