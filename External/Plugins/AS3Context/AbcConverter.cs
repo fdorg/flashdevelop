@@ -708,7 +708,7 @@ namespace AS3Context
 
             if (id != null)
             {
-                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('\"'))
+                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('"'))
                     doc.Value = "\"" + doc.Value + "\"";
 
                 if (doc.LongDesc is null)

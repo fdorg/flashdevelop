@@ -50,8 +50,9 @@ namespace ProjectManager.Projects
 
         public Project(string path, CompilerOptions compilerOptions)
         {
-            this.ProjectPath = path;
-            this.CompilerOptions = compilerOptions;
+            if (IsDirectory(path)) path = Path.Combine(path, "Project.folder");
+            ProjectPath = path;
+            CompilerOptions = compilerOptions;
 
             TestMovieBehavior = TestMovieBehavior.Default;
 
@@ -61,16 +62,16 @@ namespace ProjectManager.Projects
             LibraryAssets = new AssetCollection(this);
             storage = new Dictionary<string, string>();
 
-            InputPath = "";
-            OutputPath = "";
-            PreBuildEvent = "";
-            PostBuildEvent = "";
+            InputPath = string.Empty;
+            OutputPath = string.Empty;
+            PreBuildEvent = string.Empty;
+            PostBuildEvent = string.Empty;
         }
 
         public abstract string Language { get; }
         public abstract string LanguageDisplayName { get; }
+        public virtual bool ReadOnly => IsFolderProject();
         public virtual bool IsCompilable => false;
-        public virtual bool ReadOnly => false;
         public virtual bool UsesInjection => false;
         public virtual bool HasLibraries => false;
         public virtual bool RequireLibrary => false;
@@ -83,13 +84,22 @@ namespace ProjectManager.Projects
 
         protected bool AllowedSaving(string fileName)
         {
+            if (IsFolderProject()) return false;
             if (ReadOnly && fileName == ProjectPath) return false;
-            return BeforeSave is { } saveHandler && saveHandler(this, fileName);
+            var onBeforeSave = BeforeSave;
+            return onBeforeSave is null
+                || onBeforeSave(this, fileName);
         }
+
+        public bool IsFolderProject() => ProjectPath.EndsWith("Project.folder");
 
         public virtual void PropertiesChanged() => OnClasspathChanged();
 
-        public virtual PropertiesDialog CreatePropertiesDialog() => new PropertiesDialog();
+        public virtual PropertiesDialog CreatePropertiesDialog()
+        {
+            if (IsFolderProject()) return null;
+            return new PropertiesDialog();
+        }
 
         public void OnClasspathChanged()
         {

@@ -64,31 +64,30 @@ namespace ASCompletion
         public const int ICON_TEMPLATE = 33;
         public const int ICON_DECLARATION = 34;
 
-        public int LookupCount => (lookupLocations != null) ? lookupLocations.Count : 0;
         public FixedTreeView OutlineTree { get; set; }
         public ImageList TreeIcons => treeIcons;
 
         public ToolStripMenuItem LookupMenuItem;
-        private System.ComponentModel.IContainer components;
+        System.ComponentModel.IContainer components;
         public ImageListManager treeIcons;
-        private System.Timers.Timer tempoClick;
+        System.Timers.Timer tempoClick;
 
-        private readonly GeneralSettings settings;
-        private string prevChecksum;
-        private List<int> prevLines;
-        private Stack<LookupLocation> lookupLocations;
+        readonly GeneralSettings settings;
+        string prevChecksum;
+        List<int> prevLines;
+        Stack<LookupLocation> lookupLocations;
 
-        private TreeNode currentHighlight;
-        private ToolStrip toolStrip;
-        private ToolStripSpringTextBox findTextTxt;
-        private ToolStripDropDownButton sortDropDown;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem noneItem;
-        private ToolStripMenuItem sortedItem;
-        private ToolStripMenuItem sortedByKindItem;
-        private ToolStripMenuItem sortedSmartItem;
-        private ToolStripMenuItem sortedGroupItem;
-        private ToolStripButton clearButton;
+        TreeNode currentHighlight;
+        ToolStrip toolStrip;
+        ToolStripSpringTextBox findTextTxt;
+        ToolStripDropDownButton sortDropDown;
+        ToolStripSeparator toolStripSeparator1;
+        ToolStripMenuItem noneItem;
+        ToolStripMenuItem sortedItem;
+        ToolStripMenuItem sortedByKindItem;
+        ToolStripMenuItem sortedSmartItem;
+        ToolStripMenuItem sortedGroupItem;
+        ToolStripButton clearButton;
 
         #region initialization
         public PluginUI(PluginMain plugin)
@@ -100,7 +99,7 @@ namespace ASCompletion
             ResumeLayout();
         }
 
-        private void InitializeControls()
+        void InitializeControls()
         {
             InitializeComponent();
             treeIcons.ColorDepth = ColorDepth.Depth32Bit;
@@ -133,7 +132,7 @@ namespace ASCompletion
             ScrollBarEx.Attach(OutlineTree);
         }
 
-        private void TreeIcons_Populate(object sender, EventArgs e)
+        void TreeIcons_Populate(object sender, EventArgs e)
         {
             treeIcons.Images.AddRange(new[]
             {
@@ -182,12 +181,11 @@ namespace ASCompletion
 
         public static System.IO.Stream GetStream(string name)
         {
-            string prefix = "ASCompletion.Icons.";
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            return assembly.GetManifestResourceStream(prefix + name);
+            var assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetManifestResourceStream("ASCompletion.Icons." + name);
         }
 
-        private void InitializeTexts()
+        void InitializeTexts()
         {
             this.noneItem.Text = TextHelper.GetString("Outline.SortNone");
             this.sortedItem.Text = TextHelper.GetString("Outline.SortDefault");
@@ -216,7 +214,7 @@ namespace ASCompletion
 
         public static int GetIcon(FlagType flag, Visibility access)
         {
-            int rst = 0;
+            int rst;
             bool isStatic = (flag & FlagType.Static) > 0;
 
             if ((flag & FlagType.Constant) > 0)
@@ -269,7 +267,7 @@ namespace ASCompletion
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
@@ -391,7 +389,7 @@ namespace ASCompletion
 
         #region Status
 
-        private delegate void SetStatusInvoker(string state, int value, int max);
+        delegate void SetStatusInvoker(string state, int value, int max);
 
         /// <summary>
         /// Show a status bar
@@ -443,7 +441,7 @@ namespace ASCompletion
             if (OutlineTree.Nodes.Count == 0) return;
             string match;
             // class or class member
-            if (classModel != null && classModel != ClassModel.VoidClass)
+            if (classModel != null && !classModel.IsVoid())
             {
                 match = classModel.Name;
                 TreeNode found = MatchNodeText(OutlineTree.Nodes[0].Nodes, match);
@@ -478,7 +476,7 @@ namespace ASCompletion
             SetHighlight(null);
         }
 
-        private TreeNode MatchNodeText(IEnumerable nodes, string match)
+        TreeNode MatchNodeText(IEnumerable nodes, string match)
         {
             foreach(TreeNode node in nodes)
             {
@@ -492,7 +490,7 @@ namespace ASCompletion
             return null;
         }
 
-        private void SetHighlight(TreeNode node)
+        void SetHighlight(TreeNode node)
         {
             if (node == currentHighlight) return;
             if (currentHighlight != null)
@@ -521,20 +519,19 @@ namespace ASCompletion
             try
             {
                 // files "checksum"
-                StringBuilder sb = new StringBuilder().Append(aFile.FileName).Append(aFile.Version).Append(aFile.Package);
+                var sb = new StringBuilder().Append(aFile.FileName).Append(aFile.Version).Append(aFile.Package);
                 var lines = new List<int>();
                 var names = new List<string>();
                 if (aFile != FileModel.Ignore)
                 {
-                    sb.Append(settings.ShowExtends).Append(settings.ShowImplements).Append(settings.ShowImports).Append(
-                        settings.ShowRegions);
-                    foreach (MemberModel import in aFile.Imports)
+                    sb.Append(settings.ShowExtends).Append(settings.ShowImplements).Append(settings.ShowImports).Append(settings.ShowRegions);
+                    foreach (var import in aFile.Imports)
                     {
                         sb.Append(import.Type);
                         lines.Add(import.LineFrom);
                         names.Add(import.Name);
                     }
-                    foreach (MemberModel member in aFile.Members)
+                    foreach (var member in aFile.Members)
                     {
                         sb.Append(member.Flags).Append(member);
                         lines.Add(member.LineFrom);
@@ -552,14 +549,14 @@ namespace ASCompletion
                                 sb.Append(implements);
                         lines.Add(aClass.LineFrom);
                         names.Add(aClass.Name);
-                        foreach (MemberModel member in aClass.Members)
+                        foreach (var member in aClass.Members)
                         {
                             sb.Append(member.Flags).Append(member);
                             lines.Add(member.LineFrom);
                             names.Add(member.Name);
                         }
                     }
-                    foreach (MemberModel region in aFile.Regions)
+                    foreach (var region in aFile.Regions)
                     {
                         sb.Append(region.Name);
                         lines.Add(region.LineFrom);
@@ -592,7 +589,7 @@ namespace ASCompletion
             }
         }
 
-        private void RefreshView(FileModel aFile)
+        void RefreshView(FileModel aFile)
         {
             //TraceManager.Add("Outline refresh...");
             OutlineTree.BeginStatefulUpdate();
@@ -605,7 +602,7 @@ namespace ASCompletion
                 OutlineTree.Nodes.Clear();
 
                 // If text == "" then the field has the focus and it's already empty, no need to dispatch unneeded events
-                if (findTextTxt.Text != searchInvitation && findTextTxt.Text != string.Empty)
+                if (findTextTxt.Text != searchInvitation && findTextTxt.Text.Length != 0)
                 {
                     findTextTxt.Clear();
                     FindProcTxtLeave(null, null);
@@ -701,7 +698,7 @@ namespace ASCompletion
             }
         }
 
-        private void UpdateTree(FileModel aFile, IList<string> modelNames, IList<int> newLines)
+        void UpdateTree(FileModel aFile, IList<string> modelNames, IList<int> newLines)
         {
             try
             {
@@ -725,9 +722,7 @@ namespace ASCompletion
                     var nodes = tree.Pop();
                     foreach (TreeNode node in nodes)
                     {
-                        var memberNode = node as MemberTreeNode;
-                        string newTag;
-                        if (memberNode != null && mapping.TryGetValue((string)memberNode.Tag, out newTag))
+                        if (node is MemberTreeNode memberNode && mapping.TryGetValue((string)memberNode.Tag, out var newTag))
                             memberNode.Tag = newTag;
                         if (node.Nodes.Count > 0) tree.Push(node.Nodes);
                     }
@@ -739,7 +734,7 @@ namespace ASCompletion
             }
         }
 
-        private void AddExtend(TreeNodeCollection tree, ClassModel aClass)
+        void AddExtend(TreeNodeCollection tree, ClassModel aClass)
         {
             var folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
 
@@ -764,7 +759,7 @@ namespace ASCompletion
             if (folder.Nodes.Count > 0) tree.Add(folder);
         }
 
-        private void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
+        void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
         {
             if (implementsTypes.IsNullOrEmpty()) return;
             var folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
@@ -775,7 +770,7 @@ namespace ASCompletion
             tree.Add(folder);
         }
 
-        private void AddMembersSorted(TreeNodeCollection tree, MemberList members)
+        void AddMembersSorted(TreeNodeCollection tree, MemberList members)
         {
             if (settings.SortingMode == OutlineSorting.None)
             {
@@ -787,24 +782,22 @@ namespace ASCompletion
             }
             else
             {
-                IComparer<MemberModel> comparer = null;
-                if (settings.SortingMode == OutlineSorting.Sorted)
-                    comparer = null;
-                else if (settings.SortingMode == OutlineSorting.SortedByKind)
-                    comparer = new ByKindMemberComparer();
-                else if (settings.SortingMode == OutlineSorting.SortedSmart)
-                    comparer = new SmartMemberComparer();
-                else if (settings.SortingMode == OutlineSorting.SortedGroup)
-                    comparer = new ByKindMemberComparer();
+                var comparer = settings.SortingMode switch
+                {
+                    OutlineSorting.Sorted => (IComparer<MemberModel>) null,
+                    OutlineSorting.SortedByKind => new ByKindMemberComparer(),
+                    OutlineSorting.SortedSmart => new SmartMemberComparer(),
+                    OutlineSorting.SortedGroup => new ByKindMemberComparer(),
+                    _ => null
+                };
 
-                MemberList copy = new MemberList();
-                copy.Add(members);
+                var copy = new MemberList {members};
                 copy.Sort(comparer);
                 AddMembers(tree, copy);
             }
         }
 
-        private void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
+        void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
         {
             MemberList regions = aFile.Regions;
             int count = regions.Count;
@@ -887,14 +880,13 @@ namespace ASCompletion
 
         public static void AddMembersGrouped(TreeNodeCollection tree, MemberList members)
         {
-            var typePriority = new[] { FlagType.Constructor, FlagType.Function, FlagType.Getter | FlagType.Setter, FlagType.Variable, FlagType.Constant };
             var typeGroups = new Dictionary<FlagType, List<MemberModel>>();
 
-            FlagType type;
             List<MemberModel> groupList;
-            foreach (MemberModel member in members)
+            foreach (var member in members)
             {
                 // member type
+                FlagType type;
                 if ((member.Flags & FlagType.Constant) > 0)
                     type = FlagType.Constant;
                 else if ((member.Flags & FlagType.Variable) > 0)
@@ -915,9 +907,10 @@ namespace ASCompletion
                 groupList.Add(member);
             }
 
+            var typePriority = new[] { FlagType.Constructor, FlagType.Function, FlagType.Getter | FlagType.Setter, FlagType.Variable, FlagType.Constant };
             for (int i = 0, count = typePriority.Length; i < count; i++)
             {
-                type = typePriority[i];
+                var type = typePriority[i];
                 if (typeGroups.TryGetValue(type, out groupList))
                 {
                     if (groupList.Count == 0)
@@ -937,7 +930,7 @@ namespace ASCompletion
             }
         }
 
-        private void SortDropDown_DropDownOpening(object sender, EventArgs e)
+        void SortDropDown_DropDownOpening(object sender, EventArgs e)
         {
             noneItem.Checked = settings.SortingMode == OutlineSorting.None;
             sortedItem.Checked = settings.SortingMode == OutlineSorting.Sorted;
@@ -946,9 +939,9 @@ namespace ASCompletion
             sortedSmartItem.Checked = settings.SortingMode == OutlineSorting.SortedSmart;
         }
 
-        private void SortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void SortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            ToolStripMenuItem item = e.ClickedItem as ToolStripMenuItem;
+            var item = e.ClickedItem as ToolStripMenuItem;
             if (item is null || item.Checked) return;
             if (item == noneItem) settings.SortingMode = OutlineSorting.None;
             else if (item == sortedItem) settings.SortingMode = OutlineSorting.Sorted;
@@ -964,7 +957,7 @@ namespace ASCompletion
         /// <summary>
         /// Selection des items de l'arbre
         /// </summary>
-        private void ClassTreeSelect(object sender, TreeNode node)
+        void ClassTreeSelect(object sender, TreeNode node)
         {
             if (tempoClick is null)
             {
@@ -977,11 +970,10 @@ namespace ASCompletion
             tempoClick.Enabled = true;
         }
 
-        private void DelayedClassTreeSelect(object sender, System.Timers.ElapsedEventArgs e)
+        void DelayedClassTreeSelect(object sender, System.Timers.ElapsedEventArgs e)
         {
-            TreeNode node = OutlineTree.SelectedNode;
-            if (node is null)
-                return;
+            var node = OutlineTree.SelectedNode;
+            if (node is null) return;
             ASContext.Context.OnSelectOutlineNode(node);
         }
 
@@ -1008,24 +1000,21 @@ namespace ASCompletion
             if (!ASContext.Context.IsFileValid || lookupLocations.IsNullOrEmpty())
                 return false;
 
-            LookupLocation location = lookupLocations.Pop();
+            var location = lookupLocations.Pop();
             // menu item
             if (lookupLocations.Count == 0 && LookupMenuItem != null) LookupMenuItem.Enabled = false;
 
             PluginBase.MainForm.OpenEditableDocument(location.File, false);
-            ScintillaNet.ScintillaControl sci = ASContext.CurSciControl;
-            if (sci != null)
-            {
-                int position = sci.PositionFromLine(location.Line) + location.Column;
-                sci.SetSel(position, position);
-                int line = sci.CurrentLine;
-                sci.EnsureVisible(line);
-                int top = sci.FirstVisibleLine;
-                int middle = top + sci.LinesOnScreen / 2;
-                sci.LineScroll(0, line - middle);
-                return true;
-            }
-            return false;
+            var sci = ASContext.CurSciControl;
+            if (sci is null) return false;
+            int position = sci.PositionFromLine(location.Line) + location.Column;
+            sci.SetSel(position, position);
+            int line = sci.CurrentLine;
+            sci.EnsureVisible(line);
+            int top = sci.FirstVisibleLine;
+            int middle = top + sci.LinesOnScreen / 2;
+            sci.LineScroll(0, line - middle);
+            return true;
         }
 
         #endregion
@@ -1033,7 +1022,7 @@ namespace ASCompletion
         #region Find declaration
 
         // if highlight is true, shows the node and paint it with color 
-        private void ShowAndHighlightNode(TreeNode node, bool highlight)
+        void ShowAndHighlightNode(TreeNode node, bool highlight)
         {
             if (highlight)
             {
@@ -1048,7 +1037,7 @@ namespace ASCompletion
             }
         }
 
-        private bool IsMatch(string inputText, string searchText)
+        bool IsMatch(string inputText, string searchText)
         {
             if (inputText is null || searchText == "")
             {
@@ -1057,7 +1046,7 @@ namespace ASCompletion
             return inputText.ToUpper().Contains(searchText);
         }
 
-        private void HighlightAllMatchingDeclaration(string text)
+        void HighlightAllMatchingDeclaration(string text)
         {
             try
             {
@@ -1072,7 +1061,7 @@ namespace ASCompletion
             }
         }
 
-        private void HighlightDeclarationInGroup(IEnumerable nodes, string text)
+        void HighlightDeclarationInGroup(IEnumerable nodes, string text)
         {
             foreach (TreeNode sub in nodes)
             {
@@ -1090,28 +1079,24 @@ namespace ASCompletion
         }
 
         // Display informative text in the search field
-        private string searchInvitation = TextHelper.GetString("Info.SearchInvitation");
+        string searchInvitation = TextHelper.GetString("Info.SearchInvitation");
 
         void FindProcTxtEnter(object sender, EventArgs e)
         {
-            if (findTextTxt.Text == searchInvitation)
-            {
-                findTextTxt.Text = "";
-                findTextTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
-            }
+            if (findTextTxt.Text != searchInvitation) return;
+            findTextTxt.Text = "";
+            findTextTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
         }
 
         void FindProcTxtLeave(object sender, EventArgs e)
         {
-            if (findTextTxt.Text == "")
-            {
-                findTextTxt.Text = searchInvitation;
-                findTextTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
-                clearButton.Enabled = false;
-            }
+            if (findTextTxt.Text.Length != 0) return;
+            findTextTxt.Text = searchInvitation;
+            findTextTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
+            clearButton.Enabled = false;
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
+        void clearButton_Click(object sender, EventArgs e)
         {
             findTextTxt.Text = "";
             FindProcTxtLeave(null, null);
@@ -1168,7 +1153,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        private TreeNode FindMatch(IEnumerable nodes)
+        TreeNode FindMatch(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
@@ -1200,7 +1185,8 @@ namespace ASCompletion
     }
 
     #region Custom structures
-    struct LookupLocation
+
+    internal struct LookupLocation
     {
         public readonly string File;
         public readonly int Line;
@@ -1214,7 +1200,7 @@ namespace ASCompletion
         }
     }
 
-    class MemberTreeNode : TreeNode
+    internal class MemberTreeNode : TreeNode
     {
         public MemberTreeNode(MemberModel member, int imageIndex)
             : base(member.ToString(), imageIndex, imageIndex)

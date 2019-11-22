@@ -20,6 +20,7 @@ namespace ProjectManager
         readonly LinkLabel help;
 
         public event EventHandler NewProject;
+        public event EventHandler OpenFolder;
         public event EventHandler OpenProject;
         public event EventHandler ImportProject;
         public event RenameEventHandler Rename;
@@ -66,7 +67,7 @@ namespace ProjectManager
 
             help = new LinkLabel();
             string[] helpParts = string.Format(TextHelper.GetString("Info.NoProjectsOpenLink"), "\n").Split('|');
-            string[] helpActions = { "create", "open", "import|FlashBuilder", "import|hxml" };
+            string[] helpActions = { "folder", "create", "open", "import|FlashBuilder", "import|hxml" };
             var helpActionsLength = helpActions.Length;
             int[] linkStart = new int[helpActionsLength];
             int[] linkLength = new int[helpActionsLength];
@@ -167,8 +168,9 @@ namespace ProjectManager
         private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string action = e.Link.LinkData as string;
-            if (action == "create" && NewProject is { } newProject) newProject(sender, e);
-            else if (action == "open" && OpenProject is { } openProject) openProject(sender, e);
+            if (action == "create" && NewProject != null) NewProject(sender, e);
+            else if (action == "open" && OpenProject != null) OpenProject(sender, e);
+            else if (action == "folder" && OpenFolder != null) OpenFolder(sender, e);
             else if (action != null && action.StartsWith("import|")) ImportProject?.Invoke(sender, e);
         }
 

@@ -144,19 +144,21 @@ namespace ASCompletion.Model
 
         public FileModel()
         {
-            init("");
+            Init("");
         }
 
         public FileModel(string fileName)
         {
-            init(fileName);
+            Init(fileName);
         }
+
         public FileModel(string fileName, DateTime cacheLastWriteTime)
         {
-            init(fileName);
+            Init(fileName);
             LastWriteTime = cacheLastWriteTime;
         }
-        private void init(string fileName)
+
+        private void Init(string fileName)
         {
             Package = "";
             Module = "";
@@ -289,7 +291,6 @@ namespace ASCompletion.Model
             ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
             // members          
-            string decl;
             foreach (MemberModel member in Members)
             {
                 ASMetaData.GenerateIntrinsic(member.MetaDatas, sb, nl, tab);
@@ -300,7 +301,7 @@ namespace ASCompletion.Model
                 }
                 else if ((member.Flags & FlagType.Function) > 0)
                 {
-                    decl = ClassModel.MemberDeclaration(member);
+                    var decl = ClassModel.MemberDeclaration(member);
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
                     sb.Append(tab).Append(decl).Append(semi).Append(nl);
                 }

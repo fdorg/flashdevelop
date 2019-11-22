@@ -233,7 +233,7 @@ namespace ScintillaNet
             return RTF_HEADEROPEN + fontTable + colorTable + body + RTF_HEADERCLOSE;
         }
 
-        private static int GetBackColor(StyleClass style)
+        static int GetBackColor(StyleClass style)
         {
             while (true)
             {
@@ -253,7 +253,7 @@ namespace ScintillaNet
             }
         }
 
-        private static int GetForeColor(StyleClass style)
+        static int GetForeColor(StyleClass style)
         {
             if (style.fore != null)
             {
@@ -267,7 +267,7 @@ namespace ScintillaNet
             return 0x000000;
         }
 
-        private static int GetRgbColor(string value)
+        static int GetRgbColor(string value)
         {
             int color = Color.FromName(value).ToArgb();
             if (color == 0x00000000)
@@ -280,7 +280,7 @@ namespace ScintillaNet
                 {
                     return int.Parse(value, NumberStyles.HexNumber);
                 }
-                catch (Exception) { }
+                catch { }
             }
             return color & 0x00FFFFFF;
         }

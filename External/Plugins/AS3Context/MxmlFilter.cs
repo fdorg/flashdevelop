@@ -98,7 +98,7 @@ namespace AS3Context
                     catalogs.AddRange(cat.Values);
             }
             catch (XmlException ex) { Console.WriteLine(ex.Message); }
-            catch (Exception) { }
+            catch { }
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace AS3Context
                     catalogs.AddRange(cat.Values);
             }
             catch (XmlException ex) { Console.WriteLine(ex.Message); }
-            catch (Exception) { }
+            catch { }
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace PluginCore.Helpers
             var delta = 0;
             while (sci.SelectText(BOUNDARY, 0) != -1)
             {
-                sci.ReplaceSel("");
+                sci.ReplaceSel(string.Empty);
                 delta -= BOUNDARY.Length;
             }
             if (!TryProcessEntryExitPoints(sci, 0, ref delta))
@@ -48,7 +48,6 @@ namespace PluginCore.Helpers
                 startPosition = endSelection;
                 startSelection = sci.SelectText(ENTRYPOINT, startPosition);
             }
-            if (positions.Count == 0) return false;
             sci.SetSelection(positions[0], positions[1]);
             for (var i = 2; i < positions.Count; i += 2)
             {

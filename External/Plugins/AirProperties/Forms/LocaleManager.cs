@@ -168,13 +168,12 @@ namespace AirProperties
         private void CustomLocaleField_Validating(object sender, CancelEventArgs e)
         {
             string newLocale = CustomLocaleField.Text.Trim();
-            string baseLocale;
             bool isValid = false;
             if (newLocale.Length > 0 && newLocale != TextHelper.GetString("Label.AddCustomLocale"))
             {
                 foreach (ListItem locale in _defaultLocales)
                 {
-                    baseLocale = locale.Value + "-";
+                    var baseLocale = locale.Value + "-";
                     if (newLocale.StartsWithOrdinal(baseLocale) && newLocale.Length > baseLocale.Length)
                     {
                         isValid = true;

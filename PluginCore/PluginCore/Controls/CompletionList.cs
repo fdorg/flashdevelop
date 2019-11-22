@@ -146,7 +146,7 @@ namespace PluginCore.Controls
             var sci = doc.SciControl;
             try
             {
-                if ((itemList is null) || (itemList.Count == 0))
+                if (itemList is null || itemList.Count == 0)
                 {
                     if (Active) Hide();
                     return;
@@ -222,10 +222,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Require that completion items are explicitly inserted (Enter, Tab, mouse-click)
         /// </summary>
-        public static void DisableAutoInsertion()
-        {
-            noAutoInsert = true;
-        }
+        public static void DisableAutoInsertion() => noAutoInsert = true;
 
         /// <summary>
         /// 
@@ -281,19 +278,17 @@ namespace PluginCore.Controls
         /// </summary>  
         public static void Hide()
         {
-            if (completionList != null && Active) 
-            {
-                tempo.Enabled = false;
-                Active = false;
-                fullList = false;
-                faded = false;
-                completionList.Visible = false;
-                if (completionList.Items.Count > 0) completionList.Items.Clear();
-                currentItem = null;
-                allItems = null;
-                UITools.Tip.Hide();
-                if (!UITools.CallTip.CallTipActive) UITools.Manager.UnlockControl();
-            }
+            if (completionList is null || !Active) return;
+            tempo.Enabled = false;
+            Active = false;
+            fullList = false;
+            faded = false;
+            completionList.Visible = false;
+            if (completionList.Items.Count > 0) completionList.Items.Clear();
+            currentItem = null;
+            allItems = null;
+            UITools.Tip.Hide();
+            if (!UITools.CallTip.CallTipActive) UITools.Manager.UnlockControl();
         }
 
         /// <summary>
@@ -315,16 +310,15 @@ namespace PluginCore.Controls
         /// </summary> 
         public static void SelectWordInList(string tail)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            var doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)
             {
                 Hide();
                 return;
             }
-            ScintillaControl sci = doc.SciControl;
             currentWord = tail;
             currentPos += tail.Length;
-            sci.SetSel(currentPos, currentPos);
+            doc.SciControl.SetSel(currentPos, currentPos);
         }
 
         /// <summary>
@@ -339,8 +333,8 @@ namespace PluginCore.Controls
                 Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
                 Color sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
                 bool selected = (e.State & DrawItemState.Selected) > 0;
-                Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
-                Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
+                using Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
+                using Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
                 Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
                 Graphics g = e.Graphics;
                 float newHeight = e.Bounds.Height - 2;
@@ -712,11 +706,11 @@ namespace PluginCore.Controls
 
         static int IsAbbreviation(string label, string word)
         {
-            int len = word.Length;
-            int i = 1;
-            char c = word[0];
+            var len = word.Length;
+            var i = 1;
+            var c = word[0];
             int p2;
-            int score = 0;
+            int score;
             if (label[0] == c) { p2 = 0; score = 1; }
             else if (!label.Contains('.'))
             {

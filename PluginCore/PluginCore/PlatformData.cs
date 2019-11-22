@@ -29,7 +29,8 @@ namespace PluginCore
                     if (otherVersion.Value == version)
                     {
                         foreach (var flashVersion in flashPlatform.Versions)
-                            if (flashVersion.SwfVersion == otherVersion.SwfVersion) return flashVersion.Value;
+                            if (flashVersion.SwfVersion == otherVersion.SwfVersion)
+                                return flashVersion.Value;
                     }
             }
             // default to last FP
@@ -61,7 +62,7 @@ namespace PluginCore
             {
                 try
                 {
-                    SupportedLanguage lang = new SupportedLanguage
+                    var lang = new SupportedLanguage
                     {
                         Name = Path.GetFileNameWithoutExtension(langDir),
                         Platforms = LoadPlatforms(langDir)
@@ -74,7 +75,7 @@ namespace PluginCore
             }
         }
 
-        private static Dictionary<string, LanguagePlatform> LoadPlatforms(string langDir)
+        static Dictionary<string, LanguagePlatform> LoadPlatforms(string langDir)
         {
             // walk flashplayer.xml, openfl.xml,... for one language (ie. Haxe)
             var platforms = new Dictionary<string, LanguagePlatform>();
@@ -95,7 +96,7 @@ namespace PluginCore
             return platforms;
         }
 
-        private static LanguagePlatform ParsePlatform(XmlNode node)
+        static LanguagePlatform ParsePlatform(XmlNode node)
         {
             // parse platform file, ie. flashplayer.xml
             List<PlatformVersion> versions = null;
@@ -122,26 +123,26 @@ namespace PluginCore
                 DefaultProjectFile = GetList(node, "default-project"),
                 HaxeTarget = GetAttribute(node, "haxe-target"),
                 DebuggerSupported = GetList(node, "debugger"),
-                RawData = node
+                RawData = node,
+                VersionNames = new string[versions.Count],
             };
-            platform.VersionNames = new string[platform.Versions.Count];
             for (int i = 0; i < platform.Versions.Count; i++)
                 platform.VersionNames[i] = platform.Versions[i].Value;
             return platform;
         }
 
-        private static bool GetBool(XmlNode node, string attribute) => (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
+        static bool GetBool(XmlNode node, string attribute) => (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
 
-        private static string GetAttribute(XmlNode node, string name) => node.Attributes?[name]?.Value;
+        static string GetAttribute(XmlNode node, string name) => node.Attributes?[name]?.Value;
 
-        private static string[] GetList(XmlNode node, string attribute)
+        static string[] GetList(XmlNode node, string attribute)
         {
             // build targets, ie. html5, flash, android for openfl
             var attr = node.Attributes?[attribute];
             return attr?.Value.Split(',');
         }
 
-        private static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
+        static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
         {
             if (!language.HasChildNodes) return new List<PlatformVersion>
             {
@@ -165,7 +166,7 @@ namespace PluginCore
             return versions;
         }
 
-        private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
+        static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
         {
             // custom display/build/run/clean commands, ie. for openfl
             var commands = defaultCommands is null 
@@ -189,7 +190,7 @@ namespace PluginCore
             return null;
         }
 
-        private static string ParseSwfVersion(XmlNode node) => node.Attributes["swf-version"]?.Value;
+        static string ParseSwfVersion(XmlNode node) => node.Attributes["swf-version"]?.Value;
 
         #endregion
     }

@@ -18,7 +18,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private interface IHitTest
                 {
                     DockStyle HitTest(Point pt);
-                    DockStyle Status { get; set;    }
+                    DockStyle Status { get; set; }
                 }
                 #endregion
 

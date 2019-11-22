@@ -2280,7 +2280,7 @@ namespace AirProperties
         private void IPhoneExternalSWFsField_Validating(object sender, CancelEventArgs e)
         {
             var externalsFile = IPhoneExternalSWFsField.Text;
-            if (externalsFile == string.Empty) ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
+            if (externalsFile.Length == 0) ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
             else if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
             {
                 ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
@@ -2364,7 +2364,7 @@ namespace AirProperties
                 iPhoneAdditions["UIApplicationExitsOnSuspend"] = IPhoneExitsOnSuspendCheck.CheckState == CheckState.Indeterminate ? null : (bool?)IPhoneExitsOnSuspendCheck.Checked;
                 iPhoneAdditions["UIPrerenderedIcon"] = IPhonePrerrenderedIconCheck.CheckState == CheckState.Indeterminate ? null : (bool?)IPhonePrerrenderedIconCheck.Checked;
                 iPhoneAdditions["UIStatusBarStyle"] = IPhoneStatusBarStyleCombo.SelectedIndex == 0 ? null : ((ListItem)IPhoneStatusBarStyleCombo.SelectedItem).Value;
-                iPhoneAdditions["MinimumOSVersion"] = MinimumiOsVersionField.Text == string.Empty ? null : MinimumiOsVersionField.Text;
+                iPhoneAdditions["MinimumOSVersion"] = MinimumiOsVersionField.Text.Length == 0 ? null : MinimumiOsVersionField.Text;
 
                 IPhoneInfoAdditionsField.Text = iPhoneAdditions.GetPlistXml();
             }
@@ -2405,8 +2405,7 @@ namespace AirProperties
                     }
                 }
 
-                if (MinimumAndroidOsField.Text == string.Empty)
-                    androidManifest.UsesSdk = null;
+                if (MinimumAndroidOsField.Text.Length == 0) androidManifest.UsesSdk = null;
                 else
                 {
                     var usesSdk = androidManifest.UsesSdk ?? new AndroidManifestManager.UsesSdkElement();
@@ -2420,7 +2419,7 @@ namespace AirProperties
 
         private void MinimumiOsVersionField_Validating(object sender, CancelEventArgs e)
         {
-            if (MinimumiOsVersionField.Text != string.Empty)
+            if (MinimumiOsVersionField.Text.Length != 0)
             {
                 try
                 {
@@ -2449,14 +2448,12 @@ namespace AirProperties
 
         private void MinimumAndroidOsField_Validating(object sender, CancelEventArgs e)
         {
-            int osVersion;
-            if (MinimumAndroidOsField.Text == string.Empty)
+            if (MinimumAndroidOsField.Text.Length == 0)
             {
                 ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
-
                 return;
             }
-            if (!int.TryParse(MinimumAndroidOsField.Text, out osVersion))
+            if (!int.TryParse(MinimumAndroidOsField.Text, out var osVersion))
             {
                 e.Cancel = true;
                 ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidVersionValue"));

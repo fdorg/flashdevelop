@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ using ProjectManager.Helpers;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;
+using ProjectManager.Projects.Generic;
 
 namespace ProjectManager.Actions
 {
@@ -79,8 +81,8 @@ namespace ProjectManager.Actions
         {
             try
             {
-                string physical = PathHelper.GetPhysicalPathName(path);
-                Project loaded = ProjectLoader.Load(physical);
+                var physical = PathHelper.GetPhysicalPathName(path);
+                var loaded = ProjectLoader.Load(physical);
                 PatchProject(loaded);
                 return loaded;
             }
@@ -92,6 +94,27 @@ namespace ProjectManager.Actions
             }
         }
 
+        public Project OpenFolder()
+        {
+            using var dialog = new VistaFolderBrowserDialog();
+            if (dialog.ShowDialog(owner) == DialogResult.OK)
+            {
+                return OpenFolderSilent(dialog.SelectedPath);
+            }
+            return null;
+        }
+
+        public Project OpenFolderSilent(string path)
+        {
+            var hxmlFiles = Directory.GetFiles(path, "*.hxml");
+            if (hxmlFiles.Length == 0) return new GenericProject(path);
+            var project = new HaxeProject(path);
+            project.RawHXML = File.ReadAllLines(hxmlFiles[0]);
+            PatchProject(project);
+            PatchHxmlProject(project);
+            return project;
+        }
+
         public string ImportProject() => ImportProject(null);
 
         internal string ImportProject(string importFrom)
@@ -100,49 +123,45 @@ namespace ProjectManager.Actions
             dialog.Title = TextHelper.GetString("Title.ImportProject");
             dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
             if (importFrom == "hxml") dialog.FilterIndex = 3;
-            if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
+            if (dialog.ShowDialog() != DialogResult.OK || !File.Exists(dialog.FileName)) return null;
+            var fileName = dialog.FileName;
+            var currentDirectory = Directory.GetCurrentDirectory();
+            try
             {
-                string fileName = dialog.FileName;
-                string currentDirectory = Directory.GetCurrentDirectory();
-                try
+                if (FileInspector.IsHxml(Path.GetExtension(fileName).ToLower()))
                 {
-                    if (FileInspector.IsHxml(Path.GetExtension(fileName).ToLower()))
-                    {
-                        var project = HaxeProject.Load(fileName);
-                        var path = Path.GetDirectoryName(project.ProjectPath);
-                        var name = Path.GetFileNameWithoutExtension(project.OutputPath);
-                        var newPath = Path.Combine(path, $"{name}.hxproj");
-                        PatchProject(project);
-                        PatchHxmlProject(project);
-                        project.SaveAs(newPath);
-                        return newPath;
-                    }
-                    if (FileInspector.IsFlexBuilderPackagedProject(fileName))
-                    {
-                        fileName = ExtractPackagedProject(fileName);
-                    }
-                    if (FileInspector.IsFlexBuilderProject(fileName))
-                    {
-                        AS3Project imported = AS3Project.Load(fileName);
-                        string path = Path.GetDirectoryName(imported.ProjectPath);
-                        string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
-                        string newPath = Path.Combine(path, name + ".as3proj");
-                        PatchProject(imported);
-                        PatchFbProject(imported);
-                        imported.SaveAs(newPath);
-
-                        return newPath;
-                    }
-                    ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
+                    var project = HaxeProject.Load(fileName);
+                    var path = Path.GetDirectoryName(project.ProjectPath);
+                    var name = Path.GetFileNameWithoutExtension(project.OutputPath);
+                    var newPath = Path.Combine(path, $"{name}.hxproj");
+                    PatchProject(project);
+                    PatchHxmlProject(project);
+                    project.SaveAs(newPath);
+                    return newPath;
                 }
-                catch (Exception exception)
+                if (FileInspector.IsFlexBuilderPackagedProject(fileName))
                 {
-                    Directory.SetCurrentDirectory(currentDirectory);
-                    string msg = TextHelper.GetString("Info.CouldNotOpenProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    fileName = ExtractPackagedProject(fileName);
                 }
+                if (FileInspector.IsFlexBuilderProject(fileName))
+                {
+                    var imported = AS3Project.Load(fileName);
+                    var path = Path.GetDirectoryName(imported.ProjectPath);
+                    var name = Path.GetFileNameWithoutExtension(imported.OutputPath);
+                    var newPath = Path.Combine(path, $"{name}.as3proj");
+                    PatchProject(imported);
+                    PatchFbProject(imported);
+                    imported.SaveAs(newPath);
+                    return newPath;
+                }
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
             }
-
+            catch (Exception exception)
+            {
+                Directory.SetCurrentDirectory(currentDirectory);
+                var msg = TextHelper.GetString("Info.CouldNotOpenProject");
+                ErrorManager.ShowInfo(msg + " " + exception.Message);
+            }
             return null;
         }
 
@@ -158,7 +177,7 @@ namespace ProjectManager.Actions
             project.MovieOptions.Version = string.Empty;
         }
 
-        private void PatchFbProject(AS3Project project)
+        static void PatchFbProject(Project project)
         {
             if (project is null || !project.MovieOptions.Platform.StartsWithOrdinal("AIR")) return;
 
@@ -250,57 +269,48 @@ namespace ProjectManager.Actions
             FileHelper.WriteFile(descriptor, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
-        private void PatchProject(Project project)
+        static void PatchProject(Project project)
         {
             if (project is null) return;
             if (!project.HiddenPaths.IsHidden("obj"))
                 project.HiddenPaths.Add("obj");
         }
 
-        private string ExtractPackagedProject(string packagePath)
+        static string ExtractPackagedProject(string packagePath)
         {
             using var stream = new FileStream(packagePath, FileMode.Open, FileAccess.Read);
             using var zFile = new ZipFile(stream);
-            if (zFile.GetEntry(".actionscriptProperties") != null)
+            if (zFile.GetEntry(".actionscriptProperties") is null) return string.Empty;
+            using var saveDialog = new VistaFolderBrowserDialog();
+            saveDialog.ShowNewFolderButton = true;
+            saveDialog.UseDescriptionForTitle = true;
+            saveDialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
+            if (saveDialog.ShowDialog() != DialogResult.OK) return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
+            foreach (ZipEntry entry in zFile)
             {
-                using var saveDialog = new VistaFolderBrowserDialog();
-                saveDialog.ShowNewFolderButton = true;
-                saveDialog.UseDescriptionForTitle = true;
-                saveDialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
-
-                if (saveDialog.ShowDialog() == DialogResult.OK)
+                var newPath = Path.Combine(saveDialog.SelectedPath, entry.Name.Replace('/', '\\'));
+                if (entry.IsFile)
                 {
-                    foreach (ZipEntry entry in zFile)
+                    var data = new byte[4095];
+                    var zip = zFile.GetInputStream(entry);
+                    var dirPath = Path.GetDirectoryName(newPath);
+                    if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                    var extracted = new FileStream(newPath, FileMode.Create);
+                    while (true)
                     {
-                        byte[] data = new byte[4095];
-                        string newPath = Path.Combine(saveDialog.SelectedPath, entry.Name.Replace('/', '\\'));
-
-                        if (entry.IsFile)
-                        {
-                            Stream zip = zFile.GetInputStream(entry);
-                            string dirPath = Path.GetDirectoryName(newPath);
-                            if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-                            FileStream extracted = new FileStream(newPath, FileMode.Create);
-                            while (true)
-                            {
-                                var size = zip.Read(data, 0, data.Length);
-                                if (size > 0) extracted.Write(data, 0, size);
-                                else break;
-                            }
-                            extracted.Close();
-                            extracted.Dispose();
-                        }
-                        else
-                        {
-                            Directory.CreateDirectory(newPath);
-                        }
+                        var size = zip.Read(data, 0, data.Length);
+                        if (size > 0) extracted.Write(data, 0, size);
+                        else break;
                     }
+                    extracted.Close();
+                    extracted.Dispose();
                 }
-
-                return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
+                else
+                {
+                    Directory.CreateDirectory(newPath);
+                }
             }
-
-            return string.Empty;
+            return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
         }
 
         #endregion

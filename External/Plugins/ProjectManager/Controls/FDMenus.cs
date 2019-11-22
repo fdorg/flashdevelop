@@ -116,11 +116,12 @@ namespace ProjectManager.Controls
 
         public void SetProject(Project project)
         {
+            var enable = !project.IsFolderProject();
             RecentProjects.AddOpenedProject(project.ProjectPath);
-            ConfigurationSelector.Enabled = true;
-            ProjectMenu.ProjectItemsEnabled = true;
-            TestMovie.Enabled = true;
-            BuildProject.Enabled = true;
+            ConfigurationSelector.Enabled = enable;
+            ProjectMenu.ProjectItemsEnabled = enable;
+            TestMovie.Enabled = enable;
+            BuildProject.Enabled = enable;
             ProjectChanged(project);
         }
 
@@ -179,6 +180,7 @@ namespace ProjectManager.Controls
     {
         public ToolStripMenuItem NewProject;
         public ToolStripMenuItem OpenProject;
+        public ToolStripMenuItem OpenFolder;
         public ToolStripMenuItem ImportProject;
         public ToolStripMenuItem CloseProject;
         public ToolStripMenuItem OpenResource;
@@ -198,6 +200,9 @@ namespace ProjectManager.Controls
             NewProject.Image = Icons.NewProject.Img;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.NewProject", NewProject);
             //AllItems.Add(NewProject);
+
+            OpenFolder = new ToolStripMenuItem(TextHelper.GetString("Label.OpenFolder"));
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.OpenFolder", OpenFolder);
 
             OpenProject = new ToolStripMenuItem(TextHelper.GetString("Label.OpenProject"));
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.OpenProject", OpenProject);
@@ -246,6 +251,7 @@ namespace ProjectManager.Controls
             base.Text = TextHelper.GetString("Label.Project");
             base.DropDownItems.Add(NewProject);
             base.DropDownItems.Add(OpenProject);
+            base.DropDownItems.Add(OpenFolder);
             base.DropDownItems.Add(ImportProject);
             base.DropDownItems.Add(CloseProject);
             base.DropDownItems.Add(new ToolStripSeparator());

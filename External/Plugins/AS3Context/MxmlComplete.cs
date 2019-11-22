@@ -457,7 +457,7 @@ namespace AS3Context
                     foreach (string value in enumValues.Split(','))
                     {
                         var tValue = value.Trim();
-                        if (tValue != string.Empty) retVal.Add(new HtmlAttributeItem(tValue));
+                        if (tValue.Length != 0) retVal.Add(new HtmlAttributeItem(tValue));
                     }
 
                     if (retVal.Count > 0) return retVal;
@@ -503,7 +503,7 @@ namespace AS3Context
                         foreach (string value in meta.Params["enumeration"].Split(','))
                         {
                             var tValue = value.Trim();
-                            if (tValue != string.Empty) retVal.Add(new HtmlAttributeItem(tValue));
+                            if (tValue.Length != 0) retVal.Add(new HtmlAttributeItem(tValue));
                         }
                         result = retVal;
 

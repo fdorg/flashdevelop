@@ -44,7 +44,7 @@ namespace ProjectManager.Actions
         public event FileMovedHandler FileMoved;
         public event FileMovedHandler FileCopied;
 
-        public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
+        public FileActions(IMainForm mainForm)
         {
             this.mainForm = mainForm;
         }
@@ -572,6 +572,7 @@ namespace ProjectManager.Actions
                     var title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
                     var suggestion = Path.GetFileName(copyPath);
                     using var dialog = new LineEntryDialog(title, label, suggestion);
+                    dialog.SelectRange(0, Path.GetFileNameWithoutExtension(copyPath).Length);
                     var choice = dialog.ShowDialog();
                     if (choice == DialogResult.OK && dialog.Line.Trim().Length > 0)
                     {

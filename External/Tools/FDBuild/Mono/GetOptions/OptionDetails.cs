@@ -23,7 +23,7 @@ namespace Mono.GetOptions
             }
             else
             {
-                LongForm = option.LongForm != string.Empty ? option.LongForm : memberInfo.Name;
+                LongForm = option.LongForm.Length != 0 ? option.LongForm : memberInfo.Name;
             }
             AlternateForm = option.AlternateForm;
             ShortDescription = ExtractParamName(option.ShortDescription);
@@ -189,9 +189,9 @@ namespace Mono.GetOptions
             return shortDescription;
         }
 
-        private bool IsThisOption(string arg)
+        bool IsThisOption(string arg)
         {
-            if (arg is null || arg == string.Empty) return false;
+            if (string.IsNullOrEmpty(arg)) return false;
             char[] chArray1 = { '-', '/' } ;
             arg = arg.TrimStart(chArray1);
             if (VBCStyleBoolean)

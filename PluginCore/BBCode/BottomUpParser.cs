@@ -27,7 +27,7 @@ namespace PluginCore.BBCode
             return lastTree;
         }
 
-        private IndexTree _parse()
+        IndexTree _parse()
         {
             pairTagMatcher.input = input;
 
@@ -37,7 +37,7 @@ namespace PluginCore.BBCode
             return tree;
         }
 
-        private List<IPairTagMatch> _findAllOpeners()
+        List<IPairTagMatch> _findAllOpeners()
         {
             List<IPairTagMatch> openers = new List<IPairTagMatch>();
             IPairTagMatch m;
@@ -63,25 +63,21 @@ namespace PluginCore.BBCode
             return openers;
         }
 
-        private IndexTree _buildTree(List<IPairTagMatch> openers)
+        IndexTree _buildTree(IList<IPairTagMatch> openers)
         {
-            uint inputL = (uint)input.Length;
-            bool closerOutOfBounds;
-            int closerStartAt;
-            Dictionary<int, IPairTagMatch> closerIndices = new Dictionary<int, IPairTagMatch>();
-            IPairTagMatch mOp;
-            IPairTagMatch mCl;
-            IndexTree rootTree = new IndexTree(0, (int)inputL, 0, 0, null, null);
-            int i = openers.Count;
+            var inputL = (uint)input.Length;
+            var closerIndices = new Dictionary<int, IPairTagMatch>();
+            var rootTree = new IndexTree(0, (int)inputL, 0, 0, null, null);
+            var i = openers.Count;
             while (i-- > 0)
             {
-                mOp = openers[i];
-                closerStartAt = (int)(mOp.tagIndex + mOp.tagLength);
-                closerOutOfBounds = false;
+                var mOp = openers[i];
+                var closerStartAt = (int)(mOp.tagIndex + mOp.tagLength);
+                var closerOutOfBounds = false;
 
                 while (true)
                 {
-                    mCl = pairTagMatcher.searchCloserFor(mOp, (uint)closerStartAt);
+                    var mCl = pairTagMatcher.searchCloserFor(mOp, (uint)closerStartAt);
                     if (mCl is null)
                     {
                         mCl = new VoidCloserTagMatch((int)inputL);
@@ -103,10 +99,8 @@ namespace PluginCore.BBCode
                         break;
                     }
 
-                    if (closerOutOfBounds)
-                        break;
-                    if (mCl != null)
-                        closerStartAt = mCl.tagIndex + 1;
+                    if (closerOutOfBounds) break;
+                    closerStartAt = mCl.tagIndex + 1;
                 }
             }
             return rootTree;

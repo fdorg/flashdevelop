@@ -1752,7 +1752,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>This project has no output and not build command configured.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|Create a new project|{0}or{0}|Open an existing project|{0}or{0}|Import a Flash Builder project|{0}or{0}|Import a Haxe hxml project|</value>
+    <value>|Open a folder|{0}or{0}|Create a new project|{0}or{0}|Open an existing project|{0}or{0}|Import a Flash Builder project|{0}or{0}|Import a Haxe hxml project|</value>
+    <comment>Modified after 5.3.1</comment>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>No templates were found in the templates directory. You will not be able to create new projects. You might try reinstalling FlashDevelop.</value>
@@ -6370,5 +6371,9 @@ AND - All conditions are met.</value>
   <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
     <value>Initialize {0}</value>
     <comment>Added After 5.3.3</comment>
+  </data>
+  <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
+    <value>Open &amp;Folder...</value>
+    <comment>Added after 5.3.1</comment>
   </data>
 </root>

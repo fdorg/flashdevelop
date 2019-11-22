@@ -460,9 +460,7 @@ namespace ASCompletion.Helpers
     {
         internal static HashSet<T> ToHashSet<T>(this IEnumerable<T> e)
         {
-            if (e is null) return new HashSet<T>();
-
-            return new HashSet<T>(e);
+            return e is null ? new HashSet<T>() : new HashSet<T>(e);
         }
 
         internal static void AddUnion<S, T>(this Dictionary<S, HashSet<T>> dict, S key, IEnumerable<T> value)
