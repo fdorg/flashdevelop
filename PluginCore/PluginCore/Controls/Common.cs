@@ -584,21 +584,28 @@ namespace System.Windows.Forms
 
         public ProgressBarEx()
         {
-            SetStyle(ControlStyles.UserPaint, true);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void WndProc(ref Message message)
         {
-            if (UseTheme)
+            base.WndProc(ref message);
+            switch (message.Msg)
             {
-                Rectangle rec = new Rectangle(0, 0, Width, Height);
-                double scaleFactor = ((Value - (double)Minimum) / (Maximum - (double)Minimum));
-                rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
-                e.Graphics.FillRectangle(new SolidBrush(BackColor), new Rectangle(0, 0, Width - 1, Height - 1));
-                e.Graphics.FillRectangle(new SolidBrush(ForeColor), 1, 1, rec.Width, rec.Height);
-                e.Graphics.DrawRectangle(new Pen(BorderColor), new Rectangle(0, 0, Width - 1, Height - 1));
+                case Win32.WM_PAINT:
+                    if (UseTheme)
+                    {
+                        Rectangle rec = new Rectangle(0, 0, Width, Height);
+                        double scaleFactor = (((double)Value - (double)Minimum) / ((double)Maximum - (double)Minimum));
+                        rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
+                        using (Graphics g = CreateGraphics())
+                        {
+                            g.FillRectangle(new SolidBrush(BackColor), new Rectangle(0, 0, Width - 1, Height - 1));
+                            g.FillRectangle(new SolidBrush(ForeColor), 1, 1, rec.Width, rec.Height);
+                            g.DrawRectangle(new Pen(BorderColor), new Rectangle(0, 0, Width - 1, Height - 1));
+                        }
+                    }
+                    break;
             }
-            else base.OnPaint(e);
         }
     }
 
