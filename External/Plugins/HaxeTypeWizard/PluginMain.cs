@@ -23,7 +23,7 @@ namespace HaxeTypeWizard
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name => nameof(ASClassWizard);
+        public string Name => nameof(HaxeTypeWizard);
 
         /// <summary>
         /// GUID of the plugin
