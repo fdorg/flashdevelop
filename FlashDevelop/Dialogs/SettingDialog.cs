@@ -524,7 +524,7 @@ namespace FlashDevelop.Dialogs
                 GridItem changedItem = e.ChangedItem;
                 string settingId = this.nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
                 TextEvent te = new TextEvent(EventType.SettingChanged, settingId);
-                EventManager.DispatchEvent(Globals.MainForm, te);
+                EventManager.DispatchEvent(PluginBase.MainForm, te);
 
                 if (changedItem.PropertyDescriptor.Attributes.Matches(new RequiresRestartAttribute()))
                 {

@@ -113,7 +113,7 @@ namespace FlashDevelop.Managers
                 {
                     ScintillaControl.UpdateShortcut(item.Id, item.Custom);
                     DataEvent de = new DataEvent(EventType.Shortcut, item.Id, item.Custom);
-                    EventManager.DispatchEvent(Globals.MainForm, de);
+                    EventManager.DispatchEvent(PluginBase.MainForm, de);
                 }
             }
             foreach (ToolStripItem button in SecondaryItems)

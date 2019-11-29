@@ -167,7 +167,7 @@ namespace FlashDevelop.Managers
                 if (obj is MainForm)
                 {
                     NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
-                    EventManager.DispatchEvent(Globals.MainForm, ne);
+                    EventManager.DispatchEvent(PluginBase.MainForm, ne);
                     Globals.MainForm.AdjustAllImages();
                     Globals.MainForm.Refresh();
                 }
