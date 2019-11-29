@@ -1379,7 +1379,7 @@ namespace HaXeContext.Completion
             if (result.Type != null && !result.Type.IsVoid()) return;
             var list = ASContext.Context.GetTopLevelElements();
             if (list.IsNullOrEmpty()) return;
-            foreach (MemberModel it in list)
+            foreach (var it in list)
             {
                 if (it.Name != token || !it.Flags.HasFlag(FlagType.Enum)) continue;
                 var type = ResolveType(it.Type, inFile);
@@ -1492,7 +1492,7 @@ namespace HaXeContext.Completion
                         string newType = null;
                         var template = templates[i];
                         // try transform T:{} to T
-                        if (template.IndexOf(':') is int p && p != -1) template = template.Substring(0, p);
+                        if (template.Contains(':', out var p)) template = template.Substring(0, p);
                         var reTemplateType = new Regex($"\\b{template}\\b");
                         if (member.Parameters is { } parameters)
                         {

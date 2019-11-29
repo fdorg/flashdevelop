@@ -592,8 +592,9 @@ namespace ASCompletion.Completion
             result.InClass = null;
             result.InFile = null;
             var path = type.Name;
-            var index = path.IndexOf('.');
-            result.Path = index != -1 ? path.Substring(0, index) : path;
+            result.Path = path.Contains('.', out var index)
+                ? path.Substring(0, index)
+                : path;
             return OpenDocumentToDeclaration(sci, result);
         }
 
@@ -1145,13 +1146,13 @@ namespace ASCompletion.Completion
                     // braces
                     if (!ASContext.CommonSettings.DisableAutoCloseBraces)
                     {
-                        if (txt.IndexOfOrdinal("//") is var p1 && p1 > 0) // remove comment at end of line
+                        if (txt.Contains("//", out var p1) && p1 > 0) // remove comment at end of line
                         {
-                            int slashes = sci.MBSafeTextLength(txt.Substring(0, p1 + 1));
+                            var slashes = sci.MBSafeTextLength(txt.Substring(0, p1 + 1));
                             if (sci.PositionIsOnComment(sci.PositionFromLine(line-1) + slashes))
                                 txt = txt.Substring(0, p1).Trim();
                         }
-                        if (txt.EndsWith('{') && (line > 1)) AutoCloseBrace(sci, line);
+                        if (txt.EndsWith('{') && line > 1) AutoCloseBrace(sci, line);
                     }
                     // code reformatting
                     if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWithOrdinal("*/"))
@@ -2274,24 +2275,18 @@ namespace ASCompletion.Completion
                 if (!aClass.IsVoid())
                 {
                     // AS2 special srictly typed Arrays supports
-                    int p = newItemType.IndexOf('@');
-                    if (p > -1) newItemType = newItemType.Substring(0, p);
+                    if (newItemType.Contains('@', out var p)) newItemType = newItemType.Substring(0, p);
                     else if (!string.IsNullOrEmpty(aClass.IndexType))
                     {
                         newItemType = aClass.QualifiedName;
                         newItem = new MemberItem(new MemberModel(newItemType, aClass.Type, aClass.Flags, aClass.Access));
                     }
                 }
-                else
-                {
-                    newItem = new NonexistentMemberItem(newItemType);
-                }
-
+                else newItem = new NonexistentMemberItem(newItemType);
                 if (newItem != null)
                 {
-                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
-                    int genericStart = newItemType.IndexOf('<');
-                    if (genericStart > -1 && ASContext.Context.Features.HasGenericsShortNotation)
+                    var itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (newItemType.Contains('<', out var genericStart) && ASContext.Context.Features.HasGenericsShortNotation)
                     {
                         newItemType = newItemType.Substring(0, genericStart);
                         itemIndex = itemIndex > 0 ? itemIndex : 0;
@@ -3112,7 +3107,7 @@ namespace ASCompletion.Completion
                         }
                         return;
                     }
-                    if (mPack.Name.IndexOf('<') is int p && p > 0)
+                    if (mPack.Name.Contains('<', out var p) && p > 0)
                     {
                         if (p > 1 && mPack.Name[p - 1] == '.') p--;
                         if (mPack.Name.Substring(0, p) == token)
@@ -3124,7 +3119,7 @@ namespace ASCompletion.Completion
                         }
                     }
                 }
-                foreach (MemberModel member in result.InFile.Members)
+                foreach (var member in result.InFile.Members)
                 {
                     if (member.Name == token)
                     {
@@ -3151,7 +3146,7 @@ namespace ASCompletion.Completion
             {
                 found = null;
                 var matches = inFile.Members.MultipleSearch(token, mask, access);
-                foreach (MemberModel member in matches)
+                foreach (var member in matches)
                 {
                     found = member;
                     if ((member.Flags & FlagType.Setter) == 0) break;
@@ -3228,7 +3223,7 @@ namespace ASCompletion.Completion
                 {
                     found = null;
                     var matches = tmpClass.Members.MultipleSearch(token, mask, access);
-                    foreach (MemberModel member in matches)
+                    foreach (var member in matches)
                     {
                         found = member;
                         if ((member.Flags & FlagType.Getter) > 0) break;
@@ -5264,12 +5259,11 @@ namespace ASCompletion.Completion
         {
             get 
             {
-                if (Member.Name.IndexOf('<') is int p1 && p1 <= 0 || Member.Template is null) return Member.Name;
+                if (!Member.Name.Contains('<', out var p1) && p1 <= 0 || Member.Template is null) return Member.Name;
 
                 // ActionScript3: Vector.<int>
-                if (Member.Name.IndexOfOrdinal(".<") is int p2 && p2 > 0)
+                if (Member.Name.Contains(".<", out var p2) && p2 > 0)
                     return Member.Name.Substring(0, p2);
-
                 return Member.Name.Substring(0, p1);
             }
         }
@@ -5299,8 +5293,8 @@ namespace ASCompletion.Completion
         {
             get
             {
-                if (Label.IndexOf('<') is var p1 && p1 == -1) return Label;
-                return Label.IndexOfOrdinal(".<") is var p2 && p2 > 0
+                if (!Label.Contains('<', out var p1)) return Label;
+                return Label.Contains(".<", out var p2) && p2 > 0
                     ? Label.Substring(0, p2)
                     : Label.Substring(0, p1);
             }
