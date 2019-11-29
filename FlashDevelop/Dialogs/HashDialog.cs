@@ -3,6 +3,8 @@ using System.Text;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using FlashDevelop.Settings;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Controls;
@@ -26,7 +28,7 @@ namespace FlashDevelop.Dialogs
         public HashDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
+            this.Font = PluginBase.MainForm.Settings.DefaultFont;
             this.FormGuid = "f521ee73-e082-4218-a41f-bd1a501ebe27";
             this.resultHashText = string.Empty;
             this.InitializeComponent();
@@ -61,7 +63,7 @@ namespace FlashDevelop.Dialogs
             this.inputTextBox.Size = new System.Drawing.Size(386, 75);
             this.inputTextBox.TabIndex = 7;
             this.inputTextBox.TextChanged += this.InputTextBoxChanged;
-            this.inputTextBox.Font = Globals.Settings.DefaultFont; // Do not remove!
+            this.inputTextBox.Font = PluginBase.MainForm.Settings.DefaultFont; // Do not remove!
             // 
             // okButton
             // 
@@ -126,7 +128,7 @@ namespace FlashDevelop.Dialogs
             this.outputTextBox.Size = new System.Drawing.Size(386, 75);
             this.outputTextBox.TabIndex = 9;
             this.outputTextBox.ForeColor = SystemColors.GrayText;
-            this.outputTextBox.Font = Globals.Settings.DefaultFont; // Do not remove!
+            this.outputTextBox.Font = PluginBase.MainForm.Settings.DefaultFont; // Do not remove!
             // 
             // encodingLabel
             // 

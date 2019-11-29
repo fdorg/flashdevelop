@@ -372,7 +372,7 @@ namespace ASCompletion
             if (model != null)
             {
                 if (File.Exists(model.FileName))
-                    ASContext.MainForm.OpenEditableDocument(model.FileName, false);
+                    PluginBase.MainForm.OpenEditableDocument(model.FileName, false);
                 else
                 {
                     ASComplete.OpenVirtualFile(model);

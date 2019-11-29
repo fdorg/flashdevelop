@@ -69,15 +69,11 @@ namespace ASCompletion.Context
 
         #region static properties
 
-        public static IMainForm MainForm => PluginBase.MainForm;
-
         public static ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
 
         public static PluginUI Panel => plugin?.Panel;
 
         public static GeneralSettings CommonSettings => plugin.Settings as GeneralSettings;
-
-        public static string DataPath => plugin.DataPath;
 
         //static private int setCount = 0;
         public static IASContext Context
@@ -94,8 +90,8 @@ namespace ASCompletion.Context
                 }
                 //if (context.Settings != null) TraceManager.Add("Set context... " + (++setCount) + " " + context.Settings.LanguageId);
                 // Update toolbar/menus state depending on the context state
-                bool isValid = context.IsFileValid;
-                foreach (ToolStripItem item in plugin.MenuItems)
+                var isValid = context.IsFileValid;
+                foreach (var item in plugin.MenuItems)
                 {
                     item.Enabled = isValid;
                 }
@@ -211,7 +207,7 @@ namespace ASCompletion.Context
                     return false;
                 if (cFile.InlinedRanges is null || !(CurSciControl is { } sci)) return true;
                 var position = sci.CurrentPos;
-                foreach (InlineRange range in cFile.InlinedRanges)
+                foreach (var range in cFile.InlinedRanges)
                 {
                     if (position > range.Start && position < range.End) return true;
                 }
@@ -296,7 +292,7 @@ namespace ASCompletion.Context
         {
             if (lang is null) return null;
             lang = lang.ToLower();
-            foreach (RegisteredContext reg in allContexts)
+            foreach (var reg in allContexts)
             {
                 if (reg.Language == lang && reg.Inlined is null) return reg.Context;
             }
@@ -310,7 +306,7 @@ namespace ASCompletion.Context
         /// <param name="classpath">Additional classpath</param>
         public static void SetLanguageClassPath(ContextSetupInfos setup)
         {
-            foreach (RegisteredContext reg in allContexts)
+            foreach (var reg in allContexts)
             {
                 if (reg.Language == setup.Lang) reg.Context.Setup(setup);
             }
@@ -324,7 +320,7 @@ namespace ASCompletion.Context
             // reset previous contexts
             if (validContexts.Count > 0)
             {
-                foreach (IASContext oldcontext in validContexts)
+                foreach (var oldcontext in validContexts)
                     oldcontext.CurrentFile = null;
             }
             validContexts = new List<IASContext>();
@@ -367,7 +363,7 @@ namespace ASCompletion.Context
 
         internal static void SetCurrentLine(int line)
         {
-            ScintillaControl sci = CurSciControl;
+            var sci = CurSciControl;
             if (validContexts.Count == 0 || sci is null)
             {
                 HasContext = false;
@@ -1229,7 +1225,7 @@ namespace ASCompletion.Context
                 aClass = ResolveType(node.Text, CurrentModel);
                 if (!aClass.IsVoid() && File.Exists(aClass.InFile.FileName))
                 {
-                    MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
+                    PluginBase.MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
                     string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
                     ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
@@ -1246,7 +1242,7 @@ namespace ASCompletion.Context
             }
             else if (node.Tag is string tag)
             {
-                string[] info = tag.Split('@');
+                var info = tag.Split('@');
                 if (info.Length == 2 && int.TryParse(info[1], out var line))
                 {
                     ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
@@ -1306,15 +1302,13 @@ namespace ASCompletion.Context
         public bool BrowseTo(string package)
         {
             package = package.Replace('.',dirSeparatorChar);
-            foreach (PathModel aPath in classPath)
+            foreach (var aPath in classPath)
             {
-                string path = Path.Combine(aPath.Path, package);
-                if (Directory.Exists(path))
-                {
-                    DataEvent de = new DataEvent(EventType.Command, "FileExplorer.BrowseTo", path);
-                    EventManager.DispatchEvent(this, de);
-                    return de.Handled;
-                }
+                var path = Path.Combine(aPath.Path, package);
+                if (!Directory.Exists(path)) continue;
+                var de = new DataEvent(EventType.Command, "FileExplorer.BrowseTo", path);
+                EventManager.DispatchEvent(this, de);
+                return de.Handled;
             }
             return false;
         }
@@ -1433,7 +1427,7 @@ namespace ASCompletion.Context
             // no destination, replace text
             if (dest is null)
             {
-                MainForm.CallCommand("New", null);
+                PluginBase.MainForm.CallCommand("New", null);
                 if (CurSciControl is { } sci)
                 {
                     sci.CurrentPos = 0;
@@ -1455,12 +1449,12 @@ namespace ASCompletion.Context
         #endregion
 
         #region common tool methods
-        public static void SetStatusText(string text) => MainForm.StatusStrip.Items[0].Text = "  " + text;
+        public static void SetStatusText(string text) => PluginBase.MainForm.StatusStrip.Items[0].Text = "  " + text;
 
         protected static string GetStatusText()
         {
-            if (MainForm.StatusStrip.Items[0].Text.Length > 2)
-                return MainForm.StatusStrip.Items[0].Text.Substring(2);
+            if (PluginBase.MainForm.StatusStrip.Items[0].Text.Length > 2)
+                return PluginBase.MainForm.StatusStrip.Items[0].Text.Substring(2);
             return "";
         }
 
@@ -1549,7 +1543,7 @@ namespace ASCompletion.Context
     #region Completion cache
     public class CompletionCache
     {
-        private bool isDirty;
+        bool isDirty;
 
         public readonly string Package;
         public string Classname;
@@ -1583,7 +1577,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Build scintilla keywords from class names
         /// </summary>
-        private string GetKeywords()
+        string GetKeywords()
         {
             if (Elements is null) return string.Empty;
             var keywords = new List<string>();

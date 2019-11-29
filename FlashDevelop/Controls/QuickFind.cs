@@ -20,26 +20,26 @@ namespace FlashDevelop.Controls
 {
     public class QuickFind : ToolStripEx, IEventHandler
     {
-        private Color backColor;
-        private Timer highlightTimer;
-        private CheckBox wholeWordCheckBox;
-        private CheckBox highlightCheckBox;
-        private CheckBox matchCaseCheckBox;
-        private ToolStripButton nextButton;
-        private ToolStripButton closeButton;
-        private ToolStripControlHost wholeWordHost;
-        private ToolStripControlHost matchCaseHost;
-        private ToolStripControlHost highlightHost;
-        private ToolStripButton previousButton;
-        private ToolStripButton moreButton;
-        private EscapeTextBox findTextBox;
-        private ToolStripLabel findLabel;
-        private ToolStripLabel infoLabel;
-        private Timer typingTimer;
+        Color backColor;
+        Timer highlightTimer;
+        CheckBox wholeWordCheckBox;
+        CheckBox highlightCheckBox;
+        CheckBox matchCaseCheckBox;
+        ToolStripButton nextButton;
+        ToolStripButton closeButton;
+        ToolStripControlHost wholeWordHost;
+        ToolStripControlHost matchCaseHost;
+        ToolStripControlHost highlightHost;
+        ToolStripButton previousButton;
+        ToolStripButton moreButton;
+        EscapeTextBox findTextBox;
+        ToolStripLabel findLabel;
+        ToolStripLabel infoLabel;
+        Timer typingTimer;
 
         public QuickFind()
         {
-            Font = Globals.Settings.DefaultFont;
+            Font = PluginBase.MainForm.Settings.DefaultFont;
             InitializeComponent();
             InitializeGraphics();
             InitializeEvents();
@@ -51,7 +51,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Initializes the internals events
         /// </summary>
-        private void InitializeEvents() => EventManager.AddEventHandler(this, EventType.FileSwitch | EventType.ApplyTheme);
+        void InitializeEvents() => EventManager.AddEventHandler(this, EventType.FileSwitch | EventType.ApplyTheme);
 
         /// <summary>
         /// Handles the internal events
@@ -220,12 +220,12 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Initializes the graphics used in the control.
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
-            Color text = Globals.MainForm.GetThemeColor("QuickFind.ForeColor");
-            Color fore = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
-            Color back = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
-            bool useTheme = Globals.MainForm.GetThemeColor("QuickFind.BackColor") != Color.Empty;
+            Color text = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
+            Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
+            Color back = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
+            bool useTheme = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor") != Color.Empty;
             if (back != Color.Empty) backColor = findTextBox.BackColor = back;
             if (text != Color.Empty) infoLabel.ForeColor = text;
             if (fore != Color.Empty) findTextBox.ForeColor = fore;
@@ -248,7 +248,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Initializes the timers used in the control.
         /// </summary>
-        private void InitializeTimers()
+        void InitializeTimers()
         {
             typingTimer = new Timer();
             typingTimer.Tick += TypingTimerTick;
@@ -322,7 +322,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// If there is a word selected, insert it to the find box
         /// </summary>
-        private void UpdateFindText()
+        void UpdateFindText()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci != null && sci.SelText.Length > 0)
@@ -334,9 +334,9 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Update the match case globally if it's changed
         /// </summary>
-        private void MatchCaseCheckBoxCheckedChanged(object sender, EventArgs e)
+        void MatchCaseCheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            if (!Globals.Settings.DisableFindOptionSync)
+            if (!PluginBase.MainForm.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetMatchCase(this, matchCaseCheckBox.Checked);
             }
@@ -345,9 +345,9 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Update the whole word globally if it's changed
         /// </summary>
-        private void WholeWordCheckBoxCheckedChanged(object sender, EventArgs e)
+        void WholeWordCheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            if (!Globals.Settings.DisableFindOptionSync)
+            if (!PluginBase.MainForm.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetWholeWord(this, wholeWordCheckBox.Checked);
             }
@@ -357,7 +357,7 @@ namespace FlashDevelop.Controls
         /// Text into the main search textbox has changed, then 
         /// process with find next occurrence of the word
         /// </summary>
-        private void FindTextBoxTextChanged(object sender, EventArgs e)
+        void FindTextBoxTextChanged(object sender, EventArgs e)
         {
             if (PluginBase.MainForm.CurrentDocument.SciControl.TextLength > 30000)
             {
@@ -370,7 +370,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// When the typing timer ticks update the search
         /// </summary>
-        private void TypingTimerTick(object sender, EventArgs e)
+        void TypingTimerTick(object sender, EventArgs e)
         {
             typingTimer.Stop();
             if (findTextBox.Text.Length > 0)
@@ -392,7 +392,7 @@ namespace FlashDevelop.Controls
         /// Escape key has been pressed into the toolstriptextbox then 
         /// assign the current focus to the current scintilla control
         /// </summary>
-        private void FindTextBoxOnKeyEscape()
+        void FindTextBoxOnKeyEscape()
         {
             PluginBase.MainForm.CurrentDocument.Activate();
             CloseButtonClick(null, null);
@@ -401,7 +401,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Pressed key on the main textbox
         /// </summary>
-        private void FindTextBoxKeyPress(object sender, KeyPressEventArgs e)
+        void FindTextBoxKeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Return && findTextBox.Text.Length > 0)
             {
@@ -414,7 +414,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Timed highlight of all current items
         /// </summary>
-        private void HighlightTimerTick()
+        void HighlightTimerTick()
         {
             highlightTimer.Stop();
             if (highlightTimer.Tag is Hashtable hashtable)
@@ -435,7 +435,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Highlights or removes highlights for all results
         /// </summary>
-        private void HighlightAllCheckBoxClick(object sender, EventArgs e)
+        void HighlightAllCheckBoxClick(object sender, EventArgs e)
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (highlightCheckBox.Checked)
@@ -455,7 +455,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Finds the correct match based on the current position
         /// </summary>
-        private void FindCorrect(string text, bool refreshHighlights)
+        void FindCorrect(string text, bool refreshHighlights)
         {
             if (string.IsNullOrEmpty(text)) return;
             findTextBox.BackColor = backColor;
@@ -473,7 +473,7 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
+                findTextBox.BackColor = PluginBase.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
                 string message = TextHelper.GetString("Info.NoMatchesFound");
                 infoLabel.Text = message;
@@ -483,7 +483,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Finds the next match based on the current position
         /// </summary>
-        private void FindNext(string text, bool refreshHighlights)
+        void FindNext(string text, bool refreshHighlights)
         {
             if (text == "") return;
             findTextBox.BackColor = backColor;
@@ -501,7 +501,7 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
+                findTextBox.BackColor = PluginBase.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
                 string message = TextHelper.GetString("Info.NoMatchesFound");
                 infoLabel.Text = message;
@@ -511,7 +511,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Finds the previous match based on the current position
         /// </summary>
-        private void FindPrev(string text, bool refreshHighlights)
+        void FindPrev(string text, bool refreshHighlights)
         {
             if (text == "") return;
             findTextBox.BackColor = backColor;
@@ -529,7 +529,7 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
+                findTextBox.BackColor = PluginBase.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
                 string message = TextHelper.GetString("Info.NoMatchesFound");
                 infoLabel.Text = message;
@@ -541,9 +541,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         public void ApplyFixedDocumentPadding()
         {
-            foreach (ITabbedDocument castable in Globals.MainForm.Documents)
+            foreach (TabbedDocument document in PluginBase.MainForm.Documents)
             {
-                TabbedDocument document = castable as TabbedDocument;
                 if (document.IsEditable)
                 {
                     Rectangle find = RectangleToScreen(ClientRectangle);
@@ -557,7 +556,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Remove the status strip elements
         /// </summary>
-        private void CloseButtonClick(object sender, EventArgs e)
+        void CloseButtonClick(object sender, EventArgs e)
         {
             Hide();
             ApplyFixedDocumentPadding();
@@ -566,7 +565,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Open the Find And Replace dialog
         /// </summary>
-        private void MoreButtonClick(object sender, EventArgs e)
+        void MoreButtonClick(object sender, EventArgs e)
         {
             CloseButtonClick(null, null);
             PluginBase.MainForm.CallCommand("FindAndReplace", null);
@@ -575,7 +574,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Adds highlights to the correct sci control
         /// </summary>
-        private void AddHighlights(ScintillaControl sci, List<SearchMatch> matches)
+        void AddHighlights(ScintillaControl sci, List<SearchMatch> matches)
         {
             Language language = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
             sci.AddHighlights(matches, language.editorstyle.HighlightBackColor);
@@ -584,7 +583,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Refreshes the highlights
         /// </summary>
-        private void RefreshHighlights(ScintillaControl sci, List<SearchMatch> matches)
+        void RefreshHighlights(ScintillaControl sci, List<SearchMatch> matches)
         {
             sci.RemoveHighlights();
             if (highlightTimer.Enabled) highlightTimer.Stop();
@@ -597,7 +596,7 @@ namespace FlashDevelop.Controls
 
         /// Gets search results for a sci control
         /// </summary>
-        private List<SearchMatch> GetResults(ScintillaControl sci, string text)
+        List<SearchMatch> GetResults(ScintillaControl sci, string text)
         {
             string pattern = text;
             FRSearch search = new FRSearch(pattern);
@@ -614,12 +613,12 @@ namespace FlashDevelop.Controls
 
         public class QuickFindRenderer : ToolStripRenderer
         {
-            private ToolStrip toolStrip;
-            private readonly ToolStripRenderer renderer;
+            ToolStrip toolStrip;
+            readonly ToolStripRenderer renderer;
 
             public QuickFindRenderer()
             {
-                UiRenderMode renderMode = Globals.Settings.RenderMode;
+                UiRenderMode renderMode = PluginBase.MainForm.Settings.RenderMode;
                 if (renderMode == UiRenderMode.System) renderer = new ToolStripSystemRenderer();
                 else renderer = new DockPanelStripRenderer();
             }
@@ -654,7 +653,7 @@ namespace FlashDevelop.Controls
                 else if (item is ToolStripTextBox)
                 {
                     var textBox = item as ToolStripTextBox;
-                    Color border = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+                    Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
                     if (border != Color.Empty) // Are we theming?
                     {
                         textBox.Margin = new Padding(2, 1, 2, 1);
@@ -663,9 +662,9 @@ namespace FlashDevelop.Controls
                 }
             }
 
-            private void OnToolStripPaint(object sender, PaintEventArgs e)
+            void OnToolStripPaint(object sender, PaintEventArgs e)
             {
-                Color tborder = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+                Color tborder = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
                 foreach (ToolStripItem item in toolStrip.Items)
                 {
                     if (item is ToolStripTextBox && tborder != Color.Empty)
@@ -682,8 +681,8 @@ namespace FlashDevelop.Controls
             protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
             {
                 Rectangle r = e.AffectedBounds;
-                Color back = Globals.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
-                Color fore = Globals.MainForm.GetThemeColor("ToolStrip.3dLightColor");
+                Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
+                Color fore = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
                 e.Graphics.DrawLine(fore == Color.Empty ? SystemPens.ControlLightLight : new Pen(fore), r.Left, r.Top + 1, r.Right, r.Top + 1);
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), r.Left, r.Bottom - 1, r.Right, r.Bottom - 1);
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), r.Right - 1, r.Top, r.Right - 1, r.Bottom);
@@ -696,9 +695,9 @@ namespace FlashDevelop.Controls
                 if (renderer is ToolStripProfessionalRenderer)
                 {
                     bool isOver = false;
-                    Color back = Globals.MainForm.GetThemeColor("ToolStripItem.BackColor");
-                    Color border = Globals.MainForm.GetThemeColor("ToolStripItem.BorderColor");
-                    Color active = Globals.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
+                    Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
+                    Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
+                    Color active = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
                     if (e.Item is ToolStripButton)
                     {
                         ToolStripButton button = e.Item as ToolStripButton;
@@ -845,7 +844,7 @@ namespace FlashDevelop.Controls
                 return false;
             }
 
-            private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+            void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
             {
                 Keys ctrlAlt = Keys.Control | Keys.Alt;
                 if ((e.KeyData & ctrlAlt) == ctrlAlt) e.IsInputKey = true;

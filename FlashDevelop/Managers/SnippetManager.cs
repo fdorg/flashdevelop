@@ -15,24 +15,23 @@ using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
-    class SnippetManager
+    internal class SnippetManager
     {
         /// <summary>
         /// Gets a snippet from a file in the snippets directory
         /// </summary>
         public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            string global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
-            string specific = Path.Combine(PathHelper.SnippetDir, syntax, word + ".fds");
+            var specific = Path.Combine(PathHelper.SnippetDir, syntax, word + ".fds");
             if (File.Exists(specific))
             {
-                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
+                var info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-
+            var global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
             if (File.Exists(global))
             {
-                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
+                var info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
             return null;
@@ -41,25 +40,22 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Inserts text from the snippets class
         /// </summary>
-        public static bool InsertTextByWord(string word, bool emptyUndoBuffer)
+        public static bool InsertTextByWord(string word)
         {
-            ScintillaControl sci = Globals.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci is null) return false;
-            bool canShowList = false; 
+            var canShowList = false; 
             string snippet = null;
             if (word is null)
             {
                 canShowList = true;
                 word = sci.GetWordFromPosition(sci.CurrentPos);
             }
-            if (!string.IsNullOrEmpty(word))
-            {
-                snippet = GetSnippet(word, sci.ConfigurationLanguage, sci.Encoding);
-            }
+            if (!string.IsNullOrEmpty(word)) snippet = GetSnippet(word, sci.ConfigurationLanguage, sci.Encoding);
             // let plugins handle the snippet
-            Hashtable data = new Hashtable {["word"] = word, ["snippet"] = snippet};
-            DataEvent de = new DataEvent(EventType.Command, "SnippetManager.Expand", data);
-            EventManager.DispatchEvent(Globals.MainForm, de);
+            var data = new Hashtable {["word"] = word, ["snippet"] = snippet};
+            var de = new DataEvent(EventType.Command, "SnippetManager.Expand", data);
+            EventManager.DispatchEvent(PluginBase.MainForm, de);
             if (de.Handled) return true;
             snippet = (string)data["snippet"];
             if (!string.IsNullOrEmpty(sci.SelText))
@@ -129,7 +125,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// On completion list insert or cancel, reset the previous selection
         /// </summary>
-        private static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
+        static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
             CompletionList.OnInsert -= HandleListInsert;
             CompletionList.OnCancel -= HandleListInsert;
@@ -140,9 +136,9 @@ namespace FlashDevelop.Managers
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        private string snippet;
-        private readonly string fileName;
-        private Bitmap icon;
+        string snippet;
+        readonly string fileName;
+        Bitmap icon;
 
         public SnippetItem(string word, string fileName)
         {
@@ -182,7 +178,7 @@ namespace FlashDevelop.Managers
         {
             get
             {
-                SnippetManager.InsertTextByWord(Label, false);
+                SnippetManager.InsertTextByWord(Label);
                 return null;
             }
         }
@@ -192,7 +188,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public Bitmap Icon
         {
-            get => icon ??= (Bitmap) Globals.MainForm.FindImage("341");
+            get => icon ??= (Bitmap) PluginBase.MainForm.FindImage("341");
             set => icon = value;
         }
 
