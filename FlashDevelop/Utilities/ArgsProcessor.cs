@@ -167,10 +167,10 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenFile()
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
+            using var ofd = new OpenFileDialog();
             ofd.InitialDirectory = GetCurDir();
             ofd.Multiselect = false;
-            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
+            if (ofd.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return ofd.FileName;
             return string.Empty;
         }
         
@@ -180,7 +180,7 @@ namespace FlashDevelop.Utilities
         public static string GetSaveFile()
         {
             using var sfd = new SaveFileDialog {InitialDirectory = GetCurDir()};
-            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
+            if (sfd.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return sfd.FileName;
             return string.Empty;
         }
         
@@ -190,7 +190,7 @@ namespace FlashDevelop.Utilities
         public static string GetOpenDir()
         {
             using var fbd = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
-            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
+            if (fbd.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return fbd.SelectedPath;
             return string.Empty;
         }
         

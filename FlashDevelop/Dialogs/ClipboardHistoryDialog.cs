@@ -279,7 +279,7 @@ namespace FlashDevelop.Dialogs
             try
             {
                 current = new ClipboardHistoryDialog();
-                var dialogResult = current.ShowDialog(Globals.MainForm);
+                var dialogResult = current.ShowDialog(PluginBase.MainForm);
                 data = current.SelectedData;
                 return dialogResult == DialogResult.OK;
             }
