@@ -263,10 +263,10 @@ namespace FlashDevelop.Dialogs
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(Globals.MainForm.FindImage("341", false));
-            imageList.Images.Add(Globals.MainForm.FindImage("342", false));
-            imageList.Images.Add(Globals.MainForm.FindImage("50", false));
-            imageList.Images.Add(Globals.MainForm.FindImage("153", false)); // clear
+            imageList.Images.Add(PluginBase.MainForm.FindImage("341", false));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342", false));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("50", false));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("153", false)); // clear
             this.itemListView.SmallImageList = imageList;
             this.clearFilterButton.ImageList = imageList;
             this.clearFilterButton.ImageIndex = 3;

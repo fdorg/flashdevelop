@@ -65,7 +65,7 @@ namespace FlashDevelop.Dialogs
             InitializeGraphics();
             UpdateSettings();
 
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, Globals.MainForm.FindImage("209"));
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, PluginBase.MainForm.FindImage("209"));
         }
 
         #region Windows Form Designer Generated Code

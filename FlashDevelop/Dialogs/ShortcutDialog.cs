@@ -208,10 +208,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            this.pictureBox.Image = Globals.MainForm.FindImage16("229", false);
-            this.clearButton.Image = Globals.MainForm.FindImage16("153", false);
-            this.exportButton.Image = Globals.MainForm.FindImage16("55|9|3|3", false);
-            this.importButton.Image = Globals.MainForm.FindImage16("55|1|3|3", false);
+            this.pictureBox.Image = PluginBase.MainForm.FindImage16("229", false);
+            this.clearButton.Image = PluginBase.MainForm.FindImage16("153", false);
+            this.exportButton.Image = PluginBase.MainForm.FindImage16("55|9|3|3", false);
+            this.importButton.Image = PluginBase.MainForm.FindImage16("55|1|3|3", false);
         }
 
         /// <summary>
@@ -227,9 +227,9 @@ namespace FlashDevelop.Dialogs
             this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
             this.revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
             this.removeShortcut.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
-            this.removeShortcut.Image = Globals.MainForm.FindImage("153", false);
-            this.revertToDefault.Image = Globals.MainForm.FindImage("69", false);
-            this.revertAllToDefault.Image = Globals.MainForm.FindImage("224", false);
+            this.removeShortcut.Image = PluginBase.MainForm.FindImage("153", false);
+            this.revertToDefault.Image = PluginBase.MainForm.FindImage("69", false);
+            this.revertAllToDefault.Image = PluginBase.MainForm.FindImage("224", false);
             cms.Items.Add(this.removeShortcut);
             cms.Items.Add(this.revertToDefault);
             cms.Items.Add(this.revertAllToDefault);
