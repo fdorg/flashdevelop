@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -17,7 +18,7 @@ namespace FlashDevelop.Managers
         public static void UpdateFlaggedButtons()
         {
             int count = StripBarManager.Items.Count;
-            if (Globals.CurrentDocument is null) return;
+            if (PluginBase.MainForm.CurrentDocument is null) return;
             for (int i = 0; i < count; i++)
             {
                 var item = StripBarManager.Items[i];
@@ -144,7 +145,7 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("TracksBoolean"))
             {
-                bool value = (bool)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
+                bool value = (bool)((SettingObject)PluginBase.MainForm.Settings).GetValue(((ItemData)item.Tag).Tag);
                 if (!value) return false;
             }
             if (sci != null)
@@ -292,7 +293,7 @@ namespace FlashDevelop.Managers
                     ToolStripMenuItem item = new ToolStripMenuItem();
                     item.Click += Globals.MainForm.Reopen;
                     item.Tag = file; item.Text = PathHelper.GetCompactPath(file);
-                    if (i < Globals.Settings.MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
+                    if (i < ((SettingObject)PluginBase.MainForm.Settings).MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
                     else Globals.PreviousDocuments.Remove(file);
                 }
                 if (Globals.PreviousDocuments.Count > 0)
@@ -337,7 +338,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static string GetActiveEncodingName()
         {
-            ITabbedDocument document = Globals.CurrentDocument;
+            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document != null && document.IsEditable)
             {
                 int codepage = document.SciControl.Encoding.CodePage;

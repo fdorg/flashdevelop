@@ -15,34 +15,34 @@ namespace FlashDevelop.Dialogs
 {
     public class SettingDialog : SmartForm
     {
-        private string helpUrl;
-        private System.Windows.Forms.ListView itemListView;
-        private System.Windows.Forms.PictureBox infoPictureBox;
-        private System.Windows.Forms.ColumnHeader columnHeader;
-        private FlashDevelop.Controls.FilteredGrid itemPropertyGrid;
-        private System.Windows.Forms.ListViewGroup pluginsGroup;
-        private System.Windows.Forms.ListViewGroup mainGroup;
-        private System.Windows.Forms.CheckBox disableCheckBox;
-        private System.Windows.Forms.Button clearFilterButton;
-        private System.Windows.Forms.LinkLabel helpLabel;
-        private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.TextBox filterText;
-        private System.Windows.Forms.Label filterLabel;
-        private System.Windows.Forms.Label nameLabel;
-        private System.Windows.Forms.Label infoLabel;
-        private System.Windows.Forms.Label descLabel;
-        private readonly string itemFilter = string.Empty;
-        private readonly string itemName = string.Empty;
-        private static int lastItemIndex = 0;
-        private InstalledSDKContext sdkContext;
-        private static readonly Hashtable requireRestart = new Hashtable();
+        string helpUrl;
+        System.Windows.Forms.ListView itemListView;
+        System.Windows.Forms.PictureBox infoPictureBox;
+        System.Windows.Forms.ColumnHeader columnHeader;
+        FlashDevelop.Controls.FilteredGrid itemPropertyGrid;
+        System.Windows.Forms.ListViewGroup pluginsGroup;
+        System.Windows.Forms.ListViewGroup mainGroup;
+        System.Windows.Forms.CheckBox disableCheckBox;
+        System.Windows.Forms.Button clearFilterButton;
+        System.Windows.Forms.LinkLabel helpLabel;
+        System.Windows.Forms.Button closeButton;
+        System.Windows.Forms.TextBox filterText;
+        System.Windows.Forms.Label filterLabel;
+        System.Windows.Forms.Label nameLabel;
+        System.Windows.Forms.Label infoLabel;
+        System.Windows.Forms.Label descLabel;
+        readonly string itemFilter = string.Empty;
+        readonly string itemName = string.Empty;
+        static int lastItemIndex = 0;
+        InstalledSDKContext sdkContext;
+        static readonly Hashtable requireRestart = new Hashtable();
 
         public SettingDialog(string name, string filter)
         {
             this.itemName = name;
             this.itemFilter = filter;
             this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
+            this.Font = PluginBase.MainForm.Settings.DefaultFont;
             this.FormGuid = "48a75ac0-479a-49b9-8ec0-5db7c8d36388";
             this.InitializeComponent();
             this.InitializeGraphics(); 
@@ -58,7 +58,7 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.itemListView = new System.Windows.Forms.ListViewEx();
             this.filterText = new System.Windows.Forms.TextBoxEx();
@@ -258,7 +258,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -275,7 +275,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        private void ApplyLocalizedTexts()
+        void ApplyLocalizedTexts()
         {
             this.helpLabel.Text = TextHelper.GetString("Info.Help");
             this.Text = " " + TextHelper.GetString("Title.SettingDialog");
@@ -289,7 +289,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Initializes the setting object groups
         /// </summary>
-        private void InitializeItemGroups()
+        void InitializeItemGroups()
         {
             string mainHeader = TextHelper.GetString("Group.Main");
             string pluginsHeader = TextHelper.GetString("Group.Plugins");
@@ -303,7 +303,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// 
         /// </summary>
-        private void InitializeContextMenu()
+        void InitializeContextMenu()
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             ToolStripMenuItem collapseAll = new ToolStripMenuItem(TextHelper.GetString("Label.CollapseAll"));
@@ -320,7 +320,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Populates the plugin list
         /// </summary>
-        private void PopulatePluginList()
+        void PopulatePluginList()
         {
             this.itemListView.Items.Clear();
             int count = PluginServices.AvailablePlugins.Count;
@@ -333,7 +333,7 @@ namespace FlashDevelop.Dialogs
                 AvailablePlugin plugin = PluginServices.AvailablePlugins[i];
                 ListViewItem item = new ListViewItem(plugin.Instance.Name, 0);
                 item.Tag = plugin.Instance;
-                if (Globals.Settings.DisabledPlugins.Contains(plugin.Instance.Guid))
+                if (PluginBase.MainForm.Settings.DisabledPlugins.Contains(plugin.Instance.Guid))
                 {
                     item.ImageIndex = 1;
                 }
@@ -364,7 +364,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Selects the correct setting item
         /// </summary>
-        private void SelectCorrectItem(string itemName)
+        void SelectCorrectItem(string itemName)
         {
             for (int i = 0; i < this.itemListView.Items.Count; i++)
             {
@@ -380,7 +380,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the selected plugin in the prop grid
         /// </summary>
-        private void ItemListViewSelectedIndexChanged(object sender, EventArgs e)
+        void ItemListViewSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
@@ -401,7 +401,7 @@ namespace FlashDevelop.Dialogs
                 {
                     IPlugin plugin = (IPlugin)itemListView.SelectedItems[0].Tag;
                     sdkContext = new InstalledSDKContext(plugin as InstalledSDKOwner);
-                    this.disableCheckBox.Checked = Globals.Settings.DisabledPlugins.Contains(plugin.Guid);
+                    this.disableCheckBox.Checked = PluginBase.MainForm.Settings.DisabledPlugins.Contains(plugin.Guid);
                     this.itemPropertyGrid.SelectedObject = plugin.Settings;
                     this.itemPropertyGrid.Enabled = plugin.Settings != null;
                     this.descLabel.Text = plugin.Description;
@@ -427,7 +427,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Filter the currently selected property sheet according to the text on the filter box
         /// </summary>
-        private void FilterPropertySheet()
+        void FilterPropertySheet()
         {
             if (PlatformHelper.IsRunningOnMono()) return;
             object settingsObj = this.itemPropertyGrid.SelectedObject;
@@ -453,7 +453,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if a propery exist in a plugin
         /// </summary>
-        private bool CheckIfExist(IPlugin plugin, string text)
+        bool CheckIfExist(IPlugin plugin, string text)
         {
             if (plugin.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
@@ -476,7 +476,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if the property matches in any property infos
         /// </summary>
-        private bool PropertyMatches(PropertyInfo property, string text)
+        bool PropertyMatches(PropertyInfo property, string text)
         {
             if (property.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
@@ -517,7 +517,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When setting value has changed, dispatch event
         /// </summary>
-        private void PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        void PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
@@ -536,7 +536,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// 
         /// </summary>
-        private void UpdateRestartRequired(string key, object oldValue, object newValue)
+        void UpdateRestartRequired(string key, object oldValue, object newValue)
         {
             bool previous = requireRestart.Count > 0;
             if (requireRestart.Contains(key))
@@ -553,24 +553,24 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// 
         /// </summary>
-        private void UpdateInfo()
+        void UpdateInfo()
         {
             if (requireRestart.Count > 0)
             {
                 this.infoLabel.Text = TextHelper.GetString("Info.RequiresRestart");
-                this.infoPictureBox.Image = Globals.MainForm.FindImage("196", false);
+                this.infoPictureBox.Image = PluginBase.MainForm.FindImage("196", false);
             }
             else
             {
                 this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
-                this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
+                this.infoPictureBox.Image = PluginBase.MainForm.FindImage("229", false);
             }
         }
 
         /// <summary>
         /// Moves the info controls to correct position
         /// </summary>
-        private void MoveInfoControls()
+        void MoveInfoControls()
         {
             int dcbY = this.disableCheckBox.Location.Y;
             int dcbX = this.nameLabel.Location.X + this.nameLabel.Width + 13;
@@ -583,7 +583,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows or hides the info controls
         /// </summary>
-        private void ShowInfoControls(bool value)
+        void ShowInfoControls(bool value)
         {
             this.disableCheckBox.Visible = value;
             this.helpLabel.Visible = value;
@@ -592,7 +592,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Toggles the enabled state and saves it to settings
         /// </summary>
-        private void DisableCheckBoxCheck(object sender, EventArgs e)
+        void DisableCheckBoxCheck(object sender, EventArgs e)
         {
             int selectedIndex = this.itemListView.SelectedIndices[0];
             if (selectedIndex != 0)
@@ -602,12 +602,12 @@ namespace FlashDevelop.Dialogs
                 if (disabled)
                 {
                     this.itemListView.Items[selectedIndex].ImageIndex = 1;
-                    Globals.Settings.DisabledPlugins.Add(plugin.Guid);
+                    PluginBase.MainForm.Settings.DisabledPlugins.Add(plugin.Guid);
                 }
                 else
                 {
                     this.itemListView.Items[selectedIndex].ImageIndex = 0;
-                    Globals.Settings.DisabledPlugins.Remove(plugin.Guid);
+                    PluginBase.MainForm.Settings.DisabledPlugins.Remove(plugin.Guid);
                 }
                 UpdateRestartRequired(nameLabel.Text, !disabled, disabled);
             }
@@ -616,7 +616,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Populate plugin list before dialog is shown
         /// </summary>
-        private void DialogLoad(object sender, EventArgs e)
+        void DialogLoad(object sender, EventArgs e)
         {
             this.PopulatePluginList();
         }
@@ -624,7 +624,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Restore the selected index - only if an item id hasn't been provided
         /// </summary>
-        private void DialogShown(object sender, EventArgs e)
+        void DialogShown(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.itemName) || this.itemName == DistroConfig.DISTRIBUTION_NAME)
             {
@@ -637,7 +637,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Save the last selected index to a static var
         /// </summary>
-        private void DialogClosing(object sender, FormClosingEventArgs e)
+        void DialogClosing(object sender, FormClosingEventArgs e)
         {
             lastItemIndex = itemListView.SelectedIndices.Count > 0 ? itemListView.SelectedIndices[0] : 0;
         }
@@ -645,19 +645,19 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When the form is closed applies settings
         /// </summary>
-        private void DialogClosed(object sender, FormClosedEventArgs e)
+        void DialogClosed(object sender, FormClosedEventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;  // Enough for our sync code
             sdkContext?.Dispose();
             Globals.MainForm.ApplyAllSettings();
             Globals.MainForm.SaveSettings();
-            if (requireRestart.Count > 0 && !Globals.MainForm.RequiresRestart) Globals.MainForm.RestartRequired();
+            if (requireRestart.Count > 0 && !PluginBase.MainForm.RequiresRestart) Globals.MainForm.RestartRequired();
         }
 
         /// <summary>
         /// Event for changing the filter text
         /// </summary>
-        private void FilterTextTextChanged(object sender, EventArgs e)
+        void FilterTextTextChanged(object sender, EventArgs e)
         {
             this.PopulatePluginList();
             this.FilterPropertySheet();
@@ -666,7 +666,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Event for pressing the filter clear button
         /// </summary>
-        private void ClearFilterButtonClick(object sender, EventArgs e)
+        void ClearFilterButtonClick(object sender, EventArgs e)
         {
             this.filterText.Text = "";
         }
@@ -674,34 +674,29 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Browses to the specified help url
         /// </summary>
-        private void HelpLabelClick(object sender, LinkLabelLinkClickedEventArgs e)
+        void HelpLabelClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (this.helpUrl != null)
             {
-                Globals.MainForm.CallCommand("Browse", this.helpUrl);
+                PluginBase.MainForm.CallCommand("Browse", this.helpUrl);
             }
         }
 
         /// <summary>
         /// Closes the setting dialog
         /// </summary>
-        private void CloseButtonClick(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        void CloseButtonClick(object sender, EventArgs e) => this.Close();
 
         /// <summary>
         /// Shows the settings dialog
         /// </summary>
         public static void Show(string itemName, string filter)
         {
-            using SettingDialog settingDialog = new SettingDialog(itemName, filter);
+            using var settingDialog = new SettingDialog(itemName, filter);
             settingDialog.closeButton.Select();
             settingDialog.ShowDialog();
         }
 
         #endregion
-
     }
-
 }

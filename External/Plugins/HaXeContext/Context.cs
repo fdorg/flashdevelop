@@ -2322,8 +2322,8 @@ namespace HaXeContext
             try
             {
                 // save modified files if needed
-                if (outputFile is null) MainForm.CallCommand("SaveAllModified", ".hx");
-                else MainForm.CallCommand("SaveAllModified", null);
+                if (outputFile is null) PluginBase.MainForm.CallCommand("SaveAllModified", ".hx");
+                else PluginBase.MainForm.CallCommand("SaveAllModified", null);
 
                 // change current directory
                 var currentPath = Directory.GetCurrentDirectory();
@@ -2351,7 +2351,7 @@ namespace HaXeContext
                 command = command.Replace(filePath, "");
 
                 // run
-                MainForm.CallCommand("RunProcessCaptured", command + " " + append);
+                PluginBase.MainForm.CallCommand("RunProcessCaptured", command + " " + append);
                 // restaure current directory
                 if (Directory.GetCurrentDirectory() == filePath)
                     Directory.SetCurrentDirectory(currentPath);
@@ -2391,7 +2391,7 @@ namespace HaXeContext
             try
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
-                command = " " + MainForm.ProcessArgString(command) + " ";
+                command = " " + PluginBase.MainForm.ProcessArgString(command) + " ";
                 if (string.IsNullOrEmpty(command))
                 {
                     if (!failSilently)
@@ -2497,7 +2497,7 @@ namespace HaXeContext
             var cwd = Directory.GetCurrentDirectory();
             nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
                 .ToList()
-                .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+                .ForEach(it => PluginBase.MainForm.CallCommand("RunProcessCaptured", it));
         }
 
         internal void InstallLixLibrary(Dictionary<string, string> nameToVersion)

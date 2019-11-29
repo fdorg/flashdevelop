@@ -670,7 +670,7 @@ namespace ASCompletion.Completion
             if (model != ASContext.Context.CurrentModel)
             {
                 if (model.FileName.Length > 0 && File.Exists(model.FileName))
-                    ASContext.MainForm.OpenEditableDocument(model.FileName, false);
+                    PluginBase.MainForm.OpenEditableDocument(model.FileName, false);
                 else
                 {
                     OpenVirtualFile(model);
@@ -730,7 +730,7 @@ namespace ASCompletion.Completion
             var ext = Path.GetExtension(model.FileName);
             if (string.IsNullOrEmpty(ext)) ext = model.Context.GetExplorerMask()[0].Replace("*", string.Empty);
             var dummyFile = Path.Combine(Path.GetDirectoryName(model.FileName), "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
-            foreach (var doc in ASContext.MainForm.Documents)
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
                 if (doc.FileName == dummyFile)
                 {
@@ -742,7 +742,7 @@ namespace ASCompletion.Completion
             model.Members.Sort();
             foreach (var aClass in model.Classes) aClass.Members.Sort();
             var src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
-            if (ASContext.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp && tmp.IsEditable) 
+            if (PluginBase.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp && tmp.IsEditable) 
             {
                 // The model document will be read only
                 tmp.SciControl.IsReadOnly = true;
@@ -1014,7 +1014,7 @@ namespace ASCompletion.Completion
                     // call the command
                     try
                     {
-                        ASContext.MainForm.CallCommand("RunProcess", cmd);
+                        PluginBase.MainForm.CallCommand("RunProcess", cmd);
                     }
                     catch (Exception ex)
                     {

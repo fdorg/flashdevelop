@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.ComponentModel;
+using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
@@ -13,18 +14,18 @@ namespace FlashDevelop.Dialogs
 {
     public class UpdateDialog : SmartForm
     {
-        private UpdateInfo updateInfo = null;
-        private System.Windows.Forms.Label infoLabel;
-        private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Button downloadButton;
-        private System.ComponentModel.BackgroundWorker worker;
-        private readonly string URL = DistroConfig.DISTRIBUTION_VERSION;
-        private static bool silentCheck = false;
+        UpdateInfo updateInfo = null;
+        System.Windows.Forms.Label infoLabel;
+        System.Windows.Forms.Button closeButton;
+        System.Windows.Forms.Button downloadButton;
+        System.ComponentModel.BackgroundWorker worker;
+        const string URL = DistroConfig.DISTRIBUTION_VERSION;
+        static bool silentCheck = false;
 
         public UpdateDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
+            this.Font = PluginBase.MainForm.Settings.DefaultFont;
             this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
@@ -37,7 +38,7 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.downloadButton = new System.Windows.Forms.ButtonEx();
             this.infoLabel = new System.Windows.Forms.Label();
@@ -108,7 +109,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary> 
-        private void ApplyLocalizedTexts()
+        void ApplyLocalizedTexts()
         {
             this.Text = " " + TextHelper.GetString("Title.UpdateDialog");
             this.infoLabel.Text = TextHelper.GetString("Info.CheckingUpdates");
@@ -119,12 +120,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Downloads the new flashdevelop release
         /// </summary>
-        private void DownloadButtonClick(object sender, EventArgs e)
+        void DownloadButtonClick(object sender, EventArgs e)
         {
             try
             {
-                string address = this.updateInfo.DownloadUrl;
-                ProcessHelper.StartAsync(address);
+                ProcessHelper.StartAsync(this.updateInfo.DownloadUrl);
             }
             catch (Exception ex)
             {
@@ -136,7 +136,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When the form is closed cancel the update check
         /// </summary>
-        private void DialogClosed(object sender, FormClosedEventArgs e)
+        void DialogClosed(object sender, FormClosedEventArgs e)
         {
             if (this.worker.IsBusy)
             {
@@ -147,18 +147,15 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog when user clicks buttons
         /// </summary>
-        private void CloseButtonClick(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        void CloseButtonClick(object sender, EventArgs e) => this.Close();
 
         /// <summary>
         /// Startups the update check
         /// </summary>
-        private void InitializeUpdating()
+        void InitializeUpdating()
         {
             this.worker = new BackgroundWorker();
-            this.worker.DoWork += this.WorkerDoWork;
+            this.worker.DoWork += WorkerDoWork;
             this.worker.RunWorkerCompleted += this.WorkerCompleted;
             this.worker.WorkerSupportsCancellation = true;
             this.worker.RunWorkerAsync();
@@ -167,20 +164,21 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Does the actual work on background
         /// </summary>
-        private void WorkerDoWork(object sender, DoWorkEventArgs e)
+        static void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
-                WebRequest request = WebRequest.Create(URL);
-                WebResponse response = request.GetResponse();
-                Stream stream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(stream);
-                string version = reader.ReadLine(); // Read version
-                string download = reader.ReadLine(); // Read download
-                string product = Application.ProductName; // Internal version
-                int lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
-                string current = product.Substring(lenght, product.IndexOfOrdinal(" for") - lenght);
-                stream.Close(); response.Close(); // Close all resources
+                var request = WebRequest.Create(URL);
+                var response = request.GetResponse();
+                var stream = response.GetResponseStream();
+                using var reader = new StreamReader(stream);
+                var version = reader.ReadLine(); // Read version
+                var download = reader.ReadLine(); // Read download
+                var product = Application.ProductName; // Internal version
+                var length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
+                var current = product.Substring(length, product.IndexOfOrdinal(" for") - length);
+                stream.Close();
+                response.Close(); // Close all resources
                 e.Result = new UpdateInfo(current, version, download);
             }
             catch (Exception ex)
@@ -193,7 +191,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Handles the finish of the update check
         /// </summary>
-        private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.updateInfo = (UpdateInfo)e.Result;
             if (this.updateInfo is null)
@@ -253,7 +251,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Parses the needs update value from the version strings
         /// </summary>
-        private void ParseNeedsUpdate()
+        void ParseNeedsUpdate()
         {
             try
             {

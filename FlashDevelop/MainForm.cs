@@ -664,12 +664,12 @@ namespace FlashDevelop
         /// </summary>
         void InitializeRendering()
         {
-            if (Globals.Settings.RenderMode == UiRenderMode.System)
+            if (PluginBase.MainForm.Settings.RenderMode == UiRenderMode.System)
             {
                 ToolStripManager.VisualStylesEnabled = true;
                 ToolStripManager.RenderMode = ToolStripManagerRenderMode.System;
             }
-            else if (Globals.Settings.RenderMode == UiRenderMode.Professional)
+            else if (PluginBase.MainForm.Settings.RenderMode == UiRenderMode.Professional)
             {
                 ToolStripManager.VisualStylesEnabled = false;
                 ToolStripManager.RenderMode = ToolStripManagerRenderMode.Professional;
@@ -842,10 +842,10 @@ namespace FlashDevelop
                 ToolStripPanel.Controls.Add(ToolStrip);
                 ToolStripPanel.Controls.Add(MenuStrip);
             }
-            TabMenu.Font = Globals.Settings.DefaultFont;
-            ToolStrip.Font = Globals.Settings.DefaultFont;
-            MenuStrip.Font = Globals.Settings.DefaultFont;
-            EditorMenu.Font = Globals.Settings.DefaultFont;
+            TabMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
+            ToolStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
+            MenuStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
+            EditorMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
             TabMenu.Renderer = new DockPanelStripRenderer(false);
             EditorMenu.Renderer = new DockPanelStripRenderer(false);
             MenuStrip.Renderer = new DockPanelStripRenderer(false);
@@ -914,7 +914,7 @@ namespace FlashDevelop
             StatusStrip.Items.Add(StatusLabel);
             StatusStrip.Items.Add(ProgressLabel);
             StatusStrip.Items.Add(toolStripProgressBar);
-            StatusStrip.Font = Globals.Settings.DefaultFont;
+            StatusStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
             StatusStrip.Renderer = new DockPanelStripRenderer(false);
             StatusStrip.Stretch = true;
             // 
@@ -1084,7 +1084,7 @@ namespace FlashDevelop
                 ClosingEntirely = false;
                 e.Cancel = true;
             }
-            if (!e.Cancel && Globals.Settings.ConfirmOnExit)
+            if (!e.Cancel && PluginBase.MainForm.Settings.ConfirmOnExit)
             {
                 string title = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.AreYouSureToExit");
@@ -1426,7 +1426,7 @@ namespace FlashDevelop
                 int y = unchecked((short)((long)m.LParam >> 16));
                 var hWnd = Win32.WindowFromPoint(new Point(x, y));
                 if (hWnd == IntPtr.Zero) return false;
-                var doc = Globals.CurrentDocument;
+                var doc = PluginBase.MainForm.CurrentDocument;
                 if (FromHandle(hWnd) != null)
                 {
                     Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
@@ -2163,7 +2163,7 @@ namespace FlashDevelop
                 var lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
                 processed = Regex.Replace(processed, @"\r\n?|\n", lineEndChar);
                 var actionPoint = SnippetHelper.ProcessActionPoint(processed);
-                FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, Globals.Settings.SaveUnicodeWithBOM);
+                FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, PluginBase.MainForm.Settings.SaveUnicodeWithBOM);
                 if (actionPoint.EntryPosition != -1)
                 {
                     if (Documents.Length == 1 && Documents[0].IsUntitled)
@@ -2662,8 +2662,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindNext(object sender, EventArgs e)
         {
-            bool update = !Globals.Settings.DisableFindTextUpdating;
-            bool simple = !Globals.Settings.DisableSimpleQuickFind && !quickFind.Visible;
+            bool update = !PluginBase.MainForm.Settings.DisableFindTextUpdating;
+            bool simple = !PluginBase.MainForm.Settings.DisableSimpleQuickFind && !quickFind.Visible;
             frInDocDialog.FindNext(true, update, simple);
         }
 
@@ -2672,8 +2672,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindPrevious(object sender, EventArgs e)
         {
-            bool update = !Globals.Settings.DisableFindTextUpdating;
-            bool simple = !Globals.Settings.DisableSimpleQuickFind && !quickFind.Visible;
+            bool update = !PluginBase.MainForm.Settings.DisableFindTextUpdating;
+            bool simple = !PluginBase.MainForm.Settings.DisableSimpleQuickFind && !quickFind.Visible;
             frInDocDialog.FindNext(false, update, simple);
         }
 
@@ -3193,7 +3193,7 @@ namespace FlashDevelop
             {
                 ToolStripItem button = (ToolStripItem)sender;
                 string word = (((ItemData)button.Tag).Tag);
-                SnippetManager.InsertTextByWord(word != "null" ? word : null, false);
+                SnippetManager.InsertTextByWord(word != "null" ? word : null);
             }
             catch (Exception ex)
             {

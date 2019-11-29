@@ -15,7 +15,6 @@ namespace FlashDevelop.Dialogs
 {
     public class ArgumentDialog : SmartForm
     {
-        static List<Argument> arguments;
         Label keyLabel;
         Label infoLabel;
         Label valueLabel;
@@ -33,13 +32,13 @@ namespace FlashDevelop.Dialogs
 
         static ArgumentDialog()
         {
-            arguments = new List<Argument>();
+            CustomArguments = new List<Argument>();
         }
 
         public ArgumentDialog()
         {
             Owner = Globals.MainForm;
-            Font = Globals.Settings.DefaultFont;
+            Font = PluginBase.MainForm.Settings.DefaultFont;
             FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
             InitializeComponent();
             InitializeItemGroups();
@@ -137,7 +136,7 @@ namespace FlashDevelop.Dialogs
             //
             valueTextBox.AcceptsTab = true;
             valueTextBox.AcceptsReturn = true;
-            valueTextBox.Font = Globals.Settings.ConsoleFont;
+            valueTextBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
             valueTextBox.ScrollBars = ScrollBars.Vertical;
             valueTextBox.Location = new Point(14, 77);
             valueTextBox.Multiline = true;
@@ -231,11 +230,11 @@ namespace FlashDevelop.Dialogs
         #endregion
 
         #region Methods And Event Handlers
-        
+
         /// <summary>
         /// List of all custom arguments
         /// </summary>
-        public static List<Argument> CustomArguments => arguments;
+        public static List<Argument> CustomArguments { get; private set; }
 
         /// <summary>
         /// Initializes the external graphics
@@ -343,7 +342,7 @@ namespace FlashDevelop.Dialogs
             }
             item.Tag = argument; 
             item.Selected = true;
-            arguments.Add(argument);
+            CustomArguments.Add(argument);
         }
 
         /// <summary>
@@ -361,7 +360,7 @@ namespace FlashDevelop.Dialogs
             {
                 argsListView.Items.Remove(item);
                 Argument argument = item.Tag as Argument;
-                arguments.Remove(argument);
+                CustomArguments.Remove(argument);
             }
             argsListView.EndUpdate();
             if (argsListView.Items.Count > 0)
@@ -404,8 +403,7 @@ namespace FlashDevelop.Dialogs
                 valueTextBox.Enabled = false;
                 keyTextBox.Enabled = false;
             }
-            if (argsListView.SelectedItems.Count == 0) deleteButton.Enabled = false;
-            else deleteButton.Enabled = true;
+            deleteButton.Enabled = argsListView.SelectedItems.Count != 0;
         }
 
         /// <summary>
@@ -430,9 +428,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ExportArguments(object sender, EventArgs e)
         {
-            using SaveFileDialog sfd = new SaveFileDialog();
+            using var sfd = new SaveFileDialog();
             sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            sfd.InitialDirectory = Globals.MainForm.WorkingDirectory;
+            sfd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 List<Argument> args = new List<Argument>();
@@ -449,29 +447,29 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ImportArguments(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
+            using var ofd = new OpenFileDialog();
             ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            ofd.InitialDirectory = Globals.MainForm.WorkingDirectory;
+            ofd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 List<Argument> args = new List<Argument>();
                 args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
-                arguments.AddRange(args); // Append imported
-                PopulateArgumentList(arguments);
+                CustomArguments.AddRange(args); // Append imported
+                PopulateArgumentList(CustomArguments);
             }
         }
 
         /// <summary>
         /// Loads the arguments from the settings
         /// </summary>
-        void DialogLoad(object sender, EventArgs e) => PopulateArgumentList(arguments);
+        void DialogLoad(object sender, EventArgs e) => PopulateArgumentList(CustomArguments);
 
         /// <summary>
         /// Shows the argument dialog
         /// </summary>
         public new static void Show()
         {
-            using ArgumentDialog argumentDialog = new ArgumentDialog();
+            using var argumentDialog = new ArgumentDialog();
             argumentDialog.ShowDialog();
         }
 
@@ -487,12 +485,12 @@ namespace FlashDevelop.Dialogs
             string file = FileNameHelper.UserArgData;
             if (File.Exists(file))
             {
-                object data = ObjectSerializer.Deserialize(file, arguments, false);
-                arguments = (List<Argument>)data;
+                object data = ObjectSerializer.Deserialize(file, CustomArguments, false);
+                CustomArguments = (List<Argument>)data;
             }
-            if (!File.Exists(file) || arguments.Count == 0)
+            if (!File.Exists(file) || CustomArguments.Count == 0)
             {
-                arguments.Add(new Argument("DefaultUser", "..."));
+                CustomArguments.Add(new Argument("DefaultUser", "..."));
             }
         }
 
@@ -502,11 +500,10 @@ namespace FlashDevelop.Dialogs
         public static void SaveCustomArguments()
         {
             string file = FileNameHelper.UserArgData;
-            ObjectSerializer.Serialize(file, arguments);
+            ObjectSerializer.Serialize(file, CustomArguments);
         }
 
         #endregion
 
     }
-
 }

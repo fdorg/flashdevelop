@@ -8,6 +8,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
 using FlashDevelop.Managers;
 using FlashDevelop.Controls;
+using FlashDevelop.Settings;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
@@ -19,13 +20,13 @@ namespace FlashDevelop.Docking
 {
     public class TabbedDocument : DockContent, ITabbedDocument
     {
-        private readonly Timer focusTimer;
-        private Timer backupTimer;
-        private string previousText;
-        private readonly List<int> bookmarks;
-        private ScintillaControl lastEditor;
-        private bool isModified;
-        private FileInfo fileInfo;
+        readonly Timer focusTimer;
+        Timer backupTimer;
+        string previousText;
+        readonly List<int> bookmarks;
+        ScintillaControl lastEditor;
+        bool isModified;
+        FileInfo fileInfo;
 
         public TabbedDocument()
         {
@@ -35,8 +36,8 @@ namespace FlashDevelop.Docking
             focusTimer.Tick += OnFocusTimer;
             ControlAdded += DocumentControlAdded;
             UITools.Manager.OnMarkerChanged += OnMarkerChanged;
-            DockPanel = Globals.MainForm.DockPanel;
-            Font = Globals.Settings.DefaultFont;
+            DockPanel = PluginBase.MainForm.DockPanel;
+            Font = PluginBase.MainForm.Settings.DefaultFont;
             DockAreas = DockAreas.Document;
             BackColor = Color.White;
             UseCustomIcon = false;
@@ -103,7 +104,7 @@ namespace FlashDevelop.Docking
             get
             {
                 int count = 0;
-                foreach (ITabbedDocument document in Globals.MainForm.Documents)
+                foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
                 {
                     if (document.DockHandler.PanelPane == DockHandler.PanelPane) count++;
                 }
@@ -196,7 +197,8 @@ namespace FlashDevelop.Docking
             }
             ButtonManager.UpdateFlaggedButtons();
         }
-        private void OnFocusTimer(object sender, EventArgs e)
+
+        void OnFocusTimer(object sender, EventArgs e)
         {
             focusTimer.Stop();
             if (SciControl != null && DockPanel.ActiveContent != null && DockPanel.ActiveContent == this)
@@ -209,7 +211,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// 
         /// </summary>
-        private void OnMarkerChanged(ScintillaControl sci, int line)
+        void OnMarkerChanged(ScintillaControl sci, int line)
         {
             if (sci != SplitSci1 && sci != SplitSci2) return;
             if (line == -1) // all markers cleared
@@ -267,7 +269,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Syncs both of the scintilla editors
         /// </summary>
-        private void EditorUpdateSync(ScintillaControl sender)
+        void EditorUpdateSync(ScintillaControl sender)
         {
             if (!IsEditable) return;
             ScintillaControl e1 = SplitSci1;
@@ -287,7 +289,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// When the user changes to sci, block events from inactive sci
         /// </summary>
-        private void EditorFocusChanged(ScintillaControl sender)
+        void EditorFocusChanged(ScintillaControl sender)
         {
             if (sender.IsFocus)
             {
@@ -402,12 +404,12 @@ namespace FlashDevelop.Docking
             {
                 string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.AreYouSureToReload");
-                if (MessageBox.Show(Globals.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
+                if (MessageBox.Show(PluginBase.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             Globals.MainForm.ReloadingDocument = true;
             int position = SciControl.CurrentPos;
             TextEvent te = new TextEvent(EventType.FileReload, FileName);
-            EventManager.DispatchEvent(Globals.MainForm, te);
+            EventManager.DispatchEvent(PluginBase.MainForm, te);
             if (!te.Handled)
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(FileName);
@@ -452,9 +454,9 @@ namespace FlashDevelop.Docking
             {
                 string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.AreYouSureToRevert");
-                if (MessageBox.Show(Globals.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
+                if (MessageBox.Show(PluginBase.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
-            TextEvent te = new TextEvent(EventType.FileRevert, Globals.SciControl.FileName);
+            TextEvent te = new TextEvent(EventType.FileRevert, PluginBase.MainForm.CurrentDocument.SciControl.FileName);
             EventManager.DispatchEvent(this, te);
             if (!te.Handled)
             {
@@ -466,18 +468,18 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Starts the backup process timing
         /// </summary> 
-        private void StartBackupTiming()
+        void StartBackupTiming()
         {
             backupTimer = new Timer();
             backupTimer.Tick += BackupTimerTick;
-            backupTimer.Interval = Globals.Settings.BackupInterval;
+            backupTimer.Interval = ((SettingObject)PluginBase.MainForm.Settings).BackupInterval;
             backupTimer.Start();
         }
 
         /// <summary>
         /// Saves a backup file after an interval
         /// </summary> 
-        private void BackupTimerTick(object sender, EventArgs e)
+        void BackupTimerTick(object sender, EventArgs e)
         {
             if (IsEditable && !IsUntitled && IsModified && previousText != SciControl.Text)
             {
@@ -489,13 +491,13 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Automatically updates the document icon
         /// </summary>
-        private void UpdateDocumentIcon(string file)
+        void UpdateDocumentIcon(string file)
         {
             if (UseCustomIcon) return;
             if (Win32.ShouldUseWin32() && !IsBrowsable) Icon = IconExtractor.GetFileIcon(file, true);
             else
             {
-                Image image = Globals.MainForm.FindImage("480", false);
+                var image = PluginBase.MainForm.FindImage("480", false);
                 Icon = ImageKonverter.ImageToIcon(image);
                 UseCustomIcon = true;
             }
@@ -525,15 +527,12 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Updates the document's tooltip
         /// </summary>
-        private void UpdateToolTipText()
-        {
-            ToolTipText = !IsEditable ? "" : FileName;
-        }
+        void UpdateToolTipText() => ToolTipText = !IsEditable ? "" : FileName;
 
         /// <summary>
         /// Updates the document icon when a control is added
         /// </summary>
-        private void DocumentControlAdded(object sender, ControlEventArgs e)
+        void DocumentControlAdded(object sender, ControlEventArgs e)
         {
             UpdateToolTipText();
             UpdateDocumentIcon(FileName);
@@ -547,8 +546,5 @@ namespace FlashDevelop.Docking
             base.Close();
             ButtonManager.UpdateFlaggedButtons();
         }
-
     }
-
 }
-

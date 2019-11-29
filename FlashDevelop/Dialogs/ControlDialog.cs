@@ -27,7 +27,7 @@ namespace FlashDevelop.Dialogs
             ScrollBarEx.Attach(this, true);
             ScrollBarEx.Attach(this.dataGridViewEx);
             PluginBase.MainForm.ThemeControls(this);
-            this.BackColor = Globals.MainForm.GetThemeColor("Form.BackColor", SystemColors.Control);
+            this.BackColor = PluginBase.MainForm.GetThemeColor("Form.BackColor", SystemColors.Control);
             for (var i = 0; i < 30; i++)
             {
                 var msg = "Hello from the other side of the moon " + i;

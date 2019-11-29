@@ -205,7 +205,7 @@ namespace ASCompletion
             EventManager.DispatchEvent(sender, de); 
         }
 
-        public System.Drawing.Image GetIcon(int index)
+        public Image GetIcon(int index)
         {
             if (treeIcons.Images.Count > 0)
                 return treeIcons.Images[Math.Min(index, treeIcons.Images.Count)];
@@ -865,9 +865,9 @@ namespace ASCompletion
             var sci = ASContext.CurSciControl;
             var ctx = ASContext.Context;
             var hasInference = ctx.Features.hasInference;
-            for (var i = 0; i < members.Count; i++)
+            foreach (var it in members)
             {
-                var member = members[i];
+                var member = it;
                 var img = GetIcon(member.Flags, member.Access);
                 if (hasInference && string.IsNullOrEmpty(member.Type))
                 {
@@ -1037,7 +1037,7 @@ namespace ASCompletion
             }
         }
 
-        bool IsMatch(string inputText, string searchText)
+        static bool IsMatch(string inputText, string searchText)
         {
             if (inputText is null || searchText == "")
             {
@@ -1153,7 +1153,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        TreeNode FindMatch(IEnumerable nodes)
+        static TreeNode FindMatch(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {

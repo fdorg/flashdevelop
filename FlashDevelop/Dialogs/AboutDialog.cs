@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Helpers;
+using FlashDevelop.Settings;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
@@ -18,7 +20,7 @@ namespace FlashDevelop.Dialogs
         public AboutDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
+            this.Font = PluginBase.MainForm.Settings.DefaultFont;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();

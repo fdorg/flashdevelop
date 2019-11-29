@@ -79,20 +79,18 @@ namespace ASCompletion.Completion
         /// </summary>
         class TagItem : ICompletionListItem
         {
-            readonly string label;
-            
             public TagItem(string label) 
             {
-                this.label = label;
+                Label = label;
             }
-            
-            public string Label => label;
+
+            public string Label { get; }
 
             public string Description => TextHelper.GetString("Label.DocTagTemplate");
 
             public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION);
 
-            public string Value => label;
+            public string Value => Label;
         }
         #endregion
         
@@ -354,5 +352,4 @@ namespace ASCompletion.Completion
         }
         #endregion
     }
-
 }
