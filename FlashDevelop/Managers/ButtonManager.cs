@@ -6,7 +6,6 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
@@ -17,8 +16,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateFlaggedButtons()
         {
-            int count = StripBarManager.Items.Count;
             if (PluginBase.MainForm.CurrentDocument is null) return;
+            int count = StripBarManager.Items.Count;
             for (int i = 0; i < count; i++)
             {
                 var item = StripBarManager.Items[i];
@@ -36,9 +35,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static bool ValidateFlagAction(ToolStripItem item, string action)
         {
-            IMainForm mainForm = PluginBase.MainForm;
-            ITabbedDocument document = mainForm.CurrentDocument;
-            ScintillaControl sci = document.SciControl;
+            var mainForm = PluginBase.MainForm;
+            var document = mainForm.CurrentDocument;
             if (action.Contains("!IsEditable"))
             {
                 if (document.IsEditable) return false;
@@ -148,6 +146,7 @@ namespace FlashDevelop.Managers
                 bool value = (bool)((SettingObject)PluginBase.MainForm.Settings).GetValue(((ItemData)item.Tag).Tag);
                 if (!value) return false;
             }
+            var sci = document.SciControl;
             if (sci != null)
             {
                 if (action.Contains("!CanUndo"))
@@ -287,16 +286,16 @@ namespace FlashDevelop.Managers
             {
                 ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 reopenMenu.DropDownItems.Clear();
-                for (int i = 0; i < Globals.PreviousDocuments.Count; i++)
+                for (int i = 0; i < PluginBase.MainForm.Settings.PreviousDocuments.Count; i++)
                 {
-                    string file = Globals.PreviousDocuments[i];
+                    string file = PluginBase.MainForm.Settings.PreviousDocuments[i];
                     ToolStripMenuItem item = new ToolStripMenuItem();
                     item.Click += Globals.MainForm.Reopen;
                     item.Tag = file; item.Text = PathHelper.GetCompactPath(file);
                     if (i < ((SettingObject)PluginBase.MainForm.Settings).MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
-                    else Globals.PreviousDocuments.Remove(file);
+                    else PluginBase.MainForm.Settings.PreviousDocuments.Remove(file);
                 }
-                if (Globals.PreviousDocuments.Count > 0)
+                if (PluginBase.MainForm.Settings.PreviousDocuments.Count > 0)
                 {
                     string cleanLabel = TextHelper.GetString("Label.CleanReopenList");
                     string clearLabel = TextHelper.GetString("Label.ClearReopenList");
@@ -320,11 +319,11 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (Globals.PreviousDocuments.Contains(file))
+                if (PluginBase.MainForm.Settings.PreviousDocuments.Contains(file))
                 {
-                    Globals.PreviousDocuments.Remove(file);
+                    PluginBase.MainForm.Settings.PreviousDocuments.Remove(file);
                 }
-                Globals.PreviousDocuments.Insert(0, file);
+                PluginBase.MainForm.Settings.PreviousDocuments.Insert(0, file);
                 PopulateReopenMenu();
             }
             catch (Exception ex)
@@ -338,7 +337,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static string GetActiveEncodingName()
         {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+            var document = PluginBase.MainForm.CurrentDocument;
             if (document != null && document.IsEditable)
             {
                 int codepage = document.SciControl.Encoding.CodePage;
@@ -387,7 +386,5 @@ namespace FlashDevelop.Managers
             if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }
-
     }
-
 }
