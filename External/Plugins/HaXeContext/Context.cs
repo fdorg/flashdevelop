@@ -2338,7 +2338,7 @@ namespace HaXeContext
                 command += ";";
                 if (cFile.Package.Length > 0) command += cFile.Package + ".";
                 var cname = cFile.GetPublicClass().Name;
-                if (cname.IndexOf('<') is var p && p > 0) cname = cname.Substring(0, p);
+                if (cname.Contains('<', out var p) && p > 0) cname = cname.Substring(0, p);
                 command += cname;
 
                 if (haxeTarget == "flash" && (append is null || !append.Contains("-swf-version")))

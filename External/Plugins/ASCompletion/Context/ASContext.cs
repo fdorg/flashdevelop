@@ -1585,15 +1585,15 @@ namespace ASCompletion.Context
         /// </summary>
         private string GetKeywords()
         {
-            if (Elements is null) return "";
+            if (Elements is null) return string.Empty;
             var keywords = new List<string>();
-            foreach (MemberModel item in Elements)
+            foreach (var item in Elements)
             {
                 if ((item.Flags & FlagType.Package) != 0) continue;
                 var name = item.Name;
-                if (name.IndexOf('<') is var p1 && p1 > 0)
+                if (name.Contains('<', out var p1) && p1 > 0)
                 {
-                    if (name.IndexOfOrdinal(".<") is var p2 && p2 > 0) name = name.Substring(0, p2);
+                    if (name.Contains(".<", out var p2) && p2 > 0) name = name.Substring(0, p2);
                     else name = name.Substring(0, p1);
                 }
                 if (name.LastIndexOf('.') is var p3 && p3 > 0) name = name.Substring(p3 + 1);
