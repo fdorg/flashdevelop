@@ -720,7 +720,7 @@ namespace FlashDevelop.Dialogs
                 else 
                 {
                     var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (var entry in results)
                     {
                         foreach (var match in entry.Value)
@@ -729,7 +729,7 @@ namespace FlashDevelop.Dialogs
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     Hide();
                 }
             }
@@ -782,7 +782,7 @@ namespace FlashDevelop.Dialogs
                 else
                 {
                     var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (var entry in results)
                     {
                         foreach (var match in entry.Value)
@@ -791,7 +791,7 @@ namespace FlashDevelop.Dialogs
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     Hide();
                 }
             }
