@@ -69,8 +69,6 @@ namespace ASCompletion.Context
 
         #region static properties
 
-        public static ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
-
         public static PluginUI Panel => plugin?.Panel;
 
         public static GeneralSettings CommonSettings => plugin.Settings as GeneralSettings;

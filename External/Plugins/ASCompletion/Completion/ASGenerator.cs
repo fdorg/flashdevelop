@@ -1787,7 +1787,7 @@ namespace ASCompletion.Completion
                 lookupPosition = -1;
 
                 PluginBase.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
-                sci = ASContext.CurSciControl;
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
                 {
@@ -1830,7 +1830,7 @@ namespace ASCompletion.Completion
                 lookupPosition = -1;
 
                 PluginBase.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
-                sci = ASContext.CurSciControl;
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 var fileModel = ASContext.Context.GetFileModel(funcResult.Type.InFile.FileName);
                 foreach (var cm in fileModel.Classes)
                 {
@@ -2452,7 +2452,7 @@ namespace ASCompletion.Completion
                 lookupPosition = -1;
 
                 PluginBase.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
-                sci = ASContext.CurSciControl;
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
@@ -2808,7 +2808,7 @@ namespace ASCompletion.Completion
                 lookupPosition = -1;
 
                 PluginBase.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
-                sci = ASContext.CurSciControl;
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
