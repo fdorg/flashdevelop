@@ -67,9 +67,9 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the catched unhandled exception and logs it
         /// </summary>
-        void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception exception = new Exception(e.ExceptionObject.ToString());
+            var exception = new Exception(e.ExceptionObject.ToString());
             ErrorManager.AddToLog("Unhandled exception: ", exception);
         }
 
@@ -662,14 +662,14 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the UI rendering
         /// </summary>
-        void InitializeRendering()
+        static void InitializeRendering()
         {
-            if (Globals.Settings.RenderMode == UiRenderMode.System)
+            if (PluginBase.MainForm.Settings.RenderMode == UiRenderMode.System)
             {
                 ToolStripManager.VisualStylesEnabled = true;
                 ToolStripManager.RenderMode = ToolStripManagerRenderMode.System;
             }
-            else if (Globals.Settings.RenderMode == UiRenderMode.Professional)
+            else if (PluginBase.MainForm.Settings.RenderMode == UiRenderMode.Professional)
             {
                 ToolStripManager.VisualStylesEnabled = false;
                 ToolStripManager.RenderMode = ToolStripManagerRenderMode.Professional;
@@ -684,8 +684,7 @@ namespace FlashDevelop
             AppSettings = SettingObject.GetDefaultSettings();
             if (File.Exists(FileNameHelper.SettingData))
             {
-                object obj = ObjectSerializer.Deserialize(FileNameHelper.SettingData, AppSettings, false);
-                AppSettings = (SettingObject)obj;
+                AppSettings = (SettingObject)ObjectSerializer.Deserialize(FileNameHelper.SettingData, AppSettings, false);
             }
             SettingObject.EnsureValidity(AppSettings);
             FileStateManager.RemoveOldStateFiles();
@@ -842,10 +841,10 @@ namespace FlashDevelop
                 ToolStripPanel.Controls.Add(ToolStrip);
                 ToolStripPanel.Controls.Add(MenuStrip);
             }
-            TabMenu.Font = Globals.Settings.DefaultFont;
-            ToolStrip.Font = Globals.Settings.DefaultFont;
-            MenuStrip.Font = Globals.Settings.DefaultFont;
-            EditorMenu.Font = Globals.Settings.DefaultFont;
+            TabMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
+            ToolStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
+            MenuStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
+            EditorMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
             TabMenu.Renderer = new DockPanelStripRenderer(false);
             EditorMenu.Renderer = new DockPanelStripRenderer(false);
             MenuStrip.Renderer = new DockPanelStripRenderer(false);
@@ -914,7 +913,7 @@ namespace FlashDevelop
             StatusStrip.Items.Add(StatusLabel);
             StatusStrip.Items.Add(ProgressLabel);
             StatusStrip.Items.Add(toolStripProgressBar);
-            StatusStrip.Font = Globals.Settings.DefaultFont;
+            StatusStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
             StatusStrip.Renderer = new DockPanelStripRenderer(false);
             StatusStrip.Stretch = true;
             // 
@@ -1084,7 +1083,7 @@ namespace FlashDevelop
                 ClosingEntirely = false;
                 e.Cancel = true;
             }
-            if (!e.Cancel && Globals.Settings.ConfirmOnExit)
+            if (!e.Cancel && PluginBase.MainForm.Settings.ConfirmOnExit)
             {
                 string title = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.AreYouSureToExit");
@@ -1110,8 +1109,7 @@ namespace FlashDevelop
             }
             if (!e.Cancel)
             {
-                string file = FileNameHelper.SessionData;
-                SessionManager.SaveSession(file, session);
+                SessionManager.SaveSession(FileNameHelper.SessionData, session);
                 ShortcutManager.SaveCustomShortcuts();
                 ArgumentDialog.SaveCustomArguments();
                 ClipboardManager.Dispose();
@@ -1152,8 +1150,7 @@ namespace FlashDevelop
             if (DockPanel.ActiveContent.GetType() == typeof(TabbedDocument))
             {
                 PanelIsActive = false;
-                TabbedDocument document = (TabbedDocument)DockPanel.ActiveContent;
-                document.Activate();
+                ((TabbedDocument) DockPanel.ActiveContent).Activate();
             }
             else PanelIsActive = true;
             NotifyEvent ne = new NotifyEvent(EventType.UIRefresh);
@@ -1188,7 +1185,7 @@ namespace FlashDevelop
                     */
                     if (AppSettings.ApplyFileExtension)
                     {
-                        string extension = Path.GetExtension(CurrentDocument.FileName);
+                        var extension = Path.GetExtension(CurrentDocument.FileName);
                         if (extension != "") saveFileDialog.DefaultExt = extension;
                     }
                     /**
@@ -1202,8 +1199,7 @@ namespace FlashDevelop
                     /**
                     * Checks the file changes
                     */
-                    TabbedDocument document = (TabbedDocument)CurrentDocument;
-                    document.Activate();
+                    ((TabbedDocument)CurrentDocument).Activate();
                     /**
                     * Processes the opened file
                     */
@@ -1219,9 +1215,9 @@ namespace FlashDevelop
                     }
                 }
                 TabTextManager.UpdateTabTexts();
-                NotifyEvent ne = new NotifyEvent(EventType.FileSwitch);
+                var ne = new NotifyEvent(EventType.FileSwitch);
                 EventManager.DispatchEvent(this, ne);
-                NotifyEvent ce = new NotifyEvent(EventType.Completion);
+                var ce = new NotifyEvent(EventType.Completion);
                 EventManager.DispatchEvent(this, ce);
             }
             catch (Exception ex)
@@ -1235,13 +1231,13 @@ namespace FlashDevelop
         /// </summary>
         public void OnDocumentClosing(object sender, CancelEventArgs e)
         {
-            ITabbedDocument document = (ITabbedDocument)sender;
+            var document = (ITabbedDocument)sender;
             if (CloseAllCanceled && closingAll) e.Cancel = true;
             else if (document.IsModified)
             {
-                string saveChanges = TextHelper.GetString("Info.SaveChanges");
-                string saveChangesTitle = TextHelper.GetString("Title.SaveChanges");
-                DialogResult result = MessageBox.Show(this, saveChanges, saveChangesTitle + " " + document.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                var saveChanges = TextHelper.GetString("Info.SaveChanges");
+                var saveChangesTitle = TextHelper.GetString("Title.SaveChanges");
+                var result = MessageBox.Show(this, saveChanges, saveChangesTitle + " " + document.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
                     if (document.IsUntitled)
@@ -1287,9 +1283,9 @@ namespace FlashDevelop
         /// </summary>
         public void OnDocumentClosed(object sender, EventArgs e)
         {
-            ITabbedDocument document = (ITabbedDocument) sender;
+            var document = (ITabbedDocument) sender;
             TabbingManager.TabHistory.Remove(document);
-            TextEvent ne = new TextEvent(EventType.FileClose, document.FileName);
+            var ne = new TextEvent(EventType.FileClose, document.FileName);
             EventManager.DispatchEvent(this, ne);
             if (AppSettings.SequentialTabbing)
             {
@@ -1316,16 +1312,20 @@ namespace FlashDevelop
                 BeginInvoke((MethodInvoker)(() => OnScintillaControlUpdateControl(sci)));
                 return;
             }
-            var document = DocumentManager.FindDocument(sci);
-            if (sci != null && document != null && document.IsEditable)
+            if (sci != null && DocumentManager.FindDocument(sci) != null)
             {
-                string statusText = " " + TextHelper.GetString("Info.StatusText");
-                string line = sci.CurrentLine + 1 + " / " + sci.LineCount;
-                string column = sci.Column(sci.CurrentPos) + 1 + " / " + (sci.Column(sci.LineEndPosition(sci.CurrentLine)) + 1);
+                var statusText = " " + TextHelper.GetString("Info.StatusText");
+                var line = sci.CurrentLine + 1 + " / " + sci.LineCount;
+                var column = sci.Column(sci.CurrentPos) + 1 + " / " + (sci.Column(sci.LineEndPosition(sci.CurrentLine)) + 1);
                 var oldOS = OSVersion.Major < 6; // Vista is 6.0 and ok...
-                string file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
-                string eol = (sci.EOLMode == 0) ? "CR+LF" : ((sci.EOLMode == 1) ? "CR" : "LF");
-                string encoding = ButtonManager.GetActiveEncodingName();
+                var file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
+                var eol = sci.EOLMode switch
+                {
+                    0 => "CR+LF",
+                    1 => "CR",
+                    _ => "LF"
+                };
+                var encoding = ButtonManager.GetActiveEncodingName();
                 StatusLabel.Text = string.Format(statusText, line, column, eol, encoding, file);
             }
             else StatusLabel.Text = " ";
@@ -1426,7 +1426,7 @@ namespace FlashDevelop
                 int y = unchecked((short)((long)m.LParam >> 16));
                 var hWnd = Win32.WindowFromPoint(new Point(x, y));
                 if (hWnd == IntPtr.Zero) return false;
-                var doc = Globals.CurrentDocument;
+                var doc = PluginBase.MainForm.CurrentDocument;
                 if (FromHandle(hWnd) != null)
                 {
                     Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
@@ -1450,8 +1450,8 @@ namespace FlashDevelop
             /**
             * Notify plugins. Don't notify ControlKey or ShiftKey as it polls a lot
             */
-            KeyEvent ke = new KeyEvent(EventType.Keys, keyData);
-            Keys keyCode = keyData & Keys.KeyCode;
+            var ke = new KeyEvent(EventType.Keys, keyData);
+            var keyCode = keyData & Keys.KeyCode;
             if ((keyCode != Keys.ControlKey) && (keyCode != Keys.ShiftKey))
             {
                 EventManager.DispatchEvent(this, ke);
@@ -1463,12 +1463,16 @@ namespace FlashDevelop
                 */ 
                 if (CurrentDocument.SciControl is null || !CurrentDocument.SciControl.IsFocus)
                 {
-                    if (keyData == (Keys.Control | Keys.C)) return false;
-                    if (keyData == (Keys.Control | Keys.V)) return false;
-                    if (keyData == (Keys.Control | Keys.X)) return false;
-                    if (keyData == (Keys.Control | Keys.A)) return false;
-                    if (keyData == (Keys.Control | Keys.Z)) return false;
-                    if (keyData == (Keys.Control | Keys.Y)) return false;
+                    switch (keyData)
+                    {
+                        case Keys.Control | Keys.C:
+                        case Keys.Control | Keys.V:
+                        case Keys.Control | Keys.X:
+                        case Keys.Control | Keys.A:
+                        case Keys.Control | Keys.Z:
+                        case Keys.Control | Keys.Y:
+                            return false;
+                    }
                 }
                 /**
                 * Process special key combinations and allow "chaining" of 
@@ -1518,11 +1522,7 @@ namespace FlashDevelop
         public void OnUpdateMainFormDialogTitle()
         {
             if (PluginBase.CurrentProject is {} project) Text = project.Name + " - " + DistroConfig.DISTRIBUTION_NAME;
-            else if (CurrentDocument is { } document && document.IsEditable)
-            {
-                string file = Path.GetFileName(document.FileName);
-                Text = file + " - " + DistroConfig.DISTRIBUTION_NAME;
-            }
+            else if (CurrentDocument?.FileName is {} fileName) Text = Path.GetFileName(fileName) + " - " + DistroConfig.DISTRIBUTION_NAME;
             else Text = DistroConfig.DISTRIBUTION_NAME;
         }
 
@@ -1534,7 +1534,7 @@ namespace FlashDevelop
             document.IsModified = false;
             ReloadingDocument = false;
             OnUpdateMainFormDialogTitle();
-            if (document.IsEditable) document.SciControl.MarkerDeleteAll(2);
+            if (document.SciControl is {} sci) sci.MarkerDeleteAll(2);
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1814,8 +1814,7 @@ namespace FlashDevelop
         {
             if (restartButton != null) restartButton.Visible = true;
             RequiresRestart = true;
-            string message = TextHelper.GetString("Info.RequiresRestart");
-            TraceManager.Add(message);
+            TraceManager.Add(TextHelper.GetString("Info.RequiresRestart"));
         }
 
         /// <summary>
@@ -1823,8 +1822,7 @@ namespace FlashDevelop
         /// </summary>
         public void RefreshUI()
         {
-            if (CurrentDocument is null) return;
-            OnScintillaControlUpdateControl(CurrentDocument.SciControl);
+            if (CurrentDocument?.SciControl is {} sci) OnScintillaControlUpdateControl(sci);
         }
 
         /// <summary>
@@ -1881,15 +1879,14 @@ namespace FlashDevelop
         /// </summary>
         void OpenDocumentFromParameters(string file)
         {
-            Match openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
+            var openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
             if (openParams.Success)
             {
                 file = file.Substring(0, openParams.Index);
                 file = PathHelper.GetLongPathName(file);
                 if (File.Exists(file))
                 {
-                    TabbedDocument doc = OpenEditableDocument(file, false) as TabbedDocument;
-                    if (doc != null) ApplyOpenParams(openParams, doc.SciControl);
+                    if (OpenEditableDocument(file, false) is TabbedDocument doc) ApplyOpenParams(openParams, doc.SciControl);
                     else if (CurrentDocument.FileName == file) ApplyOpenParams(openParams, CurrentDocument.SciControl);
                 }
             }
@@ -1900,10 +1897,7 @@ namespace FlashDevelop
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>        
-        void ApplyOpenParams(Match openParams, ScintillaControl sci)
+        static void ApplyOpenParams(Match openParams, ScintillaControl sci)
         {
             if (sci is null) return;
             int col = 0;
@@ -1923,8 +1917,8 @@ namespace FlashDevelop
 
         public void CloseAllDocuments(bool exceptCurrent, bool exceptOtherPanes)
         {
-            ITabbedDocument current = CurrentDocument;
-            DockPane currentPane = current?.DockHandler.PanelPane;
+            var current = CurrentDocument;
+            var currentPane = current?.DockHandler.PanelPane;
             CloseAllCanceled = false; closingAll = true;
             var documents = new List<ITabbedDocument>(Documents);
             foreach (var document in documents)
@@ -2021,17 +2015,10 @@ namespace FlashDevelop
         /// </summary>
         public string GetWorkingDirectory()
         {
-            var project = PluginBase.CurrentProject;
-            var document = CurrentDocument;
-            if (document != null && document.IsEditable && File.Exists(document.FileName))
-            {
-                return Path.GetDirectoryName(document.FileName);
-            }
-
-            if (project != null && File.Exists(project.ProjectPath))
-            {
-                return Path.GetDirectoryName(project.ProjectPath);
-            }
+            if (CurrentDocument?.SciControl?.FileName is {} fileName && File.Exists(fileName))
+                return Path.GetDirectoryName(fileName);
+            if (PluginBase.CurrentProject?.ProjectPath is {} projectPath && File.Exists(projectPath))
+                return Path.GetDirectoryName(projectPath);
             return PathHelper.AppDir;
         }
 
@@ -2080,13 +2067,10 @@ namespace FlashDevelop
         /// </summary>
         public void New(object sender, EventArgs e)
         {
-            string fileName = DocumentManager.GetNewDocumentName(null);
-            TextEvent te = new TextEvent(EventType.FileNew, fileName);
+            var fileName = DocumentManager.GetNewDocumentName(null);
+            var te = new TextEvent(EventType.FileNew, fileName);
             EventManager.DispatchEvent(this, te);
-            if (!te.Handled)
-            {
-                CreateEditableDocument(fileName, "", (int)AppSettings.DefaultCodePage);
-            }
+            if (!te.Handled) CreateEditableDocument(fileName, "", (int) AppSettings.DefaultCodePage);
         }
 
         /// <summary>
@@ -2105,13 +2089,10 @@ namespace FlashDevelop
                 }
                 catch { /* NO ERRORS */ }
             }
-            string fileName = DocumentManager.GetNewDocumentName(ext);
-            TextEvent te = new TextEvent(EventType.FileNew, fileName);
+            var fileName = DocumentManager.GetNewDocumentName(ext);
+            var te = new TextEvent(EventType.FileNew, fileName);
             EventManager.DispatchEvent(this, te);
-            if (!te.Handled)
-            {
-                CreateEditableDocument(fileName, "", (int)AppSettings.DefaultCodePage);
-            }
+            if (!te.Handled) CreateEditableDocument(fileName, "", (int) AppSettings.DefaultCodePage);
         }
 
         /// <summary>
@@ -2129,18 +2110,18 @@ namespace FlashDevelop
                 string lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
                 contents = Regex.Replace(contents, @"\r\n?|\n", lineEndChar);
                 string processed = ProcessArgString(contents);
-                ActionPoint actionPoint = SnippetHelper.ProcessActionPoint(processed);
+                var actionPoint = SnippetHelper.ProcessActionPoint(processed);
                 if (Documents.Length == 1 && Documents[0].IsUntitled)
                 {
                     closingForOpenFile = true;
                     Documents[0].Close();
                     closingForOpenFile = false;
                 }
-                TextEvent te = new TextEvent(EventType.FileTemplate, fileName);
+                var te = new TextEvent(EventType.FileTemplate, fileName);
                 EventManager.DispatchEvent(this, te);
                 if (!te.Handled)
                 {
-                    ITabbedDocument document = (ITabbedDocument)CreateEditableDocument(fileName, actionPoint.Text, encoding.CodePage);
+                    var document = (ITabbedDocument)CreateEditableDocument(fileName, actionPoint.Text, encoding.CodePage);
                     SnippetHelper.ExecuteActionPoint(actionPoint, document.SciControl);
                 }
             }
@@ -2163,7 +2144,7 @@ namespace FlashDevelop
                 var lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
                 processed = Regex.Replace(processed, @"\r\n?|\n", lineEndChar);
                 var actionPoint = SnippetHelper.ProcessActionPoint(processed);
-                FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, Globals.Settings.SaveUnicodeWithBOM);
+                FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, PluginBase.MainForm.Settings.SaveUnicodeWithBOM);
                 if (actionPoint.EntryPosition != -1)
                 {
                     if (Documents.Length == 1 && Documents[0].IsUntitled)
@@ -2201,10 +2182,9 @@ namespace FlashDevelop
             openFileDialog.InitialDirectory = WorkingDirectory;
             if (openFileDialog.ShowDialog(this) == DialogResult.OK && openFileDialog.FileName.Length != 0)
             {
-                int count = openFileDialog.FileNames.Length;
-                for (int i = 0; i < count; i++)
+                foreach (var it in openFileDialog.FileNames)
                 {
-                    OpenEditableDocument(openFileDialog.FileNames[i]);
+                    OpenEditableDocument(it);
                 }
             }
             openFileDialog.Multiselect = false;
@@ -2222,15 +2202,14 @@ namespace FlashDevelop
             openFileDialog.InitialDirectory = WorkingDirectory;
             if (openFileDialog.ShowDialog(this) == DialogResult.OK && openFileDialog.FileName.Length != 0)
             {
-                int count = openFileDialog.FileNames.Length;
-                for (int i = 0; i < count; i++)
+                foreach (var it in openFileDialog.FileNames)
                 {
                     if (encMode == 0) // Detect 8bit encoding...
                     {
-                        int codepage = FileHelper.GetFileCodepage(openFileDialog.FileNames[i]);
+                        int codepage = FileHelper.GetFileCodepage(it);
                         encoding = Encoding.GetEncoding(codepage);
                     }
-                    OpenEditableDocument(openFileDialog.FileNames[i], encoding, false);
+                    OpenEditableDocument(it, encoding, false);
                 }
             }
             openFileDialog.Multiselect = false;
@@ -2241,8 +2220,7 @@ namespace FlashDevelop
         /// </summary>
         public void Edit(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string file = ProcessArgString(((ItemData)button.Tag).Tag);
+            var file = ProcessArgString(((ItemData)((ToolStripItem)sender).Tag).Tag);
             if (File.Exists(file)) OpenEditableDocument(file);
         }
 
@@ -2251,8 +2229,7 @@ namespace FlashDevelop
         /// </summary>
         public void Reopen(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string file = button.Tag.ToString();
+            var file = ((ToolStripItem)sender).Tag.ToString();
             if (File.Exists(file))
             {
                 OpenEditableDocument(file);
@@ -2260,7 +2237,7 @@ namespace FlashDevelop
             }
             else
             {
-                string message = TextHelper.GetString("Info.InvalidFileOnReopen");
+                var message = TextHelper.GetString("Info.InvalidFileOnReopen");
                 Settings.PreviousDocuments.Remove(file);
                 ButtonManager.PopulateReopenMenu();
                 ErrorManager.ShowInfo(message);
@@ -2337,8 +2314,7 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string file = ((ItemData)button.Tag).Tag;
+                var file = ((ItemData)((ToolStripItem)sender).Tag).Tag;
                 SessionManager.SaveSession(file);
             }
             catch (Exception ex)
@@ -2354,8 +2330,7 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string file = ((ItemData)button.Tag).Tag;
+                var file = ((ItemData)((ToolStripItem)sender).Tag).Tag;
                 SessionManager.RestoreSession(file, SessionType.External);
             }
             catch (Exception ex)
@@ -2371,8 +2346,7 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string file = ((ItemData)button.Tag).Tag;
+                var file = ((ItemData)((ToolStripItem)sender).Tag).Tag;
                 LayoutManager.RestoreLayout(file);
             }
             catch (Exception ex)
@@ -2404,8 +2378,7 @@ namespace FlashDevelop
                 }
                 else if (CurrentDocument.IsModified)
                 {
-                    var button = (ToolStripItem)sender;
-                    var reason = ((ItemData)button.Tag).Tag;
+                    var reason = ((ItemData)((ToolStripItem)sender).Tag).Tag;
                     CurrentDocument.Save(CurrentDocument.FileName, reason);
                 }
             }
@@ -2499,23 +2472,22 @@ namespace FlashDevelop
             try 
             {
                 SavingMultiple = true;
-                ITabbedDocument[] documents = Documents;
-                ITabbedDocument active = CurrentDocument;
-                foreach (var current in documents)
+                var active = CurrentDocument;
+                foreach (var document in Documents)
                 {
-                    if (current.IsEditable && current.IsModified)
+                    if (document.IsEditable && document.IsModified)
                     {
-                        if (current.IsUntitled)
+                        if (document.IsUntitled)
                         {
-                            saveFileDialog.FileName = current.FileName;
+                            saveFileDialog.FileName = document.FileName;
                             saveFileDialog.InitialDirectory = WorkingDirectory;
                             if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                             {
                                 ButtonManager.AddNewReopenMenuItem(saveFileDialog.FileName);
-                                current.Save(saveFileDialog.FileName);
+                                document.Save(saveFileDialog.FileName);
                             }
                         }
-                        else current.Save();
+                        else document.Save();
                     }
                 }
                 SavingMultiple = false;
@@ -2536,16 +2508,14 @@ namespace FlashDevelop
             {
                 string filter = "*";
                 SavingMultiple = true;
-                ToolStripItem button = (ToolStripItem)sender;
-                filter = ((ItemData)button.Tag).Tag + filter;
-                ITabbedDocument[] documents = Documents;
-                ITabbedDocument active = CurrentDocument;
-                foreach (var current in documents)
+                filter = ((ItemData)((ToolStripItem)sender).Tag).Tag + filter;
+                var active = CurrentDocument;
+                foreach (var document in Documents)
                 {
-                    if (current.IsEditable && current.IsModified && !current.IsUntitled && current.Text.EndsWithOrdinal(filter))
+                    if (document.IsEditable && document.IsModified && !document.IsUntitled && document.Text.EndsWithOrdinal(filter))
                     {
-                        current.Save();
-                        current.IsModified = false;
+                        document.Save();
+                        document.IsModified = false;
                     }
                 }
                 SavingMultiple = false;
@@ -2582,10 +2552,10 @@ namespace FlashDevelop
         /// </summary>
         public void Duplicate(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
-            string extension = Path.GetExtension(sci.FileName);
-            string filename = DocumentManager.GetNewDocumentName(extension);
-            DockContent document = CreateEditableDocument(filename, sci.Text, sci.Encoding.CodePage);
+            var sci = CurrentDocument.SciControl;
+            var extension = Path.GetExtension(sci.FileName);
+            var filename = DocumentManager.GetNewDocumentName(extension);
+            var document = CreateEditableDocument(filename, sci.Text, sci.Encoding.CodePage);
             ((TabbedDocument)document).IsModified = true;
         }
 
@@ -2662,8 +2632,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindNext(object sender, EventArgs e)
         {
-            bool update = !Globals.Settings.DisableFindTextUpdating;
-            bool simple = !Globals.Settings.DisableSimpleQuickFind && !quickFind.Visible;
+            bool update = !PluginBase.MainForm.Settings.DisableFindTextUpdating;
+            bool simple = !PluginBase.MainForm.Settings.DisableSimpleQuickFind && !quickFind.Visible;
             frInDocDialog.FindNext(true, update, simple);
         }
 
@@ -2672,8 +2642,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindPrevious(object sender, EventArgs e)
         {
-            bool update = !Globals.Settings.DisableFindTextUpdating;
-            bool simple = !Globals.Settings.DisableSimpleQuickFind && !quickFind.Visible;
+            bool update = !PluginBase.MainForm.Settings.DisableFindTextUpdating;
+            bool simple = !PluginBase.MainForm.Settings.DisableSimpleQuickFind && !quickFind.Visible;
             frInDocDialog.FindNext(false, update, simple);
         }
 
@@ -2695,8 +2665,7 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceFrom(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string file = ((ItemData)button.Tag).Tag;
+            var file = ((ItemData)((ToolStripItem)sender).Tag).Tag;
             BeginInvoke((MethodInvoker)(() => OpenEditableDocument(file)));
             if (!frInDocDialog.Visible) frInDocDialog.Show();
             else frInDocDialog.Activate();
@@ -2720,8 +2689,7 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceInFilesFrom(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string path = ((ItemData)button.Tag).Tag;
+            var path = ((ItemData)((ToolStripItem)sender).Tag).Tag;
             if (!frInFilesDialog.Visible) frInFilesDialog.Show(); // Show first..
             else frInFilesDialog.Activate();
             frInFilesDialog.SetFindPath(path);
@@ -2966,7 +2934,7 @@ namespace FlashDevelop
             }
         }
 
-        bool DirIsImportant(string dir)
+        static bool DirIsImportant(string dir)
         {
             var full = Path.GetDirectoryName(dir);
             return full == PathHelper.UserPluginDir
@@ -3016,7 +2984,7 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleSplitView(object sender, EventArgs e)
         {
-            if (!CurrentDocument.IsEditable) return;
+            if (CurrentDocument.SciControl is null) return;
             CurrentDocument.IsSplitted = !CurrentDocument.IsSplitted;
             ButtonManager.UpdateFlaggedButtons();
         }
@@ -3150,7 +3118,7 @@ namespace FlashDevelop
         {
             try
             {
-                ScintillaControl sci = CurrentDocument.SciControl;
+                var sci = CurrentDocument.SciControl;
                 sci.SaveBOM = !sci.SaveBOM;
                 OnScintillaControlUpdateControl(sci);
                 OnDocumentModify(CurrentDocument);
@@ -3191,9 +3159,8 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string word = (((ItemData)button.Tag).Tag);
-                SnippetManager.InsertTextByWord(word != "null" ? word : null, false);
+                string word = (((ItemData)((ToolStripItem)sender).Tag).Tag);
+                SnippetManager.InsertTextByWord(word != "null" ? word : null);
             }
             catch (Exception ex)
             {
@@ -3215,10 +3182,10 @@ namespace FlashDevelop
         /// </summary>
         public void InsertHash(object sender, EventArgs e)
         {
-            using HashDialog cd = new HashDialog();
-            if (cd.ShowDialog() == DialogResult.OK)
+            using var dialog = new HashDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                CurrentDocument.SciControl.ReplaceSel(cd.HashResultText);
+                CurrentDocument.SciControl.ReplaceSel(dialog.HashResultText);
             }
         }
 
@@ -3231,7 +3198,7 @@ namespace FlashDevelop
             {
                 bool hasPrefix = true;
                 bool isAsterisk = false;
-                ScintillaControl sci = CurrentDocument.SciControl;
+                var sci = CurrentDocument.SciControl;
                 if (sci.SelText.Length > 0)
                 {
                     isAsterisk = sci.SelText.StartsWith('#');
@@ -3277,15 +3244,16 @@ namespace FlashDevelop
         {
             try
             {
-                FileInfo fileInfo = new FileInfo(CurrentDocument.FileName);
-                string message = TextHelper.GetString("Info.FileDetails");
-                string newline = LineEndDetector.GetNewLineMarker(CurrentDocument.SciControl.EOLMode);
-                string path = fileInfo.FullName;
-                string created = fileInfo.CreationTime.ToString();
-                string modified = fileInfo.LastWriteTime.ToString();
-                string size = fileInfo.Length.ToString();
-                string info = string.Format(message, newline, path, created, modified, size);
-                CurrentDocument.SciControl.ReplaceSel(info);
+                var sci = CurrentDocument.SciControl;
+                var fileInfo = new FileInfo(sci.FileName);
+                var message = TextHelper.GetString("Info.FileDetails");
+                var newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
+                var path = fileInfo.FullName;
+                var created = fileInfo.CreationTime.ToString();
+                var modified = fileInfo.LastWriteTime.ToString();
+                var size = fileInfo.Length.ToString();
+                var info = string.Format(message, newline, path, created, modified, size);
+                sci.ReplaceSel(info);
             }
             catch
             {
@@ -3301,10 +3269,9 @@ namespace FlashDevelop
         {
             try
             {
-                DateTime dateTime = DateTime.Now;
-                ToolStripItem button = (ToolStripItem)sender;
-                string date = (((ItemData)button.Tag).Tag);
-                string currentDate = dateTime.ToString(date);
+                var button = (ToolStripItem)sender;
+                var date = (((ItemData)button.Tag).Tag);
+                var currentDate = DateTime.Now.ToString(date);
                 CurrentDocument.SciControl.ReplaceSel(currentDate);
             }
             catch (Exception ex)
@@ -3943,12 +3910,12 @@ namespace FlashDevelop
         {
             try
             {
-                using var sfd = new SaveFileDialog();
-                sfd.AddExtension = true;
-                sfd.DefaultExt = "fdz";
-                sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                using var dialog = new SaveFileDialog();
+                dialog.AddExtension = true;
+                dialog.DefaultExt = "fdz";
+                dialog.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
                 var dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
-                if (sfd.ShowDialog(this) != DialogResult.OK) return;
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
                 var settingFiles = new List<string>();
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
@@ -3956,7 +3923,7 @@ namespace FlashDevelop
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
-                var zipFile = ZipFile.Create(sfd.FileName);
+                var zipFile = ZipFile.Create(dialog.FileName);
                 zipFile.BeginUpdate();
                 foreach (string settingFile in settingFiles)
                 {
@@ -4042,7 +4009,7 @@ namespace FlashDevelop
         public void ExecuteScriptExternal(string script)
         {
             if (!File.Exists(script)) throw new FileNotFoundException();
-            using AsmHelper helper = new AsmHelper(CSScript.CompileFile(script, null, true), null, true);
+            using var helper = new AsmHelper(CSScript.CompileFile(script, null, true), null, true);
             helper.Invoke("*.Execute");
         }
 
@@ -4053,8 +4020,8 @@ namespace FlashDevelop
         public void ExecuteScriptInternal(string script, bool random)
         {
             if (!File.Exists(script)) throw new FileNotFoundException();
-            string file = random ? Path.GetTempFileName() : null;
-            AsmHelper helper = new AsmHelper(CSScript.Load(script, file, false, null));
+            var file = random ? Path.GetTempFileName() : null;
+            var helper = new AsmHelper(CSScript.Load(script, file, false, null));
             helper.Invoke("*.Execute");
         }
 

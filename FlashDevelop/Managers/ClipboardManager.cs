@@ -13,7 +13,7 @@ namespace FlashDevelop.Managers
     /// </summary>
     internal static class ClipboardManager
     {
-        private static IntPtr hwnd;
+        static IntPtr hwnd;
 
         /// <summary>
         /// Gets a collection of <see cref="IDataObject"/>, each representing clipboard data in history.
@@ -56,7 +56,7 @@ namespace FlashDevelop.Managers
                     hwnd = IntPtr.Zero;
                 }
             }
-            History = new FixedSizeQueue<ClipboardTextData>(Globals.Settings.ClipboardHistorySize);
+            History = new FixedSizeQueue<ClipboardTextData>(PluginBase.MainForm.Settings.ClipboardHistorySize);
             try
             {
                 var dataObject = Clipboard.GetDataObject();
@@ -131,11 +131,11 @@ namespace FlashDevelop.Managers
         {
             if (History != null)
             {
-                History.Capacity = Globals.Settings.ClipboardHistorySize;
+                History.Capacity = PluginBase.MainForm.Settings.ClipboardHistorySize;
             }
         }
 
-        private static class UnsafeNativeMethods
+        static class UnsafeNativeMethods
         {
             /// <summary>
             /// Sent when the contents of the clipboard have changed.
@@ -214,7 +214,7 @@ namespace FlashDevelop.Managers
                 || dataObject.GetDataPresent(DataFormats.StringFormat)*/;
         }
 
-        private void Initialize(IDataObject dataObject)
+        void Initialize(IDataObject dataObject)
         {
             if (dataObject.GetDataPresent(DataFormats.Rtf))
             {
@@ -233,7 +233,5 @@ namespace FlashDevelop.Managers
                 throw new ArgumentException("Specified " + nameof(IDataObject) + " does not contain any text data.");
             }
         }
-
     }
-
 }

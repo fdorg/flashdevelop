@@ -13,7 +13,7 @@ namespace HaXeContext.Generators
     {
         protected override void GenerateDocumentation(string context)
         {
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var position = sci.CurrentPos;
             var line = sci.LineFromPosition(position);

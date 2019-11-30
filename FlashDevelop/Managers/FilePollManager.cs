@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
 using FlashDevelop.Docking;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Localization;
 
 namespace FlashDevelop.Managers
 {
-    class FilePollManager
+    internal class FilePollManager
     {
-        private static Timer FilePollTimer;
-        private static bool YesToAll;
+        static Timer FilePollTimer;
+        static bool YesToAll;
 
         /// <summary>
         /// Initialize the file change polling
@@ -18,7 +19,7 @@ namespace FlashDevelop.Managers
         {
             CheckSettingValues();
             FilePollTimer = new Timer();
-            FilePollTimer.Interval = Globals.Settings.FilePollInterval;
+            FilePollTimer.Interval = ((SettingObject)PluginBase.MainForm.Settings).FilePollInterval;
             FilePollTimer.Tick += FilePollTimerTick;
             FilePollTimer.Start();
         }
@@ -26,20 +27,20 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Checks the setting value validity
         /// </summary>
-        private static void CheckSettingValues()
+        static void CheckSettingValues()
         {
-            int interval = Globals.Settings.FilePollInterval;
-            if (interval == 0) Globals.Settings.FilePollInterval = 3000;
+            var settings = (SettingObject)PluginBase.MainForm.Settings;
+            if (settings.FilePollInterval == 0) settings.FilePollInterval = 3000;
         }
 
         /// <summary>
         /// Checks if a file has been changed outside
         /// </summary>
-        private static void CheckFileChange(ITabbedDocument document)
+        static void CheckFileChange(ITabbedDocument document)
         {
             if (document is TabbedDocument casted && casted.IsEditable && casted.CheckFileChange())
             {
-                if (Globals.Settings.AutoReloadModifiedFiles)
+                if (PluginBase.MainForm.Settings.AutoReloadModifiedFiles)
                 {
                     casted.RefreshFileInfo();
                     casted.Reload(false);
@@ -57,7 +58,7 @@ namespace FlashDevelop.Managers
                     string formatted = string.Format(dlgMessage, "\n", casted.FileName);
                     MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
                     MessageBoxManager.Register(); // Use custom labels...
-                    DialogResult result = MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    var result = MessageBox.Show(PluginBase.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                     casted.RefreshFileInfo(); // User may have waited before responding, save info now
                     if (result == DialogResult.Yes) casted.Reload(false);
                     else if (result == DialogResult.Cancel)
@@ -73,15 +74,14 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// After an interval check if the files have changed
         /// </summary>
-        private static void FilePollTimerTick(object sender, EventArgs e)
+        static void FilePollTimerTick(object sender, EventArgs e)
         {
             try
             {
                 FilePollTimer.Enabled = false;
-                ITabbedDocument[] documents = Globals.MainForm.Documents;
-                ITabbedDocument current = Globals.MainForm.CurrentDocument;
+                var current = PluginBase.MainForm.CurrentDocument;
                 CheckFileChange(current); // Check the current first..
-                foreach (ITabbedDocument document in documents)
+                foreach (var document in PluginBase.MainForm.Documents)
                 {
                     if (document != current) CheckFileChange(document);
                 }
@@ -90,7 +90,5 @@ namespace FlashDevelop.Managers
             }
             catch { /* No errors shown here.. */ }
         }
-
     }
-
 }
