@@ -207,7 +207,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void WebBrowserNewWindow(object sender, CancelEventArgs e)
         {
-            PluginBase.MainForm.CallCommand("Browse", webBrowser.StatusText);
+            Globals.MainForm.CallCommand("Browse", webBrowser.StatusText);
             e.Cancel = true;
         }
 

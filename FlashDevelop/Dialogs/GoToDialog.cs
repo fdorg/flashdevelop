@@ -1,8 +1,10 @@
 using System;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Controls;
+using ScintillaNet;
 
 namespace FlashDevelop.Dialogs
 {

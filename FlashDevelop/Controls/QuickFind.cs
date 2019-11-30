@@ -231,9 +231,9 @@ namespace FlashDevelop.Controls
             if (fore != Color.Empty) findTextBox.ForeColor = fore;
             if (ScaleHelper.GetScale() >= 1.5)
             {
-                nextButton.Image = PluginBase.MainForm.FindImage("67");
-                previousButton.Image = PluginBase.MainForm.FindImage("63");
-                closeButton.Image = PluginBase.MainForm.FindImage("111");
+                nextButton.Image = Globals.MainForm.FindImage("67");
+                previousButton.Image = Globals.MainForm.FindImage("63");
+                closeButton.Image = Globals.MainForm.FindImage("111");
             }
             Padding pad = new Padding(0, 2, 6, useTheme ? 3 : 1);
             highlightHost.Margin = matchCaseHost.Margin = wholeWordHost.Margin = pad;

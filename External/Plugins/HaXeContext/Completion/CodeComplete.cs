@@ -1226,7 +1226,7 @@ namespace HaXeContext.Completion
             {
                 if (expr.Type is { } leftExprType
                     && expr.Context.RightOperator is { } @operator
-                    && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                    && ASContext.CurSciControl is { } sci
                     && expr.Context.Position is int position
                     && GetCharLeft(sci, true, ref position) is char c
                     && @operator.Contains(c))
@@ -1398,7 +1398,7 @@ namespace HaXeContext.Completion
             {
                 base.FindMemberEx(token, inClass, result, mask, access);
                 if (result.Member != null && string.IsNullOrEmpty(result.Member.Type) && result.Member.Flags.HasFlag(FlagType.Function))
-                    InferType(PluginBase.MainForm.CurrentDocument?.SciControl, result.Member);
+                    InferType(ASContext.CurSciControl, result.Member);
             }
             var context = result.Context;
             var member = result.Member;
@@ -1480,7 +1480,7 @@ namespace HaXeContext.Completion
                         if ((arrCount == 0 && groupCount == 0 && c == ',') || i == length)
                         {
                             if (i == length) i++;
-                            var expr = GetExpressionType(PluginBase.MainForm.CurrentDocument?.SciControl, subExpressionPosition + i, false, true);
+                            var expr = GetExpressionType(ASContext.CurSciControl, subExpressionPosition + i, false, true);
                             if (expr.Type is null) expr.Type = ClassModel.VoidClass;
                             expressions.Add(expr);
                         }
@@ -1614,7 +1614,7 @@ namespace HaXeContext.Completion
         {
             var result = base.TypesAffinity(context, inClass, withClass);
             if (context != null
-                && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                && ASContext.CurSciControl is { } sci
                 && context.WordBefore == "privateAccess" && context.WordBeforePosition is int p
                 && sci.CharAt(p - 2) == '@' && sci.CharAt(p - 1) == ':') result |= Visibility.Private;
             return result;

@@ -243,8 +243,8 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("242", false));
-            infoPictureBox.Image = PluginBase.MainForm.FindImage("229", false);
+            imageList.Images.Add(Globals.MainForm.FindImage("242", false));
+            infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             argsListView.SmallImageList = imageList;
             argsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             columnHeader.Width = ScaleHelper.Scale(columnHeader.Width);

@@ -1,5 +1,4 @@
 using System.IO;
-using PluginCore;
 using PluginCore.Helpers;
 
 namespace FlashDevelop.Helpers
@@ -76,7 +75,7 @@ namespace FlashDevelop.Helpers
         /// </summary>
         public static string GetSettingFile(string file)
         {
-            var standalone = PluginBase.MainForm.StandaloneMode;
+            var standalone = Globals.MainForm.StandaloneMode;
             var appDirSettingFile = Path.Combine(PathHelper.AppDir, "Settings", file);
             var userDirSettingFile = Path.Combine(PathHelper.UserAppDir, "Settings", file);
             if (!standalone && File.Exists(userDirSettingFile)) return userDirSettingFile;

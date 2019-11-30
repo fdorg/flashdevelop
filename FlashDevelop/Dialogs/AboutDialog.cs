@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Helpers;
+using FlashDevelop.Settings;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs

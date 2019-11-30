@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using FlashDevelop.Helpers;
-using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Utilities;
 
@@ -183,7 +182,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         static bool GetImageAdjustments(out int saturation, out int brightness)
         {
-            switch (PluginBase.MainForm.GetThemeValue("ImageManager.ImageSet"))
+            switch (Globals.MainForm.GetThemeValue("ImageManager.ImageSet"))
             {
                 default:
                 case "Default": saturation =   0; brightness =   0; return false;

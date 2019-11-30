@@ -153,7 +153,7 @@ namespace FlashDevelop.Managers
             menu.Text = GetLocalizedString(label);
             menu.Name = name ?? label.Replace("Label.", "");
             if (enabled != null) menu.Enabled = Convert.ToBoolean(enabled);
-            if (image != null) menu.Image = PluginBase.MainForm.FindImage(image);
+            if (image != null) menu.Image = Globals.MainForm.FindImage(image);
             if (click != null) menu.Click += GetEventHandler(click);
             foreach (XmlNode subNode in node.ChildNodes)
             {
@@ -183,7 +183,7 @@ namespace FlashDevelop.Managers
             if (image != null) button.ToolTipText = stripped;
             else button.Text = stripped; // Use text instead...
             if (enabled != null) button.Enabled = Convert.ToBoolean(enabled);
-            if (image != null) button.Image = PluginBase.MainForm.FindImage(image);
+            if (image != null) button.Image = Globals.MainForm.FindImage(image);
             if (click != null) button.Click += GetEventHandler(click);
             Items.Add(button);
             return button;
@@ -208,7 +208,7 @@ namespace FlashDevelop.Managers
             menu.Tag = new ItemData(label + ";" + keyId, tag, flags);
             menu.Text = GetLocalizedString(label);
             menu.Name = name ?? label.Replace("Label.", "");
-            if (image != null) menu.Image = PluginBase.MainForm.FindImage(image);
+            if (image != null) menu.Image = Globals.MainForm.FindImage(image);
             if (enabled != null) menu.Enabled = Convert.ToBoolean(enabled);
             if (keytext != null) menu.ShortcutKeyDisplayString = GetKeyText(keytext);
             if (click != null) menu.Click += GetEventHandler(click);

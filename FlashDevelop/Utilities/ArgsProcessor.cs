@@ -98,7 +98,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return PluginBase.MainForm.WorkingDirectory;
+            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
             return Path.GetDirectoryName(GetCurFile());
         }
         
@@ -160,17 +160,17 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the working directory
         /// </summary>
-        public static string GetWorkingDir() => PluginBase.MainForm.WorkingDirectory;
+        public static string GetWorkingDir() => Globals.MainForm.WorkingDirectory;
 
         /// <summary>
         /// Gets the user selected file for opening
         /// </summary>
         public static string GetOpenFile()
         {
-            using var ofd = new OpenFileDialog();
+            using OpenFileDialog ofd = new OpenFileDialog();
             ofd.InitialDirectory = GetCurDir();
             ofd.Multiselect = false;
-            if (ofd.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return ofd.FileName;
+            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
             return string.Empty;
         }
         
@@ -180,7 +180,7 @@ namespace FlashDevelop.Utilities
         public static string GetSaveFile()
         {
             using var sfd = new SaveFileDialog {InitialDirectory = GetCurDir()};
-            if (sfd.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return sfd.FileName;
+            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
             return string.Empty;
         }
         
@@ -190,7 +190,7 @@ namespace FlashDevelop.Utilities
         public static string GetOpenDir()
         {
             using var fbd = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
-            if (fbd.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return fbd.SelectedPath;
+            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
             return string.Empty;
         }
         
@@ -199,7 +199,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetClipboard()
         {
-            var cbdata = Clipboard.GetDataObject();
+            IDataObject cbdata = Clipboard.GetDataObject();
             if (cbdata.GetDataPresent("System.String", true)) 
             {
                 return cbdata.GetData("System.String", true).ToString();
@@ -330,43 +330,46 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ReplaceVars(Match match)
         {
-            if (match.Groups.Count == 0) return match.Value;
-            var name = match.Groups[1].Value;
-            switch (name)
+            if (match.Groups.Count > 0)
             {
-                case "Quote" : return "\"";
-                case "CBI" : return GetCBI();
-                case "STC" : return GetSTC();
-                case "AppDir" : return GetAppDir();
-                case "UserAppDir" : return GetUserAppDir();
-                case "TemplateDir": return GetTemplateDir();
-                case "BaseDir" : return GetBaseDir();
-                case "SelText" : return GetSelText();
-                case "CurFilename": return GetCurFilename();
-                case "CurFilenameNoExt": return GetCurFilenameNoExt();
-                case "CurFile" : return GetCurFile();
-                case "CurDir" : return GetCurDir();
-                case "CurWord" : return GetCurWord();
-                case "CurSyntax": return GetCurSyntax();
-                case "Timestamp" : return GetTimestamp();
-                case "OpenFile" : return GetOpenFile();
-                case "SaveFile" : return GetSaveFile();
-                case "OpenDir" : return GetOpenDir();
-                case "DesktopDir" : return GetDesktopDir();
-                case "SystemDir" : return GetSystemDir();
-                case "ProgramsDir" : return GetProgramsDir();
-                case "PersonalDir" : return GetPersonalDir();
-                case "WorkingDir" : return GetWorkingDir();
-                case "Clipboard": return GetClipboard();
-                case "Locale": return GetLocale();
-                case "Dollar": return "$";
+                string name = match.Groups[1].Value;
+                switch (name)
+                {
+                    case "Quote" : return "\"";
+                    case "CBI" : return GetCBI();
+                    case "STC" : return GetSTC();
+                    case "AppDir" : return GetAppDir();
+                    case "UserAppDir" : return GetUserAppDir();
+                    case "TemplateDir": return GetTemplateDir();
+                    case "BaseDir" : return GetBaseDir();
+                    case "SelText" : return GetSelText();
+                    case "CurFilename": return GetCurFilename();
+                    case "CurFilenameNoExt": return GetCurFilenameNoExt();
+                    case "CurFile" : return GetCurFile();
+                    case "CurDir" : return GetCurDir();
+                    case "CurWord" : return GetCurWord();
+                    case "CurSyntax": return GetCurSyntax();
+                    case "Timestamp" : return GetTimestamp();
+                    case "OpenFile" : return GetOpenFile();
+                    case "SaveFile" : return GetSaveFile();
+                    case "OpenDir" : return GetOpenDir();
+                    case "DesktopDir" : return GetDesktopDir();
+                    case "SystemDir" : return GetSystemDir();
+                    case "ProgramsDir" : return GetProgramsDir();
+                    case "PersonalDir" : return GetPersonalDir();
+                    case "WorkingDir" : return GetWorkingDir();
+                    case "Clipboard": return GetClipboard();
+                    case "Locale": return GetLocale();
+                    case "Dollar": return "$";
+                }
+                foreach (Argument arg in ArgumentDialog.CustomArguments)
+                {
+                    if (name == arg.Key) return arg.Value;
+                }
+                return "$(" + name + ")";
             }
-            foreach (Argument arg in ArgumentDialog.CustomArguments)
-            {
-                if (name == arg.Key) return arg.Value;
-            }
-            return "$(" + name + ")";
 
+            return match.Value;
         }
         
         /// <summary>

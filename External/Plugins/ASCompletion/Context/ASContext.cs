@@ -69,6 +69,8 @@ namespace ASCompletion.Context
 
         #region static properties
 
+        public static ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
+
         public static PluginUI Panel => plugin?.Panel;
 
         public static GeneralSettings CommonSettings => plugin.Settings as GeneralSettings;
@@ -203,7 +205,7 @@ namespace ASCompletion.Context
             {
                 if (cFile is null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings is null)
                     return false;
-                if (cFile.InlinedRanges is null || !(PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)) return true;
+                if (cFile.InlinedRanges is null || !(CurSciControl is { } sci)) return true;
                 var position = sci.CurrentPos;
                 foreach (var range in cFile.InlinedRanges)
                 {
@@ -361,7 +363,7 @@ namespace ASCompletion.Context
 
         internal static void SetCurrentLine(int line)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = CurSciControl;
             if (validContexts.Count == 0 || sci is null)
             {
                 HasContext = false;
@@ -944,7 +946,7 @@ namespace ASCompletion.Context
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+            else if (CurSciControl is { } sci)
             {
                 cLine = sci.CurrentLine;
                 UpdateContext(cLine);
@@ -959,7 +961,7 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile is null || !(PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)) return;
+            if (cFile is null || !(CurSciControl is { } sci)) return;
             GetCodeModel(cFile, sci.Text);
             cLine = sci.CurrentLine;
             UpdateContext(cLine);
@@ -1426,7 +1428,7 @@ namespace ASCompletion.Context
             if (dest is null)
             {
                 PluginBase.MainForm.CallCommand("New", null);
-                if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+                if (CurSciControl is { } sci)
                 {
                     sci.CurrentPos = 0;
                     sci.Text = code;
@@ -1451,8 +1453,9 @@ namespace ASCompletion.Context
 
         protected static string GetStatusText()
         {
-            var text = PluginBase.MainForm.StatusStrip.Items[0].Text;
-            return text.Length > 2 ? text.Substring(2) : string.Empty;
+            if (PluginBase.MainForm.StatusStrip.Items[0].Text.Length > 2)
+                return PluginBase.MainForm.StatusStrip.Items[0].Text.Substring(2);
+            return "";
         }
 
         public static string NormalizeFilename(string path)

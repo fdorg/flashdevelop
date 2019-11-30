@@ -1,6 +1,7 @@
 using System;
 using System.Media;
 using System.Drawing;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Controls;
@@ -146,7 +147,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            var error = PluginBase.MainForm.FindImage("197", false);
+            var error = Globals.MainForm.FindImage("197", false);
             if (error != null) pictureBox.Image = error;
         }
 

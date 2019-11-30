@@ -3,6 +3,7 @@ using System.Text;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Utilities;

@@ -165,8 +165,8 @@ namespace PHPContext
                 cFile.Context = this;
                 cFile.HasFiltering = true;
                 ASFileParser parser = new ASFileParser();
-                parser.ParseSrc(cFile, (PluginBase.MainForm.CurrentDocument?.SciControl).Text);
-                cLine = (PluginBase.MainForm.CurrentDocument?.SciControl).CurrentLine;
+                parser.ParseSrc(cFile, CurSciControl.Text);
+                cLine = CurSciControl.CurrentLine;
                 UpdateContext(cLine);
             }
         }

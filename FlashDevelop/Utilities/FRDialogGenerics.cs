@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using PluginCore;
 using PluginCore.FRService;
 using ScintillaNet;
 
@@ -16,9 +15,9 @@ namespace FlashDevelop.Utilities
         {
             return img switch
             {
-                1 => PluginBase.MainForm.FindImage("196", false),
-                2 => PluginBase.MainForm.FindImage("197", false),
-                _ => PluginBase.MainForm.FindImage("229", false),
+                1 => Globals.MainForm.FindImage("196", false),
+                2 => Globals.MainForm.FindImage("197", false),
+                _ => Globals.MainForm.FindImage("229", false),
             };
         }
 

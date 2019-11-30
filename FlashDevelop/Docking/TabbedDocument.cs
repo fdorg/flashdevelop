@@ -4,7 +4,6 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Linq;
 using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
 using FlashDevelop.Managers;
@@ -45,16 +44,6 @@ namespace FlashDevelop.Docking
             StartBackupTiming();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                focusTimer?.Dispose();
-                backupTimer?.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         /// <summary>
         /// Disables the automatic update of the icon
         /// </summary>
@@ -63,17 +52,27 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Path of the document
         /// </summary>
-        public string FileName => SciControl?.FileName;
+        public string FileName => IsEditable ? SciControl.FileName : null;
+
+        /// <summary>
+        /// Do we contain a Browser control?
+        /// </summary>
+        public bool IsBrowsable
+        {
+            get
+            {
+                foreach (Control ctrl in Controls)
+                {
+                    if (ctrl is Browser) return true;
+                }
+                return false;
+            }
+        }
 
         /// <summary>
         /// Do we contain a ScintillaControl?
         /// </summary>
         public bool IsEditable => SciControl != null;
-
-        /// <summary>
-        /// Do we contain a Browser control?
-        /// </summary>
-        public bool IsBrowsable => Controls.OfType<Browser>().Any();
 
         /// <summary>
         /// Are we splitted in to two sci controls?
@@ -104,7 +103,12 @@ namespace FlashDevelop.Docking
         {
             get
             {
-                return PluginBase.MainForm.Documents.Count(document => document.DockHandler.PanelPane == DockHandler.PanelPane) <= 1;
+                int count = 0;
+                foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+                {
+                    if (document.DockHandler.PanelPane == DockHandler.PanelPane) count++;
+                }
+                return count <= 1;
             }
         }
 
@@ -120,9 +124,9 @@ namespace FlashDevelop.Docking
                     if (ctrl is ScintillaControl control && !Disposing && !IsDisposed) return control;
                     if (ctrl is SplitContainer casted && casted.Name == "fdSplitView" && !Disposing && !IsDisposed)
                     {
-                        var sci2 = (ScintillaControl) casted.Panel2.Controls[0];
+                        ScintillaControl sci1 = casted.Panel1.Controls[0] as ScintillaControl;
+                        ScintillaControl sci2 = casted.Panel2.Controls[0] as ScintillaControl;
                         if (sci2.IsFocus) return sci2;
-                        var sci1 = (ScintillaControl) casted.Panel1.Controls[0];
                         if (sci1.IsFocus) return sci1;
                         if (lastEditor != null && lastEditor.Visible)
                         {
@@ -153,9 +157,14 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Gets if the file is untitled
         /// </summary>
-        public bool IsUntitled => SciControl is { } sci
-                                  && TextHelper.GetString("Info.UntitledFileStart") is { } untitledFileStart
-                                  && sci.FileName.StartsWithOrdinal(untitledFileStart);
+        public bool IsUntitled
+        {
+            get
+            {
+                string untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
+                return IsEditable && FileName.StartsWithOrdinal(untitledFileStart);
+            }
+        }
 
         /// <summary>
         /// Sets or gets if the file is modified
@@ -192,9 +201,9 @@ namespace FlashDevelop.Docking
         void OnFocusTimer(object sender, EventArgs e)
         {
             focusTimer.Stop();
-            if (DockPanel.ActiveContent == this && SciControl is { } sci)
+            if (SciControl != null && DockPanel.ActiveContent != null && DockPanel.ActiveContent == this)
             {
-                sci.Focus();
+                SciControl.Focus();
                 InitBookmarks();
             }
         }
@@ -211,11 +220,12 @@ namespace FlashDevelop.Docking
                 ButtonManager.UpdateFlaggedButtons();
                 return;
             }
-            var hadBookmark = bookmarks.Contains(line);
-            if (hadBookmark != MarkerManager.HasMarker(sci, 0, line)) // any change?
+            bool hadBookmark = bookmarks.Contains(line);
+            bool hasBookmark = MarkerManager.HasMarker(sci, 0, line);
+            if (hadBookmark != hasBookmark) // any change?
             {
-                if (!hadBookmark) bookmarks.Add(line);
-                else bookmarks.Remove(line);
+                if (!hadBookmark && hasBookmark) bookmarks.Add(line);
+                else if (hadBookmark && !hasBookmark) bookmarks.Remove(line);
                 ButtonManager.UpdateFlaggedButtons();
             }
         }
@@ -238,7 +248,8 @@ namespace FlashDevelop.Docking
             SplitContainer.Panel2.Controls.Add(SplitSci2);
             SplitContainer.Dock = DockStyle.Fill;
             SplitContainer.Panel2Collapsed = true;
-            SplitSci2.DocPointer = SplitSci1.DocPointer;
+            int oldDoc = SplitSci1.DocPointer;
+            SplitSci2.DocPointer = oldDoc;
             SplitSci1.SavePointLeft += delegate
             {
                 Globals.MainForm.OnDocumentModify(this);
@@ -261,17 +272,17 @@ namespace FlashDevelop.Docking
         void EditorUpdateSync(ScintillaControl sender)
         {
             if (!IsEditable) return;
-            var sci1 = SplitSci1;
-            var sci2 = SplitSci2;
-            if (sender == sci2)
+            ScintillaControl e1 = SplitSci1;
+            ScintillaControl e2 = SplitSci2;
+            if (sender == SplitSci2)
             {
-                 sci1 = sci2;
-                 sci2 = SplitSci1;
+                 e1 = SplitSci2;
+                 e2 = SplitSci1;
             }
-            sci2.UpdateSync -= EditorUpdateSync;
-            ScintillaManager.UpdateSyncProps(sci1, sci2);
-            ScintillaManager.ApplySciSettings(sci2);
-            sci2.UpdateSync += EditorUpdateSync;
+            e2.UpdateSync -= EditorUpdateSync;
+            ScintillaManager.UpdateSyncProps(e1, e2);
+            ScintillaManager.ApplySciSettings(e2);
+            e2.UpdateSync += EditorUpdateSync;
             Globals.MainForm.RefreshUI();
         }
 
@@ -293,8 +304,11 @@ namespace FlashDevelop.Docking
         /// </summary>
         public bool CheckFileChange()
         {
-            if (fileInfo is null) fileInfo = new FileInfo(FileName);
-            if (!PluginBase.MainForm.ClosingEntirely && File.Exists(FileName))
+            if (fileInfo is null)
+            {
+                fileInfo = new FileInfo(FileName);
+            }
+            if (!Globals.MainForm.ClosingEntirely && File.Exists(FileName))
             {
                 FileInfo fi = new FileInfo(FileName);
                 if (fileInfo.IsReadOnly != fi.IsReadOnly) return true;
@@ -308,7 +322,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         public void RefreshFileInfo()
         {
-            if (!PluginBase.MainForm.ClosingEntirely && File.Exists(FileName))
+            if (!Globals.MainForm.ClosingEntirely && File.Exists(FileName))
             {
                 fileInfo = new FileInfo(FileName);
             }
@@ -326,7 +340,7 @@ namespace FlashDevelop.Docking
             {
                 string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.MakeReadOnlyWritable");
-                if (MessageBox.Show(PluginBase.MainForm, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show(Globals.MainForm, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     ScintillaManager.MakeFileWritable(SciControl);
                 }
@@ -369,7 +383,6 @@ namespace FlashDevelop.Docking
             }
             RefreshTexts();
         }
-
         /// <summary>
         /// Saves an editable document
         /// </summary>
@@ -377,7 +390,8 @@ namespace FlashDevelop.Docking
 
         public void Save()
         {
-            if (IsEditable) Save(FileName);
+            if (!IsEditable) return;
+            Save(FileName);
         }
 
         /// <summary>
@@ -393,18 +407,18 @@ namespace FlashDevelop.Docking
                 if (MessageBox.Show(PluginBase.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             Globals.MainForm.ReloadingDocument = true;
-            var position = SciControl.CurrentPos;
-            var te = new TextEvent(EventType.FileReload, FileName);
+            int position = SciControl.CurrentPos;
+            TextEvent te = new TextEvent(EventType.FileReload, FileName);
             EventManager.DispatchEvent(PluginBase.MainForm, te);
             if (!te.Handled)
             {
-                var info = FileHelper.GetEncodingFileInfo(FileName);
+                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(FileName);
                 if (info.CodePage == -1)
                 {
                     Globals.MainForm.ReloadingDocument = false;
                     return; // If the files is locked, stop.
                 }
-                var encoding = Encoding.GetEncoding(info.CodePage);
+                Encoding encoding = Encoding.GetEncoding(info.CodePage);
                 SciControl.IsReadOnly = false;
                 SciControl.Encoding = encoding;
                 SciControl.Text = info.Contents;
@@ -431,7 +445,7 @@ namespace FlashDevelop.Docking
         }
 
         /// <summary>
-        /// Reverts the document to the original state
+        /// Reverts the document to the orginal state
         /// </summary>
         public void Revert(bool showQuestion)
         {
@@ -442,11 +456,13 @@ namespace FlashDevelop.Docking
                 string message = TextHelper.GetString("Info.AreYouSureToRevert");
                 if (MessageBox.Show(PluginBase.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
-            var te = new TextEvent(EventType.FileRevert, PluginBase.MainForm.CurrentDocument.SciControl.FileName);
+            TextEvent te = new TextEvent(EventType.FileRevert, PluginBase.MainForm.CurrentDocument.SciControl.FileName);
             EventManager.DispatchEvent(this, te);
-            if (te.Handled) return;
-            while (SciControl.CanUndo) SciControl.Undo();
-            ButtonManager.UpdateFlaggedButtons();
+            if (!te.Handled)
+            {
+                while (SciControl.CanUndo) SciControl.Undo();
+                ButtonManager.UpdateFlaggedButtons();
+            }
         }
         
         /// <summary>
@@ -465,14 +481,10 @@ namespace FlashDevelop.Docking
         /// </summary> 
         void BackupTimerTick(object sender, EventArgs e)
         {
-            if (SciControl is { } sci
-                && !IsUntitled
-                && IsModified
-                && sci.Text is { } text
-                && text != previousText)
+            if (IsEditable && !IsUntitled && IsModified && previousText != SciControl.Text)
             {
-                RecoveryManager.SaveTemporaryFile(FileName, text, sci.Encoding);
-                previousText = text;
+                RecoveryManager.SaveTemporaryFile(FileName, SciControl.Text, SciControl.Encoding);
+                previousText = SciControl.Text;
             }
         }
 
@@ -506,32 +518,24 @@ namespace FlashDevelop.Docking
         public void InitBookmarks()
         {
             bookmarks.Clear();
-            var sci = SciControl;
-            for (var i = 0; i < sci.LineCount; i++) 
+            for (int i = 0; i < SplitSci1.LineCount; i++) 
             {
-                if (MarkerManager.HasMarker(sci, 0, i))
-                    bookmarks.Add(i);
+                if (MarkerManager.HasMarker(SciControl, 0, i)) bookmarks.Add(i);
             }
         }
 
         /// <summary>
         /// Updates the document's tooltip
         /// </summary>
-        void UpdateToolTipText() => UpdateToolTipText(FileName ?? string.Empty);
-
-        /// <summary>
-        /// Updates the document's tooltip
-        /// </summary>
-        void UpdateToolTipText(string text) => ToolTipText = text;
+        void UpdateToolTipText() => ToolTipText = !IsEditable ? "" : FileName;
 
         /// <summary>
         /// Updates the document icon when a control is added
         /// </summary>
         void DocumentControlAdded(object sender, ControlEventArgs e)
         {
-            var fileName = FileName;
-            UpdateToolTipText(fileName);
-            UpdateDocumentIcon(fileName);
+            UpdateToolTipText();
+            UpdateDocumentIcon(FileName);
         }
 
         /// <summary>

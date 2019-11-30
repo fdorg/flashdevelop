@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.ComponentModel;
+using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;

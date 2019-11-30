@@ -862,7 +862,7 @@ namespace ASCompletion
         /// <param name="members"></param>
         public static void AddMembers(TreeNodeCollection tree, MemberList members)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = ASContext.CurSciControl;
             var ctx = ASContext.Context;
             var hasInference = ctx.Features.hasInference;
             foreach (var it in members)
@@ -1005,7 +1005,7 @@ namespace ASCompletion
             if (lookupLocations.Count == 0 && LookupMenuItem != null) LookupMenuItem.Enabled = false;
 
             PluginBase.MainForm.OpenEditableDocument(location.File, false);
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = ASContext.CurSciControl;
             if (sci is null) return false;
             int position = sci.PositionFromLine(location.Line) + location.Column;
             sci.SetSel(position, position);
