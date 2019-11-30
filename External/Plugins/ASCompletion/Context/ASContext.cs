@@ -63,15 +63,21 @@ namespace ASCompletion.Context
             completionCache = new CompletionCache(this, null);
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
-            cacheRefreshTimer.Tick += CacheRefreshTimer_Tick;
+            cacheRefreshTimer.Tick += cacheRefreshTimer_Tick;
         }
         #endregion
 
         #region static properties
 
+        public static IMainForm MainForm => PluginBase.MainForm;
+
+        public static ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
+
         public static PluginUI Panel => plugin?.Panel;
 
         public static GeneralSettings CommonSettings => plugin.Settings as GeneralSettings;
+
+        public static string DataPath => plugin.DataPath;
 
         //static private int setCount = 0;
         public static IASContext Context
@@ -88,8 +94,8 @@ namespace ASCompletion.Context
                 }
                 //if (context.Settings != null) TraceManager.Add("Set context... " + (++setCount) + " " + context.Settings.LanguageId);
                 // Update toolbar/menus state depending on the context state
-                var isValid = context.IsFileValid;
-                foreach (var item in plugin.MenuItems)
+                bool isValid = context.IsFileValid;
+                foreach (ToolStripItem item in plugin.MenuItems)
                 {
                     item.Enabled = isValid;
                 }
@@ -203,9 +209,9 @@ namespace ASCompletion.Context
             {
                 if (cFile is null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings is null)
                     return false;
-                if (cFile.InlinedRanges is null || !(PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)) return true;
+                if (cFile.InlinedRanges is null || !(CurSciControl is { } sci)) return true;
                 var position = sci.CurrentPos;
-                foreach (var range in cFile.InlinedRanges)
+                foreach (InlineRange range in cFile.InlinedRanges)
                 {
                     if (position > range.Start && position < range.End) return true;
                 }
@@ -290,7 +296,7 @@ namespace ASCompletion.Context
         {
             if (lang is null) return null;
             lang = lang.ToLower();
-            foreach (var reg in allContexts)
+            foreach (RegisteredContext reg in allContexts)
             {
                 if (reg.Language == lang && reg.Inlined is null) return reg.Context;
             }
@@ -304,7 +310,7 @@ namespace ASCompletion.Context
         /// <param name="classpath">Additional classpath</param>
         public static void SetLanguageClassPath(ContextSetupInfos setup)
         {
-            foreach (var reg in allContexts)
+            foreach (RegisteredContext reg in allContexts)
             {
                 if (reg.Language == setup.Lang) reg.Context.Setup(setup);
             }
@@ -316,41 +322,43 @@ namespace ASCompletion.Context
         internal static void SetCurrentFile(ITabbedDocument doc, bool shouldIgnore)
         {
             // reset previous contexts
-            foreach (var it in validContexts)
-                it.CurrentFile = null;
+            if (validContexts.Count > 0)
+            {
+                foreach (IASContext oldcontext in validContexts)
+                    oldcontext.CurrentFile = null;
+            }
             validContexts = new List<IASContext>();
             context = defaultContext;
             context.CurrentFile = null;
 
             // check document
-            var sci = doc.SciControl;
-            var fileName = string.Empty;
-            if (!string.IsNullOrEmpty(sci?.FileName))
+            string filename = "";
+            if (doc?.FileName != null)
             {
-                fileName = sci.FileName;
+                filename = doc.FileName;
                 if (doPathNormalization)
-                    fileName = fileName.Replace(dirAltSeparator, dirSeparator);
+                    filename = filename.Replace(dirAltSeparator, dirSeparator);
             }
             else shouldIgnore = true;
 
-            FileModel.Ignore.FileName = fileName;
+            FileModel.Ignore.FileName = filename;
             // find the doc context(s)
             if (!shouldIgnore)
             {
-                var lang = sci.ConfigurationLanguage.ToLower();
-                var ext = Path.GetExtension(fileName);
+                string lang = doc.SciControl.ConfigurationLanguage.ToLower();
+                string ext = Path.GetExtension(filename);
                 if (!string.IsNullOrEmpty(ext) && lang == "xml")
                     lang = ext.Substring(1).ToLower();
-                foreach (var it in allContexts)
+                foreach (RegisteredContext reg in allContexts)
                 {
-                    if (it.Language == lang)
+                    if (reg.Language == lang)
                     {
-                        validContexts.Add(it.Context);
-                        it.Context.CurrentFile = fileName;
+                        validContexts.Add(reg.Context);
+                        reg.Context.CurrentFile = filename;
                     }
                 }
                 currentLine = -1;
-                SetCurrentLine(sci.CurrentLine);
+                SetCurrentLine(doc.SciControl.CurrentLine);
             }
             // no context
             if (context == defaultContext) Panel.UpdateView(FileModel.Ignore);
@@ -359,50 +367,53 @@ namespace ASCompletion.Context
 
         internal static void SetCurrentLine(int line)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            ScintillaControl sci = CurSciControl;
             if (validContexts.Count == 0 || sci is null)
             {
                 HasContext = false;
                 return;
             }
-            if (line == currentLine) return;
-            // reevaluate active context
-            HasContext = false;
-            string needSyntax = null;
-            currentLine = line;
-            foreach (var context in validContexts)
+            if (line != currentLine)
             {
-                context.CurrentLine = line;
-                // inline language coloring
-                if (context.CurrentModel?.InlinedRanges != null)
+                // reevaluate active context
+                HasContext = false;
+                string needSyntax = null;
+                currentLine = line;
+                foreach (IASContext context in validContexts)
                 {
-                    needSyntax = context.CurrentModel.InlinedIn;
-                    int start = sci.MBSafeCharPosition(sci.PositionFromLine(line));
-                    int end = start + sci.GetLine(line).Length;
-                    foreach (var range in context.CurrentModel.InlinedRanges)
+                    context.CurrentLine = line;
+
+                    // inline language coloring
+                    if (context.CurrentModel?.InlinedRanges != null)
                     {
-                        if (start > range.Start && end < range.End)
+                        needSyntax = context.CurrentModel.InlinedIn;
+                        int start = sci.MBSafeCharPosition(sci.PositionFromLine(line));
+                        int end = start + sci.GetLine(line).Length;
+                        foreach (InlineRange range in context.CurrentModel.InlinedRanges)
                         {
-                            needSyntax = range.Syntax;
-                            HasContext = true;
-                            break;
+                            if (start > range.Start && end < range.End)
+                            {
+                                needSyntax = range.Syntax;
+                                HasContext = true;
+                                break;
+                            }
                         }
                     }
+                    else HasContext = true;
                 }
-                else HasContext = true;
-            }
-            if (needSyntax != null && needSyntax != sci.ConfigurationLanguage)
-            {
-                sci.ConfigurationLanguage = needSyntax;
-                if (!CommonSettings.DisableKnownTypesColoring && context is ASContext ctx)
+                if (needSyntax != null && needSyntax != sci.ConfigurationLanguage)
                 {
-                    // known classes colorization
-                    if (ctx.completionCache.Keywords.Length > 0)
-                        sci.KeyWords(1, ctx.completionCache.Keywords); // additional-keywords index = 1
+                    sci.ConfigurationLanguage = needSyntax;
+                    if (!CommonSettings.DisableKnownTypesColoring && context is ASContext ctx)
+                    {
+                        // known classes colorization
+                        if (ctx.completionCache.Keywords.Length > 0)
+                            sci.KeyWords(1, ctx.completionCache.Keywords); // additional-keywords index = 1
+                    }
+                    sci.Colourise(0, -1); // re-colorize the editor
                 }
-                sci.Colourise(0, -1); // re-colorize the editor
+                Panel.Highlight(Context.CurrentClass, Context.CurrentMember);
             }
-            Panel.Highlight(Context.CurrentClass, Context.CurrentMember);
         }
 
         /// <summary>
@@ -410,8 +421,9 @@ namespace ASCompletion.Context
         /// </summary>
         public static void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            foreach (var it in validContexts)
-                it.TrackTextChange(sender, position, length, linesAdded);
+            if (validContexts.Count == 0) return;
+            foreach (var context in validContexts)
+                context.TrackTextChange(sender, position, length, linesAdded);
         }
 
         /*private static void RepaintRanges(ScintillaNet.ScintillaControl sci)
@@ -440,11 +452,15 @@ namespace ASCompletion.Context
         {
             Context = defaultContext;
             validContexts.Clear();
-            foreach (var it in allContexts)
-                it.Context.Reset();
+            foreach (RegisteredContext reg in allContexts)
+                reg.Context.Reset();
+            //PathExplorer.ClearAll();
             PathModel.ClearAll();
+
             Application.DoEvents();
-            SetCurrentFile(PluginBase.MainForm.CurrentDocument, false);
+
+            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            SetCurrentFile(doc, !doc.IsEditable); 
         }
 
         #endregion
@@ -474,6 +490,7 @@ namespace ASCompletion.Context
                 foreach (PathModel aPath in classPath) aPath.InUse = true;
             }
             PathModel.Compact();
+
             PathExplorer.EndUpdate();
         }
 
@@ -528,7 +545,7 @@ namespace ASCompletion.Context
                     return apath;
             }
             // add new path
-            var aPath = PathModel.GetModel(path, this);
+            PathModel aPath = PathModel.GetModel(path, this);
             if (aPath != null)
             {
                 classPath.Add(aPath);
@@ -557,7 +574,7 @@ namespace ASCompletion.Context
             path.InUse = true;
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
             explorer.OnExplorationDone += RefreshContextCache;
-            explorer.OnExplorationProgress += (state, value, max) => plugin.Panel.SetStatus(state, value, max);
+            explorer.OnExplorationProgress += ExplorationProgress;
             explorer.UseCache = !CommonSettings.DisableCache;
             explorer.Run();
         }
@@ -576,7 +593,7 @@ namespace ASCompletion.Context
                 //TraceManager.Add("EXPLORE: " + path.Path);
                 PathExplorer explorer = new PathExplorer(this, path);
                 explorer.OnExplorationDone += RefreshContextCache;
-                explorer.OnExplorationProgress += (state, value, max) => plugin.Panel.SetStatus(state, value, max);
+                explorer.OnExplorationProgress += ExplorationProgress;
                 explorer.UseCache = !CommonSettings.DisableCache;
                 explorer.Run();
                 return true;
@@ -590,8 +607,14 @@ namespace ASCompletion.Context
             return false;
         }
 
+        void ExplorationProgress(string state, int value, int max)
+        {
+            // SetStatus is thread safe
+            plugin.Panel.SetStatus(state, value, max);
+        }
+
         /// <summary>
-        /// Called after:
+        /// Called afer:
         /// - a PathExplorer has finished exploring
         /// - a PathModel has some internal change
         /// - an import was generated
@@ -609,7 +632,7 @@ namespace ASCompletion.Context
             cacheRefreshTimer.Enabled = true;
         }
 
-        void CacheRefreshTimer_Tick(object sender, EventArgs e)
+        void cacheRefreshTimer_Tick(object sender, EventArgs e)
         {
             cacheRefreshTimer.Enabled = false;
             cacheRefreshTimer.Interval = 200;
@@ -651,7 +674,7 @@ namespace ASCompletion.Context
                     }
                 // add path
                 temporaryPath = path;
-                var tempModel = PathModel.GetModel(temporaryPath, this);
+                PathModel tempModel = PathModel.GetModel(temporaryPath, this);
                 if (!tempModel.WasExplored)
                 {
                     tempModel.IsTemporaryPath = true;
@@ -854,10 +877,10 @@ namespace ASCompletion.Context
         public virtual FileModel CreateFileModel(string fileName)
         {
             if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
-                return new FileModel(fileName ?? string.Empty);
-            var result = new FileModel(PathHelper.GetLongPathName(fileName));
-            result.Context = this;
-            return result;
+                return new FileModel(fileName ?? "");
+            var fileModel = new FileModel(PathHelper.GetLongPathName(fileName));
+            fileModel.Context = this;
+            return fileModel;
         }
 
         /// <summary>
@@ -927,7 +950,7 @@ namespace ASCompletion.Context
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+            else if (CurSciControl is { } sci)
             {
                 cLine = sci.CurrentLine;
                 UpdateContext(cLine);
@@ -942,7 +965,7 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile is null || !(PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)) return;
+            if (cFile is null || !(CurSciControl is { } sci)) return;
             GetCodeModel(cFile, sci.Text);
             cLine = sci.CurrentLine;
             UpdateContext(cLine);
@@ -966,7 +989,8 @@ namespace ASCompletion.Context
 
             if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
             {
-                classPath[0].AddFile(cFile);
+                var tPath = classPath[0];
+                tPath.AddFile(cFile);
             }
 
             if (cFile.OutOfDate) UpdateCurrentFile(true);
@@ -1205,7 +1229,7 @@ namespace ASCompletion.Context
                 aClass = ResolveType(node.Text, CurrentModel);
                 if (!aClass.IsVoid() && File.Exists(aClass.InFile.FileName))
                 {
-                    PluginBase.MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
+                    MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
                     string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
                     ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
@@ -1222,7 +1246,7 @@ namespace ASCompletion.Context
             }
             else if (node.Tag is string tag)
             {
-                var info = tag.Split('@');
+                string[] info = tag.Split('@');
                 if (info.Length == 2 && int.TryParse(info[1], out var line))
                 {
                     ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
@@ -1282,13 +1306,15 @@ namespace ASCompletion.Context
         public bool BrowseTo(string package)
         {
             package = package.Replace('.',dirSeparatorChar);
-            foreach (var aPath in classPath)
+            foreach (PathModel aPath in classPath)
             {
-                var path = Path.Combine(aPath.Path, package);
-                if (!Directory.Exists(path)) continue;
-                var de = new DataEvent(EventType.Command, "FileExplorer.BrowseTo", path);
-                EventManager.DispatchEvent(this, de);
-                return de.Handled;
+                string path = Path.Combine(aPath.Path, package);
+                if (Directory.Exists(path))
+                {
+                    DataEvent de = new DataEvent(EventType.Command, "FileExplorer.BrowseTo", path);
+                    EventManager.DispatchEvent(this, de);
+                    return de.Handled;
+                }
             }
             return false;
         }
@@ -1407,8 +1433,8 @@ namespace ASCompletion.Context
             // no destination, replace text
             if (dest is null)
             {
-                PluginBase.MainForm.CallCommand("New", null);
-                if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+                MainForm.CallCommand("New", null);
+                if (CurSciControl is { } sci)
                 {
                     sci.CurrentPos = 0;
                     sci.Text = code;
@@ -1429,12 +1455,13 @@ namespace ASCompletion.Context
         #endregion
 
         #region common tool methods
-        public static void SetStatusText(string text) => PluginBase.MainForm.StatusStrip.Items[0].Text = "  " + text;
+        public static void SetStatusText(string text) => MainForm.StatusStrip.Items[0].Text = "  " + text;
 
         protected static string GetStatusText()
         {
-            var text = PluginBase.MainForm.StatusStrip.Items[0].Text;
-            return text.Length > 2 ? text.Substring(2) : string.Empty;
+            if (MainForm.StatusStrip.Items[0].Text.Length > 2)
+                return MainForm.StatusStrip.Items[0].Text.Substring(2);
+            return "";
         }
 
         public static string NormalizeFilename(string path)
@@ -1522,7 +1549,7 @@ namespace ASCompletion.Context
     #region Completion cache
     public class CompletionCache
     {
-        bool isDirty;
+        private bool isDirty;
 
         public readonly string Package;
         public string Classname;
@@ -1533,11 +1560,7 @@ namespace ASCompletion.Context
         public bool IsDirty
         {
             get => isDirty;
-            set
-            {
-                isDirty = value;
-                Imports = null;
-            }
+            set { isDirty = value; Imports = null; }
         }
 
         public CompletionCache(IASContext context, MemberList elements)
@@ -1560,17 +1583,17 @@ namespace ASCompletion.Context
         /// <summary>
         /// Build scintilla keywords from class names
         /// </summary>
-        string GetKeywords()
+        private string GetKeywords()
         {
-            if (Elements is null) return string.Empty;
+            if (Elements is null) return "";
             var keywords = new List<string>();
-            foreach (var item in Elements)
+            foreach (MemberModel item in Elements)
             {
                 if ((item.Flags & FlagType.Package) != 0) continue;
                 var name = item.Name;
-                if (name.Contains('<', out var p1) && p1 > 0)
+                if (name.IndexOf('<') is var p1 && p1 > 0)
                 {
-                    if (name.Contains(".<", out var p2) && p2 > 0) name = name.Substring(0, p2);
+                    if (name.IndexOfOrdinal(".<") is var p2 && p2 > 0) name = name.Substring(0, p2);
                     else name = name.Substring(0, p1);
                 }
                 if (name.LastIndexOf('.') is var p3 && p3 > 0) name = name.Substring(p3 + 1);

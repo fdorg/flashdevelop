@@ -6,7 +6,6 @@ using PluginCore.Localization;
 using PluginCore.Helpers;
 using Microsoft.Win32;
 using System.IO;
-using PluginCore;
 
 namespace FlashDevelop.Controls
 {
@@ -29,7 +28,7 @@ namespace FlashDevelop.Controls
                 string subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
                 RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
                 {
-                    var value = emu.GetValue(valueName);
+                    object value = emu.GetValue(valueName);
                     if (value is null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
                 }
             }
@@ -38,7 +37,7 @@ namespace FlashDevelop.Controls
 
         public Browser()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = Globals.Settings.DefaultFont;
             InitializeComponent();
             InitializeLocalization();
             InitializeInterface();
@@ -188,7 +187,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void InitializeInterface()
         {
-            addressComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
             toolStrip.Renderer = new DockPanelStripRenderer(true, true);
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)
@@ -207,7 +206,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void WebBrowserNewWindow(object sender, CancelEventArgs e)
         {
-            PluginBase.MainForm.CallCommand("Browse", webBrowser.StatusText);
+            Globals.MainForm.CallCommand("Browse", webBrowser.StatusText);
             e.Cancel = true;
         }
 
@@ -226,7 +225,7 @@ namespace FlashDevelop.Controls
         void WebBrowserNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
             addressComboBox.Text = webBrowser.Url.ToString();
-            Globals.MainForm.OnScintillaControlUpdateControl(PluginBase.MainForm.CurrentDocument.SciControl);
+            Globals.MainForm.OnScintillaControlUpdateControl(Globals.SciControl);
         }
 
         /// <summary>
@@ -258,17 +257,26 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Browses to the previous page in history
         /// </summary>
-        void BackButtonClick(object sender, EventArgs e) => webBrowser.GoBack();
+        void BackButtonClick(object sender, EventArgs e)
+        {
+            webBrowser.GoBack();
+        }
 
         /// <summary>
         /// Browses to the next page in history
         /// </summary>
-        void ForwardButtonClick(object sender, EventArgs e) => webBrowser.GoForward();
+        void ForwardButtonClick(object sender, EventArgs e)
+        {
+            webBrowser.GoForward();
+        }
 
         /// <summary>
         /// Reloads the current pages contents
         /// </summary>
-        void RefreshButtonClick(object sender, EventArgs e) => webBrowser.Refresh();
+        void RefreshButtonClick(object sender, EventArgs e)
+        {
+            webBrowser.Refresh();
+        }
 
         /// <summary>
         /// Browses to the specified url on click

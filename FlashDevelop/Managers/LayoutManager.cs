@@ -214,7 +214,7 @@ namespace FlashDevelop.Managers
             {
                 Globals.MainForm.RestoringContents = true;
                 TextEvent te = new TextEvent(EventType.RestoreLayout, file);
-                EventManager.DispatchEvent(PluginBase.MainForm, te);
+                EventManager.DispatchEvent(Globals.MainForm, te);
                 if (!te.Handled)
                 {
                     BuildLayoutSystems(file);

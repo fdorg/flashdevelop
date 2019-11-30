@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace FlashDevelop.Managers
 {
-    internal class ThemeManager
+    class ThemeManager
     {
         /// <summary>
         /// Dictionary containing the loaded theme values
         /// </summary>
-        static readonly Dictionary<string, string> valueMap = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> valueMap = new Dictionary<string, string>();
 
         /// <summary>
         /// Gets a value entry from the config.
@@ -166,8 +166,8 @@ namespace FlashDevelop.Managers
                 }
                 if (obj is MainForm)
                 {
-                    var ne = new NotifyEvent(EventType.ApplyTheme);
-                    EventManager.DispatchEvent(PluginBase.MainForm, ne);
+                    NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
+                    EventManager.DispatchEvent(Globals.MainForm, ne);
                     Globals.MainForm.AdjustAllImages();
                     Globals.MainForm.Refresh();
                 }
@@ -186,7 +186,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies theme colors to the control based on type.
         /// </summary>
-        static void ThemeControl(object obj, Type type)
+        private static void ThemeControl(object obj, Type type)
         {
             try
             {
@@ -315,7 +315,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Apply property color if defined and property is available
         /// </summary>
-        static void ApplyPropColor(object targObj, string propId)
+        private static void ApplyPropColor(object targObj, string propId)
         {
             Color color = GetThemeColor(propId);
             PropertyInfo prop = targObj.GetType().GetProperty(propId.Split('.')[1]);
@@ -324,5 +324,8 @@ namespace FlashDevelop.Managers
                 prop.SetValue(targObj, color, null);
             }
         }
+
     }
+
 }
+

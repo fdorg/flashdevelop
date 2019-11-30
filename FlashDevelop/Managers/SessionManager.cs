@@ -9,13 +9,16 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace FlashDevelop.Managers
 {
-    internal class SessionManager
+    class SessionManager
     {
         /// <summary>
         /// Saves the current session to a file
         /// </summary>
-        public static void SaveSession(string file) => SaveSession(file, GetCurrentSession());
-
+        public static void SaveSession(string file)
+        {
+            Session session = GetCurrentSession();
+            SaveSession(file, session);
+        }
         public static void SaveSession(string file, Session session)
         {
             try
@@ -54,19 +57,19 @@ namespace FlashDevelop.Managers
                 Globals.MainForm.CloseAllDocuments(false);
                 if (!Globals.MainForm.CloseAllCanceled)
                 {
-                    var te = new DataEvent(EventType.RestoreSession, file, session);
-                    EventManager.DispatchEvent(PluginBase.MainForm, te);
+                    DataEvent te = new DataEvent(EventType.RestoreSession, file, session);
+                    EventManager.DispatchEvent(Globals.MainForm, te);
                     if (!te.Handled)
                     {
                         foreach (var fileToOpen in session.Files)
                         {
-                            if (File.Exists(fileToOpen)) PluginBase.MainForm.OpenEditableDocument(fileToOpen);
+                            if (File.Exists(fileToOpen)) Globals.MainForm.OpenEditableDocument(fileToOpen);
                         }
                         RestoreDocks(session);
-                        if (PluginBase.MainForm.Documents.Length == 0)
+                        if (Globals.MainForm.Documents.Length == 0)
                         {
-                            var ne = new NotifyEvent(EventType.FileEmpty);
-                            EventManager.DispatchEvent(PluginBase.MainForm, ne);
+                            NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
+                            EventManager.DispatchEvent(Globals.MainForm, ne);
                             if (!ne.Handled) Globals.MainForm.SmartNew(null, null);
                         }
                         DocumentManager.ActivateDocument(session.Index);
@@ -83,7 +86,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Restores the previous document docks
         /// </summary>
-        static void RestoreDocks(Session session)
+        private static void RestoreDocks(Session session)
         {
             try
             {
@@ -99,14 +102,11 @@ namespace FlashDevelop.Managers
                         }
                         else if (dockContent.DockPanel.Panes.Count > nestedDock.NestIndex)
                         {
+                            DockStyle ds = DockStyle.Right;
                             prevPane = dockContent.DockPanel.Panes[nestedDock.NestIndex];
-                            var ds = nestedDock.Alignment switch
-                            {
-                                DockAlignment.Top => DockStyle.Top,
-                                DockAlignment.Left => DockStyle.Left,
-                                DockAlignment.Bottom => DockStyle.Bottom,
-                                _ => DockStyle.Right
-                            };
+                            if (nestedDock.Alignment == DockAlignment.Top) ds = DockStyle.Top;
+                            else if (nestedDock.Alignment == DockAlignment.Left) ds = DockStyle.Left;
+                            else if (nestedDock.Alignment == DockAlignment.Bottom) ds = DockStyle.Bottom;
                             dockContent.DockTo(prevPane, ds, -1, nestedDock.Proportion);
                         }
                     }
@@ -121,13 +121,13 @@ namespace FlashDevelop.Managers
         public static Session GetCurrentSession()
         {
             var session = new Session();
-            var documents = PluginBase.MainForm.Documents;
+            var documents = Globals.MainForm.Documents;
             for (int i = 0; i < documents.Length; i++)
             {
                 ITabbedDocument document = documents[i];
                 if (document.IsEditable && !document.IsUntitled)
                 {
-                    if (document == PluginBase.MainForm.CurrentDocument)
+                    if (document == Globals.CurrentDocument)
                     {
                         session.Index = i;
                     }
@@ -164,10 +164,10 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class Session : ISession
     {
-        int index = 0;
-        List<string> files = new List<string>();
-        List<NestedDock> nested = new List<NestedDock>();
-        SessionType type = SessionType.Startup;
+        private int index = 0;
+        private List<string> files = new List<string>();
+        private List<NestedDock> nested = new List<NestedDock>();
+        private SessionType type = SessionType.Startup;
 
         public Session() {}
         public Session(int index, List<string> files)
@@ -207,11 +207,11 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class NestedDock
     {
-        int nest = -1;
-        int index = -1;
-        string file = "";
-        double prop = 0.5;
-        DockAlignment align = DockAlignment.Right;
+        private int nest = -1;
+        private int index = -1;
+        private string file = "";
+        private double prop = 0.5;
+        private DockAlignment align = DockAlignment.Right;
 
         public NestedDock() { }
         public NestedDock(string file, int nest, int index, DockAlignment align, double prop)

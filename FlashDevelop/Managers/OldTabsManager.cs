@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using PluginCore;
 using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
@@ -16,11 +15,11 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void OpenOldTabDocument()
         {
-            foreach (var fileName in OldTabs)
+            foreach (var tab in OldTabs)
             {
-                if (DocumentManager.FindDocument(fileName) is null)
+                if (DocumentManager.FindDocument(tab) is null)
                 {
-                    PluginBase.MainForm.OpenEditableDocument(fileName);
+                    Globals.MainForm.OpenEditableDocument(tab);
                     break;
                 }
             }
@@ -32,7 +31,13 @@ namespace FlashDevelop.Managers
         public static void SaveOldTabDocument(string filename)
         {
             if (!OldTabs.Contains(filename)) OldTabs.Insert(0, filename);
-            if (OldTabs.Count - 10 is var count && count > 0) OldTabs.RemoveRange(10, count);
+            while (OldTabs.Count > 10)
+            {
+                int last = OldTabs.Count - 1;
+                OldTabs.RemoveAt(last);
+            }
         }
+
     }
+
 }

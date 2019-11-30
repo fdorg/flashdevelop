@@ -205,7 +205,7 @@ namespace ASCompletion
             EventManager.DispatchEvent(sender, de); 
         }
 
-        public Image GetIcon(int index)
+        public System.Drawing.Image GetIcon(int index)
         {
             if (treeIcons.Images.Count > 0)
                 return treeIcons.Images[Math.Min(index, treeIcons.Images.Count)];
@@ -862,12 +862,12 @@ namespace ASCompletion
         /// <param name="members"></param>
         public static void AddMembers(TreeNodeCollection tree, MemberList members)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = ASContext.CurSciControl;
             var ctx = ASContext.Context;
             var hasInference = ctx.Features.hasInference;
-            foreach (var it in members)
+            for (var i = 0; i < members.Count; i++)
             {
-                var member = it;
+                var member = members[i];
                 var img = GetIcon(member.Flags, member.Access);
                 if (hasInference && string.IsNullOrEmpty(member.Type))
                 {
@@ -1005,7 +1005,7 @@ namespace ASCompletion
             if (lookupLocations.Count == 0 && LookupMenuItem != null) LookupMenuItem.Enabled = false;
 
             PluginBase.MainForm.OpenEditableDocument(location.File, false);
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = ASContext.CurSciControl;
             if (sci is null) return false;
             int position = sci.PositionFromLine(location.Line) + location.Column;
             sci.SetSel(position, position);
@@ -1037,7 +1037,7 @@ namespace ASCompletion
             }
         }
 
-        static bool IsMatch(string inputText, string searchText)
+        bool IsMatch(string inputText, string searchText)
         {
             if (inputText is null || searchText == "")
             {
@@ -1153,7 +1153,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        static TreeNode FindMatch(IEnumerable nodes)
+        TreeNode FindMatch(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {

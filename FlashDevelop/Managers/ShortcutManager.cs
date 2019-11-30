@@ -113,7 +113,7 @@ namespace FlashDevelop.Managers
                 {
                     ScintillaControl.UpdateShortcut(item.Id, item.Custom);
                     DataEvent de = new DataEvent(EventType.Shortcut, item.Id, item.Custom);
-                    EventManager.DispatchEvent(PluginBase.MainForm, de);
+                    EventManager.DispatchEvent(Globals.MainForm, de);
                 }
             }
             foreach (ToolStripItem button in SecondaryItems)
@@ -132,9 +132,9 @@ namespace FlashDevelop.Managers
             var ids = ((ItemData) item.Tag).Id.Split(';');
             if (ids.Length == 2) id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
             else return; // No work for us here...
-            var keys = PluginBase.MainForm.GetShortcutItemKeys(id);
+            bool view = Globals.Settings.ViewShortcuts;
+            Keys keys = Globals.MainForm.GetShortcutItemKeys(id);
             if (keys == Keys.None) return;
-            var view = PluginBase.MainForm.Settings.ViewShortcuts;
             if (item is ToolStripMenuItem casted)
             {
                 if (casted.ShortcutKeys == Keys.None)
@@ -276,4 +276,5 @@ namespace FlashDevelop.Managers
     }
 
     #endregion
+
 }

@@ -106,7 +106,7 @@ namespace FlashDevelop.Utilities
                         // Invalid plugin, ignore...
                         throw new Exception("Required API level does not match.");
                     }
-                    if (!PluginBase.MainForm.Settings.DisabledPlugins.Contains(newPlugin.Instance.Guid))
+                    if (!Globals.Settings.DisabledPlugins.Contains(newPlugin.Instance.Guid))
                     {
                         newPlugin.Instance.Initialize();
                         newPlugin.IsActive = true;
@@ -135,5 +135,7 @@ namespace FlashDevelop.Utilities
         {
             Assembly = assembly;
         }
+        
     }
+    
 }

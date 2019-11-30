@@ -2,14 +2,13 @@ using System;
 using System.IO;
 using System.Text;
 using FlashDevelop.Helpers;
-using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace FlashDevelop.Managers
 {
-    internal class RecoveryManager
+    class RecoveryManager
     {
         /// <summary>
         /// Removes the saved backup file from the restoration directory
@@ -39,7 +38,7 @@ namespace FlashDevelop.Managers
                 string recoveryDir = FileNameHelper.RecoveryDir;
                 if (!Directory.Exists(recoveryDir)) Directory.CreateDirectory(recoveryDir);
                 string path = Path.Combine(recoveryDir, name); // Create full file path
-                int lineEndMode = LineEndDetector.DetectNewLineMarker(text, (int)PluginBase.MainForm.Settings.EOLMode);
+                int lineEndMode = LineEndDetector.DetectNewLineMarker(text, (int)Globals.Settings.EOLMode);
                 string lineEndMarker = LineEndDetector.GetNewLineMarker(lineEndMode);
                 text = file + lineEndMarker + lineEndMarker + text;
                 FileHelper.WriteFile(path, text, encoding);
@@ -53,7 +52,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Converts a path to a valid file name
         /// </summary>
-        static string ConvertToFileName(string path)
+        private static string ConvertToFileName(string path)
         {
             try
             {
@@ -67,5 +66,7 @@ namespace FlashDevelop.Managers
                 return filename;
             }
         }
+
     }
+
 }

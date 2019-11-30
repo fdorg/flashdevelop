@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
-    internal class TabTextManager
+    class TabTextManager
     {
         /// <summary>
         /// Updates the documents tab texts
         /// </summary>
         public static void UpdateTabTexts()
         {
-            if (((SettingObject)PluginBase.MainForm.Settings).DisableTabDifferentiation)
+            if (Globals.Settings.DisableTabDifferentiation)
             {
-                foreach (var doc in PluginBase.MainForm.Documents)
+                foreach (var doc in Globals.MainForm.Documents)
                 {
                     if (doc.IsEditable)
                     {
@@ -42,10 +40,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Updates the tab texts by differenting them
         /// </summary>
-        static void DifferentiateTabTexts()
+        private static void DifferentiateTabTexts()
         {
             var byName = new Dictionary<string, List<string>>();
-            foreach (var doc in PluginBase.MainForm.Documents)
+            foreach (var doc in Globals.MainForm.Documents)
             {
                 if (doc.IsEditable)
                 {
@@ -79,10 +77,14 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Collects a list of path differences
         /// </summary>
-        static IEnumerable<ExplodePath> Discriminate(IEnumerable<string> tabs)
+        private static List<ExplodePath> Discriminate(List<string> tabs)
         {
+            var paths = new List<ExplodePath>();
             ExplodePath.Longer = 0;
-            var paths = tabs.Select(tab => new ExplodePath(tab)).ToList();
+            foreach (var tab in tabs)
+            {
+                paths.Add(new ExplodePath(tab));
+            }
             paths.Sort(ExplodePath.LongerFirst);
             bool hadDiff = false;
             bool hadMatch = false;
@@ -122,7 +124,7 @@ namespace FlashDevelop.Managers
         }
     }
 
-    internal class ExplodePath
+    class ExplodePath
     {
         public string Tab;
         public string Diff;
@@ -133,8 +135,8 @@ namespace FlashDevelop.Managers
         public ExplodePath(string tab)
         {
             Tab = tab;
-            var path = tab;
-            var parts = Regex.Split(Path.GetDirectoryName(path), "[\\\\/]+");
+            string path = tab;
+            string[] parts = Regex.Split(Path.GetDirectoryName(path), "[\\\\/]+");
             Array.Reverse(parts);
             if (parts.Length > Longer) Longer = parts.Length;
             Parts = parts;
@@ -145,4 +147,5 @@ namespace FlashDevelop.Managers
 
         public string this[int i] => i < Parts.Length ? Parts[i] : null;
     }
+
 }

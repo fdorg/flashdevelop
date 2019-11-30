@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using FlashDevelop.Helpers;
-using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
@@ -129,17 +128,17 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (PluginBase.MainForm.Settings.EnsureLastLineEnd)
+                if (Globals.Settings.EnsureLastLineEnd)
                 {
                     sci.AddLastLineEnd();
                 }
-                if (PluginBase.MainForm.Settings.EnsureConsistentLineEnds)
+                if (Globals.Settings.EnsureConsistentLineEnds)
                 {
                     sci.ConvertEOLs(sci.EOLMode);
                 }
-                if (PluginBase.MainForm.Settings.StripTrailingSpaces)
+                if (Globals.Settings.StripTrailingSpaces)
                 {
-                    sci.StripTrailingSpaces(((SettingObject)PluginBase.MainForm.Settings).KeepIndentTabs);
+                    sci.StripTrailingSpaces(Globals.Settings.KeepIndentTabs);
                 }
             }
             catch (Exception ex)
@@ -181,17 +180,41 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the line comment string
         /// </summary>
-        public static string GetLineComment(string lang) => SciConfig.GetLanguage(lang).linecomment ?? string.Empty;
+        public static string GetLineComment(string lang)
+        {
+            Language obj = SciConfig.GetLanguage(lang);
+            if (obj.linecomment != null)
+            {
+                return obj.linecomment;
+            }
+            return string.Empty;
+        }
 
         /// <summary>
         /// Gets the comment start string
         /// </summary>
-        public static string GetCommentStart(string lang) => SciConfig.GetLanguage(lang).commentstart ?? string.Empty;
+        public static string GetCommentStart(string lang)
+        {
+            Language obj = SciConfig.GetLanguage(lang);
+            if (obj.commentstart != null)
+            {
+                return obj.commentstart;
+            }
+            return string.Empty;
+        }
 
         /// <summary>
         /// Gets the comment end string
         /// </summary>
-        public static string GetCommentEnd(string lang) => SciConfig.GetLanguage(lang).commentend ?? string.Empty;
+        public static string GetCommentEnd(string lang)
+        {
+            Language obj = SciConfig.GetLanguage(lang);
+            if (obj.commentend != null)
+            {
+                return obj.commentend;
+            }
+            return string.Empty;
+        }
 
         /// <summary>
         /// Changes the current document's language
@@ -211,8 +234,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Updates editor Globals.Settings to the specified ScintillaControl
         /// </summary>
-        public static void ApplySciSettings(ScintillaControl sci) => ApplySciSettings(sci, false);
-
+        public static void ApplySciSettings(ScintillaControl sci)
+        {
+            ApplySciSettings(sci, false);
+        }
         public static void ApplySciSettings(ScintillaControl sci, bool hardUpdate)
         {
             try
@@ -249,17 +274,17 @@ namespace FlashDevelop.Managers
                 /**
                 * Set if themes should colorize the first margin
                 */
-                var language = SciConfig.GetLanguage(sci.ConfigurationLanguage);
+                Language language = SciConfig.GetLanguage(sci.ConfigurationLanguage);
                 if (language?.editorstyle != null)
                 {
-                    var colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
+                    bool colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
                     if (colorizeMarkerBack) sci.SetMarginTypeN(BookmarksMargin, (int)MarginType.Fore);
                     else sci.SetMarginTypeN(BookmarksMargin, (int)MarginType.Symbol);
                 }
                 /**
                 * Set correct line number margin width
                 */
-                var viewLineNumbers = settings.ViewLineNumbers;
+                bool viewLineNumbers = settings.ViewLineNumbers;
                 if (viewLineNumbers) sci.SetMarginWidthN(LineMargin, ScaleArea(sci, 36));
                 else sci.SetMarginWidthN(LineMargin, 0);
                 /**
@@ -310,7 +335,11 @@ namespace FlashDevelop.Managers
                         sci.AddIgnoredKeys(keys);
                     }
                 }
-                if (hardUpdate) sci.ConfigurationLanguage = sci.ConfigurationLanguage;
+                if (hardUpdate)
+                {
+                    string lang = sci.ConfigurationLanguage;
+                    sci.ConfigurationLanguage = lang;
+                }
                 sci.Colourise(0, -1);
                 sci.Refresh();
             }
@@ -427,5 +456,7 @@ namespace FlashDevelop.Managers
             UITools.Manager.ListenTo(sci);
             return sci;
         }
+
     }
+
 }

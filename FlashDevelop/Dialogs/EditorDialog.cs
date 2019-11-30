@@ -18,96 +18,96 @@ namespace FlashDevelop.Dialogs
 {
     public class EditorDialog : SmartForm, IThemeHandler
     {
-        string languageFile;
-        XmlDocument languageDoc;
-        XmlElement editorStyleNode;
-        XmlElement defaultStyleNode;
-        XmlElement currentStyleNode;
-        bool isItemSaved = true;
-        bool isEditorSaved = true;
-        bool isLoadingEditor = false;
-        bool isLanguageSaved = true;
-        bool isLoadingItem = false;
-        System.Windows.Forms.Label sizeLabel;
-        System.Windows.Forms.Label fontLabel;
-        System.Windows.Forms.Button okButton;
-        System.Windows.Forms.Button revertButton;
-        System.Windows.Forms.Button defaultButton;
-        System.Windows.Forms.Button applyButton;
-        System.Windows.Forms.Button exportButton;
-        System.Windows.Forms.Button cancelButton;
-        System.Windows.Forms.ListView itemListView;
-        System.Windows.Forms.ColorDialog colorDialog;
-        System.Windows.Forms.GroupBox itemGroupBox;
-        System.Windows.Forms.GroupBox languageGroupBox;
-        System.Windows.Forms.Label markerForeLabel;
-        System.Windows.Forms.Label markerBackLabel;
-        System.Windows.Forms.Label marginForeLabel;
-        System.Windows.Forms.Label marginBackLabel;
-        System.Windows.Forms.Button markerForeButton;
-        System.Windows.Forms.Button markerBackButton;
-        System.Windows.Forms.Button marginForeButton;
-        System.Windows.Forms.Button marginBackButton;
-        System.Windows.Forms.TextBox markerForeTextBox;
-        System.Windows.Forms.TextBox markerBackTextBox;
-        System.Windows.Forms.TextBox marginForeTextBox;
-        System.Windows.Forms.TextBox marginBackTextBox;
-        System.Windows.Forms.Label caretForeLabel;
-        System.Windows.Forms.Label caretlineBackLabel;
-        System.Windows.Forms.Label selectionForeLabel;
-        System.Windows.Forms.Label selectionBackLabel;
-        System.Windows.Forms.Button caretForeButton;
-        System.Windows.Forms.Button caretlineBackButton;
-        System.Windows.Forms.Button selectionForeButton;
-        System.Windows.Forms.Button selectionBackButton;
-        System.Windows.Forms.TextBox caretForeTextBox;
-        System.Windows.Forms.TextBox caretlineBackTextBox;
-        System.Windows.Forms.TextBox selectionForeTextBox;
-        System.Windows.Forms.TextBox selectionBackTextBox;
-        System.Windows.Forms.SaveFileDialog saveFileDialog;
-        System.Windows.Forms.Label sampleTextLabel;
-        System.Windows.Forms.ComboBox fontSizeComboBox;
-        System.Windows.Forms.ComboBox fontNameComboBox;
-        System.Windows.Forms.TextBox foregroundTextBox;
-        System.Windows.Forms.CheckBox boldCheckBox;
-        System.Windows.Forms.CheckBox colorizeCheckBox;
-        System.Windows.Forms.CheckBox italicsCheckBox;
-        System.Windows.Forms.TextBox backgroundTextBox;
-        System.Windows.Forms.Button backgroundButton;
-        System.Windows.Forms.Button foregroundButton;
-        System.Windows.Forms.ComboBox languageDropDown;
-        System.Windows.Forms.ColumnHeader columnHeader;
-        System.Windows.Forms.Label backgroundLabel;
-        System.Windows.Forms.Label foregroundLabel;
-        System.Windows.Forms.Label printMarginLabel;
-        System.Windows.Forms.Label bookmarkLineLabel;
-        System.Windows.Forms.Label modifiedLineLabel;
-        System.Windows.Forms.Label highlightBackLabel;
-        System.Windows.Forms.Label highlightWordBackLabel;
-        System.Windows.Forms.Button printMarginButton;
-        System.Windows.Forms.Button bookmarkLineButton;
-        System.Windows.Forms.Button modifiedLineButton;
-        System.Windows.Forms.Button highlightBackButton;
-        System.Windows.Forms.Button highlightWordBackButton;
-        System.Windows.Forms.TextBox printMarginTextBox;
-        System.Windows.Forms.TextBox bookmarkLineTextBox;
-        System.Windows.Forms.TextBox modifiedLineTextBox;
-        System.Windows.Forms.TextBox highlightBackTextBox;
-        System.Windows.Forms.TextBox highlightWordBackTextBox;
-        System.Windows.Forms.Button debugLineButton;
-        System.Windows.Forms.Button errorLineButton;
-        System.Windows.Forms.Button disabledLineButton;
-        System.Windows.Forms.TextBox disabledLineTextBox;
-        System.Windows.Forms.TextBox debugLineTextBox;
-        System.Windows.Forms.TextBox errorLineTextBox;
-        System.Windows.Forms.Label disabledLineLabel;
-        System.Windows.Forms.Label debugLineLabel;
-        System.Windows.Forms.Label errorLineLabel;
+        private string languageFile;
+        private XmlDocument languageDoc;
+        private XmlElement editorStyleNode;
+        private XmlElement defaultStyleNode;
+        private XmlElement currentStyleNode;
+        private bool isItemSaved = true;
+        private bool isEditorSaved = true;
+        private bool isLoadingEditor = false;
+        private bool isLanguageSaved = true;
+        private bool isLoadingItem = false;
+        private System.Windows.Forms.Label sizeLabel;
+        private System.Windows.Forms.Label fontLabel;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button revertButton;
+        private System.Windows.Forms.Button defaultButton;
+        private System.Windows.Forms.Button applyButton;
+        private System.Windows.Forms.Button exportButton;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.ListView itemListView;
+        private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.GroupBox itemGroupBox;
+        private System.Windows.Forms.GroupBox languageGroupBox;
+        private System.Windows.Forms.Label markerForeLabel;
+        private System.Windows.Forms.Label markerBackLabel;
+        private System.Windows.Forms.Label marginForeLabel;
+        private System.Windows.Forms.Label marginBackLabel;
+        private System.Windows.Forms.Button markerForeButton;
+        private System.Windows.Forms.Button markerBackButton;
+        private System.Windows.Forms.Button marginForeButton;
+        private System.Windows.Forms.Button marginBackButton;
+        private System.Windows.Forms.TextBox markerForeTextBox;
+        private System.Windows.Forms.TextBox markerBackTextBox;
+        private System.Windows.Forms.TextBox marginForeTextBox;
+        private System.Windows.Forms.TextBox marginBackTextBox;
+        private System.Windows.Forms.Label caretForeLabel;
+        private System.Windows.Forms.Label caretlineBackLabel;
+        private System.Windows.Forms.Label selectionForeLabel;
+        private System.Windows.Forms.Label selectionBackLabel;
+        private System.Windows.Forms.Button caretForeButton;
+        private System.Windows.Forms.Button caretlineBackButton;
+        private System.Windows.Forms.Button selectionForeButton;
+        private System.Windows.Forms.Button selectionBackButton;
+        private System.Windows.Forms.TextBox caretForeTextBox;
+        private System.Windows.Forms.TextBox caretlineBackTextBox;
+        private System.Windows.Forms.TextBox selectionForeTextBox;
+        private System.Windows.Forms.TextBox selectionBackTextBox;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.Label sampleTextLabel;
+        private System.Windows.Forms.ComboBox fontSizeComboBox;
+        private System.Windows.Forms.ComboBox fontNameComboBox;
+        private System.Windows.Forms.TextBox foregroundTextBox;
+        private System.Windows.Forms.CheckBox boldCheckBox;
+        private System.Windows.Forms.CheckBox colorizeCheckBox;
+        private System.Windows.Forms.CheckBox italicsCheckBox;
+        private System.Windows.Forms.TextBox backgroundTextBox;
+        private System.Windows.Forms.Button backgroundButton;
+        private System.Windows.Forms.Button foregroundButton;
+        private System.Windows.Forms.ComboBox languageDropDown;
+        private System.Windows.Forms.ColumnHeader columnHeader;
+        private System.Windows.Forms.Label backgroundLabel;
+        private System.Windows.Forms.Label foregroundLabel;
+        private System.Windows.Forms.Label printMarginLabel;
+        private System.Windows.Forms.Label bookmarkLineLabel;
+        private System.Windows.Forms.Label modifiedLineLabel;
+        private System.Windows.Forms.Label highlightBackLabel;
+        private System.Windows.Forms.Label highlightWordBackLabel;
+        private System.Windows.Forms.Button printMarginButton;
+        private System.Windows.Forms.Button bookmarkLineButton;
+        private System.Windows.Forms.Button modifiedLineButton;
+        private System.Windows.Forms.Button highlightBackButton;
+        private System.Windows.Forms.Button highlightWordBackButton;
+        private System.Windows.Forms.TextBox printMarginTextBox;
+        private System.Windows.Forms.TextBox bookmarkLineTextBox;
+        private System.Windows.Forms.TextBox modifiedLineTextBox;
+        private System.Windows.Forms.TextBox highlightBackTextBox;
+        private System.Windows.Forms.TextBox highlightWordBackTextBox;
+        private System.Windows.Forms.Button debugLineButton;
+        private System.Windows.Forms.Button errorLineButton;
+        private System.Windows.Forms.Button disabledLineButton;
+        private System.Windows.Forms.TextBox disabledLineTextBox;
+        private System.Windows.Forms.TextBox debugLineTextBox;
+        private System.Windows.Forms.TextBox errorLineTextBox;
+        private System.Windows.Forms.Label disabledLineLabel;
+        private System.Windows.Forms.Label debugLineLabel;
+        private System.Windows.Forms.Label errorLineLabel;
 
         public EditorDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
@@ -121,7 +121,7 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        void InitializeComponent()
+        private void InitializeComponent()
         {
             this.okButton = new System.Windows.Forms.ButtonEx();
             this.applyButton = new System.Windows.Forms.ButtonEx();
@@ -980,26 +980,25 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the path to the language directory
         /// </summary>
-        string LangDir => Path.Combine(PathHelper.SettingDir, "Languages");
+        private string LangDir => Path.Combine(PathHelper.SettingDir, "Languages");
 
         /// <summary>
         /// Constant xml file style paths
         /// </summary>
-        const string stylePath = "Scintilla/languages/language/use-styles/style";
-
-        const string editorStylePath = "Scintilla/languages/language/editor-style";
-        const string defaultStylePath = "Scintilla/languages/language/use-styles/style[@name='default']";
+        private const string stylePath = "Scintilla/languages/language/use-styles/style";
+        private const string editorStylePath = "Scintilla/languages/language/editor-style";
+        private const string defaultStylePath = "Scintilla/languages/language/use-styles/style[@name='default']";
 
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        void ApplyLocalizedTexts()
+        private void ApplyLocalizedTexts()
         {
             ToolTip tooltip = new ToolTip();
-            this.languageDropDown.Font = PluginBase.MainForm.Settings.DefaultFont;
-            this.fontSizeComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            this.fontNameComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            this.languageDropDown.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            this.languageDropDown.Font = Globals.Settings.DefaultFont;
+            this.fontSizeComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.fontNameComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.languageDropDown.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
             tooltip.SetToolTip(this.exportButton, TextHelper.GetString("Label.ExportFiles"));
             tooltip.SetToolTip(this.revertButton, TextHelper.GetString("Label.RevertFiles"));
             tooltip.SetToolTip(this.defaultButton, TextHelper.GetString("Label.MakeAsDefault"));
@@ -1034,7 +1033,7 @@ namespace FlashDevelop.Dialogs
             this.fontLabel.Text = TextHelper.GetString("Info.Font");
             this.sizeLabel.Text = TextHelper.GetString("Info.Size");
             this.okButton.Text = TextHelper.GetString("Label.Ok");
-            if (PluginBase.MainForm.StandaloneMode)
+            if (Globals.MainForm.StandaloneMode)
             {
                 this.revertButton.Enabled = false;
             }
@@ -1043,7 +1042,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Initializes the graphics
         /// </summary>
-        void InitializeGraphics()
+        private void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -1078,7 +1077,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Initializes all ui components
         /// </summary>
-        void PopulateControls()
+        private void PopulateControls()
         {
             this.revertButton.ImageIndex = 2;
             this.exportButton.ImageIndex = 3;
@@ -1122,7 +1121,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Loads language to be edited
         /// </summary>
-        void LoadLanguage(string newLanguage, bool promptToSave)
+        private void LoadLanguage(string newLanguage, bool promptToSave)
         {
             if (!this.isLanguageSaved && promptToSave)
             {
@@ -1150,7 +1149,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Loads the language item
         /// </summary>
-        void LoadLanguageItem(string item)
+        private void LoadLanguageItem(string item)
         {
             if (!this.isItemSaved) this.SaveCurrentItem();
             this.isLoadingItem = true;
@@ -1203,7 +1202,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if font is installed
         /// </summary>
-        static bool IsFontInstalled(string fontName)
+        private static bool IsFontInstalled(string fontName)
         {
             using var testFont = new Font(fontName, 9);
             return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
@@ -1212,7 +1211,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the current item being edited
         /// </summary>
-        void SaveCurrentItem()
+        private void SaveCurrentItem()
         {
             if (this.fontNameComboBox.Text != "") this.currentStyleNode.SetAttribute("font", fontNameComboBox.Text);
             else this.currentStyleNode.RemoveAttribute("font");
@@ -1234,7 +1233,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Load the editor style items
         /// </summary>
-        void LoadEditorStyles()
+        private void LoadEditorStyles()
         {
             this.isLoadingEditor = true;
             this.caretForeTextBox.Text = "";
@@ -1331,7 +1330,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the editor style items
         /// </summary>
-        void SaveEditorStyles()
+        private void SaveEditorStyles()
         {
             if (this.caretForeTextBox.Text != "") this.editorStyleNode.SetAttribute("caret-fore", this.caretForeTextBox.Text);
             else this.editorStyleNode.RemoveAttribute("caret-fore");
@@ -1374,7 +1373,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the Sample Item from settings in dialog
         /// </summary>
-        void UpdateSampleText()
+        private void UpdateSampleText()
         {
             try
             {
@@ -1418,7 +1417,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Asks the user to save the changes
         /// </summary>
-        void PromptToSaveLanguage()
+        private void PromptToSaveLanguage()
         {
             string message = TextHelper.GetString("Info.SaveCurrentLanguage");
             string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
@@ -1431,7 +1430,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// After item has been changed, update controls
         /// </summary>
-        void ItemsSelectedIndexChanged(object sender, EventArgs e)
+        private void ItemsSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
@@ -1443,7 +1442,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void ItemForegroundButtonClick(object sender, EventArgs e)
+        private void ItemForegroundButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.foregroundTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1455,7 +1454,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void ItemBackgroundButtonClick(object sender, EventArgs e)
+        private void ItemBackgroundButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.backgroundTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1467,7 +1466,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void SelectionForeButtonClick(object sender, EventArgs e)
+        private void SelectionForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.selectionForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1479,7 +1478,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void SelectionBackButtonClick(object sender, EventArgs e)
+        private void SelectionBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.selectionBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1491,7 +1490,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void CaretlineBackButtonClick(object sender, EventArgs e)
+        private void CaretlineBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.caretlineBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1503,7 +1502,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void CaretForeButtonClick(object sender, EventArgs e)
+        private void CaretForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.caretForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1515,7 +1514,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void MarkerBackButtonClick(object sender, EventArgs e)
+        private void MarkerBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.markerBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1527,7 +1526,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void MarkerForeButtonClick(object sender, EventArgs e)
+        private void MarkerForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.markerForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1539,7 +1538,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void MarginBackButtonClick(object sender, EventArgs e)
+        private void MarginBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.marginForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1551,7 +1550,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void MarginForeButtonClick(object sender, EventArgs e)
+        private void MarginForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.marginForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1563,7 +1562,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void PrintMarginButtonClick(object sender, EventArgs e)
+        private void PrintMarginButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.printMarginTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1575,7 +1574,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void HighlightBackButtonClick(object sender, EventArgs e)
+        private void HighlightBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.highlightBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1587,7 +1586,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void HighlightWordBackButtonClick(object sender, EventArgs e)
+        private void HighlightWordBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.highlightWordBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1599,7 +1598,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void ModifiedLineButtonClick(object sender, EventArgs e)
+        private void ModifiedLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.modifiedLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1611,7 +1610,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void BookmarkLineButtonClick(object sender, EventArgs e)
+        private void BookmarkLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.bookmarkLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1623,7 +1622,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void ErrorLineButtonClick(object sender, EventArgs e)
+        private void ErrorLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.errorLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1635,7 +1634,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void DebugLineButtonClick(object sender, EventArgs e)
+        private void DebugLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.debugLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1647,7 +1646,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        void DisabledLineButtonClick(object sender, EventArgs e)
+        private void DisabledLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.disabledLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1659,7 +1658,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When style item has been changed, update controls
         /// </summary>
-        void LanguageItemChanged(object sender, EventArgs e)
+        private void LanguageItemChanged(object sender, EventArgs e)
         {
             if (!this.isLoadingItem)
             {
@@ -1673,7 +1672,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When editor item has been changed, update controls
         /// </summary>
-        void EditorItemChanged(object sender, EventArgs e)
+        private void EditorItemChanged(object sender, EventArgs e)
         {
             if (!this.isLoadingEditor)
             {
@@ -1686,7 +1685,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the current modified language
         /// </summary>
-        void SaveCurrentLanguage()
+        private void SaveCurrentLanguage()
         {
             if (!this.isItemSaved) this.SaveCurrentItem();
             if (!this.isEditorSaved) this.SaveEditorStyles();
@@ -1704,7 +1703,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// After index has been changed, load the selected language
         /// </summary>
-        void LanguagesSelectedIndexChanged(object sender, EventArgs e)
+        private void LanguagesSelectedIndexChanged(object sender, EventArgs e)
         {
             this.LoadLanguage(this.languageDropDown.Text, true);
         }
@@ -1712,7 +1711,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Opens the revert settings dialog
         /// </summary>
-        void RevertLanguagesClick(object sender, EventArgs e)
+        private void RevertLanguagesClick(object sender, EventArgs e)
         {
             string caption = TextHelper.GetString("Title.ConfirmDialog");
             string message = TextHelper.GetString("Info.RevertSettingsFiles");
@@ -1736,7 +1735,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Refreshes the langugage configuration
         /// </summary>
-        void RefreshConfiguration()
+        private void RefreshConfiguration()
         {
             this.LoadLanguage(this.languageDropDown.Text, true);
             if (this.itemListView.SelectedIndices.Count > 0)
@@ -1744,13 +1743,13 @@ namespace FlashDevelop.Dialogs
                 string language = this.itemListView.SelectedItems[0].Text;
                 this.LoadLanguageItem(language);
             }
-            PluginBase.MainForm.RefreshSciConfig();
+            Globals.MainForm.RefreshSciConfig();
         }
 
         /// <summary>
         /// Makes the current style as the default
         /// </summary>
-        void MakeAsDefaultStyleClick(object sender, EventArgs e)
+        private void MakeAsDefaultStyleClick(object sender, EventArgs e)
         {
             this.Enabled = false;
             this.isLanguageSaved = true;
@@ -1833,16 +1832,17 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Opens the export settings dialog
         /// </summary>
-        void ExportLanguagesClick(object sender, EventArgs e)
+        private void ExportLanguagesClick(object sender, EventArgs e)
         {
             if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
             {
+                string xmlFile = "";
                 string[] langFiles = Directory.GetFiles(this.LangDir);
                 ZipFile zipFile = ZipFile.Create(this.saveFileDialog.FileName);
                 zipFile.BeginUpdate();
                 foreach (string langFile in langFiles)
                 {
-                    var xmlFile = Path.GetFileName(langFile);
+                    xmlFile = Path.GetFileName(langFile);
                     zipFile.Add(langFile, "$(BaseDir)\\Settings\\Languages\\" + xmlFile);
                 }
                 zipFile.CommitUpdate();
@@ -1853,24 +1853,27 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the current language
         /// </summary>
-        void SaveButtonClick(object sender, EventArgs e)
+        private void SaveButtonClick(object sender, EventArgs e)
         {
             this.SaveCurrentLanguage();
-            PluginBase.MainForm.RefreshSciConfig();
+            Globals.MainForm.RefreshSciConfig();
         }
 
         /// <summary>
         /// Closes the dialog without saving
         /// </summary>
-        void CancelButtonClick(object sender, EventArgs e) => this.Close();
+        private void CancelButtonClick(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
         /// <summary>
         /// Closes the dialog and saves changes
         /// </summary>
-        void OkButtonClick(object sender, EventArgs e)
+        private void OkButtonClick(object sender, EventArgs e)
         {
             if (!this.isLanguageSaved) this.SaveCurrentLanguage();
-            PluginBase.MainForm.RefreshSciConfig();
+            Globals.MainForm.RefreshSciConfig();
             this.Close();
         }
 
@@ -1884,5 +1887,7 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
+
     }
+
 }

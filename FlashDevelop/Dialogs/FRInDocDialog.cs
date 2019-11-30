@@ -40,7 +40,7 @@ namespace FlashDevelop.Dialogs
         public FRInDocDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "24910809-a60a-4b7c-8d2a-d53a363f595f";
             this.InitializeComponent();
             this.InitializeProperties();
@@ -375,7 +375,7 @@ namespace FlashDevelop.Dialogs
             this.escapedCheckBox.Text = " " + TextHelper.GetString("Label.EscapedCharacters");
             this.useRegexCheckBox.Text = " " + TextHelper.GetString("Label.RegularExpressions");
             this.Text = " " + TextHelper.GetString("Title.FindAndReplaceDialog");
-            this.lookComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            this.lookComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
         }
 
         /// <summary>
@@ -422,7 +422,7 @@ namespace FlashDevelop.Dialogs
         private void UpdateFindText()
         {
             if (this.useRegexCheckBox.Checked) return;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            ScintillaControl sci = Globals.SciControl;
             if (sci != null && sci.SelText.Length > 0 && !this.lookupIsDirty)
             {
                 this.findComboBox.Text = sci.SelText;
@@ -435,7 +435,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public void InitializeFindText()
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            ScintillaControl sci = Globals.SciControl;
             if (sci != null && sci.SelText.Length > 0)
             {
                 this.findComboBox.Text = sci.SelText;
@@ -456,8 +456,8 @@ namespace FlashDevelop.Dialogs
         {
             this.currentMatch = null;
             if (update) this.UpdateFindText();
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (Globals.SciControl is null) return;
+            var sci = Globals.SciControl;
             var matches = this.GetResults(sci, simple);
             if (!matches.IsNullOrEmpty())
             {
@@ -503,8 +503,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BookmarkAllButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (Globals.SciControl is null) return;
+            ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
             if (matches != null && this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0)
             {
@@ -530,8 +530,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (Globals.SciControl is null) return;
+            var sci = Globals.SciControl;
             if (sci.SelText.Length == 0)
             {
                 FindNext(true);
@@ -557,8 +557,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceAllButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (Globals.SciControl is null) return;
+            ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
             bool selectionOnly = this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0;
             if (matches != null && selectionOnly)
@@ -618,11 +618,11 @@ namespace FlashDevelop.Dialogs
                 this.lookupIsDirty = true;
                 this.currentMatch = null;
             }
-            if (sender == this.matchCaseCheckBox && !PluginBase.MainForm.Settings.DisableFindOptionSync)
+            if (sender == this.matchCaseCheckBox && !Globals.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetMatchCase(this, this.matchCaseCheckBox.Checked);
             }
-            if (sender == this.wholeWordCheckBox && !PluginBase.MainForm.Settings.DisableFindOptionSync)
+            if (sender == this.wholeWordCheckBox && !Globals.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetWholeWord(this, this.wholeWordCheckBox.Checked);
             }
@@ -643,7 +643,7 @@ namespace FlashDevelop.Dialogs
         private void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            PluginBase.MainForm.CurrentDocument.Activate();
+            Globals.CurrentDocument.Activate();
             this.Hide();
         }
 

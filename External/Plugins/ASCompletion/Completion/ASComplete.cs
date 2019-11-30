@@ -389,10 +389,10 @@ namespace ASCompletion.Completion
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
             if (!ASContext.CommonSettings.AddClosingBraces) return;
-            var ctx = ASContext.Context;
+            var context = ASContext.Context;
             if (addedChar)
             {
-                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && ctx.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -422,7 +422,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
+                    || context.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     char nextChar = sci.CurrentChar;
                     int nextPos = sci.CurrentPos;
@@ -472,7 +472,7 @@ namespace ASCompletion.Completion
             {
                 char open = (char) sci.CharAt(sci.CurrentPos - 1);
 
-                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && ctx.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -483,7 +483,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || ctx.CodeComplete.IsStringInterpolationStyle(sci, position)
+                    || context.CodeComplete.IsStringInterpolationStyle(sci, position)
                     || IsMatchingQuote(open, styleAfter))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
@@ -592,9 +592,8 @@ namespace ASCompletion.Completion
             result.InClass = null;
             result.InFile = null;
             var path = type.Name;
-            result.Path = path.Contains('.', out var index)
-                ? path.Substring(0, index)
-                : path;
+            var index = path.IndexOf('.');
+            result.Path = index != -1 ? path.Substring(0, index) : path;
             return OpenDocumentToDeclaration(sci, result);
         }
 
@@ -670,7 +669,7 @@ namespace ASCompletion.Completion
             if (model != ASContext.Context.CurrentModel)
             {
                 if (model.FileName.Length > 0 && File.Exists(model.FileName))
-                    PluginBase.MainForm.OpenEditableDocument(model.FileName, false);
+                    ASContext.MainForm.OpenEditableDocument(model.FileName, false);
                 else
                 {
                     OpenVirtualFile(model);
@@ -687,7 +686,7 @@ namespace ASCompletion.Completion
                 }
             }
             if ((inClass is null || inClass.IsVoid()) && result.Member is null) return false;
-            if (PluginBase.MainForm.CurrentDocument?.SciControl is null) return false;
+            if (ASContext.CurSciControl is null) return false;
 
             int line = 0;
             string name = null;
@@ -730,7 +729,7 @@ namespace ASCompletion.Completion
             var ext = Path.GetExtension(model.FileName);
             if (string.IsNullOrEmpty(ext)) ext = model.Context.GetExplorerMask()[0].Replace("*", string.Empty);
             var dummyFile = Path.Combine(Path.GetDirectoryName(model.FileName), "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
-            foreach (var doc in PluginBase.MainForm.Documents)
+            foreach (var doc in ASContext.MainForm.Documents)
             {
                 if (doc.FileName == dummyFile)
                 {
@@ -742,7 +741,7 @@ namespace ASCompletion.Completion
             model.Members.Sort();
             foreach (var aClass in model.Classes) aClass.Members.Sort();
             var src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
-            if (PluginBase.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp && tmp.IsEditable) 
+            if (ASContext.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp && tmp.IsEditable) 
             {
                 // The model document will be read only
                 tmp.SciControl.IsReadOnly = true;
@@ -1014,7 +1013,7 @@ namespace ASCompletion.Completion
                     // call the command
                     try
                     {
-                        PluginBase.MainForm.CallCommand("RunProcess", cmd);
+                        ASContext.MainForm.CallCommand("RunProcess", cmd);
                     }
                     catch (Exception ex)
                     {
@@ -1146,13 +1145,13 @@ namespace ASCompletion.Completion
                     // braces
                     if (!ASContext.CommonSettings.DisableAutoCloseBraces)
                     {
-                        if (txt.Contains("//", out var p1) && p1 > 0) // remove comment at end of line
+                        if (txt.IndexOfOrdinal("//") is var p1 && p1 > 0) // remove comment at end of line
                         {
-                            var slashes = sci.MBSafeTextLength(txt.Substring(0, p1 + 1));
+                            int slashes = sci.MBSafeTextLength(txt.Substring(0, p1 + 1));
                             if (sci.PositionIsOnComment(sci.PositionFromLine(line-1) + slashes))
                                 txt = txt.Substring(0, p1).Trim();
                         }
-                        if (txt.EndsWith('{') && line > 1) AutoCloseBrace(sci, line);
+                        if (txt.EndsWith('{') && (line > 1)) AutoCloseBrace(sci, line);
                     }
                     // code reformatting
                     if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWithOrdinal("*/"))
@@ -2175,7 +2174,7 @@ namespace ASCompletion.Completion
         public static void DotContextResolved(ScintillaControl sci, ASExpr expr, MemberList items, bool autoHide)
         {
             // still valid context and position?
-            if (sci != PluginBase.MainForm.CurrentDocument?.SciControl) return;
+            if (sci != ASContext.CurSciControl) return;
             var features = ASContext.Context.Features;
             var position = sci.CurrentPos;
             var local = GetExpression(sci, position);
@@ -2275,18 +2274,24 @@ namespace ASCompletion.Completion
                 if (!aClass.IsVoid())
                 {
                     // AS2 special srictly typed Arrays supports
-                    if (newItemType.Contains('@', out var p)) newItemType = newItemType.Substring(0, p);
+                    int p = newItemType.IndexOf('@');
+                    if (p > -1) newItemType = newItemType.Substring(0, p);
                     else if (!string.IsNullOrEmpty(aClass.IndexType))
                     {
                         newItemType = aClass.QualifiedName;
                         newItem = new MemberItem(new MemberModel(newItemType, aClass.Type, aClass.Flags, aClass.Access));
                     }
                 }
-                else newItem = new NonexistentMemberItem(newItemType);
+                else
+                {
+                    newItem = new NonexistentMemberItem(newItemType);
+                }
+
                 if (newItem != null)
                 {
-                    var itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
-                    if (newItemType.Contains('<', out var genericStart) && ASContext.Context.Features.HasGenericsShortNotation)
+                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
+                    int genericStart = newItemType.IndexOf('<');
+                    if (genericStart > -1 && ASContext.Context.Features.HasGenericsShortNotation)
                     {
                         newItemType = newItemType.Substring(0, genericStart);
                         itemIndex = itemIndex > 0 ? itemIndex : 0;
@@ -2863,7 +2868,7 @@ namespace ASCompletion.Completion
                                 result.InClass = inClass;
                                 if (features.hasInference && (var.Type is null || ResolveType(var.Type, inFile).IsVoid()))
                                 {
-                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, var);
+                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(ASContext.CurSciControl, local, var);
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ResolveType("Function", null);
@@ -2893,7 +2898,7 @@ namespace ASCompletion.Completion
                 {
                     if (features.hasInference && result.Member is { } member && member.Type is null)
                     {
-                        ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, member);
+                        ctx.CodeComplete.InferType(ASContext.CurSciControl, local, member);
                         if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
                     }
                     return result;
@@ -3107,7 +3112,7 @@ namespace ASCompletion.Completion
                         }
                         return;
                     }
-                    if (mPack.Name.Contains('<', out var p) && p > 0)
+                    if (mPack.Name.IndexOf('<') is int p && p > 0)
                     {
                         if (p > 1 && mPack.Name[p - 1] == '.') p--;
                         if (mPack.Name.Substring(0, p) == token)
@@ -3119,7 +3124,7 @@ namespace ASCompletion.Completion
                         }
                     }
                 }
-                foreach (var member in result.InFile.Members)
+                foreach (MemberModel member in result.InFile.Members)
                 {
                     if (member.Name == token)
                     {
@@ -3146,7 +3151,7 @@ namespace ASCompletion.Completion
             {
                 found = null;
                 var matches = inFile.Members.MultipleSearch(token, mask, access);
-                foreach (var member in matches)
+                foreach (MemberModel member in matches)
                 {
                     found = member;
                     if ((member.Flags & FlagType.Setter) == 0) break;
@@ -3223,7 +3228,7 @@ namespace ASCompletion.Completion
                 {
                     found = null;
                     var matches = tmpClass.Members.MultipleSearch(token, mask, access);
-                    foreach (var member in matches)
+                    foreach (MemberModel member in matches)
                     {
                         found = member;
                         if ((member.Flags & FlagType.Getter) > 0) break;
@@ -5259,11 +5264,12 @@ namespace ASCompletion.Completion
         {
             get 
             {
-                if (!Member.Name.Contains('<', out var p1) && p1 <= 0 || Member.Template is null) return Member.Name;
+                if (Member.Name.IndexOf('<') is int p1 && p1 <= 0 || Member.Template is null) return Member.Name;
 
                 // ActionScript3: Vector.<int>
-                if (Member.Name.Contains(".<", out var p2) && p2 > 0)
+                if (Member.Name.IndexOfOrdinal(".<") is int p2 && p2 > 0)
                     return Member.Name.Substring(0, p2);
+
                 return Member.Name.Substring(0, p1);
             }
         }
@@ -5293,8 +5299,8 @@ namespace ASCompletion.Completion
         {
             get
             {
-                if (!Label.Contains('<', out var p1)) return Label;
-                return Label.Contains(".<", out var p2) && p2 > 0
+                if (Label.IndexOf('<') is var p1 && p1 == -1) return Label;
+                return Label.IndexOfOrdinal(".<") is var p2 && p2 > 0
                     ? Label.Substring(0, p2)
                     : Label.Substring(0, p1);
             }

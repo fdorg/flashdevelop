@@ -9,6 +9,7 @@ using ASCompletion.Context;
 using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -438,7 +439,7 @@ namespace HaXeContext.Generators
                     || member.Flags.HasFlag(FlagType.Getter)
                     || member.Flags.HasFlag(FlagType.Setter)))
             {
-                ASContext.Context.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, member);
+                ASContext.Context.CodeComplete.InferType(ASContext.CurSciControl, member);
             }
             return result;
         }
@@ -776,7 +777,7 @@ namespace HaXeContext.Generators
                 statement += inFile.Module + "." + member.Name;
             }
             if (string.IsNullOrEmpty(statement)) statement = member.Type;
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = ASContext.CurSciControl;
             var newLineMarker = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             statement = "using " + statement + ";" + newLineMarker;
             int position;

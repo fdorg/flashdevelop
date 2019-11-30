@@ -1,7 +1,6 @@
 using System;
 using System.Media;
 using System.Drawing;
-using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Controls;
 
@@ -9,22 +8,22 @@ namespace FlashDevelop.Dialogs
 {
     public class ErrorDialog : SmartForm
     {
-        System.Windows.Forms.Label countLabel;
-        System.Windows.Forms.Label headerLabel;
-        System.Windows.Forms.Button exitButton;
-        System.Windows.Forms.Button continueButton;
-        System.Windows.Forms.PictureBox pictureBox;
-        System.Windows.Forms.TextBox infoTextBox;
-        static int errorCount = 1;
+        private System.Windows.Forms.Label countLabel;
+        private System.Windows.Forms.Label headerLabel;
+        private System.Windows.Forms.Button exitButton;
+        private System.Windows.Forms.Button continueButton;
+        private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.TextBox infoTextBox;
+        private static int errorCount = 1;
 
         public ErrorDialog()
         {
-            Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
-            FormGuid = "4f534f7c-8078-4053-9c54-343129c513b3";
-            InitializeComponent();
-            ApplyLocalizedTexts();
-            InitializeGraphics();
+            this.Owner = Globals.MainForm;
+            this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "4f534f7c-8078-4053-9c54-343129c513b3";
+            this.InitializeComponent();
+            this.ApplyLocalizedTexts();
+            this.InitializeGraphics();
         }
 
         #region Windows Form Designer Generated Code
@@ -33,107 +32,107 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        void InitializeComponent()
+        private void InitializeComponent()
         {
-            exitButton = new System.Windows.Forms.ButtonEx();
-            headerLabel = new System.Windows.Forms.Label();
-            continueButton = new System.Windows.Forms.ButtonEx();
-            infoTextBox = new System.Windows.Forms.TextBoxEx();
-            countLabel = new System.Windows.Forms.Label();
-            pictureBox = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(pictureBox)).BeginInit();
-            SuspendLayout();
+            this.exitButton = new System.Windows.Forms.ButtonEx();
+            this.headerLabel = new System.Windows.Forms.Label();
+            this.continueButton = new System.Windows.Forms.ButtonEx();
+            this.infoTextBox = new System.Windows.Forms.TextBoxEx();
+            this.countLabel = new System.Windows.Forms.Label();
+            this.pictureBox = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            this.SuspendLayout();
             // 
             // exitButton
             // 
-            exitButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            exitButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            exitButton.Location = new Point(331, 351);
-            exitButton.Name = "exitButton";
-            exitButton.Size = new Size(83, 23);
-            exitButton.TabIndex = 2;
-            exitButton.Text = "&Exit";
-            exitButton.UseVisualStyleBackColor = true;
-            exitButton.Click += ExitButtonClick;
+            this.exitButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.exitButton.Location = new System.Drawing.Point(331, 351);
+            this.exitButton.Name = "exitButton";
+            this.exitButton.Size = new System.Drawing.Size(83, 23);
+            this.exitButton.TabIndex = 2;
+            this.exitButton.Text = "&Exit";
+            this.exitButton.UseVisualStyleBackColor = true;
+            this.exitButton.Click += this.ExitButtonClick;
             // 
             // headerLabel
             // 
-            headerLabel.AutoSize = true;
-            headerLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            headerLabel.Location = new Point(34, 13);
-            headerLabel.Name = "headerLabel";
-            headerLabel.Size = new Size(300, 13);
-            headerLabel.TabIndex = 0;
-            headerLabel.Text = "Error occurred in FlashDevelop. Here are details of the error:";
+            this.headerLabel.AutoSize = true;
+            this.headerLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.headerLabel.Location = new System.Drawing.Point(34, 13);
+            this.headerLabel.Name = "headerLabel";
+            this.headerLabel.Size = new System.Drawing.Size(300, 13);
+            this.headerLabel.TabIndex = 0;
+            this.headerLabel.Text = "Error occurred in FlashDevelop. Here are details of the error:";
             // 
             // continueButton
             // 
-            continueButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            continueButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            continueButton.Location = new Point(421, 351);
-            continueButton.Name = "continueButton";
-            continueButton.Size = new Size(90, 23);
-            continueButton.TabIndex = 1;
-            continueButton.Text = "&Continue";
-            continueButton.UseVisualStyleBackColor = true;
-            continueButton.Click += ContinueButtonClick;
+            this.continueButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.continueButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.continueButton.Location = new System.Drawing.Point(421, 351);
+            this.continueButton.Name = "continueButton";
+            this.continueButton.Size = new System.Drawing.Size(90, 23);
+            this.continueButton.TabIndex = 1;
+            this.continueButton.Text = "&Continue";
+            this.continueButton.UseVisualStyleBackColor = true;
+            this.continueButton.Click += this.ContinueButtonClick;
             // 
             // infoTextBox
             // Font needs to be set here so that controls resize correctly in high-dpi
             //
-            infoTextBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
-            infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            infoTextBox.Location = new Point(13, 35);
-            infoTextBox.Multiline = true;
-            infoTextBox.Name = "infoTextBox";
-            infoTextBox.Size = new Size(497, 309);
-            infoTextBox.TabIndex = 3;
-            infoTextBox.WordWrap = false;
+            this.infoTextBox.Font = Globals.Settings.ConsoleFont;
+            this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.infoTextBox.Location = new System.Drawing.Point(13, 35);
+            this.infoTextBox.Multiline = true;
+            this.infoTextBox.Name = "infoTextBox";
+            this.infoTextBox.Size = new System.Drawing.Size(497, 309);
+            this.infoTextBox.TabIndex = 3;
+            this.infoTextBox.WordWrap = false;
             // 
             // countLabel
             // 
-            countLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            countLabel.AutoSize = true;
-            countLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            countLabel.Location = new Point(14, 355);
-            countLabel.Name = "countLabel";
-            countLabel.Size = new Size(109, 13);
-            countLabel.TabIndex = 0;
-            countLabel.Text = "Errors in this session:";
+            this.countLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            this.countLabel.AutoSize = true;
+            this.countLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.countLabel.Location = new System.Drawing.Point(14, 355);
+            this.countLabel.Name = "countLabel";
+            this.countLabel.Size = new System.Drawing.Size(109, 13);
+            this.countLabel.TabIndex = 0;
+            this.countLabel.Text = "Errors in this session:";
             // 
             // pictureBox
             //
-            pictureBox.Location = new Point(13, 12);
-            pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            pictureBox.Name = "pictureBox";
-            pictureBox.Size = new Size(16, 16);
-            pictureBox.TabIndex = 6;
-            pictureBox.TabStop = false;
+            this.pictureBox.Location = new System.Drawing.Point(13, 12);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(16, 16);
+            this.pictureBox.TabIndex = 6;
+            this.pictureBox.TabStop = false;
             // 
             // ErrorDialog
             // 
-            AutoScaleDimensions = new SizeF(6F, 13F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            CancelButton = continueButton;
-            ClientSize = new Size(522, 386);
-            Controls.Add(pictureBox);
-            Controls.Add(countLabel);
-            Controls.Add(infoTextBox);
-            Controls.Add(continueButton);
-            Controls.Add(headerLabel);
-            Controls.Add(exitButton);
-            MaximizeBox = false;
-            MinimizeBox = false;
-            MinimumSize = new Size(350, 290);
-            Name = "ErrorDialog";
-            ShowIcon = false;
-            ShowInTaskbar = false;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = " Error";
-            ((System.ComponentModel.ISupportInitialize)(pictureBox)).EndInit();
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.continueButton;
+            this.ClientSize = new System.Drawing.Size(522, 386);
+            this.Controls.Add(this.pictureBox);
+            this.Controls.Add(this.countLabel);
+            this.Controls.Add(this.infoTextBox);
+            this.Controls.Add(this.continueButton);
+            this.Controls.Add(this.headerLabel);
+            this.Controls.Add(this.exitButton);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(350, 290);
+            this.Name = "ErrorDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = " Error";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -144,33 +143,39 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        void InitializeGraphics()
+        private void InitializeGraphics()
         {
-            var error = PluginBase.MainForm.FindImage("197", false);
-            if (error != null) pictureBox.Image = error;
+            Image error = Globals.MainForm.FindImage("197", false);
+            if (error != null) this.pictureBox.Image = error;
         }
 
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        void ApplyLocalizedTexts()
+        private void ApplyLocalizedTexts()
         {
-            exitButton.Text = TextHelper.GetString("Label.Exit");
-            continueButton.Text = TextHelper.GetString("Label.Continue");
-            headerLabel.Text = TextHelper.GetString("Info.ErrorOccurred");
-            countLabel.Text = TextHelper.GetString("Info.ErrorsInThisSession");
-            Text = " " + TextHelper.GetString("Title.ErrorDialog");
+            this.exitButton.Text = TextHelper.GetString("Label.Exit");
+            this.continueButton.Text = TextHelper.GetString("Label.Continue");
+            this.headerLabel.Text = TextHelper.GetString("Info.ErrorOccurred");
+            this.countLabel.Text = TextHelper.GetString("Info.ErrorsInThisSession");
+            this.Text = " " + TextHelper.GetString("Title.ErrorDialog");
         }
 
         /// <summary>
         /// Closes the form error dialog
         /// </summary>
-        void ContinueButtonClick(object sender, EventArgs e) => Close();
+        private void ContinueButtonClick(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
         /// <summary>
         /// Exits the application entirely
         /// </summary>
-        static void ExitButtonClick(object sender, EventArgs e) => Environment.Exit(1);
+        private void ExitButtonClick(object sender, EventArgs e)
+        {
+            Environment.Exit(1);
+        }
 
         /// <summary>
         /// Shows the error dialog
@@ -178,13 +183,16 @@ namespace FlashDevelop.Dialogs
         public static void Show(Exception ex)
         {
             SystemSounds.Hand.Play();
-            using var errorDialog = new ErrorDialog();
+            using ErrorDialog errorDialog = new ErrorDialog();
             errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
             errorDialog.countLabel.Text += " " + errorCount++;
-            errorDialog.exitButton.Enabled = errorCount >= 7;
+            if (errorCount < 7) errorDialog.exitButton.Enabled = false;
+            else errorDialog.exitButton.Enabled = true;
             errorDialog.ShowDialog();
         }
 
         #endregion
+
     }
+
 }

@@ -16,46 +16,46 @@ namespace FileExplorer
 {
     public class PluginUI : DockPanelControl
     {
-        ListViewEx fileView;
-        ToolStrip toolStrip;
-        ContextMenuStrip menu;
-        ToolStripMenuItem runButton;
-        ToolStripMenuItem editButton;
-        ToolStripMenuItem renameButton;
-        ToolStripMenuItem deleteButton;
-        ToolStripMenuItem shellButton;
-        ToolStripMenuItem pasteButton;
-        ToolStripMenuItem copyButton;
-        ToolStripSeparator separator;
-        ToolStripSpringComboBox selectedPath;
-        ToolStripButton browseButton;
-        ToolStripButton syncronizeButton;
-        ColumnHeader fileHeader;
-        ColumnHeader sizeHeader;
-        ColumnHeader typeHeader;
-        ColumnHeader modifiedHeader;
-        VistaFolderBrowserDialog folderBrowserDialog;
-        ListViewItem highlightedItem;
-        ImageListManager imageList;
-        bool updateInProgress;
-        string previousItemLabel;
-        string autoSelectItem;
-        long lastUpdateTimeStamp;
-        int prevColumnClick;
-        readonly ListViewSorter listViewSorter;
-        FileSystemWatcher watcher;
-        readonly PluginMain pluginMain;
+        private ListViewEx fileView;
+        private ToolStrip toolStrip;
+        private ContextMenuStrip menu;
+        private ToolStripMenuItem runButton;
+        private ToolStripMenuItem editButton;
+        private ToolStripMenuItem renameButton;
+        private ToolStripMenuItem deleteButton;
+        private ToolStripMenuItem shellButton;
+        private ToolStripMenuItem pasteButton;
+        private ToolStripMenuItem copyButton;
+        private ToolStripSeparator separator;
+        private ToolStripSpringComboBox selectedPath;
+        private ToolStripButton browseButton;
+        private ToolStripButton syncronizeButton;
+        private ColumnHeader fileHeader;
+        private ColumnHeader sizeHeader;
+        private ColumnHeader typeHeader;
+        private ColumnHeader modifiedHeader;
+        private VistaFolderBrowserDialog folderBrowserDialog;
+        private ListViewItem highlightedItem;
+        private ImageListManager imageList;
+        private bool updateInProgress;
+        private string previousItemLabel;
+        private string autoSelectItem;
+        private long lastUpdateTimeStamp;
+        private int prevColumnClick;
+        private readonly ListViewSorter listViewSorter;
+        private FileSystemWatcher watcher;
+        private readonly PluginMain pluginMain;
         
         public PluginUI(PluginMain pluginMain)
         {
-            AutoKeyHandling = true;
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
-            listViewSorter = new ListViewSorter();
-            InitializeComponent();
-            InitializeGraphics();
-            InitializeContextMenu();
-            InitializeLayout();
-            InitializeTexts();
+            this.listViewSorter = new ListViewSorter();
+            this.InitializeComponent();
+            this.InitializeGraphics();
+            this.InitializeContextMenu();
+            this.InitializeLayout();
+            this.InitializeTexts();
             ScrollBarEx.Attach(fileView);
         }
         
@@ -66,138 +66,138 @@ namespace FileExplorer
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        void InitializeComponent() 
+        private void InitializeComponent() 
         {
-            watcher = new FileSystemWatcher();
-            modifiedHeader = new ColumnHeader();
-            typeHeader = new ColumnHeader();
-            fileView = new ListViewEx();
-            fileHeader = new ColumnHeader();
-            sizeHeader = new ColumnHeader();
-            folderBrowserDialog = new VistaFolderBrowserDialog();
-            toolStrip = new ToolStripEx();
-            selectedPath = new ToolStripSpringComboBox();
-            syncronizeButton = new ToolStripButton();
-            browseButton = new ToolStripButton();
-            ((System.ComponentModel.ISupportInitialize)(watcher)).BeginInit();
-            toolStrip.SuspendLayout();
-            SuspendLayout();
+            this.watcher = new System.IO.FileSystemWatcher();
+            this.modifiedHeader = new System.Windows.Forms.ColumnHeader();
+            this.typeHeader = new System.Windows.Forms.ColumnHeader();
+            this.fileView = new System.Windows.Forms.ListViewEx();
+            this.fileHeader = new System.Windows.Forms.ColumnHeader();
+            this.sizeHeader = new System.Windows.Forms.ColumnHeader();
+            this.folderBrowserDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
+            this.selectedPath = new System.Windows.Forms.ToolStripSpringComboBox();
+            this.syncronizeButton = new System.Windows.Forms.ToolStripButton();
+            this.browseButton = new System.Windows.Forms.ToolStripButton();
+            ((System.ComponentModel.ISupportInitialize)(this.watcher)).BeginInit();
+            this.toolStrip.SuspendLayout();
+            this.SuspendLayout();
             // 
             // watcher
             // 
-            watcher.EnableRaisingEvents = true;
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            watcher.SynchronizingObject = this;
-            watcher.Renamed += WatcherRenamed;
-            watcher.Deleted += WatcherChanged;
-            watcher.Created += WatcherChanged;
-            watcher.Changed += WatcherChanged;
+            this.watcher.EnableRaisingEvents = true;
+            this.watcher.NotifyFilter = System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.DirectoryName;
+            this.watcher.SynchronizingObject = this;
+            this.watcher.Renamed += this.WatcherRenamed;
+            this.watcher.Deleted += this.WatcherChanged;
+            this.watcher.Created += this.WatcherChanged;
+            this.watcher.Changed += this.WatcherChanged;
             // 
             // modifiedHeader
             // 
-            modifiedHeader.Text = "Modified";
-            modifiedHeader.Width = 120;
+            this.modifiedHeader.Text = "Modified";
+            this.modifiedHeader.Width = 120;
             // 
             // typeHeader
             // 
-            typeHeader.Text = "Type";
+            this.typeHeader.Text = "Type";
             // 
             // fileView
             // 
-            fileView.AllowDrop = true;
-            fileView.BorderStyle = BorderStyle.None;
-            fileView.Columns.AddRange(new[] {
-            fileHeader,
-            sizeHeader,
-            typeHeader,
-            modifiedHeader});
-            fileView.Dock = DockStyle.Fill;
-            fileView.LabelEdit = true;
-            fileView.Name = "fileView";
-            fileView.Size = new Size(278, 327);
-            fileView.TabIndex = 5;
-            fileView.FullRowSelect = true;
-            fileView.UseCompatibleStateImageBehavior = false;
-            fileView.View = View.Details;
-            fileView.ItemActivate += FileViewItemActivate;
-            fileView.AfterLabelEdit += FileViewAfterLabelEdit;
-            fileView.MouseUp += FileViewMouseUp;
-            fileView.DragDrop += FileViewDragDrop;
-            fileView.ColumnClick += FileViewColumnClick;
-            fileView.KeyUp += FileViewKeyUp;
-            fileView.BeforeLabelEdit += FileViewBeforeLabelEdit;
-            fileView.ItemDrag += FileViewDragItems;
-            fileView.DragOver += FileViewDragOver;
+            this.fileView.AllowDrop = true;
+            this.fileView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.fileView.Columns.AddRange(new[] {
+            this.fileHeader,
+            this.sizeHeader,
+            this.typeHeader,
+            this.modifiedHeader});
+            this.fileView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fileView.LabelEdit = true;
+            this.fileView.Name = "fileView";
+            this.fileView.Size = new System.Drawing.Size(278, 327);
+            this.fileView.TabIndex = 5;
+            this.fileView.FullRowSelect = true;
+            this.fileView.UseCompatibleStateImageBehavior = false;
+            this.fileView.View = System.Windows.Forms.View.Details;
+            this.fileView.ItemActivate += this.FileViewItemActivate;
+            this.fileView.AfterLabelEdit += this.FileViewAfterLabelEdit;
+            this.fileView.MouseUp += this.FileViewMouseUp;
+            this.fileView.DragDrop += this.FileViewDragDrop;
+            this.fileView.ColumnClick += this.FileViewColumnClick;
+            this.fileView.KeyUp += this.FileViewKeyUp;
+            this.fileView.BeforeLabelEdit += this.FileViewBeforeLabelEdit;
+            this.fileView.ItemDrag += this.FileViewDragItems;
+            this.fileView.DragOver += this.FileViewDragOver;
             // 
             // fileHeader
             // 
-            fileHeader.Text = "Files";
-            fileHeader.Width = 190;
+            this.fileHeader.Text = "Files";
+            this.fileHeader.Width = 190;
             // 
             // sizeHeader
             // 
-            sizeHeader.Text = "Size";
-            sizeHeader.Width = 55;
+            this.sizeHeader.Text = "Size";
+            this.sizeHeader.Width = 55;
             // 
             // folderBrowserDialog
             // 
-            folderBrowserDialog.Description = "Open a folder to list the files in the folder";
-            folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            this.folderBrowserDialog.Description = "Open a folder to list the files in the folder";
+            this.folderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
             // toolStrip
             //
-            toolStrip.CanOverflow = false;
-            toolStrip.Dock = DockStyle.Top;
-            toolStrip.GripStyle = ToolStripGripStyle.Hidden;
-            toolStrip.Items.AddRange(new ToolStripItem[] {
-            selectedPath,
-            syncronizeButton,
-            browseButton});
-            toolStrip.Name = "toolStrip";
-            toolStrip.Padding = new Padding(1, 1, 2, 2);
-            toolStrip.Size = new Size(278, 26);
-            toolStrip.Stretch = true;
-            toolStrip.TabIndex = 6;
+            this.toolStrip.CanOverflow = false;
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.Top;
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectedPath,
+            this.syncronizeButton,
+            this.browseButton});
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(1, 1, 2, 2);
+            this.toolStrip.Size = new System.Drawing.Size(278, 26);
+            this.toolStrip.Stretch = true;
+            this.toolStrip.TabIndex = 6;
             // 
             // selectedPath
             //
-            selectedPath.Name = "selectedPath";
-            selectedPath.Size = new Size(200, 22);
-            selectedPath.Padding = new Padding(0, 0, 1, 0);
-            selectedPath.FlatCombo.SelectedIndexChanged += SelectedPathSelectedIndexChanged;
-            selectedPath.KeyDown += SelectedPathKeyDown;
+            this.selectedPath.Name = "selectedPath";
+            this.selectedPath.Size = new System.Drawing.Size(200, 22);
+            this.selectedPath.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
+            this.selectedPath.FlatCombo.SelectedIndexChanged += this.SelectedPathSelectedIndexChanged;
+            this.selectedPath.KeyDown += this.SelectedPathKeyDown;
             // 
             // syncronizeButton
             //
-            syncronizeButton.Margin = new Padding(0, 1, 0, 1);
-            syncronizeButton.Alignment = ToolStripItemAlignment.Right;
-            syncronizeButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            syncronizeButton.Name = "syncronizeButton";
-            syncronizeButton.Size = new Size(23, 22);
-            syncronizeButton.Text = "Synchronize";
-            syncronizeButton.Click += SynchronizeView;
+            this.syncronizeButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
+            this.syncronizeButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.syncronizeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.syncronizeButton.Name = "syncronizeButton";
+            this.syncronizeButton.Size = new System.Drawing.Size(23, 22);
+            this.syncronizeButton.Text = "Synchronize";
+            this.syncronizeButton.Click += this.SynchronizeView;
             // 
             // browseButton
             //
-            browseButton.Margin = new Padding(0, 1, 0, 1);
-            browseButton.Alignment = ToolStripItemAlignment.Right;
-            browseButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            browseButton.Name = "browseButton";
-            browseButton.Size = new Size(23, 22);
-            browseButton.Text = "Browse";
-            browseButton.Click += BrowseButtonClick;
+            this.browseButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
+            this.browseButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.browseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(23, 22);
+            this.browseButton.Text = "Browse";
+            this.browseButton.Click += this.BrowseButtonClick;
             // 
             // PluginUI
             //
-            Name = "PluginUI";
-            Controls.Add(fileView);
-            Controls.Add(toolStrip);
-            Size = new Size(280, 352);
-            ((System.ComponentModel.ISupportInitialize)(watcher)).EndInit();
-            toolStrip.ResumeLayout(false);
-            toolStrip.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            this.Name = "PluginUI";
+            this.Controls.Add(this.fileView);
+            this.Controls.Add(this.toolStrip);
+            this.Size = new System.Drawing.Size(280, 352);
+            ((System.ComponentModel.ISupportInitialize)(this.watcher)).EndInit();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -208,87 +208,87 @@ namespace FileExplorer
         /// <summary>
         /// Shows the explorer shell menu
         /// </summary>
-        void ShowShellMenu(object sender, EventArgs e)
+        private void ShowShellMenu(object sender, EventArgs e)
         {
-            int count = fileView.SelectedItems.Count;
+            int count = this.fileView.SelectedItems.Count;
             FileInfo[] selectedPathsAndFiles = new FileInfo[count];
             ShellContextMenu scm = new ShellContextMenu();
             for (int i = 0; i < count; i++)
             {
-                string path = fileView.SelectedItems[i].Tag.ToString();
+                string path = this.fileView.SelectedItems[i].Tag.ToString();
                 selectedPathsAndFiles[i] = new FileInfo(path);
             }
             if (count == 0)
             {
-                string path = selectedPath.Text;
+                string path = this.selectedPath.Text;
                 if (!Directory.Exists(path)) return;
                 selectedPathsAndFiles = new FileInfo[1];
                 selectedPathsAndFiles[0] = new FileInfo(path);
             }
-            menu.Hide(); /* Hide default menu */
-            Point location = new Point(menu.Bounds.Left, menu.Bounds.Top);
+            this.menu.Hide(); /* Hide default menu */
+            Point location = new Point(this.menu.Bounds.Left, this.menu.Bounds.Top);
             scm.ShowContextMenu(selectedPathsAndFiles, location);
         }
 
         /// <summary>
         /// Creates and attaches the context menu
         /// </summary>
-        void InitializeContextMenu()
+        private void InitializeContextMenu()
         {
-            menu = new ContextMenuStrip();
-            menu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.RefreshView"), null, RefreshFileView));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.SynchronizeView"), null, SynchronizeView));
-            menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFileHere"), null, CreateFileHere));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFolderHere"), null, CreateFolderHere));
-            menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, ExploreHere));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), null, FindHere));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CommandPromptHere"), null, CommandPromptHere));
+            this.menu = new ContextMenuStrip();
+            this.menu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.RefreshView"), null, this.RefreshFileView));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.SynchronizeView"), null, this.SynchronizeView));
+            this.menu.Items.Add(new ToolStripSeparator());
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFileHere"), null, this.CreateFileHere));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFolderHere"), null, this.CreateFolderHere));
+            this.menu.Items.Add(new ToolStripSeparator());
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, this.ExploreHere));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), null, this.FindHere));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CommandPromptHere"), null, this.CommandPromptHere));
             if (Win32.ShouldUseWin32())
             {
-                shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, ShowShellMenu);
-                menu.Items.Add(shellButton);
+                this.shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, this.ShowShellMenu);
+                this.menu.Items.Add(this.shellButton);
             }
-            menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.TrustHere"), null, TrustHere));
-            separator = new ToolStripSeparator();
-            runButton = new ToolStripMenuItem(TextHelper.GetString("Label.Run"), null, OpenItem);
-            editButton = new ToolStripMenuItem(TextHelper.GetString("Label.Edit"), null, EditItems);
-            copyButton = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, CopyItems);
-            pasteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Paste"), null, PasteItems);
-            renameButton = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"), null, RenameItem);
-            deleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Delete"), null, DeleteItems);
-            menu.Items.Add(separator);
-            menu.Items.AddRange(new ToolStripMenuItem[6]{runButton, editButton, copyButton, pasteButton, renameButton, deleteButton});
-            menu.Font = PluginBase.Settings.DefaultFont;
-            menu.Renderer = new DockPanelStripRenderer(false);
-            fileView.ContextMenuStrip = menu;
+            this.menu.Items.Add(new ToolStripSeparator());
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.TrustHere"), null, this.TrustHere));
+            this.separator = new ToolStripSeparator();
+            this.runButton = new ToolStripMenuItem(TextHelper.GetString("Label.Run"), null, this.OpenItem);
+            this.editButton = new ToolStripMenuItem(TextHelper.GetString("Label.Edit"), null, this.EditItems);
+            this.copyButton = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, this.CopyItems);
+            this.pasteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Paste"), null, this.PasteItems);
+            this.renameButton = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"), null, this.RenameItem);
+            this.deleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Delete"), null, this.DeleteItems);
+            this.menu.Items.Add(this.separator);
+            this.menu.Items.AddRange(new ToolStripMenuItem[6]{this.runButton, this.editButton, this.copyButton, this.pasteButton, this.renameButton, this.deleteButton});
+            this.menu.Font = PluginBase.Settings.DefaultFont;
+            this.menu.Renderer = new DockPanelStripRenderer(false);
+            this.fileView.ContextMenuStrip = this.menu;
             // Set default key strings
             if (PluginBase.Settings.ViewShortcuts)
             {
-                editButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
-                renameButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.F2);
-                copyButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
-                pasteButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.P);
-                deleteButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
+                this.editButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
+                this.renameButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.F2);
+                this.copyButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
+                this.pasteButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.P);
+                this.deleteButton.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
             }
         }
 
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        void InitializeGraphics()
+        private void InitializeGraphics()
         {
-            imageList = new ImageListManager();
-            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Populate += RefreshFileView;
-            AddNonWin32Images();
-            syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
-            browseButton.Image = PluginBase.MainForm.FindImage("203");
-            fileView.SmallImageList = imageList;
+            this.imageList = new ImageListManager();
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
+            this.imageList.Populate += RefreshFileView;
+            this.AddNonWin32Images();
+            this.syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
+            this.browseButton.Image = PluginBase.MainForm.FindImage("203");
+            this.fileView.SmallImageList = this.imageList;
         }
 
         /// <summary>
@@ -296,24 +296,24 @@ namespace FileExplorer
         /// </summary>
         public void InitializeTexts()
         {
-            fileHeader.Text = TextHelper.GetString("Header.Files");
-            modifiedHeader.Text = TextHelper.GetString("Header.Modified");
-            folderBrowserDialog.UseDescriptionForTitle = true;
-            folderBrowserDialog.Description = TextHelper.GetString("Info.BrowseDescription");
-            syncronizeButton.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
-            browseButton.ToolTipText = TextHelper.GetString("ToolTip.Browse");
-            typeHeader.Text = TextHelper.GetString("Header.Type");
-            sizeHeader.Text = TextHelper.GetString("Header.Size");
+            this.fileHeader.Text = TextHelper.GetString("Header.Files");
+            this.modifiedHeader.Text = TextHelper.GetString("Header.Modified");
+            this.folderBrowserDialog.UseDescriptionForTitle = true;
+            this.folderBrowserDialog.Description = TextHelper.GetString("Info.BrowseDescription");
+            this.syncronizeButton.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
+            this.browseButton.ToolTipText = TextHelper.GetString("ToolTip.Browse");
+            this.typeHeader.Text = TextHelper.GetString("Header.Type");
+            this.sizeHeader.Text = TextHelper.GetString("Header.Size");
         }
 
         /// <summary>
         /// Initializes the custom rendering
         /// </summary>
-        void InitializeLayout()
+        private void InitializeLayout()
         {
-            selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-            toolStrip.Renderer = new DockPanelStripRenderer();
-            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            this.selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            this.toolStrip.Renderer = new DockPanelStripRenderer();
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             foreach (ColumnHeader column in fileView.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
@@ -325,7 +325,7 @@ namespace FileExplorer
         /// </summary>
         public void BrowseTo(string path)
         {
-            PopulateFileView(path);
+            this.PopulateFileView(path);
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace FileExplorer
         /// </summary>
         public ContextMenuStrip GetContextMenu()
         {
-            return menu;
+            return this.menu;
         }
 
         /// <summary>
@@ -341,42 +341,42 @@ namespace FileExplorer
         /// </summary>
         public void AddToMRU(string path)
         {
-            if (Directory.Exists(path) && !selectedPath.Items.Contains(path))
+            if (Directory.Exists(path) && !this.selectedPath.Items.Contains(path))
             {
-                selectedPath.Items.Add(path);
+                this.selectedPath.Items.Add(path);
             }
         }
 
         /// <summary>
         /// List last open path on load
         /// </summary>
-        public void Initialize(object sender, EventArgs e)
+        public void Initialize(object sender, System.EventArgs e)
         {
             string path = PathHelper.AppDir;
-            string pathToCheck = pluginMain.Settings.FilePath;
+            string pathToCheck = this.pluginMain.Settings.FilePath;
             if (Directory.Exists(pathToCheck)) path = pathToCheck;
-            listViewSorter.SortColumn = pluginMain.Settings.SortColumn;
-            if (pluginMain.Settings.SortOrder == 0) listViewSorter.Order = SortOrder.Ascending;
-            else listViewSorter.Order = SortOrder.Descending;
-            watcher.Path = path; watcher.EnableRaisingEvents = true;
-            fileView.ListViewItemSorter = listViewSorter;
-            PopulateFileView(path);
+            this.listViewSorter.SortColumn = this.pluginMain.Settings.SortColumn;
+            if (this.pluginMain.Settings.SortOrder == 0) this.listViewSorter.Order = SortOrder.Ascending;
+            else this.listViewSorter.Order = SortOrder.Descending;
+            this.watcher.Path = path; this.watcher.EnableRaisingEvents = true;
+            this.fileView.ListViewItemSorter = this.listViewSorter;
+            this.PopulateFileView(path);
         }
 
         /// <summary>
         /// Update files listview. If the path is invalid, use the last valid path
         /// </summary>
-        void PopulateFileView(string path)
+        private void PopulateFileView(string path)
         {
             // Prevent double call caused by AddToMRU
-            if (updateInProgress) return;
-            updateInProgress = true;
-            fileView.ContextMenu = null;
-            syncronizeButton.Enabled = false;
-            browseButton.Enabled = false;
-            selectedPath.Enabled = false;
-            Cursor = Cursors.WaitCursor;
-            AddToMRU(path);
+            if (this.updateInProgress) return;
+            this.updateInProgress = true;
+            this.fileView.ContextMenu = null;
+            this.syncronizeButton.Enabled = false;
+            this.browseButton.Enabled = false;
+            this.selectedPath.Enabled = false;
+            this.Cursor = Cursors.WaitCursor;
+            this.AddToMRU(path);
             DirectoryInfo dir = null;
             FileSystemInfo[] infos = null;
             // Check the specified path
@@ -393,7 +393,7 @@ namespace FileExplorer
                 // marshal back to the UI thread
                 BeginInvoke((MethodInvoker)delegate
                 { 
-                    UpdateUI(path, dir, infos); 
+                    this.UpdateUI(path, dir, infos); 
                 });
             }, null);
         }
@@ -401,14 +401,14 @@ namespace FileExplorer
         /// <summary>
         /// Updates the UI in the GUI thread
         /// </summary>
-        void UpdateUI(string path, DirectoryInfo directory, FileSystemInfo[] infos)
+        private void UpdateUI(string path, DirectoryInfo directory, FileSystemInfo[] infos)
         {
-            ClearImageList();
-            pluginMain.Settings.FilePath = path;
-            selectedPath.Text = path;
-            fileView.BeginUpdate();
-            fileView.ListViewItemSorter = null;
-            fileView.Items.Clear();
+            this.ClearImageList();
+            this.pluginMain.Settings.FilePath = path;
+            this.selectedPath.Text = path;
+            this.fileView.BeginUpdate();
+            this.fileView.ListViewItemSorter = null;
+            this.fileView.Items.Clear();
             try
             {
                 ListViewItem item;
@@ -419,7 +419,7 @@ namespace FileExplorer
                     item.SubItems.Add("-");
                     item.SubItems.Add("-");
                     item.SubItems.Add("-");
-                    fileView.Items.Add(item);
+                    this.fileView.Items.Add(item);
                 }
                 foreach (FileSystemInfo info in infos)
                 {
@@ -431,7 +431,7 @@ namespace FileExplorer
                         item.SubItems.Add("-");
                         item.SubItems.Add("-");
                         item.SubItems.Add(subDir.LastWriteTime.ToString());
-                        fileView.Items.Add(item);
+                        this.fileView.Items.Add(item);
                     }
                 }
                 foreach (FileSystemInfo info in infos)
@@ -446,52 +446,52 @@ namespace FileExplorer
                         else item.SubItems.Add((file.Length / 1024) + " " + kbs);
                         item.SubItems.Add(file.Extension.ToUpper().Replace(".", ""));
                         item.SubItems.Add(file.LastWriteTime.ToString());
-                        fileView.Items.Add(item);
+                        this.fileView.Items.Add(item);
                     }
                 }
-                watcher.Path = path;
-                fileView.ListViewItemSorter = listViewSorter;
+                this.watcher.Path = path;
+                this.fileView.ListViewItemSorter = this.listViewSorter;
             }
             finally
             {
                 // Select the possible created item
-                if (autoSelectItem != null)
+                if (this.autoSelectItem != null)
                 {
-                    foreach (ListViewItem item in fileView.Items)
+                    foreach (ListViewItem item in this.fileView.Items)
                     {
-                        if (item.Text == autoSelectItem)
+                        if (item.Text == this.autoSelectItem)
                         {
-                            fileView.Focus();
+                            this.fileView.Focus();
                             item.BeginEdit();
                             break;
                         }
                     }
-                    autoSelectItem = null;
+                    this.autoSelectItem = null;
                 }
-                Cursor = Cursors.Default;
-                fileView.ContextMenuStrip = menu;
-                syncronizeButton.Enabled = true;
-                selectedPath.Enabled = true;
-                browseButton.Enabled = true;
-                updateInProgress = false;
-                fileView.EndUpdate();
+                this.Cursor = Cursors.Default;
+                this.fileView.ContextMenuStrip = this.menu;
+                this.syncronizeButton.Enabled = true;
+                this.selectedPath.Enabled = true;
+                this.browseButton.Enabled = true;
+                this.updateInProgress = false;
+                this.fileView.EndUpdate();
             }
         }
 
         /// <summary>
         /// Open the folder browser dialog
         /// </summary>
-        void BrowseButtonClick(object sender, EventArgs e)
+        private void BrowseButtonClick(object sender, System.EventArgs e)
         {
             try
             {
-                if (Directory.Exists(selectedPath.Text))
+                if (Directory.Exists(this.selectedPath.Text))
                 {
-                    folderBrowserDialog.SelectedPath = selectedPath.Text;
+                    this.folderBrowserDialog.SelectedPath = this.selectedPath.Text;
                 }
-                if (folderBrowserDialog.ShowDialog((Form)PluginBase.MainForm) == DialogResult.OK)
+                if (this.folderBrowserDialog.ShowDialog((Form)PluginBase.MainForm) == DialogResult.OK)
                 {
-                    PopulateFileView(folderBrowserDialog.SelectedPath);
+                    this.PopulateFileView(this.folderBrowserDialog.SelectedPath);
                 }
             }
             catch (Exception ex)
@@ -503,27 +503,27 @@ namespace FileExplorer
         /// <summary>
         /// Repopulate when user changes the path from the combo box
         /// </summary>
-        void SelectedPathSelectedIndexChanged(object sender, EventArgs e)
+        private void SelectedPathSelectedIndexChanged(object sender, System.EventArgs e)
         {
-            if (selectedPath.SelectedIndex != -1)
+            if (this.selectedPath.SelectedIndex != -1)
             {
-                string path = selectedPath.SelectedItem.ToString();
-                if (Directory.Exists(path)) PopulateFileView(path);
+                string path = this.selectedPath.SelectedItem.ToString();
+                if (Directory.Exists(path)) this.PopulateFileView(path);
             }
         }
 
         /// <summary>
         /// Key pressed while editing the selected path
         /// </summary>
-        void SelectedPathKeyDown(object sender, KeyEventArgs e)
+        private void SelectedPathKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 e.Handled = true;
-                string path = selectedPath.Text;
+                string path = this.selectedPath.Text;
                 if (Directory.Exists(path))
                 {
-                    PopulateFileView(path);
+                    this.PopulateFileView(path);
                 }
             }
         }
@@ -531,12 +531,12 @@ namespace FileExplorer
         /// <summary>
         /// Gets a list of currectly selected files
         /// </summary>
-        string[] GetSelectedFiles()
+        private string[] GetSelectedFiles()
         {
             int i = 0;
-            if (fileView.SelectedItems.Count == 0) return null;
-            string[] files = new string[fileView.SelectedItems.Count];
-            foreach (ListViewItem item in fileView.SelectedItems)
+            if (this.fileView.SelectedItems.Count == 0) return null;
+            string[] files = new string[this.fileView.SelectedItems.Count];
+            foreach (ListViewItem item in this.fileView.SelectedItems)
             {
                 files[i++] = item.Tag.ToString();
             }
@@ -546,20 +546,20 @@ namespace FileExplorer
         /// <summary>
         /// Starts the dragging operation
         /// </summary>
-        void FileViewDragItems(object sender, ItemDragEventArgs e)
+        private void FileViewDragItems(object sender, ItemDragEventArgs e)
         {
-            string[] files = GetSelectedFiles();
+            string[] files = this.GetSelectedFiles();
             if (files != null && e.Button == MouseButtons.Left)
             {
                 DataObject data = new DataObject(DataFormats.FileDrop, files);
-                fileView.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
+                this.fileView.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
             }
         }
 
         /// <summary>
         /// Checks if the path list contains only files
         /// </summary> 
-        bool ContainsOnlyFiles(string[] files)
+        private bool ContainsOnlyFiles(string[] files)
         {
             for (int i = 0; i < files.Length; i++)
             {
@@ -571,40 +571,40 @@ namespace FileExplorer
         /// <summary>
         /// Handles the event when the drag is over the control
         /// </summary>
-        void FileViewDragOver(object sender, DragEventArgs e)
+        private void FileViewDragOver(object sender, DragEventArgs e)
         {
-            Point cp = fileView.PointToClient(new Point(e.X, e.Y));
-            ListViewItem whereToMove = fileView.GetItemAt(cp.X, cp.Y);
+            Point cp = this.fileView.PointToClient(new Point(e.X, e.Y));
+            ListViewItem whereToMove = this.fileView.GetItemAt(cp.X, cp.Y);
             if (whereToMove != null && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string path = whereToMove.Tag.ToString();
                 string[] data = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (Directory.Exists(path) && IsValidDropTarget(path, data))
+                if (Directory.Exists(path) && this.IsValidDropTarget(path, data))
                 {
-                    if (ModifierKeys == Keys.Control)
+                    if (Control.ModifierKeys == Keys.Control)
                     {
                         e.Effect = DragDropEffects.Copy;
                     }
                     else e.Effect = DragDropEffects.Move;
-                    HighlightSelectedItem(whereToMove);
+                    this.HighlightSelectedItem(whereToMove);
                 }
                 else
                 {
                     e.Effect = DragDropEffects.None;
-                    UnhighlightSelectedItem();
+                    this.UnhighlightSelectedItem();
                 }
             }
             else
             {
                 e.Effect = DragDropEffects.None;
-                UnhighlightSelectedItem();
+                this.UnhighlightSelectedItem();
             }
         }
 
         /// <summary>
         /// Checks whether the user is trying to drop something inside itself
         /// </summary>
-        bool IsValidDropTarget(string path, string[] paths)
+        private bool IsValidDropTarget(string path, string[] paths)
         {
             string original = PathHelper.GetLongPathName(path);
             for (int i = 0; i < paths.Length; i++)
@@ -618,20 +618,20 @@ namespace FileExplorer
         /// <summary>
         /// If the files are dropped over the file view, moves the files
         /// </summary>
-        void FileViewDragDrop(object sender, DragEventArgs e)
+        private void FileViewDragDrop(object sender, DragEventArgs e)
         {
-            UnhighlightSelectedItem();
+            this.UnhighlightSelectedItem();
             try
             {
-                Point cp = fileView.PointToClient(new Point(e.X, e.Y));
-                ListViewItem whereToMove = fileView.GetItemAt(cp.X, cp.Y);
+                Point cp = this.fileView.PointToClient(new Point(e.X, e.Y));
+                ListViewItem whereToMove = this.fileView.GetItemAt(cp.X, cp.Y);
                 if (whereToMove is null) return; // Item is dropped on nothing
                 string targetDirectory = whereToMove.Tag.ToString();
                 if (whereToMove.Text.StartsWith('[') || Directory.Exists(targetDirectory))
                 {
-                    for (int i = 0; i < fileView.SelectedItems.Count; i++)
+                    for (int i = 0; i < this.fileView.SelectedItems.Count; i++)
                     {
-                        string path = fileView.SelectedItems[i].Tag.ToString();
+                        string path = this.fileView.SelectedItems[i].Tag.ToString();
                         if (File.Exists(path))
                         {
                             string name = Path.GetFileName(path);
@@ -666,19 +666,19 @@ namespace FileExplorer
         /// <summary>
         /// Handles the pressed keys from the fileView
         /// </summary> 
-        void FileViewKeyUp(object sender, KeyEventArgs e)
+        private void FileViewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
                 e.Handled = true;
-                DeleteItems(null, null);
+                this.DeleteItems(null, null);
             }
             else if (e.KeyCode == Keys.F2)
             {
                 e.Handled = true;
-                if (fileView.SelectedItems.Count > 0)
+                if (this.fileView.SelectedItems.Count > 0)
                 {
-                    RenameItem(null, null);
+                    this.RenameItem(null, null);
                 }
             }
         }
@@ -686,12 +686,12 @@ namespace FileExplorer
         /// <summary>
         /// A file/directory item could be renamed
         /// </summary>
-        void FileViewBeforeLabelEdit(object sender, LabelEditEventArgs e)
+        private void FileViewBeforeLabelEdit(object sender, System.Windows.Forms.LabelEditEventArgs e)
         {
             try
             {
-                previousItemLabel = fileView.Items[e.Item].Text;
-                if (previousItemLabel.StartsWith('[')) e.CancelEdit = true;
+                this.previousItemLabel = this.fileView.Items[e.Item].Text;
+                if (this.previousItemLabel.StartsWith('[')) e.CancelEdit = true;
             }
             catch
             {
@@ -702,29 +702,29 @@ namespace FileExplorer
         /// <summary>
         /// A file/directory item has been renamed
         /// </summary>
-        void FileViewAfterLabelEdit(object sender, LabelEditEventArgs e)
+        private void FileViewAfterLabelEdit(object sender, System.Windows.Forms.LabelEditEventArgs e)
         {
             ListViewItem item = null;
             try
             {
-                if (e.CancelEdit || string.IsNullOrEmpty(e.Label) || e.Label == previousItemLabel)
+                if (e.CancelEdit || string.IsNullOrEmpty(e.Label) || e.Label == this.previousItemLabel)
                 {
                     e.CancelEdit = true;
                     return;
                 }
-                item = fileView.Items[e.Item];
+                item = this.fileView.Items[e.Item];
                 string file = item.Tag.ToString();
                 FileInfo info = new FileInfo(file);
                 string path = info.Directory + Path.DirectorySeparatorChar.ToString();
                 if (File.Exists(file))
                 {
-                    File.Move(path + previousItemLabel, path + e.Label);
-                    DocumentManager.MoveDocuments(path + previousItemLabel, path + e.Label);
+                    File.Move(path + this.previousItemLabel, path + e.Label);
+                    DocumentManager.MoveDocuments(path + this.previousItemLabel, path + e.Label);
                 }
                 else if (Directory.Exists(path))
                 {
-                    Directory.Move(path + previousItemLabel, path + e.Label);
-                    DocumentManager.MoveDocuments(path + previousItemLabel, path + e.Label);
+                    Directory.Move(path + this.previousItemLabel, path + e.Label);
+                    DocumentManager.MoveDocuments(path + this.previousItemLabel, path + e.Label);
                 }
             }
             catch (Exception ex)
@@ -737,61 +737,61 @@ namespace FileExplorer
         /// <summary>
         /// Opens the selected file or browses to a path
         /// </summary>
-        void FileViewItemActivate(object sender, EventArgs e)
+        private void FileViewItemActivate(object sender, System.EventArgs e)
         {
-            if (fileView.SelectedItems.Count == 0) return;
-            string file = fileView.SelectedItems[0].Tag.ToString();
-            if (ModifierKeys == Keys.Shift) OpenItem(null, null);
+            if (this.fileView.SelectedItems.Count == 0) return;
+            string file = this.fileView.SelectedItems[0].Tag.ToString();
+            if (Control.ModifierKeys == Keys.Shift) this.OpenItem(null, null);
             else
             {
                 if (File.Exists(file)) PluginBase.MainForm.OpenEditableDocument(file);
-                else PopulateFileView(file);
+                else this.PopulateFileView(file);
             }
         }
 
         /// <summary>
         /// Creates the context menu on right button click
         /// </summary>
-        void FileViewMouseUp(object sender, MouseEventArgs e)
+        private void FileViewMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right) 
             {
-                UpdateMenuItemVisibility();
+                this.UpdateMenuItemVisibility();
             }
         }
 
         /// <summary>
         /// Updates the context menu item visibility
         /// </summary>
-        void UpdateMenuItemVisibility()
+        private void UpdateMenuItemVisibility()
         {
             bool canPaste = false;
             bool notFirstItem = true;
             bool targetIsDirectory = false;
-            bool onlyFiles = SelectedItemsAreOnlyFiles();
-            int selectedItems = fileView.SelectedItems.Count;
-            if (selectedItems > 0) notFirstItem = !fileView.SelectedItems[0].Text.StartsWith('[');
-            if (selectedItems == 1) targetIsDirectory = Directory.Exists(fileView.SelectedItems[0].Tag.ToString());
-            if (!targetIsDirectory) targetIsDirectory = Directory.Exists(selectedPath.Text);
+            bool onlyFiles = this.SelectedItemsAreOnlyFiles();
+            int selectedItems = this.fileView.SelectedItems.Count;
+            if (selectedItems > 0) notFirstItem = !this.fileView.SelectedItems[0].Text.StartsWith('[');
+            if (selectedItems == 1) targetIsDirectory = Directory.Exists(this.fileView.SelectedItems[0].Tag.ToString());
+            if (!targetIsDirectory) targetIsDirectory = Directory.Exists(this.selectedPath.Text);
             canPaste = (targetIsDirectory && notFirstItem && Clipboard.ContainsFileDropList());
-            renameButton.Visible = (selectedItems == 1 && notFirstItem);
-            runButton.Visible = (selectedItems == 1 && notFirstItem);
-            deleteButton.Visible = (selectedItems > 0 && notFirstItem);
-            copyButton.Visible = (selectedItems > 0 && notFirstItem);
-            editButton.Visible = (selectedItems > 0 && notFirstItem && onlyFiles);
-            separator.Visible = (selectedItems > 0 && notFirstItem);
-            if (selectedItems == 0 && canPaste) separator.Visible = true;
-            pasteButton.Visible = canPaste;
+            this.renameButton.Visible = (selectedItems == 1 && notFirstItem);
+            this.runButton.Visible = (selectedItems == 1 && notFirstItem);
+            this.deleteButton.Visible = (selectedItems > 0 && notFirstItem);
+            this.copyButton.Visible = (selectedItems > 0 && notFirstItem);
+            this.editButton.Visible = (selectedItems > 0 && notFirstItem && onlyFiles);
+            this.separator.Visible = (selectedItems > 0 && notFirstItem);
+            if (selectedItems == 0 && canPaste) this.separator.Visible = true;
+            this.pasteButton.Visible = canPaste;
         }
 
         /// <summary>
         /// Check whether the selected items are only files
         /// </summary> 
-        bool SelectedItemsAreOnlyFiles()
+        private bool SelectedItemsAreOnlyFiles()
         {
-            for (int i = 0; i < fileView.SelectedItems.Count; i++)
+            for (int i = 0; i < this.fileView.SelectedItems.Count; i++)
             {
-                string path = fileView.SelectedItems[i].Tag.ToString();
+                string path = this.fileView.SelectedItems[i].Tag.ToString();
                 if (Directory.Exists(path)) return false;
             }
             return true;
@@ -800,21 +800,21 @@ namespace FileExplorer
         /// <summary>
         /// Refreshes the file view
         /// </summary>
-        void RefreshFileView(object sender, EventArgs e)
+        private void RefreshFileView(object sender, System.EventArgs e)
         {
-            string path = selectedPath.Text;
-            if (!string.IsNullOrEmpty(path)) PopulateFileView(path);
+            string path = this.selectedPath.Text;
+            if (!string.IsNullOrEmpty(path)) this.PopulateFileView(path);
         }
 
         /// <summary>
         /// Browses to the current file's path
         /// If file is in a project, browse to project root
         /// </summary>
-        void SynchronizeView(object sender, EventArgs e)
+        private void SynchronizeView(object sender, System.EventArgs e)
         {
             string path = null;
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (PluginBase.CurrentProject != null && pluginMain.Settings.SynchronizeToProject)
+            if (PluginBase.CurrentProject != null && this.pluginMain.Settings.SynchronizeToProject)
             {
                 path = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
                 if (document.IsEditable && !document.IsUntitled && !document.FileName.StartsWith(path, StringComparison.OrdinalIgnoreCase))
@@ -828,36 +828,39 @@ namespace FileExplorer
             }
             if (path != null && Directory.Exists(path))
             {
-                PopulateFileView(path);
+                this.PopulateFileView(path);
             }
         }
 
         /// <summary>
         /// Add directory to trust files
         /// </summary>
-        void TrustHere(object sender, EventArgs e)
+        private void TrustHere(object sender, System.EventArgs e)
         {
             string path;
             string trustFile;
             string trustParams;
             // add selected file
-            if ((fileView.SelectedItems.Count != 0) && (fileView.SelectedIndices[0] > 0))
+            if ((this.fileView.SelectedItems.Count != 0) && (this.fileView.SelectedIndices[0] > 0))
             {
-                var file = fileView.SelectedItems[0].Tag.ToString();
+                string file = this.fileView.SelectedItems[0].Tag.ToString();
                 if (File.Exists(file)) file = Path.GetDirectoryName(file);
                 if (!Directory.Exists(file)) return;
-                var info = new DirectoryInfo(file);
+                DirectoryInfo info = new DirectoryInfo(file);
                 path = info.FullName;
+                trustFile = path.Replace('\\', '_').Remove(1, 1);
+                while ((trustFile.Length > 100) && (trustFile.IndexOf('_') is var p && p > 0)) trustFile = trustFile.Substring(p);
+                trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
             }
             // add current folder
             else
             {
-                var info = new FileInfo(selectedPath.Text);
+                FileInfo info = new FileInfo(this.selectedPath.Text);
                 path = info.FullName;
+                trustFile = path.Replace('\\', '_').Remove(1, 1);
+                while ((trustFile.Length > 100) && (trustFile.IndexOf('_') is var p && p > 0)) trustFile = trustFile.Substring(p);
+                trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
             }
-            trustFile = path.Replace('\\', '_').Remove(1, 1);
-            while (trustFile.Length > 100 && trustFile.Contains('_', out var p) && p > 0) trustFile = trustFile.Substring(p);
-            trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
             // add to trusted files
             DataEvent deTrust = new DataEvent(EventType.Command, "ASCompletion.CreateTrustFile", trustParams);
             EventManager.DispatchEvent(this, deTrust);
@@ -871,65 +874,65 @@ namespace FileExplorer
         /// <summary>
         /// Opens Windows explorer in the current path
         /// </summary>
-        void ExploreHere(object sender, EventArgs e)
+        private void ExploreHere(object sender, System.EventArgs e)
         {
-            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.Explore", selectedPath.Text);
+            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.Explore", this.selectedPath.Text);
             EventManager.DispatchEvent(this, de);
         }
 
         /// <summary>
         /// Opens the find and replace in files popup in the current path
         /// </summary>
-        void FindHere(object sender, EventArgs e)
+        private void FindHere(object sender, System.EventArgs e)
         {
-            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.FindHere", GetSelectedFiles());
+            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.FindHere", this.GetSelectedFiles());
             EventManager.DispatchEvent(this, de);
         }
 
         /// <summary>
         /// Opens the command prompt in the current path
         /// </summary>
-        void CommandPromptHere(object sender, EventArgs e)
+        private void CommandPromptHere(object sender, System.EventArgs e)
         {
-            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.PromptHere", selectedPath.Text);
+            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.PromptHere", this.selectedPath.Text);
             EventManager.DispatchEvent(this, de);
         }
 
         /// <summary>
         /// Sorts items on user column click
         /// </summary>
-        void FileViewColumnClick(object sender, ColumnClickEventArgs e)
+        private void FileViewColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
         {
-            if (prevColumnClick == e.Column)
+            if (this.prevColumnClick == e.Column)
             {
-                listViewSorter.Order = (listViewSorter.Order == SortOrder.Descending) ? SortOrder.Ascending : SortOrder.Descending;
+                this.listViewSorter.Order = (this.listViewSorter.Order == SortOrder.Descending) ? SortOrder.Ascending : SortOrder.Descending;
             } 
-            else listViewSorter.Order = SortOrder.Ascending;
-            if (listViewSorter.Order == SortOrder.Ascending)
+            else this.listViewSorter.Order = SortOrder.Ascending;
+            if (this.listViewSorter.Order == SortOrder.Ascending)
             {
-                pluginMain.Settings.SortOrder = 0;
+                this.pluginMain.Settings.SortOrder = 0;
             } 
-            else pluginMain.Settings.SortOrder = 1;
-            prevColumnClick = e.Column;
-            pluginMain.Settings.SortColumn = e.Column;
-            listViewSorter.SortColumn = e.Column;
-            fileView.Sort();
+            else this.pluginMain.Settings.SortOrder = 1;
+            this.prevColumnClick = e.Column;
+            this.pluginMain.Settings.SortColumn = e.Column;
+            this.listViewSorter.SortColumn = e.Column;
+            this.fileView.Sort();
         }
 
         /// <summary>
         /// Creates a new file to the current folder
         /// </summary>
-        void CreateFileHere(object sender, EventArgs e)
+        private void CreateFileHere(object sender, System.EventArgs e)
         {
             try
             {
                 string filename = TextHelper.GetString("Info.NewFileName");
                 int codepage = (int)PluginBase.MainForm.Settings.DefaultCodePage;
                 string extension = PluginBase.MainForm.Settings.DefaultFileExtension;
-                string file = Path.Combine(selectedPath.Text, filename) + "." + extension;
+                string file = Path.Combine(this.selectedPath.Text, filename) + "." + extension;
                 string unique = FileHelper.EnsureUniquePath(file);
                 FileHelper.WriteFile(unique, "", Encoding.GetEncoding(codepage), PluginBase.Settings.SaveUnicodeWithBOM);
-                autoSelectItem = Path.GetFileName(unique);
+                this.autoSelectItem = Path.GetFileName(unique);
             }
             catch (Exception ex)
             {
@@ -940,15 +943,15 @@ namespace FileExplorer
         /// <summary>
         /// Creates a new folder to the current folder
         /// </summary>
-        void CreateFolderHere(object sender, EventArgs e)
+        private void CreateFolderHere(object sender, System.EventArgs e)
         {
             try
             {
                 string folderName = TextHelper.GetString("Info.NewFolderName");
-                string target = Path.Combine(selectedPath.Text, folderName);
+                string target = Path.Combine(this.selectedPath.Text, folderName);
                 string unique = FolderHelper.EnsureUniquePath(target);
                 Directory.CreateDirectory(unique);
-                autoSelectItem = folderName;
+                this.autoSelectItem = folderName;
             }
             catch (Exception ex)
             {
@@ -959,10 +962,10 @@ namespace FileExplorer
         /// <summary>
         /// Copies the selected files to the clipboard
         /// </summary>
-        void CopyItems(object sender, EventArgs e)
+        private void CopyItems(object sender, System.EventArgs e)
         {
             StringCollection items = new StringCollection();
-            for (int i = 0; i < fileView.SelectedItems.Count; i++)
+            for (int i = 0; i < this.fileView.SelectedItems.Count; i++)
             {
                 items.Add(fileView.SelectedItems[i].Tag.ToString());
             }
@@ -972,11 +975,11 @@ namespace FileExplorer
         /// <summary>
         /// Pastes the selected files from clipboard
         /// </summary>
-        void PasteItems(object sender, EventArgs e)
+        private void PasteItems(object sender, System.EventArgs e)
         {
             string target = string.Empty;
-            if (fileView.SelectedItems.Count == 0) target = selectedPath.Text;
-            else target = fileView.SelectedItems[0].Tag.ToString();
+            if (this.fileView.SelectedItems.Count == 0) target = this.selectedPath.Text;
+            else target = this.fileView.SelectedItems[0].Tag.ToString();
             StringCollection items = Clipboard.GetFileDropList();
             foreach (var it in items)
             {
@@ -997,11 +1000,11 @@ namespace FileExplorer
         /// <summary>
         /// Edits the selected items in FlashDevelop
         /// </summary>
-        void EditItems(object sender, EventArgs e)
+        private void EditItems(object sender, System.EventArgs e)
         {
-            for (int i = 0; i < fileView.SelectedItems.Count; i++)
+            for (int i = 0; i < this.fileView.SelectedItems.Count; i++)
             {
-                string file = fileView.SelectedItems[i].Tag.ToString();
+                string file = this.fileView.SelectedItems[i].Tag.ToString();
                 if (File.Exists(file)) PluginBase.MainForm.OpenEditableDocument(file);
             }
         }
@@ -1009,7 +1012,7 @@ namespace FileExplorer
         /// <summary>
         /// Deletes the selected items
         /// </summary>
-        void DeleteItems(object sender, EventArgs e)
+        private void DeleteItems(object sender, System.EventArgs e)
         {
             try
             {
@@ -1018,9 +1021,9 @@ namespace FileExplorer
                 DialogResult result = MessageBox.Show(message, " " + confirm, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
-                    for (int i = 0; i < fileView.SelectedItems.Count; i++)
+                    for (int i = 0; i < this.fileView.SelectedItems.Count; i++)
                     {
-                        string path = fileView.SelectedItems[i].Tag.ToString();
+                        string path = this.fileView.SelectedItems[i].Tag.ToString();
                         if (!FileHelper.Recycle(path))
                         {
                             string error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
@@ -1039,19 +1042,19 @@ namespace FileExplorer
         /// <summary>
         /// Renames current file or directory
         /// </summary>
-        void RenameItem(object sender, EventArgs e)
+        private void RenameItem(object sender, System.EventArgs e)
         {
-            fileView.SelectedItems[0].BeginEdit();
+            this.fileView.SelectedItems[0].BeginEdit();
         }
 
         /// <summary>
         /// Opens the current file or directory with associated program 
         /// </summary>
-        void OpenItem(object sender, EventArgs e)
+        private void OpenItem(object sender, System.EventArgs e)
         {
             try
             {
-                string file = fileView.SelectedItems[0].Tag.ToString();
+                string file = this.fileView.SelectedItems[0].Tag.ToString();
                 ProcessHelper.StartAsync(file);
             }
             catch (Exception ex) 
@@ -1063,48 +1066,48 @@ namespace FileExplorer
         /// <summary>
         /// Highlights the selected item
         /// </summary>
-        void HighlightSelectedItem(ListViewItem item)
+        private void HighlightSelectedItem(ListViewItem item)
         {
-            if (item != highlightedItem)
+            if (item != this.highlightedItem)
             {
-                UnhighlightSelectedItem();
-                highlightedItem = item;
-                highlightedItem.Selected = true;
+                this.UnhighlightSelectedItem();
+                this.highlightedItem = item;
+                this.highlightedItem.Selected = true;
             }
         }
 
         /// <summary>
         /// Unhighlights the selected item
         /// </summary>
-        void UnhighlightSelectedItem()
+        private void UnhighlightSelectedItem()
         {
-            if (highlightedItem != null)
+            if (this.highlightedItem != null)
             {
-                highlightedItem.Selected = false;
-                highlightedItem = null;
+                this.highlightedItem.Selected = false;
+                this.highlightedItem = null;
             }
         }
 
         /// <summary>
         /// The directory we're watching has changed - refresh!
         /// </summary>
-        void WatcherChanged(object sender, FileSystemEventArgs e)
+        private void WatcherChanged(object sender, FileSystemEventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate
+            this.BeginInvoke((MethodInvoker)delegate
             {
                 long timestamp = DateTime.Now.Ticks;
-                if (timestamp - lastUpdateTimeStamp < 500) return;
-                lastUpdateTimeStamp = timestamp; // Store timestamp
-                PopulateFileView(selectedPath.Text);
+                if (timestamp - this.lastUpdateTimeStamp < 500) return;
+                this.lastUpdateTimeStamp = timestamp; // Store timestamp
+                this.PopulateFileView(this.selectedPath.Text);
             });
         }
 
         /// <summary>
         /// The directory we're watching has changed - refresh!
         /// </summary>
-        void WatcherRenamed(object sender, RenamedEventArgs e)
+        private void WatcherRenamed(object sender, RenamedEventArgs e)
         {
-            WatcherChanged(sender, null);
+            this.WatcherChanged(sender, null);
         }
 
         #endregion
@@ -1115,7 +1118,7 @@ namespace FileExplorer
         /// Ask the shell to feed us the appropriate icon for the given file, but
         /// first try looking in our cache to see if we've already loaded it.
         /// </summary>
-        int ExtractIconIfNecessary(string path, bool isFile)
+        private int ExtractIconIfNecessary(string path, bool isFile)
         {
             try
             {
@@ -1128,8 +1131,8 @@ namespace FileExplorer
                     image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
                     image = PluginBase.MainForm.ImageSetAdjust(image);
                     icon.Dispose();
-                    imageList.Images.Add(image);
-                    return imageList.Images.Count - 1;
+                    this.imageList.Images.Add(image);
+                    return this.imageList.Images.Count - 1;
                 }
             }
             catch {} // No errors please...
@@ -1139,20 +1142,20 @@ namespace FileExplorer
         /// <summary>
         /// Dispose all images entirely.
         /// </summary>
-        void ClearImageList()
+        private void ClearImageList()
         {
-            imageList.Images.Clear();
+            this.imageList.Images.Clear();
             AddNonWin32Images();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        void AddNonWin32Images()
+        private void AddNonWin32Images()
         {
             if (Win32.ShouldUseWin32()) return;
-            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("526"));
-            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("203"));
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("526"));
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("203"));
         }
 
         #endregion

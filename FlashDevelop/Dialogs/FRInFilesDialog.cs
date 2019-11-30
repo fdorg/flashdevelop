@@ -20,52 +20,52 @@ namespace FlashDevelop.Dialogs
 {
     public class FRInFilesDialog : SmartForm
     {
-        Label infoLabel;
-        Label findLabel;
-        Label folderLabel;
-        Label replaceLabel;
-        Label extensionLabel;
-        ColumnHeader lineHeader;
-        ColumnHeader descHeader;
-        ColumnHeader fileHeader;
-        ColumnHeader pathHeader;
-        ColumnHeader replacedHeader;
-        ProgressBarEx progressBar;
-        GroupBox optionsGroupBox;
-        ComboBox folderComboBox;
-        ComboBox extensionComboBox;
-        ComboBox replaceComboBox;
-        ComboBox findComboBox;
-        CheckBox redirectCheckBox;
-        CheckBox regexCheckBox;
-        CheckBox escapedCheckBox;
-        CheckBox wholeWordCheckBox;
-        CheckBox matchCaseCheckBox;
-        CheckBox stringsCheckBox;
-        CheckBox commentsCheckBox;
-        CheckBox subDirectoriesCheckBox;
-        ListView resultsView;
-        Button replaceButton;
-        Button cancelButton;
-        Button browseButton;
-        Button closeButton;
-        Button findButton;
-        FRRunner runner;
-        IProject lastProject;
+        private System.Windows.Forms.Label infoLabel;
+        private System.Windows.Forms.Label findLabel;
+        private System.Windows.Forms.Label folderLabel;
+        private System.Windows.Forms.Label replaceLabel;
+        private System.Windows.Forms.Label extensionLabel;
+        private System.Windows.Forms.ColumnHeader lineHeader;
+        private System.Windows.Forms.ColumnHeader descHeader;
+        private System.Windows.Forms.ColumnHeader fileHeader;
+        private System.Windows.Forms.ColumnHeader pathHeader;
+        private System.Windows.Forms.ColumnHeader replacedHeader;
+        private System.Windows.Forms.ProgressBarEx progressBar;
+        private System.Windows.Forms.GroupBox optionsGroupBox;
+        private System.Windows.Forms.ComboBox folderComboBox;
+        private System.Windows.Forms.ComboBox extensionComboBox;
+        private System.Windows.Forms.ComboBox replaceComboBox;
+        private System.Windows.Forms.ComboBox findComboBox;
+        private System.Windows.Forms.CheckBox redirectCheckBox;
+        private System.Windows.Forms.CheckBox regexCheckBox;
+        private System.Windows.Forms.CheckBox escapedCheckBox;
+        private System.Windows.Forms.CheckBox wholeWordCheckBox;
+        private System.Windows.Forms.CheckBox matchCaseCheckBox;
+        private System.Windows.Forms.CheckBox stringsCheckBox;
+        private System.Windows.Forms.CheckBox commentsCheckBox;
+        private System.Windows.Forms.CheckBox subDirectoriesCheckBox;
+        private System.Windows.Forms.ListView resultsView;
+        private System.Windows.Forms.Button replaceButton;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button browseButton;
+        private System.Windows.Forms.Button closeButton;
+        private System.Windows.Forms.Button findButton;
+        private PluginCore.FRService.FRRunner runner;
+        private PluginCore.IProject lastProject;
 
-        const string TraceGroup = "FindInFiles";
+        private const string TraceGroup = "FindInFiles";
         
         public FRInFilesDialog()
         {
-            Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
-            FormGuid = "d2dbaf53-35ea-4632-b038-5428c9784a32";
-            InitializeComponent();
-            ApplyLocalizedTexts();
-            InitializeGraphics();
-            UpdateSettings();
+            this.Owner = Globals.MainForm;
+            this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "d2dbaf53-35ea-4632-b038-5428c9784a32";
+            this.InitializeComponent();
+            this.ApplyLocalizedTexts();
+            this.InitializeGraphics();
+            this.UpdateSettings();
 
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, PluginBase.MainForm.FindImage("209"));
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, Globals.MainForm.FindImage("209"));
         }
 
         #region Windows Form Designer Generated Code
@@ -74,203 +74,203 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        void InitializeComponent()
+        private void InitializeComponent()
         {
-            replaceButton = new ButtonEx();
-            redirectCheckBox = new CheckBoxEx();
-            regexCheckBox = new CheckBoxEx();
-            optionsGroupBox = new GroupBoxEx();
-            stringsCheckBox = new CheckBoxEx();
-            commentsCheckBox = new CheckBoxEx();
-            escapedCheckBox = new CheckBoxEx();
-            wholeWordCheckBox = new CheckBoxEx();
-            matchCaseCheckBox = new CheckBoxEx();
-            subDirectoriesCheckBox = new CheckBoxEx();
-            replaceComboBox = new FlatCombo();
-            replaceLabel = new Label();
-            findComboBox = new FlatCombo();
-            findLabel = new Label();
-            findButton = new ButtonEx();
-            folderComboBox = new FlatCombo();
-            folderLabel = new Label();
-            extensionComboBox = new FlatCombo();
-            extensionLabel = new Label();
-            browseButton = new ButtonEx();
-            replacedHeader = new ColumnHeader();
-            cancelButton = new ButtonEx();
-            infoLabel = new Label();
-            lineHeader = new ColumnHeader();
-            descHeader = new ColumnHeader();
-            pathHeader = new ColumnHeader();
-            fileHeader = new ColumnHeader();
-            resultsView = new ListViewEx();
-            progressBar = new ProgressBarEx();
-            closeButton = new ButtonEx();
-            optionsGroupBox.SuspendLayout();
-            SuspendLayout();
+            this.replaceButton = new System.Windows.Forms.ButtonEx();
+            this.redirectCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.regexCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.stringsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.commentsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.escapedCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.wholeWordCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.matchCaseCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.subDirectoriesCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.replaceComboBox = new System.Windows.Forms.FlatCombo();
+            this.replaceLabel = new System.Windows.Forms.Label();
+            this.findComboBox = new System.Windows.Forms.FlatCombo();
+            this.findLabel = new System.Windows.Forms.Label();
+            this.findButton = new System.Windows.Forms.ButtonEx();
+            this.folderComboBox = new System.Windows.Forms.FlatCombo();
+            this.folderLabel = new System.Windows.Forms.Label();
+            this.extensionComboBox = new System.Windows.Forms.FlatCombo();
+            this.extensionLabel = new System.Windows.Forms.Label();
+            this.browseButton = new System.Windows.Forms.ButtonEx();
+            this.replacedHeader = new System.Windows.Forms.ColumnHeader();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.infoLabel = new System.Windows.Forms.Label();
+            this.lineHeader = new System.Windows.Forms.ColumnHeader();
+            this.descHeader = new System.Windows.Forms.ColumnHeader();
+            this.pathHeader = new System.Windows.Forms.ColumnHeader();
+            this.fileHeader = new System.Windows.Forms.ColumnHeader();
+            this.resultsView = new System.Windows.Forms.ListViewEx();
+            this.progressBar = new System.Windows.Forms.ProgressBarEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
+            this.optionsGroupBox.SuspendLayout();
+            this.SuspendLayout();
             // 
             // replaceButton
             // 
-            replaceButton.FlatStyle = FlatStyle.System;
-            replaceButton.Location = new Point(113, 171);
-            replaceButton.Name = "replaceButton";
-            replaceButton.Size = new Size(90, 23);
-            replaceButton.TabIndex = 8;
-            replaceButton.Text = "&Replace";
-            replaceButton.Click += ReplaceButtonClick;
+            this.replaceButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.replaceButton.Location = new System.Drawing.Point(113, 171);
+            this.replaceButton.Name = "replaceButton";
+            this.replaceButton.Size = new System.Drawing.Size(90, 23);
+            this.replaceButton.TabIndex = 8;
+            this.replaceButton.Text = "&Replace";
+            this.replaceButton.Click += this.ReplaceButtonClick;
             // 
             // regexCheckBox
             // 
-            regexCheckBox.AutoSize = true;
-            regexCheckBox.FlatStyle = FlatStyle.System;
-            regexCheckBox.Location = new Point(12, 85);
-            regexCheckBox.Name = "regexCheckBox";
-            regexCheckBox.Size = new Size(132, 18);
-            regexCheckBox.TabIndex = 4;
-            regexCheckBox.Text = " &Regular expressions";
+            this.regexCheckBox.AutoSize = true;
+            this.regexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.regexCheckBox.Location = new System.Drawing.Point(12, 85);
+            this.regexCheckBox.Name = "regexCheckBox";
+            this.regexCheckBox.Size = new System.Drawing.Size(132, 18);
+            this.regexCheckBox.TabIndex = 4;
+            this.regexCheckBox.Text = " &Regular expressions";
             // 
             // optionsGroupBox
             // 
-            optionsGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            optionsGroupBox.Controls.Add(stringsCheckBox);
-            optionsGroupBox.Controls.Add(commentsCheckBox);
-            optionsGroupBox.Controls.Add(regexCheckBox);
-            optionsGroupBox.Controls.Add(escapedCheckBox);
-            optionsGroupBox.Controls.Add(wholeWordCheckBox);
-            optionsGroupBox.Controls.Add(matchCaseCheckBox);
-            optionsGroupBox.Controls.Add(subDirectoriesCheckBox);
-            optionsGroupBox.FlatStyle = FlatStyle.System;
-            optionsGroupBox.Location = new Point(347, 15);
-            optionsGroupBox.Name = "optionsGroupBox";
-            optionsGroupBox.Size = new Size(156, 178);
-            optionsGroupBox.TabIndex = 6;
-            optionsGroupBox.TabStop = false;
-            optionsGroupBox.Text = " Options";
+            this.optionsGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.optionsGroupBox.Controls.Add(this.stringsCheckBox);
+            this.optionsGroupBox.Controls.Add(this.commentsCheckBox);
+            this.optionsGroupBox.Controls.Add(this.regexCheckBox);
+            this.optionsGroupBox.Controls.Add(this.escapedCheckBox);
+            this.optionsGroupBox.Controls.Add(this.wholeWordCheckBox);
+            this.optionsGroupBox.Controls.Add(this.matchCaseCheckBox);
+            this.optionsGroupBox.Controls.Add(this.subDirectoriesCheckBox);
+            this.optionsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.optionsGroupBox.Location = new System.Drawing.Point(347, 15);
+            this.optionsGroupBox.Name = "optionsGroupBox";
+            this.optionsGroupBox.Size = new System.Drawing.Size(156, 178);
+            this.optionsGroupBox.TabIndex = 6;
+            this.optionsGroupBox.TabStop = false;
+            this.optionsGroupBox.Text = " Options";
             // 
             // stringsCheckBox
             // 
-            stringsCheckBox.AutoSize = true;
-            stringsCheckBox.Checked = true;
-            stringsCheckBox.CheckState = CheckState.Checked;
-            stringsCheckBox.FlatStyle = FlatStyle.System;
-            stringsCheckBox.Location = new Point(12, 151);
-            stringsCheckBox.Name = "stringsCheckBox";
-            stringsCheckBox.Size = new Size(103, 18);
-            stringsCheckBox.TabIndex = 7;
-            stringsCheckBox.Text = " Look in &strings";
+            this.stringsCheckBox.AutoSize = true;
+            this.stringsCheckBox.Checked = true;
+            this.stringsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.stringsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.stringsCheckBox.Location = new System.Drawing.Point(12, 151);
+            this.stringsCheckBox.Name = "stringsCheckBox";
+            this.stringsCheckBox.Size = new System.Drawing.Size(103, 18);
+            this.stringsCheckBox.TabIndex = 7;
+            this.stringsCheckBox.Text = " Look in &strings";
             // 
             // commentsCheckBox
             // 
-            commentsCheckBox.AutoSize = true;
-            commentsCheckBox.Checked = true;
-            commentsCheckBox.CheckState = CheckState.Checked;
-            commentsCheckBox.FlatStyle = FlatStyle.System;
-            commentsCheckBox.Location = new Point(12, 129);
-            commentsCheckBox.Name = "commentsCheckBox";
-            commentsCheckBox.Size = new Size(119, 18);
-            commentsCheckBox.TabIndex = 6;
-            commentsCheckBox.Text = " Look in c&omments";
+            this.commentsCheckBox.AutoSize = true;
+            this.commentsCheckBox.Checked = true;
+            this.commentsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.commentsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.commentsCheckBox.Location = new System.Drawing.Point(12, 129);
+            this.commentsCheckBox.Name = "commentsCheckBox";
+            this.commentsCheckBox.Size = new System.Drawing.Size(119, 18);
+            this.commentsCheckBox.TabIndex = 6;
+            this.commentsCheckBox.Text = " Look in c&omments";
             // 
             // escapedCheckBox
             // 
-            escapedCheckBox.AutoSize = true;
-            escapedCheckBox.FlatStyle = FlatStyle.System;
-            escapedCheckBox.Location = new Point(12, 63);
-            escapedCheckBox.Name = "escapedCheckBox";
-            escapedCheckBox.Size = new Size(129, 18);
-            escapedCheckBox.TabIndex = 3;
-            escapedCheckBox.Text = " &Escaped characters";
+            this.escapedCheckBox.AutoSize = true;
+            this.escapedCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.escapedCheckBox.Location = new System.Drawing.Point(12, 63);
+            this.escapedCheckBox.Name = "escapedCheckBox";
+            this.escapedCheckBox.Size = new System.Drawing.Size(129, 18);
+            this.escapedCheckBox.TabIndex = 3;
+            this.escapedCheckBox.Text = " &Escaped characters";
             // 
             // wholeWordCheckBox
             // 
-            wholeWordCheckBox.AutoSize = true;
-            wholeWordCheckBox.FlatStyle = FlatStyle.System;
-            wholeWordCheckBox.Location = new Point(12, 19);
-            wholeWordCheckBox.Name = "wholeWordCheckBox";
-            wholeWordCheckBox.Size = new Size(92, 18);
-            wholeWordCheckBox.TabIndex = 1;
-            wholeWordCheckBox.Text = " &Whole word";
+            this.wholeWordCheckBox.AutoSize = true;
+            this.wholeWordCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.wholeWordCheckBox.Location = new System.Drawing.Point(12, 19);
+            this.wholeWordCheckBox.Name = "wholeWordCheckBox";
+            this.wholeWordCheckBox.Size = new System.Drawing.Size(92, 18);
+            this.wholeWordCheckBox.TabIndex = 1;
+            this.wholeWordCheckBox.Text = " &Whole word";
             // 
             // matchCaseCheckBox
             // 
-            matchCaseCheckBox.AutoSize = true;
-            matchCaseCheckBox.FlatStyle = FlatStyle.System;
-            matchCaseCheckBox.Location = new Point(12, 41);
-            matchCaseCheckBox.Name = "matchCaseCheckBox";
-            matchCaseCheckBox.Size = new Size(89, 18);
-            matchCaseCheckBox.TabIndex = 2;
-            matchCaseCheckBox.Text = " Match &case";
+            this.matchCaseCheckBox.AutoSize = true;
+            this.matchCaseCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.matchCaseCheckBox.Location = new System.Drawing.Point(12, 41);
+            this.matchCaseCheckBox.Name = "matchCaseCheckBox";
+            this.matchCaseCheckBox.Size = new System.Drawing.Size(89, 18);
+            this.matchCaseCheckBox.TabIndex = 2;
+            this.matchCaseCheckBox.Text = " Match &case";
             // 
             // subDirectoriesCheckBox
             // 
-            subDirectoriesCheckBox.AutoSize = true;
-            subDirectoriesCheckBox.Checked = true;
-            subDirectoriesCheckBox.CheckState = CheckState.Checked;
-            subDirectoriesCheckBox.FlatStyle = FlatStyle.System;
-            subDirectoriesCheckBox.Location = new Point(12, 107);
-            subDirectoriesCheckBox.Name = "subDirectoriesCheckBox";
-            subDirectoriesCheckBox.Size = new Size(138, 18);
-            subDirectoriesCheckBox.TabIndex = 5;
-            subDirectoriesCheckBox.Text = " Look in sub&directories";
+            this.subDirectoriesCheckBox.AutoSize = true;
+            this.subDirectoriesCheckBox.Checked = true;
+            this.subDirectoriesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.subDirectoriesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.subDirectoriesCheckBox.Location = new System.Drawing.Point(12, 107);
+            this.subDirectoriesCheckBox.Name = "subDirectoriesCheckBox";
+            this.subDirectoriesCheckBox.Size = new System.Drawing.Size(138, 18);
+            this.subDirectoriesCheckBox.TabIndex = 5;
+            this.subDirectoriesCheckBox.Text = " Look in sub&directories";
             // 
             // replaceComboBox
             // 
-            replaceComboBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
-            replaceComboBox.FlatStyle = FlatStyle.System;
-            replaceComboBox.Location = new Point(12, 61);
-            replaceComboBox.Name = "replaceComboBox";
-            replaceComboBox.Size = new Size(324, 21);
-            replaceComboBox.TabIndex = 2;
+            this.replaceComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.replaceComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.replaceComboBox.Location = new System.Drawing.Point(12, 61);
+            this.replaceComboBox.Name = "replaceComboBox";
+            this.replaceComboBox.Size = new System.Drawing.Size(324, 21);
+            this.replaceComboBox.TabIndex = 2;
             // 
             // replaceLabel
             // 
-            replaceLabel.AutoSize = true;
-            replaceLabel.FlatStyle = FlatStyle.System;
-            replaceLabel.Location = new Point(13, 46);
-            replaceLabel.Name = "replaceLabel";
-            replaceLabel.Size = new Size(72, 13);
-            replaceLabel.TabIndex = 24;
-            replaceLabel.Text = "Replace with:";
+            this.replaceLabel.AutoSize = true;
+            this.replaceLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.replaceLabel.Location = new System.Drawing.Point(13, 46);
+            this.replaceLabel.Name = "replaceLabel";
+            this.replaceLabel.Size = new System.Drawing.Size(72, 13);
+            this.replaceLabel.TabIndex = 24;
+            this.replaceLabel.Text = "Replace with:";
             // 
             // findComboBox
             // 
-            findComboBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
-            findComboBox.FlatStyle = FlatStyle.System;
-            findComboBox.Location = new Point(12, 22);
-            findComboBox.Name = "findComboBox";
-            findComboBox.Size = new Size(324, 21);
-            findComboBox.TabIndex = 1;
+            this.findComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.findComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.findComboBox.Location = new System.Drawing.Point(12, 22);
+            this.findComboBox.Name = "findComboBox";
+            this.findComboBox.Size = new System.Drawing.Size(324, 21);
+            this.findComboBox.TabIndex = 1;
             // 
             // findLabel
             // 
-            findLabel.AutoSize = true;
-            findLabel.FlatStyle = FlatStyle.System;
-            findLabel.Location = new Point(13, 7);
-            findLabel.Name = "findLabel";
-            findLabel.Size = new Size(58, 13);
-            findLabel.TabIndex = 17;
-            findLabel.Text = "Find what:";
+            this.findLabel.AutoSize = true;
+            this.findLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.findLabel.Location = new System.Drawing.Point(13, 7);
+            this.findLabel.Name = "findLabel";
+            this.findLabel.Size = new System.Drawing.Size(58, 13);
+            this.findLabel.TabIndex = 17;
+            this.findLabel.Text = "Find what:";
             // 
             // findButton
             // 
-            findButton.FlatStyle = FlatStyle.System;
-            findButton.Location = new Point(11, 171);
-            findButton.Name = "findButton";
-            findButton.Size = new Size(90, 23);
-            findButton.TabIndex = 7;
-            findButton.Text = "&Find";
-            findButton.Click += FindButtonClick;
+            this.findButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.findButton.Location = new System.Drawing.Point(11, 171);
+            this.findButton.Name = "findButton";
+            this.findButton.Size = new System.Drawing.Size(90, 23);
+            this.findButton.TabIndex = 7;
+            this.findButton.Text = "&Find";
+            this.findButton.Click += this.FindButtonClick;
             // 
             // folderComboBox
             // 
-            folderComboBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
-            folderComboBox.FlatStyle = FlatStyle.System;
-            folderComboBox.Location = new Point(12, 139);
-            folderComboBox.Name = "folderComboBox";
-            folderComboBox.Size = new Size(293, 21);
-            folderComboBox.TabIndex = 4;
-            folderComboBox.Text = "<Project>";
-            folderComboBox.TextChanged += (sender, args) =>
+            this.folderComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.folderComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.folderComboBox.Location = new System.Drawing.Point(12, 139);
+            this.folderComboBox.Name = "folderComboBox";
+            this.folderComboBox.Size = new System.Drawing.Size(293, 21);
+            this.folderComboBox.TabIndex = 4;
+            this.folderComboBox.Text = "<Project>";
+            this.folderComboBox.TextChanged += (sender, args) =>
             {
                 var backColor = findComboBox.BackColor;
                 var buttonsEnabled = true;
@@ -287,24 +287,24 @@ namespace FlashDevelop.Dialogs
             // 
             // folderLabel
             // 
-            folderLabel.AutoSize = true;
-            folderLabel.FlatStyle = FlatStyle.System;
-            folderLabel.Location = new Point(13, 124);
-            folderLabel.Name = "folderLabel";
-            folderLabel.Size = new Size(60, 13);
-            folderLabel.TabIndex = 28;
-            folderLabel.Text = "Top folder:";
+            this.folderLabel.AutoSize = true;
+            this.folderLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.folderLabel.Location = new System.Drawing.Point(13, 124);
+            this.folderLabel.Name = "folderLabel";
+            this.folderLabel.Size = new System.Drawing.Size(60, 13);
+            this.folderLabel.TabIndex = 28;
+            this.folderLabel.Text = "Top folder:";
             // 
             // extensionComboBox
             // 
-            extensionComboBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
-            extensionComboBox.FlatStyle = FlatStyle.System;
-            extensionComboBox.Location = new Point(12, 100);
-            extensionComboBox.Name = "extensionComboBox";
-            extensionComboBox.Size = new Size(324, 21);
-            extensionComboBox.TabIndex = 3;
-            extensionComboBox.Text = ".ext";
-            extensionComboBox.TextChanged += (sender, args) =>
+            this.extensionComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.extensionComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.extensionComboBox.Location = new System.Drawing.Point(12, 100);
+            this.extensionComboBox.Name = "extensionComboBox";
+            this.extensionComboBox.Size = new System.Drawing.Size(324, 21);
+            this.extensionComboBox.TabIndex = 3;
+            this.extensionComboBox.Text = ".ext";
+            this.extensionComboBox.TextChanged += (sender, args) =>
             {
                 var backColor = findComboBox.BackColor;
                 var buttonsEnabled = true;
@@ -321,166 +321,166 @@ namespace FlashDevelop.Dialogs
             // 
             // extensionLabel
             // 
-            extensionLabel.AutoSize = true;
-            extensionLabel.FlatStyle = FlatStyle.System;
-            extensionLabel.Location = new Point(13, 85);
-            extensionLabel.Name = "extensionLabel";
-            extensionLabel.Size = new Size(83, 13);
-            extensionLabel.TabIndex = 25;
-            extensionLabel.Text = "Extension filter:";
+            this.extensionLabel.AutoSize = true;
+            this.extensionLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.extensionLabel.Location = new System.Drawing.Point(13, 85);
+            this.extensionLabel.Name = "extensionLabel";
+            this.extensionLabel.Size = new System.Drawing.Size(83, 13);
+            this.extensionLabel.TabIndex = 25;
+            this.extensionLabel.Text = "Extension filter:";
             // 
             // browseButton
             // 
-            browseButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            browseButton.Location = new Point(311, 136);
-            browseButton.Name = "browseButton";
-            browseButton.Size = new Size(26, 24);
-            browseButton.TabIndex = 5;
-            browseButton.Click += BrowseButtonClick;
+            this.browseButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.browseButton.Location = new System.Drawing.Point(311, 136);
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(26, 24);
+            this.browseButton.TabIndex = 5;
+            this.browseButton.Click += this.BrowseButtonClick;
             // 
             // replacedHeader
             // 
-            replacedHeader.Text = "Replacements";
-            replacedHeader.Width = 120;
+            this.replacedHeader.Text = "Replacements";
+            this.replacedHeader.Width = 120;
             // 
             // cancelButton
             //
-            cancelButton.FlatStyle = FlatStyle.System;
-            cancelButton.Location = new Point(215, 171);
-            cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(90, 23);
-            cancelButton.TabIndex = 9;
-            cancelButton.Text = "Ca&ncel";
-            cancelButton.Click += CancelButtonClick;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cancelButton.Location = new System.Drawing.Point(215, 171);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(90, 23);
+            this.cancelButton.TabIndex = 9;
+            this.cancelButton.Text = "Ca&ncel";
+            this.cancelButton.Click += this.CancelButtonClick;
             // 
             // infoLabel
             // 
-            infoLabel.AutoSize = true;
-            infoLabel.BackColor = SystemColors.Control;
-            infoLabel.FlatStyle = FlatStyle.System;
-            infoLabel.ForeColor = SystemColors.ControlText;
-            infoLabel.Location = new Point(14, 203);
-            infoLabel.Name = "infoLabel";
-            infoLabel.Size = new Size(130, 13);
-            infoLabel.TabIndex = 0;
-            infoLabel.Text = "No suitable results found.";
-            infoLabel.TextAlign = ContentAlignment.MiddleLeft;
+            this.infoLabel.AutoSize = true;
+            this.infoLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.infoLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.infoLabel.Location = new System.Drawing.Point(14, 203);
+            this.infoLabel.Name = "infoLabel";
+            this.infoLabel.Size = new System.Drawing.Size(130, 13);
+            this.infoLabel.TabIndex = 0;
+            this.infoLabel.Text = "No suitable results found.";
+            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lineHeader
             // 
-            lineHeader.Text = "Line";
-            lineHeader.Width = 50;
+            this.lineHeader.Text = "Line";
+            this.lineHeader.Width = 50;
             // 
             // descHeader
             // 
-            descHeader.Text = "Description";
-            descHeader.Width = 120;
+            this.descHeader.Text = "Description";
+            this.descHeader.Width = 120;
             // 
             // fileHeader
             // 
-            fileHeader.Text = "File";
-            fileHeader.Width = 120;
+            this.fileHeader.Text = "File";
+            this.fileHeader.Width = 120;
             // 
             // pathHeader
             // 
-            pathHeader.Text = "Path";
-            pathHeader.Width = 220;
+            this.pathHeader.Text = "Path";
+            this.pathHeader.Width = 220;
             // 
             // resultsView
             // 
-            resultsView.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
-            resultsView.Columns.AddRange(new[] {
-            lineHeader,
-            descHeader,
-            fileHeader,
-            pathHeader});
-            resultsView.ShowGroups = true;
-            resultsView.LabelWrap = false;
-            resultsView.FullRowSelect = true;
-            resultsView.GridLines = true;
-            resultsView.Location = new Point(12, 219);
-            resultsView.Name = "resultsView";
-            resultsView.ShowItemToolTips = true;
-            resultsView.Size = new Size(492, 167);
-            resultsView.TabIndex = 11;
-            resultsView.UseCompatibleStateImageBehavior = false;
-            resultsView.View = View.Details;
-            resultsView.DoubleClick += ResultsViewDoubleClick;
+            this.resultsView.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.resultsView.Columns.AddRange(new[] {
+            this.lineHeader,
+            this.descHeader,
+            this.fileHeader,
+            this.pathHeader});
+            this.resultsView.ShowGroups = true;
+            this.resultsView.LabelWrap = false;
+            this.resultsView.FullRowSelect = true;
+            this.resultsView.GridLines = true;
+            this.resultsView.Location = new System.Drawing.Point(12, 219);
+            this.resultsView.Name = "resultsView";
+            this.resultsView.ShowItemToolTips = true;
+            this.resultsView.Size = new System.Drawing.Size(492, 167);
+            this.resultsView.TabIndex = 11;
+            this.resultsView.UseCompatibleStateImageBehavior = false;
+            this.resultsView.View = System.Windows.Forms.View.Details;
+            this.resultsView.DoubleClick += this.ResultsViewDoubleClick;
             // 
             // progressBar
             // 
-            progressBar.Anchor = (AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right;
-            progressBar.Location = new Point(12, 392);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(491, 14);
-            progressBar.TabIndex = 0;
+            this.progressBar.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.progressBar.Location = new System.Drawing.Point(12, 392);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(491, 14);
+            this.progressBar.TabIndex = 0;
             // 
             // closeButton
             //
-            closeButton.TabStop = false;
-            closeButton.FlatStyle = FlatStyle.System;
-            closeButton.Location = new Point(0, 0);
-            closeButton.Name = "closeButton";
-            closeButton.Size = new Size(0, 0);
-            closeButton.TabIndex = 29;
-            closeButton.Click += CloseButtonClick;
+            this.closeButton.TabStop = false;
+            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.closeButton.Location = new System.Drawing.Point(0, 0);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(0, 0);
+            this.closeButton.TabIndex = 29;
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // sendCheckBox
             // 
-            redirectCheckBox.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Right;
-            redirectCheckBox.AutoSize = true;
-            redirectCheckBox.Checked = true;
-            redirectCheckBox.CheckState = CheckState.Checked;
-            redirectCheckBox.FlatStyle = FlatStyle.System;
-            redirectCheckBox.Location = new Point(273, 201);
-            redirectCheckBox.Name = "redirectCheckBox";
-            redirectCheckBox.RightToLeft = RightToLeft.Yes;
-            redirectCheckBox.Size = new Size(230, 25);
-            redirectCheckBox.TabIndex = 8;
-            redirectCheckBox.Text = " Send results to Results Panel";
-            redirectCheckBox.CheckedChanged += RedirectCheckBoxCheckChanged;
+            this.redirectCheckBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right;
+            this.redirectCheckBox.AutoSize = true;
+            this.redirectCheckBox.Checked = true;
+            this.redirectCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.redirectCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.redirectCheckBox.Location = new System.Drawing.Point(273, 201);
+            this.redirectCheckBox.Name = "redirectCheckBox";
+            this.redirectCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.redirectCheckBox.Size = new System.Drawing.Size(230, 25);
+            this.redirectCheckBox.TabIndex = 8;
+            this.redirectCheckBox.Text = " Send results to Results Panel";
+            this.redirectCheckBox.CheckedChanged += this.RedirectCheckBoxCheckChanged;
             // 
             // FRInFilesDialog
             // 
-            AcceptButton = findButton;
-            CancelButton = closeButton;
-            AutoScaleDimensions = new SizeF(6F, 13F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(515, 418);
-            Controls.Add(infoLabel);
-            Controls.Add(cancelButton);
-            Controls.Add(resultsView);
-            Controls.Add(browseButton);
-            Controls.Add(progressBar);
-            Controls.Add(folderComboBox);
-            Controls.Add(folderLabel);
-            Controls.Add(extensionComboBox);
-            Controls.Add(extensionLabel);
-            Controls.Add(replaceButton);
-            Controls.Add(optionsGroupBox);
-            Controls.Add(replaceComboBox);
-            Controls.Add(replaceLabel);
-            Controls.Add(findComboBox);
-            Controls.Add(findLabel);
-            Controls.Add(findButton);
-            Controls.Add(closeButton);
-            Controls.Add(redirectCheckBox);
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Name = "FRInFilesDialog";
-            ShowIcon = false;
-            ShowInTaskbar = false;
-            MinimumSize = new Size(500, 340);
-            SizeGripStyle = SizeGripStyle.Show;
-            StartPosition = FormStartPosition.CenterParent;
-            Text = " Find And Replace In Files";
-            Load += DialogLoaded;
-            VisibleChanged += VisibleChange;
-            Closing += DialogClosing;
-            optionsGroupBox.ResumeLayout(false);
-            optionsGroupBox.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            this.AcceptButton = this.findButton;
+            this.CancelButton = this.closeButton;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(515, 418);
+            this.Controls.Add(this.infoLabel);
+            this.Controls.Add(this.cancelButton);
+            this.Controls.Add(this.resultsView);
+            this.Controls.Add(this.browseButton);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.folderComboBox);
+            this.Controls.Add(this.folderLabel);
+            this.Controls.Add(this.extensionComboBox);
+            this.Controls.Add(this.extensionLabel);
+            this.Controls.Add(this.replaceButton);
+            this.Controls.Add(this.optionsGroupBox);
+            this.Controls.Add(this.replaceComboBox);
+            this.Controls.Add(this.replaceLabel);
+            this.Controls.Add(this.findComboBox);
+            this.Controls.Add(this.findLabel);
+            this.Controls.Add(this.findButton);
+            this.Controls.Add(this.closeButton);
+            this.Controls.Add(this.redirectCheckBox);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "FRInFilesDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.MinimumSize = new System.Drawing.Size(500, 340);
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = " Find And Replace In Files";
+            this.Load += this.DialogLoaded;
+            this.VisibleChanged += this.VisibleChange;
+            this.Closing += this.DialogClosing;
+            this.optionsGroupBox.ResumeLayout(false);
+            this.optionsGroupBox.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -493,68 +493,68 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public void UpdateSettings()
         {
-            FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
-            bool useGroups = PluginBase.MainForm.Settings.UseListViewGrouping;
-            resultsView.ShowGroups = useGroups;
-            resultsView.GridLines = !useGroups;
+            FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
+            bool useGroups = Globals.MainForm.Settings.UseListViewGrouping;
+            this.resultsView.ShowGroups = useGroups;
+            this.resultsView.GridLines = !useGroups;
         }
 
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        void InitializeGraphics()
+        private void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("203", false));
-            browseButton.ImageList = imageList;
-            browseButton.ImageIndex = 0;
+            imageList.Images.Add(Globals.MainForm.FindImage("203", false));
+            this.browseButton.ImageList = imageList;
+            this.browseButton.ImageIndex = 0;
         }
 
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        void ApplyLocalizedTexts()
+        private void ApplyLocalizedTexts()
         {
-            findLabel.Text = TextHelper.GetString("Info.FindWhat");
-            extensionLabel.Text = TextHelper.GetString("Info.ExtensionFilter");
-            folderLabel.Text = TextHelper.GetString("Info.TopFolder");
-            replaceLabel.Text = TextHelper.GetString("Info.ReplaceWith");
-            findButton.Text = TextHelper.GetString("Label.Find");
-            cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            replaceButton.Text = TextHelper.GetStringWithoutEllipsis("Label.Replace");
-            lineHeader.Text = TextHelper.GetString("Info.LineHeader");
-            descHeader.Text = TextHelper.GetString("Info.DescHeader");
-            pathHeader.Text = TextHelper.GetString("Info.PathHeader");
-            fileHeader.Text = TextHelper.GetString("Info.FileHeader");
-            replacedHeader.Text = TextHelper.GetString("Info.ReplacementsHeader");
-            optionsGroupBox.Text = " " + TextHelper.GetString("Label.Options");
-            matchCaseCheckBox.Text = " " + TextHelper.GetString("Label.MatchCase");
-            wholeWordCheckBox.Text = " " + TextHelper.GetString("Label.WholeWord");
-            escapedCheckBox.Text = " " + TextHelper.GetString("Label.EscapedCharacters");
-            regexCheckBox.Text = " " + TextHelper.GetString("Label.RegularExpressions");
-            subDirectoriesCheckBox.Text = " " + TextHelper.GetString("Label.LookInSubdirectories");
-            redirectCheckBox.Text = " " + TextHelper.GetString("Info.RedirectFilesResults");
-            commentsCheckBox.Text = " " + TextHelper.GetString("Label.LookInComments");
-            stringsCheckBox.Text = " " + TextHelper.GetString("Label.LookInStrings");
-            Text = " " + TextHelper.GetString("Title.FindAndReplaceInFilesDialog");
-            pathHeader.Width = -2; // Extend last column
+            this.findLabel.Text = TextHelper.GetString("Info.FindWhat");
+            this.extensionLabel.Text = TextHelper.GetString("Info.ExtensionFilter");
+            this.folderLabel.Text = TextHelper.GetString("Info.TopFolder");
+            this.replaceLabel.Text = TextHelper.GetString("Info.ReplaceWith");
+            this.findButton.Text = TextHelper.GetString("Label.Find");
+            this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
+            this.replaceButton.Text = TextHelper.GetStringWithoutEllipsis("Label.Replace");
+            this.lineHeader.Text = TextHelper.GetString("Info.LineHeader");
+            this.descHeader.Text = TextHelper.GetString("Info.DescHeader");
+            this.pathHeader.Text = TextHelper.GetString("Info.PathHeader");
+            this.fileHeader.Text = TextHelper.GetString("Info.FileHeader");
+            this.replacedHeader.Text = TextHelper.GetString("Info.ReplacementsHeader");
+            this.optionsGroupBox.Text = " " + TextHelper.GetString("Label.Options");
+            this.matchCaseCheckBox.Text = " " + TextHelper.GetString("Label.MatchCase");
+            this.wholeWordCheckBox.Text = " " + TextHelper.GetString("Label.WholeWord");
+            this.escapedCheckBox.Text = " " + TextHelper.GetString("Label.EscapedCharacters");
+            this.regexCheckBox.Text = " " + TextHelper.GetString("Label.RegularExpressions");
+            this.subDirectoriesCheckBox.Text = " " + TextHelper.GetString("Label.LookInSubdirectories");
+            this.redirectCheckBox.Text = " " + TextHelper.GetString("Info.RedirectFilesResults");
+            this.commentsCheckBox.Text = " " + TextHelper.GetString("Label.LookInComments");
+            this.stringsCheckBox.Text = " " + TextHelper.GetString("Label.LookInStrings");
+            this.Text = " " + TextHelper.GetString("Title.FindAndReplaceInFilesDialog");
+            this.pathHeader.Width = -2; // Extend last column
         }
 
         /// <summary>
         /// Changes the redirection setting and updates the check state.
         /// </summary>
-        void RedirectCheckBoxCheckChanged(object sender, EventArgs e)
+        private void RedirectCheckBoxCheckChanged(object sender, EventArgs e)
         {
-            PluginBase.MainForm.Settings.RedirectFilesResults = !PluginBase.MainForm.Settings.RedirectFilesResults;
-            redirectCheckBox.Checked = PluginBase.MainForm.Settings.RedirectFilesResults;
+            Globals.Settings.RedirectFilesResults = !Globals.Settings.RedirectFilesResults;
+            this.redirectCheckBox.Checked = Globals.Settings.RedirectFilesResults;
         }
 
         /// <summary>
         /// Runs the find based on the user specified arguments
         /// </summary>
-        void FindButtonClick(object sender, EventArgs e)
+        private void FindButtonClick(object sender, EventArgs e)
         {
             if (!IsValidPattern()) return;
             var mask = extensionComboBox.Text.Trim();
@@ -580,12 +580,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Runs the replace based on the user specified arguments
         /// </summary>
-        void ReplaceButtonClick(object sender, EventArgs e)
+        private void ReplaceButtonClick(object sender, EventArgs e)
         {
             if (!IsValidPattern()) return;
             var mask = extensionComboBox.Text.Trim();
             if (!IsValidFileMask(mask)) return;
-            if (!PluginBase.MainForm.Settings.DisableReplaceFilesConfirm)
+            if (!Globals.Settings.DisableReplaceFilesConfirm)
             {
                 var caption = TextHelper.GetString("Title.ConfirmDialog");
                 var message = TextHelper.GetString("Info.AreYouSureToReplaceInFiles");
@@ -616,19 +616,19 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog window
         /// </summary>
-        void CloseButtonClick(object sender, EventArgs e) => Close();
+        private void CloseButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Selects the path for the find and replace
         /// </summary>
-        void BrowseButtonClick(object sender, EventArgs e)
+        private void BrowseButtonClick(object sender, EventArgs e)
         {
             using var fbd = new VistaFolderBrowserDialog {Multiselect = true};
             var curDir = folderComboBox.Text.Trim();
             if (curDir == "<Project>")
             {
                 curDir = PluginBase.CurrentProject is null
-                    ? PluginBase.MainForm.WorkingDirectory
+                    ? Globals.MainForm.WorkingDirectory
                     : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             }
             if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
@@ -642,15 +642,15 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Handles the double click event from results view
         /// </summary>
-        void ResultsViewDoubleClick(object sender, EventArgs e)
+        private void ResultsViewDoubleClick(object sender, System.EventArgs e)
         {
-            if (resultsView.SelectedItems.Count == 0) return;
-            var item = resultsView.SelectedItems[0];
+            if (this.resultsView.SelectedItems.Count == 0) return;
+            var item = this.resultsView.SelectedItems[0];
             var data = (KeyValuePair<string, SearchMatch>)item.Tag;
             if (!File.Exists(data.Key)) return;
             Globals.MainForm.Activate();
             var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
-            if (doc != null && doc.IsEditable && resultsView.Columns.Count == 4)
+            if (doc != null && doc.IsEditable && this.resultsView.Columns.Count == 4)
             {
                 FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
             }
@@ -659,33 +659,39 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Cancels the find or replace lookup
         /// </summary>
-        void CancelButtonClick(object sender, EventArgs e) => runner?.CancelAsync();
+        private void CancelButtonClick(object sender, System.EventArgs e)
+        {
+            runner?.CancelAsync();
+        }
 
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        void RunnerProgress(int percentDone) => progressBar.Value = percentDone;
+        private void RunnerProgress(int percentDone)
+        {
+            this.progressBar.Value = percentDone;
+        }
 
         /// <summary>
         /// Handles the results when find is ready
         /// </summary>
-        void FindFinished(FRResults results)
+        private void FindFinished(FRResults results)
         {
-            SetupResultsView(true);
-            resultsView.Items.Clear();
+            this.SetupResultsView(true);
+            this.resultsView.Items.Clear();
             if (results is null)
             {
                 string message = TextHelper.GetString("Info.FindLookupCanceled");
-                infoLabel.Text = message;
+                this.infoLabel.Text = message;
             }
             else if (results.Count == 0)
             {
                 string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
+                this.infoLabel.Text = message;
             }
             else
             {
-                if (!redirectCheckBox.Checked)
+                if (!this.redirectCheckBox.Checked)
                 {
                     resultsView.BeginUpdate();
                     var fileCount = 0;
@@ -702,19 +708,19 @@ namespace FlashDevelop.Dialogs
                             item.SubItems.Add(Path.GetFileName(entry.Key));
                             item.SubItems.Add(Path.GetDirectoryName(entry.Key));
                             item.Tag = new KeyValuePair<string, SearchMatch>(entry.Key, match);
-                            resultsView.Items.Add(item);
-                            AddToGroup(item, entry.Key);
+                            this.resultsView.Items.Add(item);
+                            this.AddToGroup(item, entry.Key);
                         }
                     }
                     var message = TextHelper.GetString("Info.FoundInFiles");
                     var formatted = string.Format(message, matchCount, fileCount);
-                    infoLabel.Text = formatted;
+                    this.infoLabel.Text = formatted;
                     resultsView.EndUpdate();
                 } 
                 else 
                 {
                     var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
-                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (var entry in results)
                     {
                         foreach (var match in entry.Value)
@@ -723,33 +729,33 @@ namespace FlashDevelop.Dialogs
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
-                    Hide();
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+                    this.Hide();
                 }
             }
-            UpdateUIState(false);
+            this.UpdateUIState(false);
         }
 
         /// <summary>
         /// Handles the results when replace is ready
         /// </summary>
-        void ReplaceFinished(FRResults results)
+        private void ReplaceFinished(FRResults results)
         {
-            SetupResultsView(false);
-            resultsView.Items.Clear();
+            this.SetupResultsView(false);
+            this.resultsView.Items.Clear();
             if (results is null)
             {
                 string message = TextHelper.GetString("Info.ReplaceLookupCanceled");
-                infoLabel.Text = message;
+                this.infoLabel.Text = message;
             }
             else if (results.Count == 0)
             {
                 string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
+                this.infoLabel.Text = message;
             }
             else
             {
-                if (!redirectCheckBox.Checked)
+                if (!this.redirectCheckBox.Checked)
                 {
                     resultsView.BeginUpdate();
                     var fileCount = 0;
@@ -765,18 +771,18 @@ namespace FlashDevelop.Dialogs
                         item.Text = replaceCount.ToString();
                         item.SubItems.Add(Path.GetFileName(entry.Key));
                         item.SubItems.Add(Path.GetDirectoryName(entry.Key));
-                        resultsView.Items.Add(item);
-                        AddToGroup(item, entry.Key);
+                        this.resultsView.Items.Add(item);
+                        this.AddToGroup(item, entry.Key);
                     }
                     var message = TextHelper.GetString("Info.ReplacedInFiles");
                     var formatted = string.Format(message, matchCount, fileCount);
-                    infoLabel.Text = formatted;
+                    this.infoLabel.Text = formatted;
                     resultsView.EndUpdate();
                 } 
                 else
                 {
                     var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
-                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (var entry in results)
                     {
                         foreach (var match in entry.Value)
@@ -785,19 +791,19 @@ namespace FlashDevelop.Dialogs
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
-                    Hide();
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+                    this.Hide();
                 }
             }
-            UpdateUIState(false);
+            this.UpdateUIState(false);
         }
 
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        void AddToGroup(ListViewItem item, string path)
+        private void AddToGroup(ListViewItem item, string path)
         {
-            foreach (ListViewGroup lvg in resultsView.Groups)
+            foreach (ListViewGroup lvg in this.resultsView.Groups)
             {
                 if (lvg.Tag.ToString() == path)
                 {
@@ -805,52 +811,53 @@ namespace FlashDevelop.Dialogs
                     return;
                 }
             }
-
+            string gpname;
+            if (File.Exists(path)) gpname = Path.GetFileName(path);
+            else gpname = TextHelper.GetString("Group.Other");
             var gp = new ListViewGroup();
             gp.Tag = path;
-            gp.Header = File.Exists(path)
-                ? Path.GetFileName(path)
-                : TextHelper.GetString("Group.Other");
-            resultsView.Groups.Add(gp);
+            gp.Header = gpname;
+            this.resultsView.Groups.Add(gp);
             gp.Items.Add(item);
         }
 
         /// <summary>
         /// Setups the resultsView.Columns for find and replace
         /// </summary>
-        void SetupResultsView(bool finding)
+        private void SetupResultsView(bool finding)
         {
-            if (finding && resultsView.Columns.Count != 4)
+            if (finding && this.resultsView.Columns.Count != 4)
             {
-                resultsView.Columns.Clear();
-                resultsView.Columns.AddRange(new[] { lineHeader, descHeader, fileHeader, pathHeader });
+                this.resultsView.Columns.Clear();
+                this.resultsView.Columns.AddRange(new[] { this.lineHeader, this.descHeader, this.fileHeader, this.pathHeader });
             }
-            else if (!finding && resultsView.Columns.Count != 3)
+            else if (!finding && this.resultsView.Columns.Count != 3)
             {
-                resultsView.Columns.Clear();
-                resultsView.Columns.AddRange(new[] { replacedHeader, fileHeader, pathHeader });
+                this.resultsView.Columns.Clear();
+                this.resultsView.Columns.AddRange(new[] { this.replacedHeader, this.fileHeader, this.pathHeader });
             }
         }
 
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        void DialogClosing(object sender, CancelEventArgs e)
+        private void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             runner?.CancelAsync();
-            PluginBase.MainForm.CurrentDocument.Activate();
-            Hide();
+            Globals.CurrentDocument.Activate();
+            this.Hide();
         }
         
         /// <summary>
         /// Setups the dialog on load
         /// </summary>
-        void DialogLoaded(object sender, EventArgs e)
+        private void DialogLoaded(object sender, System.EventArgs e)
         {
-            cancelButton.Enabled = false;
-            infoLabel.Text = TextHelper.GetString("Info.NoMatches");
-            CenterToParent();
+            this.cancelButton.Enabled = false;
+            string message = TextHelper.GetString("Info.NoMatches");
+            this.infoLabel.Text = message;
+            this.CenterToParent();
         }
 
         /// <summary>
@@ -860,7 +867,7 @@ namespace FlashDevelop.Dialogs
         {
             if (keyData == (Keys.Control | Keys.F))
             {
-                findComboBox.Focus();
+                this.findComboBox.Focus();
                 return true;
             }
             return base.ProcessDialogKey(keyData);
@@ -869,19 +876,19 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        void VisibleChange(object sender, EventArgs e)
+        private void VisibleChange(object sender, EventArgs e)
         {
-            if (Visible)
+            if (this.Visible)
             {
-                findComboBox.Select();
-                findComboBox.SelectAll();
+                this.findComboBox.Select();
+                this.findComboBox.SelectAll();
             }
         }
 
         /// <summary>
         /// Checks if the file mask is somewhat valid
         /// </summary>
-        bool IsValidFileMask(string mask)
+        private bool IsValidFileMask(string mask)
         {
             return !string.IsNullOrEmpty(mask) && mask.Trim().StartsWithOrdinal("*.") && !mask.Contains("..")
                    && !mask.Contains('/') && !mask.Contains('\\') && !mask.Contains(':') && Path.GetInvalidPathChars().All(it => !mask.Contains(it));
@@ -890,37 +897,37 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the file extension and the initial directory
         /// </summary>
-        void UpdateDialogArguments()
+        private void UpdateDialogArguments()
         {
-            var project = PluginBase.CurrentProject;
-            var doRefresh = lastProject != null && lastProject != project;
+            IProject project = PluginBase.CurrentProject;
+            bool doRefresh = lastProject != null && lastProject != project;
             if (project != null)
             {
                 string path = Path.GetDirectoryName(project.ProjectPath);
-                if (string.IsNullOrEmpty(folderComboBox.Text) || doRefresh)
+                if (string.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
                 {
-                    folderComboBox.Text = path;
+                    this.folderComboBox.Text = path;
                 }
             }
-            else if (string.IsNullOrEmpty(folderComboBox.Text) || doRefresh)
+            else if (string.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
             {
-                folderComboBox.Text = PluginBase.MainForm.WorkingDirectory;
+                this.folderComboBox.Text = Globals.MainForm.WorkingDirectory;
             }
-            folderComboBox.SelectionStart = folderComboBox.Text.Length;
-            redirectCheckBox.CheckedChanged -= RedirectCheckBoxCheckChanged;
-            redirectCheckBox.Checked = PluginBase.MainForm.Settings.RedirectFilesResults;
-            redirectCheckBox.CheckedChanged += RedirectCheckBoxCheckChanged;
-            if (!IsValidFileMask(extensionComboBox.Text) || doRefresh)
+            this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
+            this.redirectCheckBox.CheckedChanged -= this.RedirectCheckBoxCheckChanged;
+            this.redirectCheckBox.Checked = Globals.Settings.RedirectFilesResults;
+            this.redirectCheckBox.CheckedChanged += this.RedirectCheckBoxCheckChanged;
+            if (!this.IsValidFileMask(this.extensionComboBox.Text) || doRefresh)
             {
                 if (project != null)
                 {
                     string filter = project.DefaultSearchFilter;
-                    extensionComboBox.Text = filter;
+                    this.extensionComboBox.Text = filter;
                 }
                 else
                 {
-                    string def = PluginBase.MainForm.Settings.DefaultFileExtension;
-                    extensionComboBox.Text = "*." + def;
+                    string def = Globals.Settings.DefaultFileExtension;
+                    this.extensionComboBox.Text = "*." + def;
                 }
             }
             UpdateFindText();
@@ -930,29 +937,29 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the ui based on the running state
         /// </summary> 
-        void UpdateUIState(bool running)
+        private void UpdateUIState(bool running)
         {
             if (running)
             {
-                cancelButton.Enabled = true;
-                replaceButton.Enabled = false;
-                findButton.Enabled = false;
+                this.cancelButton.Enabled = true;
+                this.replaceButton.Enabled = false;
+                this.findButton.Enabled = false;
             } 
             else 
             {
-                cancelButton.Enabled = false;
-                replaceButton.Enabled = true;
-                findButton.Enabled = true;
+                this.cancelButton.Enabled = false;
+                this.replaceButton.Enabled = true;
+                this.findButton.Enabled = true;
             }
-            progressBar.Value = 0;
+            this.progressBar.Value = 0;
         }
 
         /// <summary>
         /// Gets search config for find and replace
         /// </summary>
-        FRConfiguration GetFRConfig(string path, string mask, bool recursive)
+        private FRConfiguration GetFRConfig(string path, string mask, bool recursive)
         {
-            if (path.Trim() != "<Project>") return new FRConfiguration(path, mask, recursive, GetFRSearch());
+            if (path.Trim() != "<Project>") return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
             if (PluginBase.CurrentProject is null) return null;
             var allFiles = new List<string>();
             var project = PluginBase.CurrentProject;
@@ -972,13 +979,13 @@ namespace FlashDevelop.Dialogs
                     allFiles.AddRange(walker.GetFiles());
                 }
             }
-            return new FRConfiguration(allFiles, GetFRSearch());
+            return new FRConfiguration(allFiles, this.GetFRSearch());
         }
 
         /// <summary>
         /// Check if file is hidden in project
         /// </summary>
-        bool IsFileHidden(string file, IProject project)
+        private bool IsFileHidden(string file, IProject project)
         {
             string[] hiddenPaths = project.GetHiddenPaths();
             foreach (string hiddenPath in hiddenPaths)
@@ -992,11 +999,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Control user pattern
         /// </summary>
-        bool IsValidPattern()
+        private bool IsValidPattern()
         {
-            string pattern = findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             if (pattern.Length == 0) return false;
-            if (regexCheckBox.Checked)
+            if (this.regexCheckBox.Checked)
             {
                 try
                 {
@@ -1005,15 +1012,15 @@ namespace FlashDevelop.Dialogs
                 catch (Exception ex)
                 {
                     ErrorManager.ShowInfo(ex.Message);
-                    Select();
-                    findComboBox.SelectAll();
+                    this.Select();
+                    this.findComboBox.SelectAll();
                     return false;
                 }
             }
             return true;
         }
 
-        bool IsValidExtensionFilter()
+        private bool IsValidExtensionFilter()
         {
             var text = extensionComboBox.Text.Trim();
             if (text.Length == 0) return false;
@@ -1021,7 +1028,7 @@ namespace FlashDevelop.Dialogs
             return paths.Length > 0 && paths.All(IsValidFileMask);
         }
 
-        bool IsValidTopLevel()
+        private bool IsValidTopLevel()
         {
             var text = folderComboBox.Text.Trim();
             if (text.Length == 0) return false;
@@ -1033,20 +1040,20 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets search object for find and replace
         /// </summary>
-        FRSearch GetFRSearch()
+        private FRSearch GetFRSearch()
         {
-            string pattern = findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             FRSearch search = new FRSearch(pattern);
-            search.IsRegex = regexCheckBox.Checked;
-            search.IsEscaped = escapedCheckBox.Checked;
-            search.WholeWord = wholeWordCheckBox.Checked;
-            search.NoCase = !matchCaseCheckBox.Checked;
+            search.IsRegex = this.regexCheckBox.Checked;
+            search.IsEscaped = this.escapedCheckBox.Checked;
+            search.WholeWord = this.wholeWordCheckBox.Checked;
+            search.NoCase = !this.matchCaseCheckBox.Checked;
             search.Filter = SearchFilter.None;
-            if (!commentsCheckBox.Checked)
+            if (!this.commentsCheckBox.Checked)
             {
                 search.Filter |= SearchFilter.OutsideCodeComments;
             }
-            if (!stringsCheckBox.Checked)
+            if (!this.stringsCheckBox.Checked)
             {
                 search.Filter |= SearchFilter.OutsideStringLiterals;
             }
@@ -1063,7 +1070,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new void Show()
         {
-            UpdateDialogArguments();
+            this.UpdateDialogArguments();
             base.Show();
         }
 
@@ -1072,13 +1079,15 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public void UpdateFindText()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
+            ITabbedDocument document = Globals.CurrentDocument;
             if (document.IsEditable && document.SciControl.SelText.Length > 0)
             {
-                findComboBox.Text = document.SciControl.SelText;
+                this.findComboBox.Text = document.SciControl.SelText;
             }
         }
 
         #endregion
+
     }
+
 }
