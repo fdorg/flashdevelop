@@ -199,7 +199,7 @@ namespace CodeRefactor.Provider
                     {
                         result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
                     }
-                    sci = ASContext.CurSciControl;
+                    sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 }
             }
             if (sci is null) return null;
