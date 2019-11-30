@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using FlashDevelop.Utilities;
 using FlashDevelop.Managers;
-using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
@@ -108,7 +107,7 @@ namespace FlashDevelop.Dialogs
         public EditorDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
@@ -996,10 +995,10 @@ namespace FlashDevelop.Dialogs
         private void ApplyLocalizedTexts()
         {
             ToolTip tooltip = new ToolTip();
-            this.languageDropDown.Font = PluginBase.MainForm.Settings.DefaultFont;
-            this.fontSizeComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            this.fontNameComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            this.languageDropDown.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            this.languageDropDown.Font = Globals.Settings.DefaultFont;
+            this.fontSizeComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.fontNameComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.languageDropDown.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
             tooltip.SetToolTip(this.exportButton, TextHelper.GetString("Label.ExportFiles"));
             tooltip.SetToolTip(this.revertButton, TextHelper.GetString("Label.RevertFiles"));
             tooltip.SetToolTip(this.defaultButton, TextHelper.GetString("Label.MakeAsDefault"));

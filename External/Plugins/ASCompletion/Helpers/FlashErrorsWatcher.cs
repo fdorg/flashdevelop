@@ -13,21 +13,21 @@ namespace ASCompletion.Helpers
 {
     public class FlashErrorsWatcher
     {
-        string logFile;
-        string docInfo;
-        string publishInfo;
-        readonly WatcherEx fsWatcher;
-        readonly Timer updater;
+        private string logFile;
+        private string docInfo;
+        private string publishInfo;
+        private readonly WatcherEx fsWatcher;
+        private readonly Timer updater;
 
-        readonly Regex reError = new Regex(
+        private readonly Regex reError = new Regex(
             @"^\*\*Error\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        readonly Regex warnError = new Regex(
+        private readonly Regex warnError = new Regex(
             @"^\*\*Warning\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        readonly Regex reFlashFile = new Regex(
+        private readonly Regex reFlashFile = new Regex(
             "<flashFileName>(?<output>[^<]+)</flashFileName>",
             RegexOptions.Compiled);
 
@@ -125,7 +125,7 @@ namespace ASCompletion.Helpers
             ((Form) PluginBase.MainForm).Focus();
         }
 
-        void PlaySWF()
+        private void PlaySWF()
         {
             if (!File.Exists(docInfo) || !File.Exists(publishInfo)) return;
             var fla = File.ReadAllText(docInfo);
@@ -154,7 +154,7 @@ namespace ASCompletion.Helpers
             }
         }
 
-        void fsWatcher_Changed(object sender, FileSystemEventArgs e)
+        private void fsWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (fsWatcher.IsRemote)
             {
@@ -166,7 +166,7 @@ namespace ASCompletion.Helpers
             SetTimer();
         }
 
-        void SetTimer()
+        private void SetTimer()
         {
             updater.Enabled = false;
             updater.Enabled = true;

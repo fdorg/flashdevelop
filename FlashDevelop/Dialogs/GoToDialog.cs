@@ -1,10 +1,7 @@
 using System;
-using FlashDevelop.Settings;
-using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using ScintillaNet;
 
 namespace FlashDevelop.Dialogs
 {
@@ -19,7 +16,7 @@ namespace FlashDevelop.Dialogs
         public GoToDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
@@ -154,7 +151,7 @@ namespace FlashDevelop.Dialogs
         private void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            PluginBase.MainForm.CurrentDocument.Activate();
+            Globals.CurrentDocument.Activate();
             this.Hide();
         }
 
@@ -163,12 +160,12 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void LineButtonClick(object sender, System.EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
+            if (Globals.SciControl is null) return;
             try
             {
                 int line = Convert.ToInt32(this.lineTextBox.Text) - 1;
-                PluginBase.MainForm.CurrentDocument.SciControl.EnsureVisibleEnforcePolicy(line);
-                PluginBase.MainForm.CurrentDocument.SciControl.GotoLineIndent(line);
+                Globals.SciControl.EnsureVisibleEnforcePolicy(line);
+                Globals.SciControl.GotoLineIndent(line);
                 this.Close();
             }
             catch
@@ -183,13 +180,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PositionButtonClick(object sender, System.EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
+            if (Globals.SciControl is null) return;
             try
             {
                 int pos = Convert.ToInt32(this.lineTextBox.Text) - 1;
-                int line = PluginBase.MainForm.CurrentDocument.SciControl.LineFromPosition(pos);
-                PluginBase.MainForm.CurrentDocument.SciControl.EnsureVisibleEnforcePolicy(line);
-                PluginBase.MainForm.CurrentDocument.SciControl.GotoPos(pos);
+                int line = Globals.SciControl.LineFromPosition(pos);
+                Globals.SciControl.EnsureVisibleEnforcePolicy(line);
+                Globals.SciControl.GotoPos(pos);
                 this.Close();
             }
             catch

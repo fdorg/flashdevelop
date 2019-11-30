@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FlashDevelop.Controls;
 using System.Windows.Forms;
-using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
@@ -17,6 +16,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Panel bottomPanel;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.FlowLayoutPanel argsPanel;
+        private readonly System.Collections.Generic.Dictionary<string, string> argDictionary = new Dictionary<string, string>();
         private readonly System.Text.RegularExpressions.Regex regex;
         public string text;
 
@@ -28,7 +28,7 @@ namespace FlashDevelop.Dialogs
             this.ApplyLocalizedTexts();
             this.InitializeInterface();
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             if (this.argsPanel.Controls.Count == 0)
             {
@@ -125,11 +125,11 @@ namespace FlashDevelop.Dialogs
         #endregion
 
         #region Methods And Event Handlers
-
+        
         /// <summary>
         /// Accessor for the dictionary
         /// </summary>
-        public Dictionary<string, string> Dictionary { get; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Dictionary => this.argDictionary;
 
         /// <summary>
         /// Make sure back colors match
@@ -183,7 +183,7 @@ namespace FlashDevelop.Dialogs
             foreach (Control control in this.argsPanel.Controls)
             {
                 argEditor = control as ArgEditor;
-                Dictionary.Add(argEditor.Argument, argEditor.Value);
+                argDictionary.Add(argEditor.Argument, argEditor.Value);
             }
         }
 
@@ -216,4 +216,5 @@ namespace FlashDevelop.Dialogs
         #endregion
 
     }
+
 }

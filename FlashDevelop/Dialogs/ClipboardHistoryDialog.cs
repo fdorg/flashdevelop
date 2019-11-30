@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using FlashDevelop.Managers;
-using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Controls;
 
@@ -10,14 +9,14 @@ namespace FlashDevelop.Dialogs
 {
     public class ClipboardHistoryDialog : SmartForm
     {
-        Button btnCopy;
-        Button btnClear;
-        Button btnPaste;
-        Button btnCancel;
-        ListBox listBox;
-        TextBox previewBox;
-        SplitContainer splitContainer;
-        static ClipboardHistoryDialog current;
+        private Button btnCopy;
+        private Button btnClear;
+        private Button btnPaste;
+        private Button btnCancel;
+        private ListBox listBox;
+        private TextBox previewBox;
+        private SplitContainer splitContainer;
+        private static ClipboardHistoryDialog current;
 
         public ClipboardHistoryDialog()
         {
@@ -35,7 +34,7 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        void InitializeComponent()
+        private void InitializeComponent()
         {
             splitContainer = new SplitContainer();
             btnClear = new ButtonEx();
@@ -190,14 +189,14 @@ namespace FlashDevelop.Dialogs
 
         #region Initialization
 
-        void InitializeFont()
+        private void InitializeFont()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
-            previewBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
+            Font = Globals.Settings.DefaultFont;
+            previewBox.Font = Globals.Settings.ConsoleFont;
             listBox.ItemHeight = Font.Height;
         }
 
-        void InitializeLocalization()
+        private void InitializeLocalization()
         {
             Text = " " + TextHelper.GetStringWithoutMnemonics("Label.ClipboardHistory");
             btnPaste.Text = TextHelper.GetStringWithoutMnemonics("Label.Paste");
@@ -206,7 +205,7 @@ namespace FlashDevelop.Dialogs
             btnClear.Text = TextHelper.GetStringWithoutMnemonics("Label.Clear");
         }
 
-        void InitializeListBox()
+        private void InitializeListBox()
         {
             listBox.BeginUpdate();
             foreach (var data in ClipboardManager.History)
@@ -225,14 +224,17 @@ namespace FlashDevelop.Dialogs
 
         #region Events
 
-        void ListBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
-            if (e.Index == -1) return;
+            if (e.Index == -1)
+            {
+                return;
+            }
 
             using var brush = new SolidBrush(e.BackColor);
             e.Graphics.FillRectangle(brush, e.Bounds);
-            var lines = listBox.GetItemText(listBox.Items[e.Index]).Split('\n');
-            for (var i = 0; i < lines.Length; i++)
+            string[] lines = listBox.GetItemText(listBox.Items[e.Index]).Split('\n');
+            for (int i = 0; i < lines.Length; i++)
             {
                 lines[i] = lines[i].Trim();
             }
@@ -243,7 +245,7 @@ namespace FlashDevelop.Dialogs
             e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat);
         }
 
-        void ListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selectedItem = (ClipboardTextData)listBox.SelectedItem;
             previewBox.Text = selectedItem?.Text;
@@ -251,14 +253,14 @@ namespace FlashDevelop.Dialogs
             btnCopy.Enabled = !string.IsNullOrEmpty(selectedItem?.Text);
         }
 
-        void BtnCopy_Click(object sender, EventArgs e)
+        private void BtnCopy_Click(object sender, EventArgs e)
         {
             previewBox.SelectAll();
             previewBox.Copy();
             btnPaste.Select();
         }
 
-        void BtnClear_Click(object sender, EventArgs e)
+        private void BtnClear_Click(object sender, EventArgs e)
         {
             listBox.SelectedIndex = -1;
             ClipboardManager.History.Clear();
@@ -301,7 +303,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// 
         /// </summary>
-        void AddNewClipboardData()
+        private void AddNewClipboardData()
         {
             listBox.BeginUpdate();
             while (listBox.Items.Count >= ClipboardManager.History.Count)
@@ -314,5 +316,7 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
+
     }
+
 }

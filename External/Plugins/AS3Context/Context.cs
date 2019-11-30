@@ -1100,7 +1100,7 @@ namespace AS3Context
             FlexShells.Instance.RunMxmlc(command, as3settings.GetDefaultSDK().Path);
         }
 
-        bool IsCompilationTarget() => (!PluginBase.MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
+        bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
 
         /// <summary>
         /// Calls RunCMD with additional parameters taken from the classes @mxmlc doc tag
@@ -1113,7 +1113,7 @@ namespace AS3Context
                 return false;
             }
             
-            PluginBase.MainForm.CallCommand("SaveAllModified", null);
+            MainForm.CallCommand("SaveAllModified", null);
 
             var sdk = PluginBase.CurrentProject != null 
                     ? PluginBase.CurrentProject.CurrentSDK

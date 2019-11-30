@@ -1786,7 +1786,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                PluginBase.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
+                ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
@@ -1829,7 +1829,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                PluginBase.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
+                ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
                 var fileModel = ASContext.Context.GetFileModel(funcResult.Type.InFile.FileName);
                 foreach (var cm in fileModel.Classes)
@@ -1992,7 +1992,7 @@ namespace ASCompletion.Completion
                 break;
             }
             var template = ((ASGenerator) ctx.CodeGenerator).GetAddInterfaceDefTemplate(member);
-            PluginBase.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
+            ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             var sci = ASContext.CurSciControl;
             var latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
             int position;
@@ -2451,7 +2451,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                PluginBase.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
+                ASContext.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
@@ -2807,7 +2807,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                PluginBase.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
+                ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
