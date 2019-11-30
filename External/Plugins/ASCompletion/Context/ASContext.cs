@@ -63,7 +63,7 @@ namespace ASCompletion.Context
             completionCache = new CompletionCache(this, null);
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
-            cacheRefreshTimer.Tick += CacheRefreshTimer_Tick;
+            cacheRefreshTimer.Tick += cacheRefreshTimer_Tick;
         }
         #endregion
 
@@ -316,41 +316,43 @@ namespace ASCompletion.Context
         internal static void SetCurrentFile(ITabbedDocument doc, bool shouldIgnore)
         {
             // reset previous contexts
-            foreach (var it in validContexts)
-                it.CurrentFile = null;
+            if (validContexts.Count > 0)
+            {
+                foreach (var oldcontext in validContexts)
+                    oldcontext.CurrentFile = null;
+            }
             validContexts = new List<IASContext>();
             context = defaultContext;
             context.CurrentFile = null;
 
             // check document
-            var sci = doc.SciControl;
-            var fileName = string.Empty;
-            if (!string.IsNullOrEmpty(sci?.FileName))
+            string filename = "";
+            if (doc?.FileName != null)
             {
-                fileName = sci.FileName;
+                filename = doc.FileName;
                 if (doPathNormalization)
-                    fileName = fileName.Replace(dirAltSeparator, dirSeparator);
+                    filename = filename.Replace(dirAltSeparator, dirSeparator);
             }
             else shouldIgnore = true;
 
-            FileModel.Ignore.FileName = fileName;
+            FileModel.Ignore.FileName = filename;
             // find the doc context(s)
             if (!shouldIgnore)
             {
-                var lang = sci.ConfigurationLanguage.ToLower();
-                var ext = Path.GetExtension(fileName);
+                string lang = doc.SciControl.ConfigurationLanguage.ToLower();
+                string ext = Path.GetExtension(filename);
                 if (!string.IsNullOrEmpty(ext) && lang == "xml")
                     lang = ext.Substring(1).ToLower();
-                foreach (var it in allContexts)
+                foreach (RegisteredContext reg in allContexts)
                 {
-                    if (it.Language == lang)
+                    if (reg.Language == lang)
                     {
-                        validContexts.Add(it.Context);
-                        it.Context.CurrentFile = fileName;
+                        validContexts.Add(reg.Context);
+                        reg.Context.CurrentFile = filename;
                     }
                 }
                 currentLine = -1;
-                SetCurrentLine(sci.CurrentLine);
+                SetCurrentLine(doc.SciControl.CurrentLine);
             }
             // no context
             if (context == defaultContext) Panel.UpdateView(FileModel.Ignore);
@@ -365,44 +367,47 @@ namespace ASCompletion.Context
                 HasContext = false;
                 return;
             }
-            if (line == currentLine) return;
-            // reevaluate active context
-            HasContext = false;
-            string needSyntax = null;
-            currentLine = line;
-            foreach (var context in validContexts)
+            if (line != currentLine)
             {
-                context.CurrentLine = line;
-                // inline language coloring
-                if (context.CurrentModel?.InlinedRanges != null)
+                // reevaluate active context
+                HasContext = false;
+                string needSyntax = null;
+                currentLine = line;
+                foreach (IASContext context in validContexts)
                 {
-                    needSyntax = context.CurrentModel.InlinedIn;
-                    int start = sci.MBSafeCharPosition(sci.PositionFromLine(line));
-                    int end = start + sci.GetLine(line).Length;
-                    foreach (var range in context.CurrentModel.InlinedRanges)
+                    context.CurrentLine = line;
+
+                    // inline language coloring
+                    if (context.CurrentModel?.InlinedRanges != null)
                     {
-                        if (start > range.Start && end < range.End)
+                        needSyntax = context.CurrentModel.InlinedIn;
+                        int start = sci.MBSafeCharPosition(sci.PositionFromLine(line));
+                        int end = start + sci.GetLine(line).Length;
+                        foreach (InlineRange range in context.CurrentModel.InlinedRanges)
                         {
-                            needSyntax = range.Syntax;
-                            HasContext = true;
-                            break;
+                            if (start > range.Start && end < range.End)
+                            {
+                                needSyntax = range.Syntax;
+                                HasContext = true;
+                                break;
+                            }
                         }
                     }
+                    else HasContext = true;
                 }
-                else HasContext = true;
-            }
-            if (needSyntax != null && needSyntax != sci.ConfigurationLanguage)
-            {
-                sci.ConfigurationLanguage = needSyntax;
-                if (!CommonSettings.DisableKnownTypesColoring && context is ASContext ctx)
+                if (needSyntax != null && needSyntax != sci.ConfigurationLanguage)
                 {
-                    // known classes colorization
-                    if (ctx.completionCache.Keywords.Length > 0)
-                        sci.KeyWords(1, ctx.completionCache.Keywords); // additional-keywords index = 1
+                    sci.ConfigurationLanguage = needSyntax;
+                    if (!CommonSettings.DisableKnownTypesColoring && context is ASContext ctx)
+                    {
+                        // known classes colorization
+                        if (ctx.completionCache.Keywords.Length > 0)
+                            sci.KeyWords(1, ctx.completionCache.Keywords); // additional-keywords index = 1
+                    }
+                    sci.Colourise(0, -1); // re-colorize the editor
                 }
-                sci.Colourise(0, -1); // re-colorize the editor
+                Panel.Highlight(Context.CurrentClass, Context.CurrentMember);
             }
-            Panel.Highlight(Context.CurrentClass, Context.CurrentMember);
         }
 
         /// <summary>
@@ -410,8 +415,9 @@ namespace ASCompletion.Context
         /// </summary>
         public static void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            foreach (var it in validContexts)
-                it.TrackTextChange(sender, position, length, linesAdded);
+            if (validContexts.Count == 0) return;
+            foreach (var context in validContexts)
+                context.TrackTextChange(sender, position, length, linesAdded);
         }
 
         /*private static void RepaintRanges(ScintillaNet.ScintillaControl sci)
@@ -440,11 +446,15 @@ namespace ASCompletion.Context
         {
             Context = defaultContext;
             validContexts.Clear();
-            foreach (var it in allContexts)
-                it.Context.Reset();
+            foreach (RegisteredContext reg in allContexts)
+                reg.Context.Reset();
+            //PathExplorer.ClearAll();
             PathModel.ClearAll();
+
             Application.DoEvents();
-            SetCurrentFile(PluginBase.MainForm.CurrentDocument, false);
+
+            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            SetCurrentFile(doc, !doc.IsEditable); 
         }
 
         #endregion
@@ -474,6 +484,7 @@ namespace ASCompletion.Context
                 foreach (PathModel aPath in classPath) aPath.InUse = true;
             }
             PathModel.Compact();
+
             PathExplorer.EndUpdate();
         }
 
@@ -528,7 +539,7 @@ namespace ASCompletion.Context
                     return apath;
             }
             // add new path
-            var aPath = PathModel.GetModel(path, this);
+            PathModel aPath = PathModel.GetModel(path, this);
             if (aPath != null)
             {
                 classPath.Add(aPath);
@@ -557,7 +568,7 @@ namespace ASCompletion.Context
             path.InUse = true;
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
             explorer.OnExplorationDone += RefreshContextCache;
-            explorer.OnExplorationProgress += (state, value, max) => plugin.Panel.SetStatus(state, value, max);
+            explorer.OnExplorationProgress += ExplorationProgress;
             explorer.UseCache = !CommonSettings.DisableCache;
             explorer.Run();
         }
@@ -576,7 +587,7 @@ namespace ASCompletion.Context
                 //TraceManager.Add("EXPLORE: " + path.Path);
                 PathExplorer explorer = new PathExplorer(this, path);
                 explorer.OnExplorationDone += RefreshContextCache;
-                explorer.OnExplorationProgress += (state, value, max) => plugin.Panel.SetStatus(state, value, max);
+                explorer.OnExplorationProgress += ExplorationProgress;
                 explorer.UseCache = !CommonSettings.DisableCache;
                 explorer.Run();
                 return true;
@@ -590,8 +601,14 @@ namespace ASCompletion.Context
             return false;
         }
 
+        void ExplorationProgress(string state, int value, int max)
+        {
+            // SetStatus is thread safe
+            plugin.Panel.SetStatus(state, value, max);
+        }
+
         /// <summary>
-        /// Called after:
+        /// Called afer:
         /// - a PathExplorer has finished exploring
         /// - a PathModel has some internal change
         /// - an import was generated
@@ -609,7 +626,7 @@ namespace ASCompletion.Context
             cacheRefreshTimer.Enabled = true;
         }
 
-        void CacheRefreshTimer_Tick(object sender, EventArgs e)
+        void cacheRefreshTimer_Tick(object sender, EventArgs e)
         {
             cacheRefreshTimer.Enabled = false;
             cacheRefreshTimer.Interval = 200;
@@ -651,7 +668,7 @@ namespace ASCompletion.Context
                     }
                 // add path
                 temporaryPath = path;
-                var tempModel = PathModel.GetModel(temporaryPath, this);
+                PathModel tempModel = PathModel.GetModel(temporaryPath, this);
                 if (!tempModel.WasExplored)
                 {
                     tempModel.IsTemporaryPath = true;
@@ -854,10 +871,10 @@ namespace ASCompletion.Context
         public virtual FileModel CreateFileModel(string fileName)
         {
             if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
-                return new FileModel(fileName ?? string.Empty);
-            var result = new FileModel(PathHelper.GetLongPathName(fileName));
-            result.Context = this;
-            return result;
+                return new FileModel(fileName ?? "");
+            var fileModel = new FileModel(PathHelper.GetLongPathName(fileName));
+            fileModel.Context = this;
+            return fileModel;
         }
 
         /// <summary>
@@ -966,7 +983,8 @@ namespace ASCompletion.Context
 
             if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
             {
-                classPath[0].AddFile(cFile);
+                var tPath = classPath[0];
+                tPath.AddFile(cFile);
             }
 
             if (cFile.OutOfDate) UpdateCurrentFile(true);
@@ -1533,11 +1551,7 @@ namespace ASCompletion.Context
         public bool IsDirty
         {
             get => isDirty;
-            set
-            {
-                isDirty = value;
-                Imports = null;
-            }
+            set { isDirty = value; Imports = null; }
         }
 
         public CompletionCache(IASContext context, MemberList elements)
