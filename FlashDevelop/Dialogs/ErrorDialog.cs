@@ -1,7 +1,6 @@
 using System;
 using System.Media;
 using System.Drawing;
-using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Controls;

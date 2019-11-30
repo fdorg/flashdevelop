@@ -832,7 +832,7 @@ namespace AS2Context
                 var fullpath = Path.GetDirectoryName(cFile.FileName);
                 if (package.Length == 0 || !fullpath.EndsWithOrdinal(pathname))
                 {
-                    if (settings.FixPackageAutomatically && CurSciControl is { } sci)
+                    if (settings.FixPackageAutomatically && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
                     {
                         var packagePattern = cFile.Context.Settings.LanguageId == "AS2"
                             ? new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')')
@@ -1212,7 +1212,7 @@ namespace AS2Context
                 completionCache = new CompletionCache(this, elements);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
                 {
                     try
                     {

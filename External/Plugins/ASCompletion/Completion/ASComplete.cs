@@ -389,10 +389,10 @@ namespace ASCompletion.Completion
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
             if (!ASContext.CommonSettings.AddClosingBraces) return;
-            var context = ASContext.Context;
+            var ctx = ASContext.Context;
             if (addedChar)
             {
-                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && ctx.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -422,7 +422,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || context.CodeComplete.IsStringInterpolationStyle(sci, position))
+                    || ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     char nextChar = sci.CurrentChar;
                     int nextPos = sci.CurrentPos;
@@ -472,7 +472,7 @@ namespace ASCompletion.Completion
             {
                 char open = (char) sci.CharAt(sci.CurrentPos - 1);
 
-                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && ctx.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -483,7 +483,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || context.CodeComplete.IsStringInterpolationStyle(sci, position)
+                    || ctx.CodeComplete.IsStringInterpolationStyle(sci, position)
                     || IsMatchingQuote(open, styleAfter))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
@@ -687,7 +687,7 @@ namespace ASCompletion.Completion
                 }
             }
             if ((inClass is null || inClass.IsVoid()) && result.Member is null) return false;
-            if (ASContext.CurSciControl is null) return false;
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is null) return false;
 
             int line = 0;
             string name = null;
@@ -2175,7 +2175,7 @@ namespace ASCompletion.Completion
         public static void DotContextResolved(ScintillaControl sci, ASExpr expr, MemberList items, bool autoHide)
         {
             // still valid context and position?
-            if (sci != ASContext.CurSciControl) return;
+            if (sci != PluginBase.MainForm.CurrentDocument?.SciControl) return;
             var features = ASContext.Context.Features;
             var position = sci.CurrentPos;
             var local = GetExpression(sci, position);
@@ -2863,7 +2863,7 @@ namespace ASCompletion.Completion
                                 result.InClass = inClass;
                                 if (features.hasInference && (var.Type is null || ResolveType(var.Type, inFile).IsVoid()))
                                 {
-                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(ASContext.CurSciControl, local, var);
+                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, var);
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ResolveType("Function", null);
@@ -2893,7 +2893,7 @@ namespace ASCompletion.Completion
                 {
                     if (features.hasInference && result.Member is { } member && member.Type is null)
                     {
-                        ctx.CodeComplete.InferType(ASContext.CurSciControl, local, member);
+                        ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, member);
                         if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
                     }
                     return result;

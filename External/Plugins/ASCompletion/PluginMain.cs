@@ -228,7 +228,7 @@ namespace ASCompletion
                     case EventType.SyntaxDetect:
                         // detect Actionscript language version
                         if (sci is null) return;
-                        if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
+                        if (sci.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
                             ((TextEvent) e).Value = settingObject.LastASVersion;
@@ -526,17 +526,17 @@ namespace ASCompletion
 
                                     // alternative to default shortcuts
                                     case "ASCompletion.CtrlSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlShiftSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlAltSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
@@ -544,7 +544,7 @@ namespace ASCompletion
                                         if (ASContext.HasContext)
                                         {
                                             var options = new List<ICompletionListItem>();
-                                            ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);
+                                            ASGenerator.ContextualGenerator(sci, options);
                                             EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
                                             if (options.Count == 0)
                                             {
@@ -984,19 +984,19 @@ namespace ASCompletion
             {
                 var code = ASComplete.GetCodeTipCode(result);
                 if (code is null) return;
-                UITools.CodeTip.Show(ASContext.CurSciControl, result.Context.PositionExpression, code);
+                UITools.CodeTip.Show(PluginBase.MainForm.CurrentDocument?.SciControl, result.Context.PositionExpression, code);
             }
         }
 
         /// <summary>
         /// Menu item command: Goto Declaration
         /// </summary>
-        public void GotoDeclaration(object sender, EventArgs e) => ASComplete.DeclarationLookup(ASContext.CurSciControl);
+        public void GotoDeclaration(object sender, EventArgs e) => ASComplete.DeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
-        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
+        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Back From Declaration or Type Declaration
@@ -1195,7 +1195,7 @@ namespace ASCompletion
 
         void TimerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var position = sci.CurrentPos;
             if (position == currentPos) return;
