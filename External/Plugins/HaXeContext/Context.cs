@@ -2118,7 +2118,7 @@ namespace HaXeContext
                 completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
                 {
                     try
                     {
@@ -2284,7 +2284,7 @@ namespace HaXeContext
             if (haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = GetHaxeComplete(CurSciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
+            var hc = GetHaxeComplete(PluginBase.MainForm.CurrentDocument?.SciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 

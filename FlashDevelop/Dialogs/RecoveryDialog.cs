@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Helpers;

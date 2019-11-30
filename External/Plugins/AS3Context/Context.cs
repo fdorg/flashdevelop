@@ -619,7 +619,7 @@ namespace AS3Context
         {
             if (!IsFileValid) return;
 
-            var sci = CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             ClearSquiggles(sci);
 

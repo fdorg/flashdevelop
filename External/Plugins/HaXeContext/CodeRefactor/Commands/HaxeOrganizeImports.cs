@@ -3,6 +3,7 @@ using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
+using PluginCore;
 using PluginCore.FRService;
 
 namespace HaXeContext.CodeRefactor.Commands
@@ -39,7 +40,7 @@ namespace HaXeContext.CodeRefactor.Commands
             search.SourceFile = sourceFile;
             var matches = search.Matches(searchInText);
             var ctx = ASContext.Context.CodeComplete;
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             foreach (var m in matches)
             {
                 if (ctx.IsStringInterpolationStyle(sci, m.Index)) return true;

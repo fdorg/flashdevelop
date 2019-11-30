@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FlashDevelop.Controls;
 using System.Windows.Forms;
-using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;

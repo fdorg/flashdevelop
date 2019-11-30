@@ -65,7 +65,7 @@ namespace FlashDevelop.Dialogs
             InitializeGraphics();
             UpdateSettings();
 
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, Globals.MainForm.FindImage("209"));
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, PluginBase.MainForm.FindImage("209"));
         }
 
         #region Windows Form Designer Generated Code
@@ -628,7 +628,7 @@ namespace FlashDevelop.Dialogs
             if (curDir == "<Project>")
             {
                 curDir = PluginBase.CurrentProject is null
-                    ? Globals.MainForm.WorkingDirectory
+                    ? PluginBase.MainForm.WorkingDirectory
                     : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             }
             if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
@@ -659,18 +659,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Cancels the find or replace lookup
         /// </summary>
-        void CancelButtonClick(object sender, EventArgs e)
-        {
-            runner?.CancelAsync();
-        }
+        void CancelButtonClick(object sender, EventArgs e) => runner?.CancelAsync();
 
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        void RunnerProgress(int percentDone)
-        {
-            progressBar.Value = percentDone;
-        }
+        void RunnerProgress(int percentDone) => progressBar.Value = percentDone;
 
         /// <summary>
         /// Handles the results when find is ready
@@ -720,7 +714,7 @@ namespace FlashDevelop.Dialogs
                 else 
                 {
                     var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (var entry in results)
                     {
                         foreach (var match in entry.Value)
@@ -729,7 +723,7 @@ namespace FlashDevelop.Dialogs
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     Hide();
                 }
             }
@@ -782,7 +776,7 @@ namespace FlashDevelop.Dialogs
                 else
                 {
                     var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (var entry in results)
                     {
                         foreach (var match in entry.Value)
@@ -791,7 +785,7 @@ namespace FlashDevelop.Dialogs
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     Hide();
                 }
             }
@@ -811,12 +805,12 @@ namespace FlashDevelop.Dialogs
                     return;
                 }
             }
-            string gpname;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("Group.Other");
+
             var gp = new ListViewGroup();
             gp.Tag = path;
-            gp.Header = gpname;
+            gp.Header = File.Exists(path)
+                ? Path.GetFileName(path)
+                : TextHelper.GetString("Group.Other");
             resultsView.Groups.Add(gp);
             gp.Items.Add(item);
         }
@@ -855,8 +849,7 @@ namespace FlashDevelop.Dialogs
         void DialogLoaded(object sender, EventArgs e)
         {
             cancelButton.Enabled = false;
-            string message = TextHelper.GetString("Info.NoMatches");
-            infoLabel.Text = message;
+            infoLabel.Text = TextHelper.GetString("Info.NoMatches");
             CenterToParent();
         }
 
@@ -899,8 +892,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void UpdateDialogArguments()
         {
-            IProject project = PluginBase.CurrentProject;
-            bool doRefresh = lastProject != null && lastProject != project;
+            var project = PluginBase.CurrentProject;
+            var doRefresh = lastProject != null && lastProject != project;
             if (project != null)
             {
                 string path = Path.GetDirectoryName(project.ProjectPath);
@@ -911,7 +904,7 @@ namespace FlashDevelop.Dialogs
             }
             else if (string.IsNullOrEmpty(folderComboBox.Text) || doRefresh)
             {
-                folderComboBox.Text = Globals.MainForm.WorkingDirectory;
+                folderComboBox.Text = PluginBase.MainForm.WorkingDirectory;
             }
             folderComboBox.SelectionStart = folderComboBox.Text.Length;
             redirectCheckBox.CheckedChanged -= RedirectCheckBoxCheckChanged;

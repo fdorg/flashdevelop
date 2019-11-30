@@ -3,6 +3,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using CodeRefactor.Commands;
 using CodeRefactor.Provider;
+using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -21,7 +22,7 @@ namespace HaXeContext.CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("CodeRefactor.Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("CodeRefactor.Info.SearchingFiles"));
             var context = (Context) ASContext.GetLanguageContext("haxe");
-            var hc = context.GetHaxeComplete(ASContext.CurSciControl, CurrentTarget.Context, true, HaxeCompilerService.USAGE);
+            var hc = context.GetHaxeComplete(PluginBase.MainForm.CurrentDocument.SciControl, CurrentTarget.Context, true, HaxeCompilerService.USAGE);
             hc.GetUsages(OnHaxeCompleteResultHandler);
         }
 
@@ -36,7 +37,7 @@ namespace HaXeContext.CodeRefactor.Commands
                 case HaxeCompleteStatus.USAGE:
                     if (!IgnoreDeclarationSource)
                     {
-                        var sci = ASContext.CurSciControl;
+                        var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                         var path = sci.FileName;
                         if (!results.ContainsKey(path)) results.Add(path, new List<SearchMatch>());
                         var index = sci.MBSafeCharPosition(hc.Expr.PositionExpression);

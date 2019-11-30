@@ -99,7 +99,7 @@ namespace ASCompletion.Generators
             {
                 case Empty:
                 case MethodDetails:
-                    var sci = ASContext.CurSciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                     sci.BeginUndoAction();
                     try
                     {
@@ -116,7 +116,7 @@ namespace ASCompletion.Generators
         protected virtual void GenerateDocumentation(string context)
         {
             // get indentation
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var position = sci.CurrentPos;
             var line = sci.LineFromPosition(position);
