@@ -132,9 +132,9 @@ namespace FlashDevelop.Managers
             var ids = ((ItemData) item.Tag).Id.Split(';');
             if (ids.Length == 2) id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
             else return; // No work for us here...
-            bool view = PluginBase.MainForm.Settings.ViewShortcuts;
-            Keys keys = Globals.MainForm.GetShortcutItemKeys(id);
+            var keys = PluginBase.MainForm.GetShortcutItemKeys(id);
             if (keys == Keys.None) return;
+            var view = PluginBase.MainForm.Settings.ViewShortcuts;
             if (item is ToolStripMenuItem casted)
             {
                 if (casted.ShortcutKeys == Keys.None)

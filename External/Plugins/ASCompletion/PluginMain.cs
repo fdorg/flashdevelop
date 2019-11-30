@@ -796,7 +796,7 @@ namespace ASCompletion
             timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += timerPosition_Elapsed;
+            timerPosition.Elapsed += TimerPosition_Elapsed;
 
             //Cache update
             astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
@@ -1199,7 +1199,7 @@ namespace ASCompletion
                 OnMouseHover(sci, lastHoverPosition);
         }
 
-        void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
+        void TimerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
             var sci = ASContext.CurSciControl;
             if (sci is null) return;
@@ -1214,10 +1214,9 @@ namespace ASCompletion
             var doc = PluginBase.MainForm.CurrentDocument;
             var isValid = false;
 
-            if (doc.IsEditable)
+            if (doc.SciControl is { } sci)
             {
-                var sci = ASContext.CurSciControl;
-                if (currentDoc == doc.FileName && sci != null)
+                if (currentDoc == sci.FileName)
                 {
                     var line = sci.LineFromPosition(currentPos);
                     ASContext.SetCurrentLine(line);

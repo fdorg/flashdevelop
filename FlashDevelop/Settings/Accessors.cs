@@ -995,7 +995,7 @@ namespace FlashDevelop.Settings
         [Browsable(false)]
         public bool UseListViewGrouping
         {
-            get => Globals.MainForm.GetThemeFlag("ListView.UseGrouping", true);
+            get => PluginBase.MainForm.GetThemeFlag("ListView.UseGrouping", true);
             set {}
         }
 
@@ -1004,7 +1004,7 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                string value = PluginBase.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
+                var value = PluginBase.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
                 if (value == "System") return UiRenderMode.System;
                 return UiRenderMode.Professional;
             }

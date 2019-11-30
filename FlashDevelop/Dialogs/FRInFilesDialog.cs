@@ -628,7 +628,7 @@ namespace FlashDevelop.Dialogs
             if (curDir == "<Project>")
             {
                 curDir = PluginBase.CurrentProject is null
-                    ? Globals.MainForm.WorkingDirectory
+                    ? PluginBase.MainForm.WorkingDirectory
                     : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             }
             if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
@@ -659,18 +659,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Cancels the find or replace lookup
         /// </summary>
-        void CancelButtonClick(object sender, EventArgs e)
-        {
-            runner?.CancelAsync();
-        }
+        void CancelButtonClick(object sender, EventArgs e) => runner?.CancelAsync();
 
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        void RunnerProgress(int percentDone)
-        {
-            progressBar.Value = percentDone;
-        }
+        void RunnerProgress(int percentDone) => progressBar.Value = percentDone;
 
         /// <summary>
         /// Handles the results when find is ready
@@ -811,12 +805,12 @@ namespace FlashDevelop.Dialogs
                     return;
                 }
             }
-            string gpname;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("Group.Other");
+
             var gp = new ListViewGroup();
             gp.Tag = path;
-            gp.Header = gpname;
+            gp.Header = File.Exists(path)
+                ? Path.GetFileName(path)
+                : TextHelper.GetString("Group.Other");
             resultsView.Groups.Add(gp);
             gp.Items.Add(item);
         }
@@ -855,8 +849,7 @@ namespace FlashDevelop.Dialogs
         void DialogLoaded(object sender, EventArgs e)
         {
             cancelButton.Enabled = false;
-            string message = TextHelper.GetString("Info.NoMatches");
-            infoLabel.Text = message;
+            infoLabel.Text = TextHelper.GetString("Info.NoMatches");
             CenterToParent();
         }
 
@@ -899,8 +892,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void UpdateDialogArguments()
         {
-            IProject project = PluginBase.CurrentProject;
-            bool doRefresh = lastProject != null && lastProject != project;
+            var project = PluginBase.CurrentProject;
+            var doRefresh = lastProject != null && lastProject != project;
             if (project != null)
             {
                 string path = Path.GetDirectoryName(project.ProjectPath);
@@ -911,7 +904,7 @@ namespace FlashDevelop.Dialogs
             }
             else if (string.IsNullOrEmpty(folderComboBox.Text) || doRefresh)
             {
-                folderComboBox.Text = Globals.MainForm.WorkingDirectory;
+                folderComboBox.Text = PluginBase.MainForm.WorkingDirectory;
             }
             folderComboBox.SelectionStart = folderComboBox.Text.Length;
             redirectCheckBox.CheckedChanged -= RedirectCheckBoxCheckChanged;

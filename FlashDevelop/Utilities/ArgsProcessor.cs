@@ -98,7 +98,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
+            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return PluginBase.MainForm.WorkingDirectory;
             return Path.GetDirectoryName(GetCurFile());
         }
         
@@ -160,7 +160,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the working directory
         /// </summary>
-        public static string GetWorkingDir() => Globals.MainForm.WorkingDirectory;
+        public static string GetWorkingDir() => PluginBase.MainForm.WorkingDirectory;
 
         /// <summary>
         /// Gets the user selected file for opening
