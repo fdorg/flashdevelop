@@ -102,9 +102,6 @@ namespace ASCompletion
         [Browsable(false)]
         public virtual PluginUI Panel => pluginUI;
 
-        [Browsable(false)]
-        public virtual string DataPath => dataPath;
-
         #endregion
 
         #region Required Methods
@@ -165,7 +162,7 @@ namespace ASCompletion
                 var doc = PluginBase.MainForm.CurrentDocument;
                 // editor ready?
                 if (doc is null) return;
-                var sci = doc.IsEditable ? doc.SciControl : null;
+                var sci = doc.SciControl;
 
                 //
                 //  Events always handled
@@ -175,7 +172,7 @@ namespace ASCompletion
                 {
                     // caret position in editor
                     case EventType.UIRefresh:
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         ASContext.Context.OnBraceMatch(sci);
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
@@ -194,7 +191,7 @@ namespace ASCompletion
                             e.Handled = true;
                             return;
                         }
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         e.Handled = ASComplete.OnShortcut(keys, sci);
                         return;
 
@@ -217,7 +214,7 @@ namespace ASCompletion
                         break;
 
                     case EventType.FileSave:
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         ASContext.Context.CheckModel(false);
                         // toolbar
                         var isValid = ASContext.Context.IsFileValid;
@@ -230,7 +227,7 @@ namespace ASCompletion
 
                     case EventType.SyntaxDetect:
                         // detect Actionscript language version
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
@@ -257,17 +254,15 @@ namespace ASCompletion
                         goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
-                        if (!doc.IsEditable)
+                        if (sci is null)
                         {
                             ASContext.SetCurrentFile(null, true);
                             ContextChanged();
                             return;
                         }
-                        currentDoc = doc.FileName;
+                        currentDoc = sci.FileName;
                         currentPos = sci.CurrentPos;
-                        // check file
-                        var ignoreFile = !doc.IsEditable;
-                        ASContext.SetCurrentFile(doc, ignoreFile);
+                        ASContext.SetCurrentFile(doc, false);
                         // UI
                         ContextChanged();
                         return;
@@ -563,8 +558,7 @@ namespace ASCompletion
                             return;
 
                         case EventType.ProcessEnd:
-                            var procResult = ((TextEvent) e).Value;
-                            ASContext.Context.OnProcessEnd(procResult);
+                            ASContext.Context.OnProcessEnd(((TextEvent) e).Value);
                             break;
                     }
                 }
