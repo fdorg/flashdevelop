@@ -22,8 +22,9 @@ namespace AS3Context.Completion
                     || (expression.Length > 2 && expression[0] == '-' && expression[1] == '-' && char.IsDigit(expression, 2)))
                 {
                     int p;
+                    int pe1;
                     var pe2 = -1;
-                    if (expression.Contains("e-", out var pe1) || expression.Contains("e+", out pe2))
+                    if ((pe1 = expression.IndexOfOrdinal("e-")) != -1 || (pe2 = expression.IndexOfOrdinal("e+")) != -1)
                     {
                         p = expression.IndexOf('.');
                         if (p == -1) p = expression.Length - 1;

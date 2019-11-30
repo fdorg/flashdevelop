@@ -561,17 +561,20 @@ namespace HaXeContext
                 var libraries = project.CompilerOptions.Libraries.ToList();
                 foreach (var it in project.CompilerOptions.Additional)
                 {
-                    if (it.Contains("-lib ", out var index)) libraries.Add(it.Substring(index + "-lib ".Length).Trim());
+                    var index = it.IndexOfOrdinal("-lib ");
+                    if (index != -1) libraries.Add(it.Substring(index + "-lib ".Length).Trim());
                 }
-                foreach (var library in libraries)
+                foreach (string library in libraries)
                     if (!string.IsNullOrEmpty(library.Trim()))
                     {
-                        var libPaths = LookupLibrary(library);
-                        if (libPaths is null) continue;
-                        foreach (var path in libPaths)
+                        List<string> libPaths = LookupLibrary(library);
+                        if (libPaths != null)
                         {
-                            var libPath = AddPath(path);
-                            if (libPath != null) AppendPath(contextSetup, libPath.Path);
+                            foreach (string path in libPaths)
+                            {
+                                PathModel libPath = AddPath(path);
+                                if (libPath != null) AppendPath(contextSetup, libPath.Path);
+                            }
                         }
                     }
             }
@@ -639,7 +642,7 @@ namespace HaXeContext
             if (!path.WasExplored && !path.IsVirtual && !path.IsTemporaryPath)
             {
                 // enable stricter validation for haxelibs which tend to include a lot of unrelated code (samples, templates)
-                var haxelib = Path.Combine(path.Path, "haxelib.json");
+                string haxelib = Path.Combine(path.Path, "haxelib.json");
                 if (File.Exists(haxelib))
                 {
                     path.ValidatePackage = true;
@@ -651,7 +654,7 @@ namespace HaXeContext
                     {
                         path.ValidatePackage = true;
                         // let's hide confusing packages of NME library
-                        var src = File.ReadAllText(haxelib);
+                        string src = File.ReadAllText(haxelib);
                         if (src.Contains("<project name=\"nme\""))
                         {
                             ManualExploration(path, new[] { "js", "jeash", "neash", "native", "browser", "flash", "neko", "tools", "samples", "project" });
@@ -708,8 +711,9 @@ namespace HaXeContext
             base.GetCodeModel(result, src, scriptMode);
             // members
             {
-                foreach (var member in result.Members)
+                for (var i = 0; i < result.Members.Count; i++)
                 {
+                    var member = result.Members[i];
                     if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
                     foreach (var parameter in member.Parameters)
                     {
@@ -906,45 +910,51 @@ namespace HaXeContext
             MemberModel item;
             // public & internal classes
             string package = CurrentModel?.Package;
-            foreach (var aPath in classPath)
-                if (aPath.IsValid && !aPath.Updating)
+            foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
+            {
+                aPath.ForeachFile((aFile) =>
                 {
-                    aPath.ForeachFile(aFile =>
-                    {
-                        string module = aFile.Module;
-                        bool needModule = true;
-                        if (aFile.Classes.Count > 0 && !aFile.Classes[0].IsVoid())
-                            foreach (var aClass in aFile.Classes)
-                            {
-                                if (aClass.IndexType is null
-                                    && (aClass.Access == Visibility.Public
-                                        || (aClass.Access == Visibility.Internal && aClass.InFile.Package == package)))
-                                {
-                                    if (aClass.Name == module) needModule = false;
-                                    item = aClass.ToMemberModel();
-                                    //if (tpackage != package) 
-                                    if (item.Type != null) item.Name = item.Type;
-                                    fullList.Add(item);
-                                }
-                            }
-                        // HX files correspond to a "module" which should appear in code completion
-                        // (you don't import classes defined in modules but the module itself)
-                        if (needModule && aFile.FullPackage is { } qmodule)
+                    string module = aFile.Module;
+                    bool needModule = true;
+
+                    if (aFile.Classes.Count > 0 && !aFile.Classes[0].IsVoid())
+                        foreach (ClassModel aClass in aFile.Classes)
                         {
-                            item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
-                            fullList.Add(item);
+                            if (aClass.IndexType is null
+                                && (aClass.Access == Visibility.Public
+                                    || (aClass.Access == Visibility.Internal && aClass.InFile.Package == package)))
+                            {
+                                if (aClass.Name == module) needModule = false;
+                                item = aClass.ToMemberModel();
+                                //if (tpackage != package) 
+                                if (item.Type != null) item.Name = item.Type;
+                                fullList.Add(item);
+                            }
                         }
-                        return true;
-                    });
-                }
+                    // HX files correspond to a "module" which should appear in code completion
+                    // (you don't import classes defined in modules but the module itself)
+                    if (needModule && aFile.FullPackage is { } qmodule)
+                    {
+                        item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
+                        fullList.Add(item);
+                    }
+                    return true;
+                });
+            }
             // display imported classes and classes declared in imported modules
             var imports = ResolveImports(cFile);
             const FlagType mask = FlagType.Class | FlagType.Enum;
-            foreach (var import in imports)
+            foreach (MemberModel import in imports)
             {
                 if ((import.Flags & mask) > 0)
                 {
-                    fullList.Add(import);
+                    /*if (import is ClassModel)
+                    {
+                        MemberModel cmodel = (import as ClassModel).ToMemberModel();
+                        cmodel.Name = cmodel.Type;
+                        fullList.Add(cmodel);
+                    }
+                    else*/ fullList.Add(import);
                 }
             }
 
@@ -1016,7 +1026,7 @@ namespace HaXeContext
 
             var imports = new MemberList();
             if (inFile is null) return imports;
-            foreach (var item in inFile.Imports)
+            foreach (MemberModel item in inFile.Imports)
             {
                 if (item.Name != "*") ResolveImport(item, imports);
                 else
@@ -1125,9 +1135,9 @@ namespace HaXeContext
                     }
 
                     // add all public classes of Haxe modules
-                    foreach (var @class in file.Classes)
+                    for (var i = 0; i < file.Classes.Count; i++)
                     {
-                        var c = @class;
+                        var c = file.Classes[i];
                         if (c.IndexType is null && c.Access == Visibility.Public)
                         {
                             if (isUsing)
@@ -1156,7 +1166,8 @@ namespace HaXeContext
             if (member == ClassModel.VoidClass) return false;
             if (member.InFile?.BasePath == CurrentModel.BasePath) return true;
             var name = member.Name;
-            if (name.Contains('#', out var p)) name = name.Substring(0, p);
+            var p = name.IndexOf('#');
+            if (p > 0) name = name.Substring(0, p);
             var type = member.Type;
             var isShortType = name == type;
             var curFile = Context.CurrentModel;
@@ -1343,7 +1354,8 @@ namespace HaXeContext
                     }
                     return ResolveType(sb.ToString(), inFile);
                 }
-                if (token.Contains(' ', out var index))
+                var index = token.IndexOf(' ');
+                if (index != -1)
                 {
                     var word = token.Substring(0, index);
                     if (word == "new" && last == ')')
@@ -1389,7 +1401,7 @@ namespace HaXeContext
         /// </summary>
         ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
         {
-            var aClass = ResolveType(baseType, inFile);
+            ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
 
             if (aClass.QualifiedName == features.dynamicKey)
@@ -1408,12 +1420,12 @@ namespace HaXeContext
 
             // resolve T
             string Tname = "T";
-            var m = re_Template.Match(aClass.Type);
+            Match m = re_Template.Match(aClass.Type);
             if (m.Success)
             {
                 Tname = m.Groups[1].Value;
             }
-            var reReplaceType = new Regex("\\b" + Tname + "\\b");
+            Regex reReplaceType = new Regex("\\b" + Tname + "\\b");
 
             // clone the type
             aClass = (ClassModel) aClass.Clone();
@@ -1523,7 +1535,7 @@ namespace HaXeContext
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
                     if (!it.TryGetFile(path, out var model)) continue;
-                    foreach (var import in model.Imports)
+                    foreach (MemberModel import in model.Imports)
                     {
                         // for example: using package.Type;
                         if ((import.Flags & FlagType.Using) != 0)
@@ -1594,7 +1606,7 @@ namespace HaXeContext
                         extends.ResolveExtends();
                         while (!extends.IsVoid())
                         {
-                            foreach (var member in import.Members)
+                            foreach (MemberModel member in import.Members)
                             {
                                 if ((member.Access & access) == 0
                                     || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
@@ -1786,10 +1798,10 @@ namespace HaXeContext
                             pos = i + 1;
                             hasColon = false;
                             if (braCount == 0 && genCount == 0 
-                                && !type.Contains('{', pos)
-                                && !type.Contains('<', pos)
-                                && !type.Contains(',', pos)
-                                && !type.Contains('-', pos))
+                                && type.IndexOf('{', pos) == -1
+                                && type.IndexOf('<', pos) == -1
+                                && type.IndexOf(',', pos) == -1
+                                && type.IndexOf('-', pos) == -1)
                             {
                                 result.Add(type.Substring(pos));
                                 break;
@@ -1987,7 +1999,7 @@ namespace HaXeContext
             }
         }
 
-        static ClassModel GetPublicClass(FileModel file)
+        ClassModel GetPublicClass(FileModel file)
         {
             if (file?.Classes != null)
             {
@@ -2175,14 +2187,14 @@ namespace HaXeContext
                 return null;
 
             // Do not show error
-            var value = expression.Value;
-            if (value == "for"
-                || value == "while"
-                || value == "if"
-                || value == "switch"
-                || value == "function"
-                || value == "catch"
-                || value == "trace")
+            var val = expression.Value;
+            if (val == "for" || 
+                val == "while" ||
+                val == "if" ||
+                val == "switch" ||
+                val == "function" ||
+                val == "catch" ||
+                val == "trace")
                 return null;
 
             expression.Position++;
@@ -2338,7 +2350,7 @@ namespace HaXeContext
                 command += ";";
                 if (cFile.Package.Length > 0) command += cFile.Package + ".";
                 var cname = cFile.GetPublicClass().Name;
-                if (cname.Contains('<', out var p) && p > 0) cname = cname.Substring(0, p);
+                if (cname.IndexOf('<') is var p && p > 0) cname = cname.Substring(0, p);
                 command += cname;
 
                 if (haxeTarget == "flash" && (append is null || !append.Contains("-swf-version")))
@@ -2531,13 +2543,13 @@ namespace HaXeContext
         {
             if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
             var position = sci.CurrentPos - 1;
-            var c = (char)sci.CharAt(position);
-            if (c != '<' && c != '>')
+            var character = (char)sci.CharAt(position);
+            if (character != '<' && character != '>')
             {
                 position = sci.CurrentPos;
-                c = (char)sci.CharAt(position);
+                character = (char)sci.CharAt(position);
             }
-            if (c == '<' || c == '>')
+            if (character == '<' || character == '>')
             {
                 if (!sci.PositionIsOnComment(position))
                 {

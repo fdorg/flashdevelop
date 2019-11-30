@@ -789,13 +789,13 @@ namespace XMLCompletion
             }
             xtag.Position = position;
             xtag.Tag = tag;
-            var mTag = tagName.Match(tag + " ");
+            Match mTag = tagName.Match(tag + " ");
             if (mTag.Success)
             {
                 xtag.Name = mTag.Groups["name"].Value;
                 xtag.Closing = tag[1] == '/';
                 xtag.Closed = tag.EndsWithOrdinal("/>") || tag.EndsWithOrdinal("-->");
-                if (xtag.Name.Contains(':', out var p) && p > 0)
+                if (xtag.Name.IndexOf(':') is var p && p > 0)
                 {
                     xtag.NameSpace = xtag.Name.Substring(0, p);
                 }

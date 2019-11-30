@@ -191,7 +191,7 @@ namespace ASCompletion.Model
             var bbCodeOpen = allowBBCode ? "[BGCOLOR=#EEE:SUBTRACT]" : "";
             var bbCodeClose = allowBBCode ? "[/BGCOLOR]" : "";
             if (type.Substring(0, p) == "Array") return $"{type.Substring(0, p)}{bbCodeOpen}/*{type.Substring(p + 1)}*/{bbCodeClose}";
-            if (type.Contains("<T>", out var p1) && p1 > 0) return $"{type.Substring(0, p1)}{bbCodeOpen}<{type.Substring(p + 1)}>{bbCodeClose}";
+            if (type.IndexOfOrdinal("<T>") is var p1 && p1 > 0) return $"{type.Substring(0, p1)}{bbCodeOpen}<{type.Substring(p + 1)}>{bbCodeClose}";
             return $"{bbCodeOpen}/*{type.Substring(p + 1)}*/{bbCodeClose}{type.Substring(0, p)}";
         }
     }

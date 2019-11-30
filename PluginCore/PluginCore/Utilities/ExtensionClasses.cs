@@ -7,20 +7,12 @@ namespace PluginCore
 {
     public static class StringExtensions
     {
-        public static bool Contains(this string @this, char value) => @this.IndexOf(value) != -1;
-
-        public static bool Contains(this string @this, char value, int startPosition) => @this.IndexOf(value, startPosition) != -1;
+        public static bool Contains(this string @this, char value) => @this.IndexOf(value) >= 0;
 
         public static bool Contains(this string @this, char value, out int position)
         {
             position = @this.IndexOf(value);
-            return position != -1;
-        }
-       
-        public static bool Contains(this string @this, string value, out int position)
-        {
-            position = @this.IndexOfOrdinal(value);
-            return position != -1;
+            return position >= 0;
         }
 
         /// <summary>
