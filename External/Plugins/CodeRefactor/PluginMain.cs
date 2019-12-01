@@ -420,11 +420,11 @@ namespace CodeRefactor
         /// </summary>
         void GenerateSurroundMenuItems()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                && RefactoringHelper.GetLanguageIsValid(sci))
             {
-                surroundContextMenu.GenerateSnippets(document.SciControl);
-                refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
+                surroundContextMenu.GenerateSnippets(sci);
+                refactorMainMenu.SurroundMenu.GenerateSnippets(sci);
             }
             else
             {

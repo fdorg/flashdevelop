@@ -23,34 +23,29 @@ namespace System.Windows.Forms
         public DockPanelControl()
         {
             Borders = DockBorders.Left | DockBorders.Right;
-            Color color = PluginCore.PluginBase.MainForm.GetThemeColor("DockPanelControl.BorderColor");
-            if (color != Color.Empty) borderPen = new Pen(color);
-            else borderPen = SystemPens.ControlDark;
+            var color = PluginBase.MainForm.GetThemeColor("DockPanelControl.BorderColor");
+            borderPen = color != Color.Empty ? new Pen(color) : SystemPens.ControlDark;
         }
 
-        private DockBorders Borders
+        DockBorders Borders
         {
             get => borders;
             set
             {
                 borders = value;
-                this.Padding = new Padding((borders & DockBorders.Left) > 0 ? 1 : 0, (borders & DockBorders.Top) > 0 ? 1 : 0, (borders & DockBorders.Right) > 0 ? 1 : 0, (borders & DockBorders.Bottom) > 0 ? 1 : 0);
+                Padding = new Padding((borders & DockBorders.Left) > 0 ? 1 : 0, (borders & DockBorders.Top) > 0 ? 1 : 0, (borders & DockBorders.Right) > 0 ? 1 : 0, (borders & DockBorders.Bottom) > 0 ? 1 : 0);
             }
         }
         
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            if (this.AutoKeyHandling && this.ContainsFocus)
+            if (AutoKeyHandling
+                && ContainsFocus
+                && keyData == Keys.Escape
+                && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
             {
-                if (keyData == Keys.Escape)
-                {
-                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                    if (doc != null && doc.IsEditable) 
-                    {
-                        doc.SciControl.Focus();
-                        return true;
-                    }
-                }
+                sci.Focus();
+                return true;
             }
             return base.ProcessDialogKey(keyData);
         }
@@ -61,7 +56,7 @@ namespace System.Windows.Forms
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            this.CheckDockPosition();
+            CheckDockPosition();
             if ((borders & DockBorders.Left) > 0)
             {
                 e.Graphics.DrawLine(borderPen, e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Left, e.ClipRectangle.Bottom + 1);
@@ -83,15 +78,15 @@ namespace System.Windows.Forms
         /// <summary>
         /// Special logic that draws the borders for content
         /// </summary>
-        private void CheckDockPosition()
+        void CheckDockPosition()
         {
             bool isOnlyTab;
-            DockContent dock = this.Parent as DockContent;
+            DockContent dock = Parent as DockContent;
             if (dock?.Pane is null) return;
             if (dock.IsFloat)
             {
                 DockBorders local;
-                isOnlyTab = this.CountPanels(false) == 1;
+                isOnlyTab = CountPanels(false) == 1;
                 if (isOnlyTab) local = DockBorders.Left | DockBorders.Top | DockBorders.Right | DockBorders.Bottom;
                 else local = DockBorders.Left | DockBorders.Top | DockBorders.Right;
                 if (dock.Pane.HasCaption) local -= DockBorders.Top;
@@ -99,38 +94,37 @@ namespace System.Windows.Forms
             }
             else
             {
-                isOnlyTab = this.CountPanels(true) == 1;
+                isOnlyTab = CountPanels(true) == 1;
                 if (isOnlyTab) Borders = DockBorders.Left | DockBorders.Bottom | DockBorders.Right;
                 else Borders = DockBorders.Left | DockBorders.Right;
             }
         }
 
-        private bool IsAutoHidden(DockContent content)
+        bool IsAutoHidden(DockContent content)
         {
-            DockState state = content.DockState;
-            return state == DockState.DockLeftAutoHide || state == DockState.DockRightAutoHide 
-                || state == DockState.DockTopAutoHide || state == DockState.DockBottomAutoHide;
+            var state = content.DockState;
+            return state == DockState.DockLeftAutoHide
+                   || state == DockState.DockRightAutoHide
+                   || state == DockState.DockTopAutoHide
+                   || state == DockState.DockBottomAutoHide;
         }
 
         /// <summary>
         /// Counts the the contents excluding hidden and floating (option) windows
         /// </summary>
-        private int CountPanels(bool includeFloats)
+        int CountPanels(bool includeFloats)
         {
-            int count = 0;
-            DockContent dock = this.Parent as DockContent;
-            for (int i = 0; i < dock.Pane.Contents.Count; i++)
+            var count = 0;
+            var dock = (DockContent) Parent;
+            foreach (var it in dock.Pane.Contents)
             {
-                if (dock.Pane.Contents[i] is DockContent)
+                if (it is DockContent)
                 {
-                    IDockContent current = dock.Pane.Contents[i];
-                    if (includeFloats && !current.DockHandler.IsHidden && !current.DockHandler.IsFloat) count++;
-                    else if (!includeFloats && !current.DockHandler.IsHidden) count++;
+                    if (includeFloats && !it.DockHandler.IsHidden && !it.DockHandler.IsFloat) count++;
+                    else if (!includeFloats && !it.DockHandler.IsHidden) count++;
                 }
             }
             return count;
         }
-
     }
-
 }

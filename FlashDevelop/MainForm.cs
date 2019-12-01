@@ -1540,9 +1540,10 @@ namespace FlashDevelop
         /// </summary>
         public void OnDocumentModify(ITabbedDocument document)
         {
-            if (!document.IsEditable || document.IsModified || ReloadingDocument || ProcessingContents) return;
+            var sci = document.SciControl;
+            if (sci is null || document.IsModified || ReloadingDocument || ProcessingContents) return;
             document.IsModified = true;
-            TextEvent te = new TextEvent(EventType.FileModify, document.FileName);
+            TextEvent te = new TextEvent(EventType.FileModify, sci.FileName);
             EventManager.DispatchEvent(this, te);
         }
 
@@ -1560,7 +1561,7 @@ namespace FlashDevelop
                 EventManager.DispatchEvent(this, open);
             }
             OnUpdateMainFormDialogTitle();
-            if (document.IsEditable) document.SciControl.MarkerDeleteAll(2);
+            if (document.SciControl is { } sci) sci.MarkerDeleteAll(2);
             TextDataEvent save = new TextDataEvent(EventType.FileSave, document.FileName, reason);
             EventManager.DispatchEvent(this, save);
             ButtonManager.UpdateFlaggedButtons();

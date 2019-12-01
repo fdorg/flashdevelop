@@ -852,9 +852,9 @@ namespace FlashDevelop.Settings
             set
             {
                 uiHoverDelay = value;
-                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
-                    if (doc.IsEditable) doc.SciControl.MouseDwellTime = uiHoverDelay;
+                    if (doc.SciControl is { } sci) sci.MouseDwellTime = uiHoverDelay;
                 }
             }
         }

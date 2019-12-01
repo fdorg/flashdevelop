@@ -813,18 +813,20 @@ namespace FileExplorer
         void SynchronizeView(object sender, EventArgs e)
         {
             string path = null;
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+            var document = PluginBase.MainForm.CurrentDocument;
             if (PluginBase.CurrentProject != null && pluginMain.Settings.SynchronizeToProject)
             {
                 path = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                if (document.IsEditable && !document.IsUntitled && !document.FileName.StartsWith(path, StringComparison.OrdinalIgnoreCase))
+                if (document.SciControl is { } sci
+                    && !document.IsUntitled
+                    && !sci.FileName.StartsWith(path, StringComparison.OrdinalIgnoreCase))
                 {
-                    path = Path.GetDirectoryName(document.FileName);
+                    path = Path.GetDirectoryName(sci.FileName);
                 }
             }
-            else if (document.IsEditable && !document.IsUntitled)
+            else if (document.SciControl is { } sci && !document.IsUntitled)
             {
-                path = Path.GetDirectoryName(document.FileName);
+                path = Path.GetDirectoryName(sci.FileName);
             }
             if (path != null && Directory.Exists(path))
             {
@@ -838,8 +840,6 @@ namespace FileExplorer
         void TrustHere(object sender, EventArgs e)
         {
             string path;
-            string trustFile;
-            string trustParams;
             // add selected file
             if ((fileView.SelectedItems.Count != 0) && (fileView.SelectedIndices[0] > 0))
             {
@@ -855,9 +855,9 @@ namespace FileExplorer
                 var info = new FileInfo(selectedPath.Text);
                 path = info.FullName;
             }
-            trustFile = path.Replace('\\', '_').Remove(1, 1);
+            var trustFile = path.Replace('\\', '_').Remove(1, 1);
             while (trustFile.Length > 100 && trustFile.Contains('_', out var p) && p > 0) trustFile = trustFile.Substring(p);
-            trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
+            var trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
             // add to trusted files
             DataEvent deTrust = new DataEvent(EventType.Command, "ASCompletion.CreateTrustFile", trustParams);
             EventManager.DispatchEvent(this, deTrust);
@@ -961,8 +961,8 @@ namespace FileExplorer
         /// </summary>
         void CopyItems(object sender, EventArgs e)
         {
-            StringCollection items = new StringCollection();
-            for (int i = 0; i < fileView.SelectedItems.Count; i++)
+            var items = new StringCollection();
+            for (var i = 0; i < fileView.SelectedItems.Count; i++)
             {
                 items.Add(fileView.SelectedItems[i].Tag.ToString());
             }
@@ -974,10 +974,10 @@ namespace FileExplorer
         /// </summary>
         void PasteItems(object sender, EventArgs e)
         {
-            string target = string.Empty;
-            if (fileView.SelectedItems.Count == 0) target = selectedPath.Text;
-            else target = fileView.SelectedItems[0].Tag.ToString();
-            StringCollection items = Clipboard.GetFileDropList();
+            var target = fileView.SelectedItems.Count == 0
+                ? selectedPath.Text
+                : fileView.SelectedItems[0].Tag.ToString();
+            var items = Clipboard.GetFileDropList();
             foreach (var it in items)
             {
                 if (File.Exists(it))
@@ -1119,13 +1119,13 @@ namespace FileExplorer
         {
             try
             {
-                Icon icon; Image image;
-                Size size = ScaleHelper.Scale(new Size(16, 16));
                 if (Win32.ShouldUseWin32())
                 {
-                    if (isFile) icon = IconExtractor.GetFileIcon(path, false, true);
-                    else icon = IconExtractor.GetFolderIcon(path, false, true);
-                    image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
+                    var icon = isFile
+                        ? IconExtractor.GetFileIcon(path, false, true)
+                        : IconExtractor.GetFolderIcon(path, false, true);
+                    var size = ScaleHelper.Scale(new Size(16, 16));
+                    var image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
                     image = PluginBase.MainForm.ImageSetAdjust(image);
                     icon.Dispose();
                     imageList.Images.Add(image);
@@ -1156,7 +1156,5 @@ namespace FileExplorer
         }
 
         #endregion
-
     }
-
 }

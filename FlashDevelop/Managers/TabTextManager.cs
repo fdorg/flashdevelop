@@ -20,9 +20,9 @@ namespace FlashDevelop.Managers
             {
                 foreach (var doc in PluginBase.MainForm.Documents)
                 {
-                    if (doc.IsEditable)
+                    if (doc.SciControl is { } sci)
                     {
-                        string name = Path.GetFileName(doc.FileName);
+                        var name = Path.GetFileName(sci.FileName);
                         if (doc.IsModified) doc.Text = name + "*";
                         else doc.Text = name;
                     }
@@ -47,12 +47,12 @@ namespace FlashDevelop.Managers
             var byName = new Dictionary<string, List<string>>();
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                if (doc.IsEditable)
+                if (doc.SciControl is { } sci)
                 {
-                    string fileName = doc.FileName;
-                    string name = Path.GetFileName(fileName);
+                    var fileName = sci.FileName;
+                    var name = Path.GetFileName(fileName);
                     if (!byName.ContainsKey(name)) byName[name] = new List<string>();
-                    byName[name].Add(doc.FileName);
+                    byName[name].Add(sci.FileName);
                 }
             }
             foreach (var entry in byName)
