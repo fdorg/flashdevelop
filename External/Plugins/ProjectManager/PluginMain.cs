@@ -575,11 +575,9 @@ namespace ProjectManager
 
         void AutoSelectConfiguration(string configuration)
         {
-            if (configuration != null)
-            {
-                int newIdx = menus.ConfigurationSelector.Items.IndexOf(configuration);
-                if (newIdx >= 0) menus.ConfigurationSelector.SelectedIndex = newIdx;
-            }
+            if (configuration is null) return;
+            var index = menus.ConfigurationSelector.Items.IndexOf(configuration);
+            if (index >= 0) menus.ConfigurationSelector.SelectedIndex = index;
         }
 
         bool HandleKeyEvent(KeyEvent ke)
@@ -623,7 +621,7 @@ namespace ProjectManager
 
         #region Custom Methods
 
-        void RestoreProjectSession(IProject project)
+        static void RestoreProjectSession(IProject project)
         {
             if (project is null || !Settings.UseProjectSessions) return;
             var hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
@@ -633,12 +631,12 @@ namespace ProjectManager
 
         void SaveProjectSession()
         {
-            Project project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
+            var project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
             if (project is null || !Settings.UseProjectSessions) return;
-            string hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
-            string sessionDir = Path.Combine(SettingsDir, "Sessions");
+            var hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
+            var sessionDir = Path.Combine(SettingsDir, "Sessions");
             if (!Directory.Exists(sessionDir)) Directory.CreateDirectory(sessionDir);
-            string sessionFile = Path.Combine(sessionDir, hash + ".fdb");
+            var sessionFile = Path.Combine(sessionDir, hash + ".fdb");
             PluginBase.MainForm.CallCommand("SaveSession", sessionFile);
         }
 
@@ -755,7 +753,7 @@ namespace ProjectManager
         public void OpenLastProject()
         {
             // try to open the last opened project
-            string lastProject = Settings.LastProject;
+            var lastProject = Settings.LastProject;
             if (!string.IsNullOrEmpty(lastProject) && File.Exists(lastProject))
             {
                 SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
@@ -1036,7 +1034,7 @@ namespace ProjectManager
             }
         }
 
-        bool ProjectBeforeSave(Project project, string fileName)
+        static bool ProjectBeforeSave(Project project, string fileName)
         {
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.BeforeSave, fileName);
             EventManager.DispatchEvent(project, de);
@@ -1056,20 +1054,17 @@ namespace ProjectManager
 
         void NewProject()
         {
-            var project = projectActions.NewProject();
-            if (project != null) SetProject(project);
+            if (projectActions.NewProject() is { } project) SetProject(project);
         }
 
         void OpenProject()
         {
-            var project = projectActions.OpenProject();
-            if (project != null) SetProject(project);
+            if (projectActions.OpenProject() is { } project) SetProject(project);
         }
 
         void OpenFolder()
         {
-            var project = projectActions.OpenFolder();
-            if (project != null) SetProject(project);
+            if (projectActions.OpenFolder() is { } project) SetProject(project);
         }
 
         void OpenFolderSilent(string path)
@@ -1169,8 +1164,7 @@ namespace ProjectManager
         void FileMoved(string fromPath, string toPath)
         {
             var project = Tree.ProjectOf(fromPath);
-            var projectTo = Tree.ProjectOf(toPath);
-            if (project != null && project != projectTo)
+            if (project != null && project != Tree.ProjectOf(toPath))
             {
                 if (project.IsCompileTarget(fromPath) || project.IsLibraryAsset(fromPath))
                 {
@@ -1287,14 +1281,12 @@ namespace ProjectManager
 
         void OpenNextFile()
         {
-            if (openFileQueue.Count > 0)
+            if (openFileQueue.Count == 0) return;
+            var file = openFileQueue.Dequeue();
+            if (File.Exists(file)) OpenFile(file);
+            if (file.IndexOfOrdinal("::") > 0 && File.Exists(file.Substring(0, file.IndexOfOrdinal("::")))) // virtual files
             {
-                var file = openFileQueue.Dequeue();
-                if (File.Exists(file)) OpenFile(file);
-                if (file.IndexOfOrdinal("::") > 0 && File.Exists(file.Substring(0, file.IndexOfOrdinal("::")))) // virtual files
-                {
-                    OpenFile(file);
-                }
+                OpenFile(file);
             }
         }
 
@@ -1304,7 +1296,7 @@ namespace ProjectManager
                 ShellOpenFile(path);
         }
 
-        void ShellOpenFile(string path)
+        static void ShellOpenFile(string path)
         {
             if (BridgeManager.Active && BridgeManager.IsRemote(path) && !BridgeManager.AlwaysOpenLocal(path))
             {
@@ -1424,14 +1416,11 @@ namespace ProjectManager
         {
             var de = new DataEvent(EventType.Command, "FileExplorer.PromptHere", Tree.SelectedPath);
             EventManager.DispatchEvent(this, de);
-
-            if (!de.Handled)
-            {
-                var psi = new ProcessStartInfo();
-                psi.FileName = PluginBase.MainForm.CommandPromptExecutable;
-                psi.WorkingDirectory = Tree.SelectedPath;
-                Process.Start(psi);
-            }
+            if (de.Handled) return;
+            var info = new ProcessStartInfo();
+            info.FileName = PluginBase.MainForm.CommandPromptExecutable;
+            info.WorkingDirectory = Tree.SelectedPath;
+            Process.Start(info);
         }
 
         /// <summary>
@@ -1520,9 +1509,9 @@ namespace ProjectManager
             }
         }
 
-        bool IsBuildable(string path)
+        static bool IsBuildable(string path)
         {
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             return FileInspector.IsAS2Project(path, ext)
                    || FileInspector.IsAS3Project(path, ext)
                    || FileInspector.IsHaxeProject(path, ext);
@@ -1554,8 +1543,8 @@ namespace ProjectManager
 
         void CopyClassName()
         {
-            string path = Tree.SelectedPath;
-            DataEvent copyCP = new DataEvent(EventType.Command, "ASCompletion.GetClassPath", path);
+            var path = Tree.SelectedPath;
+            var copyCP = new DataEvent(EventType.Command, "ASCompletion.GetClassPath", path);
             EventManager.DispatchEvent(this, copyCP);
             if (copyCP.Handled) // UI needs refresh on clipboard change...
             {
@@ -1577,11 +1566,9 @@ namespace ProjectManager
             if (Tree.SelectedPaths is null) return;
             var paths = new List<string>(Tree.SelectedPaths);
             paths.RemoveAll(p => !Directory.Exists(p));
-            if (paths.Count > 0)
-            {
-                var path = string.Join(";", paths);
-                PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
-            }
+            if (paths.Count == 0) return;
+            var path = string.Join(";", paths);
+            PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
         }
 
         void TreeSyncToMainFile()
@@ -1621,17 +1608,14 @@ namespace ProjectManager
                 Tree.SelectedNode.EnsureVisible();
                 Tree.PathToSelect = null;
             }
-            else
-                Tree.PathToSelect = path;
+            else Tree.PathToSelect = path;
         }
 
         void OpenResource()
         {
-            if (PluginBase.CurrentProject != null)
-            {
-                if (projectResources is null) projectResources = new OpenResourceForm(this);
-                projectResources.ShowDialog(pluginUI);
-            }
+            if (PluginBase.CurrentProject is null) return;
+            if (projectResources is null) projectResources = new OpenResourceForm(this);
+            projectResources.ShowDialog(pluginUI);
         }
 
         #endregion
