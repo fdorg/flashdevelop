@@ -142,17 +142,21 @@ namespace PluginCore.Controls
         /// </summary>
         public static void Show(IList<ICompletionListItem> itemList, bool autoHide)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci is null) return;
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable) return;
+            var sci = doc.SciControl;
             try
             {
-                if (itemList.IsNullOrEmpty())
+                if (itemList is null || itemList.Count == 0)
                 {
                     if (Active) Hide();
                     return;
                 }
-                if (Active) Hide();
-                return;
+                if (sci is null) 
+                {
+                    if (Active) Hide();
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -226,9 +230,10 @@ namespace PluginCore.Controls
         /// </summary>
         static void DisplayList(object sender, System.Timers.ElapsedEventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
-            if (sci is null) return;
-            var cl = completionList;
+            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable) return;
+            ScintillaControl sci = doc.SciControl;
+            ListBox cl = completionList;
             if (cl.Items.Count == 0) return;
 
             // measure control
@@ -296,9 +301,9 @@ namespace PluginCore.Controls
             Hide();
             var onCancel = OnCancel;
             if (onCancel is null) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci is null) return;
-            onCancel(sci, currentPos, currentWord, trigger, null);
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable) return;
+            onCancel(doc.SciControl, currentPos, currentWord, trigger, null);
         }
 
         /// <summary>
@@ -306,15 +311,15 @@ namespace PluginCore.Controls
         /// </summary> 
         public static void SelectWordInList(string tail)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci is null)
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable)
             {
                 Hide();
                 return;
             }
             currentWord = tail;
             currentPos += tail.Length;
-            sci.SetSel(currentPos, currentPos);
+            doc.SciControl.SetSel(currentPos, currentPos);
         }
 
         static void CLDrawListItem(object sender, DrawItemEventArgs e)
@@ -387,23 +392,24 @@ namespace PluginCore.Controls
 
         static void CLClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
-            if (sci is null)
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable)
             {
                 Hide();
                 return;
             }
-            sci.Focus();
+            doc.SciControl.Focus();
         }
 
         static void CLDoubleClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
-            if (sci is null)
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable)
             {
                 Hide();
                 return;
             }
+            var sci = doc.SciControl;
             sci.Focus();
             ReplaceText(sci, '\0');
         }
@@ -788,8 +794,8 @@ namespace PluginCore.Controls
 
         public static void OnChar(ScintillaControl sci, int value)
         {
-            var c = (char)value;
-            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            char c = (char)value;
+            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             if (characterClass.Contains(c))
             {
                 word += c;
@@ -1013,4 +1019,5 @@ namespace PluginCore.Controls
             Item = item;
         }
     }
+
 }
