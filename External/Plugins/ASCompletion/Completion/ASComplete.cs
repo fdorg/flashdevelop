@@ -742,10 +742,11 @@ namespace ASCompletion.Completion
             model.Members.Sort();
             foreach (var aClass in model.Classes) aClass.Members.Sort();
             var src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
-            if (PluginBase.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp && tmp.IsEditable) 
+            if (PluginBase.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp
+                && tmp.SciControl is { } sci) 
             {
                 // The model document will be read only
-                tmp.SciControl.IsReadOnly = true;
+                sci.IsReadOnly = true;
             }
         }
 

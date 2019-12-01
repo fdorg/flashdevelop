@@ -350,8 +350,8 @@ namespace OutputPanel
                 toggleButton.Image = toggleButtonImagePlayNew;
                 return;
             }
-            IList<TraceItem> log = TraceManager.TraceLog;
-            int newCount = log.Count;
+            var log = TraceManager.TraceLog;
+            var newCount = log.Count;
             if (newCount <= logCount)
             {
                 logCount = newCount;

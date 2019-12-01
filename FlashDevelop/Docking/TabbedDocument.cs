@@ -293,10 +293,11 @@ namespace FlashDevelop.Docking
         /// </summary>
         public bool CheckFileChange()
         {
-            if (fileInfo is null) fileInfo = new FileInfo(FileName);
-            if (!PluginBase.MainForm.ClosingEntirely && File.Exists(FileName))
+            var fileName = FileName;
+            if (fileInfo is null) fileInfo = new FileInfo(fileName);
+            if (!PluginBase.MainForm.ClosingEntirely && File.Exists(fileName))
             {
-                FileInfo fi = new FileInfo(FileName);
+                FileInfo fi = new FileInfo(fileName);
                 if (fileInfo.IsReadOnly != fi.IsReadOnly) return true;
                 if (fileInfo.LastWriteTime != fi.LastWriteTime) return true;
             }
@@ -308,9 +309,11 @@ namespace FlashDevelop.Docking
         /// </summary>
         public void RefreshFileInfo()
         {
-            if (!PluginBase.MainForm.ClosingEntirely && File.Exists(FileName))
+            if (!PluginBase.MainForm.ClosingEntirely
+                && FileName is { } fileName
+                && File.Exists(fileName))
             {
-                fileInfo = new FileInfo(FileName);
+                fileInfo = new FileInfo(fileName);
             }
         }
 

@@ -89,18 +89,18 @@ namespace CssCompletion
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document is null || !document.IsEditable) return;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             switch (e.Type)
             {
                 case EventType.Keys:
                 {
-                    Keys keys = ((KeyEvent) e).Value;
-                    if (IsSupported(document) && keys == (Keys.Control | Keys.Space))
+                    var keys = ((KeyEvent) e).Value;
+                    if (IsSupported(sci) && keys == (Keys.Control | Keys.Space))
                     {
                         if (completion != null)
                         {
-                            completion.OnComplete(document.SciControl, document.SciControl.CurrentPos);
+                            completion.OnComplete(sci, sci.CurrentPos);
                             e.Handled = true;
                         }
                     }
@@ -110,15 +110,14 @@ namespace CssCompletion
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (IsSupported(document))
+                    if (IsSupported(sci))
                     {
-                        var ext = Path.GetExtension(document.FileName).ToLower();
+                        var ext = Path.GetExtension(sci.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
                         if (completion is null) completion = new Completion(config, settingObject);
                         completion.OnFileChanged(features);
                         if (features?.Syntax != null)
                         {
-                            var sci = document.SciControl;
                             sci.SetProperty(features.Syntax, "1");
                             sci.Colourise(0, -1);
                         }
@@ -132,9 +131,9 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (IsSupported(document))
+                    if (IsSupported(sci))
                     {
-                        updateFile = document.FileName;
+                        updateFile = sci.FileName;
                         updateFeatures = features;
                         updater.Start();
                     }
@@ -217,7 +216,9 @@ namespace CssCompletion
         /// <summary>
         /// Checks if the language should use basic completion 
         /// </summary>
-        public bool IsSupported(ITabbedDocument document) => document.SciControl.ConfigurationLanguage == "css";
+        public bool IsSupported(ITabbedDocument document) => IsSupported(document.SciControl);
+
+        public bool IsSupported(ScintillaControl sci) => sci.ConfigurationLanguage == "css";
 
         #endregion
 
