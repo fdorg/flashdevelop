@@ -79,10 +79,8 @@
   -->
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,11 +101,7 @@
     <ProjectReference Include="..\ASClassWizard\ASClassWizard.csproj">
       <Project>{A2C159C1-7D21-4483-AEB1-38D9FDC4C7F3}</Project>
       <Name>ASClassWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
-      <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
-      <Name>ASCompletion</Name>
-      <Private>False</Private>
+	  <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
