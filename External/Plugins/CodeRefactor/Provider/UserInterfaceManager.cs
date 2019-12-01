@@ -6,16 +6,8 @@ namespace CodeRefactor.Provider
 {
     public static class UserInterfaceManager
     {
-        private static ProgressDialog progressDialog;
+        static ProgressDialog progressDialog;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static Form Main => PluginBase.MainForm as Form;
-
-        /// <summary>
-        /// 
-        /// </summary>
         public static ProgressDialog ProgressDialog
         {
             get
@@ -23,12 +15,10 @@ namespace CodeRefactor.Provider
                 if (progressDialog is null)
                 {
                     progressDialog = new ProgressDialog();
-                    Main.AddOwnedForm(progressDialog);
+                    ((Form) PluginBase.MainForm).AddOwnedForm(progressDialog);
                 }
                 return progressDialog;
             }
         }
-
     }
-
 }

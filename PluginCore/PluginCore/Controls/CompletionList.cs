@@ -19,30 +19,31 @@ namespace PluginCore.Controls
         /// <summary>
         /// Properties of the class 
         /// </summary> 
-        private static System.Timers.Timer tempo;
-        private static System.Timers.Timer tempoTip;
-        private static ListBox completionList;
+        static System.Timers.Timer tempo;
+
+        static System.Timers.Timer tempoTip;
+        static ListBox completionList;
         
         #region State Properties
 
-        private static bool disableSmartMatch;
-        private static ICompletionListItem currentItem;
-        private static IList<ICompletionListItem> allItems;
-        private static bool exactMatchInList;
-        private static bool smartMatchInList;
-        private static bool autoHideList;
-        private static bool noAutoInsert;
+        static bool disableSmartMatch;
+        static ICompletionListItem currentItem;
+        static IList<ICompletionListItem> allItems;
+        static bool exactMatchInList;
+        static bool smartMatchInList;
+        static bool autoHideList;
+        static bool noAutoInsert;
         internal static bool listUp;
-        private static bool fullList;
-        private static int startPos;
-        private static int currentPos;
-        private static int lastIndex;
-        private static string currentWord;
-        private static string word;
-        private static bool needResize;
-        private static string widestLabel;
-        private static long showTime;
-        private static ICompletionListItem defaultItem;
+        static bool fullList;
+        static int startPos;
+        static int currentPos;
+        static int lastIndex;
+        static string currentWord;
+        static string word;
+        static bool needResize;
+        static string widestLabel;
+        static long showTime;
+        static ICompletionListItem defaultItem;
 
         /// <summary>
         /// Set to 0 after calling .Show to keep the completion list active 
@@ -227,7 +228,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary>
-        private static void DisplayList(object sender, System.Timers.ElapsedEventArgs e)
+        static void DisplayList(object sender, System.Timers.ElapsedEventArgs e)
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
@@ -321,34 +322,31 @@ namespace PluginCore.Controls
             doc.SciControl.SetSel(currentPos, currentPos);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static void CLDrawListItem(object sender, DrawItemEventArgs e)
+        static void CLDrawListItem(object sender, DrawItemEventArgs e)
         {
-            ICompletionListItem item = completionList.Items[e.Index] as ICompletionListItem;
+            var item = completionList.Items[e.Index] as ICompletionListItem;
             e.DrawBackground();
             if (item != null)
             {
-                Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
-                Color sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
-                bool selected = (e.State & DrawItemState.Selected) > 0;
+                var fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
+                var sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
+                var selected = (e.State & DrawItemState.Selected) > 0;
                 using Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
                 using Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
-                Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
-                Graphics g = e.Graphics;
+                var bounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
+                var g = e.Graphics;
                 float newHeight = e.Bounds.Height - 2;
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(item.Icon, 1, e.Bounds.Top + ((e.Bounds.Height - newHeight) / 2), newHeight, newHeight);
                 if (!selected && !(item is ICompletionListSpecialItem)
                     && item.Label.LastIndexOf('.') is var p && p > 0)
                 {
-                    string package = item.Label.Substring(0, p + 1);
-                    g.DrawString(package, e.Font, packageBrush, tbounds, StringFormat.GenericDefault);
-                    int left = tbounds.Left + DrawHelper.MeasureDisplayStringWidth(e.Graphics, package, e.Font) - 2;
-                    if (left < tbounds.Right) g.DrawString(item.Label.Substring(p + 1), e.Font, textBrush, left, tbounds.Top, StringFormat.GenericDefault);
+                    var package = item.Label.Substring(0, p + 1);
+                    g.DrawString(package, e.Font, packageBrush, bounds, StringFormat.GenericDefault);
+                    var left = bounds.Left + DrawHelper.MeasureDisplayStringWidth(e.Graphics, package, e.Font) - 2;
+                    if (left < bounds.Right) g.DrawString(item.Label.Substring(p + 1), e.Font, textBrush, left, bounds.Top, StringFormat.GenericDefault);
                 }
-                else g.DrawString(item.Label, e.Font, textBrush, tbounds, StringFormat.GenericDefault);
+                else g.DrawString(item.Label, e.Font, textBrush, bounds, StringFormat.GenericDefault);
             }
             e.DrawFocusRectangle();
             if ((item != null) && ((e.State & DrawItemState.Selected) > 0))
@@ -392,12 +390,9 @@ namespace PluginCore.Controls
             UITools.Tip.Show();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static void CLClick(object sender, EventArgs e)
+        static void CLClick(object sender, EventArgs e)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            var doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)
             {
                 Hide();
@@ -406,18 +401,15 @@ namespace PluginCore.Controls
             doc.SciControl.Focus();
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
-        private static void CLDoubleClick(object sender, EventArgs e)
+        static void CLDoubleClick(object sender, EventArgs e)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            var doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)
             {
                 Hide();
                 return;
             }
-            ScintillaControl sci = doc.SciControl;
+            var sci = doc.SciControl;
             sci.Focus();
             ReplaceText(sci, '\0');
         }
@@ -603,7 +595,7 @@ namespace PluginCore.Controls
             }
         }
 
-        private static int TestDefaultItem(int index, string word, int len)
+        static int TestDefaultItem(int index, string word, int len)
         {
             if (defaultItem != null && completionList.Items.Contains(defaultItem))
             {
@@ -756,14 +748,8 @@ namespace PluginCore.Controls
             return score + 2;
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
         public static bool ReplaceText(ScintillaControl sci, char trigger) => ReplaceText(sci, "", trigger);
 
-        /// <summary>
-        /// 
-        /// </summary> 
         public static bool ReplaceText(ScintillaControl sci, string tail, char trigger)
         {
             sci.BeginUndoAction();
@@ -991,7 +977,7 @@ namespace PluginCore.Controls
             return true;
         }
 
-        private static void RefreshTip()
+        static void RefreshTip()
         {
             UITools.Tip.Hide();
             tempoTip.Enabled = false;
@@ -1001,7 +987,7 @@ namespace PluginCore.Controls
 
         #region Controls fading on Control key
 
-        private static bool faded;
+        static bool faded;
 
         internal static void FadeOut()
         {
@@ -1022,7 +1008,7 @@ namespace PluginCore.Controls
 
     }
 
-    struct ItemMatch
+    internal struct ItemMatch
     {
         public readonly int Score;
         public readonly ICompletionListItem Item;

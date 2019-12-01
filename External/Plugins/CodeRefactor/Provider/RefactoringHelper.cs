@@ -63,10 +63,15 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static bool GetLanguageIsValid()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document is null || !document.IsEditable) return false;
-            var lang = document.SciControl.ConfigurationLanguage;
-            return CommandFactoryProvider.ContainsLanguage(lang);
+            return GetLanguageIsValid(PluginBase.MainForm.CurrentDocument?.SciControl);
+        }
+
+        /// <summary>
+        /// Gets if the language is valid for refactoring
+        /// </summary>
+        public static bool GetLanguageIsValid(ScintillaControl sci)
+        {
+            return sci != null && CommandFactoryProvider.ContainsLanguage(sci.ConfigurationLanguage);
         }
 
         /// <summary>
@@ -199,7 +204,7 @@ namespace CodeRefactor.Provider
                     {
                         result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
                     }
-                    sci = ASContext.CurSciControl;
+                    sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 }
             }
             if (sci is null) return null;

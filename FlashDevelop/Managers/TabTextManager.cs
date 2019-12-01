@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
-    class TabTextManager
+    internal class TabTextManager
     {
         /// <summary>
         /// Updates the documents tab texts
         /// </summary>
         public static void UpdateTabTexts()
         {
-            if (Globals.Settings.DisableTabDifferentiation)
+            if (((SettingObject)PluginBase.MainForm.Settings).DisableTabDifferentiation)
             {
-                foreach (var doc in Globals.MainForm.Documents)
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
-                    if (doc.IsEditable)
+                    if (doc.SciControl is { } sci)
                     {
-                        string name = Path.GetFileName(doc.FileName);
+                        var name = Path.GetFileName(sci.FileName);
                         if (doc.IsModified) doc.Text = name + "*";
                         else doc.Text = name;
                     }
@@ -40,17 +42,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Updates the tab texts by differenting them
         /// </summary>
-        private static void DifferentiateTabTexts()
+        static void DifferentiateTabTexts()
         {
             var byName = new Dictionary<string, List<string>>();
-            foreach (var doc in Globals.MainForm.Documents)
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                if (doc.IsEditable)
+                if (doc.SciControl is { } sci)
                 {
-                    string fileName = doc.FileName;
-                    string name = Path.GetFileName(fileName);
+                    var fileName = sci.FileName;
+                    var name = Path.GetFileName(fileName);
                     if (!byName.ContainsKey(name)) byName[name] = new List<string>();
-                    byName[name].Add(doc.FileName);
+                    byName[name].Add(sci.FileName);
                 }
             }
             foreach (var entry in byName)
@@ -77,14 +79,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Collects a list of path differences
         /// </summary>
-        private static List<ExplodePath> Discriminate(List<string> tabs)
+        static IEnumerable<ExplodePath> Discriminate(IEnumerable<string> tabs)
         {
-            var paths = new List<ExplodePath>();
             ExplodePath.Longer = 0;
-            foreach (var tab in tabs)
-            {
-                paths.Add(new ExplodePath(tab));
-            }
+            var paths = tabs.Select(tab => new ExplodePath(tab)).ToList();
             paths.Sort(ExplodePath.LongerFirst);
             bool hadDiff = false;
             bool hadMatch = false;
@@ -124,7 +122,7 @@ namespace FlashDevelop.Managers
         }
     }
 
-    class ExplodePath
+    internal class ExplodePath
     {
         public string Tab;
         public string Diff;
@@ -135,8 +133,8 @@ namespace FlashDevelop.Managers
         public ExplodePath(string tab)
         {
             Tab = tab;
-            string path = tab;
-            string[] parts = Regex.Split(Path.GetDirectoryName(path), "[\\\\/]+");
+            var path = tab;
+            var parts = Regex.Split(Path.GetDirectoryName(path), "[\\\\/]+");
             Array.Reverse(parts);
             if (parts.Length > Longer) Longer = parts.Length;
             Parts = parts;
@@ -147,5 +145,4 @@ namespace FlashDevelop.Managers
 
         public string this[int i] => i < Parts.Length ? Parts[i] : null;
     }
-
 }

@@ -832,7 +832,7 @@ namespace AS2Context
                 var fullpath = Path.GetDirectoryName(cFile.FileName);
                 if (package.Length == 0 || !fullpath.EndsWithOrdinal(pathname))
                 {
-                    if (settings.FixPackageAutomatically && CurSciControl is { } sci)
+                    if (settings.FixPackageAutomatically && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
                     {
                         var packagePattern = cFile.Context.Settings.LanguageId == "AS2"
                             ? new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')')
@@ -1212,7 +1212,7 @@ namespace AS2Context
                 completionCache = new CompletionCache(this, elements);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
                 {
                     try
                     {
@@ -1324,8 +1324,8 @@ namespace AS2Context
             try 
             {
                 // save modified files if needed
-                if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
-                else MainForm.CallCommand("SaveAllModified", ".as");
+                if (outputFile != null) PluginBase.MainForm.CallCommand("SaveAllModified", null);
+                else PluginBase.MainForm.CallCommand("SaveAllModified", ".as");
                 
                 // prepare command
                 string command = mtascPath;
@@ -1345,10 +1345,10 @@ namespace AS2Context
                 string filePath = NormalizePath(cFile.BasePath);
                 if (PluginBase.CurrentProject != null)
                     filePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath); 
-                string workDir = MainForm.WorkingDirectory;
-                MainForm.WorkingDirectory = filePath;
-                MainForm.CallCommand("RunProcessCaptured", command+" "+append);
-                MainForm.WorkingDirectory = workDir;
+                string workDir = PluginBase.MainForm.WorkingDirectory;
+                PluginBase.MainForm.WorkingDirectory = filePath;
+                PluginBase.MainForm.CallCommand("RunProcessCaptured", command+" "+append);
+                PluginBase.MainForm.WorkingDirectory = workDir;
             }
             catch (Exception ex)
             {
@@ -1389,7 +1389,7 @@ namespace AS2Context
             try
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
-                command = " " + MainForm.ProcessArgString(command) + " ";
+                command = " " + PluginBase.MainForm.ProcessArgString(command) + " ";
                 if (string.IsNullOrEmpty(command))
                 {
                     if (!failSilently)

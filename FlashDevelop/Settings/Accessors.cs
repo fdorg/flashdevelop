@@ -852,9 +852,9 @@ namespace FlashDevelop.Settings
             set
             {
                 uiHoverDelay = value;
-                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
-                    if (doc.IsEditable) doc.SciControl.MouseDwellTime = uiHoverDelay;
+                    if (doc.SciControl is { } sci) sci.MouseDwellTime = uiHoverDelay;
                 }
             }
         }
@@ -995,7 +995,7 @@ namespace FlashDevelop.Settings
         [Browsable(false)]
         public bool UseListViewGrouping
         {
-            get => Globals.MainForm.GetThemeFlag("ListView.UseGrouping", true);
+            get => PluginBase.MainForm.GetThemeFlag("ListView.UseGrouping", true);
             set {}
         }
 
@@ -1004,7 +1004,7 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                string value = Globals.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
+                var value = PluginBase.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
                 if (value == "System") return UiRenderMode.System;
                 return UiRenderMode.Professional;
             }
@@ -1016,7 +1016,7 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                string value = Globals.MainForm.GetThemeValue("ComboBox.FlatStyle", "Standard");
+                string value = PluginBase.MainForm.GetThemeValue("ComboBox.FlatStyle", "Standard");
                 return value switch
                 {
                     "Flat" => FlatStyle.Flat,

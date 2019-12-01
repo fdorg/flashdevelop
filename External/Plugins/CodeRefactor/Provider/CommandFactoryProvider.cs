@@ -58,8 +58,8 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactoryForCurrentDocument()
         {
-            return PluginBase.MainForm.CurrentDocument is { } document && document.IsEditable
-                ? GetFactory(document)
+            return PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                ? GetFactory(sci)
                 : null;
         }
 

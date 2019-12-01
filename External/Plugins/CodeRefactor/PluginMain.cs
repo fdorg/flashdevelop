@@ -420,11 +420,11 @@ namespace CodeRefactor
         /// </summary>
         void GenerateSurroundMenuItems()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                && RefactoringHelper.GetLanguageIsValid(sci))
             {
-                surroundContextMenu.GenerateSnippets(document.SciControl);
-                refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
+                surroundContextMenu.GenerateSnippets(sci);
+                refactorMainMenu.SurroundMenu.GenerateSnippets(sci);
             }
             else
             {
@@ -678,7 +678,7 @@ namespace CodeRefactor
             var features = ASContext.Context.Features;
             if (!features.hasImports) return;
 
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             var line = sci.GetLine(sci.CurrentLine).TrimStart();
 
             if (line.StartsWithOrdinal(features.importKey)

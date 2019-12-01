@@ -28,8 +28,8 @@ namespace FlashDevelop.Managers
             if ((Control.ModifierKeys & Keys.Control) == 0)
             {
                 TabTimer.Enabled = false;
-                TabHistory.Remove(Globals.MainForm.CurrentDocument);
-                TabHistory.Insert(0, Globals.MainForm.CurrentDocument);
+                TabHistory.Remove(PluginBase.MainForm.CurrentDocument);
+                TabHistory.Insert(0, PluginBase.MainForm.CurrentDocument);
             }
         }
 
@@ -38,7 +38,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateSequentialIndex(ITabbedDocument document)
         {
-            ITabbedDocument[] documents = Globals.MainForm.Documents;
+            var documents = PluginBase.MainForm.Documents;
             int count = documents.Length;
             for (int i = 0; i < count; i++)
             {
@@ -55,9 +55,10 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void NavigateTabsSequentially(int direction)
         {
-            ITabbedDocument current = Globals.CurrentDocument;
-            ITabbedDocument[] documents = Globals.MainForm.Documents;
-            int count = documents.Length; if (count <= 1) return;
+            var current = PluginBase.MainForm.CurrentDocument;
+            var documents = PluginBase.MainForm.Documents;
+            var count = documents.Length;
+            if (count <= 1) return;
             for (int i = 0; i < count; i++)
             {
                 if (documents[i] == current)
@@ -85,13 +86,11 @@ namespace FlashDevelop.Managers
             if (TabHistory.Count == 0) return;
             if (direction != 0)
             {
-                currentIndex = TabHistory.IndexOf(Globals.MainForm.CurrentDocument);
+                currentIndex = TabHistory.IndexOf(PluginBase.MainForm.CurrentDocument);
                 currentIndex = (currentIndex + direction) % TabHistory.Count;
                 if (currentIndex == -1) currentIndex = TabHistory.Count - 1;
             }
             TabHistory[currentIndex].Activate();
         }
-
     }
-
 }

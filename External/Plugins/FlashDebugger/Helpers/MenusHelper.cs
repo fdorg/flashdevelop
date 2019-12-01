@@ -12,33 +12,33 @@ namespace FlashDebugger
     internal class MenusHelper
     {
         public static ImageListManager imageList;
-        private readonly ToolStripItem[] m_ToolStripButtons;
-        private readonly ToolStripSeparator m_ToolStripSeparator;
-        private readonly ToolStripSeparator m_ToolStripSeparator2;
-        private readonly ToolStripButton StartContinueButton;
-        private readonly ToolStripButton PauseButton;
-        private readonly ToolStripButton StopButton;
-        private readonly ToolStripButton CurrentButton;
-        private readonly ToolStripButton RunToCursorButton;
-        private readonly ToolStripButton StepButton;
-        private readonly ToolStripButton NextButton;
-        private readonly ToolStripButton FinishButton;
-        private readonly ToolStripMenuItem StartContinueMenu;
-        private readonly ToolStripMenuItem PauseMenu;
-        private readonly ToolStripMenuItem StopMenu;
-        private readonly ToolStripMenuItem CurrentMenu;
-        private readonly ToolStripMenuItem RunToCursorMenu;
-        private readonly ToolStripMenuItem StepMenu;
-        private readonly ToolStripMenuItem NextMenu;
-        private readonly ToolStripMenuItem FinishMenu;
-        private readonly ToolStripMenuItem ToggleBreakPointMenu;
-        private readonly ToolStripMenuItem ToggleBreakPointEnableMenu;
-        private readonly ToolStripMenuItem DeleteAllBreakPointsMenu;
-        private readonly ToolStripMenuItem DisableAllBreakPointsMenu;
-        private readonly ToolStripMenuItem EnableAllBreakPointsMenu;
-        private readonly ToolStripMenuItem StartRemoteDebuggingMenu;
-        private readonly ToolStripMenuItem BreakOnAllMenu;
-        private DebuggerState CurrentState = DebuggerState.Initializing;
+        readonly ToolStripItem[] m_ToolStripButtons;
+        readonly ToolStripSeparator m_ToolStripSeparator;
+        readonly ToolStripSeparator m_ToolStripSeparator2;
+        readonly ToolStripButton StartContinueButton;
+        readonly ToolStripButton PauseButton;
+        readonly ToolStripButton StopButton;
+        readonly ToolStripButton CurrentButton;
+        readonly ToolStripButton RunToCursorButton;
+        readonly ToolStripButton StepButton;
+        readonly ToolStripButton NextButton;
+        readonly ToolStripButton FinishButton;
+        readonly ToolStripMenuItem StartContinueMenu;
+        readonly ToolStripMenuItem PauseMenu;
+        readonly ToolStripMenuItem StopMenu;
+        readonly ToolStripMenuItem CurrentMenu;
+        readonly ToolStripMenuItem RunToCursorMenu;
+        readonly ToolStripMenuItem StepMenu;
+        readonly ToolStripMenuItem NextMenu;
+        readonly ToolStripMenuItem FinishMenu;
+        readonly ToolStripMenuItem ToggleBreakPointMenu;
+        readonly ToolStripMenuItem ToggleBreakPointEnableMenu;
+        readonly ToolStripMenuItem DeleteAllBreakPointsMenu;
+        readonly ToolStripMenuItem DisableAllBreakPointsMenu;
+        readonly ToolStripMenuItem EnableAllBreakPointsMenu;
+        readonly ToolStripMenuItem StartRemoteDebuggingMenu;
+        readonly ToolStripMenuItem BreakOnAllMenu;
+        DebuggerState CurrentState = DebuggerState.Initializing;
 
         /// <summary>
         /// Creates a menu item for the plugin and adds a ignored key
@@ -167,35 +167,29 @@ namespace FlashDebugger
             PluginMain.settingObject.BreakOnThrowChanged += BreakOnThrowChanged;
         }
 
-        private void ImageList_Populate(object sender, EventArgs e)
+        static void ImageList_Populate(object sender, EventArgs e)
         {
             imageList.Images.Add("StartContinue", PluginBase.MainForm.ImageSetAdjust(Resource.StartContinue));
             imageList.Images.Add("Pause", PluginBase.MainForm.ImageSetAdjust(Resource.Pause));
-            //imageList.Images.Add("Stop", PluginBase.MainForm.ImageSetAdjust(Resource.Stop));
-            //imageList.Images.Add("Current", PluginBase.MainForm.ImageSetAdjust(Resource.Current));
-            //imageList.Images.Add("RunToCursor", PluginBase.MainForm.ImageSetAdjust(Resource.RunToCursor));
-            //imageList.Images.Add("Step", PluginBase.MainForm.ImageSetAdjust(Resource.Step));
-            //imageList.Images.Add("Next", PluginBase.MainForm.ImageSetAdjust(Resource.Next));
-            //imageList.Images.Add("Finish", PluginBase.MainForm.ImageSetAdjust(Resource.Finish));
         }
 
         public void AddToolStripItems() => PluginBase.MainForm.ToolStrip.Items.AddRange(m_ToolStripButtons);
 
-        void OpenLocalVariablesPanel(object sender, EventArgs e) => PanelsHelper.localsPanel.Show();
+        static void OpenLocalVariablesPanel(object sender, EventArgs e) => PanelsHelper.localsPanel.Show();
 
-        void OpenBreakPointPanel(object sender, EventArgs e) => PanelsHelper.breakPointPanel.Show();
+        static void OpenBreakPointPanel(object sender, EventArgs e) => PanelsHelper.breakPointPanel.Show();
 
-        void OpenStackframePanel(object sender, EventArgs e) => PanelsHelper.stackframePanel.Show();
+        static void OpenStackframePanel(object sender, EventArgs e) => PanelsHelper.stackframePanel.Show();
 
-        void OpenWatchPanel(object sender, EventArgs e) => PanelsHelper.watchPanel.Show();
+        static void OpenWatchPanel(object sender, EventArgs e) => PanelsHelper.watchPanel.Show();
 
-        void OpenImmediatePanel(object sender, EventArgs e) => PanelsHelper.immediatePanel.Show();
+        public void OpenImmediatePanel(object sender, EventArgs e) => PanelsHelper.immediatePanel.Show();
 
-        void OpenThreadsPanel(object sender, EventArgs e) => PanelsHelper.threadsPanel.Show();
+        static void OpenThreadsPanel(object sender, EventArgs e) => PanelsHelper.threadsPanel.Show();
 
         void BreakOnAll_Click(object sender, EventArgs e) => PluginMain.settingObject.BreakOnThrow = !BreakOnAllMenu.Checked;
 
-        void StartContinue_Click(object sender, EventArgs e)
+        static void StartContinue_Click(object sender, EventArgs e)
         {
             if (PluginMain.debugManager.FlashInterface.isDebuggerStarted)
             {
@@ -204,7 +198,7 @@ namespace FlashDebugger
             else PluginMain.debugManager.Start(/*false*/);
         }
 
-        void StartRemote_Click(object sender, EventArgs e)
+        static void StartRemote_Click(object sender, EventArgs e)
         {
             if (PluginMain.debugManager.FlashInterface.isDebuggerStarted)
             {
@@ -215,7 +209,7 @@ namespace FlashDebugger
 
         #region Menus State Management
 
-        private void BreakOnThrowChanged(object sender, EventArgs e) => BreakOnAllMenu.Checked = PluginMain.settingObject.BreakOnThrow;
+        void BreakOnThrowChanged(object sender, EventArgs e) => BreakOnAllMenu.Checked = PluginMain.settingObject.BreakOnThrow;
 
         public void UpdateMenuState(object sender) => UpdateMenuState(sender, CurrentState);
 
@@ -284,17 +278,16 @@ namespace FlashDebugger
         /// <summary>
         /// Gets if the language is valid for debugging
         /// </summary>
-        private bool GetLanguageIsValid()
+        static bool GetLanguageIsValid()
         {
             var document = PluginBase.MainForm.CurrentDocument;
-            if (document is null || !document.IsEditable) return false;
-            var ext = Path.GetExtension(document.FileName);
-            var lang = document.SciControl.ConfigurationLanguage;
-            return lang == "as3" || ext == ".mxml" || lang == "haxe";
+            if (!(document?.SciControl is {} sci)) return false;
+            var lang = sci.ConfigurationLanguage;
+            return lang == "as3"
+                   || lang == "haxe"
+                   || Path.GetExtension(sci.FileName) == ".mxml";
         }
 
         #endregion
-
     }
-
 }

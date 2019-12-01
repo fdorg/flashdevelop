@@ -365,8 +365,9 @@ namespace PluginCore.Controls
                 EventManager.DispatchEvent(this, ke);
                 ignoreKeys = false;
                 // if not handled - show snippets
-                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable
-                    && !PluginBase.MainForm.CurrentDocument.SciControl.IsSelectionRectangle)
+                if (!ke.Handled
+                    && PluginBase.MainForm.CurrentDocument.SciControl is { } scintilla
+                    && !scintilla.IsSelectionRectangle)
                 {
                     PluginBase.MainForm.CallCommand("InsertSnippet", "null");
                 }

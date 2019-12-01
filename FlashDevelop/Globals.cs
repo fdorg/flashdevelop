@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FlashDevelop.Settings;
 using PluginCore;
@@ -9,22 +10,25 @@ namespace FlashDevelop
     {
         /// <summary>
         /// Quick reference to MainForm 
-        /// </summary> 
+        /// </summary>
         public static MainForm MainForm { get; internal set; }
 
         /// <summary>
         /// Quick reference to CurrentDocument 
         /// </summary>
+        [Obsolete("Use PluginBase.MainForm.CurrentDocument")]
         public static ITabbedDocument CurrentDocument => PluginBase.MainForm.CurrentDocument;
 
         /// <summary>
         /// Quick reference to SciControl 
         /// </summary>
+        [Obsolete("Use PluginBase.MainForm.CurrentDocument?.SciControl")]
         public static ScintillaControl SciControl => CurrentDocument.SciControl;
 
         /// <summary>
         /// Quick reference to PreviousDocuments 
         /// </summary>
+        [Obsolete("Use PluginBase.MainForm.Settings.PreviousDocuments")]
         public static List<string> PreviousDocuments => Settings.PreviousDocuments;
 
         /// <summary>
@@ -32,5 +36,4 @@ namespace FlashDevelop
         /// </summary>
         public static SettingObject Settings => (SettingObject)PluginBase.MainForm.Settings;
     }
-
 }

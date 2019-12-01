@@ -10,7 +10,6 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using ScintillaNet;
 
 namespace FlashDevelop.Utilities
 {
@@ -19,16 +18,18 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Regexes for tab and var replacing
         /// </summary>
-        private static readonly Regex reTabs = new Regex("^\\t+", RegexOptions.Multiline | RegexOptions.Compiled);
-        private static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reTabs = new Regex("^\\t+", RegexOptions.Multiline | RegexOptions.Compiled);
+
+        static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
         /// Regexes and variables for enhanced arguments
         /// </summary>
-        private static Dictionary<string, string> userArgs;
-        private static readonly Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-        private static readonly Regex reSpecialArgs = new Regex("\\$\\$\\(\\#([a-z]+)\\#=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-        private static readonly Regex reEnvArgs = new Regex("\\$\\$\\(\\%([a-z]+)\\%\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static Dictionary<string, string> userArgs;
+
+        static readonly Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reSpecialArgs = new Regex("\\$\\$\\(\\#([a-z]+)\\#=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reEnvArgs = new Regex("\\$\\$\\(\\%([a-z]+)\\%\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
         /// Previously selected text, if the selection canceled
@@ -65,8 +66,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetSelText()
         {
-            if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            if (Globals.SciControl.SelText.Length > 0) return Globals.SciControl.SelText;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return string.Empty;
+            if (sci.SelText.Length > 0) return sci.SelText;
             if (PrevSelText.Length > 0) return PrevSelText;
             return string.Empty;
         }
@@ -76,9 +78,10 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurWord()
         {
-            if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            string curWord = Globals.SciControl.GetWordFromPosition(Globals.SciControl.CurrentPos);
-            if (!string.IsNullOrEmpty(curWord)) return curWord;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return string.Empty;
+            var word = sci.GetWordFromPosition(sci.CurrentPos);
+            if (!string.IsNullOrEmpty(word)) return word;
             if (PrevSelWord.Length > 0) return PrevSelWord;
             return string.Empty;
         }
@@ -88,8 +91,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFile()
         {
-            if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            return Globals.CurrentDocument.FileName;
+            return PluginBase.MainForm.CurrentDocument.SciControl is { } sci
+                ? sci.FileName
+                : string.Empty;
         }
 
         /// <summary>
@@ -97,7 +101,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            if (!Globals.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
+            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return PluginBase.MainForm.WorkingDirectory;
             return Path.GetDirectoryName(GetCurFile());
         }
         
@@ -106,7 +110,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilename()
         {
-            if (!Globals.CurrentDocument.IsEditable) return string.Empty;
+            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return string.Empty;
             return Path.GetFileName(GetCurFile());
         }
 
@@ -115,7 +119,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilenameNoExt()
         {
-            if (!Globals.CurrentDocument.IsEditable) return string.Empty;
+            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return string.Empty;
             return Path.GetFileNameWithoutExtension(GetCurFile());
         }
 
@@ -159,17 +163,17 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the working directory
         /// </summary>
-        public static string GetWorkingDir() => Globals.MainForm.WorkingDirectory;
+        public static string GetWorkingDir() => PluginBase.MainForm.WorkingDirectory;
 
         /// <summary>
         /// Gets the user selected file for opening
         /// </summary>
         public static string GetOpenFile()
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = GetCurDir();
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
+            using var dialog = new OpenFileDialog();
+            dialog.InitialDirectory = GetCurDir();
+            dialog.Multiselect = false;
+            if (dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return dialog.FileName;
             return string.Empty;
         }
         
@@ -178,8 +182,8 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetSaveFile()
         {
-            using var sfd = new SaveFileDialog {InitialDirectory = GetCurDir()};
-            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
+            using var dialog = new SaveFileDialog {InitialDirectory = GetCurDir()};
+            if (dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return dialog.FileName;
             return string.Empty;
         }
         
@@ -188,8 +192,8 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenDir()
         {
-            using var fbd = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
-            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
+            using var dialog = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
+            if (dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return dialog.SelectedPath;
             return string.Empty;
         }
         
@@ -198,7 +202,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetClipboard()
         {
-            IDataObject cbdata = Clipboard.GetDataObject();
+            var cbdata = Clipboard.GetDataObject();
             if (cbdata.GetDataPresent("System.String", true)) 
             {
                 return cbdata.GetData("System.String", true).ToString();
@@ -211,15 +215,14 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCBI()
         {
-            CommentBlockStyle cbs = Globals.Settings.CommentBlockStyle;
-            if (cbs == CommentBlockStyle.Indented) return " ";
-            return "";
+            var cbs = PluginBase.MainForm.Settings.CommentBlockStyle;
+            return cbs == CommentBlockStyle.Indented ? " " : "";
         }
 
         /// <summary>
         /// Gets the space or tab character based on settings
         /// </summary>
-        public static string GetSTC() => Globals.Settings.UseTabs ? "\t" : " ";
+        public static string GetSTC() => PluginBase.MainForm.Settings.UseTabs ? "\t" : " ";
 
         /// <summary>
         /// Gets the current syntax based on project or current file.
@@ -228,13 +231,11 @@ namespace FlashDevelop.Utilities
         {
             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language != "*")
             {
-                string syntax = PluginBase.CurrentProject.Language;
-                return syntax.ToLower();
+                return PluginBase.CurrentProject.Language.ToLower();
             }
 
-            if (Globals.CurrentDocument.IsEditable)
+            if (PluginBase.MainForm.CurrentDocument.SciControl is {} sci)
             {
-                ScintillaControl sci = Globals.SciControl;
                 return sci.ConfigurationLanguage.ToLower();
             }
             return string.Empty;
@@ -246,13 +247,14 @@ namespace FlashDevelop.Utilities
         public static string ProcessCodeStyleLineBreaks(string text)
         {
             const string CSLB = "$(CSLB)";
-            int nextIndex = text.IndexOfOrdinal(CSLB);
+            var nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
-            CodingStyle cs = PluginBase.Settings.CodingStyle;
+            var cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
-            int eolMode = (int)Globals.Settings.EOLMode;
-            string lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            string result = ""; int currentIndex = 0;
+            var eolMode = (int)PluginBase.MainForm.Settings.EOLMode;
+            var lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
+            var result = "";
+            var currentIndex = 0;
             while (nextIndex >= 0)
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
@@ -267,18 +269,17 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetLineIndentation(string text, int position)
         {
-            char c;
             int startPos = position;
             while (startPos > 0)
             {
-                c = text[startPos];
+                var c = text[startPos];
                 if (c == 10 || c == 13) break;
                 startPos--;
             }
             int endPos = ++startPos;
             while (endPos < position)
             {
-                c = text[endPos];
+                var c = text[endPos];
                 if (c != '\t' && c != ' ') break;
                 endPos++;
             }
@@ -288,7 +289,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the current locale
         /// </summary>
-        private static string GetLocale() => Globals.Settings.LocaleVersion.ToString();
+        static string GetLocale() => PluginBase.MainForm.Settings.LocaleVersion.ToString();
 
         /// <summary>
         /// Processes the argument String variables
@@ -303,8 +304,8 @@ namespace FlashDevelop.Utilities
                 if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, ReplaceTabs);
                 result = reArgs.Replace(result, ReplaceVars);
                 if (!dispatch || !result.Contains('$')) return result;
-                TextEvent te = new TextEvent(EventType.ProcessArgs, result);
-                EventManager.DispatchEvent(Globals.MainForm, te);
+                var te = new TextEvent(EventType.ProcessArgs, result);
+                EventManager.DispatchEvent(PluginBase.MainForm, te);
                 result = ReplaceArgsWithGUI(te.Value);
                 PrevSelWord = string.Empty;
                 PrevSelText = string.Empty;
@@ -330,46 +331,43 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ReplaceVars(Match match)
         {
-            if (match.Groups.Count > 0)
+            if (match.Groups.Count == 0) return match.Value;
+            var name = match.Groups[1].Value;
+            switch (name)
             {
-                string name = match.Groups[1].Value;
-                switch (name)
-                {
-                    case "Quote" : return "\"";
-                    case "CBI" : return GetCBI();
-                    case "STC" : return GetSTC();
-                    case "AppDir" : return GetAppDir();
-                    case "UserAppDir" : return GetUserAppDir();
-                    case "TemplateDir": return GetTemplateDir();
-                    case "BaseDir" : return GetBaseDir();
-                    case "SelText" : return GetSelText();
-                    case "CurFilename": return GetCurFilename();
-                    case "CurFilenameNoExt": return GetCurFilenameNoExt();
-                    case "CurFile" : return GetCurFile();
-                    case "CurDir" : return GetCurDir();
-                    case "CurWord" : return GetCurWord();
-                    case "CurSyntax": return GetCurSyntax();
-                    case "Timestamp" : return GetTimestamp();
-                    case "OpenFile" : return GetOpenFile();
-                    case "SaveFile" : return GetSaveFile();
-                    case "OpenDir" : return GetOpenDir();
-                    case "DesktopDir" : return GetDesktopDir();
-                    case "SystemDir" : return GetSystemDir();
-                    case "ProgramsDir" : return GetProgramsDir();
-                    case "PersonalDir" : return GetPersonalDir();
-                    case "WorkingDir" : return GetWorkingDir();
-                    case "Clipboard": return GetClipboard();
-                    case "Locale": return GetLocale();
-                    case "Dollar": return "$";
-                }
-                foreach (Argument arg in ArgumentDialog.CustomArguments)
-                {
-                    if (name == arg.Key) return arg.Value;
-                }
-                return "$(" + name + ")";
+                case "Quote" : return "\"";
+                case "CBI" : return GetCBI();
+                case "STC" : return GetSTC();
+                case "AppDir" : return GetAppDir();
+                case "UserAppDir" : return GetUserAppDir();
+                case "TemplateDir": return GetTemplateDir();
+                case "BaseDir" : return GetBaseDir();
+                case "SelText" : return GetSelText();
+                case "CurFilename": return GetCurFilename();
+                case "CurFilenameNoExt": return GetCurFilenameNoExt();
+                case "CurFile" : return GetCurFile();
+                case "CurDir" : return GetCurDir();
+                case "CurWord" : return GetCurWord();
+                case "CurSyntax": return GetCurSyntax();
+                case "Timestamp" : return GetTimestamp();
+                case "OpenFile" : return GetOpenFile();
+                case "SaveFile" : return GetSaveFile();
+                case "OpenDir" : return GetOpenDir();
+                case "DesktopDir" : return GetDesktopDir();
+                case "SystemDir" : return GetSystemDir();
+                case "ProgramsDir" : return GetProgramsDir();
+                case "PersonalDir" : return GetPersonalDir();
+                case "WorkingDir" : return GetWorkingDir();
+                case "Clipboard": return GetClipboard();
+                case "Locale": return GetLocale();
+                case "Dollar": return "$";
             }
+            foreach (Argument arg in ArgumentDialog.CustomArguments)
+            {
+                if (name == arg.Key) return arg.Value;
+            }
+            return "$(" + name + ")";
 
-            return match.Value;
         }
         
         /// <summary>
@@ -441,7 +439,5 @@ namespace FlashDevelop.Utilities
             }
             return match.Value;
         }
-
     }
-    
 }
