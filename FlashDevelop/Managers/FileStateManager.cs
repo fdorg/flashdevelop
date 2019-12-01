@@ -2,28 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FlashDevelop.Helpers;
-using PluginCore;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
-    class FileStateManager
+    internal class FileStateManager
     {
         /// <summary>
         /// Saves the file state to a binary file
         /// </summary>
-        public static void SaveFileState(ITabbedDocument document)
+        public static void SaveFileState(ScintillaControl sci)
         {
+            if (sci is null) return;
             try
             {
-                if (!document.IsEditable) return;
-                string fileStateDir = FileNameHelper.FileStateDir;
+                var fileStateDir = FileNameHelper.FileStateDir;
                 if (!Directory.Exists(fileStateDir)) Directory.CreateDirectory(fileStateDir);
-                StateObject so = GetStateObject(document.SciControl);
-                string fileName = ConvertToFileName(document.FileName);
-                string stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
+                var so = GetStateObject(sci);
+                var fileName = ConvertToFileName(sci.FileName);
+                var stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
                 ObjectSerializer.Serialize(stateFile, so);
             }
             catch (Exception ex)
@@ -35,19 +34,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies the file state to a scintilla control
         /// </summary>
-        public static void ApplyFileState(ITabbedDocument document, bool restorePosition)
+        public static void ApplyFileState(ScintillaControl sci, bool restorePosition)
         {
+            if (sci is null) return;
             try
             {
-                if (!document.IsEditable) return;
-                string fileName = ConvertToFileName(document.FileName);
-                string stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
-                if (File.Exists(stateFile))
-                {
-                    StateObject so = new StateObject();
-                    so = (StateObject)ObjectSerializer.Deserialize(stateFile, so);
-                    ApplyStateObject(document.SciControl, so, restorePosition);
-                }
+                var fileName = ConvertToFileName(sci.FileName);
+                var stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
+                if (!File.Exists(stateFile)) return;
+                var so = new StateObject();
+                so = (StateObject) ObjectSerializer.Deserialize(stateFile, so);
+                ApplyStateObject(sci, so, restorePosition);
             }
             catch (Exception ex)
             {
@@ -62,8 +59,8 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                string fileName = ConvertToFileName(file);
-                string stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
+                var fileName = ConvertToFileName(file);
+                var stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
                 if (File.Exists(stateFile)) File.Delete(stateFile);
             }
             catch (Exception ex)
@@ -79,13 +76,13 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                DateTime timeNow = DateTime.Now;
                 if (!Directory.Exists(FileNameHelper.FileStateDir)) return;
-                string[] foundFiles = Directory.GetFiles(FileNameHelper.FileStateDir);
-                foreach (string foundFile in foundFiles)
+                var timeNow = DateTime.Now;
+                var foundFiles = Directory.GetFiles(FileNameHelper.FileStateDir);
+                foreach (var foundFile in foundFiles)
                 {
-                    TimeSpan twoWeeks = new TimeSpan(14, 0, 0, 0);
-                    DateTime writeTime = File.GetLastWriteTime(foundFile);
+                    var twoWeeks = new TimeSpan(14, 0, 0, 0);
+                    var writeTime = File.GetLastWriteTime(foundFile);
                     if (timeNow.CompareTo(writeTime.Add(twoWeeks)) > 0)
                     {
                         File.Delete(foundFile);
@@ -101,7 +98,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies the state object to a scintilla control
         /// </summary>
-        private static void ApplyStateObject(ScintillaControl sci, StateObject so, bool restorePosition)
+        static void ApplyStateObject(ScintillaControl sci, StateObject so, bool restorePosition)
         {
             if (so.LineCount != sci.LineCount) return;
             sci.Refresh(); // Update the scintilla control state
@@ -120,7 +117,7 @@ namespace FlashDevelop.Managers
             if (restorePosition)
             {
                 sci.FirstVisibleLine = so.LineScroll;
-                int line = sci.LineFromPosition(so.Position);
+                var line = sci.LineFromPosition(so.Position);
                 sci.SetSel(so.Position, so.Position);
                 sci.EnsureVisible(line);
             }
@@ -129,21 +126,21 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the state object from a scintilla control
         /// </summary>
-        private static StateObject GetStateObject(ScintillaControl sci)
+        static StateObject GetStateObject(ScintillaControl sci)
         {
-            StateObject so = new StateObject();
+            var so = new StateObject();
             so.LineCount = sci.LineCount;
             so.Position = sci.CurrentPos;
             so.FileName = sci.FileName;
             so.LineScroll = sci.FirstVisibleLine;
-            for (int line = 0;; line++)
+            for (var line = 0;; line++)
             {
-                int lineNext = sci.ContractedFoldNext(line);
-                if ((line < 0) || (lineNext < line)) break;
+                var lineNext = sci.ContractedFoldNext(line);
+                if (line < 0 || lineNext < line) break;
                 line = lineNext;
                 so.FoldedLines.Add(line);
             }
-            int lineBookmark = -1;
+            var lineBookmark = -1;
             while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1)) >= 0)
             {
                 so.BookmarkedLines.Add(lineBookmark);
@@ -154,11 +151,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Converts a path to a valid file name
         /// </summary>
-        private static string ConvertToFileName(string path)
-        {
-            return HashCalculator.CalculateSHA1(path);
-        }
-
+        static string ConvertToFileName(string path) => HashCalculator.CalculateSHA1(path);
     }
 
     [Serializable]
@@ -171,6 +164,4 @@ namespace FlashDevelop.Managers
         public List<int> BookmarkedLines = new List<int>();
         public List<int> FoldedLines = new List<int>();
     }
-
 }
-

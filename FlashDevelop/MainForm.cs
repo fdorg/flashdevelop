@@ -483,9 +483,9 @@ namespace FlashDevelop
             }
             try
             {
-                foreach (ITabbedDocument doc in Documents)
+                foreach (var doc in Documents)
                 {
-                    if (doc.IsEditable && doc.FileName.ToUpper() == file.ToUpper())
+                    if (doc.SciControl?.FileName is { } fileName && string.Equals(fileName, file, StringComparison.CurrentCultureIgnoreCase))
                     {
                         doc.Activate();
                         return doc as DockContent;
@@ -516,10 +516,10 @@ namespace FlashDevelop
             }
             try
             {
-                if (CurrentDocument != null && CurrentDocument.IsUntitled && !CurrentDocument.IsModified && Documents.Length == 1)
+                if (CurrentDocument is { } doc && doc.IsUntitled && !doc.IsModified && Documents.Length == 1)
                 {
                     closingForOpenFile = true;
-                    CurrentDocument.Close();
+                    doc.Close();
                     closingForOpenFile = false;
                     createdDoc = CreateEditableDocument(file, info.Contents, info.CodePage);
                 }
@@ -531,14 +531,11 @@ namespace FlashDevelop
                 createdDoc = CreateEditableDocument(file, info.Contents, info.CodePage);
                 ButtonManager.AddNewReopenMenuItem(file);
             }
-            var document = (TabbedDocument)createdDoc;
-            document.SciControl.SaveBOM = info.ContainsBOM;
-            document.SciControl.BeginInvoke((MethodInvoker)(() =>
+            var sci = ((TabbedDocument)createdDoc).SciControl;
+            sci.SaveBOM = info.ContainsBOM;
+            sci.BeginInvoke((MethodInvoker)(() =>
             {
-                if (AppSettings.RestoreFileStates)
-                {
-                    FileStateManager.ApplyFileState(document, restorePosition);
-                }
+                if (AppSettings.RestoreFileStates) FileStateManager.ApplyFileState(sci, restorePosition);
             }));
             ButtonManager.UpdateFlaggedButtons();
             return createdDoc;
@@ -1293,11 +1290,11 @@ namespace FlashDevelop
                 else TabbingManager.NavigateTabsSequentially(-1);
             }
             else TabbingManager.NavigateTabHistory(0);
-            if (document.IsEditable && !document.IsUntitled)
+            if (document.SciControl is {} sci && !document.IsUntitled)
             {
-                if (AppSettings.RestoreFileStates) FileStateManager.SaveFileState(document);
-                RecoveryManager.RemoveTemporaryFile(document.FileName);
-                OldTabsManager.SaveOldTabDocument(document.FileName);
+                if (AppSettings.RestoreFileStates) FileStateManager.SaveFileState(sci);
+                RecoveryManager.RemoveTemporaryFile(sci.FileName);
+                OldTabsManager.SaveOldTabDocument(sci.FileName);
             }
             ButtonManager.UpdateFlaggedButtons();
         }
