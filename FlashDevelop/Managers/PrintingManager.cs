@@ -24,7 +24,7 @@ namespace FlashDevelop.Managers
             PrintPageNumber = 0;
             PrintPageLastChar = 0;
             PrintDocument printDocument = new PrintDocument();
-            printDocument.DocumentName = Globals.CurrentDocument.Text;
+            printDocument.DocumentName = PluginBase.MainForm.CurrentDocument.Text;
             printDocument.PrintPage += OnPrintDocumentPrintPage;
             return printDocument;
         }
@@ -35,7 +35,7 @@ namespace FlashDevelop.Managers
         public static void OnPrintDocumentPrintPage(object sender, PrintPageEventArgs e)
         {
             PrintPageNumber++;
-            ITabbedDocument document = Globals.CurrentDocument;
+            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             string page = TextHelper.GetString("Info.PrintFooterPage");
             string footer = page + PrintPageNumber + " - " + document.FileName;
             PrintPageLastChar = document.SciControl.FormatRange(false, e, PrintPageLastChar, document.SciControl.Length);
@@ -50,7 +50,5 @@ namespace FlashDevelop.Managers
                 PrintPageNumber = 0;
             }
         }
-
     }
-
 }

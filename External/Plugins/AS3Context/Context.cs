@@ -619,7 +619,7 @@ namespace AS3Context
         {
             if (!IsFileValid) return;
 
-            var sci = CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             ClearSquiggles(sci);
 
@@ -1100,7 +1100,7 @@ namespace AS3Context
             FlexShells.Instance.RunMxmlc(command, as3settings.GetDefaultSDK().Path);
         }
 
-        bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
+        bool IsCompilationTarget() => (!PluginBase.MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
 
         /// <summary>
         /// Calls RunCMD with additional parameters taken from the classes @mxmlc doc tag
@@ -1113,7 +1113,7 @@ namespace AS3Context
                 return false;
             }
             
-            MainForm.CallCommand("SaveAllModified", null);
+            PluginBase.MainForm.CallCommand("SaveAllModified", null);
 
             var sdk = PluginBase.CurrentProject != null 
                     ? PluginBase.CurrentProject.CurrentSDK

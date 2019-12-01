@@ -93,13 +93,14 @@ namespace PluginCore.Managers
         /// </summary>
         public static void ActivateDocument(int index)
         {
-            if (index < PluginBase.MainForm.Documents.Length && index >= 0)
+            var documents = PluginBase.MainForm.Documents;
+            if (index >= 0 && index < documents.Length)
             {
-                PluginBase.MainForm.Documents[index].Activate();
+                documents[index].Activate();
             }
-            else if (PluginBase.MainForm.Documents.Length > 0)
+            else if (documents.Length > 0)
             {
-                PluginBase.MainForm.Documents[0].Activate();
+                documents[0].Activate();
             }
         }
 
@@ -110,7 +111,7 @@ namespace PluginCore.Managers
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable && document.FileName == filename)
+                if (document.FileName == filename)
                 {
                     return document;
                 }
@@ -125,14 +126,12 @@ namespace PluginCore.Managers
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable && document.SciControl == sci)
+                if (document.SciControl == sci)
                 {
                     return document;
                 }
             }
             return null;
         }
-
     }
-
 }

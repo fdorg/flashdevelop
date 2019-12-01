@@ -102,9 +102,6 @@ namespace ASCompletion
         [Browsable(false)]
         public virtual PluginUI Panel => pluginUI;
 
-        [Browsable(false)]
-        public virtual string DataPath => dataPath;
-
         #endregion
 
         #region Required Methods
@@ -165,7 +162,7 @@ namespace ASCompletion
                 var doc = PluginBase.MainForm.CurrentDocument;
                 // editor ready?
                 if (doc is null) return;
-                var sci = doc.IsEditable ? doc.SciControl : null;
+                var sci = doc.SciControl;
 
                 //
                 //  Events always handled
@@ -175,7 +172,7 @@ namespace ASCompletion
                 {
                     // caret position in editor
                     case EventType.UIRefresh:
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         ASContext.Context.OnBraceMatch(sci);
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
@@ -194,7 +191,7 @@ namespace ASCompletion
                             e.Handled = true;
                             return;
                         }
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         e.Handled = ASComplete.OnShortcut(keys, sci);
                         return;
 
@@ -217,7 +214,7 @@ namespace ASCompletion
                         break;
 
                     case EventType.FileSave:
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         ASContext.Context.CheckModel(false);
                         // toolbar
                         var isValid = ASContext.Context.IsFileValid;
@@ -230,8 +227,8 @@ namespace ASCompletion
 
                     case EventType.SyntaxDetect:
                         // detect Actionscript language version
-                        if (!doc.IsEditable) return;
-                        if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
+                        if (sci is null) return;
+                        if (sci.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
                             ((TextEvent) e).Value = settingObject.LastASVersion;
@@ -257,17 +254,15 @@ namespace ASCompletion
                         goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
-                        if (!doc.IsEditable)
+                        if (sci is null)
                         {
                             ASContext.SetCurrentFile(null, true);
                             ContextChanged();
                             return;
                         }
-                        currentDoc = doc.FileName;
+                        currentDoc = sci.FileName;
                         currentPos = sci.CurrentPos;
-                        // check file
-                        var ignoreFile = !doc.IsEditable;
-                        ASContext.SetCurrentFile(doc, ignoreFile);
+                        ASContext.SetCurrentFile(doc, false);
                         // UI
                         ContextChanged();
                         return;
@@ -531,17 +526,17 @@ namespace ASCompletion
 
                                     // alternative to default shortcuts
                                     case "ASCompletion.CtrlSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlShiftSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlAltSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
@@ -549,7 +544,7 @@ namespace ASCompletion
                                         if (ASContext.HasContext)
                                         {
                                             var options = new List<ICompletionListItem>();
-                                            ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);
+                                            ASGenerator.ContextualGenerator(sci, options);
                                             EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
                                             if (options.Count == 0)
                                             {
@@ -563,8 +558,7 @@ namespace ASCompletion
                             return;
 
                         case EventType.ProcessEnd:
-                            var procResult = ((TextEvent) e).Value;
-                            ASContext.Context.OnProcessEnd(procResult);
+                            ASContext.Context.OnProcessEnd(((TextEvent) e).Value);
                             break;
                     }
                 }
@@ -796,7 +790,7 @@ namespace ASCompletion
             timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += timerPosition_Elapsed;
+            timerPosition.Elapsed += TimerPosition_Elapsed;
 
             //Cache update
             astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
@@ -990,19 +984,19 @@ namespace ASCompletion
             {
                 var code = ASComplete.GetCodeTipCode(result);
                 if (code is null) return;
-                UITools.CodeTip.Show(ASContext.CurSciControl, result.Context.PositionExpression, code);
+                UITools.CodeTip.Show(PluginBase.MainForm.CurrentDocument?.SciControl, result.Context.PositionExpression, code);
             }
         }
 
         /// <summary>
         /// Menu item command: Goto Declaration
         /// </summary>
-        public void GotoDeclaration(object sender, EventArgs e) => ASComplete.DeclarationLookup(ASContext.CurSciControl);
+        public void GotoDeclaration(object sender, EventArgs e) => ASComplete.DeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
-        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
+        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Back From Declaration or Type Declaration
@@ -1199,9 +1193,9 @@ namespace ASCompletion
                 OnMouseHover(sci, lastHoverPosition);
         }
 
-        void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
+        void TimerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var position = sci.CurrentPos;
             if (position == currentPos) return;
@@ -1214,10 +1208,9 @@ namespace ASCompletion
             var doc = PluginBase.MainForm.CurrentDocument;
             var isValid = false;
 
-            if (doc.IsEditable)
+            if (doc.SciControl is { } sci)
             {
-                var sci = ASContext.CurSciControl;
-                if (currentDoc == doc.FileName && sci != null)
+                if (currentDoc == sci.FileName)
                 {
                     var line = sci.LineFromPosition(currentPos);
                     ASContext.SetCurrentLine(line);

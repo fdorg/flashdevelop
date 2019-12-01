@@ -190,6 +190,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Accessor for MainForm
         /// </summary>
+        [Obsolete("Use PluginBase.MainForm")]
         public static IMainForm MainForm => PluginBase.MainForm;
 
         /// <summary>

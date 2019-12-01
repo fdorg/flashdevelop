@@ -31,7 +31,7 @@ namespace System.Windows.Forms
         {
             BorderPanel panel;
             if (!UseCustomBorder) return null;
-            if (ctrl.Tag is BorderPanel) panel = ctrl.Tag as BorderPanel;
+            if (ctrl.Tag is BorderPanel) panel = (BorderPanel) ctrl.Tag;
             else
             {
                 panel = new BorderPanel();

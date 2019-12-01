@@ -86,7 +86,8 @@ namespace ProjectManager
         bool firstRun;
 
         ProjectTreeView Tree => pluginUI.Tree;
-        public static IMainForm MainForm => PluginBase.MainForm;
+
+        [Obsolete("Use PluginBase.MainForm")] public static IMainForm MainForm => PluginBase.MainForm;
 
         public static ProjectManagerSettings Settings;
 
@@ -174,12 +175,12 @@ namespace ProjectManager
             Description = TextHelper.GetString("Info.Description");
             openFileQueue = new Queue<string>();
 
-            Icons.Initialize(MainForm);
+            Icons.Initialize(PluginBase.MainForm);
             EventManager.AddEventHandler(this, eventMask);
 
             #region Actions and Event Listeners
 
-            menus = new FDMenus(MainForm);
+            menus = new FDMenus(PluginBase.MainForm);
             menus.ProjectMenu.ProjectItemsEnabled = false;
             menus.TestMovie.Enabled = false;
             menus.TestMovie.Click += delegate { TestMovie(); };
@@ -212,11 +213,11 @@ namespace ProjectManager
             menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
             menus.RecentProjects.ProjectSelected += OpenProjectSilent;
 
-            buildActions = new BuildActions(MainForm, this);
+            buildActions = new BuildActions(PluginBase.MainForm, this);
             buildActions.BuildComplete += BuildComplete;
             buildActions.BuildFailed += BuildFailed;
 
-            fileActions = new FileActions(MainForm);
+            fileActions = new FileActions(PluginBase.MainForm);
             fileActions.OpenFile += OpenFile;
             fileActions.FileDeleted += FileDeleted;
             fileActions.FileMoved += FileMoved;
@@ -286,7 +287,7 @@ namespace ProjectManager
 
             #endregion
 
-            pluginPanel = MainForm.CreateDockablePanel(pluginUI, Guid, Icons.Project.Img, DockState.DockRight);
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, Icons.Project.Img, DockState.DockRight);
             buildQueue = new Queue<string>();
             buildTimer = new Timer();
             buildTimer.Interval = 500;
@@ -307,7 +308,7 @@ namespace ProjectManager
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, message,
                     title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
-                    MainForm.KillProcess();
+                    PluginBase.MainForm.KillProcess();
             }
         }
 
@@ -321,7 +322,7 @@ namespace ProjectManager
             FlexCompilerShell.Cleanup();
             project.TargetBuild = menus.TargetBuildSelector.Text;
             project.UpdateVars(false);
-            projectActions.UpdateASCompletion(MainForm, project);
+            projectActions.UpdateASCompletion(PluginBase.MainForm, project);
         }
 
         void TargetBuildSelector_KeyDown(object sender, KeyEventArgs e)
@@ -424,13 +425,13 @@ namespace ProjectManager
                     break;
 
                 case EventType.FileOpen:
-                    SetDocumentIcon(MainForm.CurrentDocument);
+                    SetDocumentIcon(PluginBase.MainForm.CurrentDocument);
                     OpenNextFile(); // it's safe to open any other files on the queue
                     break;
 
                 case EventType.FileSave:
                     // refresh the tree to update any included <mx:Script> tags
-                    string path = MainForm.CurrentDocument.FileName;
+                    string path = PluginBase.MainForm.CurrentDocument.FileName;
                     if (Settings.EnableMxmlMapping && FileInspector.IsMxml(path, Path.GetExtension(path).ToLower()) && Tree.NodeMap.ContainsKey(path))
                     {
                         Tree.RefreshNode(Tree.NodeMap[path]);
@@ -696,7 +697,7 @@ namespace ProjectManager
 
             BuildActions.GetCompilerPath(project); // detect project's SDK
             BroadcastProjectInfo(project);
-            projectActions.UpdateASCompletion(MainForm, project);
+            projectActions.UpdateASCompletion(PluginBase.MainForm, project);
             BroadcastProjectSetUp(project);
 
             // ui
@@ -744,7 +745,7 @@ namespace ProjectManager
                 PluginBase.MainForm.RefreshUI();
 
                 BroadcastProjectInfo(null);
-                projectActions.UpdateASCompletion(MainForm, null);
+                projectActions.UpdateASCompletion(PluginBase.MainForm, null);
             }
             TabColors.UpdateTabColors(Settings);
         }
@@ -792,7 +793,7 @@ namespace ProjectManager
                 project.Save();
                 menus.ProjectChanged(project);
             }
-            else projectActions.UpdateASCompletion(MainForm, project);
+            else projectActions.UpdateASCompletion(PluginBase.MainForm, project);
         }
 
         public void OpenFile(string path)
@@ -804,7 +805,7 @@ namespace ProjectManager
                 var de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
                 EventManager.DispatchEvent(this, de);
             }
-            else MainForm.OpenEditableDocument(path);
+            else PluginBase.MainForm.OpenEditableDocument(path);
         }
 
         void SetDocumentIcon(ITabbedDocument doc)
@@ -932,7 +933,7 @@ namespace ProjectManager
                         EventManager.DispatchEvent(this, de);
                     }
 
-                    var cmd = MainForm.ProcessArgString(project.TestMovieCommand).Trim();
+                    var cmd = PluginBase.MainForm.ProcessArgString(project.TestMovieCommand).Trim();
                     cmd = project.FixDebugReleasePath(cmd);
 
                     // let plugins handle the command
@@ -1046,7 +1047,7 @@ namespace ProjectManager
         {
             if (!listenToPathChange) return;
             listenToPathChange = false;
-            projectActions.UpdateASCompletion(MainForm, project);
+            projectActions.UpdateASCompletion(PluginBase.MainForm, project);
             pluginUI.NotifyIssues();
             FlexCompilerShell.Cleanup(); // clear compile cache for this project
             Tree.RebuildTree();
@@ -1320,7 +1321,7 @@ namespace ProjectManager
             var node = Tree.SelectedNode as ExportNode;
             var path = (node != null) ? node.ContainingSwfPath : Tree.SelectedPath;
             var project = Tree.ProjectOf(path) ?? Tree.ProjectOf(Tree.SelectedNode);
-            if (project != null) projectActions.InsertFile(MainForm, project, path, node);
+            if (project != null) projectActions.InsertFile(PluginBase.MainForm, project, path, node);
             // TODO better handling / report invalid action
         }
 
@@ -1411,7 +1412,7 @@ namespace ProjectManager
             EventManager.DispatchEvent(this, de);
 
             var project = activeProject; // TODO apply to all projects?
-            projectActions.UpdateASCompletion(MainForm, project);
+            projectActions.UpdateASCompletion(PluginBase.MainForm, project);
 
             Tree.RefreshTree();
         }

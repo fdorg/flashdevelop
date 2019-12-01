@@ -19,7 +19,7 @@ namespace FlashDevelop.Dialogs
         public RecoveryDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
+            this.Font = PluginBase.MainForm.Settings.DefaultFont;
             this.FormGuid = "54452519-b993-47f6-9d27-22d31bced4ff";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();

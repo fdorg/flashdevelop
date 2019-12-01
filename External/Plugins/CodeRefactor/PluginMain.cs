@@ -678,7 +678,7 @@ namespace CodeRefactor
             var features = ASContext.Context.Features;
             if (!features.hasImports) return;
 
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             var line = sci.GetLine(sci.CurrentLine).TrimStart();
 
             if (line.StartsWithOrdinal(features.importKey)

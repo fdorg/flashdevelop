@@ -1154,7 +1154,7 @@ namespace ASCompletion.Completion
 
         public static void GenerateJob(GeneratorJobType job, MemberModel member, ClassModel inClass, string itemLabel, object data)
         {
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             lookupPosition = sci.CurrentPos;
 
             int position;
@@ -1786,8 +1786,8 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
-                sci = ASContext.CurSciControl;
+                PluginBase.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
                 {
@@ -1829,8 +1829,8 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
-                sci = ASContext.CurSciControl;
+                PluginBase.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 var fileModel = ASContext.Context.GetFileModel(funcResult.Type.InFile.FileName);
                 foreach (var cm in fileModel.Classes)
                 {
@@ -1992,8 +1992,8 @@ namespace ASCompletion.Completion
                 break;
             }
             var template = ((ASGenerator) ctx.CodeGenerator).GetAddInterfaceDefTemplate(member);
-            ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
-            var sci = ASContext.CurSciControl;
+            PluginBase.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             var latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
             int position;
             if (latest is null) position = GetBodyStart(aType.LineFrom, aType.LineTo, sci);
@@ -2451,8 +2451,8 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                ASContext.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
-                sci = ASContext.CurSciControl;
+                PluginBase.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
@@ -2807,8 +2807,8 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
-                sci = ASContext.CurSciControl;
+                PluginBase.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
+                sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (var cm in fileModel.Classes)
@@ -3563,7 +3563,7 @@ namespace ASCompletion.Completion
         static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position, ClassModel inClass)
         {
             var ctx = ASContext.Context;
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             sci.BeginUndoAction();
             try
             {
@@ -3688,7 +3688,7 @@ namespace ASCompletion.Completion
             if (template.Length == 0)
             {
                 GenerateSetter(name, member, position);
-                ASContext.CurSciControl.SetSel(position, position);
+                (PluginBase.MainForm.CurrentDocument?.SciControl).SetSel(position, position);
                 GenerateGetter(name, member, position);
                 return;
             }
@@ -4282,7 +4282,7 @@ namespace ASCompletion.Completion
                     fullPath = inFile.Package + "." + inFile.Module;
                 fullPath = CleanType(fullPath);
             }
-            var sci = ASContext.CurSciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             var newLineMarker = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             var statement = "import " + fullPath + ";" + newLineMarker;
             var position = sci.CurrentPos;
@@ -4370,7 +4370,7 @@ namespace ASCompletion.Completion
 
         protected static int lookupPosition;
 
-        public static void InsertCode(int position, string src) => InsertCode(position, src, ASContext.CurSciControl);
+        public static void InsertCode(int position, string src) => InsertCode(position, src, PluginBase.MainForm.CurrentDocument?.SciControl);
 
         public static void InsertCode(int position, string src, ScintillaControl sci)
         {
@@ -4447,7 +4447,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static void AddLookupPosition() => AddLookupPosition(ASContext.CurSciControl);
+        static void AddLookupPosition() => AddLookupPosition(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         protected static void AddLookupPosition(ScintillaControl sci)
         {
