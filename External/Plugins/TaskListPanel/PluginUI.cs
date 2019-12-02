@@ -740,16 +740,16 @@ namespace TaskListPanel
             var selected = listView.SelectedItems;
             currentFileName = null; currentPos = -1;
             if (selected.Count == 0) return;
-            ListViewItem firstSelected = selected[0];
-            string path = firstSelected.Name;
+            var firstSelected = selected[0];
+            var path = firstSelected.Name;
             currentFileName = path;
             currentPos = (int)((Hashtable)firstSelected.Tag)["Position"];
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document.IsEditable)
+            var document = PluginBase.MainForm.CurrentDocument;
+            if (document.SciControl is { } sci)
             {
-                if (document.FileName.ToUpper() == path.ToUpper())
+                if (sci.FileName.ToUpper() == path.ToUpper())
                 {
-                    MoveToPosition(document.SciControl, currentPos);
+                    MoveToPosition(sci, currentPos);
                     currentFileName = null;
                     currentPos = -1;
                     return;
@@ -812,7 +812,6 @@ namespace TaskListPanel
             }
         }
 
-
         /// <summary>
         /// Click on a listview header column, then sort the view
         /// </summary>
@@ -821,11 +820,9 @@ namespace TaskListPanel
             if (!isEnabled) return;
             if (e.Column == columnSorter.SortColumn)
             {
-                if (columnSorter.Order == SortOrder.Ascending)
-                {
-                    columnSorter.Order = SortOrder.Descending;
-                }
-                else columnSorter.Order = SortOrder.Ascending;
+                columnSorter.Order = columnSorter.Order == SortOrder.Ascending
+                    ? SortOrder.Descending
+                    : SortOrder.Ascending;
             }
             else
             {
@@ -850,9 +847,6 @@ namespace TaskListPanel
 
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     internal class ExplorationContext
     {
         public int Status;
@@ -862,5 +856,4 @@ namespace TaskListPanel
         public string[] ExcludedPaths;
         public string[] HiddenPaths;
     }
-
 }

@@ -37,9 +37,10 @@ namespace PluginCore.Managers
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (!document.IsEditable) continue;
+                var sci = document.SciControl;
+                if (sci is null) continue;
                 path = Path.GetFullPath(path);
-                var filename = Path.GetFullPath(document.FileName);
+                var filename = Path.GetFullPath(sci.FileName);
                 if (filename == path || filename.StartsWithOrdinal(path + Path.DirectorySeparatorChar))
                 {
                     document.Close();

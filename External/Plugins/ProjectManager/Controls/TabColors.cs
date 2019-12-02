@@ -31,7 +31,7 @@ namespace ProjectManager.Controls
             {
                 foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 {
-                    DockContent tab = doc as DockContent;
+                    DockContent tab = (DockContent) doc;
                     if (doc.IsEditable && tab.TabColor != Color.Transparent)
                     {
                         tab.TabColor = Color.Transparent;

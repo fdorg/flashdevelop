@@ -164,7 +164,7 @@ namespace CodeRefactor.Controls
                     var files = new List<string>();
                     foreach (var document in PluginBase.MainForm.Documents)
                     {
-                        if (document.IsEditable && !document.IsUntitled) files.Add(document.FileName);
+                        if (document.SciControl is { } sci && !document.IsUntitled) files.Add(sci.FileName);
                     }
                     
                     item.Processor.Process(files);
