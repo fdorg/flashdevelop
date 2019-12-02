@@ -418,13 +418,13 @@ namespace FlashDebugger
 
         void TsbExportFiltered_Click(object sender, EventArgs e)
         {
-            using var fileDialog = new SaveFileDialog();
-            fileDialog.OverwritePrompt = true;
-            fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
-            if (fileDialog.ShowDialog(this) != DialogResult.OK) return;
+            using var dialog = new SaveFileDialog();
+            dialog.OverwritePrompt = true;
+            dialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
+            if (dialog.ShowDialog(this) != DialogResult.OK) return;
             try
             {
-                breakPointManager.Save(fileDialog.FileName);
+                breakPointManager.Save(dialog.FileName);
             }
             catch (Exception ex)
             {
@@ -434,13 +434,13 @@ namespace FlashDebugger
 
         void TsbImport_Click(object sender, EventArgs e)
         {
-            using var fileDialog = new OpenFileDialog();
-            fileDialog.CheckFileExists = true;
-            fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
-            if (fileDialog.ShowDialog(this) != DialogResult.OK) return;
+            using var dialog = new OpenFileDialog();
+            dialog.CheckFileExists = true;
+            dialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
+            if (dialog.ShowDialog(this) != DialogResult.OK) return;
             try
             {
-                breakPointManager.Import(fileDialog.FileName);
+                breakPointManager.Import(dialog.FileName);
                 breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
             }
             catch (Exception ex)

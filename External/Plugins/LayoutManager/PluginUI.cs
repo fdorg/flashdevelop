@@ -15,20 +15,20 @@ namespace LayoutManager
 {
     public class PluginUI : DockPanelControl
     {
-        private ToolStrip toolStrip;
-        private ListViewEx layoutsListView;
-        private ListViewItem infoListViewItem;
-        private ToolStripMenuItem menuLoadButton;
-        private ToolStripMenuItem menuSaveButton;
-        private ToolStripMenuItem menuDeleteButton;
-        private ToolStripMenuItem menuSettingButton;
-        private ToolStripSeparator toolStripSeparator;
-        private ToolStripButton settingStripButton;
-        private ToolStripButton deleteStripButton;
-        private ToolStripButton saveStripButton;
-        private ToolStripButton loadStripButton;
-        private PluginMain pluginMain;
-        private ImageListManager imageList;
+        ToolStrip toolStrip;
+        ListViewEx layoutsListView;
+        ListViewItem infoListViewItem;
+        ToolStripMenuItem menuLoadButton;
+        ToolStripMenuItem menuSaveButton;
+        ToolStripMenuItem menuDeleteButton;
+        ToolStripMenuItem menuSettingButton;
+        ToolStripSeparator toolStripSeparator;
+        ToolStripButton settingStripButton;
+        ToolStripButton deleteStripButton;
+        ToolStripButton saveStripButton;
+        ToolStripButton loadStripButton;
+        PluginMain pluginMain;
+        ImageListManager imageList;
         
         public PluginUI(PluginMain pluginMain)
         {
@@ -48,7 +48,7 @@ namespace LayoutManager
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent() 
+        void InitializeComponent() 
         {
             this.layoutsListView = new System.Windows.Forms.ListViewEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
@@ -158,7 +158,7 @@ namespace LayoutManager
         /// <summary>
         /// Initializes the used graphics
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             this.imageList = new ImageListManager();
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
@@ -177,7 +177,7 @@ namespace LayoutManager
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
-        private void ImageList_Populate(object sender, EventArgs e)
+        void ImageList_Populate(object sender, EventArgs e)
         {
             this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("48"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("229"));
@@ -186,7 +186,7 @@ namespace LayoutManager
         /// <summary>
         /// Creates and attaches the context menu
         /// </summary>
-        private void InitializeContextMenu()
+        void InitializeContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ImageScalingSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
@@ -204,7 +204,7 @@ namespace LayoutManager
         /// <summary>
         /// Applies the localized texts to the control
         /// </summary>
-        private void InitializeTexts()
+        void InitializeTexts()
         {
             this.loadStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.LoadLayout");
             this.deleteStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.DeleteLayout");
@@ -215,7 +215,7 @@ namespace LayoutManager
         /// <summary>
         /// Populates the list view on load
         /// </summary>
-        private void FormLoaded(object sender, EventArgs e)
+        void FormLoaded(object sender, EventArgs e)
         {
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
@@ -228,7 +228,7 @@ namespace LayoutManager
         /// <summary>
         /// Updates the ui elements
         /// </summary>
-        private void UpdatePluginUI()
+        void UpdatePluginUI()
         {
             if (this.layoutsListView.Items.Count == 0)
             {
@@ -260,7 +260,7 @@ namespace LayoutManager
         /// <summary>
         /// Populates the list view with workspaces
         /// </summary>
-        private void PopulateLayoutsListView()
+        void PopulateLayoutsListView()
         {
             this.layoutsListView.Items.Clear();
             string[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
@@ -277,7 +277,7 @@ namespace LayoutManager
         /// <summary>
         /// Shows the plugin settings
         /// </summary>
-        private void SettingsButtonClick(object sender, EventArgs e)
+        void SettingsButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -292,7 +292,7 @@ namespace LayoutManager
         /// <summary>
         /// Loads the selected layout
         /// </summary>
-        private void LoadButtonClick(object sender, EventArgs e)
+        void LoadButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -308,7 +308,7 @@ namespace LayoutManager
         /// <summary>
         /// Deletes the selected layout
         /// </summary>
-        private void DeleteButtonClick(object sender, EventArgs e)
+        void DeleteButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -329,17 +329,17 @@ namespace LayoutManager
         /// <summary>
         /// Saves the selected layout
         /// </summary>
-        private void SaveButtonClick(object sender, EventArgs e)
+        void SaveButtonClick(object sender, EventArgs e)
         {
             try
             {
-                using SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
-                sfd.InitialDirectory = this.GetLayoutsDir();
-                sfd.DefaultExt = "fdl"; sfd.FileName = "";
-                if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
+                using var dialog = new SaveFileDialog();
+                dialog.Filter = TextHelper.GetString("Info.OpenFileFilter");
+                dialog.InitialDirectory = this.GetLayoutsDir();
+                dialog.DefaultExt = "fdl"; dialog.FileName = "";
+                if (dialog.ShowDialog(this) == DialogResult.OK && dialog.FileName.Length != 0)
                 {
-                    PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
+                    PluginBase.MainForm.DockPanel.SaveAsXml(dialog.FileName);
                     this.PopulateLayoutsListView();
                 }
             }
@@ -352,12 +352,12 @@ namespace LayoutManager
         /// <summary>
         /// Updates the ui when on index change
         /// </summary>
-        private void LayoutsListViewSelectedIndexChanged(object sender, EventArgs e) => UpdatePluginUI();
+        void LayoutsListViewSelectedIndexChanged(object sender, EventArgs e) => UpdatePluginUI();
 
         /// <summary>
         /// Loads the selected layout on double click
         /// </summary>
-        private void LayoutsListViewDoubleClick(object sender, EventArgs e)
+        void LayoutsListViewDoubleClick(object sender, EventArgs e)
         {
             var item = this.GetSelectedItem();
             if (item != null && item.ImageIndex != 1)
@@ -379,7 +379,7 @@ namespace LayoutManager
         /// <summary>
         /// Gets the selected list view item
         /// </summary>
-        private ListViewItem GetSelectedItem()
+        ListViewItem GetSelectedItem()
         {
             try
             {
@@ -394,7 +394,7 @@ namespace LayoutManager
         /// <summary>
         /// Gets the layouts directory
         /// </summary>
-        private string GetLayoutsDir()
+        string GetLayoutsDir()
         {
             var userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
@@ -406,7 +406,7 @@ namespace LayoutManager
         /// <summary>
         /// Copies the default layout file to disk
         /// </summary> 
-        private void WriteDefaultLayout(string file)
+        void WriteDefaultLayout(string file)
         {
             try
             {

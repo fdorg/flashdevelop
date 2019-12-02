@@ -3672,21 +3672,21 @@ namespace FlashDevelop
         /// </summary>
         public void SelectTheme(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = PathHelper.ThemesDir;
-            ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
-            ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using var dialog = new OpenFileDialog();
+            dialog.InitialDirectory = PathHelper.ThemesDir;
+            dialog.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
+            dialog.Filter = TextHelper.GetString("Info.ThemesFilter");
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                string ext = Path.GetExtension(ofd.FileName).ToLower();
+                string ext = Path.GetExtension(dialog.FileName).ToLower();
                 if (ext == ".fdi")
                 {
-                    ThemeManager.LoadTheme(ofd.FileName);
+                    ThemeManager.LoadTheme(dialog.FileName);
                     ThemeManager.WalkControls(this);
                 }
                 else
                 {
-                    CallCommand("ExtractZip", ofd.FileName + ";true");
+                    CallCommand("ExtractZip", dialog.FileName + ";true");
                     string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                     ThemeManager.WalkControls(this);

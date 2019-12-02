@@ -26,12 +26,12 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : Command
     {
-        private readonly Command findAllReferencesCommand;
-        private Command renamePackage;
-        private readonly bool isRenamePackage;
-        private readonly string renamePackagePath;
-        private string oldFileName;
-        private string newFileName;
+        readonly Command findAllReferencesCommand;
+        Command renamePackage;
+        readonly bool isRenamePackage;
+        readonly string renamePackagePath;
+        string oldFileName;
+        string newFileName;
 
         public string OldName { get; private set; }
         public string NewName { get; private set; }
@@ -159,13 +159,13 @@ namespace CodeRefactor.Commands
 
         #region Private Helper Methods
 
-        private void OnRenamePackageComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> args)
+        void OnRenamePackageComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> args)
         {
             Results = args.Results;
             FireOnRefactorComplete();
         }
 
-        private bool ValidateTargets()
+        bool ValidateTargets()
         {
             var target = findAllReferencesCommand.CurrentTarget;
             var isEnum = target.Type.Flags.HasFlag(FlagType.Enum);
@@ -213,7 +213,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Renames the given the set of matched references
         /// </summary>
-        private void OnFindAllReferencesCompleted(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> eventArgs)
+        void OnFindAllReferencesCompleted(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> eventArgs)
         {
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
@@ -289,7 +289,7 @@ namespace CodeRefactor.Commands
             FireOnRefactorComplete();
         }
 
-        private void RenameFile(IDictionary<string, List<SearchMatch>> results)
+        void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
             // We close previous files to avoid unwanted "file modified" dialogs
             var reopen = false;
@@ -334,7 +334,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Outputs the results to the TraceManager
         /// </summary>
-        private void ReportResults()
+        void ReportResults()
         {
             var newNameLength = NewName.Length;
             // outputs the lines as they change
@@ -384,7 +384,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Begins the process of renaming.
         /// </summary>
-        private void StartRename(bool useInline, string oldName, string newName)
+        void StartRename(bool useInline, string oldName, string newName)
         {
             if (!string.IsNullOrEmpty(newName))
             {
@@ -404,8 +404,7 @@ namespace CodeRefactor.Commands
             {
                 var title = " " + string.Format(TextHelper.GetString("Title.RenameDialog"), oldName);
                 var label = TextHelper.GetString("Label.NewName");
-                var dialog = new LineEntryDialog(title, label, oldName);
-
+                using var dialog = new LineEntryDialog(title, label, oldName);
                 switch (dialog.ShowDialog())
                 {
                     case DialogResult.OK:
@@ -421,7 +420,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Apply the new name.
         /// </summary>
-        private void OnApply(InlineRename sender, string oldName, string newName)
+        void OnApply(InlineRename sender, string oldName, string newName)
         {
             UpdateDefaultFlags(sender);
             if (newName.Length == 0 || oldName == newName) return;
@@ -439,7 +438,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Cancel renaming and clean up.
         /// </summary>
-        private void OnCancel(InlineRename sender)
+        void OnCancel(InlineRename sender)
         {
             UpdateDefaultFlags(sender);
             if (findAllReferencesCommand != null)
@@ -451,7 +450,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Update the default flags and clean up.
         /// </summary>
-        private void UpdateDefaultFlags(InlineRename inlineRename)
+        void UpdateDefaultFlags(InlineRename inlineRename)
         {
             if (inlineRename is null) return;
             inlineRename.Apply -= OnApply;

@@ -110,9 +110,9 @@ namespace SourceControl.Sources.Git
         {
             var title = TextHelper.GetString("Label.Commit");
             var msg = TextHelper.GetString("Info.EnterMessage");
-            using var led = new LineEntryDialog(title, msg, "");
-            if (led.ShowDialog() != DialogResult.OK || led.Line == "") return;
-            new CommitCommand(GetPathsArray(), led.Line);
+            using var dialog = new LineEntryDialog(title, msg, "");
+            if (dialog.ShowDialog() != DialogResult.OK || dialog.Line == "") return;
+            new CommitCommand(GetPathsArray(), dialog.Line);
         }
 
         void Update_Click(object sender, EventArgs e) => TortoiseProc.Execute("pull", GetPaths());
