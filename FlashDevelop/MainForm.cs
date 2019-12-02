@@ -1874,9 +1874,6 @@ namespace FlashDevelop
             EventManager.DispatchEvent(this, ne);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         void OpenDocumentFromParameters(string file)
         {
             var openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
@@ -1887,7 +1884,7 @@ namespace FlashDevelop
                 if (File.Exists(file))
                 {
                     if (OpenEditableDocument(file, false) is TabbedDocument doc) ApplyOpenParams(openParams, doc.SciControl);
-                    else if (CurrentDocument.FileName == file) ApplyOpenParams(openParams, CurrentDocument.SciControl);
+                    else if (CurrentDocument.SciControl is { } sci && sci.FileName == file) ApplyOpenParams(openParams, sci);
                 }
             }
             else if (File.Exists(file))

@@ -28,11 +28,11 @@ namespace CodeRefactor.Provider
             if (currentCommand != null) return;
             currentCommand = command;
 
-            var doc = PluginBase.MainForm.CurrentDocument;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             startState = new StartState
             {
-                FileName = doc.FileName,
-                CursorPosition = doc.SciControl.CurrentPos,
+                FileName = sci.FileName,
+                CursorPosition = sci.CurrentPos,
                 Commands = new[] { command, null, null }
             };
 

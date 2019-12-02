@@ -124,7 +124,7 @@ namespace FlashDevelop.Managers
             var documents = PluginBase.MainForm.Documents;
             for (int i = 0; i < documents.Length; i++)
             {
-                ITabbedDocument document = documents[i];
+                var document = documents[i];
                 if (document.IsEditable && !document.IsUntitled)
                 {
                     if (document == PluginBase.MainForm.CurrentDocument)

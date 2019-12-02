@@ -38,32 +38,34 @@ namespace FlashDevelop.Managers
         /// </summary>
         static void CheckFileChange(ITabbedDocument document)
         {
-            if (document is TabbedDocument casted && casted.IsEditable && casted.CheckFileChange())
+            if (document is TabbedDocument doc
+                && doc.SciControl is { } sci
+                && doc.CheckFileChange())
             {
                 if (PluginBase.MainForm.Settings.AutoReloadModifiedFiles)
                 {
-                    casted.RefreshFileInfo();
-                    casted.Reload(false);
+                    doc.RefreshFileInfo();
+                    doc.Reload(false);
                 }
                 else
                 {
                     if (YesToAll)
                     {
-                        casted.RefreshFileInfo();
-                        casted.Reload(false);
+                        doc.RefreshFileInfo();
+                        doc.Reload(false);
                         return;
                     }
                     string dlgTitle = TextHelper.GetString("Title.InfoDialog");
                     string dlgMessage = TextHelper.GetString("Info.FileIsModifiedOutside");
-                    string formatted = string.Format(dlgMessage, "\n", casted.FileName);
+                    string formatted = string.Format(dlgMessage, "\n", sci.FileName);
                     MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
                     MessageBoxManager.Register(); // Use custom labels...
                     var result = MessageBox.Show(PluginBase.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
-                    casted.RefreshFileInfo(); // User may have waited before responding, save info now
-                    if (result == DialogResult.Yes) casted.Reload(false);
+                    doc.RefreshFileInfo(); // User may have waited before responding, save info now
+                    if (result == DialogResult.Yes) doc.Reload(false);
                     else if (result == DialogResult.Cancel)
                     {
-                        casted.Reload(false);
+                        doc.Reload(false);
                         YesToAll = true;
                     }
                     MessageBoxManager.Unregister();

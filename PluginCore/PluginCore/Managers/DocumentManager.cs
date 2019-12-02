@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using PluginCore.Localization;
 using ScintillaNet;
 
@@ -109,14 +110,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static ITabbedDocument FindDocument(string filename)
         {
-            foreach (var document in PluginBase.MainForm.Documents)
-            {
-                if (document.FileName == filename)
-                {
-                    return document;
-                }
-            }
-            return null;
+            return PluginBase.MainForm.Documents.FirstOrDefault(document => document.FileName == filename);
         }
 
         /// <summary>
@@ -124,14 +118,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static ITabbedDocument FindDocument(ScintillaControl sci)
         {
-            foreach (var document in PluginBase.MainForm.Documents)
-            {
-                if (document.SciControl == sci)
-                {
-                    return document;
-                }
-            }
-            return null;
+            return PluginBase.MainForm.Documents.FirstOrDefault(document => document.SciControl == sci);
         }
     }
 }

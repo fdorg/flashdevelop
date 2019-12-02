@@ -281,8 +281,8 @@ namespace FlashDebugger
         public static ScintillaControl ActivateDocument(string filefullpath, int line, bool bSelectLine)
         {
             var doc = PluginBase.MainForm.OpenEditableDocument(filefullpath, false) as ITabbedDocument;
-            if (doc is null || doc.FileName != filefullpath) return null;
-            ScintillaControl sci = doc.SciControl;
+            var sci = doc?.SciControl;
+            if (sci is null || sci.FileName != filefullpath) return null;
             if (line >= 0)
             {
                 sci.EnsureVisible(line);
@@ -304,8 +304,8 @@ namespace FlashDebugger
 
         internal static void RunToCursor_Click(object sender, EventArgs e)
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, sci.CurrentLine);
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            PluginMain.breakPointManager.SetTemporaryBreakPoint(sci.FileName, sci.CurrentLine);
             PluginMain.debugManager.Continue_Click(sender, e);
         }
 
@@ -346,9 +346,9 @@ namespace FlashDebugger
 
         internal static void DisableAllBreakPoints_Click(object sender, EventArgs e)
         {
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                List<int> list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPEnabled);
+                var list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPEnabled);
                 foreach (int line in list)
                 {
                     doc.SciControl.MarkerDelete(line, markerBPEnabled);
@@ -359,9 +359,9 @@ namespace FlashDebugger
 
         internal static void EnableAllBreakPoints_Click(object sender, EventArgs e)
         {
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                List<int> list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPDisabled);
+                var list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPDisabled);
                 foreach (int line in list)
                 {
                     doc.SciControl.MarkerDelete(line, markerBPDisabled);

@@ -913,8 +913,9 @@ namespace ASCompletion
         string DetectActionscriptVersion(ITabbedDocument doc)
         {
             var parser = new ASFileParser();
-            var model = new FileModel(doc.FileName);
-            parser.ParseSrc(model, doc.SciControl.Text);
+            var sci = doc.SciControl;
+            var model = new FileModel(sci.FileName);
+            parser.ParseSrc(model, sci.Text);
             if (model.Version == 1 && PluginBase.CurrentProject != null)
             {
                 var lang = PluginBase.CurrentProject.Language;

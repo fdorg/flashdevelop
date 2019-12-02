@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace LintingHelper
 {
-    class LintingCache
+    internal class LintingCache
     {
         readonly Dictionary<string, List<LintingResult>> results;
 
@@ -21,14 +21,15 @@ namespace LintingHelper
 
         public List<LintingResult> GetResultsFromPosition(ITabbedDocument document, int position)
         {
-            if (!results.TryGetValue(document.FileName, out var list)) return null;
-            var line = document.SciControl.LineFromPosition(position);
+            var sci = document.SciControl;
+            if (!results.TryGetValue(sci.FileName, out var list)) return null;
+            var line = sci.LineFromPosition(position);
 
             var localResults = new List<LintingResult>();
             foreach (var result in list)
             {
-                var start = document.SciControl.PositionFromLine(result.Line - 1);
-                var len = document.SciControl.LineLength(result.Line - 1);
+                var start = sci.PositionFromLine(result.Line - 1);
+                var len = sci.LineLength(result.Line - 1);
                 start += result.FirstChar;
                 if (result.Length > 0)
                 {
@@ -60,7 +61,7 @@ namespace LintingHelper
             }
         }
 
-        private void AddResult(string document, LintingResult result)
+        void AddResult(string document, LintingResult result)
         {
             var list = results.GetOrCreate(document);
             if (list.Find(result.Equals) is null)
