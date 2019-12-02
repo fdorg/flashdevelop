@@ -817,7 +817,7 @@ namespace ASCompletion
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (!document.IsEditable) continue;
+                if (document.SciControl is null) continue;
                 UpdateMarkersFromCache(document.SplitSci1);
                 UpdateMarkersFromCache(document.SplitSci2);
             }

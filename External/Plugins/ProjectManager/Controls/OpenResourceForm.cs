@@ -13,27 +13,27 @@ namespace ProjectManager.Controls
 {
     public class OpenResourceForm : SmartForm
     {
-        private readonly PluginMain plugin;
-        private readonly int MAX_ITEMS = 100;
-        private List<string> openedFiles;
-        private List<string> projectFiles;
-        private const string ITEM_SPACER = "-----------------";
-        private System.Windows.Forms.TextBox textBox;
-        private System.Windows.Forms.ListBox listBox;
-        private System.Windows.Forms.CheckBox cbInClasspathsOnly;
-        private System.Windows.Forms.CheckBox checkBox;
-        private System.Windows.Forms.Button refreshButton;
-        private static string previousSearch;
+        readonly PluginMain plugin;
+        readonly int MAX_ITEMS = 100;
+        List<string> openedFiles;
+        List<string> projectFiles;
+        const string ITEM_SPACER = "-----------------";
+        TextBox textBox;
+        ListBox listBox;
+        CheckBox cbInClasspathsOnly;
+        CheckBox checkBox;
+        Button refreshButton;
+        static string previousSearch;
 
         public OpenResourceForm(PluginMain plugin)
         {
             this.plugin = plugin;
-            this.InitializeComponent();
-            this.InitializeGraphics();
-            this.InitializeLocalization();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.listBox.ItemHeight = this.listBox.Font.Height;
-            this.FormGuid = "8e4e0a95-0aff-422c-b8f5-ad9bc8affabb";
+            InitializeComponent();
+            InitializeGraphics();
+            InitializeLocalization();
+            Font = PluginBase.Settings.DefaultFont;
+            listBox.ItemHeight = listBox.Font.Height;
+            FormGuid = "8e4e0a95-0aff-422c-b8f5-ad9bc8affabb";
         }
 
         #region Windows Form Designer Generated Code
@@ -42,170 +42,170 @@ namespace ProjectManager.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.textBox = new System.Windows.Forms.TextBoxEx();
-            this.listBox = new System.Windows.Forms.ListBoxEx();
-            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBoxEx();
-            this.checkBox = new System.Windows.Forms.CheckBoxEx();
-            this.refreshButton = new System.Windows.Forms.ButtonEx();
-            this.SuspendLayout();
+            textBox = new TextBoxEx();
+            listBox = new ListBoxEx();
+            cbInClasspathsOnly = new CheckBoxEx();
+            checkBox = new CheckBoxEx();
+            refreshButton = new ButtonEx();
+            SuspendLayout();
             // 
             // textBox
             // 
-            this.textBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.textBox.Location = new System.Drawing.Point(12, 32);
-            this.textBox.Name = "textBox";
-            this.textBox.Size = new System.Drawing.Size(466, 22);
-            this.textBox.TabIndex = 1;
-            this.textBox.TextChanged += this.TextBoxTextChanged;
-            this.textBox.KeyDown += this.TextBoxKeyDown;
+            textBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            textBox.Location = new Point(12, 32);
+            textBox.Name = "textBox";
+            textBox.Size = new Size(466, 22);
+            textBox.TabIndex = 1;
+            textBox.TextChanged += TextBoxTextChanged;
+            textBox.KeyDown += TextBoxKeyDown;
             // 
             // refreshButton
             //
-            this.refreshButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.refreshButton.Location = new System.Drawing.Point(485, 30);
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(26, 23);
-            this.refreshButton.TabIndex = 4;
-            this.refreshButton.Click += RefreshButtonClick;
+            refreshButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            refreshButton.Location = new Point(485, 30);
+            refreshButton.Name = "refreshButton";
+            refreshButton.Size = new Size(26, 23);
+            refreshButton.TabIndex = 4;
+            refreshButton.Click += RefreshButtonClick;
             // 
             // cbInClasspathsOnly
             // 
-            this.cbInClasspathsOnly.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.cbInClasspathsOnly.Location = new System.Drawing.Point(380, 9);
-            this.cbInClasspathsOnly.Size = new System.Drawing.Size(26, 24);
-            this.cbInClasspathsOnly.Text = "In Classpaths only";
-            this.cbInClasspathsOnly.Name = "cbInClasspathsOnly";
-            this.cbInClasspathsOnly.AutoSize = true;
-            this.cbInClasspathsOnly.TabIndex = 2;
-            this.cbInClasspathsOnly.Checked = false;
-            this.cbInClasspathsOnly.CheckedChanged += this.CbInClasspathsOnlyCheckedChanged;
+            cbInClasspathsOnly.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbInClasspathsOnly.Location = new Point(380, 9);
+            cbInClasspathsOnly.Size = new Size(26, 24);
+            cbInClasspathsOnly.Text = "In Classpaths only";
+            cbInClasspathsOnly.Name = "cbInClasspathsOnly";
+            cbInClasspathsOnly.AutoSize = true;
+            cbInClasspathsOnly.TabIndex = 2;
+            cbInClasspathsOnly.Checked = false;
+            cbInClasspathsOnly.CheckedChanged += CbInClasspathsOnlyCheckedChanged;
             // 
             // checkBox
             //
-            this.checkBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.checkBox.Location = new System.Drawing.Point(480, 9);
-            this.checkBox.Size = new System.Drawing.Size(26, 24);
-            this.checkBox.Text = "Code files only";
-            this.checkBox.Name = "checkBox";
-            this.checkBox.AutoSize = true;
-            this.checkBox.TabIndex = 3;
-            this.checkBox.Checked = false;
-            this.checkBox.CheckedChanged += this.CheckBoxCheckedChanged;
+            checkBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            checkBox.Location = new Point(480, 9);
+            checkBox.Size = new Size(26, 24);
+            checkBox.Text = "Code files only";
+            checkBox.Name = "checkBox";
+            checkBox.AutoSize = true;
+            checkBox.TabIndex = 3;
+            checkBox.Checked = false;
+            checkBox.CheckedChanged += CheckBoxCheckedChanged;
             // 
             // listBox
             // 
-            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBox.IntegralHeight = false;
-            this.listBox.FormattingEnabled = true;
-            this.listBox.Location = new System.Drawing.Point(12, 62);
-            this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(498, 264);
-            this.listBox.TabIndex = 5;
-            this.listBox.DrawItem += this.ListBoxDrawItem;
-            this.listBox.Resize += this.ListBoxResize;
-            this.listBox.DoubleClick += this.ListBoxDoubleClick;
+            listBox.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
+            listBox.DrawMode = DrawMode.OwnerDrawFixed;
+            listBox.IntegralHeight = false;
+            listBox.FormattingEnabled = true;
+            listBox.Location = new Point(12, 62);
+            listBox.Name = "listBox";
+            listBox.Size = new Size(498, 264);
+            listBox.TabIndex = 5;
+            listBox.DrawItem += ListBoxDrawItem;
+            listBox.Resize += ListBoxResize;
+            listBox.DoubleClick += ListBoxDoubleClick;
             // 
             // OpenResourceForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(522, 340);
-            this.Controls.Add(this.cbInClasspathsOnly);
-            this.Controls.Add(this.listBox);
-            this.Controls.Add(this.textBox);
-            this.Controls.Add(this.refreshButton);
-            this.Controls.Add(this.checkBox);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(480, 300);
-            this.Name = "OpenResourceForm";
-            this.ShowIcon = false;
-            this.KeyPreview = true;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Open Resource";
-            this.KeyDown += this.OpenResourceKeyDown;
-            this.Load += OpenResourceFormLoad;
-            this.Activated += OpenResourceFormActivated;
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(522, 340);
+            Controls.Add(cbInClasspathsOnly);
+            Controls.Add(listBox);
+            Controls.Add(textBox);
+            Controls.Add(refreshButton);
+            Controls.Add(checkBox);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            MinimumSize = new Size(480, 300);
+            Name = "OpenResourceForm";
+            ShowIcon = false;
+            KeyPreview = true;
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Open Resource";
+            KeyDown += OpenResourceKeyDown;
+            Load += OpenResourceFormLoad;
+            Activated += OpenResourceFormActivated;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         #region Methods And Event Handlers
 
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0", false));
-            this.refreshButton.ImageList = imageList;
-            this.refreshButton.ImageIndex = 0;
+            refreshButton.ImageList = imageList;
+            refreshButton.ImageIndex = 0;
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
-            this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
-            this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
-            this.Text = " " + TextHelper.GetString("Title.OpenResource");
+            cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
+            checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
+            Text = " " + TextHelper.GetString("Title.OpenResource");
         }
 
-        private void RefreshButtonClick(object sender, EventArgs e)
+        void RefreshButtonClick(object sender, EventArgs e)
         {
-            this.CreateFileList();
-            this.RefreshListBox();
+            CreateFileList();
+            RefreshListBox();
         }
 
-        private void CbInClasspathsOnlyCheckedChanged(object sender, EventArgs e)
+        void CbInClasspathsOnlyCheckedChanged(object sender, EventArgs e)
         {
-            this.CreateFileList();
-            this.RefreshListBox();
+            CreateFileList();
+            RefreshListBox();
         }
 
-        private void CheckBoxCheckedChanged(object sender, EventArgs e)
+        void CheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            this.CreateFileList();
-            this.RefreshListBox();
+            CreateFileList();
+            RefreshListBox();
         }
 
-        private void OpenResourceFormLoad(object sender, EventArgs e)
+        void OpenResourceFormLoad(object sender, EventArgs e)
         {
-            this.CreateFileList();
-            this.RefreshListBox();
+            CreateFileList();
+            RefreshListBox();
         }
 
-        private void OpenResourceFormActivated(object sender, EventArgs e)
+        void OpenResourceFormActivated(object sender, EventArgs e)
         {
-            this.textBox.Focus();
-            this.textBox.SelectAll();
+            textBox.Focus();
+            textBox.SelectAll();
             if (previousSearch != null)
             {
                 previousSearch = null;
-                this.UpdateOpenFiles();
-                this.textBox.Focus();
+                UpdateOpenFiles();
+                textBox.Focus();
             }
         }
 
-        private void ListBoxDrawItem(object sender, DrawItemEventArgs e)
+        void ListBoxDrawItem(object sender, DrawItemEventArgs e)
         {
             bool selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
             if (e.Index >= 0)
             {
-                var fullName = (string)this.listBox.Items[e.Index];
+                var fullName = (string)listBox.Items[e.Index];
                 if (fullName == ITEM_SPACER)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(this.listBox.BackColor), e.Bounds);
+                    e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
                     int y = (e.Bounds.Top + e.Bounds.Bottom)/2;
                     e.Graphics.DrawLine(Pens.Gray, e.Bounds.Left, y, e.Bounds.Right, y);
                 }
                 else if (!selected)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(this.listBox.BackColor), e.Bounds);
+                    e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
                     int slashIndex = fullName.LastIndexOf(Path.DirectorySeparatorChar);
                     string path = fullName.Substring(0, slashIndex + 1);
                     string name = fullName.Substring(slashIndex + 1);
@@ -223,42 +223,42 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void RefreshListBox()
+        void RefreshListBox()
         {
-            this.listBox.BeginUpdate();
-            this.listBox.Items.Clear();
-            this.FillListBox();
-            if (this.listBox.Items.Count > 0)
+            listBox.BeginUpdate();
+            listBox.Items.Clear();
+            FillListBox();
+            if (listBox.Items.Count > 0)
             {
-                this.listBox.SelectedIndex = 0;
+                listBox.SelectedIndex = 0;
             }
-            this.listBox.EndUpdate();
+            listBox.EndUpdate();
         }
 
-        private void FillListBox()
+        void FillListBox()
         {
             List<string> matchedFiles;
-            if (this.textBox.Text.Length > 0)
+            if (textBox.Text.Length > 0)
             {
-                string searchText = this.textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, searchText, Path.DirectorySeparatorChar, 0);
+                string searchText = textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                matchedFiles = SearchUtil.getMatchedItems(openedFiles, searchText, Path.DirectorySeparatorChar, 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
-                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, searchText, Path.DirectorySeparatorChar, this.MAX_ITEMS));
+                matchedFiles.AddRange(SearchUtil.getMatchedItems(projectFiles, searchText, Path.DirectorySeparatorChar, MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
             foreach (string file in matchedFiles)
             {
-               this.listBox.Items.Add(file);
+               listBox.Items.Add(file);
             }
         }
 
         /// <summary>
         /// Check open files and update collections accordingly
         /// </summary>
-        private void UpdateOpenFiles()
+        void UpdateOpenFiles()
         {
-            List<string> open = this.GetOpenFiles();
-            List<string> folders = this.GetProjectFolders();
+            List<string> open = GetOpenFiles();
+            List<string> folders = GetProjectFolders();
             List<string> prevOpen = openedFiles;
             openedFiles = new List<string>();
             foreach (string file in open)
@@ -282,12 +282,12 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void CreateFileList()
+        void CreateFileList()
         {
-            List<string> open = this.GetOpenFiles();
+            var open = GetOpenFiles();
             openedFiles = new List<string>();
             projectFiles = new List<string>();
-            List<string> allFiles = this.GetProjectFiles();
+            var allFiles = GetProjectFiles();
             foreach (string file in allFiles)
             {
                 if (open.Contains(file)) openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
@@ -299,21 +299,21 @@ namespace ProjectManager.Controls
         /// Open documents paths
         /// </summary>
         /// <returns></returns>
-        private List<string> GetOpenFiles()
+        static List<string> GetOpenFiles()
         {
-            List<string> open = new List<string>();
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+            var result = new List<string>();
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                if (doc.IsEditable && !doc.IsUntitled) 
+                if (doc.SciControl is { } sci && !doc.IsUntitled) 
                 {
-                    string ext = Path.GetExtension(doc.FileName);
+                    var ext = Path.GetExtension(sci.FileName);
                     if (!PluginMain.Settings.ExcludedFileTypes.Contains(ext))
                     {
-                        open.Add(doc.FileName);
+                        result.Add(sci.FileName);
                     }
                 }
             }
-            return open;
+            return result;
         }
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace ProjectManager.Controls
         public List<string> GetProjectFiles()
         {
             List<string> files = new List<string>();
-            List<string> folders = this.GetProjectFolders();
+            List<string> folders = GetProjectFolders();
             foreach (string folder in folders)
             {
                 AddFilesInFolder(files, folder);
@@ -333,7 +333,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Gather files in depth avoiding hidden directories
         /// </summary>
-        private void AddFilesInFolder(List<string> files, string folder)
+        void AddFilesInFolder(List<string> files, string folder)
         {
             if (Directory.Exists(folder) && !isFolderHidden(folder))
             {
@@ -388,7 +388,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Filter out hidden/VCS directories
         /// </summary>
-        private bool isFolderHidden(string folder)
+        bool isFolderHidden(string folder)
         {
             string name = Path.GetFileName(folder);
             if (name.Length == 0 || !char.IsLetterOrDigit(name[0])) return true;
@@ -398,78 +398,78 @@ namespace ProjectManager.Controls
             return (info.Attributes & FileAttributes.Hidden) > 0;
         }
 
-        private void Navigate()
+        void Navigate()
         {
-            if (this.listBox.SelectedItem != null)
+            if (listBox.SelectedItem != null)
             {
-                string file = PluginBase.CurrentProject.GetAbsolutePath((string)this.listBox.SelectedItem);
+                string file = PluginBase.CurrentProject.GetAbsolutePath((string)listBox.SelectedItem);
                 ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
                 {
                     plugin.OpenFile(file);
                 });
-                this.Close();
+                Close();
             }
         }
 
-        private void OpenResourceKeyDown(object sender, KeyEventArgs e)
+        void OpenResourceKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape) this.Close();
+            if (e.KeyCode == Keys.Escape) Close();
             else if (e.KeyCode == Keys.Enter)
             {
                 e.Handled = true;
-                this.Navigate();
+                Navigate();
             }
             else if (e.KeyData == (Keys.Control | Keys.R))
             {
                 e.SuppressKeyPress = true;
-                this.CreateFileList();
-                this.RefreshListBox();
+                CreateFileList();
+                RefreshListBox();
             }
         }
 
-        private void TextBoxKeyDown(object sender, KeyEventArgs e)
+        void TextBoxKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Down && this.listBox.SelectedIndex < this.listBox.Items.Count - 1)
+            if (e.KeyCode == Keys.Down && listBox.SelectedIndex < listBox.Items.Count - 1)
             {
-                this.listBox.SelectedIndex++;
-                if (this.listBox.SelectedItem.ToString() == ITEM_SPACER)
+                listBox.SelectedIndex++;
+                if (listBox.SelectedItem.ToString() == ITEM_SPACER)
                 {
-                    try { this.listBox.SelectedIndex++; }
+                    try { listBox.SelectedIndex++; }
                     catch { }
                 }
                 e.Handled = true;
             }
-            else if (e.KeyCode == Keys.Up && this.listBox.SelectedIndex > 0)
+            else if (e.KeyCode == Keys.Up && listBox.SelectedIndex > 0)
             {
-                this.listBox.SelectedIndex--;
-                if (this.listBox.SelectedItem.ToString() == ITEM_SPACER)
+                listBox.SelectedIndex--;
+                if (listBox.SelectedItem.ToString() == ITEM_SPACER)
                 {
-                    try { this.listBox.SelectedIndex--; }
+                    try { listBox.SelectedIndex--; }
                     catch { }
                 }
                 e.Handled = true;
             }
         }
 
-        private void TextBoxTextChanged(object sender, EventArgs e)
+        void TextBoxTextChanged(object sender, EventArgs e)
         {
-            this.RefreshListBox();
+            RefreshListBox();
         }
 
-        private void ListBoxDoubleClick(object sender, EventArgs e)
+        void ListBoxDoubleClick(object sender, EventArgs e)
         {
-            this.Navigate();
+            Navigate();
         }
 
-        private void ListBoxResize(object sender, EventArgs e)
+        void ListBoxResize(object sender, EventArgs e)
         {
-            this.listBox.Refresh();
+            listBox.Refresh();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            previousSearch = this.textBox.Text;
+            previousSearch = textBox.Text;
         }
 
         #endregion
@@ -478,7 +478,7 @@ namespace ProjectManager.Controls
 
     #region Helpers
 
-    struct SearchResult
+    internal struct SearchResult
     {
         public double Score;
         public double FolderScore;

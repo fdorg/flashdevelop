@@ -649,10 +649,10 @@ namespace FlashDevelop.Dialogs
             var data = (KeyValuePair<string, SearchMatch>)item.Tag;
             if (!File.Exists(data.Key)) return;
             Globals.MainForm.Activate();
-            var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
-            if (doc != null && doc.IsEditable && resultsView.Columns.Count == 4)
+            var doc = PluginBase.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
+            if (doc?.SciControl is {} sci && resultsView.Columns.Count == 4)
             {
-                FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
+                FRDialogGenerics.SelectMatch(sci, data.Value);
             }
         }
 

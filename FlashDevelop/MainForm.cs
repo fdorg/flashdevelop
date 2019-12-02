@@ -1944,7 +1944,7 @@ namespace FlashDevelop
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ApplySettings));
             foreach (var document in Documents)
             {
-                if (!document.IsEditable) continue;
+                if (document.SciControl is null) continue;
                 ScintillaManager.ApplySciSettings(document.SplitSci1, true);
                 ScintillaManager.ApplySciSettings(document.SplitSci2, true);
             }

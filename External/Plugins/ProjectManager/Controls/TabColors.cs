@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using PluginCore;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -45,7 +46,7 @@ namespace ProjectManager.Controls
                 {
                     paths.Add(PluginBase.CurrentProject.GetAbsolutePath(path));
                 }
-                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
                     if (doc.IsEditable) UpdateTabColor(doc, paths, settings);
                 }
@@ -55,18 +56,11 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Updates color of a document tab
         /// </summary>
-        private static void UpdateTabColor(ITabbedDocument doc, List<string> paths, ProjectManagerSettings settings)
+        static void UpdateTabColor(ITabbedDocument doc, IEnumerable<string> paths, ProjectManagerSettings settings)
         {
-            bool isMatch = false;
-            foreach (string path in paths)
-            {
-                if (doc.FileName.StartsWith(path, StringComparison.OrdinalIgnoreCase))
-                {
-                    isMatch = true;
-                    break;
-                }
-            }
-            DockContent tab = doc as DockContent;
+            var fileName = doc.FileName;
+            var isMatch = paths.Any(path => fileName.StartsWith(path, StringComparison.OrdinalIgnoreCase));
+            var tab = (DockContent) doc;
             if (!isMatch && settings.TabHighlightType == HighlightType.ExternalFiles)
             {
                 if (tab.TabColor != TabHighlightColor) tab.TabColor = TabHighlightColor;
@@ -77,7 +71,5 @@ namespace ProjectManager.Controls
             }
             else if (tab.TabColor != Color.Transparent) tab.TabColor = Color.Transparent;
         }
-
     }
-
 }
