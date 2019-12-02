@@ -324,48 +324,50 @@ namespace FlashDevelop.Docking
         /// <param name="reason">is passed on when raising the FileSave event</param>
         public void Save(string file, string reason)
         {
-            if (!IsEditable) return;
-            if (!IsUntitled && FileHelper.FileIsReadOnly(FileName))
+            var sci = SciControl;
+            if (sci is null) return;
+            if (!IsUntitled && FileHelper.FileIsReadOnly(sci.FileName))
             {
-                string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.MakeReadOnlyWritable");
+                var dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.MakeReadOnlyWritable");
                 if (MessageBox.Show(PluginBase.MainForm, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    ScintillaManager.MakeFileWritable(SciControl);
+                    ScintillaManager.MakeFileWritable(sci);
                 }
                 else return;
             }
-            string oldFile = SciControl.FileName;
-            bool otherFile = (SciControl.FileName != file);
+            var oldFile = sci.FileName;
+            var otherFile = oldFile != file;
             if (otherFile)
             {
-                string args = FileName + ";" + file;
-                RecoveryManager.RemoveTemporaryFile(FileName);
-                TextEvent renaming = new TextEvent(EventType.FileRenaming, args);
+                var args = oldFile + ";" + file;
+                RecoveryManager.RemoveTemporaryFile(oldFile);
+                var renaming = new TextEvent(EventType.FileRenaming, args);
                 EventManager.DispatchEvent(this, renaming);
-                TextEvent close = new TextEvent(EventType.FileClose, FileName);
+                var close = new TextEvent(EventType.FileClose, FileName);
                 EventManager.DispatchEvent(this, close);
             }
-            TextEvent saving = new TextEvent(EventType.FileSaving, file);
+            var saving = new TextEvent(EventType.FileSaving, file);
             EventManager.DispatchEvent(this, saving);
             if (!saving.Handled)
             {
+                sci = SciControl;
                 if (otherFile)
                 {
                     UpdateDocumentIcon(file);
-                    SciControl.FileName = file;
+                    sci.FileName = file;
                 }
-                ScintillaManager.CleanUpCode(SciControl);
-                DataEvent de = new DataEvent(EventType.FileEncode, file, SciControl.Text);
+                ScintillaManager.CleanUpCode(sci);
+                var de = new DataEvent(EventType.FileEncode, file, sci.Text);
                 EventManager.DispatchEvent(this, de); // Lets ask if a plugin wants to encode and save the data..
-                if (!de.Handled) FileHelper.WriteFile(file, SciControl.Text, SciControl.Encoding, SciControl.SaveBOM);
+                if (!de.Handled) FileHelper.WriteFile(file, sci.Text, sci.Encoding, sci.SaveBOM);
                 IsModified = false;
-                SciControl.SetSavePoint();
-                RecoveryManager.RemoveTemporaryFile(FileName);
-                fileInfo = new FileInfo(FileName);
+                sci.SetSavePoint();
+                RecoveryManager.RemoveTemporaryFile(sci.FileName);
+                fileInfo = new FileInfo(sci.FileName);
                 if (otherFile)
                 {
-                    ScintillaManager.UpdateControlSyntax(SciControl);
+                    ScintillaManager.UpdateControlSyntax(sci);
                     Globals.MainForm.OnFileSave(this, oldFile, reason);
                 }
                 else Globals.MainForm.OnFileSave(this, null, reason);
