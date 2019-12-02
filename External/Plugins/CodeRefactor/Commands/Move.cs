@@ -541,9 +541,9 @@ namespace CodeRefactor.Commands
             string oldType = (currentTarget.OldFileModel.Package + "." + targetName).Trim('.');
             string newType = (currentTarget.NewPackage + "." + targetName).Trim('.');
 
-            foreach (KeyValuePair<string, List<SearchMatch>> entry in results)
+            foreach (var entry in results)
             {
-                List<SearchMatch> matches = entry.Value;
+                var matches = entry.Value;
                 if (matches.Count == 0 || entry.Key == currentTarget.OldFilePath || 
                     entry.Key == currentTarget.NewFilePath) continue;
                 string file = entry.Key;

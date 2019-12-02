@@ -474,7 +474,7 @@ namespace FlashDevelop.Docking
                 && sci.Text is { } text
                 && text != previousText)
             {
-                RecoveryManager.SaveTemporaryFile(FileName, text, sci.Encoding);
+                RecoveryManager.SaveTemporaryFile(sci.FileName, text, sci.Encoding);
                 previousText = text;
             }
         }

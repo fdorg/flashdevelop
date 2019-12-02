@@ -96,11 +96,9 @@ namespace LintingHelper
                         {
                             var groupedFiles = new Dictionary<string, List<string>>();
                             foreach (var doc in PluginBase.MainForm.Documents)
-                               /* if (!doc.IsUntitled && doc.SciControl != null)
-                                    LintingManager.LintDocument(doc);*/
                             {
-                                ScintillaNet.ScintillaControl sci;
-                                if (doc.IsUntitled || (sci = doc.SciControl) is null) continue;
+                                var sci = doc.SciControl;
+                                if (sci is null || doc.IsUntitled) continue;
 
                                 var files = groupedFiles.GetOrCreate(sci.ConfigurationLanguage);
                                 files.Add(sci.FileName);

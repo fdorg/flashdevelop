@@ -20,10 +20,10 @@ namespace FlashDebugger
 
     public class BreakPointManager
     {
-        private IProject m_Project;
-        private string m_SaveFileFullPath;
-        private bool m_bAccessable = true;
-        private BreakPointInfo m_TemporaryBreakPointInfo;
+        IProject m_Project;
+        string m_SaveFileFullPath;
+        bool m_bAccessable = true;
+        BreakPointInfo m_TemporaryBreakPointInfo;
 
         public event ChangeBreakPointEventHandler ChangeBreakPointEvent;
         public event UpdateBreakPointEventHandler UpdateBreakPointEvent;
@@ -44,7 +44,7 @@ namespace FlashDebugger
             }
         }
 
-        private string GetBreakpointsFile(string path)
+        string GetBreakpointsFile(string path)
         {
             string cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Breakpoints");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
@@ -54,13 +54,14 @@ namespace FlashDebugger
 
         public void InitBreakPoints()
         {
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                if (Path.GetExtension(doc.SciControl.FileName) != ".as" &&
-                    Path.GetExtension(doc.SciControl.FileName) != ".mxml") continue;
-                var lines = GetMarkers(doc.SciControl, ScintillaHelper.markerBPEnabled);
-                var cbinfo = BreakPoints.Find(info => info.FileFullPath.Equals(doc.FileName, StringComparison.OrdinalIgnoreCase));
-                string exp = string.Empty;
+                var sci = doc.SciControl;
+                if (Path.GetExtension(sci.FileName) != ".as" &&
+                    Path.GetExtension(sci.FileName) != ".mxml") continue;
+                var lines = GetMarkers(sci, ScintillaHelper.markerBPEnabled);
+                var cbinfo = BreakPoints.Find(info => info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase));
+                var exp = string.Empty;
                 if (cbinfo != null)
                 {
                     exp = cbinfo.Exp;
@@ -68,7 +69,7 @@ namespace FlashDebugger
                 }
                 foreach (int i in lines)
                 {
-                    BreakPoints.Add(new BreakPointInfo(doc.SciControl.FileName, i, exp, false, true));
+                    BreakPoints.Add(new BreakPointInfo(sci.FileName, i, exp, false, true));
                 }
             }
         }
@@ -97,7 +98,7 @@ namespace FlashDebugger
             return markerLines;
         }
 
-        private static int GetMarkerMask(int marker) => 1 << marker;
+        static int GetMarkerMask(int marker) => 1 << marker;
 
         public int GetBreakPointIndex(string fileName, int line)
         {
@@ -363,8 +364,8 @@ namespace FlashDebugger
 
     public class BreakPointInfo
     {
-        private string m_ConditionalExpression;
-        private ValueExp m_ParsedExpression;
+        string m_ConditionalExpression;
+        ValueExp m_ParsedExpression;
 
         public string FileFullPath { get; set; }
 
