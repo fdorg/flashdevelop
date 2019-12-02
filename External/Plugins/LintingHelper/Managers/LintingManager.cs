@@ -125,8 +125,9 @@ namespace LintingHelper.Managers
 
         public static void LintDocument(ITabbedDocument doc)
         {
-            var files = new [] { doc.FileName };
-            var language = doc.SciControl.ConfigurationLanguage;
+            var sci = doc.SciControl;
+            var files = new [] { sci.FileName };
+            var language = sci.ConfigurationLanguage;
 
             LintFiles(files, language);
         }

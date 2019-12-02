@@ -811,12 +811,12 @@ namespace ProjectManager
             Bitmap bitmap = null;
 
             // try to open with the same icon that the treeview is using
-            if (doc.FileName != null)
+            if (doc.FileName is { } fileName)
             {
-                if (Tree.NodeMap.ContainsKey(doc.FileName))
-                    bitmap = Tree.ImageList.Images[Tree.NodeMap[doc.FileName].ImageIndex] as Bitmap;
+                if (Tree.NodeMap.ContainsKey(fileName))
+                    bitmap = Tree.ImageList.Images[Tree.NodeMap[fileName].ImageIndex] as Bitmap;
                 else
-                    bitmap = Icons.GetImageForFile(doc.FileName).Img as Bitmap;
+                    bitmap = Icons.GetImageForFile(fileName).Img as Bitmap;
             }
             if (bitmap != null)
             {

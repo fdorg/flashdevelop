@@ -560,13 +560,13 @@ namespace BookmarkPanel
                 deleteItems.Add(new KeyValuePair<string,int>(item.Group.Name, (int)item.Tag));
                 item.Group.Tag = null; // dirty
             }
-            foreach (KeyValuePair<string,int> entry in deleteItems)
+            foreach (var entry in deleteItems)
             {
-                foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+                foreach (var document in PluginBase.MainForm.Documents)
                 {
-                    if (document.IsEditable && document.FileName == entry.Key)
+                    if (document.SciControl is { } sci && sci.FileName == entry.Key)
                     {
-                        document.SciControl.MarkerDelete(entry.Value, 0);
+                        sci.MarkerDelete(entry.Value, 0);
                     }
                 }
             }

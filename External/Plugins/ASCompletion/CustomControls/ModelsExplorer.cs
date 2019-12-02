@@ -22,8 +22,8 @@ namespace ASCompletion
     {
         #region Docking
 
-        private static readonly string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
-        private static DockContent panelCtrl;
+        static readonly string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
+        static DockContent panelCtrl;
 
         public static void CreatePanel()
         {
@@ -98,13 +98,13 @@ namespace ASCompletion
 
         public static ModelsExplorer Instance => instance ?? new ModelsExplorer();
 
-        private static ModelsExplorer instance;
-        private IASContext current;
-        private Dictionary<string, TreeNodeCollection> packages;
-        private TreeNodeCollection rootNodes;
-        private List<TreeNode> allTypes;
-        private int typeIndex;
-        private TreeNode lastMatch;
+        static ModelsExplorer instance;
+        IASContext current;
+        Dictionary<string, TreeNodeCollection> packages;
+        TreeNodeCollection rootNodes;
+        List<TreeNode> allTypes;
+        int typeIndex;
+        TreeNode lastMatch;
 
         public ModelsExplorer()
         {
@@ -122,7 +122,7 @@ namespace ASCompletion
             ScrollBarEx.Attach(outlineTreeView);
         }
 
-        private void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)
+        void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             TreeNode node = outlineTreeView.GetNodeAt(outlineTreeView.PointToClient(Control.MousePosition));
             if (node is null) e.Cancel = true;
@@ -145,7 +145,7 @@ namespace ASCompletion
             }
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.filterLabel.Text = TextHelper.GetString("Info.FindType");
             this.searchButton.ToolTipText = TextHelper.GetString("ToolTip.Search");
@@ -160,7 +160,8 @@ namespace ASCompletion
         #endregion
 
         #region Nodes population
-        private void DetectContext()
+
+        void DetectContext()
         {
             current = ASContext.Context;
             if (PluginBase.CurrentProject != null)
@@ -212,7 +213,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="package">Package path</param>
         /// <returns>Nodes collection</returns>
-        private TreeNodeCollection FindPackage(string package)
+        TreeNodeCollection FindPackage(string package)
         {
             if (package == "") return rootNodes;
             if (packages.ContainsKey(package)) return packages[package];
@@ -235,7 +236,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="nodes">In package</param>
         /// <param name="model">Model information</param>
-        private void AddModel(TreeNodeCollection nodes, FileModel model)
+        void AddModel(TreeNodeCollection nodes, FileModel model)
         {
             if (model.Members != null)
                 PluginUI.AddMembers(nodes, model.Members);
@@ -256,7 +257,7 @@ namespace ASCompletion
         /// Create a subnode to a type node to be populated later
         /// </summary>
         /// <param name="node"></param>
-        private void AddExplore(TypeTreeNode node)
+        void AddExplore(TypeTreeNode node)
         {
             node.Nodes.Add(new ExploreTreeNode());
         }
@@ -265,7 +266,7 @@ namespace ASCompletion
         /// Describe types on user selection
         /// </summary>
         /// <param name="node"></param>
-        private void outlineTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        void outlineTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0] is ExploreTreeNode)
             {
@@ -287,7 +288,7 @@ namespace ASCompletion
             }
         }
 
-        private MemberList SelectMembers(MemberList list, FlagType mask)
+        MemberList SelectMembers(MemberList list, FlagType mask)
         {
             MemberList filtered = new MemberList();
             Visibility acc = Visibility.Public | Visibility.Internal;
@@ -303,7 +304,7 @@ namespace ASCompletion
             return filtered;
         }
 
-        private void outlineTreeView_Click(object sender, EventArgs e)
+        void outlineTreeView_Click(object sender, EventArgs e)
         {
             if (outlineTreeView.SelectedNode is null)
                 return;
@@ -382,7 +383,7 @@ namespace ASCompletion
             return model;
         }
 
-        private ClassModel ResolveClass(TreeNode node)
+        ClassModel ResolveClass(TreeNode node)
         {
             if (!(node is TypeTreeNode) || node.Tag is null)
                 return ClassModel.VoidClass;
@@ -395,7 +396,7 @@ namespace ASCompletion
             return model.GetClassByName(info[1]);
         }
 
-        private int ResolveMemberLine(TreeNode node)
+        int ResolveMemberLine(TreeNode node)
         {
             if (!(node is MemberTreeNode) || node.Tag is null)
                 return 0;
@@ -406,25 +407,26 @@ namespace ASCompletion
         #endregion
 
         #region UI events
-        private void filterTextBox_TextChanged(object sender, EventArgs e)
+
+        void filterTextBox_TextChanged(object sender, EventArgs e)
         {
             updateTimer.Stop();
             updateTimer.Start();
         }
 
-        private void filterTextBox_Leave(object sender, EventArgs e)
+        void filterTextBox_Leave(object sender, EventArgs e)
         {
             SetMatch(null);
         }
 
-        private void updateTimer_Tick(object sender, EventArgs e)
+        void updateTimer_Tick(object sender, EventArgs e)
         {
             updateTimer.Stop();
             typeIndex = 0;
             FindNextMatch(filterTextBox.Text);
         }
 
-        private void FindPrevMatch(string search)
+        void FindPrevMatch(string search)
         {
             if (!string.IsNullOrEmpty(search) && allTypes != null)
             {
@@ -444,7 +446,7 @@ namespace ASCompletion
             typeIndex = 0;
         }
 
-        private void FindNextMatch(string search)
+        void FindNextMatch(string search)
         {
             if (!string.IsNullOrEmpty(search) && allTypes != null)
             {
@@ -461,7 +463,7 @@ namespace ASCompletion
             typeIndex = 0;
         }
 
-        private void SetMatch(TreeNode node)
+        void SetMatch(TreeNode node)
         {
             if (lastMatch != null)
             {
@@ -480,29 +482,24 @@ namespace ASCompletion
 
         internal bool OnShortcut(Keys keys)
         {
-            if (keys == Keys.F3)
+            switch (keys)
             {
-                FindNextMatch(filterTextBox.Text);
-                return true;
+                case Keys.F3:
+                    FindNextMatch(filterTextBox.Text);
+                    return true;
+                case Keys.Shift | Keys.F3:
+                    FindPrevMatch(filterTextBox.Text);
+                    return true;
+                case Keys.F5:
+                case Keys.Control | Keys.J:
+                    UpdateTree();
+                    return true;
+                case Keys.Escape:
+                    if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
+                    if (PluginBase.MainForm.CurrentDocument.SciControl is { } sci)
+                        sci.Focus();
+                    break;
             }
-
-            if (keys == (Keys.Shift | Keys.F3))
-            {
-                FindPrevMatch(filterTextBox.Text);
-                return true;
-            }
-            if (keys == Keys.F5 || keys == (Keys.Control | Keys.J))
-            {
-                UpdateTree();
-                return true;
-            }
-            if (keys == Keys.Escape)
-            {
-                if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
-                if (PluginBase.MainForm.CurrentDocument.IsEditable)
-                    PluginBase.MainForm.CurrentDocument.SciControl.Focus();
-            }
-
             return false;
         }
 
@@ -513,11 +510,10 @@ namespace ASCompletion
                 OnShortcut(keyData);
                 return true;
             }
-
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void ModelsExplorer_KeyDown(object sender, KeyEventArgs e)
+        void ModelsExplorer_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -530,17 +526,17 @@ namespace ASCompletion
             else OnShortcut(e.KeyData);
         }
 
-        private void SearchButton_Click(object sender, EventArgs e)
+        void SearchButton_Click(object sender, EventArgs e)
         {
             FindNextMatch(filterTextBox.Text);
         }
 
-        private void RefreshButton_Click(object sender, EventArgs e)
+        void RefreshButton_Click(object sender, EventArgs e)
         {
             UpdateTree();
         }
 
-        private void RebuildButton_Click(object sender, EventArgs e)
+        void RebuildButton_Click(object sender, EventArgs e)
         {
             outlineTreeView.Nodes.Clear();
             ASContext.RebuildClasspath();
@@ -549,7 +545,7 @@ namespace ASCompletion
 
         #region Context menu
 
-        private void ExploreToolStripMenuItem_Click(object sender, EventArgs e)
+        void ExploreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
             if (node is null) return;
@@ -559,14 +555,14 @@ namespace ASCompletion
                 PluginBase.MainForm.CallCommand("RunProcess", $"explorer.exe;/e,\"{path}\"");
         }
 
-        private void EditToolStripMenuItem_Click(object sender, EventArgs e)
+        void EditToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
             if (node is null) return;
             outlineTreeView_Click(null, null);
         }
 
-        private void ConvertToolStripMenuItem_Click(object sender, EventArgs e)
+        void ConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
             if (node is null || current?.Classpath is null) return;
@@ -634,7 +630,7 @@ namespace ASCompletion
             }
         }
 
-        private ResolvedPath ResolvePath(TreeNode node)
+        ResolvedPath ResolvePath(TreeNode node)
         {
             ResolvedPath result = new ResolvedPath();
             TreeNode cp = node;
@@ -657,14 +653,14 @@ namespace ASCompletion
             return result;
         }
 
-        private void WriteIntrinsic(FileModel theModel, string filename)
+        void WriteIntrinsic(FileModel theModel, string filename)
         {
             if (filename.EndsWithOrdinal("$.as")) filename = filename.Replace("$.as", ".as"); // SWC virtual models
             Directory.CreateDirectory(Path.GetDirectoryName(filename));
             File.WriteAllText(filename, theModel.GenerateIntrinsic(false), Encoding.UTF8);
         }
 
-        private string GetPathFromNode(TreeNode node)
+        string GetPathFromNode(TreeNode node)
         {
             string path = null;
             if (node is ClasspathTreeNode)

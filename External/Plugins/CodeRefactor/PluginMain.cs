@@ -325,8 +325,8 @@ namespace CodeRefactor
         {
             try
             {
-                var document = PluginBase.MainForm.CurrentDocument;
-                var curFileName = document != null ? document.FileName : string.Empty;
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                var curFileName = sci?.FileName ?? string.Empty;
                 var langIsValid = RefactoringHelper.GetLanguageIsValid();
                 var isValid = langIsValid && resolved != null && resolved.Position >= 0;
                 var result = isValid ? resolved.Result : null;
@@ -381,12 +381,11 @@ namespace CodeRefactor
                 refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
                 refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                if (document != null && document.IsEditable && langIsValid)
+                if (sci != null && langIsValid)
                 {
                     var isValidFile = IsValidForMove(curFileName);
                     refactorMainMenu.MoveMenuItem.Enabled = isValidFile;
                     refactorContextMenu.MoveMenuItem.Enabled = isValidFile;
-                    var sci = document.SciControl;
                     if (sci.SelTextSize > 0)
                     {
                         if (!sci.PositionIsOnComment(sci.SelectionStart) || !sci.PositionIsOnComment(sci.SelectionEnd))

@@ -88,7 +88,7 @@ namespace FlashDevelop
 
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
-            if (CurrentDocument != null && CurrentDocument.FileName == file) return CurrentDocument as DockContent;
+            if (CurrentDocument?.FileName == file) return CurrentDocument as DockContent;
             throw new NotImplementedException();
         }
 
@@ -284,12 +284,7 @@ namespace FlashDevelop
 
         public ContextMenuStrip EditorMenu => throw new NotImplementedException();
 
-        private ITabbedDocument _currentDocument;
-        public ITabbedDocument CurrentDocument
-        {
-            get => _currentDocument;
-            set => _currentDocument = value;
-        }
+        public ITabbedDocument CurrentDocument { get; set; }
 
         public ITabbedDocument[] Documents => throw new NotImplementedException();
 

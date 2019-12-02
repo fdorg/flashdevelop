@@ -135,9 +135,9 @@ namespace PluginCore.FRService
             openDocuments = new Dictionary<string, ITabbedDocument>();
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable)
+                if (document.SciControl is { } sci)
                 {
-                    openDocuments[document.FileName] = document;
+                    openDocuments[sci.FileName] = document;
                 }
             }
         }

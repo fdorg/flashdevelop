@@ -596,8 +596,9 @@ namespace AS3Context
         internal void OnFileOperation(NotifyEvent e)
         {
             timerCheck.Stop();
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
-                if (doc.FileName == fileWithSquiggles) ClearSquiggles(doc.SciControl);
+            foreach (var doc in PluginBase.MainForm.Documents)
+                if (doc.SciControl is { } sci && sci.FileName == fileWithSquiggles)
+                    ClearSquiggles(sci);
         }
 
         public override void TrackTextChange(ScintillaControl sender, int position, int length, int linesAdded)

@@ -14,8 +14,8 @@ namespace DataEncoder
 {
     public class PluginMain : IPlugin
     {
-        private readonly List<TypeData> objectTypes = new List<TypeData>();
-        private string oldFileName = string.Empty;
+        readonly List<TypeData> objectTypes = new List<TypeData>();
+        string oldFileName = string.Empty;
 
         #region Required Properties
         
@@ -142,7 +142,7 @@ namespace DataEncoder
         /**
         * Information messages.
         */
-        private readonly string CANT_SAVE_FILE = TextHelper.GetString("Info.CantSaveFile");
+        readonly string CANT_SAVE_FILE = TextHelper.GetString("Info.CantSaveFile");
 
         /// <summary>
         /// Adds the required event handlers
@@ -200,16 +200,16 @@ namespace DataEncoder
         /// <summary>
         /// Checks if the syntax is ok to save
         /// </summary>
-        private bool IsXmlSaveable(string file)
+        bool IsXmlSaveable(string file)
         {
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+            foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable && document.FileName == file || document.FileName == oldFileName)
+                if (document.SciControl is { } sci && (sci.FileName == file || sci.FileName == oldFileName))
                 {
                     try
                     {
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(document.SciControl.Text);
+                        var xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(sci.Text);
                         return true;
                     }
                     catch (Exception ex)
@@ -226,7 +226,7 @@ namespace DataEncoder
         /// Checks if a file is open already
         /// </summary>
         /// <returns></returns>
-        private bool IsFileOpen(string file)
+        bool IsFileOpen(string file)
         {
             foreach (var objType in objectTypes)
             {

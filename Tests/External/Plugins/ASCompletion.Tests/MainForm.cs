@@ -275,20 +275,9 @@ namespace FlashDevelop
 
         public ContextMenuStrip EditorMenu => throw new NotImplementedException();
 
-        private ITabbedDocument _currentDocument;
-        public ITabbedDocument CurrentDocument
-        {
-            get => _currentDocument;
-            set => _currentDocument = value;
-        }
+        public ITabbedDocument CurrentDocument { get; set; }
 
-        ITabbedDocument[] tabbedDocuments;
-
-        public ITabbedDocument[] Documents
-        {
-            get => tabbedDocuments;
-            set => tabbedDocuments = value;
-        }
+        public ITabbedDocument[] Documents { get; set; }
 
         public bool HasModifiedDocuments => throw new NotImplementedException();
 
@@ -308,12 +297,7 @@ namespace FlashDevelop
 
         public bool IsFullScreen => throw new NotImplementedException();
 
-        private bool _standaloneMode;
-        public bool StandaloneMode
-        {
-            get => _standaloneMode;
-            set => _standaloneMode = value;
-        }
+        public bool StandaloneMode { get; set; }
 
         public bool MultiInstanceMode => throw new NotImplementedException();
 

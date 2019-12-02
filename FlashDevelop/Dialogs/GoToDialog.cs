@@ -8,19 +8,19 @@ namespace FlashDevelop.Dialogs
 {
     public class GoToDialog : SmartForm
     {
-        private System.Windows.Forms.Button lineButton;
-        private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Button positionButton;
-        private System.Windows.Forms.TextBox lineTextBox;
-        private System.Windows.Forms.Label valueLabel;
+        System.Windows.Forms.Button lineButton;
+        System.Windows.Forms.Button closeButton;
+        System.Windows.Forms.Button positionButton;
+        System.Windows.Forms.TextBox lineTextBox;
+        System.Windows.Forms.Label valueLabel;
 
         public GoToDialog()
         {
-            this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
-            this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
-            this.InitializeComponent();
-            this.ApplyLocalizedTexts();
+            Owner = Globals.MainForm;
+            Font = PluginBase.MainForm.Settings.DefaultFont;
+            FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
+            InitializeComponent();
+            ApplyLocalizedTexts();
         }
         
         #region Windows Forms Designer Generated Code
@@ -29,84 +29,84 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent() 
+        void InitializeComponent() 
         {
-            this.lineTextBox = new System.Windows.Forms.TextBoxEx();
-            this.positionButton = new System.Windows.Forms.ButtonEx();
-            this.valueLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.ButtonEx();
-            this.lineButton = new System.Windows.Forms.ButtonEx();
-            this.SuspendLayout();
+            lineTextBox = new System.Windows.Forms.TextBoxEx();
+            positionButton = new System.Windows.Forms.ButtonEx();
+            valueLabel = new System.Windows.Forms.Label();
+            closeButton = new System.Windows.Forms.ButtonEx();
+            lineButton = new System.Windows.Forms.ButtonEx();
+            SuspendLayout();
             // 
             // lineTextBox
             // 
-            this.lineTextBox.Location = new System.Drawing.Point(52, 10);
-            this.lineTextBox.Name = "lineTextBox";
-            this.lineTextBox.Size = new System.Drawing.Size(150, 21);
-            this.lineTextBox.TabIndex = 1;
+            lineTextBox.Location = new System.Drawing.Point(52, 10);
+            lineTextBox.Name = "lineTextBox";
+            lineTextBox.Size = new System.Drawing.Size(150, 21);
+            lineTextBox.TabIndex = 1;
             // 
             // positionButton
             // 
-            this.positionButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.positionButton.Location = new System.Drawing.Point(79, 38);
-            this.positionButton.Name = "positionButton";
-            this.positionButton.Size = new System.Drawing.Size(59, 23);
-            this.positionButton.TabIndex = 3;
-            this.positionButton.Text = "&Position";
-            this.positionButton.Click += this.PositionButtonClick;
+            positionButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            positionButton.Location = new System.Drawing.Point(79, 38);
+            positionButton.Name = "positionButton";
+            positionButton.Size = new System.Drawing.Size(59, 23);
+            positionButton.TabIndex = 3;
+            positionButton.Text = "&Position";
+            positionButton.Click += PositionButtonClick;
             // 
             // valueLabel
             // 
-            this.valueLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.valueLabel.Location = new System.Drawing.Point(15, 12);
-            this.valueLabel.Name = "valueLabel";
-            this.valueLabel.Size = new System.Drawing.Size(37, 15);
-            this.valueLabel.TabIndex = 0;
-            this.valueLabel.Text = "Value:";
+            valueLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            valueLabel.Location = new System.Drawing.Point(15, 12);
+            valueLabel.Name = "valueLabel";
+            valueLabel.Size = new System.Drawing.Size(37, 15);
+            valueLabel.TabIndex = 0;
+            valueLabel.Text = "Value:";
             // 
             // closeButton
             //
-            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.closeButton.Location = new System.Drawing.Point(150, 38);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(53, 23);
-            this.closeButton.TabIndex = 4;
-            this.closeButton.Text = "&Close";
-            this.closeButton.Click += this.CancelButtonClick;
+            closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            closeButton.Location = new System.Drawing.Point(150, 38);
+            closeButton.Name = "closeButton";
+            closeButton.Size = new System.Drawing.Size(53, 23);
+            closeButton.TabIndex = 4;
+            closeButton.Text = "&Close";
+            closeButton.Click += CancelButtonClick;
             // 
             // lineButton
             // 
-            this.lineButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lineButton.Location = new System.Drawing.Point(12, 38);
-            this.lineButton.Name = "lineButton";
-            this.lineButton.Size = new System.Drawing.Size(55, 23);
-            this.lineButton.TabIndex = 2;
-            this.lineButton.Text = "&Line";
-            this.lineButton.Click += this.LineButtonClick;
+            lineButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            lineButton.Location = new System.Drawing.Point(12, 38);
+            lineButton.Name = "lineButton";
+            lineButton.Size = new System.Drawing.Size(55, 23);
+            lineButton.TabIndex = 2;
+            lineButton.Text = "&Line";
+            lineButton.Click += LineButtonClick;
             // 
             // GoToDialog
             // 
-            this.AcceptButton = this.lineButton;
-            this.CancelButton = this.closeButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(216, 71);
-            this.Controls.Add(this.lineButton);
-            this.Controls.Add(this.positionButton);
-            this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.lineTextBox);
-            this.Controls.Add(this.valueLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "GoToDialog";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = " Goto";
-            this.VisibleChanged += this.VisibleChange;
-            this.Closing += this.DialogClosing;
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = lineButton;
+            CancelButton = closeButton;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(216, 71);
+            Controls.Add(lineButton);
+            Controls.Add(positionButton);
+            Controls.Add(closeButton);
+            Controls.Add(lineTextBox);
+            Controls.Add(valueLabel);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "GoToDialog";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = " Goto";
+            VisibleChanged += VisibleChange;
+            Closing += DialogClosing;
+            ResumeLayout(false);
+            PerformLayout();
 
         }
         #endregion
@@ -116,58 +116,59 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        private void ApplyLocalizedTexts()
+        void ApplyLocalizedTexts()
         {
-            this.lineButton.Text = TextHelper.GetString("Label.Line");
-            this.positionButton.Text = TextHelper.GetString("Label.Position");
-            this.closeButton.Text = TextHelper.GetString("Label.Close");
-            this.valueLabel.Text = TextHelper.GetString("Info.Value");
-            this.Text = " " + TextHelper.GetString("Title.GoToDialog");
+            lineButton.Text = TextHelper.GetString("Label.Line");
+            positionButton.Text = TextHelper.GetString("Label.Position");
+            closeButton.Text = TextHelper.GetString("Label.Close");
+            valueLabel.Text = TextHelper.GetString("Info.Value");
+            Text = " " + TextHelper.GetString("Title.GoToDialog");
         }
 
         /// <summary>
         /// Selects the textfield's text
         /// </summary>
-        private void SelectLineTextBox()
+        void SelectLineTextBox()
         {
-            this.lineTextBox.Select();
-            this.lineTextBox.SelectAll();
+            lineTextBox.Select();
+            lineTextBox.SelectAll();
         }
 
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(object sender, System.EventArgs e)
+        void VisibleChange(object sender, EventArgs e)
         {
-            if (this.Visible)
+            if (Visible)
             {
-                this.SelectLineTextBox();
-                this.CenterToParent();
+                SelectLineTextBox();
+                CenterToParent();
             }
         }
         
         /// <summary>
         /// Hides only the dialog when user closes it
         /// </summary>
-        private void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
             PluginBase.MainForm.CurrentDocument.Activate();
-            this.Hide();
+            Hide();
         }
 
         /// <summary>
         /// Moves the cursor to the specified line
         /// </summary>
-        private void LineButtonClick(object sender, System.EventArgs e)
+        void LineButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             try
             {
-                int line = Convert.ToInt32(this.lineTextBox.Text) - 1;
-                PluginBase.MainForm.CurrentDocument.SciControl.EnsureVisibleEnforcePolicy(line);
-                PluginBase.MainForm.CurrentDocument.SciControl.GotoLineIndent(line);
-                this.Close();
+                int line = Convert.ToInt32(lineTextBox.Text) - 1;
+                sci.EnsureVisibleEnforcePolicy(line);
+                sci.GotoLineIndent(line);
+                Close();
             }
             catch
             {
@@ -179,16 +180,17 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Moves the cursor to the specified position
         /// </summary>
-        private void PositionButtonClick(object sender, System.EventArgs e)
+        void PositionButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             try
             {
-                int pos = Convert.ToInt32(this.lineTextBox.Text) - 1;
-                int line = PluginBase.MainForm.CurrentDocument.SciControl.LineFromPosition(pos);
-                PluginBase.MainForm.CurrentDocument.SciControl.EnsureVisibleEnforcePolicy(line);
-                PluginBase.MainForm.CurrentDocument.SciControl.GotoPos(pos);
-                this.Close();
+                int pos = Convert.ToInt32(lineTextBox.Text) - 1;
+                int line = sci.LineFromPosition(pos);
+                sci.EnsureVisibleEnforcePolicy(line);
+                sci.GotoPos(pos);
+                Close();
             }
             catch
             {
@@ -200,13 +202,8 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Hides the goto dialog
         /// </summary>
-        private void CancelButtonClick(object sender, System.EventArgs e)
-        {
-            this.Close();
-        }
+        void CancelButtonClick(object sender, EventArgs e) => Close();
 
         #endregion
-        
     }
-    
 }

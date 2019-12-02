@@ -101,12 +101,12 @@ namespace FlashDebugger
                     try
                     {
                         IASTBuilder b = new ASTBuilder(false);
-                        ValueExp exp = b.parse(new StringReader(leftword));
+                        var exp = b.parse(new StringReader(leftword));
                         var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[debugManager.CurrentFrame]);
                         var obj = exp.evaluate(ctx);
-                        if (obj as Variable != null)
+                        if (obj is Variable variable)
                         {
-                            Show(dataTipPoint, (Variable)obj, leftword);
+                            Show(dataTipPoint, variable, leftword);
                         }
                     }
                     catch (Exception){}

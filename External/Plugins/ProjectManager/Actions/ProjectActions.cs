@@ -472,13 +472,15 @@ namespace ProjectManager.Actions
 
         public void InsertFile(IMainForm mainForm, Project project, string path, GenericNode node)
         {
-            if (!mainForm.CurrentDocument.IsEditable) return;
+            var document = mainForm.CurrentDocument;
+            var sci = document.SciControl;
+            if (sci is null) return;
             var nodeType = node?.GetType().ToString();
             var export = (node is ExportNode exportNode) ? exportNode.Export : null;
-            var textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
+            var textToInsert = project.GetInsertFileText(sci.FileName, path, export, nodeType);
             if (textToInsert is null) return;
-            mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
-            mainForm.CurrentDocument.Activate();
+            sci.AddText(textToInsert.Length, textToInsert);
+            document.Activate();
         }
 
         public void ToggleLibraryAsset(Project project, string[] paths)

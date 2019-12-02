@@ -35,17 +35,17 @@ namespace FlashDevelop.Managers
         public static void OnPrintDocumentPrintPage(object sender, PrintPageEventArgs e)
         {
             PrintPageNumber++;
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            string page = TextHelper.GetString("Info.PrintFooterPage");
-            string footer = page + PrintPageNumber + " - " + document.FileName;
-            PrintPageLastChar = document.SciControl.FormatRange(false, e, PrintPageLastChar, document.SciControl.Length);
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var page = TextHelper.GetString("Info.PrintFooterPage");
+            var footer = page + PrintPageNumber + " - " + sci.FileName;
+            PrintPageLastChar = sci.FormatRange(false, e, PrintPageLastChar, sci.Length);
             e.Graphics.DrawLine(new Pen(Color.Black), 35, e.PageBounds.Height - 60, e.PageBounds.Width - 35, e.PageBounds.Height - 60);
             e.Graphics.DrawString(footer, new Font("Arial", 7), Brushes.Black, 35, e.PageBounds.Height - 55, StringFormat.GenericDefault);
-            if (PrintPageLastChar < document.SciControl.Length) e.HasMorePages = true;
+            if (PrintPageLastChar < sci.Length) e.HasMorePages = true;
             else
             {
                 e.HasMorePages = false;
-                document.SciControl.FormatRangeDone();
+                sci.FormatRangeDone();
                 PrintPageLastChar = 0;
                 PrintPageNumber = 0;
             }

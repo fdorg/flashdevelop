@@ -124,14 +124,14 @@ namespace FlashDevelop.Managers
             var documents = PluginBase.MainForm.Documents;
             for (int i = 0; i < documents.Length; i++)
             {
-                ITabbedDocument document = documents[i];
-                if (document.IsEditable && !document.IsUntitled)
+                var document = documents[i];
+                if (document.SciControl is { } sci && !document.IsUntitled)
                 {
                     if (document == PluginBase.MainForm.CurrentDocument)
                     {
                         session.Index = i;
                     }
-                    session.Files.Add(document.FileName);
+                    session.Files.Add(sci.FileName);
                     AddDocumentDock(document, session);
                 }
                 else session.Files.Add(document.Text);

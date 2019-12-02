@@ -17,9 +17,9 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class InlineRename : IDisposable, IMessageFilter
     {
-        private const int MaxHistoryCount = 256;
-        private const int Indicator = 0;
-        private static InlineRename Current;
+        const int MaxHistoryCount = 256;
+        const int Indicator = 0;
+        static InlineRename Current;
 
         #region Event delegates
 
@@ -46,22 +46,22 @@ namespace CodeRefactor.Commands
 
         #endregion
 
-        private int start, end;
-        private readonly string oldName/*, prevName*/;
-        private string newName/*, prevName*/;
-        private readonly bool includeComments;
-        private readonly bool includeStrings;
-        private readonly bool previewChanges;
+        int start, end;
+        readonly string oldName/*, prevName*/;
+        string newName/*, prevName*/;
+        readonly bool includeComments;
+        readonly bool includeStrings;
+        readonly bool previewChanges;
 
-        private readonly ScintillaControl sci;
-        private ITabbedDocument currentDoc;
+        readonly ScintillaControl sci;
+        ITabbedDocument currentDoc;
 
-        private ReferenceInfo currentRef;
-        private ReferenceInfo[] refs;
+        ReferenceInfo currentRef;
+        ReferenceInfo[] refs;
 
-        private readonly DelayedExecution delayedExecution;
-        private List<string> history;
-        private int historyIndex;
+        readonly DelayedExecution delayedExecution;
+        List<string> history;
+        int historyIndex;
 
         #region Events
 
@@ -179,7 +179,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Modify the highlight indicator alpha and select current word.
         /// </summary>
-        private void InitializeHighlights()
+        void InitializeHighlights()
         {
             sci.RemoveHighlights(Indicator);
             sci.SetIndicSetAlpha(Indicator, 100);
@@ -192,7 +192,7 @@ namespace CodeRefactor.Commands
         /// <param name="supportInsideString">Whether searching inside strings are enabled.</param>
         /// <param name="supportPreviewChanges">Whether live preview is enabled.</param>
         /// <param name="target">Current target to rename.</param>
-        private void SetupLivePreview(bool supportInsideComment, bool supportInsideString, bool supportPreviewChanges, ASResult target)
+        void SetupLivePreview(bool supportInsideComment, bool supportInsideString, bool supportPreviewChanges, ASResult target)
         {
             if (!supportPreviewChanges) return;
 
@@ -241,7 +241,7 @@ namespace CodeRefactor.Commands
             refs = tempRefs.ToArray();
         }
 
-        private void AddGetterSetterPreview(List<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
+        void AddGetterSetterPreview(List<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
         {
             target = RenamingHelper.FindGetterSetter(target, prefix + name);
             if (target is null) return;
@@ -271,7 +271,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        private FRConfiguration GetConfig(string name)
+        FRConfiguration GetConfig(string name)
         {
             return new FRConfiguration(currentDoc.FileName, sci.Text, new FRSearch(name)
             {
@@ -287,7 +287,7 @@ namespace CodeRefactor.Commands
         /// Add this <see cref="InlineRename"/> object as a message filter and handle internal
         /// messages and handle <see cref="ScintillaControl"/> events.
         /// </summary>
-        private void AddMessageFilter()
+        void AddMessageFilter()
         {
             Application.AddMessageFilter(this);
             sci.SelectionChanged += Sci_SelectionChanged;
@@ -299,7 +299,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Disable main controls from <see cref="IMainForm"/>.
         /// </summary>
-        private static void DisableControls()
+        static void DisableControls()
         {
             PluginBase.MainForm.MenuStrip.Enabled = false;
             PluginBase.MainForm.ToolStrip.Enabled = false;
@@ -314,7 +314,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Apply current changes. 
         /// </summary>
-        private void OnApply()
+        void OnApply()
         {
             if (start == end || !IsValidFirstChar(sci.CharAt(start))) return;
             for (int i = start + 1; i < end; i++)
@@ -333,7 +333,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Cancel any changes.
         /// </summary>
-        private void OnCancel()
+        void OnCancel()
         {
             using (this)
             {
@@ -346,7 +346,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Update and record current changes.
         /// </summary>
-        private void OnUpdate()
+        void OnUpdate()
         {
             sci.DisableAllSciEvents = true;
 
@@ -378,7 +378,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Revert any changes and save the document to finish up.
         /// </summary>
-        private void Finish()
+        void Finish()
         {
             // If the document was closed, don't do the finish-up task.
             if (Array.IndexOf(PluginBase.MainForm.Documents, currentDoc) == -1) return;
@@ -428,7 +428,7 @@ namespace CodeRefactor.Commands
         /// <param name="strings">Whether to update matches in strings.</param>
         /// <param name="others">Whether to update other matches.</param>
         /// <param name="highlight">Whether to highlight the matches.</param>
-        private void UpdateReferences(string replacement, bool current, bool comments, bool strings, bool others, bool highlight)
+        void UpdateReferences(string replacement, bool current, bool comments, bool strings, bool others, bool highlight)
         {
             sci.DisableAllSciEvents = true;
 
@@ -499,7 +499,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Update all references and notify.
         /// </summary>
-        private void DelayedExecution_Update()
+        void DelayedExecution_Update()
         {
             UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
 
@@ -509,7 +509,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Undo the whole action and raise apply event
         /// </summary>
-        private void DelayedExecution_Apply()
+        void DelayedExecution_Apply()
         {
             delayedExecution.Dispose();
             sci.EndUndoAction();
@@ -521,7 +521,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Undo the whole action and raise cancel event
         /// </summary>
-        private void DelayedExecution_Cancel()
+        void DelayedExecution_Cancel()
         {
             delayedExecution.Dispose();
             sci.EndUndoAction();
@@ -537,7 +537,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Undo one step.
         /// </summary>
-        private void PerformUndo()
+        void PerformUndo()
         {
             if (historyIndex > 0) SafeReplace(history[--historyIndex]);
         }
@@ -545,7 +545,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Redo one step.
         /// </summary>
-        private void PerformRedo()
+        void PerformRedo()
         {
             if (historyIndex + 1 < history.Count) SafeReplace(history[++historyIndex]);
         }
@@ -553,7 +553,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Filter and paste any clipboard content.
         /// </summary>
-        private void PerformPaste()
+        void PerformPaste()
         {
             if (Clipboard.ContainsText() && CanWrite)
             {
@@ -582,7 +582,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Select the current target.
         /// </summary>
-        private void PerformSelectAll()
+        void PerformSelectAll()
         {
             sci.DisableAllSciEvents = true;
             sci.SetSel(start, end);
@@ -597,7 +597,7 @@ namespace CodeRefactor.Commands
         /// Invoked when the selection of the <see cref="ScintillaControl"/> changes.
         /// </summary>
         /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
-        private void Sci_SelectionChanged(ScintillaControl sender)
+        void Sci_SelectionChanged(ScintillaControl sender)
         {
             sci.DisableAllSciEvents = true;
 
@@ -626,7 +626,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        private bool UpdateCurrentRef(int pos)
+        bool UpdateCurrentRef(int pos)
         {
             for (int i = 0, length = refs.Length; i < length; i++)
             {
@@ -651,7 +651,7 @@ namespace CodeRefactor.Commands
         /// <param name="position">The position where text was inserted.</param>
         /// <param name="length">The length of the inserted text.</param>
         /// <param name="linesAdded">The number of lines inserted.</param>
-        private void Sci_TextInserted(ScintillaControl sender, int position, int length, int linesAdded)
+        void Sci_TextInserted(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (start <= position && position <= end)
             {
@@ -671,7 +671,7 @@ namespace CodeRefactor.Commands
         /// <param name="position">The position where text was deleted.</param>
         /// <param name="length">The length of the deleted text.</param>
         /// <param name="linesAdded">The number of lines inserted.</param>
-        private void Sci_TextDeleted(ScintillaControl sender, int position, int length, int linesAdded)
+        void Sci_TextDeleted(ScintillaControl sender, int position, int length, int linesAdded)
         {
             position += length;
 
@@ -787,7 +787,7 @@ namespace CodeRefactor.Commands
         /// <code>true</code> to allow the shortcut to be take the default action;
         /// <code>false</code> to filter the shortcut and take a customized action.
         /// </returns>
-        private bool HandleShortcuts(Keys keys)
+        bool HandleShortcuts(Keys keys)
         {
             switch (PluginBase.MainForm.GetShortcutItemId(keys))
             {
@@ -823,7 +823,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether <see cref="Keys.Back"/> is currently available.
         /// </summary>
-        private bool CanBackspace
+        bool CanBackspace
         {
             get
             {
@@ -840,7 +840,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether <see cref="Keys.Delete"/> is currently available.
         /// </summary>
-        private bool CanDelete
+        bool CanDelete
         {
             get
             {
@@ -857,7 +857,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether text can be inserted to the current position.
         /// </summary>
-        private bool CanWrite
+        bool CanWrite
         {
             get
             {
@@ -874,19 +874,19 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether the cursor is at the start of the current target.
         /// </summary>
-        private bool AtLeftmost => sci.CurrentPos == start;
+        bool AtLeftmost => sci.CurrentPos == start;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether the cursor is at the end of the current target.
         /// </summary>
-        private bool AtRightmost => sci.CurrentPos == end;
+        bool AtRightmost => sci.CurrentPos == end;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether a character is valid for an identifier.
         /// </summary>
         /// <param name="value">A character to test for validity.</param>
         /// <returns><code>true</code> if the character is valid; <code>false</code> otherwise.</returns>
-        private static bool IsValidChar(int value)
+        static bool IsValidChar(int value)
         {
             return 0x61 <= value && value <= 0x7A
                 || 0x40 <= value && value <= 0x5A
@@ -900,7 +900,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="value">A character to test for validity.</param>
         /// <returns><code>true</code> if the character is valid; <code>false</code> otherwise.</returns>
-        private static bool IsValidFirstChar(int value)
+        static bool IsValidFirstChar(int value)
         {
             return 0x61 <= value && value <= 0x7A
                 || 0x40 <= value && value <= 0x5A
@@ -913,7 +913,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="startIndex">The start index of the highlight.</param>
         /// <param name="length">The length of the highlight.</param>
-        private void Highlight(int startIndex, int length)
+        void Highlight(int startIndex, int length)
         {
             int es = sci.EndStyled;
             int mask = (1 << sci.StyleBits) - 1;
@@ -928,7 +928,7 @@ namespace CodeRefactor.Commands
         /// Record a new value to the history.
         /// </summary>
         /// <param name="value">A new value to be recorded.</param>
-        private void AddHistory(string value)
+        void AddHistory(string value)
         {
             // Delete redo history
             int excessCount = history.Count - ++historyIndex;
@@ -952,7 +952,7 @@ namespace CodeRefactor.Commands
         /// Replace all matches including declaration without dispatching <see cref="ScintillaControl"/> events.
         /// </summary>
         /// <param name="value">The string to replace with.</param>
-        private void SafeReplace(string value)
+        void SafeReplace(string value)
         {
             sci.DisableAllSciEvents = true;
 
@@ -988,7 +988,7 @@ namespace CodeRefactor.Commands
         /// Simplified version of <see cref="SearchMatch"/>, only containing fields that are needed
         /// by <see cref="InlineRename"/>.
         /// </summary>
-        private class ReferenceInfo : IComparable<ReferenceInfo>
+        class ReferenceInfo : IComparable<ReferenceInfo>
         {
             /// <summary>
             /// The index of this reference.
@@ -1021,10 +1021,10 @@ namespace CodeRefactor.Commands
         /// (<code>TextInserted</code>, <code>TextDeleted</code>) do not allow the contents of the
         /// control to be modified while the event is being dispatched.
         /// </summary>
-        private class DelayedExecution : IDisposable
+        class DelayedExecution : IDisposable
         {
-            private Action action;
-            private Timer timer;
+            Action action;
+            Timer timer;
 
             /// <summary>
             /// Creates a new instance of <see cref="DelayedExecution"/>.
@@ -1063,7 +1063,7 @@ namespace CodeRefactor.Commands
             /// </summary>
             /// <param name="sender">The event sender object.</param>
             /// <param name="e">The event arguments.</param>
-            private void Timer_Tick(object sender, EventArgs e)
+            void Timer_Tick(object sender, EventArgs e)
             {
                 timer.Stop();
                 action.Invoke();

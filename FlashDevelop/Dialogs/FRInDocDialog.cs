@@ -456,8 +456,8 @@ namespace FlashDevelop.Dialogs
         {
             this.currentMatch = null;
             if (update) this.UpdateFindText();
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             var matches = this.GetResults(sci, simple);
             if (!matches.IsNullOrEmpty())
             {
@@ -503,8 +503,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BookmarkAllButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             List<SearchMatch> matches = this.GetResults(sci);
             if (matches != null && this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0)
             {
@@ -530,8 +530,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             if (sci.SelText.Length == 0)
             {
                 FindNext(true);
@@ -557,8 +557,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceAllButtonClick(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl is null) return;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             List<SearchMatch> matches = this.GetResults(sci);
             bool selectionOnly = this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0;
             if (matches != null && selectionOnly)
@@ -788,7 +788,5 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
-        
     }
-    
 }

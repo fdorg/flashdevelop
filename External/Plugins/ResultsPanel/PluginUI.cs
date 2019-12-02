@@ -20,32 +20,32 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private ColumnHeader entryType;
-        private ColumnHeader entryLine;
-        private ColumnHeader entryDesc;
-        private ColumnHeader entryFile;
-        private ColumnHeader entryPath;
-        private readonly List<ListViewItem> allListViewItems;
-        private ToolStripButton toolStripButtonError;
-        private ToolStripButton toolStripButtonWarning;
-        private ToolStripButton toolStripButtonInfo;
-        private ToolStripButton toolStripButtonLock;
-        private ToolStripSpringTextBox toolStripTextBoxFilter;
-        private ToolStripLabel toolStripLabelFilter;
-        private ToolStripButton clearFilterButton;
-        private ToolStrip toolStripFilters;
-        private int errorCount;
-        private int warningCount;
-        private int messageCount;
-        private readonly PluginMain pluginMain;
-        private int logCount;
-        private Timer autoShow;
-        private SortOrder sortOrder;
-        private int lastColumn;
-        private GroupingMethod groupingMethod;
-        private readonly int buttonsWidth;
-        private Container components;
-        private static ImageListManager imageList;
+        ColumnHeader entryType;
+        ColumnHeader entryLine;
+        ColumnHeader entryDesc;
+        ColumnHeader entryFile;
+        ColumnHeader entryPath;
+        readonly List<ListViewItem> allListViewItems;
+        ToolStripButton toolStripButtonError;
+        ToolStripButton toolStripButtonWarning;
+        ToolStripButton toolStripButtonInfo;
+        ToolStripButton toolStripButtonLock;
+        ToolStripSpringTextBox toolStripTextBoxFilter;
+        ToolStripLabel toolStripLabelFilter;
+        ToolStripButton clearFilterButton;
+        ToolStrip toolStripFilters;
+        int errorCount;
+        int warningCount;
+        int messageCount;
+        readonly PluginMain pluginMain;
+        int logCount;
+        Timer autoShow;
+        SortOrder sortOrder;
+        int lastColumn;
+        GroupingMethod groupingMethod;
+        readonly int buttonsWidth;
+        Container components;
+        static ImageListManager imageList;
 
         #region Constructors
 
@@ -167,7 +167,7 @@ namespace ResultsPanel
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.EntriesView = new ResultsPanel.ListViewEx();
@@ -350,12 +350,12 @@ namespace ResultsPanel
         /// <summary>
         /// Initializes the context menu for entriesView
         /// </summary>
-        private void InitializeContextMenu() => EntriesView.ContextMenuStrip = pluginMain.contextMenuStrip;
+        void InitializeContextMenu() => EntriesView.ContextMenuStrip = pluginMain.contextMenuStrip;
 
         /// <summary>
         /// Initializes the image list for entriesView
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             if (imageList is null)
             {
@@ -381,7 +381,7 @@ namespace ResultsPanel
         /// <summary>
         /// Applies the localized texts to the control
         /// </summary>
-        private void InitializeTexts()
+        void InitializeTexts()
         {
             this.entryLine.Text = TextHelper.GetString("Header.Line");
             this.entryDesc.Text = TextHelper.GetString("Header.Description");
@@ -397,7 +397,7 @@ namespace ResultsPanel
         /// <summary>
         /// Initializes the custom rendering
         /// </summary>
-        private void InitializeLayout()
+        void InitializeLayout()
         {
             foreach (ColumnHeader column in EntriesView.Columns)
             {
@@ -714,7 +714,7 @@ namespace ResultsPanel
         /// <summary>
         /// Re-populate image list when the theme changes.
         /// </summary>
-        private static void ImageList_Populate(object sender, EventArgs e)
+        static void ImageList_Populate(object sender, EventArgs e)
         {
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error
@@ -726,7 +726,7 @@ namespace ResultsPanel
         /// <summary>
         /// Filter the result on check change
         /// </summary>
-        private void ToolStripButton_CheckedChanged(object sender, EventArgs e)
+        void ToolStripButton_CheckedChanged(object sender, EventArgs e)
         {
             this.clearFilterButton.Enabled = this.toolStripTextBoxFilter.Text.Length > 0;
             this.FilterResults();
@@ -735,12 +735,12 @@ namespace ResultsPanel
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButton_Click(object sender, EventArgs e) => toolStripTextBoxFilter.Text = "";
+        void ClearFilterButton_Click(object sender, EventArgs e) => toolStripTextBoxFilter.Text = "";
 
         /// <summary>
         /// If the user presses Enter, dispatch double click
         /// </summary> 
-        private void EntriesView_KeyDown(object sender, KeyEventArgs e)
+        void EntriesView_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -754,7 +754,7 @@ namespace ResultsPanel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EntriesView_ColumnClick(object sender, ColumnClickEventArgs e)
+        void EntriesView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             ColumnHeader header = this.EntriesView.Columns[e.Column];
             if (header.Tag is GroupingMethod tag)
@@ -784,12 +784,12 @@ namespace ResultsPanel
         /// <summary>
         /// Update the buttons when the panel resizes
         /// </summary>
-        private void PluginUI_Resize(object sender, EventArgs e) => UpdateButtons();
+        void PluginUI_Resize(object sender, EventArgs e) => UpdateButtons();
 
         /// <summary>
         /// Opens the file and goes to the match
         /// </summary>
-        private void EntriesView_DoubleClick(object sender, EventArgs e)
+        void EntriesView_DoubleClick(object sender, EventArgs e)
         {
             if (this.EntriesView.SelectedIndices.Count > 0)
             {
@@ -801,7 +801,7 @@ namespace ResultsPanel
         /// <summary>
         /// Shows the panel
         /// </summary>
-        private void AutoShow_Tick(object sender, EventArgs e)
+        void AutoShow_Tick(object sender, EventArgs e)
         {
             this.autoShow.Stop();
             if (this.EntriesView.Items.Count > 0)
@@ -822,7 +822,7 @@ namespace ResultsPanel
         /// <summary>
         /// Convert multibyte column to byte length
         /// </summary>
-        private int MBSafeColumn(ScintillaControl sci, int line, int length)
+        int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
             string text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
@@ -832,7 +832,7 @@ namespace ResultsPanel
         /// <summary>
         /// Goes to the match and ensures that correct fold is opened
         /// </summary>
-        private void SetSelAndFocus(ScintillaControl sci, int line, int startPosition, int endPosition)
+        void SetSelAndFocus(ScintillaControl sci, int line, int startPosition, int endPosition)
         {
             sci.SetSel(startPosition, endPosition);
             sci.EnsureVisibleEnforcePolicy(line);
@@ -841,7 +841,7 @@ namespace ResultsPanel
         /// <summary>
         /// Goes to the match and ensures that correct fold is opened
         /// </summary>
-        private void MBSafeSetSelAndFocus(ScintillaControl sci, int line, int startPosition, int endPosition)
+        void MBSafeSetSelAndFocus(ScintillaControl sci, int line, int startPosition, int endPosition)
         {
             sci.MBSafeSetSel(startPosition, endPosition);
             sci.EnsureVisibleEnforcePolicy(line);
@@ -850,7 +850,7 @@ namespace ResultsPanel
         /// <summary>
         /// Filters the results...
         /// </summary>
-        private void FilterResults()
+        void FilterResults()
         {
             string defaultGroupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
             string filterText = this.toolStripTextBoxFilter.Text;
@@ -962,7 +962,7 @@ namespace ResultsPanel
         /// <summary>
         /// Updates the filter buttons
         /// </summary>
-        private void UpdateButtons()
+        void UpdateButtons()
         {
             if (this.buttonsWidth == 0) return;
             if (this.Width >= this.buttonsWidth)
@@ -984,7 +984,7 @@ namespace ResultsPanel
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, string name, string header)
+        void AddToGroup(ListViewItem item, string name, string header)
         {
             foreach (ListViewGroup lvg in EntriesView.Groups)
             {
@@ -1032,18 +1032,19 @@ namespace ResultsPanel
         /// </summary>
         internal void GetResultsAt(List<string> results, ITabbedDocument document, int position)
         {
+            var sci = document.SciControl;
             foreach (ListViewItem item in EntriesView.Items)
             {
                 var fullPath = Path.Combine(item.SubItems[4].Text, item.SubItems[3].Text);
-                if (fullPath != document.FileName) continue; //item is about different file
+                if (fullPath != sci.FileName) continue; //item is about different file
 
                 if (item.ImageIndex == 0) continue; //item is only information
 
-                var hasPos = GetPosition(document.SciControl, item, out var start, out var end);
+                var hasPos = GetPosition(sci, item, out var start, out var end);
                 if (!hasPos) continue; //item has no position
 
                 var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-                var lineStart = document.SciControl.PositionFromLine(line);
+                var lineStart = sci.PositionFromLine(line);
                 start += lineStart;
                 end += lineStart;
 
@@ -1059,7 +1060,7 @@ namespace ResultsPanel
             }
         }
 
-        private bool GetPosition(ScintillaControl sci, ListViewItem item, out int start, out int end)
+        bool GetPosition(ScintillaControl sci, ListViewItem item, out int start, out int end)
         {
             var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
             var description = item.SubItems[2].Text;
@@ -1096,7 +1097,7 @@ namespace ResultsPanel
         /// <summary>
         /// Squiggle one result
         /// </summary>
-        private void AddSquiggle(ListViewItem item)
+        void AddSquiggle(ListViewItem item)
         {
             var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
             if (sci is null)
@@ -1147,21 +1148,19 @@ namespace ResultsPanel
             var cleared = new HashSet<string>();
             foreach (ListViewItem item in this.EntriesView.Items)
             {
-                string fileName = GetFileName(item);
+                var fileName = GetFileName(item);
                 foreach (var document in PluginBase.MainForm.Documents)
                 {
-                    if (fileName == document.FileName)
+                    var sci = document.SciControl;
+                    if (sci.FileName != fileName) continue;
+                    if (!cleared.Contains(fileName))
                     {
-                        if (!cleared.Contains(fileName))
-                        {
-                            var sci = document.SciControl;
-                            sci.RemoveHighlights((int) TraceType.Info);
-                            sci.RemoveHighlights((int) TraceType.Error);
-                            sci.RemoveHighlights((int) TraceType.Warning);
-                            cleared.Add(fileName);
-                        }
-                        break;
+                        sci.RemoveHighlights((int) TraceType.Info);
+                        sci.RemoveHighlights((int) TraceType.Error);
+                        sci.RemoveHighlights((int) TraceType.Warning);
+                        cleared.Add(fileName);
                     }
+                    break;
                 }
             }
         }
@@ -1169,7 +1168,7 @@ namespace ResultsPanel
         /// <summary>
         /// Clear and add all squiggles.
         /// </summary>
-        private void RefreshSquiggles()
+        void RefreshSquiggles()
         {
             pluginMain.pluginUI.ClearSquiggles();
             if (GroupData != null)
@@ -1203,7 +1202,7 @@ namespace ResultsPanel
         /// <summary>
         /// Get file name from a list view item
         /// </summary>
-        private static string GetFileName(ListViewItem item)
+        static string GetFileName(ListViewItem item)
         {
             return (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/', '\\');
         }
@@ -1215,13 +1214,13 @@ namespace ResultsPanel
         /**
         * Finds if a string contains invalid characters for a path
         */
-        private static readonly Regex badCharacters = new Regex("[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        static readonly Regex badCharacters = new Regex("[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
 
         /**
         * Match standard file entry -- filename:line:description
         * i.e. C:/path/to/src/com/Class.as:15: description
         */
-        private static readonly Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
+        static readonly Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match MXMLC style errors
@@ -1229,25 +1228,25 @@ namespace ResultsPanel
         * Match TypeScript style errors
         * i.e. C:\path\to\src\Class.as(9,20): description
         */
-        private static readonly Regex fileEntry2 = new Regex(@"^(?<filename>.*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
+        static readonly Regex fileEntry2 = new Regex(@"^(?<filename>.*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match find in files style ranges
         */
-        private static readonly Regex lookupRange = new Regex("lookup range[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        static readonly Regex lookupRange = new Regex("lookup range[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
 
         /**
         * Extract error caret position
         */
-        private static readonly Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
-        private static readonly Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
-        private static readonly Regex errorCharacters2 = new Regex("col: (?<start>[0-9]+)\\s*", RegexOptions.Compiled);
+        static readonly Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
+        static readonly Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        static readonly Regex errorCharacters2 = new Regex("col: (?<start>[0-9]+)\\s*", RegexOptions.Compiled);
 
         #endregion
 
         #region Entries Navigation
 
-        private int entryIndex = -1;
+        int entryIndex = -1;
 
         /// <summary>
         /// Goes to the next entry in the result list.
@@ -1277,7 +1276,7 @@ namespace ResultsPanel
             return false;
         }
 
-        private void SelectItem(int index)
+        void SelectItem(int index)
         {
             if (0 <= this.entryIndex && this.entryIndex < this.EntriesView.Items.Count)
             {
@@ -1290,7 +1289,7 @@ namespace ResultsPanel
             this.EntriesView.EnsureVisible(this.entryIndex);
         }
 
-        private void NavigateToSelectedItem()
+        void NavigateToSelectedItem()
         {
             if (this.EntriesView.SelectedItems.Count == 0) return;
             var item = this.EntriesView.SelectedItems[0];

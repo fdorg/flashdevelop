@@ -53,9 +53,9 @@ namespace CodeRefactor.Provider
             var result = new Dictionary<string, ITabbedDocument>();
             foreach (var openDocument in PluginBase.MainForm.Documents)
             {
-                if (openDocument.IsEditable)
+                if (openDocument.SciControl is { } sci)
                 {
-                    result[openDocument.FileName] = openDocument;
+                    result[sci.FileName] = openDocument;
                 }
             }
             return result;
@@ -96,12 +96,14 @@ namespace CodeRefactor.Provider
         public void RegisterLoadedDocument(ITabbedDocument document)
         {
             //if it's null, it means it was already opened, or the caller sent us garbage
-            if (document != null && !FilesOpenedAndUsed.ContainsKey(document.FileName))
+            if (document != null
+                && document.FileName is { } fileName
+                && !FilesOpenedAndUsed.ContainsKey(fileName))
             {
                 //newly opened document.  Let's store it so we can close it later if it's not part of our result set.
                 //false to indicate that it so far hasn't found any matching entries.
-                FilesOpenedAndUsed.Add(document.FileName, false);
-                FilesOpenedDocumentReferences.Add(document.FileName, document);
+                FilesOpenedAndUsed.Add(fileName, false);
+                FilesOpenedDocumentReferences.Add(fileName, document);
             }
         }
 

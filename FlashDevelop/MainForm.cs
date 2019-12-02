@@ -1162,50 +1162,52 @@ namespace FlashDevelop
         {
             try
             {
-                if (CurrentDocument is null) return;
-                OnScintillaControlUpdateControl(CurrentDocument.SciControl);
-                quickFind.CanSearch = CurrentDocument.IsEditable;
+                var document = CurrentDocument;
+                if (document is null) return;
+                var sci = document.SciControl;
+                OnScintillaControlUpdateControl(sci);
+                quickFind.CanSearch = sci != null;
                 /**
                 * Bring this newly active document to the top of the tab history
                 * unless you're currently cycling through tabs with the keyboard
                 */
-                TabbingManager.UpdateSequentialIndex(CurrentDocument);
+                TabbingManager.UpdateSequentialIndex(document);
                 if (!TabbingManager.TabTimer.Enabled)
                 {
-                    TabbingManager.TabHistory.Remove(CurrentDocument);
-                    TabbingManager.TabHistory.Insert(0, CurrentDocument);
+                    TabbingManager.TabHistory.Remove(document);
+                    TabbingManager.TabHistory.Insert(0, document);
                 }
-                if (CurrentDocument.IsEditable)
+                if (sci != null)
                 {
                     /**
                     * Apply correct extension when saving
                     */
                     if (AppSettings.ApplyFileExtension)
                     {
-                        var extension = Path.GetExtension(CurrentDocument.FileName);
-                        if (extension != "") saveFileDialog.DefaultExt = extension;
+                        var extension = Path.GetExtension(sci.FileName);
+                        if (extension != string.Empty) saveFileDialog.DefaultExt = extension;
                     }
                     /**
                     * Set current working directory
                     */
-                    string path = Path.GetDirectoryName(CurrentDocument.FileName);
-                    if (!CurrentDocument.IsUntitled && Directory.Exists(path))
+                    var path = Path.GetDirectoryName(sci.FileName);
+                    if (!document.IsUntitled && Directory.Exists(path))
                     {
                         workingDirectory = path;
                     }
                     /**
                     * Checks the file changes
                     */
-                    ((TabbedDocument)CurrentDocument).Activate();
+                    ((TabbedDocument)document).Activate();
                     /**
                     * Processes the opened file
                     */
                     if (notifyOpenFile)
                     {
-                        ScintillaManager.UpdateControlSyntax(CurrentDocument.SciControl);
-                        if (File.Exists(CurrentDocument.FileName))
+                        ScintillaManager.UpdateControlSyntax(sci);
+                        if (File.Exists(sci.FileName))
                         {
-                            TextEvent te = new TextEvent(EventType.FileOpen, CurrentDocument.FileName);
+                            var te = new TextEvent(EventType.FileOpen, sci.FileName);
                             EventManager.DispatchEvent(this, te);
                         }
                         notifyOpenFile = false;
@@ -1872,9 +1874,6 @@ namespace FlashDevelop
             EventManager.DispatchEvent(this, ne);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         void OpenDocumentFromParameters(string file)
         {
             var openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
@@ -1885,7 +1884,7 @@ namespace FlashDevelop
                 if (File.Exists(file))
                 {
                     if (OpenEditableDocument(file, false) is TabbedDocument doc) ApplyOpenParams(openParams, doc.SciControl);
-                    else if (CurrentDocument.FileName == file) ApplyOpenParams(openParams, CurrentDocument.SciControl);
+                    else if (CurrentDocument.SciControl is { } sci && sci.FileName == file) ApplyOpenParams(openParams, sci);
                 }
             }
             else if (File.Exists(file))
@@ -1942,7 +1941,7 @@ namespace FlashDevelop
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ApplySettings));
             foreach (var document in Documents)
             {
-                if (!document.IsEditable) continue;
+                if (document.SciControl is null) continue;
                 ScintillaManager.ApplySciSettings(document.SplitSci1, true);
                 ScintillaManager.ApplySciSettings(document.SplitSci2, true);
             }
