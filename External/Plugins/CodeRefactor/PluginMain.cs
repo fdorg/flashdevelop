@@ -458,7 +458,7 @@ namespace CodeRefactor
 
         static void MoveFile(string fileName)
         {
-            var dialog = new MoveDialog(fileName);
+            using var dialog = new MoveDialog(fileName);
             if (dialog.ShowDialog() != DialogResult.OK) return;
             var oldPathToNewPath = new Dictionary<string, string>();
             foreach (var file in dialog.MovingFiles)

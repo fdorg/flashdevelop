@@ -180,11 +180,11 @@ namespace FlashDevelop.Dialogs
         public static void Show(Exception ex)
         {
             SystemSounds.Hand.Play();
-            using var errorDialog = new ErrorDialog();
-            errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
-            errorDialog.countLabel.Text += " " + errorCount++;
-            errorDialog.exitButton.Enabled = errorCount >= 7;
-            errorDialog.ShowDialog();
+            using var dialog = new ErrorDialog();
+            dialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
+            dialog.countLabel.Text += " " + errorCount++;
+            dialog.exitButton.Enabled = errorCount >= 7;
+            dialog.ShowDialog();
         }
 
         #endregion

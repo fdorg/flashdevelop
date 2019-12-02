@@ -625,7 +625,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void BrowseButtonClick(object sender, EventArgs e)
         {
-            using var fbd = new VistaFolderBrowserDialog {Multiselect = true};
+            using var dialog = new VistaFolderBrowserDialog {Multiselect = true};
             var curDir = folderComboBox.Text.Trim();
             if (curDir == "<Project>")
             {
@@ -633,10 +633,10 @@ namespace FlashDevelop.Dialogs
                     ? PluginBase.MainForm.WorkingDirectory
                     : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             }
-            if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
-            if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
+            if (Directory.Exists(curDir)) dialog.SelectedPath = curDir;
+            if (dialog.ShowDialog() == DialogResult.OK && Directory.Exists(dialog.SelectedPath))
             {
-                folderComboBox.Text = string.Join(";", fbd.SelectedPaths);
+                folderComboBox.Text = string.Join(";", dialog.SelectedPaths);
                 folderComboBox.SelectionStart = folderComboBox.Text.Length;
             }
         }

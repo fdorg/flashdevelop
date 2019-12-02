@@ -694,9 +694,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void Show(string itemName, string filter)
         {
-            using var settingDialog = new SettingDialog(itemName, filter);
-            settingDialog.closeButton.Select();
-            settingDialog.ShowDialog();
+            using var dialog = new SettingDialog(itemName, filter);
+            dialog.closeButton.Select();
+            dialog.ShowDialog();
         }
 
         #endregion

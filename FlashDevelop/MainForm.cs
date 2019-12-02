@@ -3966,8 +3966,8 @@ namespace FlashDevelop
         /// </summary>
         public void TestControls(object sender, EventArgs e)
         {
-            using ControlDialog cd = new ControlDialog();
-            cd.Show(this);
+            using var dialog = new ControlDialog();
+            dialog.Show(this);
         }
 
         /// <summary>

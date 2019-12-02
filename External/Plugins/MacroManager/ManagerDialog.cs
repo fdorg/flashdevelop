@@ -392,8 +392,8 @@ namespace MacroManager
         /// </summary>
         public static void Show(PluginMain pluginMain)
         {
-            using var managerDialog = new ManagerDialog(pluginMain);
-            managerDialog.ShowDialog();
+            using var dialog = new ManagerDialog(pluginMain);
+            dialog.ShowDialog();
         }
 
         #endregion

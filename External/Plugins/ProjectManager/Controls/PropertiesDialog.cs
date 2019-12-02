@@ -1343,14 +1343,14 @@ namespace ProjectManager.Controls
 
         void preBuilderButton_Click(object sender, System.EventArgs e)
         {
-            using BuildEventDialog dialog = new BuildEventDialog(BaseProject);
+            using var dialog = new BuildEventDialog(BaseProject);
             dialog.CommandLine = preBuildBox.Text;
             if (dialog.ShowDialog(this) == DialogResult.OK) preBuildBox.Text = dialog.CommandLine;
         }
 
         void postBuilderButton_Click(object sender, System.EventArgs e)
         {
-            using BuildEventDialog dialog = new BuildEventDialog(BaseProject);
+            using var dialog = new BuildEventDialog(BaseProject);
             dialog.CommandLine = postBuildBox.Text;
             if (dialog.ShowDialog(this) == DialogResult.OK) postBuildBox.Text = dialog.CommandLine;
         }
@@ -1393,7 +1393,7 @@ namespace ProjectManager.Controls
 
         void browseButton_Click(object sender, EventArgs e)
         {
-            using VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
+            using var folder = new VistaFolderBrowserDialog();
             if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
                 folder.SelectedPath = customTextBox.Text;
             if (folder.ShowDialog() == DialogResult.OK)

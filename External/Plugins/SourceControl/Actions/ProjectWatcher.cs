@@ -412,15 +412,14 @@ namespace SourceControl.Actions
             var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             var msg = TextHelper.GetString("Info.CreateCommit");
 
-            using var led = new LineEntryDialog(title, msg, message);
-            var result = led.ShowDialog();
-            if (result == DialogResult.Cancel) //Never
+            using var dialog = new LineEntryDialog(title, msg, message);
+            if (dialog.ShowDialog() == DialogResult.Cancel) //Never
             {
                 PluginMain.SCSettings.NeverCommit = true;
                 return null;
             }
-            if (result != DialogResult.Yes || led.Line == "") return null;
-            return led.Line;
+            if (dialog.ShowDialog() != DialogResult.Yes || dialog.Line == "") return null;
+            return dialog.Line;
         }
     }
     

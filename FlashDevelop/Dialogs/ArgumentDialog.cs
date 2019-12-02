@@ -471,8 +471,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using var argumentDialog = new ArgumentDialog();
-            argumentDialog.ShowDialog();
+            using var dialog = new ArgumentDialog();
+            dialog.ShowDialog();
         }
 
         #endregion

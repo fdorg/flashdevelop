@@ -22,18 +22,18 @@ namespace ProjectManager.Controls
 
         #region Component Designer
 
-        private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.Button btnDown;
-        private System.Windows.Forms.ListBox listBox;
-        private System.Windows.Forms.ComboBox langComboBox;
-        private System.Windows.Forms.Button btnNewClasspath;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.ToolTip toolTip;
+        System.Windows.Forms.Button btnUp;
+        System.Windows.Forms.Button btnDown;
+        System.Windows.Forms.ListBox listBox;
+        System.Windows.Forms.ComboBox langComboBox;
+        System.Windows.Forms.Button btnNewClasspath;
+        System.Windows.Forms.Button btnRemove;
+        System.Windows.Forms.ToolTip toolTip;
 
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        System.ComponentModel.IContainer components = null;
 
         /// <summary> 
         /// Clean up any resources being used.
@@ -54,7 +54,7 @@ namespace ProjectManager.Controls
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.listBox = new System.Windows.Forms.ListBoxEx();
@@ -215,18 +215,18 @@ namespace ProjectManager.Controls
 
         #endregion
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.btnRemove.Text = TextHelper.GetString("Label.Remove");
             this.btnNewClasspath.Text = TextHelper.GetString("Label.AddClasspath");
         }
 
-        private void OnChanged()
+        void OnChanged()
         {
             Changed?.Invoke(this, new EventArgs());
         }
 
-        private void SetButtons()
+        void SetButtons()
         {
             btnRemove.Enabled = (listBox.SelectedIndex > -1);
             btnUp.Enabled = (listBox.SelectedIndex > 0);
@@ -235,9 +235,9 @@ namespace ProjectManager.Controls
 
         string lastBrowserPath;
 
-        private void btnNewClasspath_Click(object sender, EventArgs e)
+        void btnNewClasspath_Click(object sender, EventArgs e)
         {
-            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            using var dialog = new VistaFolderBrowserDialog();
             dialog.RootFolder = Environment.SpecialFolder.Desktop;
             dialog.UseDescriptionForTitle = true;
             dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
@@ -267,7 +267,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private bool CanBeRelative(string path)
+        bool CanBeRelative(string path)
         {
             if (Path.GetPathRoot(path).ToLower() != Path.GetPathRoot(project.ProjectPath).ToLower())
             {
@@ -276,22 +276,22 @@ namespace ProjectManager.Controls
             return true;
         }
 
-        private void btnRemove_Click(object sender, EventArgs e)
+        void btnRemove_Click(object sender, EventArgs e)
         {
             listBox.Items.RemoveAt(listBox.SelectedIndex);
             OnChanged();
         }
 
-        private void listBox_SelectedIndexChanged(object sender, EventArgs e)
+        void listBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetButtons();
         }
 
-        private void listBox_DoubleClick(object sender, System.EventArgs e)
+        void listBox_DoubleClick(object sender, System.EventArgs e)
         {
-            ClasspathEntry entry = listBox.SelectedItem as ClasspathEntry;
+            var entry = listBox.SelectedItem as ClasspathEntry;
             if (entry is null) return; // you could have double-clicked on whitespace
-            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            using var dialog = new VistaFolderBrowserDialog();
             dialog.RootFolder = Environment.SpecialFolder.Desktop;
             dialog.UseDescriptionForTitle = true;
             dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
@@ -316,8 +316,9 @@ namespace ProjectManager.Controls
             }
         }
 
-        private Point prevPoint = new Point(0, 0); // blocks too frequent updates
-        private void listBox_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        Point prevPoint = new Point(0, 0); // blocks too frequent updates
+
+        void listBox_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (prevPoint.Equals(new Point(e.X, e.Y))) return;
             prevPoint = new Point(e.X, e.Y);
@@ -335,7 +336,7 @@ namespace ProjectManager.Controls
             toolTip.SetToolTip(listBox, "");
         }
 
-        private void btnUp_Click(object sender, System.EventArgs e)
+        void btnUp_Click(object sender, System.EventArgs e)
         {
             int index = listBox.SelectedIndex;
             object temp = listBox.Items[index-1];
@@ -345,7 +346,7 @@ namespace ProjectManager.Controls
             OnChanged();
         }
 
-        private void btnDown_Click(object sender, System.EventArgs e)
+        void btnDown_Click(object sender, System.EventArgs e)
         {
             int index = listBox.SelectedIndex;
             object temp = listBox.Items[index+1];
@@ -357,7 +358,7 @@ namespace ProjectManager.Controls
 
         #region WarnConflictingPath
 
-        private bool WarnConflictingPath(string path)
+        bool WarnConflictingPath(string path)
         {
             char sep = Path.DirectorySeparatorChar;
 
@@ -388,7 +389,7 @@ namespace ProjectManager.Controls
 
         #region ClasspathEntry
 
-        private class ClasspathEntry
+        class ClasspathEntry
         {
             public readonly string Classpath;
 

@@ -24,29 +24,29 @@ namespace ProjectManager.Controls
 
         #region Windows Form Designer
 
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ImageList imageList;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.PictureBox previewBox;
-        private System.Windows.Forms.ListView projectListView;
-        private System.Windows.Forms.Label descriptionLabel;
-        private System.Windows.Forms.Button browseButton;
-        private System.Windows.Forms.TextBox locationTextBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox nameTextBox;
-        private System.Windows.Forms.CheckBox createDirectoryBox;
-        private System.Windows.Forms.StatusBar statusBar;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox packageTextBox;
-        private System.ComponentModel.IContainer components;
+        System.Windows.Forms.Button cancelButton;
+        System.Windows.Forms.Button okButton;
+        System.Windows.Forms.Label label1;
+        System.Windows.Forms.ImageList imageList;
+        System.Windows.Forms.ColumnHeader columnHeader1;
+        System.Windows.Forms.PictureBox previewBox;
+        System.Windows.Forms.ListView projectListView;
+        System.Windows.Forms.Label descriptionLabel;
+        System.Windows.Forms.Button browseButton;
+        System.Windows.Forms.TextBox locationTextBox;
+        System.Windows.Forms.Label label2;
+        System.Windows.Forms.TextBox nameTextBox;
+        System.Windows.Forms.CheckBox createDirectoryBox;
+        System.Windows.Forms.StatusBar statusBar;
+        System.Windows.Forms.Label label3;
+        System.Windows.Forms.TextBox packageTextBox;
+        System.ComponentModel.IContainer components;
         
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.cancelButton = new System.Windows.Forms.ButtonEx();
@@ -431,7 +431,7 @@ namespace ProjectManager.Controls
 
         #endregion
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.okButton.Text = TextHelper.GetString("Label.OK");
             this.label2.Text = TextHelper.GetString("Label.Name");
@@ -446,7 +446,7 @@ namespace ProjectManager.Controls
             this.Text = " " + TextHelper.GetString("Info.NewProject");
         }
 
-        private void okButton_Click(object sender, System.EventArgs e)
+        void okButton_Click(object sender, System.EventArgs e)
         {
             // we want to create a project directory with the same name as the
             // project file, underneath the selected location.
@@ -484,7 +484,7 @@ namespace ProjectManager.Controls
             this.Close();
         }
 
-        private void projectListView_SelectedIndexChanged(object sender, System.EventArgs e)
+        void projectListView_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if (projectListView.SelectedIndices.Count > 0)
             {
@@ -510,7 +510,7 @@ namespace ProjectManager.Controls
             UpdateStatusBar();
         }
 
-        private void SetProjectImage(string projectImage)
+        void SetProjectImage(string projectImage)
         {
             Image image = Image.FromFile(projectImage);
             Bitmap empty = new Bitmap(this.previewBox.Width, this.previewBox.Height);
@@ -521,9 +521,9 @@ namespace ProjectManager.Controls
             image.Dispose();
         }
 
-        private void browseButton_Click(object sender, System.EventArgs e)
+        void browseButton_Click(object sender, System.EventArgs e)
         {
-            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            using var dialog = new VistaFolderBrowserDialog();
             dialog.RootFolder = Environment.SpecialFolder.Desktop;
             dialog.UseDescriptionForTitle = true;
             dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
@@ -560,7 +560,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void UpdateStatusBar()
+        void UpdateStatusBar()
         {
             string status = string.Empty;
             string ext = ProjectExt;
@@ -577,11 +577,11 @@ namespace ProjectManager.Controls
             statusBar.Text = status;
         }
 
-        private void locationTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
-        private void nameTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
-        private void createDirectoryBox_CheckedChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
+        void locationTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
+        void nameTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
+        void createDirectoryBox_CheckedChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
 
-        private void textPackage_TextChanged(object sender, EventArgs e)
+        void textPackage_TextChanged(object sender, EventArgs e)
         {
             //package name invalid
             if (!Regex.IsMatch(PackageName, "^[_a-zA-Z]([_a-zA-Z0-9])*([\\.][_a-zA-Z]([_a-zA-Z0-9])*)*$") && packageTextBox.Text.Length > 0)

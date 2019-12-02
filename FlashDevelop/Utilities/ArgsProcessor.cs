@@ -388,9 +388,9 @@ namespace FlashDevelop.Utilities
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
-                using var rvd = new ArgReplaceDialog(args, reUserArgs);
-                userArgs = rvd.Dictionary; // Save dictionary temporarily...
-                if (rvd.ShowDialog() == DialogResult.OK)
+                using var dialog = new ArgReplaceDialog(args, reUserArgs);
+                userArgs = dialog.Dictionary; // Save dictionary temporarily...
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     args = reUserArgs.Replace(args, ReplaceUserArgs);
                 }
