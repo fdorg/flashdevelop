@@ -537,7 +537,7 @@ namespace PluginCore.FRService
                             {
                                 if (c == '"' && !IsEscapedCharacter(src, pos)) literalMatch = 0;
                             }
-                            else if (literalMatch == 2)
+                            else
                             {
                                 if (c == '\'' && !IsEscapedCharacter(src, pos)) literalMatch = 0;
                             }
