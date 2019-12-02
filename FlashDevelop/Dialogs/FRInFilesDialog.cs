@@ -1072,11 +1072,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public void UpdateFindText()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document.IsEditable && document.SciControl.SelText.Length > 0)
-            {
-                findComboBox.Text = document.SciControl.SelText;
-            }
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci != null && sci.SelText.Length > 0) findComboBox.Text = sci.SelText;
         }
 
         #endregion

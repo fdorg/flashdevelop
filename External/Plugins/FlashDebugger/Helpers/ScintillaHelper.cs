@@ -24,12 +24,9 @@ namespace FlashDebugger
 
         #region Scintilla Events
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void AddSciEvent(string value)
+        public static void AddSciEvent(string fileName)
         {
-            var document = DocumentManager.FindDocument(value);
+            var document = DocumentManager.FindDocument(fileName);
             if (document is null || !document.IsEditable) return;
             InitMarkers(document.SplitSci1);
             InitMarkers(document.SplitSci2);
@@ -314,18 +311,18 @@ namespace FlashDebugger
 
         internal static void ToggleBreakPoint_Click(object sender, EventArgs e)
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             ToggleMarker(sci, markerBPEnabled, sci.CurrentLine);
         }
 
         internal static void DeleteAllBreakPoints_Click(object sender, EventArgs e)
         {
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
-                if (doc.IsEditable)
+            foreach (var doc in PluginBase.MainForm.Documents)
+                if (doc.SciControl is { } sci)
                 {
-                    doc.SciControl.MarkerDeleteAll(markerBPEnabled);
-                    doc.SciControl.MarkerDeleteAll(markerBPDisabled);
-                    RemoveAllHighlights(doc.SciControl);
+                    sci.MarkerDeleteAll(markerBPEnabled);
+                    sci.MarkerDeleteAll(markerBPDisabled);
+                    RemoveAllHighlights(sci);
                 }
             PanelsHelper.breakPointUI.Clear();
             PluginMain.breakPointManager.ClearAll();
@@ -333,8 +330,8 @@ namespace FlashDebugger
 
         internal static void ToggleBreakPointEnable_Click(object sender, EventArgs e)
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            int line = sci.CurrentLine;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var line = sci.CurrentLine;
             if (IsMarkerSet(sci, markerBPEnabled, line))
             {
                 sci.MarkerDelete(line, markerBPEnabled);

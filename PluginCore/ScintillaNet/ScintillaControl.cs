@@ -5697,10 +5697,10 @@ namespace ScintillaNet
         /// </summary>
         public string GetWordLeft(int position, bool skipWS)
         {
-            string word = "";
-            string lang = ConfigurationLanguage;
-            Language config = Configuration.GetLanguage(lang);
-            string characterClass = config.characterclass.Characters;
+            var word = string.Empty;
+            var lang = ConfigurationLanguage;
+            var config = Configuration.GetLanguage(lang);
+            var characterClass = config.characterclass.Characters;
             while (position >= 0)
             {
                 var c = (char)CharAt(position);

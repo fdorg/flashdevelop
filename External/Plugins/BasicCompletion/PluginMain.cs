@@ -20,15 +20,15 @@ namespace BasicCompletion
 {
     public class PluginMain : IPlugin
     {
-        private readonly Hashtable updateTable = new Hashtable();
-        private readonly Hashtable baseTable = new Hashtable();
-        private readonly Hashtable fileTable = new Hashtable();
-        private Timer updateTimer;
-        private bool isActive;
-        private bool isSupported;
-        private string settingFilename;
-        private Settings settingObject;
-        private string[] projKeywords;
+        readonly Hashtable updateTable = new Hashtable();
+        readonly Hashtable baseTable = new Hashtable();
+        readonly Hashtable fileTable = new Hashtable();
+        Timer updateTimer;
+        bool isActive;
+        bool isSupported;
+        string settingFilename;
+        Settings settingObject;
+        string[] projKeywords;
 
         #region Required Properties
 
@@ -93,23 +93,23 @@ namespace BasicCompletion
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document is null || !document.IsEditable) return;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             switch (e.Type)
             {
                 case EventType.Keys:
                 {
-                    Keys keys = ((KeyEvent) e).Value;
+                    var keys = ((KeyEvent) e).Value;
                     if (isSupported && keys == (Keys.Control | Keys.Space))
                     {
-                        var lang = document.SciControl.ConfigurationLanguage;
-                        var items = GetCompletionListItems(lang, document.FileName);
+                        var lang = sci.ConfigurationLanguage;
+                        var items = GetCompletionListItems(lang, sci.FileName);
                         if (!items.IsNullOrEmpty())
                         {
                             items.Sort();
-                            int curPos = document.SciControl.CurrentPos - 1;
-                            var curWord = document.SciControl.GetWordLeft(curPos, false) ?? string.Empty;
-                            CompletionList.Show(items, false, curWord);
+                            var curPos = sci.CurrentPos - 1;
+                            var word = sci.GetWordLeft(curPos, false);
+                            CompletionList.Show(items, false, word);
                             e.Handled = true;
                         }
                     }
@@ -143,19 +143,19 @@ namespace BasicCompletion
                         isSupported = true;
                         e.Handled = true;
                     }
-                    HandleFile(document);
+                    HandleFile(sci);
                     break;
                 }
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    HandleFile(document);
+                    HandleFile(sci);
                     break;
                 }
                 case EventType.FileSave:
                 {
                     var te = (TextEvent) e;
-                    if (te.Value == document.FileName && isSupported) AddDocumentKeywords(document);
+                    if (te.Value == sci.FileName && isSupported) AddDocumentKeywords(sci);
                     else
                     {
                         var saveDoc = DocumentManager.FindDocument(te.Value);
@@ -178,23 +178,23 @@ namespace BasicCompletion
         /// <summary>
         /// Handles the completion and config for a file
         /// </summary>
-        private void HandleFile(ITabbedDocument document)
+        void HandleFile(ScintillaControl sci)
         {
             if (isSupported)
             {
-                var language = document.SciControl.ConfigurationLanguage;
+                var language = sci.ConfigurationLanguage;
                 if (!baseTable.ContainsKey(language)) AddBaseKeywords(language);
-                if (!fileTable.ContainsKey(document.FileName)) AddDocumentKeywords(document);
-                if (updateTable.ContainsKey(document.FileName)) // Need to update after save?
+                if (!fileTable.ContainsKey(sci.FileName)) AddDocumentKeywords(sci);
+                if (updateTable.ContainsKey(sci.FileName)) // Need to update after save?
                 {
-                    updateTable.Remove(document.FileName);
-                    AddDocumentKeywords(document);
+                    updateTable.Remove(sci.FileName);
+                    AddDocumentKeywords(sci);
                 }
                 updateTimer.Stop();
             }
-            else if (updateTable.ContainsKey(document.FileName)) // Not supported saved, remove
+            else if (updateTable.ContainsKey(sci.FileName)) // Not supported saved, remove
             {
-                updateTable.Remove(document.FileName);
+                updateTable.Remove(sci.FileName);
             }
         }
 
@@ -216,7 +216,7 @@ namespace BasicCompletion
         /// <summary>
         /// After the timer elapses, update doc keywords
         /// </summary>
-        private void UpdateTimerElapsed(object sender, ElapsedEventArgs e)
+        void UpdateTimerElapsed(object sender, ElapsedEventArgs e)
         {
             var doc = PluginBase.MainForm.CurrentDocument;
             if (doc != null && doc.IsEditable && isSupported)
@@ -317,15 +317,20 @@ namespace BasicCompletion
         /// <summary>
         /// Adds document keywords from config file to hashtable
         /// </summary>
-        public void AddDocumentKeywords(ITabbedDocument document)
+        public void AddDocumentKeywords(ITabbedDocument document) => AddDocumentKeywords(document.SciControl);
+
+        /// <summary>
+        /// Adds document keywords from config file to hashtable
+        /// </summary>
+        public void AddDocumentKeywords(ScintillaControl sci)
         {
-            var textLang = document.SciControl.ConfigurationLanguage;
+            var textLang = sci.ConfigurationLanguage;
             var language = ScintillaControl.Configuration.GetLanguage(textLang);
             if (language.characterclass is null) return;
             var wordCharsRegex = "[" + language.characterclass.Characters + "]{2,}";
-            var matches = Regex.Matches(document.SciControl.Text, wordCharsRegex);
+            var matches = Regex.Matches(sci.Text, wordCharsRegex);
             var words = new Dictionary<int, string>();
-            for (int i = 0; i < matches.Count; i++)
+            for (var i = 0; i < matches.Count; i++)
             {
                 var word = matches[i].Value;
                 var hash = word.GetHashCode();
@@ -334,7 +339,7 @@ namespace BasicCompletion
             }
             var keywords = new string[words.Values.Count];
             words.Values.CopyTo(keywords, 0);
-            fileTable[document.FileName] = keywords;
+            fileTable[sci.FileName] = keywords;
         }
 
         /// <summary>
@@ -371,7 +376,7 @@ namespace BasicCompletion
         /// <summary>
         /// Shows the completion list automatically after typing three chars
         /// </summary>
-        private void SciControlCharAdded(ScintillaControl sci, int value)
+        void SciControlCharAdded(ScintillaControl sci, int value)
         {
             if (!isSupported || settingObject.DisableAutoCompletion) return;
             var lang = sci.ConfigurationLanguage;
@@ -397,7 +402,7 @@ namespace BasicCompletion
         /// <summary>
         /// Starts the timer for the document keywords updating
         /// </summary>
-        private void SciControlTextChanged(ScintillaControl sci, int position, int length, int linesAdded)
+        void SciControlTextChanged(ScintillaControl sci, int position, int length, int linesAdded)
         {
             if (!isSupported) return;
             updateTimer.Stop();
