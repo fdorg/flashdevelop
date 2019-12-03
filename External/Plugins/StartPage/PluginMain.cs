@@ -19,14 +19,14 @@ namespace StartPage
 {
     public class PluginMain : IPlugin
     {
-        private bool justOpened = true;
-        private string defaultRssUrl = "";
-        private string defaultStartPageUrl = "";
-        private StartPageWebBrowser startPageWebBrowser;
-        private string settingFilename;
-        private Settings settingObject;
-        private DockContent startPage;
-        private Image pluginImage;
+        bool justOpened = true;
+        string defaultRssUrl = "";
+        string defaultStartPageUrl = "";
+        StartPageWebBrowser startPageWebBrowser;
+        string settingFilename;
+        Settings settingObject;
+        DockContent startPage;
+        Image pluginImage;
 
         #region Required Properties
 
@@ -135,18 +135,18 @@ namespace StartPage
 
         #region Custom Methods
 
-        private string CurrentPageUrl => settingObject.UseCustomStartPage ? settingObject.CustomStartPage : defaultStartPageUrl;
-        private string CurrentRssUrl => settingObject.UseCustomRssFeed ? settingObject.CustomRssFeed : defaultRssUrl;
+        string CurrentPageUrl => settingObject.UseCustomStartPage ? settingObject.CustomStartPage : defaultStartPageUrl;
+        string CurrentRssUrl => settingObject.UseCustomRssFeed ? settingObject.CustomRssFeed : defaultRssUrl;
 
         /// <summary>
         /// Initializes important variables
         /// </summary>
         public void InitBasics()
         {
-            int lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
+            int length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
             string dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
             string localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
-            string version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOfOrdinal(" for") - lenght);
+            string version = Application.ProductName.Substring(length, Application.ProductName.IndexOfOrdinal(" for") - length);
             string fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
             defaultStartPageUrl = Path.Combine(PathHelper.AppDir, "StartPage", fileWithArgs);
             defaultRssUrl = DistroConfig.DISTRIBUTION_RSS; // Default feed...
@@ -220,12 +220,12 @@ namespace StartPage
         /// <summary>
         /// Shows the start page.
         /// </summary>
-        private void ViewMenuClick(object sender, EventArgs e) => ShowStartPage();
+        void ViewMenuClick(object sender, EventArgs e) => ShowStartPage();
 
         /// <summary>
         /// Some internal event handling for closing.
         /// </summary>
-        private void PluginPanelClosing(object sender, CancelEventArgs e)
+        void PluginPanelClosing(object sender, CancelEventArgs e)
         {
             if (settingObject.ShowStartPageInsteadOfUntitled && PluginBase.MainForm.Documents.Length == 1)
             {
@@ -236,7 +236,7 @@ namespace StartPage
         /// <summary>
         /// Reset the start page reference.
         /// </summary>
-        private void PluginPanelDisposed(object sender, EventArgs e) => startPage = null;
+        void PluginPanelDisposed(object sender, EventArgs e) => startPage = null;
 
         #endregion
 
