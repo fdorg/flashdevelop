@@ -72,8 +72,9 @@ namespace SourceControl.Actions
             fsWatchers.SetProject(project);
             ovManager.Reset();
 
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
-                if (document.IsEditable) HandleFileReload(document.FileName);
+            foreach (var document in PluginBase.MainForm.Documents)
+                if (document.SciControl is { } sci) 
+                    HandleFileReload(sci.FileName);
         }
 
         internal static void SelectionChanged() => ovManager.SelectionChanged();

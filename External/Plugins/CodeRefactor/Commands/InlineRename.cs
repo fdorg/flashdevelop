@@ -51,10 +51,6 @@ namespace CodeRefactor.Commands
         int start, end;
         readonly string oldName/*, prevName*/;
         string newName/*, prevName*/;
-        readonly bool includeComments;
-        readonly bool includeStrings;
-        readonly bool previewChanges;
-
         readonly ScintillaControl sci;
         ITabbedDocument currentDoc;
 
@@ -140,11 +136,11 @@ namespace CodeRefactor.Commands
             end = position;
             currentDoc = PluginBase.MainForm.CurrentDocument;
             delayedExecution = new DelayedExecution();
-            history = new List<string>() { oldName };
+            history = new List<string> { oldName };
             historyIndex = 0;
-            this.includeComments = includeComments ?? false;
-            this.includeStrings = includeStrings ?? false;
-            this.previewChanges = previewChanges ?? false;
+            IncludeComments = includeComments ?? false;
+            IncludeStrings = includeStrings ?? false;
+            PreviewChanges = previewChanges ?? false;
 
             sci.BeginUndoAction();
             InitializeHighlights();
@@ -162,17 +158,17 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a value specifying whether current renaming process includes comments.
         /// </summary>
-        public bool IncludeComments => includeComments;
+        public bool IncludeComments { get; }
 
         /// <summary>
         /// Gets a value specifying whether current renaming process includes strings.
         /// </summary>
-        public bool IncludeStrings => includeStrings;
+        public bool IncludeStrings { get; }
 
         /// <summary>
         /// Gets a value specifying whether current renaming previews changes.
         /// </summary>
-        public bool PreviewChanges => previewChanges;
+        public bool PreviewChanges { get; }
 
         #endregion
 
@@ -212,14 +208,14 @@ namespace CodeRefactor.Commands
 
                 if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null) || insideComment || insideString)
                 {
-                    var @ref = new ReferenceInfo() { Index = index, Length = length, Value = value };
+                    var @ref = new ReferenceInfo { Index = index, Length = length, Value = value };
                     tempRefs.Add(@ref);
 
                     if (currentRef is null && match.Index == start)
                     {
                         currentRef = @ref;
                     }
-                    else if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
+                    else if (PreviewChanges && (!insideComment || IncludeComments) && (!insideString || IncludeStrings))
                     {
                         Highlight(index, length);
                     }
@@ -243,7 +239,7 @@ namespace CodeRefactor.Commands
             refs = tempRefs.ToArray();
         }
 
-        void AddGetterSetterPreview(List<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
+        void AddGetterSetterPreview(ICollection<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
         {
             target = RenamingHelper.FindGetterSetter(target, prefix + name);
             if (target is null) return;
@@ -262,10 +258,10 @@ namespace CodeRefactor.Commands
 
                 if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null) || insideComment || insideString)
                 {
-                    var @ref = new ReferenceInfo() { Index = index, Length = length, Value = value };
+                    var @ref = new ReferenceInfo { Index = index, Length = length, Value = value };
                     refInfos.Add(@ref);
 
-                    if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
+                    if (PreviewChanges && (!insideComment || IncludeComments) && (!insideString || IncludeStrings))
                     {
                         Highlight(index, value.Length);
                     }
@@ -503,7 +499,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         void DelayedExecution_Update()
         {
-            UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
+            UpdateReferences(newName, true, PreviewChanges && IncludeComments, PreviewChanges && IncludeStrings, PreviewChanges, true);
 
             Update?.Invoke(this, /*prevName,*/ newName);
         }
