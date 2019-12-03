@@ -26,12 +26,12 @@ namespace ASCompletion.Model
 
         public static bool IsWorking => explorerThread != null;
 
-        private static bool uistarted;
-        private static bool contextUpdating;
-        private static readonly Queue<PathExplorer> waiting = new Queue<PathExplorer>();
-        private static volatile Thread explorerThread;
-        private static volatile bool stopExploration;
-        private static volatile int toWait = 1000; // initial delay before exploring the filesystem
+        static bool uistarted;
+        static bool contextUpdating;
+        static readonly Queue<PathExplorer> waiting = new Queue<PathExplorer>();
+        static volatile Thread explorerThread;
+        static volatile bool stopExploration;
+        static volatile int toWait = 1000; // initial delay before exploring the filesystem
 
         public static void OnUIStarted()
         {
@@ -88,12 +88,12 @@ namespace ASCompletion.Model
         public event ExplorationDoneHandler OnExplorationDone;
         public bool UseCache;
 
-        private readonly IASContext context;
-        private readonly PathModel pathModel;
-        private readonly List<string> foundFiles;
-        private readonly List<string> explored;
-        private string hashName;
-        private readonly char hiddenPackagePrefix;
+        readonly IASContext context;
+        readonly PathModel pathModel;
+        readonly List<string> foundFiles;
+        readonly List<string> explored;
+        string hashName;
+        readonly char hiddenPackagePrefix;
 
         public PathExplorer(IASContext context, PathModel pathModel)
         {
@@ -127,7 +127,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private static void StartBackgroundThread()
+        static void StartBackgroundThread()
         {
             if (!uistarted || explorerThread != null) return;
             explorerThread = new Thread(ExploreInBackground);
@@ -136,7 +136,7 @@ namespace ASCompletion.Model
             explorerThread.Start();
         }
 
-        private static void ExploreInBackground()
+        static void ExploreInBackground()
         {
             Thread.Sleep(toWait);
             toWait = 10;
@@ -187,7 +187,7 @@ namespace ASCompletion.Model
         /// <summary>
         /// Background search
         /// </summary>
-        private void BackgroundRun()
+        void BackgroundRun()
         {
             pathModel.Updating = true;
             try
@@ -254,7 +254,7 @@ namespace ASCompletion.Model
             finally { pathModel.Updating = false; }
         }
 
-        private void ExtractFilesFromArchive()
+        void ExtractFilesFromArchive()
         {
             string[] masks = context.GetExplorerMask();
             for (int i = 0; i < masks.Length; i++)
@@ -284,7 +284,7 @@ namespace ASCompletion.Model
             pathModel.SetFiles(models);
         }
 
-        private static string UnzipFile(ZipFile zfile, ZipEntry entry)
+        static string UnzipFile(ZipFile zfile, ZipEntry entry)
         {
             Stream stream = zfile.GetInputStream(entry);
             byte[] data = new byte[entry.Size];
@@ -296,7 +296,7 @@ namespace ASCompletion.Model
             return new StreamReader(ms).ReadToEnd();
         }
 
-        private bool ParseFoundFiles()
+        bool ParseFoundFiles()
         {
             bool writeCache = false;
 
@@ -335,27 +335,27 @@ namespace ASCompletion.Model
             return writeCache;
         }
 
-        private string GetCacheFileName(string path)
+        string GetCacheFileName(string path)
         {
             string cacheDir = GetCachePath();
             string hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + "." + context.Settings.LanguageId.ToLower() + ".bin");
         }
 
-        private static string GetCachePath() => Path.Combine(PathHelper.DataDir, nameof(ASCompletion), "FileCache");
+        static string GetCachePath() => Path.Combine(PathHelper.DataDir, nameof(ASCompletion), "FileCache");
 
-        private void NotifyProgress(string state, int value, int max) => OnExplorationProgress?.Invoke(state, value, max);
+        void NotifyProgress(string state, int value, int max) => OnExplorationProgress?.Invoke(state, value, max);
 
-        private void NotifyDone(string path) => OnExplorationDone?.Invoke(path);
+        void NotifyDone(string path) => OnExplorationDone?.Invoke(path);
 
-        private FileModel GetFileModel(string filename)
+        FileModel GetFileModel(string filename)
         {
             // Going to try just doing this operation on our background thread - if there
             // are any strange exceptions, this should be synchronized
             return context?.GetFileModel(filename);
         }
 
-        private void ExploreFolder(string path, string[] masks)
+        void ExploreFolder(string path, string[] masks)
         {
             if (stopExploration || !Directory.Exists(path)) return;
             explored.Add(path);
@@ -390,7 +390,7 @@ namespace ASCompletion.Model
             catch { }
         }
 
-        private bool IgnoreDirectory(string dir)
+        bool IgnoreDirectory(string dir)
         {
             return Path.GetFileName(dir) is {} name 
                 && (name[0] == '.' || (hiddenPackagePrefix != 0 && name[0] == hiddenPackagePrefix));

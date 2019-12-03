@@ -63,8 +63,8 @@ namespace ASCompletion.Model
         {
             get
             {
-                var genericIndex = Name.IndexOf('<');
-                if (genericIndex > 0) return Name.Substring(0, genericIndex);
+                var index = Name.IndexOf('<');
+                if (index > 0) return Name.Substring(0, index);
                 return Name;
             }
         }
