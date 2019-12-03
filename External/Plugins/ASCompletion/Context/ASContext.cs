@@ -677,8 +677,8 @@ namespace ASCompletion.Context
         /// </summary>
         internal static void UserRefreshRequestAll()
         {
-            foreach (RegisteredContext reg in allContexts)
-                reg.Context.UserRefreshRequest();
+            foreach (var it in allContexts)
+                it.Context.UserRefreshRequest();
         }
 
         #endregion
@@ -708,13 +708,6 @@ namespace ASCompletion.Context
                     }
                     return;
                 }
-                /*string fbody = "";
-                    for (int i = cMember.LineFrom; i <= cMember.LineTo; i++)
-                    {
-                        fbody += sci.GetLine(i);
-                    }
-                    position -= sci.PositionFromLine(cMember.LineFrom);
-                    if (fbody.IndexOf('{') < position) return;*/
             }
             cFile.OutOfDate = true;
         }
