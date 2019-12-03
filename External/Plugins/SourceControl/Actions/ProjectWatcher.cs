@@ -70,8 +70,9 @@ namespace SourceControl.Actions
             fsWatchers.SetProject(project);
             ovManager.Reset();
 
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
-                if (document.IsEditable) HandleFileReload(document.FileName);
+            foreach (var document in PluginBase.MainForm.Documents)
+                if (document.SciControl is { } sci) 
+                    HandleFileReload(sci.FileName);
         }
 
         internal static void SelectionChanged() => ovManager.SelectionChanged();
@@ -83,26 +84,22 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileBeforeRename(string path)
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result is null || result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.FileBeforeRename(path);
+            return fsWatchers.ResolveVC(path, true) is { } result
+                   && result.Status != VCItemStatus.Unknown
+                   && result.Manager.FileActions.FileBeforeRename(path);
         }
 
         internal static bool HandleFileRename(string[] paths)
         {
-            var result = fsWatchers.ResolveVC(paths[0], true);
-            if (result is null || result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.FileRename(paths[0], paths[1]);
+            return fsWatchers.ResolveVC(paths[0], true) is { } result
+                   && result.Status != VCItemStatus.Unknown
+                   && result.Manager.FileActions.FileRename(paths[0], paths[1]);
         }
 
         internal static bool HandleFileDelete(string[] paths, bool confirm)
         {
             if (paths.IsNullOrEmpty()) return false;
-            WatcherVCResult result = fsWatchers.ResolveVC(Path.GetDirectoryName(paths[0]));
+            var result = fsWatchers.ResolveVC(Path.GetDirectoryName(paths[0]));
             if (result is null) return false;
 
             List<string> svnRemove = new List<string>();
@@ -154,9 +151,9 @@ namespace SourceControl.Actions
                 if (svnRemove.Count == 0 && regularRemove.Count > 0)
                     return false; // regular deletion
             }
-            catch (UnsafeOperationException upex)
+            catch (UnsafeOperationException ex)
             {
-                MessageBox.Show(upex.Message, TextHelper.GetString("SourceControl.Info.UnsafeDeleteOperation"), MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, TextHelper.GetString("SourceControl.Info.UnsafeDeleteOperation"), MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return true; // prevent regular deletion
             }
 
@@ -207,15 +204,15 @@ namespace SourceControl.Actions
                 
         }
 
-        private static string GetSomeFiles(List<string> list)
+        static string GetSomeFiles(List<string> list)
         {
             if (list.Count < 10) return string.Join("\n", list.ToArray());
             return string.Join("\n", list.GetRange(0, 9).ToArray()) + "\n(...)\n" + list[list.Count - 1];
         }
 
-        private static void GetAllFiles(string path, List<string> files)
+        static void GetAllFiles(string path, ICollection<string> files)
         {
-            string[] search = Directory.GetFiles(path);
+            var search = Directory.GetFiles(path);
             foreach (string file in search)
             {
                 string name = Path.GetFileName(file);
@@ -267,54 +264,41 @@ namespace SourceControl.Actions
 
         internal static bool HandleBuildProject()
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(CurrentProject.OutputPathAbsolute, true);
-            if (result is null || result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.BuildProject();
+            return fsWatchers.ResolveVC(CurrentProject.OutputPathAbsolute, true) is { } result
+                   && result.Status != VCItemStatus.Unknown
+                   && result.Manager.FileActions.BuildProject();
         }
 
         internal static bool HandleTestProject()
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(CurrentProject.OutputPathAbsolute, true);
-            if (result is null || result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.TestProject();
+            return fsWatchers.ResolveVC(CurrentProject.OutputPathAbsolute, true) is { } result
+                   && result.Status != VCItemStatus.Unknown
+                   && result.Manager.FileActions.TestProject();
         }
 
         internal static bool HandleSaveProject(string fileName)
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(fileName, true);
-            if (result is null || result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.SaveProject();
+            return fsWatchers.ResolveVC(fileName, true) is { } result
+                   && result.Status != VCItemStatus.Unknown
+                   && result.Manager.FileActions.SaveProject();
         }
 
         internal static bool HandleFileNew(string path)
         {
-            if (!Initialized)
-                return false;
-
-            WatcherVCResult result = fsWatchers.ResolveVC(path, true);
+            if (!Initialized) return false;
+            var result = fsWatchers.ResolveVC(path, true);
             if (result is null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
                 return false;
 
             addBuffer.Add(path); //at this point there is not yet an ITabbedDocument for the file
-
             return false;
         }
 
         internal static bool HandleFileOpen(string path)
         {
-            if (!Initialized)
-                return false;
-
+            if (!Initialized) return false;
             var result = fsWatchers.ResolveVC(path, true);
-            if (result is null)
-                return false;
-
+            if (result is null) return false;
             if (addBuffer.Remove(path) || result.Status == VCItemStatus.Unknown)
             {
                 var yes = TextHelper.GetString("Label.Yes");
@@ -333,10 +317,7 @@ namespace SourceControl.Actions
                     });
             }
             
-            if (result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.FileOpen(path);
+            return result.Status != VCItemStatus.Unknown && result.Manager.FileActions.FileOpen(path);
         }
 
         internal static void HandleFileCopied(string fromFile, string toFile)
@@ -363,25 +344,20 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileReload(string path)
         {
-            if (!Initialized)
-                return false;
+            if (!Initialized) return false;
 
             var result = fsWatchers.ResolveVC(path, true);
             if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
-
             return result.Manager.FileActions.FileReload(path);
         }
 
         internal static bool HandleFileModifyRO(string path)
         {
-            if (!Initialized)
-                return false;
-
+            if (!Initialized) return false;
             var result = fsWatchers.ResolveVC(path, true);
             if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
-
             return result.Manager.FileActions.FileModifyRO(path);
         }
 
@@ -410,24 +386,22 @@ namespace SourceControl.Actions
             var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             var msg = TextHelper.GetString("Info.CreateCommit");
 
-            using var led = new LineEntryDialog(title, msg, message);
-            var result = led.ShowDialog();
-            if (result == DialogResult.Cancel) //Never
+            using var dialog = new LineEntryDialog(title, msg, message);
+            if (dialog.ShowDialog() == DialogResult.Cancel) //Never
             {
                 PluginMain.SCSettings.NeverCommit = true;
                 return null;
             }
-            if (result != DialogResult.Yes || led.Line == "") return null;
-            return led.Line;
+            if (dialog.ShowDialog() != DialogResult.Yes || dialog.Line == "") return null;
+            return dialog.Line;
         }
     }
-    
-    class UnsafeOperationException:Exception
+
+    internal class UnsafeOperationException:Exception
     {
         public UnsafeOperationException(string message)
             : base(message)
         {
         }
     }
-
 }

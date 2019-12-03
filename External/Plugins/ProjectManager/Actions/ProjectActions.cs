@@ -280,14 +280,14 @@ namespace ProjectManager.Actions
             using var stream = new FileStream(packagePath, FileMode.Open, FileAccess.Read);
             using var zFile = new ZipFile(stream);
             if (zFile.GetEntry(".actionscriptProperties") is null) return string.Empty;
-            using var saveDialog = new VistaFolderBrowserDialog();
-            saveDialog.ShowNewFolderButton = true;
-            saveDialog.UseDescriptionForTitle = true;
-            saveDialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
-            if (saveDialog.ShowDialog() != DialogResult.OK) return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
+            using var dialog = new VistaFolderBrowserDialog();
+            dialog.ShowNewFolderButton = true;
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
+            if (dialog.ShowDialog() != DialogResult.OK) return Path.Combine(dialog.SelectedPath, ".actionScriptProperties");
             foreach (ZipEntry entry in zFile)
             {
-                var newPath = Path.Combine(saveDialog.SelectedPath, entry.Name.Replace('/', '\\'));
+                var newPath = Path.Combine(dialog.SelectedPath, entry.Name.Replace('/', '\\'));
                 if (entry.IsFile)
                 {
                     var data = new byte[4095];
@@ -309,7 +309,7 @@ namespace ProjectManager.Actions
                     Directory.CreateDirectory(newPath);
                 }
             }
-            return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
+            return Path.Combine(dialog.SelectedPath, ".actionScriptProperties");
         }
 
         #endregion

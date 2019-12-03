@@ -544,11 +544,11 @@ namespace ProjectManager
                         else if (de.Action == ProjectManagerCommands.LineEntryDialog)
                         {
                             var info = (Hashtable)de.Data;
-                            using var askName = new LineEntryDialog((string)info["title"], (string)info["label"], (string)info["suggestion"]);
-                            var choice = askName.ShowDialog();
-                            if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != (string)info["suggestion"])
+                            using var dialog = new LineEntryDialog((string)info["title"], (string)info["label"], (string)info["suggestion"]);
+                            var choice = dialog.ShowDialog();
+                            if (choice == DialogResult.OK && dialog.Line.Trim().Length > 0 && dialog.Line.Trim() != (string)info["suggestion"])
                             {
-                                info["suggestion"] = askName.Line.Trim();
+                                info["suggestion"] = dialog.Line.Trim();
                             }
                             if (choice == DialogResult.OK)
                             {

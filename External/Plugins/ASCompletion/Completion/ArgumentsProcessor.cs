@@ -7,8 +7,6 @@ namespace ASCompletion.Completion
     {
         public static string Process(string text, Hashtable variables) => new ArgumentsProcessor {variables = variables}.Run(text);
 
-        /* PRIVATE */
-
         static readonly Regex re_Argument =
             new Regex("\\$\\((?<name>[a-z]+)\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 

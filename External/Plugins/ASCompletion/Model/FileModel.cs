@@ -31,7 +31,7 @@ namespace ASCompletion.Model
     [Serializable]
     public class ASMetaData: IComparable
     {
-        private static readonly Regex reNameTypeParams = 
+        static readonly Regex reNameTypeParams = 
             new Regex("([^\"'\\s]+)\\s*=\\s*[\"']([^\"']+)[\"'],{0,1}\\s*", RegexOptions.Compiled);
 
         public int LineFrom;
@@ -135,7 +135,7 @@ namespace ASCompletion.Model
             get
             {
                 if (!File.Exists(FileName)) return FileName;
-                string path = Path.GetDirectoryName(FileName);
+                var path = Path.GetDirectoryName(FileName);
                 if (path.EndsWith(Package.Replace('.', Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
                     return path.Substring(0, path.Length - Package.Length);
                 return path;
@@ -158,7 +158,7 @@ namespace ASCompletion.Model
             LastWriteTime = cacheLastWriteTime;
         }
 
-        private void Init(string fileName)
+        void Init(string fileName)
         {
             Package = "";
             Module = "";
@@ -252,9 +252,9 @@ namespace ASCompletion.Model
         /// <returns></returns>
         internal MemberList GetSortedMembersList()
         {
-            var items = new MemberList {Members};
-            items.Sort();
-            return items;
+            var result = new MemberList {Members};
+            result.Sort();
+            return result;
         }
 
         #region Text output

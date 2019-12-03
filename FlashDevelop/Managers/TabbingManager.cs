@@ -39,10 +39,10 @@ namespace FlashDevelop.Managers
         public static void UpdateSequentialIndex(ITabbedDocument document)
         {
             var documents = PluginBase.MainForm.Documents;
-            int count = documents.Length;
-            for (int i = 0; i < count; i++)
+            var count = documents.Length;
+            for (var i = 0; i < count; i++)
             {
-                if (document == documents[i])
+                if (documents[i] == document)
                 {
                     SequentialIndex = i;
                     return;

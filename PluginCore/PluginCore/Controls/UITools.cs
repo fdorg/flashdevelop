@@ -16,7 +16,8 @@ namespace PluginCore.Controls
         public delegate void LineEventHandler(ScintillaControl sender, int line);
 
         #region Singleton Instance
-        private static UITools manager;
+
+        static UITools manager;
 
         public static UITools Manager => manager ??= new UITools();
 
@@ -58,14 +59,14 @@ namespace PluginCore.Controls
 
         const EventType eventMask = EventType.Keys | EventType.FileSave | EventType.Command | EventType.FileSwitch;
 
-        private readonly CodeTip codeTip;
-        private readonly RichToolTip simpleTip;
-        private readonly MethodCallTip callTip;
-        private readonly RichToolTip errorTip;
+        readonly CodeTip codeTip;
+        readonly RichToolTip simpleTip;
+        readonly MethodCallTip callTip;
+        readonly RichToolTip errorTip;
 
-        private bool ignoreKeys;
+        bool ignoreKeys;
 
-        private UITools()
+        UITools()
         {
             ShowDetails = PluginBase.Settings.ShowDetails;
             //
@@ -93,15 +94,15 @@ namespace PluginCore.Controls
         }
         #endregion
 
-        private WeakReference lockedSciControl;
-        private Point lastMousePos = new Point(0,0);
+        WeakReference lockedSciControl;
+        Point lastMousePos = new Point(0,0);
 
         #region SciControls & MainForm Events
 
-        private void DockPanel_ActivePaneChanged(object sender, EventArgs e)
+        void DockPanel_ActivePaneChanged(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.DockPanel.ActivePane != null 
-                && PluginBase.MainForm.DockPanel.ActivePane != PluginBase.MainForm.DockPanel.ActiveDocumentPane)
+            var panel = PluginBase.MainForm.DockPanel;
+            if (panel.ActivePane != null && panel.ActivePane != panel.ActiveDocumentPane)
             {
                 OnUIRefresh(null);
             }
@@ -163,7 +164,7 @@ namespace PluginCore.Controls
         /// </summary>
         public void MarkerChanged(ScintillaControl sender, int line) => OnMarkerChanged?.Invoke(sender, line);
 
-        private void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
+        void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
         {
             if (OnMouseHover is null || sci is null || DisableEvents) return;
             try
@@ -205,20 +206,20 @@ namespace PluginCore.Controls
             }
         }
 
-        private Rectangle GetWindowBounds(Control ctrl)
+        Rectangle GetWindowBounds(Control ctrl)
         {
             while (ctrl.Parent != null && !(ctrl is DockWindow)) ctrl = ctrl.Parent;
             return ctrl.Bounds;
         }
 
-        private Point GetMousePosIn(Control ctrl)
+        Point GetMousePosIn(Control ctrl)
         {
             Point ctrlPos = ctrl.PointToScreen(new Point());
             Point pos = Cursor.Position;
             return new Point(pos.X - ctrlPos.X, pos.Y - ctrlPos.Y);
         }
 
-        private void HandleDwellEnd(ScintillaControl sci, int position, int x, int y)
+        void HandleDwellEnd(ScintillaControl sci, int position, int x, int y)
         {
             simpleTip.Hide();
             errorTip.Hide();
@@ -288,7 +289,7 @@ namespace PluginCore.Controls
             lockedSciControl = null;
         }
 
-        private void OnUIRefresh(ScintillaControl sci)
+        void OnUIRefresh(ScintillaControl sci)
         {
             var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
@@ -308,18 +309,18 @@ namespace PluginCore.Controls
             simpleTip.Hide();
             errorTip.Hide();
         }
-        
-        private void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
+
+        void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
         {
             if (!DisableEvents) OnTextChanged?.Invoke(sci, position, length, linesAdded);
         }
 
-        private void OnTextDeleted(ScintillaControl sci, int position, int length, int linesAdded)
+        void OnTextDeleted(ScintillaControl sci, int position, int length, int linesAdded)
         {
             if (!DisableEvents) OnTextChanged?.Invoke(sci, position, -length, linesAdded);
         }
 
-        private void OnChar(ScintillaControl sci, int value)
+        void OnChar(ScintillaControl sci, int value)
         {
             if (sci is null || DisableEvents) return;
             if (!CompletionList.Active && !callTip.CallTipActive)
@@ -344,7 +345,7 @@ namespace PluginCore.Controls
 
         public void SendChar(ScintillaControl sci, int value) => OnCharAdded?.Invoke(sci, value);
 
-        private bool HandleKeys(Keys key)
+        bool HandleKeys(Keys key)
         {
             // UITools is currently broadcasting a shortcut, ignore!
             if (ignoreKeys || DisableEvents) return false;

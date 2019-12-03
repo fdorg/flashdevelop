@@ -1879,8 +1879,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using EditorDialog sp = new EditorDialog();
-            sp.ShowDialog();
+            using var dialog = new EditorDialog();
+            dialog.ShowDialog();
         }
 
         #endregion

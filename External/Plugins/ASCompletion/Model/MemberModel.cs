@@ -1,7 +1,3 @@
-/*
- * Misc classes used by the plugin
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -155,18 +151,18 @@ namespace ASCompletion.Model
 
         public string ParametersString(bool formatted)
         {
-            var res = "";
+            var result = "";
             if (!Parameters.IsNullOrEmpty())
             {
                 var addSep = false;
                 foreach (var param in Parameters)
                 {
-                    if (addSep) res += ", ";
+                    if (addSep) result += ", ";
                     else addSep = true;
-                    res += param.ToDeclarationString(false, true);
+                    result += param.ToDeclarationString(false, true);
                 }
             }
-            return res;
+            return result;
         }
         
         public override bool Equals(object obj) => obj is MemberModel to && Name == to.Name && Flags == to.Flags;

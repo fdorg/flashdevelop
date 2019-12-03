@@ -2284,7 +2284,7 @@ namespace HaXeContext
             if (haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = GetHaxeComplete(PluginBase.MainForm.CurrentDocument?.SciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
+            var hc = GetHaxeComplete(PluginBase.MainForm.CurrentDocument.SciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 

@@ -89,20 +89,17 @@ namespace CssCompletion
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             switch (e.Type)
             {
                 case EventType.Keys:
                 {
                     var keys = ((KeyEvent) e).Value;
-                    if (IsSupported(sci) && keys == (Keys.Control | Keys.Space))
+                    if (IsSupported(sci) && keys == (Keys.Control | Keys.Space) && completion != null)
                     {
-                        if (completion != null)
-                        {
-                            completion.OnComplete(sci, sci.CurrentPos);
-                            e.Handled = true;
-                        }
+                        completion.OnComplete(sci, sci.CurrentPos);
+                        e.Handled = true;
                     }
                     break;
                 }

@@ -244,7 +244,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Init completion engine context
         /// </summary>
-        /// <param name="mainForm">Reference to MainForm</param>
+        /// <param name="pluginMain">Reference to PluginMain</param>
         internal static void GlobalInit(PluginMain pluginMain)
         {
             dirSeparatorChar = Path.DirectorySeparatorChar;
@@ -306,8 +306,6 @@ namespace ASCompletion.Context
         /// <summary>
         /// Allows the Project Manager to define the languages projects' classpath
         /// </summary>
-        /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
-        /// <param name="classpath">Additional classpath</param>
         public static void SetLanguageClassPath(ContextSetupInfos setup)
         {
             foreach (var reg in allContexts)
@@ -419,25 +417,6 @@ namespace ASCompletion.Context
             foreach (var it in validContexts)
                 it.TrackTextChange(sender, position, length, linesAdded);
         }
-
-        /*private static void RepaintRanges(ScintillaNet.ScintillaControl sci)
-        {
-            if (context.CurrentModel is null || context.CurrentModel.InlinedRanges is null)
-                return;
-
-            int es = sci.EndStyled;
-            int mask = (1 << sci.StyleBits) - 1;
-            int pos = 0;
-            foreach (InlineRange range in context.CurrentModel.InlinedRanges)
-            {
-                sci.StartStyling(pos, mask);
-                sci.SetStyling(range.Start - pos, 1);
-                pos = range.End;
-            }
-            sci.StartStyling(pos, mask);
-            sci.SetStyling(sci.TextLength - pos, 1);
-            sci.StartStyling(es, mask);
-        }*/
 
         /// <summary>
         /// Clear and rebuild classpath models cache
@@ -696,8 +675,8 @@ namespace ASCompletion.Context
         /// </summary>
         internal static void UserRefreshRequestAll()
         {
-            foreach (RegisteredContext reg in allContexts)
-                reg.Context.UserRefreshRequest();
+            foreach (var it in allContexts)
+                it.Context.UserRefreshRequest();
         }
 
         #endregion
@@ -727,13 +706,6 @@ namespace ASCompletion.Context
                     }
                     return;
                 }
-                /*string fbody = "";
-                    for (int i = cMember.LineFrom; i <= cMember.LineTo; i++)
-                    {
-                        fbody += sci.GetLine(i);
-                    }
-                    position -= sci.PositionFromLine(cMember.LineFrom);
-                    if (fbody.IndexOf('{') < position) return;*/
             }
             cFile.OutOfDate = true;
         }

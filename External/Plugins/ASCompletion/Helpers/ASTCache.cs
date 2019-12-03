@@ -10,8 +10,6 @@ namespace ASCompletion.Helpers
 {
     using CacheDictionary = Dictionary<MemberModel, HashSet<ClassModel>>;
 
-    delegate void CacheUpdated();
-
     internal class ASTCache
     {
         public event Action FinishedUpdate;
@@ -258,7 +256,7 @@ namespace ASCompletion.Helpers
         /// Updates the given ClassModel in cache. This assumes that all existing references to cls in the cache are still correct.
         /// However they do not have to be complete, this function will add missing connections based on cls.
         /// </summary>
-        void UpdateClass(ClassModel cls, Dictionary<ClassModel, CachedClassModel> cache)
+        void UpdateClass(ClassModel cls, IDictionary<ClassModel, CachedClassModel> cache)
         {
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
             if (context.ResolveType(cls.Name, cls.InFile).IsVoid() || cls.QualifiedName == "Dynamic") //do not update no longer existing classes (or Dynamic)
