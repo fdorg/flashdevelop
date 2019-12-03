@@ -305,7 +305,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", refactorContextMenu.BatchMenuItem);
         }
 
-        void RegisterTraceGroups()
+        static void RegisterTraceGroups()
         {
             TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
             TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
@@ -456,7 +456,7 @@ namespace CodeRefactor
 
         static void MoveFile(string fileName)
         {
-            var dialog = new MoveDialog(fileName);
+            using var dialog = new MoveDialog(fileName);
             if (dialog.ShowDialog() != DialogResult.OK) return;
             var oldPathToNewPath = new Dictionary<string, string>();
             foreach (var file in dialog.MovingFiles)
@@ -466,10 +466,7 @@ namespace CodeRefactor
             MovingHelper.AddToQueue(oldPathToNewPath, true, false, dialog.FixPackages);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void MoveFile(string oldPath, string newPath)
+        static void MoveFile(string oldPath, string newPath)
         {
             try
             {
@@ -546,7 +543,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Delegate Method" command
         /// </summary>
-        void DelegateMethodsClicked(object sender, EventArgs e)
+        static void DelegateMethodsClicked(object sender, EventArgs e)
         {
             try
             {
@@ -558,7 +555,7 @@ namespace CodeRefactor
                 while (!cm.IsVoid() && cm.Type != "Object")
                 {
                     cm.Members.Sort();
-                    foreach (MemberModel m in cm.Members)
+                    foreach (var m in cm.Members)
                     {
                         if (((m.Flags & FlagType.Function) > 0 || (m.Flags & FlagType.Getter) > 0 || (m.Flags & FlagType.Setter) > 0)
                             && (m.Access & Visibility.Public) > 0
@@ -577,7 +574,7 @@ namespace CodeRefactor
                     }
                     cm = cm.Extends;
                 }
-                var dialog = new DelegateMethodsDialog();
+                using var dialog = new DelegateMethodsDialog();
                 dialog.FillData(members, result.Type);
                 if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count == 0) return;
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
@@ -592,19 +589,18 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Extract Method" command
         /// </summary>
-        void ExtractMethodClicked(object sender, EventArgs e)
+        static void ExtractMethodClicked(object sender, EventArgs e)
         {
             try
             {
                 var newName = "newMethod";
                 var label = TextHelper.GetString("Label.NewName");
                 var title = TextHelper.GetString("Title.ExtractMethodDialog");
-                var askName = new LineEntryDialog(title, label, newName);
-                var result = askName.ShowDialog();
-                if (result != DialogResult.OK) return;
-                if (askName.Line.Trim().Length > 0 && askName.Line.Trim() != newName)
+                using var dialog = new LineEntryDialog(title, label, newName);
+                if (dialog.ShowDialog() != DialogResult.OK) return;
+                if (dialog.Line.Trim().Length > 0 && dialog.Line.Trim() != newName)
                 {
-                    newName = askName.Line.Trim();
+                    newName = dialog.Line.Trim();
                 }
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractMethodCommand(newName);
                 command.Execute();
@@ -618,7 +614,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Extract Local Variable" command
         /// </summary>
-        void ExtractLocalVariableClicked(object sender, EventArgs e)
+        static void ExtractLocalVariableClicked(object sender, EventArgs e)
         {
             try
             {
@@ -634,9 +630,9 @@ namespace CodeRefactor
         /// <summary>
         /// Invokes the batch processing dialog
         /// </summary>
-        void BatchMenuItemClicked(object sender, EventArgs e)
+        static void BatchMenuItemClicked(object sender, EventArgs e)
         {
-            var dialog = new BatchProcessDialog();
+            using var dialog = new BatchProcessDialog();
             dialog.ShowDialog();
         }
 
@@ -677,7 +673,7 @@ namespace CodeRefactor
             var features = ASContext.Context.Features;
             if (!features.hasImports) return;
 
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             var line = sci.GetLine(sci.CurrentLine).TrimStart();
 
             if (line.StartsWithOrdinal(features.importKey)

@@ -89,8 +89,8 @@ namespace CodeRefactor.Commands
             var newName = "newVar";
             var label = TextHelper.GetString("Label.NewName");
             var title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-            using var askName = new LineEntryDialog(title, label, newName);
-            var choice = askName.ShowDialog();
+            using var dialog = new LineEntryDialog(title, label, newName);
+            var choice = dialog.ShowDialog();
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (choice != DialogResult.OK)
             {
@@ -98,7 +98,7 @@ namespace CodeRefactor.Commands
                 return null;
             }
             sci.DisableAllSciEvents = false;
-            var name = askName.Line.Trim();
+            var name = dialog.Line.Trim();
             if (name.Length > 0 && name != newName) newName = name;
             return newName;
         }

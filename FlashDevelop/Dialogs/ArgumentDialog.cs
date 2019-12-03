@@ -428,17 +428,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ExportArguments(object sender, EventArgs e)
         {
-            using var sfd = new SaveFileDialog();
-            sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            sfd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-            if (sfd.ShowDialog() == DialogResult.OK)
+            using var dialog = new SaveFileDialog();
+            dialog.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
+            dialog.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 List<Argument> args = new List<Argument>();
                 foreach (ListViewItem item in argsListView.SelectedItems)
                 {
                     args.Add((Argument)item.Tag);
                 }
-                ObjectSerializer.Serialize(sfd.FileName, args);
+                ObjectSerializer.Serialize(dialog.FileName, args);
             }
         }
 
@@ -447,13 +447,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ImportArguments(object sender, EventArgs e)
         {
-            using var ofd = new OpenFileDialog();
-            ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            ofd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-            if (ofd.ShowDialog() == DialogResult.OK)
+            using var dialog = new OpenFileDialog();
+            dialog.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
+            dialog.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 List<Argument> args = new List<Argument>();
-                args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
+                args = (List<Argument>)ObjectSerializer.Deserialize(dialog.FileName, args, false);
                 CustomArguments.AddRange(args); // Append imported
                 PopulateArgumentList(CustomArguments);
             }
@@ -469,8 +469,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using var argumentDialog = new ArgumentDialog();
-            argumentDialog.ShowDialog();
+            using var dialog = new ArgumentDialog();
+            dialog.ShowDialog();
         }
 
         #endregion

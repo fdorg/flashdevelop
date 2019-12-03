@@ -21,68 +21,68 @@ namespace ProjectManager.Controls
     {
         #region Form Designer
 
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnApply;
-        private System.Windows.Forms.TabPage movieTab;
-        private System.Windows.Forms.TextBox outputSwfBox;
-        private System.Windows.Forms.Label exportinLabel;
-        private System.Windows.Forms.Label pxLabel;
-        private System.Windows.Forms.Label fpsLabel;
-        private System.Windows.Forms.Label bgcolorLabel;
-        private System.Windows.Forms.Label framerateLabel;
-        private System.Windows.Forms.Label dimensionsLabel;
-        private System.Windows.Forms.Label xLabel;
-        private System.Windows.Forms.ColorDialog colorDialog;
-        private System.Windows.Forms.Button outputBrowseButton;
-        private System.Windows.Forms.GroupBox generalGroupBox;
-        private System.Windows.Forms.GroupBox playGroupBox;
-        private System.Windows.Forms.TabPage classpathsTab;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnGlobalClasspaths;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TabPage buildTab;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox preBuildBox;
-        private System.Windows.Forms.Button preBuilderButton;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Button postBuilderButton;
-        private System.Windows.Forms.TextBox postBuildBox;
-        private System.Windows.Forms.ToolTip agressiveTip;
-        private System.Windows.Forms.CheckBox alwaysExecuteCheckBox;
-        private System.Windows.Forms.ComboBox testMovieCombo;
-        private System.Windows.Forms.TabPage compilerTab;
-        private System.Windows.Forms.PropertyGrid propertyGrid;
-        private System.Windows.Forms.Label outputTypeLabel;
-        private System.Windows.Forms.ComboBox outputCombo;
-        private System.Windows.Forms.GroupBox platformGroupBox;
-        private System.Windows.Forms.ComboBox platformCombo;
-        private System.Windows.Forms.Button editCommandButton;
-        private System.Windows.Forms.ComboBox versionCombo;
-        private System.Windows.Forms.TabPage sdkTabPage;
-        private System.Windows.Forms.Button manageButton;
-        private System.Windows.Forms.ComboBox sdkComboBox;
-        private System.Windows.Forms.GroupBox sdkGroupBox;
-        private System.Windows.Forms.GroupBox customGroupBox;
-        private System.Windows.Forms.Label labelUseGlobal;
-        private System.Windows.Forms.PictureBox warningImage;
-        private System.Windows.Forms.Label labelWarning;
-        private System.Windows.Forms.Button browseButton;
-        private System.Windows.Forms.TextBox customTextBox;
-        private System.Windows.Forms.Label labelUseCustom;
+        System.Windows.Forms.Button btnOK;
+        System.Windows.Forms.Button btnCancel;
+        System.Windows.Forms.Button btnApply;
+        System.Windows.Forms.TabPage movieTab;
+        System.Windows.Forms.TextBox outputSwfBox;
+        System.Windows.Forms.Label exportinLabel;
+        System.Windows.Forms.Label pxLabel;
+        System.Windows.Forms.Label fpsLabel;
+        System.Windows.Forms.Label bgcolorLabel;
+        System.Windows.Forms.Label framerateLabel;
+        System.Windows.Forms.Label dimensionsLabel;
+        System.Windows.Forms.Label xLabel;
+        System.Windows.Forms.ColorDialog colorDialog;
+        System.Windows.Forms.Button outputBrowseButton;
+        System.Windows.Forms.GroupBox generalGroupBox;
+        System.Windows.Forms.GroupBox playGroupBox;
+        System.Windows.Forms.TabPage classpathsTab;
+        System.Windows.Forms.Label label2;
+        System.Windows.Forms.Label label3;
+        System.Windows.Forms.Button btnGlobalClasspaths;
+        System.Windows.Forms.GroupBox groupBox3;
+        System.Windows.Forms.TabPage buildTab;
+        System.Windows.Forms.GroupBox groupBox4;
+        System.Windows.Forms.TextBox preBuildBox;
+        System.Windows.Forms.Button preBuilderButton;
+        System.Windows.Forms.GroupBox groupBox5;
+        System.Windows.Forms.Button postBuilderButton;
+        System.Windows.Forms.TextBox postBuildBox;
+        System.Windows.Forms.ToolTip agressiveTip;
+        System.Windows.Forms.CheckBox alwaysExecuteCheckBox;
+        System.Windows.Forms.ComboBox testMovieCombo;
+        System.Windows.Forms.TabPage compilerTab;
+        System.Windows.Forms.PropertyGrid propertyGrid;
+        System.Windows.Forms.Label outputTypeLabel;
+        System.Windows.Forms.ComboBox outputCombo;
+        System.Windows.Forms.GroupBox platformGroupBox;
+        System.Windows.Forms.ComboBox platformCombo;
+        System.Windows.Forms.Button editCommandButton;
+        System.Windows.Forms.ComboBox versionCombo;
+        System.Windows.Forms.TabPage sdkTabPage;
+        System.Windows.Forms.Button manageButton;
+        System.Windows.Forms.ComboBox sdkComboBox;
+        System.Windows.Forms.GroupBox sdkGroupBox;
+        System.Windows.Forms.GroupBox customGroupBox;
+        System.Windows.Forms.Label labelUseGlobal;
+        System.Windows.Forms.PictureBox warningImage;
+        System.Windows.Forms.Label labelWarning;
+        System.Windows.Forms.Button browseButton;
+        System.Windows.Forms.TextBox customTextBox;
+        System.Windows.Forms.Label labelUseCustom;
         protected System.Windows.Forms.TabControl tabControl;
         protected System.Windows.Forms.TextBox colorTextBox;
         protected System.Windows.Forms.Label colorLabel;
         protected System.Windows.Forms.TextBox fpsTextBox;
         protected System.Windows.Forms.TextBox heightTextBox;
         protected System.Windows.Forms.TextBox widthTextBox;
-        private ClasspathControl classpathControl;
+        ClasspathControl classpathControl;
 
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -103,7 +103,7 @@ namespace ProjectManager.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.btnOK = new System.Windows.Forms.ButtonEx();
@@ -795,10 +795,10 @@ namespace ProjectManager.Controls
 
         #endregion
 
-        private CompilerOptions optionsCopy;
-        private bool sdkChanged;
-        private bool isPropertyGridReadOnly;
-        private LanguagePlatform langPlatform;
+        CompilerOptions optionsCopy;
+        bool sdkChanged;
+        bool isPropertyGridReadOnly;
+        LanguagePlatform langPlatform;
 
         public event EventHandler OpenGlobalClasspaths;
 
@@ -811,7 +811,7 @@ namespace ProjectManager.Controls
             this.InitializeLocalization();
         }
 
-        private void CreateClassPathControl()
+        void CreateClassPathControl()
         {
             this.classpathControl = new ProjectManager.Controls.ClasspathControl();
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
@@ -847,7 +847,7 @@ namespace ProjectManager.Controls
 
         #region Localization
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.btnOK.Text = TextHelper.GetString("Label.OK");
             this.buildTab.Text = TextHelper.GetString("Info.Build");
@@ -911,12 +911,12 @@ namespace ProjectManager.Controls
             btnApply.Enabled = false;
         }
 
-        private void InitOptionsTab()
+        void InitOptionsTab()
         {
             UpdateCompilerOptions();
         }
 
-        private void UpdateCompilerOptions()
+        void UpdateCompilerOptions()
         {
             var readOnly = IsExternalConfiguration();
             if (readOnly == isPropertyGridReadOnly && propertyGrid.SelectedObject != null) 
@@ -934,14 +934,14 @@ namespace ProjectManager.Controls
             PropertiesChanged = false;
         }
 
-        private void InitBuildTab()
+        void InitBuildTab()
         {
             preBuildBox.Text = BaseProject.PreBuildEvent;
             postBuildBox.Text = BaseProject.PostBuildEvent;
             alwaysExecuteCheckBox.Checked = BaseProject.AlwaysRunPostBuild;
         }
 
-        private void InitClasspathTab()
+        void InitClasspathTab()
         {
             classpathControl.Changed += classpathControl_Changed;
             classpathControl.Project = BaseProject;
@@ -952,7 +952,7 @@ namespace ProjectManager.Controls
             ClasspathsChanged = false;
         }
 
-        private void UpdateClasspaths()
+        void UpdateClasspaths()
         {
             if (IsExternalConfiguration())
             {
@@ -965,7 +965,7 @@ namespace ProjectManager.Controls
             label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
         }
 
-        private void InitSDKTab()
+        void InitSDKTab()
         {
             sdkComboBox.Items.Clear();
             int select = 0;
@@ -1005,7 +1005,7 @@ namespace ProjectManager.Controls
             sdkChanged = false;
         }
 
-        private void InitOutputTab()
+        void InitOutputTab()
         {
             MovieOptions options = BaseProject.MovieOptions;
 
@@ -1034,7 +1034,7 @@ namespace ProjectManager.Controls
             UpdateEditCommandButton();
         }
 
-        private void UpdateEditCommandButton()
+        void UpdateEditCommandButton()
         {
             TestMovieBehavior state = GetTestMovie();
             editCommandButton.Visible = state == TestMovieBehavior.Custom 
@@ -1042,7 +1042,7 @@ namespace ProjectManager.Controls
                 || state == TestMovieBehavior.Webserver;
         }
 
-        private void UpdateVersionCombo()
+        void UpdateVersionCombo()
         {
             if (versionCombo.Items.Count > 1)
             {
@@ -1055,7 +1055,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void InitTestMovieOptions()
+        void InitTestMovieOptions()
         {
             OutputType output = GetOutput();
             string platform = GetPlatform();
@@ -1075,12 +1075,12 @@ namespace ProjectManager.Controls
             InitCombo(testMovieCombo, items.ToArray(), BaseProject.TestMovieBehavior.ToString(), "Label.TestMovie");
         }
 
-        private void InitCombo(ComboBox combo, object[] items, object select)
+        void InitCombo(ComboBox combo, object[] items, object select)
         {
             InitCombo(combo, items, select, null);
         }
 
-        private void InitCombo(ComboBox combo, object[] values, object select, string localizePrefix)
+        void InitCombo(ComboBox combo, object[] values, object select, string localizePrefix)
         {
             combo.Items.Clear();
             ComboItem[] items = Array.ConvertAll(values, (value) => new ComboItem(value, localizePrefix));
@@ -1094,19 +1094,19 @@ namespace ProjectManager.Controls
             }
         }
 
-        private string GetPlatform()
+        string GetPlatform()
         {
             if (platformCombo.SelectedIndex < 0) return null;
             return ((ComboItem) platformCombo.SelectedItem).Value.ToString();
         }
 
-        private OutputType GetOutput()
+        OutputType GetOutput()
         {
             if (outputCombo.SelectedIndex < 0) return OutputType.Unknown;
             return (OutputType)Enum.Parse(typeof(OutputType), ((ComboItem) outputCombo.SelectedItem).Value.ToString());
         }
 
-        private TestMovieBehavior GetTestMovie()
+        TestMovieBehavior GetTestMovie()
         {
             if (testMovieCombo.SelectedIndex < 0) return TestMovieBehavior.Unknown;
             return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), ((ComboItem) testMovieCombo.SelectedItem).Value.ToString());
@@ -1160,7 +1160,7 @@ namespace ProjectManager.Controls
             return true;
         }
 
-        private bool OuputValid(string path)
+        bool OuputValid(string path)
         {
             try
             {
@@ -1173,33 +1173,33 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        void btnOK_Click(object sender, EventArgs e)
         {
             if (btnApply.Enabled) if (!Apply()) return;
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnApply_Click(object sender, EventArgs e)
+        void btnApply_Click(object sender, EventArgs e)
         {
             Apply();
         }
 
-        private void outputSwfBox_TextChanged(object sender, EventArgs e)
+        void outputSwfBox_TextChanged(object sender, EventArgs e)
         {
             ClasspathsChanged = true;
             Modified();
         }
 
-        private void widthTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        void widthTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-        private void heightTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        void heightTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-        private void colorTextBox_TextChanged(object sender, EventArgs e) 
+        void colorTextBox_TextChanged(object sender, EventArgs e) 
         {
             string rgb = colorTextBox.Text;
             if (rgb.Length == 0) rgb = "#000000";
@@ -1213,21 +1213,22 @@ namespace ProjectManager.Controls
             catch { colorLabel.BackColor = SystemColors.WindowText; }
             Modified(); 
         }
-        private void fpsTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-        private void preBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void fpsTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-        private void postBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void preBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
 
-        private void alwaysExecuteCheckBox_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        void postBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
 
-        private void testMovieCombo_SelectedIndexChanged(object sender, System.EventArgs e) 
+        void alwaysExecuteCheckBox_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+
+        void testMovieCombo_SelectedIndexChanged(object sender, System.EventArgs e) 
         { 
             Modified();
             editCommandButton.Visible = testMovieCombo.Text.IndexOfOrdinal("..") > 0;
         }
 
-        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         { 
             Modified();
         }
@@ -1253,7 +1254,7 @@ namespace ProjectManager.Controls
             Modified();
         }
 
-        private void SelectItem(ComboBox combo, object value)
+        void SelectItem(ComboBox combo, object value)
         {
             foreach (var item in combo.Items)
                 if (item.ToString() == value.ToString())
@@ -1263,7 +1264,7 @@ namespace ProjectManager.Controls
                 }
         }
 
-        private void versionCombo_SelectedIndexChanged(object sender, EventArgs e)
+        void versionCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             PlatformChanged = true;
             Modified();
@@ -1275,7 +1276,7 @@ namespace ProjectManager.Controls
             Modified();
         }
 
-        private void colorLabel_Click(object sender, EventArgs e)
+        void colorLabel_Click(object sender, EventArgs e)
         {
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
             {
@@ -1285,19 +1286,19 @@ namespace ProjectManager.Controls
             }
         }
 
-        private string ToHtml(Color c)
+        string ToHtml(Color c)
         {
             return $"#{(c.R << 16) + (c.G << 8) + c.B:X6}";
         }
 
-        private void btnGlobalClasspaths_Click(object sender, EventArgs e)
+        void btnGlobalClasspaths_Click(object sender, EventArgs e)
         {
             OpenGlobalClasspaths?.Invoke(this,new EventArgs());
         }
 
-        private void outputBrowseButton_Click(object sender, EventArgs e)
+        void outputBrowseButton_Click(object sender, EventArgs e)
         {
-            using SaveFileDialog dialog = new SaveFileDialog();
+            using var dialog = new SaveFileDialog();
             dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
             dialog.OverwritePrompt = false;
             dialog.InitialDirectory = BaseProject.Directory;
@@ -1314,7 +1315,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void editCommandButton_Click(object sender, System.EventArgs e)
+        void editCommandButton_Click(object sender, System.EventArgs e)
         {
             string caption;
             string label;
@@ -1329,7 +1330,7 @@ namespace ProjectManager.Controls
                 label = TextHelper.GetString("Label.CustomTestMovieCommand");
             }
 
-            using LineEntryDialog dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? "");
+            using var dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? "");
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 BaseProject.TestMovieCommand = dialog.Line;
@@ -1338,28 +1339,28 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void preBuilderButton_Click(object sender, System.EventArgs e)
+        void preBuilderButton_Click(object sender, System.EventArgs e)
         {
-            using BuildEventDialog dialog = new BuildEventDialog(BaseProject);
+            using var dialog = new BuildEventDialog(BaseProject);
             dialog.CommandLine = preBuildBox.Text;
             if (dialog.ShowDialog(this) == DialogResult.OK) preBuildBox.Text = dialog.CommandLine;
         }
 
-        private void postBuilderButton_Click(object sender, System.EventArgs e)
+        void postBuilderButton_Click(object sender, System.EventArgs e)
         {
-            using BuildEventDialog dialog = new BuildEventDialog(BaseProject);
+            using var dialog = new BuildEventDialog(BaseProject);
             dialog.CommandLine = postBuildBox.Text;
             if (dialog.ShowDialog(this) == DialogResult.OK) postBuildBox.Text = dialog.CommandLine;
         }
 
-        private void outputCombo_SelectedIndexChanged(object sender, EventArgs e)
+        void outputCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateGeneralPanel();
             InitTestMovieOptions();
             Modified();
         }
 
-        private void UpdateGeneralPanel()
+        void UpdateGeneralPanel()
         {
             OutputType output = GetOutput();
             generalGroupBox.Enabled = BaseProject.MovieOptions.HasOutput(output);
@@ -1375,7 +1376,7 @@ namespace ProjectManager.Controls
                 exportinLabel.Text = TextHelper.GetString("Label.OutputFile");
         }
 
-        private void manageButton_Click(object sender, EventArgs e)
+        void manageButton_Click(object sender, EventArgs e)
         {
             DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ShowSettings", BaseProject.Language);
             EventManager.DispatchEvent(this, de);
@@ -1388,9 +1389,9 @@ namespace ProjectManager.Controls
             Modified();
         }
 
-        private void browseButton_Click(object sender, EventArgs e)
+        void browseButton_Click(object sender, EventArgs e)
         {
-            using VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
+            using var folder = new VistaFolderBrowserDialog();
             if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
                 folder.SelectedPath = customTextBox.Text;
             if (folder.ShowDialog() == DialogResult.OK)
@@ -1399,7 +1400,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void sdkCombo_SelectedIndexChanged(object sender, EventArgs e)
+        void sdkCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             customTextBox.Text = "";
             sdkChanged = true;
@@ -1408,7 +1409,7 @@ namespace ProjectManager.Controls
 
         /* PLATFORM CONFIGURATION */
 
-        private void DetectExternalToolchain()
+        void DetectExternalToolchain()
         {
             if (!IsExternalToolchain()) return;
 
@@ -1426,16 +1427,16 @@ namespace ProjectManager.Controls
                 }
         }
 
-        private bool IsExternalConfiguration()
+        bool IsExternalConfiguration()
         {
             var selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
             var version = langPlatform?.GetVersion(selectedVersion);
             return version?.Commands != null && version.Commands.ContainsKey("display");
         }
 
-        private bool IsExternalToolchain() => langPlatform?.ExternalToolchain != null;
+        bool IsExternalToolchain() => langPlatform?.ExternalToolchain != null;
 
-        private LanguagePlatform GetLanguagePlatform(string platformName)
+        LanguagePlatform GetLanguagePlatform(string platformName)
         {
             if (PlatformData.SupportedLanguages.ContainsKey(BaseProject.Language))
             {
@@ -1448,7 +1449,7 @@ namespace ProjectManager.Controls
 
     }
 
-    class ComboItem
+    internal class ComboItem
     {
         public string Label;
         public object Value;

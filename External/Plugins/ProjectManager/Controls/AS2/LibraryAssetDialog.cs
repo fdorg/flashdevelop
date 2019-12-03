@@ -14,37 +14,37 @@ namespace ProjectManager.Controls.AS2
 
         #region Windows Form Designer
 
-        private System.Windows.Forms.TabControl tabControl;
-        private System.Windows.Forms.TabPage swfTabPage;
-        private System.Windows.Forms.RadioButton addPreloaderButton;
-        private System.Windows.Forms.LinkLabel explainLink;
-        private System.Windows.Forms.RadioButton sharedLibraryButton;
-        private System.Windows.Forms.RadioButton addLibraryButton;
-        private System.Windows.Forms.TabPage fontTabPage;
-        private System.Windows.Forms.TextBox charactersTextBox;
-        private System.Windows.Forms.RadioButton embedTheseButton;
-        private System.Windows.Forms.RadioButton embedAllButton;
-        private System.Windows.Forms.CheckBox autoIDBox;
-        private System.Windows.Forms.TextBox idTextBox;
-        private System.Windows.Forms.CheckBox keepUpdatedBox;
-        private System.Windows.Forms.TextBox updatedTextBox;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button browseButton;
-        private System.Windows.Forms.CheckBox specifySharepointBox;
-        private System.Windows.Forms.TextBox sharepointTextBox;
-        private System.Windows.Forms.TabPage swcTabPage;
-        private System.Windows.Forms.RadioButton swcIncOption;
-        private System.Windows.Forms.RadioButton swcExtOption;
-        private System.Windows.Forms.RadioButton swcLibOption;
-        private System.Windows.Forms.CheckBox bitmapLinkageBox;
-        private System.Windows.Forms.TabPage advancedTabPage;
+        System.Windows.Forms.TabControl tabControl;
+        System.Windows.Forms.TabPage swfTabPage;
+        System.Windows.Forms.RadioButton addPreloaderButton;
+        System.Windows.Forms.LinkLabel explainLink;
+        System.Windows.Forms.RadioButton sharedLibraryButton;
+        System.Windows.Forms.RadioButton addLibraryButton;
+        System.Windows.Forms.TabPage fontTabPage;
+        System.Windows.Forms.TextBox charactersTextBox;
+        System.Windows.Forms.RadioButton embedTheseButton;
+        System.Windows.Forms.RadioButton embedAllButton;
+        System.Windows.Forms.CheckBox autoIDBox;
+        System.Windows.Forms.TextBox idTextBox;
+        System.Windows.Forms.CheckBox keepUpdatedBox;
+        System.Windows.Forms.TextBox updatedTextBox;
+        System.Windows.Forms.Button cancelButton;
+        System.Windows.Forms.Button okButton;
+        System.Windows.Forms.Button browseButton;
+        System.Windows.Forms.CheckBox specifySharepointBox;
+        System.Windows.Forms.TextBox sharepointTextBox;
+        System.Windows.Forms.TabPage swcTabPage;
+        System.Windows.Forms.RadioButton swcIncOption;
+        System.Windows.Forms.RadioButton swcExtOption;
+        System.Windows.Forms.RadioButton swcLibOption;
+        System.Windows.Forms.CheckBox bitmapLinkageBox;
+        System.Windows.Forms.TabPage advancedTabPage;
         
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.okButton = new System.Windows.Forms.ButtonEx();
@@ -458,7 +458,7 @@ namespace ProjectManager.Controls.AS2
             this.Font = PluginCore.PluginBase.Settings.DefaultFont;
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.okButton.Text = TextHelper.GetString("Label.OK");
             this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
@@ -482,7 +482,7 @@ namespace ProjectManager.Controls.AS2
             this.Text = " " + TextHelper.GetString("Title.LibraryAssetProperties");
         }
 
-        private void EnableDisable()
+        void EnableDisable()
         {
             autoIDBox.Visible = !isAS3 && (asset.IsSwf || addLibraryButton.Checked);
             idTextBox.Visible = !isAS3 && (!asset.IsSwf || addLibraryButton.Checked);
@@ -497,7 +497,7 @@ namespace ProjectManager.Controls.AS2
             charactersTextBox.Enabled = embedTheseButton.Checked;
         }
 
-        private void Apply()
+        void Apply()
         {
             asset.ManualID = (autoIDBox.Checked) ? null : idTextBox.Text;
             asset.UpdatePath = (keepUpdatedBox.Checked) ? updatedTextBox.Text : null;
@@ -518,59 +518,59 @@ namespace ProjectManager.Controls.AS2
             asset.FontGlyphs = (embedAllButton.Checked) ? null : charactersTextBox.Text;
         }
 
-        private void Modified()
+        void Modified()
         {
             modified = true;
             EnableDisable();
         }
 
-        private void okButton_Click(object sender, System.EventArgs e)
+        void okButton_Click(object sender, System.EventArgs e)
         {
             if (modified && !isSWC) Apply();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void cancelButton_Click(object sender, System.EventArgs e)
+        void cancelButton_Click(object sender, System.EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        private void explainLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+        void explainLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
         {
 
         }
 
         #region Various Change Events
 
-        private void addLibraryButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        private void addPreloaderButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        private void sharedLibraryButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        private void sharepointTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
-        private void embedAllButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        private void embedTheseButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        private void charactersTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
-        private void idTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
-        private void updatedTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void addLibraryButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        void addPreloaderButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        void sharedLibraryButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        void sharepointTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void embedAllButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        void embedTheseButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        void charactersTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void idTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void updatedTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
 
         #endregion
 
-        private void specifySharepointBox_CheckedChanged(object sender, System.EventArgs e)
+        void specifySharepointBox_CheckedChanged(object sender, System.EventArgs e)
         {
             Modified();
             if (specifySharepointBox.Checked)
                 sharepointTextBox.Focus();
         }
 
-        private void keepUpdatedBox_CheckedChanged(object sender, System.EventArgs e)
+        void keepUpdatedBox_CheckedChanged(object sender, System.EventArgs e)
         {
             Modified();
             if (keepUpdatedBox.Checked)
                 browseButton.Focus();
         }
 
-        private void autoIDBox_CheckedChanged(object sender, System.EventArgs e)
+        void autoIDBox_CheckedChanged(object sender, System.EventArgs e)
         {
             if (autoIDBox.Checked)
                 idTextBox.Text = asset.GetAutoID();
@@ -583,9 +583,9 @@ namespace ProjectManager.Controls.AS2
                 idTextBox.Focus();
         }
 
-        private void browseButton_Click(object sender, System.EventArgs e)
+        void browseButton_Click(object sender, System.EventArgs e)
         {
-            using OpenFileDialog dialog = new OpenFileDialog();
+            using var dialog = new OpenFileDialog();
             dialog.Filter = TextHelper.GetString("Info.FileFilter");
 
             // try pre-setting the current update path
@@ -602,7 +602,7 @@ namespace ProjectManager.Controls.AS2
                 updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
         }
 
-        private void swcLibOption_CheckedChanged(object sender, EventArgs e)
+        void swcLibOption_CheckedChanged(object sender, EventArgs e)
         {
             modified = true;
             if (swcIncOption.Checked) asset.SwfMode = SwfAssetMode.IncludedLibrary;

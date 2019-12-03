@@ -776,7 +776,7 @@ namespace HaXeContext.Generators
                 statement += inFile.Module + "." + member.Name;
             }
             if (string.IsNullOrEmpty(statement)) statement = member.Type;
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             var newLineMarker = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             statement = "using " + statement + ";" + newLineMarker;
             int position;

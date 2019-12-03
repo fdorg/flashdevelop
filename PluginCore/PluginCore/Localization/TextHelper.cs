@@ -90,8 +90,7 @@ namespace PluginCore.Localization
         public static string RemoveEllipsis(string text)
         {
             if (string.IsNullOrEmpty(text)) return string.Empty;
-            var index = text.LastIndexOfOrdinal("...");
-            return index == -1 ? text : text.Remove(index, 3);
+            return text.LastIndexOfOrdinal("...") == -1 ? text : text.Remove(text.LastIndexOfOrdinal("..."), 3);
         }
 
         /// <summary>
@@ -101,10 +100,7 @@ namespace PluginCore.Localization
         /// returned from  <see cref="TextHelper.RemoveEllipsis(String)"/>.
         /// </summary>
         /// <param name="text">A <see cref="String"/> instance to remove mnemonics and ellipsis from.</param>
-        public static string RemoveMnemonicsAndEllipsis(string text)
-        {
-            return RemoveMnemonics(RemoveEllipsis(text));
-        }
+        public static string RemoveMnemonicsAndEllipsis(string text) => RemoveMnemonics(RemoveEllipsis(text));
 
         /// <summary>
         /// Gets the specified localized string with the specified assembly's name as the default prefix.
@@ -151,5 +147,4 @@ namespace PluginCore.Localization
             return true;
         }
     }
-
 }

@@ -25,7 +25,7 @@ namespace ProjectManager.Controls.AS2
             AssetsChanged = false;
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.infoLabel.Text = TextHelper.GetString("Info.CodeInjection");
             this.injectionTab.Text = TextHelper.GetString("Info.Injection");
@@ -34,13 +34,13 @@ namespace ProjectManager.Controls.AS2
             this.inputFileLabel.Text = TextHelper.GetString("Info.InputSWF");
         }
 
-        private void inputSwfBox_TextChanged(object sender, System.EventArgs e)
+        void inputSwfBox_TextChanged(object sender, System.EventArgs e)
         {
             ClasspathsChanged = true;
             Modified();
         }
 
-        private void injectionCheckBox_CheckedChanged(object sender, System.EventArgs e)
+        void injectionCheckBox_CheckedChanged(object sender, System.EventArgs e)
         {
             if (injectionCheckBox.Checked && project.LibraryAssets.Count > 0)
             {
@@ -67,9 +67,9 @@ namespace ProjectManager.Controls.AS2
             fpsTextBox.Enabled = !inject;
         }
 
-        private void inputBrowseButton_Click(object sender, System.EventArgs e)
+        void inputBrowseButton_Click(object sender, System.EventArgs e)
         {
-            using OpenFileDialog dialog = new OpenFileDialog();
+            using var dialog = new OpenFileDialog();
             dialog.Filter = TextHelper.GetString("Info.FlashMovieFilter");
             dialog.InitialDirectory = project.Directory;
 

@@ -223,16 +223,14 @@ namespace FlashDevelop
             get
             {
                 var documents = new List<ITabbedDocument>();
-                foreach (DockPane pane in DockPanel.Panes)
+                foreach (var pane in DockPanel.Panes)
                 {
-                    if (pane.DockState == DockState.Document)
+                    if (pane.DockState != DockState.Document) continue;
+                    foreach (var content in pane.Contents)
                     {
-                        foreach (IDockContent content in pane.Contents)
+                        if (content is TabbedDocument document)
                         {
-                            if (content is TabbedDocument document)
-                            {
-                                documents.Add(document);
-                            }
+                            documents.Add(document);
                         }
                     }
                 }
@@ -319,7 +317,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the application start args
         /// </summary>
-        public string[] StartArguments => Arguments;
+        public string[] StartArguments => Arguments.ToArray();
 
         /// <summary>
         /// Gets the application custom args
@@ -365,14 +363,14 @@ namespace FlashDevelop
         {
             try
             {
-                TabbedDocument tabbedDocument = new TabbedDocument();
-                tabbedDocument.Closing += OnDocumentClosing;
-                tabbedDocument.Closed += OnDocumentClosed;
-                tabbedDocument.Text = TextHelper.GetString("Title.CustomDocument");
-                tabbedDocument.TabPageContextMenuStrip = TabMenu;
-                tabbedDocument.Controls.Add(ctrl);
-                tabbedDocument.Show();
-                return tabbedDocument;
+                var result = new TabbedDocument();
+                result.Closing += OnDocumentClosing;
+                result.Closed += OnDocumentClosed;
+                result.Text = TextHelper.GetString("Title.CustomDocument");
+                result.TabPageContextMenuStrip = TabMenu;
+                result.Controls.Add(ctrl);
+                result.Show();
+                return result;
             }
             catch (Exception ex)
             {
@@ -389,15 +387,15 @@ namespace FlashDevelop
             try
             {
                 notifyOpenFile = true;
-                TabbedDocument tabbedDocument = new TabbedDocument();
-                tabbedDocument.Closing += OnDocumentClosing;
-                tabbedDocument.Closed += OnDocumentClosed;
-                tabbedDocument.TabPageContextMenuStrip = TabMenu;
-                tabbedDocument.ContextMenuStrip = EditorMenu;
-                tabbedDocument.Text = Path.GetFileName(file);
-                tabbedDocument.AddEditorControls(file, text, codepage);
-                tabbedDocument.Show();
-                return tabbedDocument;
+                var result = new TabbedDocument();
+                result.Closing += OnDocumentClosing;
+                result.Closed += OnDocumentClosed;
+                result.TabPageContextMenuStrip = TabMenu;
+                result.ContextMenuStrip = EditorMenu;
+                result.Text = Path.GetFileName(file);
+                result.AddEditorControls(file, text, codepage);
+                result.Show();
+                return result;
             }
             catch (Exception ex)
             {
@@ -413,12 +411,12 @@ namespace FlashDevelop
         {
             try
             {
-                DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
-                dockablePanel.Show();
-                dockablePanel.Image = image;
-                dockablePanel.DockState = defaultDockState;
-                LayoutManager.PluginPanels.Add(dockablePanel);
-                return dockablePanel;
+                var result = new DockablePanel(ctrl, guid);
+                result.Show();
+                result.Image = image;
+                result.DockState = defaultDockState;
+                LayoutManager.PluginPanels.Add(result);
+                return result;
             }
             catch (Exception ex)
             {
@@ -434,12 +432,12 @@ namespace FlashDevelop
         {
             try
             {
-                var dockablePanel = new DockablePanel(ctrl, guid + ":" + id);
-                dockablePanel.Image = image;
-                dockablePanel.DockState = defaultDockState;
-                LayoutManager.SetContentLayout(dockablePanel, dockablePanel.GetPersistString());
-                LayoutManager.PluginPanels.Add(dockablePanel);
-                return dockablePanel;
+                var result = new DockablePanel(ctrl, guid + ":" + id);
+                result.Image = image;
+                result.DockState = defaultDockState;
+                LayoutManager.SetContentLayout(result, result.GetPersistString());
+                LayoutManager.PluginPanels.Add(result);
+                return result;
             }
             catch (Exception e)
             {
@@ -554,7 +552,7 @@ namespace FlashDevelop
         /// </summary>
         void InitializeGraphics()
         {
-            Icon icon = new Icon(ResourceHelper.GetStream("FlashDevelopIcon.ico"));
+            var icon = new Icon(ResourceHelper.GetStream("FlashDevelopIcon.ico"));
             Icon = printPreviewDialog.Icon = icon;
         }
 
@@ -606,14 +604,11 @@ namespace FlashDevelop
         {
             try
             {
-                NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
+                var ne = new NotifyEvent(EventType.AppChanges);
                 EventManager.DispatchEvent(this, ne); // Notify plugins...
-                string appMan = Path.Combine(PathHelper.BaseDir, ".appman");
-                string contents = File.ReadAllText(appMan);
-                if (contents == "restart")
-                {
-                    RestartRequired();
-                }
+                var appMan = Path.Combine(PathHelper.BaseDir, ".appman");
+                var contents = File.ReadAllText(appMan);
+                if (contents == "restart") RestartRequired();
             }
             catch {} // No errors...
         }
@@ -694,14 +689,12 @@ namespace FlashDevelop
         {
             try
             {
-                string filePath = Path.Combine(PathHelper.BaseDir, ".locale");
-                if (File.Exists(filePath))
-                {
-                    string enumData = File.ReadAllText(filePath).Trim();
-                    LocaleVersion localeVersion = (LocaleVersion)Enum.Parse(typeof(LocaleVersion), enumData);
-                    AppSettings.LocaleVersion = localeVersion;
-                    File.Delete(filePath);
-                }
+                var filePath = Path.Combine(PathHelper.BaseDir, ".locale");
+                if (!File.Exists(filePath)) return;
+                var enumData = File.ReadAllText(filePath).Trim();
+                var localeVersion = (LocaleVersion)Enum.Parse(typeof(LocaleVersion), enumData);
+                AppSettings.LocaleVersion = localeVersion;
+                File.Delete(filePath);
             }
             catch {} // No errors...
         }
@@ -964,7 +957,7 @@ namespace FlashDevelop
         /// Initalizes the windows state after show is called and
         /// check if we need to notify user for recovery files
         /// </summary>
-        void OnMainFormShow(object sender, EventArgs e)
+        static void OnMainFormShow(object sender, EventArgs e)
         {
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
@@ -1352,11 +1345,9 @@ namespace FlashDevelop
                     var doc = OpenEditableDocument(file);
                     if (doc is null || ModifierKeys == Keys.Control) return;
                     var drop = DocumentManager.FindDocument(sci) as DockContent;
-                    if (drop?.Pane != null)
-                    {
-                        doc.DockTo(drop.Pane, DockStyle.Fill, -1);
-                        doc.Activate();
-                    }
+                    if (drop?.Pane is null) continue;
+                    doc.DockTo(drop.Pane, DockStyle.Fill, -1);
+                    doc.Activate();
                 }
                 else if (Directory.Exists(file))
                 {
@@ -1673,9 +1664,9 @@ namespace FlashDevelop
             ImageManager.AdjustAllImages();
             ImageListManager.RefreshAll();
 
-            for (int i = 0, length = LayoutManager.PluginPanels.Count; i < length; i++)
+            foreach (var it in LayoutManager.PluginPanels)
             {
-                DockablePanel panel = LayoutManager.PluginPanels[i] as DockablePanel;
+                var panel = it as DockablePanel;
                 panel?.RefreshIcon();
             }
         }
@@ -1881,11 +1872,9 @@ namespace FlashDevelop
             {
                 file = file.Substring(0, openParams.Index);
                 file = PathHelper.GetLongPathName(file);
-                if (File.Exists(file))
-                {
-                    if (OpenEditableDocument(file, false) is TabbedDocument doc) ApplyOpenParams(openParams, doc.SciControl);
-                    else if (CurrentDocument.SciControl is { } sci && sci.FileName == file) ApplyOpenParams(openParams, sci);
-                }
+                if (!File.Exists(file)) return;
+                if (OpenEditableDocument(file, false) is TabbedDocument doc) ApplyOpenParams(openParams, doc.SciControl);
+                else if (CurrentDocument.SciControl is { } sci && sci.FileName == file) ApplyOpenParams(openParams, sci);
             }
             else if (File.Exists(file))
             {
@@ -1916,9 +1905,9 @@ namespace FlashDevelop
         {
             var current = CurrentDocument;
             var currentPane = current?.DockHandler.PanelPane;
-            CloseAllCanceled = false; closingAll = true;
-            var documents = new List<ITabbedDocument>(Documents);
-            foreach (var document in documents)
+            CloseAllCanceled = false;
+            closingAll = true;
+            foreach (var document in Documents.ToArray())
             {
                 var close = !(exceptCurrent && document == current);
                 if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane) close = false;
@@ -2472,11 +2461,11 @@ namespace FlashDevelop
                 var active = CurrentDocument;
                 foreach (var document in Documents)
                 {
-                    if (document.IsEditable && document.IsModified)
+                    if (document.SciControl is { } sci && document.IsModified)
                     {
                         if (document.IsUntitled)
                         {
-                            saveFileDialog.FileName = document.FileName;
+                            saveFileDialog.FileName = sci.FileName;
                             saveFileDialog.InitialDirectory = WorkingDirectory;
                             if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                             {
@@ -3079,9 +3068,9 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string settingKey = ((ItemData)button.Tag).Tag;
-                bool value = (bool)AppSettings.GetValue(settingKey);
+                var button = (ToolStripItem)sender;
+                var settingKey = ((ItemData)button.Tag).Tag;
+                var value = (bool)AppSettings.GetValue(settingKey);
                 AppSettings.SetValue(settingKey, !value);
                 ApplyAllSettings();
             }
@@ -3098,9 +3087,9 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                ScintillaControl sci = CurrentDocument.SciControl;
-                int encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
+                var button = (ToolStripItem)sender;
+                var sci = CurrentDocument.SciControl;
+                var encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
                 sci.Encoding = Encoding.GetEncoding(encMode);
                 OnScintillaControlUpdateControl(sci);
                 OnDocumentModify(CurrentDocument);
@@ -3284,16 +3273,15 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string file = ProcessArgString(((ItemData)button.Tag).Tag);
-                if (File.Exists(file))
-                {
-                    Encoding to = CurrentDocument.SciControl.Encoding;
-                    EncodingFileInfo info = FileHelper.GetEncodingFileInfo(file);
-                    if (info.CodePage == -1) return; // If the file is locked, stop.
-                    string contents = DataConverter.ChangeEncoding(info.Contents, info.CodePage, to.CodePage);
-                    CurrentDocument.SciControl.ReplaceSel(contents);
-                }
+                var button = (ToolStripItem)sender;
+                var file = ProcessArgString(((ItemData)button.Tag).Tag);
+                if (!File.Exists(file)) return;
+                var sci = CurrentDocument.SciControl;
+                var to = sci.Encoding;
+                var info = FileHelper.GetEncodingFileInfo(file);
+                if (info.CodePage == -1) return; // If the file is locked, stop.
+                var contents = DataConverter.ChangeEncoding(info.Contents, info.CodePage, to.CodePage);
+                sci.ReplaceSel(contents);
             }
             catch (Exception ex)
             {
@@ -3308,20 +3296,18 @@ namespace FlashDevelop
         {
             try
             {
-                ScintillaControl sci = CurrentDocument.SciControl;
-                ToolStripItem button = (ToolStripItem)sender;
-                string language = ((ItemData) button.Tag).Tag;
+                var button = (ToolStripItem)sender;
+                var language = ((ItemData) button.Tag).Tag;
+                var sci = CurrentDocument.SciControl;
                 if (sci.ConfigurationLanguage.Equals(language)) return; // already using this syntax
                 ScintillaManager.ChangeSyntax(language, sci);
-                string extension = sci.GetFileExtension();
-                if (!string.IsNullOrEmpty(extension))
+                var extension = sci.GetFileExtension();
+                if (string.IsNullOrEmpty(extension)) return;
+                var title = TextHelper.GetString("Title.RememberExtensionDialog"); 
+                var message = TextHelper.GetString("Info.RememberExtensionDialog"); 
+                if (MessageBox.Show(message, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    string title = TextHelper.GetString("Title.RememberExtensionDialog"); 
-                    string message = TextHelper.GetString("Info.RememberExtensionDialog"); 
-                    if (MessageBox.Show(message, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        sci.SaveExtensionToSyntaxConfig(extension);
-                    }
+                    sci.SaveExtensionToSyntaxConfig(extension);
                 }
             }
             catch (Exception ex)
@@ -3670,21 +3656,21 @@ namespace FlashDevelop
         /// </summary>
         public void SelectTheme(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = PathHelper.ThemesDir;
-            ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
-            ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using var dialog = new OpenFileDialog();
+            dialog.InitialDirectory = PathHelper.ThemesDir;
+            dialog.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
+            dialog.Filter = TextHelper.GetString("Info.ThemesFilter");
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                string ext = Path.GetExtension(ofd.FileName).ToLower();
+                string ext = Path.GetExtension(dialog.FileName).ToLower();
                 if (ext == ".fdi")
                 {
-                    ThemeManager.LoadTheme(ofd.FileName);
+                    ThemeManager.LoadTheme(dialog.FileName);
                     ThemeManager.WalkControls(this);
                 }
                 else
                 {
-                    CallCommand("ExtractZip", ofd.FileName + ";true");
+                    CallCommand("ExtractZip", dialog.FileName + ";true");
                     string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                     ThemeManager.WalkControls(this);
@@ -3730,9 +3716,10 @@ namespace FlashDevelop
             {
                 var button = (ToolStripItem)sender;
                 var command = ((ItemData)button.Tag).Tag;
-                var mfType = CurrentDocument.SciControl.GetType();
+                var sci = CurrentDocument.SciControl;
+                var mfType = sci.GetType();
                 var method = mfType.GetMethod(command, EmptyArray<Type>.Instance);
-                method.Invoke(CurrentDocument.SciControl, null);
+                method.Invoke(sci, null);
             }
             catch (Exception ex)
             {
@@ -3894,10 +3881,7 @@ namespace FlashDevelop
         /// </summary>
         public void KillProcess()
         {
-            if (processRunner.IsRunning)
-            {
-                processRunner.KillProcess();
-            }
+            if (processRunner.IsRunning) processRunner.KillProcess();
         }
 
         /// <summary>
@@ -3911,7 +3895,6 @@ namespace FlashDevelop
                 dialog.AddExtension = true;
                 dialog.DefaultExt = "fdz";
                 dialog.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
-                var dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
                 var settingFiles = new List<string>();
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
@@ -3920,6 +3903,7 @@ namespace FlashDevelop
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
+                const string dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
                 var zipFile = ZipFile.Create(dialog.FileName);
                 zipFile.BeginUpdate();
                 foreach (string settingFile in settingFiles)
@@ -3964,8 +3948,8 @@ namespace FlashDevelop
         /// </summary>
         public void TestControls(object sender, EventArgs e)
         {
-            using ControlDialog cd = new ControlDialog();
-            cd.Show(this);
+            using var dialog = new ControlDialog();
+            dialog.Show(this);
         }
 
         /// <summary>

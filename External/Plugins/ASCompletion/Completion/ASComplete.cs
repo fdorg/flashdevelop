@@ -662,7 +662,7 @@ namespace ASCompletion.Completion
         public static bool OpenDocumentToDeclaration(ScintillaControl sci, ASResult result)
         {
             var model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
-            if (model is null || model.FileName == "") return false;
+            if (string.IsNullOrEmpty(model?.FileName)) return false;
             var inClass = result.InClass ?? result.Type;
 
             SaveLastLookupPosition(sci);
@@ -2176,7 +2176,7 @@ namespace ASCompletion.Completion
         public static void DotContextResolved(ScintillaControl sci, ASExpr expr, MemberList items, bool autoHide)
         {
             // still valid context and position?
-            if (sci != PluginBase.MainForm.CurrentDocument?.SciControl) return;
+            if (sci != PluginBase.MainForm.CurrentDocument.SciControl) return;
             var features = ASContext.Context.Features;
             var position = sci.CurrentPos;
             var local = GetExpression(sci, position);
@@ -4394,7 +4394,7 @@ namespace ASCompletion.Completion
 
         static MemberList GetTypeParameters(MemberModel model)
         {
-            MemberList retVal = null;
+            MemberList result = null;
             string template = model.Template;
             if (template != null && template.StartsWith('<'))
             {
@@ -4414,8 +4414,8 @@ namespace ASCompletion.Completion
                             genType.Type = sb.ToString();
                             genType.Flags = FlagType.TypeDef;
                             inConstraint = c == ':';
-                            if (retVal is null) retVal = new MemberList();
-                            retVal.Add(genType);
+                            if (result is null) result = new MemberList();
+                            result.Add(genType);
                             sb.Length = 0;
 
                             continue;
@@ -4443,17 +4443,17 @@ namespace ASCompletion.Completion
                 }
                 if (sb.Length > 0)
                 {
-                    if (retVal is null) retVal = new MemberList();
+                    if (result is null) result = new MemberList();
                     if (!inConstraint)
                     {
                         var name = sb.ToString();
-                        retVal.Add(new MemberModel {Name = name, Type = name, Flags = FlagType.TypeDef});
+                        result.Add(new MemberModel {Name = name, Type = name, Flags = FlagType.TypeDef});
                     }
                     else genType.Type += ":" + sb;
                 }
             }
 
-            return retVal;
+            return result;
         }
 
         static List<ICompletionListItem> GetAllClasses(ScintillaControl sci, bool classesOnly, bool showClassVars)
@@ -4531,35 +4531,33 @@ namespace ASCompletion.Completion
 
         static MemberList GetVisibleElements()
         {
-            var known = ASContext.Context.GetVisibleExternalElements();
+            var result = ASContext.Context.GetVisibleExternalElements();
             if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
             {
-                var typeParams = GetVisibleTypeParameters();
-                if (!typeParams.IsNullOrEmpty())
+                var @params = GetVisibleTypeParameters();
+                if (!@params.IsNullOrEmpty())
                 {
-                    typeParams.Sort();
-                    typeParams.Merge(known);
-                    known = typeParams;
+                    @params.Sort();
+                    @params.Merge(result);
+                    result = @params;
                 }
             }
-            return known;
+            return result;
         }
 
         static MemberList GetVisibleTypeParameters()
         {
-            var typeParams = GetTypeParameters(ASContext.Context.CurrentClass);
-
-            var curMember = ASContext.Context.CurrentMember;
-            if (curMember != null && (curMember.Flags & FlagType.Function) > 0)
+            var result = GetTypeParameters(ASContext.Context.CurrentClass);
+            var member = ASContext.Context.CurrentMember;
+            if (member != null && (member.Flags & FlagType.Function) > 0)
             {
-                var memberTypeParams = GetTypeParameters(curMember);
-                if (typeParams != null && memberTypeParams != null)
-                    typeParams.Add(memberTypeParams);
-                else if (typeParams is null)
-                    typeParams = memberTypeParams;
+                var @params = GetTypeParameters(member);
+                if (result != null && @params != null)
+                    result.Add(@params);
+                else if (result is null)
+                    result = @params;
             }
-
-            return typeParams;
+            return result;
         }
 
         /// <summary>
@@ -4838,14 +4836,14 @@ namespace ASCompletion.Completion
             return code.ToString();
         }
 
-        private static string GetFileContents(FileModel model)
+        static string GetFileContents(FileModel model)
         {
-            if (model is null || string.IsNullOrEmpty(model.FileName) || !File.Exists(model.FileName)) return null;
+            if (string.IsNullOrEmpty(model?.FileName) || !File.Exists(model.FileName)) return null;
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                if (doc.IsEditable && string.Equals(doc.FileName, model.FileName, StringComparison.CurrentCultureIgnoreCase))
+                if (doc.SciControl is { } sci && string.Equals(sci.FileName, model.FileName, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return doc.SciControl.Text;
+                    return sci.Text;
                 }
             }
             var info = FileHelper.GetEncodingFileInfo(model.FileName);
@@ -5194,8 +5192,8 @@ namespace ASCompletion.Completion
             if (resolved.IsNull() || !resolved.IsPackage || resolved.InFile is null)
                 return false;
 
-            string package = resolved.InFile.Package;
-            string check = Regex.Replace(expr.Value, "\\s", "").TrimEnd('.');
+            var package = resolved.InFile.Package;
+            var check = Regex.Replace(expr.Value, "\\s", "").TrimEnd('.');
             if (check != package)
                 return false;
 
