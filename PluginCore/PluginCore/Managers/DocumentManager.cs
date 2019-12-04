@@ -21,7 +21,7 @@ namespace PluginCore.Managers
         {
             if (string.IsNullOrEmpty(extension))
             {
-                var setting = PluginBase.MainForm.Settings.DefaultFileExtension;
+                var setting = PluginBase.Settings.DefaultFileExtension;
                 extension = setting.Trim().Length > 0 ? setting : "as";
             }
             var count = DocumentCount++;

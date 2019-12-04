@@ -30,12 +30,10 @@ namespace PluginCore.Utilities
 
             if ((cr < 0) && (lf < 0))
             {
-                return (int)PluginBase.MainForm.Settings.EOLMode;
+                return (int)PluginBase.Settings.EOLMode;
             }
             if (lf < 0) return 1;
             return 2;
         }
-
     }
-
 }

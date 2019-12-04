@@ -173,7 +173,7 @@ namespace PluginCore.Controls
                 currentWord = null;
             }
             MinWordLength = 1;
-            fullList = (word.Length == 0) || !autoHide || !PluginBase.MainForm.Settings.AutoFilterList;
+            fullList = (word.Length == 0) || !autoHide || !PluginBase.Settings.AutoFilterList;
             lastIndex = 0;
             exactMatchInList = false;
             if (sci.SelectionStart == sci.SelectionEnd)
@@ -184,14 +184,14 @@ namespace PluginCore.Controls
             defaultItem = null;
             // populate list
             needResize = true;
-            tempo.Enabled = autoHide && (PluginBase.MainForm.Settings.DisplayDelay > 0);
-            if (tempo.Enabled) tempo.Interval = PluginBase.MainForm.Settings.DisplayDelay;
+            tempo.Enabled = autoHide && (PluginBase.Settings.DisplayDelay > 0);
+            if (tempo.Enabled) tempo.Interval = PluginBase.Settings.DisplayDelay;
             FindWordStartingWith(word);
             // state
             Active = true;
             tempoTip.Enabled = false;
             showTime = DateTime.Now.Ticks;
-            disableSmartMatch = noAutoInsert || PluginBase.MainForm.Settings.DisableSmartMatch;
+            disableSmartMatch = noAutoInsert || PluginBase.Settings.DisableSmartMatch;
             UITools.Manager.LockControl(sci);
             faded = false;
         }
@@ -225,15 +225,11 @@ namespace PluginCore.Controls
         /// </summary>
         public static void DisableAutoInsertion() => noAutoInsert = true;
 
-        /// <summary>
-        /// 
-        /// </summary>
         static void DisplayList(object sender, System.Timers.ElapsedEventArgs e)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            ScintillaControl sci = doc.SciControl;
-            ListBox cl = completionList;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
+            var cl = completionList;
             if (cl.Items.Count == 0) return;
 
             // measure control
@@ -301,9 +297,9 @@ namespace PluginCore.Controls
             Hide();
             var onCancel = OnCancel;
             if (onCancel is null) return;
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            onCancel(doc.SciControl, currentPos, currentWord, trigger, null);
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
+            onCancel(sci, currentPos, currentWord, trigger, null);
         }
 
         /// <summary>
@@ -426,7 +422,7 @@ namespace PluginCore.Controls
             /// <summary>
             /// FILTER ITEMS
             /// </summary>
-            if (PluginBase.MainForm.Settings.AutoFilterList || fullList)
+            if (PluginBase.Settings.AutoFilterList || fullList)
             {
                 IList<ICompletionListItem> found;
                 if (len == 0) 
@@ -480,7 +476,7 @@ namespace PluginCore.Controls
                 // no match?
                 if (!smartMatchInList)
                 {
-                    if (autoHideList && PluginBase.MainForm.Settings.EnableAutoHide && (len == 0 || len > 255))
+                    if (autoHideList && PluginBase.Settings.EnableAutoHide && (len == 0 || len > 255))
                     {
                         Hide('\0');
                     }
@@ -491,7 +487,7 @@ namespace PluginCore.Controls
                         {
                             FindWordStartingWith(word.Substring(0, len - 1));
                         }
-                        if (!smartMatchInList && autoHideList && PluginBase.MainForm.Settings.EnableAutoHide)
+                        if (!smartMatchInList && autoHideList && PluginBase.Settings.EnableAutoHide)
                         {
                             Hide('\0');
                         }
@@ -590,7 +586,7 @@ namespace PluginCore.Controls
                     lastIndex++;
                 }
                 // no match
-                if (autoHideList && PluginBase.MainForm.Settings.EnableAutoHide) Hide('\0');
+                if (autoHideList && PluginBase.Settings.EnableAutoHide) Hide('\0');
                 else exactMatchInList = false;
             }
         }
@@ -885,7 +881,7 @@ namespace PluginCore.Controls
                         completionList.SelectedIndex = index;
                     }
                     // wrap
-                    else if (PluginBase.MainForm.Settings.WrapList)
+                    else if (PluginBase.Settings.WrapList)
                     {
                         RefreshTip();
                         index = completionList.Items.Count-1;
@@ -911,7 +907,7 @@ namespace PluginCore.Controls
                         completionList.SelectedIndex = index;
                     }
                     // wrap
-                    else if (PluginBase.MainForm.Settings.WrapList)
+                    else if (PluginBase.Settings.WrapList)
                     {
                         RefreshTip();
                         index = 0;

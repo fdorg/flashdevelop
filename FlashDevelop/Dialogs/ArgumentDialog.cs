@@ -136,7 +136,7 @@ namespace FlashDevelop.Dialogs
             //
             valueTextBox.AcceptsTab = true;
             valueTextBox.AcceptsReturn = true;
-            valueTextBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
+            valueTextBox.Font = PluginBase.Settings.ConsoleFont;
             valueTextBox.ScrollBars = ScrollBars.Vertical;
             valueTextBox.Location = new Point(14, 77);
             valueTextBox.Multiline = true;

@@ -23,7 +23,7 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class ProjectCreator
     {
-        private static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         string projectName;
         string projectId;
         string packageName;
@@ -33,9 +33,9 @@ namespace ProjectManager.Helpers
         string defaultFlexSDK;
         Argument[] arguments;
 
-        private static readonly Hashtable projectTypes = new Hashtable();
-        private static readonly List<string> projectExt = new List<string>();
-        private static bool projectTypesSet;
+        static readonly Hashtable projectTypes = new Hashtable();
+        static readonly List<string> projectExt = new List<string>();
+        static bool projectTypesSet;
 
         public static bool IsRunning { get; private set; }
 
@@ -97,7 +97,7 @@ namespace ProjectManager.Helpers
             return null;
         }
 
-        private void CopyProjectFiles(string sourceDir, string destDir, bool filter)
+        void CopyProjectFiles(string sourceDir, string destDir, bool filter)
         {
             Directory.CreateDirectory(destDir);
 
@@ -137,8 +137,8 @@ namespace ProjectManager.Helpers
             {
                 if (FileInspector.IsTemplate(source, ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
 
-                bool saveBOM = PluginBase.MainForm.Settings.SaveUnicodeWithBOM;
-                Encoding encoding = Encoding.GetEncoding((int)PluginBase.MainForm.Settings.DefaultCodePage);
+                bool saveBOM = PluginBase.Settings.SaveUnicodeWithBOM;
+                Encoding encoding = Encoding.GetEncoding((int)PluginBase.Settings.DefaultCodePage);
                 // batch files must be encoded in ASCII
                 ext = Path.GetExtension(dest).ToLower();
                 if (ext == ".bat" || ext == ".cmd" || ext.StartsWithOrdinal(".php")) encoding = Encoding.ASCII;
@@ -150,14 +150,14 @@ namespace ProjectManager.Helpers
             else File.Copy(source, dest);
         }
 
-        private string ReplaceKeywords(string line)
+        string ReplaceKeywords(string line)
         {
             if (!line.Contains('$')) return line;
             if (packageName == "") line = line.Replace(" $(PackageName)", "");
             return reArgs.Replace(line, ReplaceVars);
         }
 
-        private string ReplaceVars(Match match)
+        string ReplaceVars(Match match)
         {
             if (match.Groups.Count > 0)
             {
@@ -220,7 +220,7 @@ namespace ProjectManager.Helpers
             return string.Empty;
         }
 
-        private bool ShouldSkip(string path, bool isProjectRoot)
+        bool ShouldSkip(string path, bool isProjectRoot)
         {
             string filename = Path.GetFileName(path).ToLower();
             if (isProjectRoot)
@@ -230,7 +230,7 @@ namespace ProjectManager.Helpers
             return filename == "dummy";
         }
 
-        private static void SetInitialProjectHash()
+        static void SetInitialProjectHash()
         {
             projectTypes["project.fdproj"] = typeof(GenericProject);
             projectTypes["project.fdp"] = typeof(AS2Project);
@@ -308,7 +308,7 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the line intendation from the text
         /// </summary>
-        private static string GetLineIndentation(string text, int position)
+        static string GetLineIndentation(string text, int position)
         {
             char c;
             int startPos = position;

@@ -215,14 +215,14 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCBI()
         {
-            var cbs = PluginBase.MainForm.Settings.CommentBlockStyle;
+            var cbs = PluginBase.Settings.CommentBlockStyle;
             return cbs == CommentBlockStyle.Indented ? " " : "";
         }
 
         /// <summary>
         /// Gets the space or tab character based on settings
         /// </summary>
-        public static string GetSTC() => PluginBase.MainForm.Settings.UseTabs ? "\t" : " ";
+        public static string GetSTC() => PluginBase.Settings.UseTabs ? "\t" : " ";
 
         /// <summary>
         /// Gets the current syntax based on project or current file.
@@ -251,7 +251,7 @@ namespace FlashDevelop.Utilities
             if (nextIndex < 0) return text;
             var cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
-            var eolMode = (int)PluginBase.MainForm.Settings.EOLMode;
+            var eolMode = (int)PluginBase.Settings.EOLMode;
             var lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
             var result = "";
             var currentIndex = 0;
@@ -289,7 +289,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the current locale
         /// </summary>
-        static string GetLocale() => PluginBase.MainForm.Settings.LocaleVersion.ToString();
+        static string GetLocale() => PluginBase.Settings.LocaleVersion.ToString();
 
         /// <summary>
         /// Processes the argument String variables

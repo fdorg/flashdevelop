@@ -924,8 +924,8 @@ namespace FileExplorer
             try
             {
                 string filename = TextHelper.GetString("Info.NewFileName");
-                int codepage = (int)PluginBase.MainForm.Settings.DefaultCodePage;
-                string extension = PluginBase.MainForm.Settings.DefaultFileExtension;
+                int codepage = (int)PluginBase.Settings.DefaultCodePage;
+                string extension = PluginBase.Settings.DefaultFileExtension;
                 string file = Path.Combine(selectedPath.Text, filename) + "." + extension;
                 string unique = FileHelper.EnsureUniquePath(file);
                 FileHelper.WriteFile(unique, "", Encoding.GetEncoding(codepage), PluginBase.Settings.SaveUnicodeWithBOM);

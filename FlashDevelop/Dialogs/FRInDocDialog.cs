@@ -375,7 +375,7 @@ namespace FlashDevelop.Dialogs
             this.escapedCheckBox.Text = " " + TextHelper.GetString("Label.EscapedCharacters");
             this.useRegexCheckBox.Text = " " + TextHelper.GetString("Label.RegularExpressions");
             this.Text = " " + TextHelper.GetString("Title.FindAndReplaceDialog");
-            this.lookComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            this.lookComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
         }
 
         /// <summary>
@@ -618,11 +618,11 @@ namespace FlashDevelop.Dialogs
                 this.lookupIsDirty = true;
                 this.currentMatch = null;
             }
-            if (sender == this.matchCaseCheckBox && !PluginBase.MainForm.Settings.DisableFindOptionSync)
+            if (sender == this.matchCaseCheckBox && !PluginBase.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetMatchCase(this, this.matchCaseCheckBox.Checked);
             }
-            if (sender == this.wholeWordCheckBox && !PluginBase.MainForm.Settings.DisableFindOptionSync)
+            if (sender == this.wholeWordCheckBox && !PluginBase.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetWholeWord(this, this.wholeWordCheckBox.Checked);
             }

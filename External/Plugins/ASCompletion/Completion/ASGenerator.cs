@@ -4340,7 +4340,7 @@ namespace ASCompletion.Completion
                     else if (txt.Contains('{'))
                     {
                         packageLine = -2;
-                        indent = sci.GetLineIndentation(line - 1) + PluginBase.MainForm.Settings.IndentSize;
+                        indent = sci.GetLineIndentation(line - 1) + PluginBase.Settings.IndentSize;
                         firstLine = line;
                     }
                 }

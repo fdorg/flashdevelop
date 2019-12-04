@@ -141,7 +141,7 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("TracksBoolean"))
             {
-                bool value = (bool)((SettingObject)PluginBase.MainForm.Settings).GetValue(((ItemData)item.Tag).Tag);
+                bool value = (bool)((SettingObject)PluginBase.Settings).GetValue(((ItemData)item.Tag).Tag);
                 if (!value) return false;
             }
             var sci = document.SciControl;
@@ -280,17 +280,17 @@ namespace FlashDevelop.Managers
             {
                 var reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 reopenMenu.DropDownItems.Clear();
-                for (int i = 0; i < PluginBase.MainForm.Settings.PreviousDocuments.Count; i++)
+                for (int i = 0; i < PluginBase.Settings.PreviousDocuments.Count; i++)
                 {
-                    var file = PluginBase.MainForm.Settings.PreviousDocuments[i];
+                    var file = PluginBase.Settings.PreviousDocuments[i];
                     var item = new ToolStripMenuItem();
                     item.Tag = file;
                     item.Text = PathHelper.GetCompactPath(file);
                     item.Click += Globals.MainForm.Reopen;
-                    if (i < ((SettingObject)PluginBase.MainForm.Settings).MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
-                    else PluginBase.MainForm.Settings.PreviousDocuments.Remove(file);
+                    if (i < ((SettingObject)PluginBase.Settings).MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
+                    else PluginBase.Settings.PreviousDocuments.Remove(file);
                 }
-                if (PluginBase.MainForm.Settings.PreviousDocuments.Count > 0)
+                if (PluginBase.Settings.PreviousDocuments.Count > 0)
                 {
                     string cleanLabel = TextHelper.GetString("Label.CleanReopenList");
                     string clearLabel = TextHelper.GetString("Label.ClearReopenList");
@@ -314,7 +314,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                var documents = PluginBase.MainForm.Settings.PreviousDocuments;
+                var documents = PluginBase.Settings.PreviousDocuments;
                 documents.Remove(file);
                 documents.Insert(0, file);
                 PopulateReopenMenu();

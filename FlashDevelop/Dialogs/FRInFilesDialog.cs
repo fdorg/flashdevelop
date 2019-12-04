@@ -494,7 +494,7 @@ namespace FlashDevelop.Dialogs
         public void UpdateSettings()
         {
             FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
-            bool useGroups = PluginBase.MainForm.Settings.UseListViewGrouping;
+            bool useGroups = PluginBase.Settings.UseListViewGrouping;
             resultsView.ShowGroups = useGroups;
             resultsView.GridLines = !useGroups;
         }
@@ -547,8 +547,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void RedirectCheckBoxCheckChanged(object sender, EventArgs e)
         {
-            PluginBase.MainForm.Settings.RedirectFilesResults = !PluginBase.MainForm.Settings.RedirectFilesResults;
-            redirectCheckBox.Checked = PluginBase.MainForm.Settings.RedirectFilesResults;
+            PluginBase.Settings.RedirectFilesResults = !PluginBase.Settings.RedirectFilesResults;
+            redirectCheckBox.Checked = PluginBase.Settings.RedirectFilesResults;
         }
 
         /// <summary>
@@ -585,7 +585,7 @@ namespace FlashDevelop.Dialogs
             if (!IsValidPattern()) return;
             var mask = extensionComboBox.Text.Trim();
             if (!IsValidFileMask(mask)) return;
-            if (!PluginBase.MainForm.Settings.DisableReplaceFilesConfirm)
+            if (!PluginBase.Settings.DisableReplaceFilesConfirm)
             {
                 var caption = TextHelper.GetString("Title.ConfirmDialog");
                 var message = TextHelper.GetString("Info.AreYouSureToReplaceInFiles");
@@ -908,7 +908,7 @@ namespace FlashDevelop.Dialogs
             }
             folderComboBox.SelectionStart = folderComboBox.Text.Length;
             redirectCheckBox.CheckedChanged -= RedirectCheckBoxCheckChanged;
-            redirectCheckBox.Checked = PluginBase.MainForm.Settings.RedirectFilesResults;
+            redirectCheckBox.Checked = PluginBase.Settings.RedirectFilesResults;
             redirectCheckBox.CheckedChanged += RedirectCheckBoxCheckChanged;
             if (!IsValidFileMask(extensionComboBox.Text) || doRefresh)
             {
@@ -919,7 +919,7 @@ namespace FlashDevelop.Dialogs
                 }
                 else
                 {
-                    string def = PluginBase.MainForm.Settings.DefaultFileExtension;
+                    string def = PluginBase.Settings.DefaultFileExtension;
                     extensionComboBox.Text = "*." + def;
                 }
             }

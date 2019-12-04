@@ -997,9 +997,9 @@ namespace FlashDevelop.Dialogs
         {
             ToolTip tooltip = new ToolTip();
             this.languageDropDown.Font = PluginBase.Settings.DefaultFont;
-            this.fontSizeComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            this.fontNameComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            this.languageDropDown.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            this.fontSizeComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            this.fontNameComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            this.languageDropDown.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             tooltip.SetToolTip(this.exportButton, TextHelper.GetString("Label.ExportFiles"));
             tooltip.SetToolTip(this.revertButton, TextHelper.GetString("Label.RevertFiles"));
             tooltip.SetToolTip(this.defaultButton, TextHelper.GetString("Label.MakeAsDefault"));

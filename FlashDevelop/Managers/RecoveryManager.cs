@@ -39,7 +39,7 @@ namespace FlashDevelop.Managers
                 string recoveryDir = FileNameHelper.RecoveryDir;
                 if (!Directory.Exists(recoveryDir)) Directory.CreateDirectory(recoveryDir);
                 string path = Path.Combine(recoveryDir, name); // Create full file path
-                int lineEndMode = LineEndDetector.DetectNewLineMarker(text, (int)PluginBase.MainForm.Settings.EOLMode);
+                int lineEndMode = LineEndDetector.DetectNewLineMarker(text, (int)PluginBase.Settings.EOLMode);
                 string lineEndMarker = LineEndDetector.GetNewLineMarker(lineEndMode);
                 text = file + lineEndMarker + lineEndMarker + text;
                 FileHelper.WriteFile(path, text, encoding);

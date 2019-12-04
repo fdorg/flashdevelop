@@ -19,7 +19,7 @@ namespace FlashDevelop.Managers
         {
             CheckSettingValues();
             FilePollTimer = new Timer();
-            FilePollTimer.Interval = ((SettingObject)PluginBase.MainForm.Settings).FilePollInterval;
+            FilePollTimer.Interval = ((SettingObject)PluginBase.Settings).FilePollInterval;
             FilePollTimer.Tick += FilePollTimerTick;
             FilePollTimer.Start();
         }
@@ -29,7 +29,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         static void CheckSettingValues()
         {
-            var settings = (SettingObject)PluginBase.MainForm.Settings;
+            var settings = (SettingObject)PluginBase.Settings;
             if (settings.FilePollInterval == 0) settings.FilePollInterval = 3000;
         }
 
@@ -42,7 +42,7 @@ namespace FlashDevelop.Managers
                 && doc.SciControl is { } sci
                 && doc.CheckFileChange())
             {
-                if (PluginBase.MainForm.Settings.AutoReloadModifiedFiles)
+                if (PluginBase.Settings.AutoReloadModifiedFiles)
                 {
                     doc.RefreshFileInfo();
                     doc.Reload(false);

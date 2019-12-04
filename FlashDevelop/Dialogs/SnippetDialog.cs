@@ -306,9 +306,9 @@ namespace FlashDevelop.Dialogs
         void ApplyLocalizedTexts()
         {
             ToolTip tooltip = new ToolTip();
-            contentsTextBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
-            insertComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
-            languageDropDown.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            contentsTextBox.Font = PluginBase.Settings.ConsoleFont;
+            insertComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            languageDropDown.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             tooltip.SetToolTip(exportButton, TextHelper.GetString("Label.ExportFiles"));
             tooltip.SetToolTip(revertButton, TextHelper.GetString("Label.RevertFiles"));
             saveFileDialog.Filter = TextHelper.GetString("Info.ZipFilter");
@@ -519,7 +519,7 @@ namespace FlashDevelop.Dialogs
         {
             try
             {
-                string locale = PluginBase.MainForm.Settings.LocaleVersion.ToString();
+                string locale = PluginBase.Settings.LocaleVersion.ToString();
                 Stream stream = ResourceHelper.GetStream($"SnippetVars.{locale}.txt");
                 string contents = new StreamReader(stream).ReadToEnd();
                 if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")

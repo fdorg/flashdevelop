@@ -170,7 +170,7 @@ namespace ASClassWizard
 
         static string ProcessFileTemplate(string args)
         {
-            var eolMode = (int)PluginBase.MainForm.Settings.EOLMode;
+            var eolMode = (int)PluginBase.Settings.EOLMode;
             var lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
             var imports = new List<string>();
             var extends = "";

@@ -81,7 +81,7 @@ namespace FlashDevelop.Dialogs
             // infoTextBox
             // Font needs to be set here so that controls resize correctly in high-dpi
             //
-            infoTextBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
+            infoTextBox.Font = PluginBase.Settings.ConsoleFont;
             infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             infoTextBox.Location = new Point(13, 35);

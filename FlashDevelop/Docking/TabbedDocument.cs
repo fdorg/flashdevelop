@@ -461,7 +461,7 @@ namespace FlashDevelop.Docking
         {
             backupTimer = new Timer();
             backupTimer.Tick += BackupTimerTick;
-            backupTimer.Interval = ((SettingObject)PluginBase.MainForm.Settings).BackupInterval;
+            backupTimer.Interval = ((SettingObject)PluginBase.Settings).BackupInterval;
             backupTimer.Start();
         }
 
