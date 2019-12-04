@@ -38,7 +38,7 @@ namespace FlashDevelop.Dialogs
         public ArgumentDialog()
         {
             Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
             InitializeComponent();
             InitializeItemGroups();

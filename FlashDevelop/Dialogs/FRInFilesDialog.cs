@@ -58,7 +58,7 @@ namespace FlashDevelop.Dialogs
         public FRInFilesDialog()
         {
             Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             FormGuid = "d2dbaf53-35ea-4632-b038-5428c9784a32";
             InitializeComponent();
             ApplyLocalizedTexts();

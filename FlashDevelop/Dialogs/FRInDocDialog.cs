@@ -40,7 +40,7 @@ namespace FlashDevelop.Dialogs
         public FRInDocDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "24910809-a60a-4b7c-8d2a-d53a363f595f";
             this.InitializeComponent();
             this.InitializeProperties();

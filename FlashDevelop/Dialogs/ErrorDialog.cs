@@ -20,7 +20,7 @@ namespace FlashDevelop.Dialogs
         public ErrorDialog()
         {
             Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             FormGuid = "4f534f7c-8078-4053-9c54-343129c513b3";
             InitializeComponent();
             ApplyLocalizedTexts();

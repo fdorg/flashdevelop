@@ -24,7 +24,7 @@ namespace FlashDevelop.Dialogs
 
         public FirstRunDialog()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             InitializeExternals();
         }

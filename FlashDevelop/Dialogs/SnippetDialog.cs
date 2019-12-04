@@ -43,7 +43,7 @@ namespace FlashDevelop.Dialogs
         {
             eolMode = 0;
             Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             FormGuid = "38535b88-d4b2-4db5-a6f5-40cc0ce3cb01";
             InitializeComponent();
             ApplyLocalizedTexts();

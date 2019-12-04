@@ -38,7 +38,7 @@ namespace FlashDevelop.Docking
             ControlAdded += DocumentControlAdded;
             UITools.Manager.OnMarkerChanged += OnMarkerChanged;
             DockPanel = PluginBase.MainForm.DockPanel;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             DockAreas = DockAreas.Document;
             BackColor = Color.White;
             UseCustomIcon = false;

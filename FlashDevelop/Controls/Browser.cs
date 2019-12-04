@@ -38,7 +38,7 @@ namespace FlashDevelop.Controls
 
         public Browser()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             InitializeLocalization();
             InitializeInterface();

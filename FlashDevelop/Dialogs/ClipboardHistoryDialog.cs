@@ -192,8 +192,8 @@ namespace FlashDevelop.Dialogs
 
         void InitializeFont()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
-            previewBox.Font = PluginBase.MainForm.Settings.ConsoleFont;
+            Font = PluginBase.Settings.DefaultFont;
+            previewBox.Font = PluginBase.Settings.ConsoleFont;
             listBox.ItemHeight = Font.Height;
         }
 

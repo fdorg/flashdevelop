@@ -7,10 +7,10 @@ namespace ResultsPanel
     [Serializable]
     public class Settings
     {
-        private bool scrollToBottom = false;
-        private GroupingMethod defaultGroup = GroupingMethod.File;
-        private bool highlightOnlyActivePanelEntries = false;
-        private bool keepResultsByDefault = false;
+        bool scrollToBottom = false;
+        GroupingMethod defaultGroup = GroupingMethod.File;
+        bool highlightOnlyActivePanelEntries = false;
+        bool keepResultsByDefault = false;
 
         [DisplayName("Scroll To Bottom")]
         [LocalizedDescription("ResultsPanel.Description.ScrollToBottom"), DefaultValue(false)]
@@ -44,5 +44,4 @@ namespace ResultsPanel
             set => keepResultsByDefault = value;
         }
     }
-
 }

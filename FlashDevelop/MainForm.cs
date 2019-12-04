@@ -831,10 +831,10 @@ namespace FlashDevelop
                 ToolStripPanel.Controls.Add(ToolStrip);
                 ToolStripPanel.Controls.Add(MenuStrip);
             }
-            TabMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
-            ToolStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
-            MenuStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
-            EditorMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
+            TabMenu.Font = PluginBase.Settings.DefaultFont;
+            ToolStrip.Font = PluginBase.Settings.DefaultFont;
+            MenuStrip.Font = PluginBase.Settings.DefaultFont;
+            EditorMenu.Font = PluginBase.Settings.DefaultFont;
             TabMenu.Renderer = new DockPanelStripRenderer(false);
             EditorMenu.Renderer = new DockPanelStripRenderer(false);
             MenuStrip.Renderer = new DockPanelStripRenderer(false);
@@ -903,7 +903,7 @@ namespace FlashDevelop
             StatusStrip.Items.Add(StatusLabel);
             StatusStrip.Items.Add(ProgressLabel);
             StatusStrip.Items.Add(toolStripProgressBar);
-            StatusStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
+            StatusStrip.Font = PluginBase.Settings.DefaultFont;
             StatusStrip.Renderer = new DockPanelStripRenderer(false);
             StatusStrip.Stretch = true;
             // 

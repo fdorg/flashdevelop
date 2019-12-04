@@ -42,7 +42,7 @@ namespace FlashDevelop.Dialogs
             this.itemName = name;
             this.itemFilter = filter;
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "48a75ac0-479a-49b9-8ec0-5db7c8d36388";
             this.InitializeComponent();
             this.InitializeGraphics(); 

@@ -39,7 +39,7 @@ namespace FlashDevelop.Controls
 
         public QuickFind()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             InitializeGraphics();
             InitializeEvents();

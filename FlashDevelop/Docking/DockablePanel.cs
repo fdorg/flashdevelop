@@ -22,7 +22,7 @@ namespace FlashDevelop.Docking
             // Restrict docking on Wine/CrossOver as you can't dock panels back if undocked...
             DockPanel.AllowEndUserFloatChange = !PlatformHelper.isRunningOnWine();
             DockPanel.AllowEndUserDocking = !PlatformHelper.isRunningOnWine();
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             this.pluginGuid = pluginGuid;
             HideOnClose = true;
             Controls.Add(ctrl);

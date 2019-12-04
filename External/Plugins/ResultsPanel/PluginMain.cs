@@ -17,14 +17,14 @@ namespace ResultsPanel
 {
     public class PluginMain : IPlugin
     {
-        private Settings settingObject;
-        private string settingFilename;
+        Settings settingObject;
+        string settingFilename;
         internal PluginUI pluginUI;
         internal Image pluginImage;
         internal PanelContextMenu contextMenuStrip;
-        private ToolStripMenuItem viewItem;
-        private ToolStripMenuItem viewItemMainPanel;
-        private ToolStripSeparator viewItemSeparator;
+        ToolStripMenuItem viewItem;
+        ToolStripMenuItem viewItemMainPanel;
+        ToolStripSeparator viewItemSeparator;
 
         #region Required Properties
 
@@ -147,11 +147,14 @@ namespace ResultsPanel
                             ke.Handled = ResultsPanelHelper.ActiveUI.ClearIgnoredEntries();
                             break;
                         default:
-                            if (ke.Value == PanelContextMenu.CopyEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.CopyTextShortcut();
-                            else if (ke.Value == PanelContextMenu.IgnoreEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut();
+                            ke.Handled = ke.Value switch
+                            {
+                                PanelContextMenu.CopyEntryKeys => ResultsPanelHelper.ActiveUI.CopyTextShortcut(),
+                                PanelContextMenu.IgnoreEntryKeys => ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut(),
+                                _ => ke.Handled
+                            };
                             break;
                     }
-
                     break;
             }
         }
@@ -200,27 +203,24 @@ namespace ResultsPanel
             UITools.Manager.OnMouseHoverEnd += Scintilla_OnMouseHoverEnd;
         }
 
-        private void Scintilla_OnMouseHover(ScintillaControl sender, int position)
+        static void Scintilla_OnMouseHover(ScintillaControl sender, int position)
         {
-            var document = DocumentManager.FindDocument(sender);
-            if (document is null) return;
+            var sci = DocumentManager.FindDocument(sender)?.SciControl;
+            if (sci is null) return;
 
             var results = new List<string>();
             foreach (var ui in ResultsPanelHelper.PluginUIs)
             {
-                ui.GetResultsAt(results, document, position);
+                ui.GetResultsAt(results, sci, position);
             }
             //Main panel has to be handled specifically
-            ResultsPanelHelper.MainUI.GetResultsAt(results, document, position);
-
-            if (results.Count > 0)
-            {
-                var desc = string.Join(Environment.NewLine, results.ToArray());
-                UITools.ErrorTip.ShowAtMouseLocation(desc);
-            }
+            ResultsPanelHelper.MainUI.GetResultsAt(results, sci, position);
+            if (results.Count == 0) return;
+            var desc = string.Join(Environment.NewLine, results);
+            UITools.ErrorTip.ShowAtMouseLocation(desc);
         }
 
-        private void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position) => UITools.ErrorTip.Hide();
+        static void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position) => UITools.ErrorTip.Hide();
 
         /// <summary>
         /// Creates a plugin panel for the plugin
@@ -257,7 +257,7 @@ namespace ResultsPanel
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItemMainPanel);
         }
 
-        private void ViewItem_DropDownOpening(object sender, EventArgs e)
+        void ViewItem_DropDownOpening(object sender, EventArgs e)
         {
             viewItem.DropDownItems.Clear();
             viewItem.DropDownItems.Add(viewItemMainPanel);
@@ -269,7 +269,7 @@ namespace ResultsPanel
             }
         }
 
-        private void ViewItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void ViewItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (!(e.ClickedItem is ToolStripMenuItem)) return;
             var groupData = (string) e.ClickedItem.Tag;

@@ -107,7 +107,7 @@ namespace FlashDevelop.Dialogs
         public EditorDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
@@ -996,7 +996,7 @@ namespace FlashDevelop.Dialogs
         void ApplyLocalizedTexts()
         {
             ToolTip tooltip = new ToolTip();
-            this.languageDropDown.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.languageDropDown.Font = PluginBase.Settings.DefaultFont;
             this.fontSizeComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             this.fontNameComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             this.languageDropDown.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;

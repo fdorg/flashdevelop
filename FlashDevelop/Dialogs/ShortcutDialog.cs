@@ -35,7 +35,7 @@ namespace FlashDevelop.Dialogs
         public ShortcutDialog()
         {
             Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             FormGuid = "d7837615-77ac-425e-80cd-65515d130913";
             InitializeComponent();
             InitializeContextMenu();
@@ -219,7 +219,7 @@ namespace FlashDevelop.Dialogs
         void InitializeContextMenu()
         {
             var cms = new ContextMenuStrip();
-            cms.Font = PluginBase.MainForm.Settings.DefaultFont;
+            cms.Font = PluginBase.Settings.DefaultFont;
             cms.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             cms.Renderer = new DockPanelStripRenderer(false, false);
             removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, RemoveShortcutClick);
@@ -276,7 +276,7 @@ namespace FlashDevelop.Dialogs
                 item.ForeColor = SystemColors.ControlText;
                 item.SubItems[1].ForeColor = item.Custom == 0 ? SystemColors.GrayText : SystemColors.ControlText;
             }
-            item.Font = new Font(PluginBase.MainForm.Settings.DefaultFont, item.IsModified ? FontStyle.Bold : 0);
+            item.Font = new Font(PluginBase.Settings.DefaultFont, item.IsModified ? FontStyle.Bold : 0);
             item.UseItemStyleForSubItems = item.IsModified;
         }
 
