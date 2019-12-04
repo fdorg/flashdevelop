@@ -146,7 +146,7 @@ namespace PluginCore.Controls
             if (sci is null) return;
             try
             {
-                if (itemList is null || itemList.Count == 0)
+                if (itemList.IsNullOrEmpty())
                 {
                     if (Active) Hide();
                     return;
@@ -565,7 +565,7 @@ namespace PluginCore.Controls
                 int n = completionList.Items.Count;
                 while (lastIndex < n)
                 {
-                    var item = completionList.Items[lastIndex] as ICompletionListItem;
+                    var item = (ICompletionListItem) completionList.Items[lastIndex];
                     if (string.Compare(item.Label, 0, word, 0, len, true) == 0)
                     {
                         completionList.SelectedIndex = lastIndex;
@@ -918,7 +918,7 @@ namespace PluginCore.Controls
                     if (completionList.SelectedIndex > 0)
                     {
                         RefreshTip();
-                        index = completionList.SelectedIndex-completionList.Height/completionList.ItemHeight;
+                        index = completionList.SelectedIndex - completionList.Height / completionList.ItemHeight;
                         if (index < 0) index = 0;
                         completionList.SelectedIndex = index;
                     }
@@ -937,8 +937,8 @@ namespace PluginCore.Controls
                     if (completionList.SelectedIndex < completionList.Items.Count-1)
                     {
                         RefreshTip();
-                        index = completionList.SelectedIndex+completionList.Height/completionList.ItemHeight;
-                        if (index > completionList.Items.Count-1) index = completionList.Items.Count-1;
+                        index = completionList.SelectedIndex + completionList.Height / completionList.ItemHeight;
+                        if (index > completionList.Items.Count - 1) index = completionList.Items.Count - 1;
                         completionList.SelectedIndex = index;
                     }
                     break;

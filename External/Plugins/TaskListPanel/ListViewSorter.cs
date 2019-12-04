@@ -5,13 +5,13 @@ namespace TaskListPanel
 {
     public class ListViewSorter : IComparer
     {
-        private readonly CaseInsensitiveComparer Comparer;
+        readonly CaseInsensitiveComparer Comparer;
 
         public ListViewSorter()
         {
-            this.SortColumn = 0;
-            this.Comparer = new CaseInsensitiveComparer();
-            this.Order = SortOrder.None;
+            SortColumn = 0;
+            Comparer = new CaseInsensitiveComparer();
+            Order = SortOrder.None;
         }
 
         /// <summary>
@@ -22,20 +22,26 @@ namespace TaskListPanel
             int compareResult;
             ListViewItem listviewX = (ListViewItem)x;
             ListViewItem listviewY = (ListViewItem)y;
-            if (this.SortColumn == 1)
+            if (SortColumn == 1)
             {
                 int xVal = int.Parse(listviewX.SubItems[1].Text);
                 int yVal = int.Parse(listviewY.SubItems[1].Text);
                 compareResult = xVal.CompareTo(yVal);
-                if (this.Order == SortOrder.Ascending) return compareResult;
-                if (this.Order == SortOrder.Descending) return (-compareResult);
-                return 0;
+                return Order switch
+                {
+                    SortOrder.Ascending => compareResult,
+                    SortOrder.Descending => -compareResult,
+                    _ => 0
+                };
             }
 
-            compareResult = Comparer.Compare(listviewX.SubItems[this.SortColumn].Text, listviewY.SubItems[this.SortColumn].Text);
-            if (this.Order == SortOrder.Ascending) return compareResult;
-            if (this.Order == SortOrder.Descending) return (-compareResult);
-            return 0;
+            compareResult = Comparer.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+            return Order switch
+            {
+                SortOrder.Ascending => compareResult,
+                SortOrder.Descending => -compareResult,
+                _ => 0
+            };
         }
 
         /// <summary>

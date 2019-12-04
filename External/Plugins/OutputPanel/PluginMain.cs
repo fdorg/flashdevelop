@@ -14,9 +14,9 @@ namespace OutputPanel
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private PluginUI pluginUI;
-        private Image pluginImage;
+        string settingFilename;
+        PluginUI pluginUI;
+        Image pluginImage;
 
         #region Required Properties
 
