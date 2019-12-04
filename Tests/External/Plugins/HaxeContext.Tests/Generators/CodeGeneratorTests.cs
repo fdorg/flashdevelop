@@ -13,6 +13,7 @@ using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 using PluginCore.Collections;
+using PluginCore.Controls;
 using PluginCore.Managers;
 using ScintillaNet;
 
@@ -2341,6 +2342,8 @@ namespace HaXeContext.Generators
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFileName(fileName);
+            UITools.Init();
+            CompletionList.CreateControl(PluginBase.MainForm);
             return ASGenerator.HandleGeneratorCompletion(sci, false, ASContext.Context.Features.overrideKey);
         }
 

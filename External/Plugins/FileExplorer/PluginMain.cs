@@ -17,12 +17,12 @@ namespace FileExplorer
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private string configFilename;
-        private DockContent pluginPanel;
-        private PluginUI pluginUI;
-        private Image pluginImage;
-        private const string explorerAction = "explorer.exe /e,{0}";
+        string settingFilename;
+        string configFilename;
+        DockContent pluginPanel;
+        PluginUI pluginUI;
+        Image pluginImage;
+        const string explorerAction = "explorer.exe /e,{0}";
 
         #region Required Properties
         
@@ -149,7 +149,7 @@ namespace FileExplorer
         /// <summary>
         /// Opens the selected path in windows explorer
         /// </summary>
-        private void ExploreDirectory(string path)
+        void ExploreDirectory(string path)
         {
             try
             {
@@ -180,20 +180,20 @@ namespace FileExplorer
         /// <summary>
         /// Opens the selected path in command prompt
         /// </summary>
-        private void FindHere(IEnumerable<string> paths)
+        static void FindHere(IEnumerable<string> paths)
         {
             if (paths is null) return;
             var pathsList = new List<string>(paths);
             pathsList.RemoveAll(p => !Directory.Exists(p));
             if (pathsList.Count == 0) return;
-            string path = string.Join(";", pathsList.ToArray());
+            string path = string.Join(";", pathsList);
             PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
         }
 
         /// <summary>
         /// Opens the selected path in command prompt
         /// </summary>
-        private void PromptHere(string path)
+        void PromptHere(string path)
         {
             try
             {

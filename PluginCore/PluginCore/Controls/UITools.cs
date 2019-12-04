@@ -31,10 +31,7 @@ namespace PluginCore.Controls
 
         public static void Init()
         {
-            if (manager is null)
-            {
-                manager = new UITools();
-            }
+            if (manager is null) manager = new UITools();
         }
         #endregion
 
@@ -150,7 +147,7 @@ namespace PluginCore.Controls
         public void ListenTo(ScintillaControl sci)
         {
             // hook scintilla events
-            sci.MouseDwellTime = PluginBase.MainForm.Settings.HoverDelay;
+            sci.MouseDwellTime = PluginBase.Settings.HoverDelay;
             sci.DwellStart += HandleDwellStart;
             sci.DwellEnd += HandleDwellEnd;
             sci.CharAdded += OnChar;

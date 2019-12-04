@@ -10,6 +10,7 @@ using FlashDevelop;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using ScintillaNet;
 using ScintillaNet.Enums;
@@ -19,10 +20,10 @@ namespace ASCompletion
     public class ASCompletionTests
     {
 #pragma warning disable CS0436 // Type conflicts with imported type
-        private MainForm mainForm;
+        MainForm mainForm;
 #pragma warning restore CS0436 // Type conflicts with imported type
-        private ISettings settings;
-        private ITabbedDocument doc;
+        ISettings settings;
+        ITabbedDocument doc;
         protected ScintillaControl sci;
 
         [TestFixtureSetUp]
@@ -56,6 +57,7 @@ namespace ASCompletion
 
             sci = GetBaseScintillaControl();
             doc.SciControl.Returns(sci);
+            CompletionList.CreateControl(PluginBase.MainForm);
         }
 
         [TestFixtureTearDown]
@@ -67,7 +69,7 @@ namespace ASCompletion
             mainForm = null;
         }
 
-        private ScintillaControl GetBaseScintillaControl()
+        ScintillaControl GetBaseScintillaControl()
         {
             return new ScintillaControl
             {

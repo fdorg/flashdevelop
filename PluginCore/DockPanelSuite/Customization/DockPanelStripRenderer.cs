@@ -57,7 +57,7 @@ namespace System.Windows.Forms
             this.useTheme = useTheme;
             this.drawBottomBorder = drawBottomBorder;
             this.colorTable = new ProfessionalColorTable();
-            UiRenderMode renderMode = PluginBase.MainForm.Settings.RenderMode;
+            UiRenderMode renderMode = PluginBase.Settings.RenderMode;
             if (renderMode == UiRenderMode.System) renderer = new ToolStripSystemRenderer();
             else renderer = new ToolStripProfessionalRenderer(this.colorTable);
         }

@@ -134,7 +134,7 @@ namespace FlashDevelop.Managers
             else return; // No work for us here...
             var keys = PluginBase.MainForm.GetShortcutItemKeys(id);
             if (keys == Keys.None) return;
-            var view = PluginBase.MainForm.Settings.ViewShortcuts;
+            var view = PluginBase.Settings.ViewShortcuts;
             if (item is ToolStripMenuItem casted)
             {
                 if (casted.ShortcutKeys == Keys.None)

@@ -24,7 +24,7 @@ namespace PluginCore.PluginCore.Controls
         public MemoryMessageBox()
         {
             Owner = (Form) PluginBase.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             ApplyLocalizedTexts();
             resultToButton = new Dictionary<MemoryMessageBoxResult, Button>

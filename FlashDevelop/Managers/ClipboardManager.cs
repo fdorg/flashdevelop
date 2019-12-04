@@ -56,7 +56,7 @@ namespace FlashDevelop.Managers
                     hwnd = IntPtr.Zero;
                 }
             }
-            History = new FixedSizeQueue<ClipboardTextData>(PluginBase.MainForm.Settings.ClipboardHistorySize);
+            History = new FixedSizeQueue<ClipboardTextData>(PluginBase.Settings.ClipboardHistorySize);
             try
             {
                 var dataObject = Clipboard.GetDataObject();
@@ -131,7 +131,7 @@ namespace FlashDevelop.Managers
         {
             if (History != null)
             {
-                History.Capacity = PluginBase.MainForm.Settings.ClipboardHistorySize;
+                History.Capacity = PluginBase.Settings.ClipboardHistorySize;
             }
         }
 

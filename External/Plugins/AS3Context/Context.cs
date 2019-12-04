@@ -205,7 +205,7 @@ namespace AS3Context
                 compiler = Path.Combine(PathHelper.ToolDir, "flexlibs");
             string frameworks = compiler + S + "frameworks";
             string sdkLibs = frameworks + S + "libs";
-            string sdkLocales = frameworks + S + "locale" + S + PluginBase.MainForm.Settings.LocaleVersion;
+            string sdkLocales = frameworks + S + "locale" + S + PluginBase.Settings.LocaleVersion;
             string fallbackLibs = PathHelper.ResolvePath(PathHelper.ToolDir + S + "flexlibs" + S + "frameworks" + S + "libs");
             string fallbackLocale = PathHelper.ResolvePath(PathHelper.ToolDir + S + "flexlibs" + S + "frameworks" + S + "locale" + S + "en_US");
             List<string> addLibs = new List<string>();

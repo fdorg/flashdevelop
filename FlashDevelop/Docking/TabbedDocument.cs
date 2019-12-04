@@ -38,7 +38,7 @@ namespace FlashDevelop.Docking
             ControlAdded += DocumentControlAdded;
             UITools.Manager.OnMarkerChanged += OnMarkerChanged;
             DockPanel = PluginBase.MainForm.DockPanel;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             DockAreas = DockAreas.Document;
             BackColor = Color.White;
             UseCustomIcon = false;
@@ -461,7 +461,7 @@ namespace FlashDevelop.Docking
         {
             backupTimer = new Timer();
             backupTimer.Tick += BackupTimerTick;
-            backupTimer.Interval = ((SettingObject)PluginBase.MainForm.Settings).BackupInterval;
+            backupTimer.Interval = ((SettingObject)PluginBase.Settings).BackupInterval;
             backupTimer.Start();
         }
 

@@ -24,7 +24,7 @@ namespace FlashDevelop.Dialogs
 
         public FirstRunDialog()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             InitializeExternals();
         }
@@ -150,7 +150,7 @@ namespace FlashDevelop.Dialogs
                 {
                     Globals.MainForm.AppSettings = SettingObject.GetDefaultSettings();
                 }
-                ((SettingObject)PluginBase.MainForm.Settings).LatestCommand = commands.LatestCommand;
+                ((SettingObject)PluginBase.Settings).LatestCommand = commands.LatestCommand;
                 Close();
             }
             else
@@ -173,7 +173,7 @@ namespace FlashDevelop.Dialogs
                 int total = commands.Entries.Count;
                 foreach (Command command in commands.Entries)
                 {
-                    if (command.Number > ((SettingObject)PluginBase.MainForm.Settings).LatestCommand)
+                    if (command.Number > ((SettingObject)PluginBase.Settings).LatestCommand)
                     {
                         string data = ProcessArguments(command.Data);
                         if (command.Action.ToLower() == "copy")
@@ -215,7 +215,7 @@ namespace FlashDevelop.Dialogs
                         }
                         else if (command.Action.ToLower() == "appman")
                         {
-                            string locale = PluginBase.MainForm.Settings.LocaleVersion.ToString();
+                            string locale = PluginBase.Settings.LocaleVersion.ToString();
                             string appman = Path.Combine(PathHelper.ToolDir, "appman/AppMan.exe");
                             ProcessHelper.StartAsync(appman, "-locale=" + locale);
                         }
@@ -268,7 +268,7 @@ namespace FlashDevelop.Dialogs
             if (File.Exists(filename))
             {
                 commands = (Commands)ObjectSerializer.Deserialize(filename, commands);
-                if (commands.LatestCommand > ((SettingObject)PluginBase.MainForm.Settings).LatestCommand) return true;
+                if (commands.LatestCommand > ((SettingObject)PluginBase.Settings).LatestCommand) return true;
                 return false;
             }
 

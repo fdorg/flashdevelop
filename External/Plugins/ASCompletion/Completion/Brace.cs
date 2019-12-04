@@ -11,12 +11,12 @@ namespace ASCompletion.Completion
     [Serializable]
     public sealed class Brace
     {
-        private string name;
-        private char open;
-        private char close;
-        private bool addSpace;
-        private bool ignoreWhitespace;
-        private Rule[] rules;
+        string name;
+        char open;
+        char close;
+        bool addSpace;
+        bool ignoreWhitespace;
+        Rule[] rules;
 
         public string Name
         {
@@ -109,15 +109,15 @@ namespace ASCompletion.Completion
         [Serializable]
         public sealed class Rule
         {
-            private bool notAfterChars;
-            private Regex afterChars;
-            private bool notAfterStyles;
-            private Style[] afterStyles;
-            private bool notBeforeChars;
-            private Regex beforeChars;
-            private bool notBeforeStyles;
-            private Style[] beforeStyles;
-            private Logic logic;
+            bool notAfterChars;
+            Regex afterChars;
+            bool notAfterStyles;
+            Style[] afterStyles;
+            bool notBeforeChars;
+            Regex beforeChars;
+            bool notBeforeStyles;
+            Style[] beforeStyles;
+            Logic logic;
 
             public Rule()
             {
@@ -199,7 +199,7 @@ namespace ASCompletion.Completion
                 set => logic = value;
             }
 
-            private static Regex ToRegex(string value)
+            static Regex ToRegex(string value)
             {
                 if (string.IsNullOrEmpty(value))
                 {
@@ -208,7 +208,7 @@ namespace ASCompletion.Completion
                 return new Regex("[" + Escape(value) + "]", RegexOptions.Compiled | RegexOptions.Singleline);
             }
 
-            private static string FromRegex(Regex value)
+            static string FromRegex(Regex value)
             {
                 if (value is null)
                 {
@@ -218,17 +218,17 @@ namespace ASCompletion.Completion
                 return Unescape(str.Substring(1, str.Length - 2));
             }
 
-            private static string Escape(string value)
+            static string Escape(string value)
             {
                 return value.Replace("(", @"\(").Replace(")", @"\)").Replace("[", @"\[").Replace("]", @"\]").Replace("{", @"\{").Replace("}", @"\}");
             }
 
-            private static string Unescape(string value)
+            static string Unescape(string value)
             {
                 return value.Replace(@"\(", "(").Replace(@"\)", ")").Replace(@"\[", "[").Replace(@"\]", "]").Replace(@"\{", "{").Replace(@"\}", "}");
             }
 
-            private static bool RegexCheck(Regex regex, char c, bool exclude)
+            static bool RegexCheck(Regex regex, char c, bool exclude)
             {
                 if (regex is null)
                 {
@@ -237,7 +237,7 @@ namespace ASCompletion.Completion
                 return regex.IsMatch(c.ToString()) ^ exclude;
             }
 
-            private static bool ArrayCheck(Style[] array, byte s, bool exclude)
+            static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
                 if (array is null)
                 {

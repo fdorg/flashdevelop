@@ -7,11 +7,11 @@ namespace AirProperties
     [Serializable]
     public class Settings
     {
-        private bool renameIcons = true;
-        private bool useUniformFilenames = true;
-        private bool selectPropertiesFileOnLoad = false;
-        private string projectIconsFolder = @"bin\icons";
-        private string packageIconsFolder = "icons";
+        bool renameIcons = true;
+        bool useUniformFilenames = true;
+        bool selectPropertiesFileOnLoad = false;
+        string projectIconsFolder = @"bin\icons";
+        string packageIconsFolder = "icons";
 
         [DisplayName("Project Icons Folder")]
         [LocalizedDescription("AirProperties.Description.ProjectIconsFolder"), DefaultValue(@"bin\icons")]
@@ -52,7 +52,5 @@ namespace AirProperties
             get => selectPropertiesFileOnLoad;
             set => selectPropertiesFileOnLoad = value;
         }
-
     }
-
 }

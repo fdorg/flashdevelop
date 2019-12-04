@@ -9,7 +9,7 @@ namespace CodeAnalyzer
     [Serializable]
     public class Settings
     {
-        private string pmdRuleset = string.Empty;
+        string pmdRuleset = string.Empty;
         
         /// <summary>
         /// Get and sets the ruleset file
@@ -22,7 +22,5 @@ namespace CodeAnalyzer
             get => pmdRuleset;
             set => pmdRuleset = value;
         }
-
     }
-
 }

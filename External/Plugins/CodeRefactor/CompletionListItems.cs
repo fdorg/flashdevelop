@@ -9,7 +9,7 @@ namespace CodeRefactor
 {
     internal sealed class RefactorItem : ICompletionListSpecialItem
     {
-        private readonly ToolStripItem item;
+        readonly ToolStripItem item;
 
         public static void AddItemToList(ToolStripItem item, List<ICompletionListItem> list)
         {

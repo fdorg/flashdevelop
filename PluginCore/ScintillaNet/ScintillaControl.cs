@@ -4060,7 +4060,7 @@ namespace ScintillaNet
             if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelText.Length)
             {
                 SelectionChanged?.Invoke(sci);
-                switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
+                switch (PluginBase.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
                     {
@@ -4089,14 +4089,14 @@ namespace ScintillaNet
         {
             if (highlightDelay is null)
             {
-                highlightDelay = new System.Timers.Timer(PluginBase.MainForm.Settings.HighlightMatchingWordsDelay);
+                highlightDelay = new System.Timers.Timer(PluginBase.Settings.HighlightMatchingWordsDelay);
                 highlightDelay.Elapsed += highlightDelay_Elapsed;
                 highlightDelay.SynchronizingObject = this;
             }
             else highlightDelay.Stop();
-            if (highlightDelay.Interval != PluginBase.MainForm.Settings.HighlightMatchingWordsDelay)
+            if (highlightDelay.Interval != PluginBase.Settings.HighlightMatchingWordsDelay)
             {
-                highlightDelay.Interval = PluginBase.MainForm.Settings.HighlightMatchingWordsDelay;
+                highlightDelay.Interval = PluginBase.Settings.HighlightMatchingWordsDelay;
             }
             highlightDelay.Start();
         }
@@ -4124,7 +4124,7 @@ namespace ScintillaNet
             var search = new FRSearch(pattern)
             {
                 WholeWord = true,
-                NoCase = !PluginBase.MainForm.Settings.HighlightMatchingWordsCaseSensitive,
+                NoCase = !PluginBase.Settings.HighlightMatchingWordsCaseSensitive,
                 Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals,
                 SourceFile = FileName
             };
@@ -4141,7 +4141,7 @@ namespace ScintillaNet
         void OnCancelHighlight(ScintillaControl sci)
         {
             if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0
-                && PluginBase.MainForm.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
+                && PluginBase.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
             {
                 sci.RemoveHighlights(1);
                 sci.hasHighlights = false;

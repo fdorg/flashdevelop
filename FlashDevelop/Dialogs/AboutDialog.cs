@@ -19,7 +19,7 @@ namespace FlashDevelop.Dialogs
         public AboutDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();

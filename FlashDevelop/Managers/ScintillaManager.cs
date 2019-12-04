@@ -129,17 +129,17 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (PluginBase.MainForm.Settings.EnsureLastLineEnd)
+                if (PluginBase.Settings.EnsureLastLineEnd)
                 {
                     sci.AddLastLineEnd();
                 }
-                if (PluginBase.MainForm.Settings.EnsureConsistentLineEnds)
+                if (PluginBase.Settings.EnsureConsistentLineEnds)
                 {
                     sci.ConvertEOLs(sci.EOLMode);
                 }
-                if (PluginBase.MainForm.Settings.StripTrailingSpaces)
+                if (PluginBase.Settings.StripTrailingSpaces)
                 {
-                    sci.StripTrailingSpaces(((SettingObject)PluginBase.MainForm.Settings).KeepIndentTabs);
+                    sci.StripTrailingSpaces(((SettingObject)PluginBase.Settings).KeepIndentTabs);
                 }
             }
             catch (Exception ex)

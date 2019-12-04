@@ -15,10 +15,9 @@ namespace AirProperties
 {
     public class PluginMain : IPlugin
     {
-        private ToolStripMenuItem pluginMenuItem;
-        private ToolStripButton pmMenuButton;
-        private string settingFilename;
-        private AirWizard wizard;
+        ToolStripMenuItem pluginMenuItem;
+        ToolStripButton pmMenuButton;
+        string settingFilename;
 
         #region Required Properties
 
@@ -131,7 +130,7 @@ namespace AirProperties
         /// <summary>
         /// Create and registers the menu item
         /// </summary>
-        private void CreateMenuItems()
+        void CreateMenuItems()
         {
             var image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
             pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, OpenWizard, null);
@@ -142,12 +141,12 @@ namespace AirProperties
         /// <summary>
         /// Adds the necessary menu item to the project menu
         /// </summary>
-        private void AddMenuItems(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(menu.DropDownItems.Count - 1, pluginMenuItem);
+        void AddMenuItems(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(menu.DropDownItems.Count - 1, pluginMenuItem);
 
         /// <summary>
         /// Adds the necessary project manager toolstrip button
         /// </summary>
-        private void AddToolBarItems(ToolStrip toolStrip)
+        void AddToolBarItems(ToolStrip toolStrip)
         {
             pmMenuButton = new ToolStripButton();
             pmMenuButton.Image = pluginMenuItem.Image;
@@ -163,8 +162,8 @@ namespace AirProperties
         /// </summary>
         public void UpdateMenuItems()
         {
-            var pluginActive = false;
             if (pluginMenuItem is null || pmMenuButton is null) return;
+            var pluginActive = false;
             if (PluginBase.CurrentProject != null)
             {
                 var project = (Project)PluginBase.CurrentProject;
@@ -178,12 +177,10 @@ namespace AirProperties
         /// </summary>
         public void OpenWizard(object sender, EventArgs e)
         {
-            using (wizard = new AirWizard(this))
+            using var wizard = new AirWizard(this);
+            if (wizard.IsPropertiesLoaded)
             {
-                if (wizard.IsPropertiesLoaded)
-                {
-                    wizard.ShowDialog(PluginBase.MainForm);
-                }
+                wizard.ShowDialog(PluginBase.MainForm);
             }
         }
 

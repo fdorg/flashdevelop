@@ -1178,7 +1178,7 @@ namespace ASCompletion.Completion
             options.Newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             options.CondenseWhitespace = ASContext.CommonSettings.CondenseWhitespace;
             options.BraceAfterLine = ASContext.CommonSettings.ReformatBraces 
-                && PluginBase.MainForm.Settings.CodingStyle == CodingStyle.BracesAfterLine;
+                && PluginBase.Settings.CodingStyle == CodingStyle.BracesAfterLine;
             options.CompactChars = ASContext.CommonSettings.CompactChars;
             options.SpacedChars = ASContext.CommonSettings.SpacedChars;
             options.SpaceBeforeFunctionCall = ASContext.CommonSettings.SpaceBeforeFunctionCall;
@@ -4824,7 +4824,7 @@ namespace ASCompletion.Completion
                 return MemberTooltipText(result.Member, ClassModel.VoidClass);
             }
 
-            var eolMode = LineEndDetector.DetectNewLineMarker(file, (int)PluginBase.MainForm.Settings.EOLMode);
+            var eolMode = LineEndDetector.DetectNewLineMarker(file, (int)PluginBase.Settings.EOLMode);
             var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
             var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
             var code = new StringBuilder();

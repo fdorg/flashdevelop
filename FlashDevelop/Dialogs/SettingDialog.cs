@@ -42,7 +42,7 @@ namespace FlashDevelop.Dialogs
             this.itemName = name;
             this.itemFilter = filter;
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "48a75ac0-479a-49b9-8ec0-5db7c8d36388";
             this.InitializeComponent();
             this.InitializeGraphics(); 
@@ -333,7 +333,7 @@ namespace FlashDevelop.Dialogs
                 AvailablePlugin plugin = PluginServices.AvailablePlugins[i];
                 ListViewItem item = new ListViewItem(plugin.Instance.Name, 0);
                 item.Tag = plugin.Instance;
-                if (PluginBase.MainForm.Settings.DisabledPlugins.Contains(plugin.Instance.Guid))
+                if (PluginBase.Settings.DisabledPlugins.Contains(plugin.Instance.Guid))
                 {
                     item.ImageIndex = 1;
                 }
@@ -401,7 +401,7 @@ namespace FlashDevelop.Dialogs
                 {
                     IPlugin plugin = (IPlugin)itemListView.SelectedItems[0].Tag;
                     sdkContext = new InstalledSDKContext(plugin as InstalledSDKOwner);
-                    this.disableCheckBox.Checked = PluginBase.MainForm.Settings.DisabledPlugins.Contains(plugin.Guid);
+                    this.disableCheckBox.Checked = PluginBase.Settings.DisabledPlugins.Contains(plugin.Guid);
                     this.itemPropertyGrid.SelectedObject = plugin.Settings;
                     this.itemPropertyGrid.Enabled = plugin.Settings != null;
                     this.descLabel.Text = plugin.Description;
@@ -602,12 +602,12 @@ namespace FlashDevelop.Dialogs
                 if (disabled)
                 {
                     this.itemListView.Items[selectedIndex].ImageIndex = 1;
-                    PluginBase.MainForm.Settings.DisabledPlugins.Add(plugin.Guid);
+                    PluginBase.Settings.DisabledPlugins.Add(plugin.Guid);
                 }
                 else
                 {
                     this.itemListView.Items[selectedIndex].ImageIndex = 0;
-                    PluginBase.MainForm.Settings.DisabledPlugins.Remove(plugin.Guid);
+                    PluginBase.Settings.DisabledPlugins.Remove(plugin.Guid);
                 }
                 UpdateRestartRequired(nameLabel.Text, !disabled, disabled);
             }

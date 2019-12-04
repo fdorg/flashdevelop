@@ -143,7 +143,7 @@ namespace StartPage
         {
             int length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
             string dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
-            string localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
+            string localeName = PluginBase.Settings.LocaleVersion.ToString();
             string version = Application.ProductName.Substring(length, Application.ProductName.IndexOfOrdinal(" for") - length);
             string fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
             defaultStartPageUrl = Path.Combine(PathHelper.AppDir, "StartPage", fileWithArgs);

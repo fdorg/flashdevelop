@@ -9,20 +9,20 @@ namespace CodeFormatter.Preferences
 {
     public class AttrGroup
     {
-        private int mSortMode;
-        private readonly List<string> mAttrs;
-        private string mName;
-        private int mWrapMode;
-        private List<string> mRegexAttrs;
-        private int mData; //depends on wrap mode.  
-        private bool mIncludeStates;
+        int mSortMode;
+        readonly List<string> mAttrs;
+        string mName;
+        int mWrapMode;
+        List<string> mRegexAttrs;
+        int mData; //depends on wrap mode.  
+        bool mIncludeStates;
         public static int Wrap_Data_Use_Default=-1;
-        private static readonly string Tag_name = "name=";
-        private static readonly string Tag_sort = "sort=";
-        private static readonly string Tag_includeStates = "includeStates=";
-        private static readonly string Tag_wrap = "wrap=";
-        private static readonly string Tag_attrs = "attrs=";
-        private static readonly string Tag_data = "data=";
+        static readonly string Tag_name = "name=";
+        static readonly string Tag_sort = "sort=";
+        static readonly string Tag_includeStates = "includeStates=";
+        static readonly string Tag_wrap = "wrap=";
+        static readonly string Tag_attrs = "attrs=";
+        static readonly string Tag_data = "data=";
         public static string TagSplitter = "|";
         public static string GroupingSplitter = ",";
         public static string SplitterEscape = "char(Splitter)";
@@ -38,56 +38,31 @@ namespace CodeFormatter.Preferences
             mData=Wrap_Data_Use_Default;
         }
 
-        public int getWrapMode() 
-        {
-            return mWrapMode;
-        }
+        public int getWrapMode() => mWrapMode;
 
-        public void setWrapMode(int wrapMode) 
-        {
-            mWrapMode = wrapMode;
-        }
+        public void setWrapMode(int wrapMode) => mWrapMode = wrapMode;
 
-        public string getName()
-        {
-            return mName;
-        }
+        public string getName() => mName;
 
-        public int getSortMode() 
-        {
-            return mSortMode;
-        }
-        public void setSortMode(int sortMode)
-        {
-            mSortMode = sortMode;
-        }
+        public int getSortMode() => mSortMode;
 
-        public List<string> getAttrs() {
-            return mAttrs;
-        }
+        public void setSortMode(int sortMode) => mSortMode = sortMode;
 
-        public void setName(string name) 
-        {
-            mName=name;
-        }
+        public List<string> getAttrs() => mAttrs;
 
-        public bool isIncludeStates() 
-        {
-            return mIncludeStates;
-        }
+        public void setName(string name) => mName=name;
 
-        public void setIncludeStates(bool includeStates) 
-        {
-            mIncludeStates = includeStates;
-        }
+        public bool isIncludeStates() => mIncludeStates;
+
+        public void setIncludeStates(bool includeStates) => mIncludeStates = includeStates;
 
         public AttrGroup copy()
         {
             List<string> attrs=new List<string>();
             attrs.AddRange(getAttrs());
-            AttrGroup group=new AttrGroup(getName(), attrs, getSortMode(), getWrapMode(), isIncludeStates());
-            group.setData(getData());
-            return group;
+            AttrGroup result = new AttrGroup(getName(), attrs, getSortMode(), getWrapMode(), isIncludeStates());
+            result.setData(getData());
+            return result;
         }
 
         public string save()
@@ -178,8 +153,8 @@ namespace CodeFormatter.Preferences
             group.setData(wrapData);
             return group;
         }
-    
-        private void cacheRegexAttrs()
+
+        void cacheRegexAttrs()
         {
             if (mRegexAttrs!=null) return;
             mRegexAttrs=new List<string>();
@@ -234,16 +209,8 @@ namespace CodeFormatter.Preferences
             return buffer.ToString();
         }
 
-        public int getData()
-        {
-            return mData;
-        }
+        public int getData() => mData;
 
-        public void setData(int data) 
-        {
-            mData = data;
-        }
-    
+        public void setData(int data) => mData = data;
     }
-
 }

@@ -12,10 +12,10 @@ namespace CodeAnalyzer
 {
     public class PluginMain : IPlugin
     {
-        private ToolStripMenuItem analyzeMenuItem;
-        private ToolStripMenuItem creatorMenuItem;
-        private string settingFilename;
-        private Settings settingObject;
+        ToolStripMenuItem analyzeMenuItem;
+        ToolStripMenuItem creatorMenuItem;
+        string settingFilename;
+        Settings settingObject;
 
         #region Required Properties
         
@@ -85,8 +85,7 @@ namespace CodeAnalyzer
                 case EventType.Command:
                     if (((DataEvent)e).Action == "ProjectManager.Project")
                     {
-                        IProject project = PluginBase.CurrentProject;
-                        analyzeMenuItem.Enabled = (project != null && project.Language == "as3");
+                        analyzeMenuItem.Enabled = PluginBase.CurrentProject?.Language == "as3";
                     }
                     break;
             }
@@ -99,7 +98,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        private void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(CodeAnalyzer));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -110,12 +109,12 @@ namespace CodeAnalyzer
         /// <summary>
         /// Listen for the necessary events
         /// </summary>
-        private void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command);
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command);
 
         /// <summary>
         /// Creates a menu item for the plugin and adds a ignored key
         /// </summary>
-        private void CreateMenuItem()
+        void CreateMenuItem()
         {
             var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("FlashToolsMenu");
             creatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.RulesetCreator"), null, OpenCreator);
@@ -130,20 +129,20 @@ namespace CodeAnalyzer
         /// <summary>
         /// Opens the ruleset creator page
         /// </summary>
-        private void OpenCreator(object sender, EventArgs e)
+        static void OpenCreator(object sender, EventArgs e)
         {
-            string url = "http://www.flashdevelop.org/flexpmd/index.html";
+            const string url = "http://www.flashdevelop.org/flexpmd/index.html";
             PluginBase.MainForm.CallCommand("Browse", url);
         }
 
         /// <summary>
         /// Analyzes the current project
         /// </summary>
-        private void AnalyzeProject(object sender, EventArgs e)
+        void AnalyzeProject(object sender, EventArgs e)
         {
             if (PluginBase.CurrentProject is null) return;
-            string pmdJar = Path.Combine(PathHelper.ToolDir, "flexpmd", "flex-pmd-command-line-1.2.jar");
-            string ruleFile = Path.Combine(GetProjectPath(), "Ruleset.xml");
+            var pmdJar = Path.Combine(PathHelper.ToolDir, "flexpmd", "flex-pmd-command-line-1.2.jar");
+            var ruleFile = Path.Combine(GetProjectPath(), "Ruleset.xml");
             if (!File.Exists(ruleFile)) ruleFile = settingObject.PMDRuleset; // Use default...
             PMDRunner.Analyze(pmdJar, GetProjectPath(), GetSourcePath(), ruleFile);
         }
@@ -151,26 +150,23 @@ namespace CodeAnalyzer
         /// <summary>
         /// Gets the first available source path
         /// </summary>
-        private string GetSourcePath()
+        static string GetSourcePath()
         {
             var project = PluginBase.CurrentProject;
-            if (project.SourcePaths.Length > 0)
-            {
-                string first = project.GetAbsolutePath(project.SourcePaths[0]);
-                return Path.Combine(GetProjectPath(), first);
-            }
-            return Path.Combine(GetProjectPath(), "src");
+            if (project.SourcePaths.Length == 0) return Path.Combine(GetProjectPath(), "src");
+            var first = project.GetAbsolutePath(project.SourcePaths[0]);
+            return Path.Combine(GetProjectPath(), first);
         }
 
         /// <summary>
         /// Gets the root directory of a project
         /// </summary>
-        private string GetProjectPath() => Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+        static string GetProjectPath() => Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        private void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -184,7 +180,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        private void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
     }

@@ -16,7 +16,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateTabTexts()
         {
-            if (((SettingObject)PluginBase.MainForm.Settings).DisableTabDifferentiation)
+            if (((SettingObject)PluginBase.Settings).DisableTabDifferentiation)
             {
                 foreach (var doc in PluginBase.MainForm.Documents)
                 {

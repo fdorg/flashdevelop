@@ -656,12 +656,12 @@ namespace FlashDevelop
         /// </summary>
         static void InitializeRendering()
         {
-            if (PluginBase.MainForm.Settings.RenderMode == UiRenderMode.System)
+            if (PluginBase.Settings.RenderMode == UiRenderMode.System)
             {
                 ToolStripManager.VisualStylesEnabled = true;
                 ToolStripManager.RenderMode = ToolStripManagerRenderMode.System;
             }
-            else if (PluginBase.MainForm.Settings.RenderMode == UiRenderMode.Professional)
+            else if (PluginBase.Settings.RenderMode == UiRenderMode.Professional)
             {
                 ToolStripManager.VisualStylesEnabled = false;
                 ToolStripManager.RenderMode = ToolStripManagerRenderMode.Professional;
@@ -831,10 +831,10 @@ namespace FlashDevelop
                 ToolStripPanel.Controls.Add(ToolStrip);
                 ToolStripPanel.Controls.Add(MenuStrip);
             }
-            TabMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
-            ToolStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
-            MenuStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
-            EditorMenu.Font = PluginBase.MainForm.Settings.DefaultFont;
+            TabMenu.Font = PluginBase.Settings.DefaultFont;
+            ToolStrip.Font = PluginBase.Settings.DefaultFont;
+            MenuStrip.Font = PluginBase.Settings.DefaultFont;
+            EditorMenu.Font = PluginBase.Settings.DefaultFont;
             TabMenu.Renderer = new DockPanelStripRenderer(false);
             EditorMenu.Renderer = new DockPanelStripRenderer(false);
             MenuStrip.Renderer = new DockPanelStripRenderer(false);
@@ -903,7 +903,7 @@ namespace FlashDevelop
             StatusStrip.Items.Add(StatusLabel);
             StatusStrip.Items.Add(ProgressLabel);
             StatusStrip.Items.Add(toolStripProgressBar);
-            StatusStrip.Font = PluginBase.MainForm.Settings.DefaultFont;
+            StatusStrip.Font = PluginBase.Settings.DefaultFont;
             StatusStrip.Renderer = new DockPanelStripRenderer(false);
             StatusStrip.Stretch = true;
             // 
@@ -1073,7 +1073,7 @@ namespace FlashDevelop
                 ClosingEntirely = false;
                 e.Cancel = true;
             }
-            if (!e.Cancel && PluginBase.MainForm.Settings.ConfirmOnExit)
+            if (!e.Cancel && PluginBase.Settings.ConfirmOnExit)
             {
                 string title = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.AreYouSureToExit");
@@ -2130,7 +2130,7 @@ namespace FlashDevelop
                 var lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
                 processed = Regex.Replace(processed, @"\r\n?|\n", lineEndChar);
                 var actionPoint = SnippetHelper.ProcessActionPoint(processed);
-                FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, PluginBase.MainForm.Settings.SaveUnicodeWithBOM);
+                FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, PluginBase.Settings.SaveUnicodeWithBOM);
                 if (actionPoint.EntryPosition != -1)
                 {
                     if (Documents.Length == 1 && Documents[0].IsUntitled)
@@ -2618,8 +2618,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindNext(object sender, EventArgs e)
         {
-            bool update = !PluginBase.MainForm.Settings.DisableFindTextUpdating;
-            bool simple = !PluginBase.MainForm.Settings.DisableSimpleQuickFind && !quickFind.Visible;
+            bool update = !PluginBase.Settings.DisableFindTextUpdating;
+            bool simple = !PluginBase.Settings.DisableSimpleQuickFind && !quickFind.Visible;
             frInDocDialog.FindNext(true, update, simple);
         }
 
@@ -2628,8 +2628,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindPrevious(object sender, EventArgs e)
         {
-            bool update = !PluginBase.MainForm.Settings.DisableFindTextUpdating;
-            bool simple = !PluginBase.MainForm.Settings.DisableSimpleQuickFind && !quickFind.Visible;
+            bool update = !PluginBase.Settings.DisableFindTextUpdating;
+            bool simple = !PluginBase.Settings.DisableSimpleQuickFind && !quickFind.Visible;
             frInDocDialog.FindNext(false, update, simple);
         }
 

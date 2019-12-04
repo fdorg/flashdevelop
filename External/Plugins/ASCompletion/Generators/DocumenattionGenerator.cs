@@ -127,7 +127,7 @@ namespace ASCompletion.Generators
             var cbs = PluginBase.Settings.CommentBlockStyle;
             var star = cbs == CommentBlockStyle.Indented ? " *" : "*";
             var parInd = cbs == CommentBlockStyle.Indented ? "\t" : " ";
-            if (!PluginBase.MainForm.Settings.UseTabs) parInd = " ";
+            if (!PluginBase.Settings.UseTabs) parInd = " ";
 
             // empty box
             if (context is null)

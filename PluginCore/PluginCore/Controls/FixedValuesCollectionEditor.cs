@@ -213,7 +213,7 @@ namespace PluginCore.Controls
 
         void InitializeGraphics()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             btnAdd.Image = PluginBase.MainForm.FindImage16("67", false);
             btnRemove.Image = PluginBase.MainForm.FindImage16("63", false);
             btnUp.Image = PluginBase.MainForm.FindImage16("74", false);

@@ -28,12 +28,12 @@ namespace FlashDevelop
         /// <summary>
         /// Quick reference to PreviousDocuments 
         /// </summary>
-        [Obsolete("Use PluginBase.MainForm.Settings.PreviousDocuments")]
+        [Obsolete("Use PluginBase.Settings.PreviousDocuments")]
         public static List<string> PreviousDocuments => Settings.PreviousDocuments;
 
         /// <summary>
         /// Quick reference to Settings 
         /// </summary>
-        public static SettingObject Settings => (SettingObject)PluginBase.MainForm.Settings;
+        public static SettingObject Settings => (SettingObject)PluginBase.Settings;
     }
 }

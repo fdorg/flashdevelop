@@ -1030,9 +1030,13 @@ namespace ResultsPanel
         /// <summary>
         /// Adds the results of this ResultsPanel at the specified character position to the given list.
         /// </summary>
-        internal void GetResultsAt(List<string> results, ITabbedDocument document, int position)
+        internal void GetResultsAt(List<string> results, ITabbedDocument document, int position) => GetResultsAt(results, document.SciControl, position);
+
+        /// <summary>
+        /// Adds the results of this ResultsPanel at the specified character position to the given list.
+        /// </summary>
+        internal void GetResultsAt(List<string> results, ScintillaControl sci, int position)
         {
-            var sci = document.SciControl;
             foreach (ListViewItem item in EntriesView.Items)
             {
                 var fullPath = Path.Combine(item.SubItems[4].Text, item.SubItems[3].Text);

@@ -17,7 +17,7 @@ namespace FlashDevelop.Dialogs
         public GoToDialog()
         {
             Owner = Globals.MainForm;
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             InitializeComponent();
             ApplyLocalizedTexts();

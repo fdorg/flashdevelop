@@ -130,7 +130,7 @@ namespace ASCompletion.Completion
                 if (c == '<' && (c2 == '.' || (options.IsHaXe && (char.IsLetterOrDigit(c2) || c2 == '{'))))
                 {
                     int i2 = i;
-                    if (lookupGeneric(options,txt, ref i))
+                    if (LookupGeneric(options,txt, ref i))
                     {
                         sb.Append(c).Append(txt.Substring(i2, i - i2));
                         c2 = '$';
@@ -324,7 +324,7 @@ namespace ASCompletion.Completion
             return sb.ToString();
         }
 
-        private static bool lookupGeneric(ReformatOptions options, string txt, ref int index)
+        static bool LookupGeneric(ReformatOptions options, string txt, ref int index)
         {
             int i = index;
             int n = txt.Length;
@@ -350,20 +350,17 @@ namespace ASCompletion.Completion
                 else if (psub > 0)
                 {
                     if (c == '}') psub--;
-                    continue;
                 }
                 else if (c == '(' && prev == ':')
                     bsub++;
                 else if (bsub > 0)
                 {
                     if (c == ')') bsub--;
-                    continue;
                 }
                 // haxe function notation (Type->Type)
                 else if (options.IsHaXe && c == '-' && (i < n && txt[i] == '>'))
                 {
                     sub++;
-                    continue;
                 }
                 else break;
             }
@@ -567,12 +564,12 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static string GetLastWord(StringBuilder sb, string wordChars)
+        static string GetLastWord(StringBuilder sb, string wordChars)
         {
-            string word = "";
+            string result = "";
             int i = sb.Length - 1;
-            while (i > 0 && wordChars.Contains(sb[i])) word = sb[i--] + word;
-            return word;
+            while (i > 0 && wordChars.Contains(sb[i])) result = sb[i--] + result;
+            return result;
         }
     }
 }

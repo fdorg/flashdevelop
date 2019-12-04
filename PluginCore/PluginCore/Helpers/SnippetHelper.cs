@@ -113,7 +113,7 @@ namespace PluginCore.Helpers
                 int lineMarker = LineEndDetector.DetectNewLineMarker(text, sci.EOLMode);
                 string newline = LineEndDetector.GetNewLineMarker(lineMarker);
                 if (newline != "\n") text = text.Replace(newline, "\n");
-                newline = LineEndDetector.GetNewLineMarker((int)PluginBase.MainForm.Settings.EOLMode);
+                newline = LineEndDetector.GetNewLineMarker((int)PluginBase.Settings.EOLMode);
                 text = PluginBase.MainForm.ProcessArgString(text).Replace(newline, "\n");
                 newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
                 string[] splitted = text.Trim().Split('\n');
@@ -152,7 +152,5 @@ namespace PluginCore.Helpers
             EntryPosition = entryPosition;
             ExitPosition = exitPosition;
         }
-
     }
-
 }

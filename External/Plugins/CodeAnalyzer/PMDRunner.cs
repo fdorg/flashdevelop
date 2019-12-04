@@ -13,11 +13,11 @@ namespace CodeAnalyzer
 {
     public class PMDRunner
     {
-        private string errorLog;
-        private string watchedFile;
-        private ProcessRunner pmdRunner;
-        private FileSystemWatcher pmdWatcher;
-        private Timer deleteTimer;
+        string errorLog;
+        string watchedFile;
+        ProcessRunner pmdRunner;
+        FileSystemWatcher pmdWatcher;
+        Timer deleteTimer;
 
         /// <summary>
         /// Runs the pmd analyzer process
@@ -26,8 +26,8 @@ namespace CodeAnalyzer
         {
             try
             {
-                PMDRunner pr = new PMDRunner();
-                string objDir = Path.Combine(projectPath, "obj");
+                var pr = new PMDRunner();
+                var objDir = Path.Combine(projectPath, "obj");
                 if (!Directory.Exists(objDir)) Directory.CreateDirectory(objDir);
                 pr.RunPMD(pmdPath, objDir, sourcePath, pmdRuleset);
                 pr.WatchFile(objDir);
@@ -41,7 +41,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Start background process
         /// </summary>
-        private void RunPMD(string pmdPath, string projectPath, string sourcePath, string pmdRuleset)
+        void RunPMD(string pmdPath, string projectPath, string sourcePath, string pmdRuleset)
         {
             string args = "-Xmx256m -jar \"" + pmdPath + "\" -s \"" + sourcePath + "\" -o \"" + projectPath + "\"";
             if (!string.IsNullOrEmpty(pmdRuleset) && File.Exists(pmdRuleset)) args += " -r \"" + pmdRuleset + "\"";
@@ -56,7 +56,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Trace process done message to the output panel
         /// </summary>
-        private void PmdRunnerProcessEnded(object sender, int exitCode)
+        void PmdRunnerProcessEnded(object sender, int exitCode)
         {
             if (exitCode != 0)
             {
@@ -69,15 +69,12 @@ namespace CodeAnalyzer
         /// <summary>
         /// Log output so that we can show it on error
         /// </summary>
-        private void PmdRunnerError(object sender, string line)
-        {
-            errorLog += line + "\n";
-        }
+        void PmdRunnerError(object sender, string line) => errorLog += line + "\n";
 
         /// <summary>
         /// Watched the spcified file for creation
         /// </summary>
-        private void WatchFile(string projectPath)
+        void WatchFile(string projectPath)
         {
             pmdWatcher = new FileSystemWatcher();
             pmdWatcher.EnableRaisingEvents = false;
@@ -102,7 +99,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Stops the timer after file creation
         /// </summary>
-        private void onCreateFile(object source, FileSystemEventArgs e)
+        void onCreateFile(object source, FileSystemEventArgs e)
         {
             if (e.Name.ToLower() == "pmd.xml")
             {
@@ -114,9 +111,9 @@ namespace CodeAnalyzer
         /// <summary>
         /// Deletes the generated file after read
         /// </summary>
-        private void onTimedDelete(object sender, ElapsedEventArgs e)
+        void onTimedDelete(object sender, ElapsedEventArgs e)
         {
-            Form mainForm = PluginBase.MainForm as Form;
+            var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
                 mainForm.BeginInvoke((MethodInvoker)delegate { onTimedDelete(sender, e); });
@@ -174,10 +171,7 @@ namespace CodeAnalyzer
         /// </summary>
         public void SetStatusText(string text)
         {
-            string status = "  " + text;
-            PluginBase.MainForm.StatusStrip.Items[0].Text = status;
+            PluginBase.MainForm.StatusStrip.Items[0].Text = "  " + text;
         }
-
     }
-
 }

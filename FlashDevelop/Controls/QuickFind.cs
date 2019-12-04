@@ -39,7 +39,7 @@ namespace FlashDevelop.Controls
 
         public QuickFind()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             InitializeGraphics();
             InitializeEvents();
@@ -336,7 +336,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void MatchCaseCheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            if (!PluginBase.MainForm.Settings.DisableFindOptionSync)
+            if (!PluginBase.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetMatchCase(this, matchCaseCheckBox.Checked);
             }
@@ -347,7 +347,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void WholeWordCheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            if (!PluginBase.MainForm.Settings.DisableFindOptionSync)
+            if (!PluginBase.Settings.DisableFindOptionSync)
             {
                 Globals.MainForm.SetWholeWord(this, wholeWordCheckBox.Checked);
             }
@@ -618,7 +618,7 @@ namespace FlashDevelop.Controls
 
             public QuickFindRenderer()
             {
-                UiRenderMode renderMode = PluginBase.MainForm.Settings.RenderMode;
+                UiRenderMode renderMode = PluginBase.Settings.RenderMode;
                 if (renderMode == UiRenderMode.System) renderer = new ToolStripSystemRenderer();
                 else renderer = new DockPanelStripRenderer();
             }

@@ -9,6 +9,7 @@ using CodeRefactor.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet;
 
 namespace CodeRefactor.Commands
@@ -198,6 +199,8 @@ namespace CodeRefactor.Commands
             {
                 SetHaxeFeatures(sci);
                 SetSrc(sci, sourceText);
+                UITools.Init();
+                CompletionList.CreateControl(PluginBase.MainForm);
                 var command = (ExtractLocalVariableCommand)CommandFactoryProvider.GetFactory(sci).CreateExtractLocalVariableCommand(false, newName);
                 command.Execute();
                 ((CompletionListItem)command.CompletionList[contextualGeneratorItem]).PerformClick();

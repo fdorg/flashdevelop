@@ -27,7 +27,7 @@ namespace FlashDevelop.Dialogs
             this.ApplyLocalizedTexts();
             this.InitializeInterface();
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             if (this.argsPanel.Controls.Count == 0)
             {

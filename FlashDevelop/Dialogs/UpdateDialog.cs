@@ -24,7 +24,7 @@ namespace FlashDevelop.Dialogs
         public UpdateDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = PluginBase.MainForm.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();

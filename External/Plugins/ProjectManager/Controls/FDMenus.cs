@@ -71,7 +71,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector.Enabled = false;
             ConfigurationSelector.Width = ScaleHelper.Scale(GetThemeWidth("ProjectManager.TargetBuildSelectorWidth", 85));
             ConfigurationSelector.Margin = new Padding(1, 0, 0, 0);
-            ConfigurationSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            ConfigurationSelector.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(ConfigurationSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.F5);
@@ -83,7 +83,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.AutoSize = false;
             TargetBuildSelector.Width = ScaleHelper.Scale(GetThemeWidth("ProjectManager.ConfigurationSelectorWidth", 120));
             TargetBuildSelector.Margin = new Padding(1, 0, 0, 0);
-            TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            TargetBuildSelector.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(TargetBuildSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F7);

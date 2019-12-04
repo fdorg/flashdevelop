@@ -38,7 +38,7 @@ namespace FlashDevelop.Controls
 
         public Browser()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
             InitializeLocalization();
             InitializeInterface();
@@ -188,7 +188,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void InitializeInterface()
         {
-            addressComboBox.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
+            addressComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             toolStrip.Renderer = new DockPanelStripRenderer(true, true);
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)

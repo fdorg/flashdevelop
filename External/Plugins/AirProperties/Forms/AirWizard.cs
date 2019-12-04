@@ -67,7 +67,7 @@ namespace AirProperties
             InitializeControls();
             InitializeGraphics();
             InitializeLocalization();
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             TitleHeading.Font = new Font(Font, FontStyle.Bold);
             _iconFields = new List<PropertyManager.AirApplicationIconField> 
             { 
