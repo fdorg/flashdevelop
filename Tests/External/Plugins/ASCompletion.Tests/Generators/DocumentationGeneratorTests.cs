@@ -5,6 +5,7 @@ using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet;
 
 namespace ASCompletion.Generators
@@ -66,8 +67,10 @@ namespace ASCompletion.Generators
             {
                 SetSrc(sci, sourceText);
                 var options = new List<ICompletionListItem>();
+                UITools.Init();
+                CompletionList.CreateControl(PluginBase.MainForm);
                 ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
-                var item = options.Find(it => it is DocumentationGenerator.GeneratorItem && ((DocumentationGenerator.GeneratorItem)it).Job == job);
+                var item = options.Find(it => it is DocumentationGenerator.GeneratorItem generatorItem && generatorItem.Job == job);
                 if (hasGenerator)
                 {
                     Assert.NotNull(item);

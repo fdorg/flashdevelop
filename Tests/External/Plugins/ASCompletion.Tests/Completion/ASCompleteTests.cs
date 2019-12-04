@@ -93,8 +93,8 @@ namespace ASCompletion.Completion
 
         protected static string OnCharAndReplaceText(ScintillaControl sci, string sourceText, char addedChar, bool autoHide)
         {
-            PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
-            var manager = UITools.Manager;
+            UITools.Init();
+            CompletionList.CreateControl(PluginBase.MainForm);
             SetSrc(sci, sourceText);
             ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
             ASContext.HasContext = true;

@@ -7,6 +7,7 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
@@ -42,6 +43,8 @@ namespace HaXeContext.Generators
                 SetSrc(sci, sourceText);
                 var options = new List<ICompletionListItem>();
                 ((HaXeSettings) ASContext.Context.Settings).EnableLeadingAsterisks = enableLeadingAsterisks;
+                UITools.Init();
+                CompletionList.CreateControl(PluginBase.MainForm);
                 ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
                 var item = options.Find(it => it is DocumentationGeneratorItem && ((DocumentationGeneratorItem)it).Job == job);
                 if (hasGenerator)

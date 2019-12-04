@@ -142,17 +142,11 @@ namespace PluginCore.Controls
         /// </summary>
         public static void Show(IList<ICompletionListItem> itemList, bool autoHide)
         {
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            var sci = doc.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return;
             try
             {
                 if (itemList is null || itemList.Count == 0)
-                {
-                    if (Active) Hide();
-                    return;
-                }
-                if (sci is null) 
                 {
                     if (Active) Hide();
                     return;
@@ -302,20 +296,17 @@ namespace PluginCore.Controls
             onCancel(sci, currentPos, currentWord, trigger, null);
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
         public static void SelectWordInList(string tail)
         {
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable)
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null)
             {
                 Hide();
                 return;
             }
             currentWord = tail;
             currentPos += tail.Length;
-            doc.SciControl.SetSel(currentPos, currentPos);
+            sci.SetSel(currentPos, currentPos);
         }
 
         static void CLDrawListItem(object sender, DrawItemEventArgs e)
@@ -388,24 +379,23 @@ namespace PluginCore.Controls
 
         static void CLClick(object sender, EventArgs e)
         {
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable)
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null)
             {
                 Hide();
                 return;
             }
-            doc.SciControl.Focus();
+            sci.Focus();
         }
 
         static void CLDoubleClick(object sender, EventArgs e)
         {
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable)
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null)
             {
                 Hide();
                 return;
             }
-            var sci = doc.SciControl;
             sci.Focus();
             ReplaceText(sci, '\0');
         }
@@ -1001,7 +991,6 @@ namespace PluginCore.Controls
         }
 
         #endregion
-
     }
 
     internal struct ItemMatch
@@ -1015,5 +1004,4 @@ namespace PluginCore.Controls
             Item = item;
         }
     }
-
 }
