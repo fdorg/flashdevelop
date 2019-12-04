@@ -26,8 +26,8 @@ namespace ASCompletion.Helpers
 
         public CachedClassModel GetCachedModel(ClassModel cls)
         {
-            cache.TryGetValue(cls, out var v);
-            return v;
+            cache.TryGetValue(cls, out var result);
+            return result;
         }
 
         public void Clear()
@@ -136,7 +136,7 @@ namespace ASCompletion.Helpers
                     if (FinishedUpdate != null)
                         PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
                 }
-                catch (Exception)
+                catch
                 {
                 }
             });
@@ -163,7 +163,7 @@ namespace ASCompletion.Helpers
 
                     var c = new Dictionary<ClassModel, CachedClassModel>(cache.Comparer);
 
-                    foreach (MemberModel memberModel in context.GetAllProjectClasses())
+                    foreach (var memberModel in context.GetAllProjectClasses())
                     {
                         if (PluginBase.MainForm.ClosingEntirely)
                             return; //make sure we leave if the form is closing, so we do not block it
@@ -178,7 +178,7 @@ namespace ASCompletion.Helpers
                     if (FinishedUpdate != null)
                         PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
                 }
-                catch (Exception)
+                catch
                 {
                 }
             });
@@ -192,14 +192,14 @@ namespace ASCompletion.Helpers
 
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
             return cls.Implements
-                .Select(impl => context.ResolveType(impl, cls.InFile))
-                .Where(interf => !interf.IsVoid())
-                .SelectMany(interf => //take the interfaces we found already and add all interfaces they extend
+                .Select(it => context.ResolveType(it, cls.InFile))
+                .Where(it => !it.IsVoid())
+                .SelectMany(it => //take the interfaces we found already and add all interfaces they extend
                 {
-                    interf.ResolveExtends();
-                    var set = ResolveExtends(interf);
-                    set.Add(interf);
-                    return set;
+                    it.ResolveExtends();
+                    var extends = ResolveExtends(it);
+                    extends.Add(it);
+                    return extends;
                 })
                 .Union(ResolveInterfaces(cls.Extends)).ToHashSet();
         }
@@ -387,16 +387,14 @@ namespace ASCompletion.Helpers
         /// </summary>
         static HashSet<ClassModel> ResolveExtends(ClassModel cls)
         {
-            var set = new HashSet<ClassModel>();
-
+            var result = new HashSet<ClassModel>();
             var current = cls.Extends;
             while (!current.IsVoid())
             {
-                set.Add(current);
+                result.Add(current);
                 current = current.Extends;
             }
-
-            return set;
+            return result;
         }
 
         static CachedClassModel GetOrCreate(IDictionary<ClassModel, CachedClassModel> cache, ClassModel cls)
@@ -470,10 +468,10 @@ namespace ASCompletion.Helpers
 
         internal static ISet<T> GetOrCreateSet<S, T>(Dictionary<S, HashSet<T>> dict, S key)
         {
-            if (dict.TryGetValue(key, out var set)) return set;
-            set = new HashSet<T>(); //TODO: maybe supply new ClassModelComparer()
-            dict.Add(key, set);
-            return set;
+            if (dict.TryGetValue(key, out var result)) return result;
+            result = new HashSet<T>(); //TODO: maybe supply new ClassModelComparer()
+            dict.Add(key, result);
+            return result;
         }
     }
 
@@ -482,7 +480,6 @@ namespace ASCompletion.Helpers
         public bool Equals(ClassModel x, ClassModel y)
         {
             if (x is null || y is null) return x == y;
-
             return x.Type == y.Type;
         }
 

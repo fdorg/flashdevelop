@@ -16,12 +16,12 @@ namespace ASCompletion.Completion
 
         public static string GetStaticExternOverride(MemberModel member)
         {
-            var modifiers = string.Empty;
+            var result = string.Empty;
             var flags = member.Flags;
-            if ((flags & FlagType.Extern) > 0) modifiers += "extern ";
-            if ((flags & FlagType.Static) > 0) modifiers += "static ";
-            if ((flags & FlagType.Override) > 0) modifiers += "override ";
-            return modifiers;
+            if ((flags & FlagType.Extern) > 0) result += "extern ";
+            if ((flags & FlagType.Static) > 0) result += "static ";
+            if ((flags & FlagType.Override) > 0) result += "override ";
+            return result;
         }
 
         public static string GetModifiers(MemberModel member) => GetModifiers(member.Access);
@@ -61,23 +61,23 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        public static string ToDeclarationString(MemberModel member, string template)
+        public static string ToDeclarationString(MemberModel member, string result)
         {
             // Insert Name
-            template = ReplaceTemplateVariable(template, "Name", member.Name is null ? null : member.FullName);
+            result = ReplaceTemplateVariable(result, "Name", member.Name is null ? null : member.FullName);
 
             // If method, insert arguments
-            template = ReplaceTemplateVariable(template, "Arguments", ParametersString(member, true));
+            result = ReplaceTemplateVariable(result, "Arguments", ParametersString(member, true));
 
             if (!string.IsNullOrEmpty(member.Type))
             {
                 if ((member.Flags & FlagType.Setter) > 0 && member.Parameters != null && member.Parameters.Count == 1)
-                    template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(member.Parameters[0].Type));
-                else template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(member.Type));
+                    result = ReplaceTemplateVariable(result, "Type", MemberModel.FormatType(member.Parameters[0].Type));
+                else result = ReplaceTemplateVariable(result, "Type", MemberModel.FormatType(member.Type));
             }
-            else template = ReplaceTemplateVariable(template, "Type", null);
-            template = ReplaceTemplateVariable(template, "Value", member.Value);
-            return template;
+            else result = ReplaceTemplateVariable(result, "Type", null);
+            result = ReplaceTemplateVariable(result, "Value", member.Value);
+            return result;
         }
 
         public static string ParametersString(MemberModel member, bool formatted)
@@ -118,9 +118,9 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        public static string ReplaceTemplateVariable(string template, string var, string replace)
+        public static string ReplaceTemplateVariable(string result, string var, string replace)
         {
-            var mc = Regex.Matches(template, string.Format(template_variable, var));
+            var mc = Regex.Matches(result, string.Format(template_variable, var));
             var mcCount = mc.Count;
             if (mcCount > 0)
             {
@@ -130,26 +130,26 @@ namespace ASCompletion.Completion
                 {
                     var m = mc[i];
                     var endIndex = m.Index + m.Length;
-                    sb.Append(template.Substring(pos, m.Index - pos));
+                    sb.Append(result.Substring(pos, m.Index - pos));
                     if (replace != null)
                     {
                         var val = m.Value;
                         val = val.Substring(2, val.Length - 4);
                         sb.Append(val);
                     }
-                    if (i == mcCount - 1) sb.Append(template.Substring(endIndex));
+                    if (i == mcCount - 1) sb.Append(result.Substring(endIndex));
                     else
                     {
                         var next = mc[i + 1].Index;
-                        sb.Append(template.Substring(endIndex, next - endIndex));
+                        sb.Append(result.Substring(endIndex, next - endIndex));
                         pos += next;
                     }
                 }
 
-                template = sb.ToString();
+                result = sb.ToString();
             }
-            template = template.Replace("$(" + var + ")", replace);
-            return template;
+            result = result.Replace("$(" + var + ")", replace);
+            return result;
         }
 
         public static MemberModel GetTemplateBlockMember(ScintillaControl sci, string blockTmpl)
@@ -206,16 +206,16 @@ namespace ASCompletion.Completion
             if (!File.Exists(path)) return string.Empty;
             using Stream src = File.OpenRead(path);
             using var sr = new StreamReader(src);
-            var content = sr.ReadToEnd();
+            var result = sr.ReadToEnd();
             sr.Close();
-            return content;
+            return result;
         }
 
-        public static string GetParamName(MemberModel parameter)
+        public static string GetParamName(MemberModel model)
         {
-            return string.IsNullOrEmpty(parameter.Name)
+            return string.IsNullOrEmpty(model.Name)
                 ? string.Empty
-                : parameter.Name.Replace("?", "");
+                : model.Name.Replace("?", "");
         }
     }
 }

@@ -7,20 +7,20 @@ using PluginCore.Localization;
 namespace BridgeSettings
 {
     [Serializable]
-    class Settings : IBridgeSettings
+    internal class Settings : IBridgeSettings
     {
         const int DEFAULT_PORT_NUM = 8009;
         const string DEFAULT_IP = "127.0.0.1";
         const string DEFAULT_SHARED_DRIVE = "Y:\\";
-        private static readonly string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
+        static readonly string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
 
-        private bool active = false;
-        private string ip = DEFAULT_IP;
-        private int port = DEFAULT_PORT_NUM;
-        private bool targetRemoteIDE = true;
-        private bool useRemoteExplorer = true;
-        private string sharedDrive = DEFAULT_SHARED_DRIVE;
-        private string[] alwaysOpenLocal = DEFAULT_EXTENSIONS;
+        bool active = false;
+        string ip = DEFAULT_IP;
+        int port = DEFAULT_PORT_NUM;
+        bool targetRemoteIDE = true;
+        bool useRemoteExplorer = true;
+        string sharedDrive = DEFAULT_SHARED_DRIVE;
+        string[] alwaysOpenLocal = DEFAULT_EXTENSIONS;
 
         [LocalizedDescription("BridgeSettings.Description.Active"), DefaultValue(false)]
         public bool Active

@@ -55,17 +55,17 @@ namespace ASCompletion.Helpers
 
                 fsWatcher = new WatcherEx(logLocation);
                 fsWatcher.EnableRaisingEvents = true;
-                fsWatcher.Changed += fsWatcher_Changed;
+                fsWatcher.Changed += FsWatcher_Changed;
 
                 updater = new Timer();
                 updater.SynchronizingObject = PluginBase.MainForm as Form;
                 updater.Interval = 200;
-                updater.Elapsed += updater_Tick;
+                updater.Elapsed += Updater_Tick;
             }
             catch { }
         }
 
-        void updater_Tick(object sender, EventArgs e)
+        void Updater_Tick(object sender, EventArgs e)
         {
             updater.Stop();
             string src = File.Exists(logFile) ? File.ReadAllText(logFile) : "";
@@ -144,21 +144,19 @@ namespace ASCompletion.Helpers
             if (!m.Success) return;
             string output = m.Groups["output"].Value.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             output = PathHelper.ResolvePath(output, Path.GetDirectoryName(fla));
-            if (File.Exists(output))
-            {
-                FileInfo info = new FileInfo(output);
-                CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
+            if (!File.Exists(output)) return;
+            FileInfo info = new FileInfo(output);
+            CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
                         
-                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", output);
-                EventManager.DispatchEvent(this, de);
-            }
+            DataEvent de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", output);
+            EventManager.DispatchEvent(this, de);
         }
 
-        void fsWatcher_Changed(object sender, FileSystemEventArgs e)
+        void FsWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (fsWatcher.IsRemote)
             {
-                string logLocation = Path.GetDirectoryName(e.FullPath);
+                var logLocation = Path.GetDirectoryName(e.FullPath);
                 logFile = Path.Combine(logLocation, "FlashErrors.log");
                 docInfo = Path.Combine(logLocation, "FlashDocument.log");
                 publishInfo = Path.Combine(logLocation, "FlashPublish.log");

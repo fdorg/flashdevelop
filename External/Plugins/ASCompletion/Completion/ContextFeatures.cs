@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Model;
 
@@ -125,10 +126,7 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         internal bool HasTypePreKey(string word)
         {
-            if (typesPreKeys != null)
-            foreach (string key in typesPreKeys)
-                if (key == word) return true;
-            return false;
+            return typesPreKeys != null && typesPreKeys.Any(it => it == word);
         }
 
         /// <summary>
@@ -138,7 +136,7 @@ namespace ASCompletion.Completion
         /// <returns>Keywords list</returns>
         internal List<string> GetDeclarationKeywords(string text, bool insideClass)
         {
-            var access = new List<string>(accessKeywords);
+            var result = new List<string>(accessKeywords);
             var members = new List<string>(declKeywords);
             if (!insideClass) members.AddRange(typesKeywords);
 
@@ -157,9 +155,9 @@ namespace ASCompletion.Completion
                 }
                 foreach (string token in tokens)
                 {
-                    if (token.Length > 0 && access.Contains(token))
+                    if (token.Length > 0 && result.Contains(token))
                     {
-                        access.Remove(token);
+                        result.Remove(token);
                         if (token == overrideKey)
                         {
                             members.Clear();
@@ -167,9 +165,9 @@ namespace ASCompletion.Completion
                         }
                         else if (token == privateKey || token == internalKey || token == publicKey)
                         {
-                            if (privateKey != null) access.Remove(privateKey);
-                            if (internalKey != null) access.Remove(internalKey);
-                            if (publicKey != null) access.Remove(publicKey);
+                            if (privateKey != null) result.Remove(privateKey);
+                            if (internalKey != null) result.Remove(internalKey);
+                            if (publicKey != null) result.Remove(publicKey);
                         }
                         else 
                         {
@@ -182,21 +180,21 @@ namespace ASCompletion.Completion
 
             if (foundMember is null)
             {
-                access.AddRange(members);
+                result.AddRange(members);
             }
             else if (foundMember == "class" || foundMember == "interface")
             {
-                if (hasExtends) access.Add("extends");
-                if (hasImplements && foundMember != "interface") access.Add("implements");
+                if (hasExtends) result.Add("extends");
+                if (hasImplements && foundMember != "interface") result.Add("implements");
             }
             else if (foundMember == "abstract")
             {
-                access.Add("to");
-                access.Add("from");
+                result.Add("to");
+                result.Add("from");
             }
 
-            access.Sort();
-            return access;
+            result.Sort();
+            return result;
         }
     }
 }

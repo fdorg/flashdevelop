@@ -15,53 +15,53 @@ namespace CodeFormatter
 
         /////////////// AS3 /////////////////////////////////////
 
-        private int pref_AS_SpacesBeforeComma = 0;
-        private int pref_AS_SpacesAfterComma = 1;
-        private int pref_AS_SpacesAroundColons = 0;
-        private bool pref_AS_UseGlobalSpacesAroundColons = true;
-        private int pref_AS_AdvancedSpacesBeforeColons = 0;
-        private int pref_AS_AdvancedSpacesAfterColons = 0;
-        private int pref_AS_BlankLinesBeforeFunctions = 1;
-        private int pref_AS_BlankLinesBeforeClasses = 1;
-        private int pref_AS_BlankLinesBeforeProperties = 0;
-        private int pref_AS_BlankLinesBeforeControlStatements = 0;
-        private bool pref_AS_KeepBlankLines = false;
-        private int pref_AS_BlankLinesToKeep = 1;
-        private bool pref_AS_OpenBraceOnNewLine = true;
-        private bool pref_AS_ElseOnNewLine = true;
-        private bool pref_AS_CatchOnNewLine = true;
-        private bool pref_AS_ElseIfOnSameLine = true;
-        private int pref_AS_MaxLineLength = 200;
-        private int pref_AS_SpacesAroundAssignment = 1;
-        private int pref_AS_SpacesAroundSymbolicOperator = 1;
-        private bool pref_AS_KeepSLCommentsOnColumn1 = false;
-        private bool pref_AS_BreakLinesBeforeComma = false;
-        private WrapType pref_AS_WrapExpressionMode = WrapType.None;
-        private WrapType pref_AS_WrapMethodDeclMode = WrapType.None;
-        private WrapType pref_AS_WrapMethodCallMode = WrapType.None;
-        private WrapType pref_AS_WrapArrayDeclMode = WrapType.None;
-        private WrapType pref_AS_WrapXMLMode = WrapType.DontProcess;
-        private WrapIndent pref_AS_WrapIndentStyle = WrapIndent.Normal;
-        private bool pref_AS_CollapseSpacesForAdjacentParens = true;
-        private bool pref_AS_NewlineAfterBindable = true;
-        private int pref_AS_SpacesAfterLabel = 1;
-        private bool pref_AS_TrimTrailingWhitespace = false;
-        private bool pref_AS_PutEmptyStatementsOnNewLine = true;
-        private int pref_AS_SpacesBeforeOpenControlParen = 1;
-        private bool pref_AS_AlwaysGenerateIndent = true;
-        private bool pref_AS_DontIndentPackageItems = false;
-        private bool pref_AS_LeaveExtraWhitespaceAroundVarDecls = false;
-        private int pref_AS_SpacesInsideParens = 0;
-        private bool pref_AS_UseGlobalSpacesInsideParens = true;
-        private int pref_AS_AdvancedSpacesInsideArrayDeclBrackets = 1;
-        private int pref_AS_AdvancedSpacesInsideArrayRefBrackets = 0;
-        private int pref_AS_AdvancedSpacesInsideLiteralBraces = 1;
-        private int pref_AS_AdvancedSpacesInsideParens = 0;
-        private bool pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters = false;
-        private int pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters = 0;
-        private bool pref_AS_DoAutoFormat = true;
-        private bool pref_AS_AutoFormatStyle = true;
-        private bool pref_AS_IndentMultilineComments = true;
+        int pref_AS_SpacesBeforeComma = 0;
+        int pref_AS_SpacesAfterComma = 1;
+        int pref_AS_SpacesAroundColons = 0;
+        bool pref_AS_UseGlobalSpacesAroundColons = true;
+        int pref_AS_AdvancedSpacesBeforeColons = 0;
+        int pref_AS_AdvancedSpacesAfterColons = 0;
+        int pref_AS_BlankLinesBeforeFunctions = 1;
+        int pref_AS_BlankLinesBeforeClasses = 1;
+        int pref_AS_BlankLinesBeforeProperties = 0;
+        int pref_AS_BlankLinesBeforeControlStatements = 0;
+        bool pref_AS_KeepBlankLines = false;
+        int pref_AS_BlankLinesToKeep = 1;
+        bool pref_AS_OpenBraceOnNewLine = true;
+        bool pref_AS_ElseOnNewLine = true;
+        bool pref_AS_CatchOnNewLine = true;
+        bool pref_AS_ElseIfOnSameLine = true;
+        int pref_AS_MaxLineLength = 200;
+        int pref_AS_SpacesAroundAssignment = 1;
+        int pref_AS_SpacesAroundSymbolicOperator = 1;
+        bool pref_AS_KeepSLCommentsOnColumn1 = false;
+        bool pref_AS_BreakLinesBeforeComma = false;
+        WrapType pref_AS_WrapExpressionMode = WrapType.None;
+        WrapType pref_AS_WrapMethodDeclMode = WrapType.None;
+        WrapType pref_AS_WrapMethodCallMode = WrapType.None;
+        WrapType pref_AS_WrapArrayDeclMode = WrapType.None;
+        WrapType pref_AS_WrapXMLMode = WrapType.DontProcess;
+        WrapIndent pref_AS_WrapIndentStyle = WrapIndent.Normal;
+        bool pref_AS_CollapseSpacesForAdjacentParens = true;
+        bool pref_AS_NewlineAfterBindable = true;
+        int pref_AS_SpacesAfterLabel = 1;
+        bool pref_AS_TrimTrailingWhitespace = false;
+        bool pref_AS_PutEmptyStatementsOnNewLine = true;
+        int pref_AS_SpacesBeforeOpenControlParen = 1;
+        bool pref_AS_AlwaysGenerateIndent = true;
+        bool pref_AS_DontIndentPackageItems = false;
+        bool pref_AS_LeaveExtraWhitespaceAroundVarDecls = false;
+        int pref_AS_SpacesInsideParens = 0;
+        bool pref_AS_UseGlobalSpacesInsideParens = true;
+        int pref_AS_AdvancedSpacesInsideArrayDeclBrackets = 1;
+        int pref_AS_AdvancedSpacesInsideArrayRefBrackets = 0;
+        int pref_AS_AdvancedSpacesInsideLiteralBraces = 1;
+        int pref_AS_AdvancedSpacesInsideParens = 0;
+        bool pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters = false;
+        int pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters = 0;
+        bool pref_AS_DoAutoFormat = true;
+        bool pref_AS_AutoFormatStyle = true;
+        bool pref_AS_IndentMultilineComments = true;
         public int pref_AS_BlankLinesBeforeImportBlock = 0;
         public int pref_AS_BlankLinesAtFunctionStart = 0;
         public int pref_AS_BlankLinesAtFunctionEnd = 0;
@@ -131,28 +131,28 @@ namespace CodeFormatter
         public int pref_AS_AdvancedWrappingGraceColumns = 1;
         public bool pref_AS_AdvancedWrappingPreservePhrases = false;
         //
-        private string pref_AS_MetaTagsOnSameLineAsTargetFunction = "";
-        private string pref_AS_MetaTagsOnSameLineAsTargetProperty = "";
+        string pref_AS_MetaTagsOnSameLineAsTargetFunction = "";
+        string pref_AS_MetaTagsOnSameLineAsTargetProperty = "";
 
         ////////////////// MXML ///////////////////////////////////////
 
-        private int pref_MXML_SpacesAroundEquals = 0;
-        private bool pref_MXML_SortExtraAttrs = false;
-        private bool pref_MXML_AddNewlineAfterLastAttr = false;
-        private SortMode pref_MXML_SortAttrMode = SortMode.UseData;
-        private int pref_MXML_MaxLineLength = 200;
-        private WrapMode pref_MXML_AttrWrapMode = WrapMode.CountPerLine;
-        private int pref_MXML_AttrsPerLine = 1;
-        private bool pref_MXML_KeepBlankLines = true;
-        private WrapIndent pref_MXML_WrapIndentStyle = WrapIndent.WrapElement;
-        private string pref_MXML_TagsWithBlankLinesBefore = "";
-        private int pref_MXML_BlankLinesBeforeTags = 1;
-        private bool pref_MXML_UseAttrsToKeepOnSameLine = true;
-        private int pref_MXML_AttrsToKeepOnSameLine = 10;
-        private int pref_MXML_SpacesBeforeEmptyTagEnd = 1;
-        private bool pref_MXML_RequireCDATAForASFormatting = true;
-        private bool pref_MXML_AutoFormatStyle = true;
-        private bool pref_MXML_DoAutoFormat = true;
+        int pref_MXML_SpacesAroundEquals = 0;
+        bool pref_MXML_SortExtraAttrs = false;
+        bool pref_MXML_AddNewlineAfterLastAttr = false;
+        SortMode pref_MXML_SortAttrMode = SortMode.UseData;
+        int pref_MXML_MaxLineLength = 200;
+        WrapMode pref_MXML_AttrWrapMode = WrapMode.CountPerLine;
+        int pref_MXML_AttrsPerLine = 1;
+        bool pref_MXML_KeepBlankLines = true;
+        WrapIndent pref_MXML_WrapIndentStyle = WrapIndent.WrapElement;
+        string pref_MXML_TagsWithBlankLinesBefore = "";
+        int pref_MXML_BlankLinesBeforeTags = 1;
+        bool pref_MXML_UseAttrsToKeepOnSameLine = true;
+        int pref_MXML_AttrsToKeepOnSameLine = 10;
+        int pref_MXML_SpacesBeforeEmptyTagEnd = 1;
+        bool pref_MXML_RequireCDATAForASFormatting = true;
+        bool pref_MXML_AutoFormatStyle = true;
+        bool pref_MXML_DoAutoFormat = true;
         public bool pref_MXML_KeepRelativeIndentInMultilineComments = false;
         public int pref_MXML_BlankLinesBeforeComments = 0;
         public int pref_MXML_BlankLinesAfterSpecificParentTags = 0;
@@ -171,18 +171,18 @@ namespace CodeFormatter
         public bool pref_MXML_AlwaysUseMaxLineLength = false;
         public bool pref_MXML_UseTagsDoNotFormatInside = true;
         //
-        private string pref_MXML_TagsCanFormat = "mx:List,fx:List";
-        private string pref_MXML_TagsCannotFormat = "mx:String,fx:String";
-        private string pref_MXML_AttrGroups = "";
-        private string pref_MXML_TagsWithASContent = "";
-        private string pref_MXML_TagsDoNotFormatInside = ".*:Model,.*:XML";
-        private string pref_MXML_ParentTagsWithBlankLinesAfter = "";
-        private string pref_MXML_SortAttrData = "";
+        string pref_MXML_TagsCanFormat = "mx:List,fx:List";
+        string pref_MXML_TagsCannotFormat = "mx:String,fx:String";
+        string pref_MXML_AttrGroups = "";
+        string pref_MXML_TagsWithASContent = "";
+        string pref_MXML_TagsDoNotFormatInside = ".*:Model,.*:XML";
+        string pref_MXML_ParentTagsWithBlankLinesAfter = "";
+        string pref_MXML_SortAttrData = "";
 
         ////////////////// Others ///////////////////////////////////////
 
-        private string pref_AStyle_CPP = "";
-        private string pref_AStyle_Others = "";
+        string pref_AStyle_CPP = "";
+        string pref_AStyle_Others = "";
 
         [DefaultValue("")]
         [Category("Others")]
@@ -1797,8 +1797,8 @@ namespace CodeFormatter
             }
             Pref_MXML_AttrGroups = buffer.ToString();
         }
-        
-        private List<AttrGroup> CreateDefaultGroups()
+
+        List<AttrGroup> CreateDefaultGroups()
         {
             List<AttrGroup> groups = new List<AttrGroup>();
             List<string> attrs = new List<string>();
@@ -2270,5 +2270,4 @@ namespace CodeFormatter
         Normal = 1000,
         WrapElement = 1001
     }
-
 }

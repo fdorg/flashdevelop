@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows.Forms;
@@ -219,10 +220,7 @@ namespace BasicCompletion
         void UpdateTimerElapsed(object sender, ElapsedEventArgs e)
         {
             var doc = PluginBase.MainForm.CurrentDocument;
-            if (doc != null && doc.IsEditable && isSupported)
-            {
-                AddDocumentKeywords(doc);
-            }
+            if (doc?.SciControl is {} sci && isSupported) AddDocumentKeywords(sci);
         }
 
         /// <summary>
@@ -243,7 +241,7 @@ namespace BasicCompletion
         {
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
-            var eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted | EventType.UIClosing;
+            const EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted | EventType.UIClosing;
             EventManager.AddEventHandler(this, EventType.Completion, HandlingPriority.Low);
             EventManager.AddEventHandler(this, eventTypes);
         }
@@ -368,9 +366,7 @@ namespace BasicCompletion
                     if (!allWords.Contains(it)) allWords.Add(it);
                 }
             }
-            var items = new List<ICompletionListItem>();
-            foreach (var it in allWords) items.Add(new CompletionItem(it));
-            return items;
+            return allWords.Select(it => new CompletionItem(it)).ToList<ICompletionListItem>();
         }
 
         /// <summary>

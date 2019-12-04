@@ -16,7 +16,7 @@ namespace ASCompletion.Helpers
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            var dialog = new AddClosingBracesRulesEditorForm((Brace[]) value);
+            using var dialog = new AddClosingBracesRulesEditorForm((Brace[]) value);
             return dialog.ShowDialog(null) == DialogResult.OK ? dialog.Value : value;
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using CodeFormatter.Handlers;
 using CodeFormatter.Preferences;
 using PluginCore;
@@ -48,75 +49,33 @@ namespace CodeFormatter.Utilities
             printer.setRequireCDATAForASContent(settings.Pref_MXML_RequireCDATAForASFormatting);
             printer.setAttrsToKeepOnSameLine(settings.Pref_MXML_AttrsToKeepOnSameLine);
             printer.setObeyMaxLineLength(settings.Pref_MXML_AlwaysUseMaxLineLength);
-            string[] tags=settings.Pref_MXML_TagsCannotFormat.Split(',');
-            List<string> tagSet=new List<string>();
-            foreach (string tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            var tags=settings.Pref_MXML_TagsCannotFormat.Split(',');
+            var tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setTagsThatCannotBeFormatted(tagSet);       
             tags=settings.Pref_MXML_TagsCanFormat.Split(',');
-            tagSet=new List<string>();
-            foreach (string tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setTagsThatCanBeFormatted(tagSet);
             tags = settings.Pref_MXML_TagsWithBlankLinesBefore.Split(',');
-            tagSet=new List<string>();
-            foreach (string tag in tags)
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setTagsWithBlankLinesBeforeThem(tagSet);
             tags = settings.Pref_MXML_ParentTagsWithBlankLinesAfter.Split(',');
-            tagSet=new List<string>();
-            foreach (string tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setParentTagsWithBlankLinesAfterThem(tagSet);
             tags = settings.Pref_MXML_TagsWithASContent.Split(',');
-            tagSet=new List<string>();
-            foreach (string tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setASScriptTags(tagSet);
             List<AttrGroup> attrGroups=new List<AttrGroup>();
             string groupData=settings.Pref_MXML_AttrGroups;
             string[] groups = groupData.Split(Settings.LineSplitter);
             foreach (string g in groups) 
             {
-                AttrGroup group=AttrGroup.load(g);
+                var group=AttrGroup.load(g);
                 if (group!=null) attrGroups.Add(group);
             }
             printer.setAttrGroups(attrGroups);      
             printer.setUsePrivateTags(settings.Pref_MXML_UseTagsDoNotFormatInside);
             tags = settings.Pref_MXML_TagsDoNotFormatInside.Split(',');
-            List<string> tagList=new List<string>();
-            foreach (string tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagList.Add(tag);
-                }
-            }
+            var tagList= tags.Where(tag => tag.Length > 0).ToList();
             printer.setPrivateTags(tagList);
             configureASPrinter(printer.getASPrinter(), settings);
             printer.getASPrinter().setBlankLinesBeforeImports(0); //special case: we only want blank lines before imports in .as files
@@ -277,7 +236,5 @@ namespace CodeFormatter.Utilities
             options.setIndentStyle(wrapIndentStyle);
             printer.setXMLWrapOptions(options);
         }
-
     }
-
 }

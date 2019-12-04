@@ -10,9 +10,9 @@ namespace BookmarkPanel
 {
     public class PluginMain : IPlugin
     {
-        private DockContent pluginPanel;
-        private PluginUI pluginUI;
-        private Image pluginImage;
+        DockContent pluginPanel;
+        PluginUI pluginUI;
+        Image pluginImage;
 
         #region Required Properties
 
@@ -137,7 +137,7 @@ namespace BookmarkPanel
         /// </summary>
         public void CreatePluginPanel()
         {
-            pluginUI = new PluginUI() {Text = TextHelper.GetString("Title.PluginPanel")};
+            pluginUI = new PluginUI {Text = TextHelper.GetString("Title.PluginPanel")};
             pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockRight);
         }
 

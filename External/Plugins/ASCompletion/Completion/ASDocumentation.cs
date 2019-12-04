@@ -37,18 +37,15 @@ namespace ASCompletion.Completion
         #region Comment generation
         public static bool OnChar(ScintillaControl sci, int value, int position, int style)
         {
-            if (style == 3 || style == 124)
+            if (style != 3 && style != 124) return false;
+            return value switch
             {
-                switch (value)
-                {
-                    // documentation tag
-                    case '@': return HandleDocTagCompletion(sci);
-                    
-                    // documentation bloc
-                    case '*': return ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, position, new List<ICompletionListItem>());
-                }
-            }
-            return false;
+                // documentation tag
+                '@' => HandleDocTagCompletion(sci),
+                // documentation bloc
+                '*' => ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, position, new List<ICompletionListItem>()),
+                _ => false,
+            };
         }
 
         static bool HandleDocTagCompletion(ScintillaControl sci)
@@ -165,7 +162,8 @@ namespace ASCompletion.Completion
                     if (mParam.Success)
                     {
                         Group mVar = mParam.Groups["var"];
-                        if (cb.ParamName is null) {
+                        if (cb.ParamName is null)
+                        {
                             cb.ParamName = new List<string>();
                             cb.ParamDesc = new List<string>();
                         }

@@ -10,8 +10,8 @@ namespace BridgeSettings
 {
     public class PluginMain: IPlugin
     {
-        private string settingFilename;
-        private Settings settingObject;
+        string settingFilename;
+        Settings settingObject;
 
         #region Required Properties
         
@@ -85,7 +85,7 @@ namespace BridgeSettings
         /// <summary>
         /// Sets up the basic stuff
         /// </summary> 
-        private void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(BridgeSettings));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);

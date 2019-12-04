@@ -17,10 +17,10 @@ namespace CodeFormatter
 {
     public class PluginMain : IPlugin
     {
-        private ToolStripMenuItem contextMenuItem;
-        private ToolStripMenuItem mainMenuItem;
-        private string settingFilename;
-        private Settings settingObject;
+        ToolStripMenuItem contextMenuItem;
+        ToolStripMenuItem mainMenuItem;
+        string settingFilename;
+        Settings settingObject;
 
         #region Required Properties
 
@@ -131,7 +131,7 @@ namespace CodeFormatter
         /// <summary>
         /// Update the menu items if they are available
         /// </summary>
-        private void UpdateMenuItems()
+        void UpdateMenuItems()
         {
             if (mainMenuItem is null || contextMenuItem is null) return;
             var doc = PluginBase.MainForm.CurrentDocument;
@@ -149,7 +149,7 @@ namespace CodeFormatter
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", mainMenuItem);
         }
 
-        private void AttachMainMenuItem(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(7, mainMenuItem);
+        void AttachMainMenuItem(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(7, mainMenuItem);
 
         /// <summary>
         /// Creates a context menu item for the plugin
@@ -186,11 +186,11 @@ namespace CodeFormatter
 
         #region Code Formatting
 
-        private const int TYPE_AS3 = 0;
-        private const int TYPE_MXML = 1;
-        private const int TYPE_XML = 2;
-        private const int TYPE_CPP = 3;
-        private const int TYPE_UNKNOWN = 4;
+        const int TYPE_AS3 = 0;
+        const int TYPE_MXML = 1;
+        const int TYPE_XML = 2;
+        const int TYPE_CPP = 3;
+        const int TYPE_UNKNOWN = 4;
         
         /// <summary>
         /// Formats the current document
@@ -200,7 +200,7 @@ namespace CodeFormatter
         /// <summary>
         /// Formats the specified document
         /// </summary>
-        private void DoFormat(ITabbedDocument doc)
+        void DoFormat(ITabbedDocument doc)
         {
             if (doc.IsEditable)
             {
@@ -212,9 +212,9 @@ namespace CodeFormatter
                     switch (DocumentType)
                     {
                         case TYPE_AS3:
-                            ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
+                            var asPrinter = new ASPrettyPrinter(true, source);
                             FormatUtility.configureASPrinter(asPrinter, settingObject);
-                            string asResultData = asPrinter.print(0);
+                            var asResultData = asPrinter.print(0);
                             if (asResultData is null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
@@ -279,7 +279,7 @@ namespace CodeFormatter
         /// <summary>
         /// Get the options for the formatter based on FD settings or manual command
         /// </summary>
-        private string GetOptionData(string language)
+        string GetOptionData(string language)
         {
             string optionData;
             if (language == "cpp") optionData = settingObject.Pref_AStyle_CPP;
@@ -345,17 +345,17 @@ namespace CodeFormatter
         {
             get 
             {
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (!document.IsEditable) return TYPE_UNKNOWN;
-                string ext = Path.GetExtension(document.FileName).ToLower();
-                string lang = document.SciControl.ConfigurationLanguage.ToLower();
-                if (ASContext.Context.CurrentModel.Context != null && ASContext.Context.CurrentModel.Context.GetType().ToString().Equals("AS3Context.Context")) 
+                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                if (sci is null) return TYPE_UNKNOWN;
+                var ext = Path.GetExtension(sci.FileName).ToLower();
+                var lang = sci.ConfigurationLanguage.ToLower();
+                if (ASContext.Context.CurrentModel.Context is { } ctx && ctx.GetType().ToString().Equals("AS3Context.Context"))
                 {
                     if (ext == ".as") return TYPE_AS3;
                     if (ext == ".mxml") return TYPE_MXML;
                 }
                 else if (lang == "xml") return TYPE_XML;
-                else if (document.SciControl.Lexer == 3 && Win32.ShouldUseWin32()) return TYPE_CPP;
+                else if (sci.Lexer == 3 && Win32.ShouldUseWin32()) return TYPE_CPP;
                 return TYPE_UNKNOWN;
             }
         }
@@ -365,15 +365,13 @@ namespace CodeFormatter
         /// </summary>
         public string CompressText(string originalText)
         {
-            string compressedText = originalText.Replace(" ", "");
-            compressedText = compressedText.Replace("\t", "");
-            compressedText = compressedText.Replace("\n", "");
-            compressedText = compressedText.Replace("\r", "");
-            return compressedText;
+            var result = originalText.Replace(" ", "");
+            result = result.Replace("\t", "");
+            result = result.Replace("\n", "");
+            result = result.Replace("\r", "");
+            return result;
         }
 
         #endregion
-
     }
-    
 }
