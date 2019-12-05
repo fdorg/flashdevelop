@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using ASCompletion.Completion;
 using CodeRefactor.Provider;
@@ -377,7 +378,7 @@ namespace CodeRefactor.Commands
         void Finish()
         {
             // If the document was closed, don't do the finish-up task.
-            if (Array.IndexOf(PluginBase.MainForm.Documents, currentDoc) == -1) return;
+            if (!PluginBase.MainForm.EnumerateDocuments().Contains(currentDoc)) return;
 
             sci.RemoveHighlights(Indicator);
             sci.SetIndicSetAlpha(Indicator, 40);

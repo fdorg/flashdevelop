@@ -38,15 +38,15 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateSequentialIndex(ITabbedDocument document)
         {
-            var documents = PluginBase.MainForm.Documents;
-            var count = documents.Length;
-            for (var i = 0; i < count; i++)
+            var i = 0;
+            foreach (var it in PluginBase.MainForm.EnumerateDocuments())
             {
-                if (documents[i] == document)
+                if (it == document)
                 {
                     SequentialIndex = i;
                     return;
                 }
+                i++;
             }
         }
 

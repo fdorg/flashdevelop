@@ -111,7 +111,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static ITabbedDocument FindDocument(string filename)
         {
-            return PluginBase.MainForm.Documents.FirstOrDefault(document => document.FileName == filename);
+            return PluginBase.MainForm.EnumerateDocuments().FirstOrDefault(document => document.FileName == filename);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static ITabbedDocument FindDocument(ScintillaControl sci)
         {
-            return PluginBase.MainForm.Documents.FirstOrDefault(document => document.SciControl == sci);
+            return PluginBase.MainForm.EnumerateDocuments().FirstOrDefault(document => document.SciControl == sci);
         }
     }
 }
