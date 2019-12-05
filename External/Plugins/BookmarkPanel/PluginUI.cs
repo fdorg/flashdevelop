@@ -452,7 +452,7 @@ namespace BookmarkPanel
         /// </summary>
         void UpdateMarkers(string filename)
         {
-            var sci = DocumentManager.FindDocument(filename).SciControl;
+            var sci = DocumentManager.FindDocument(filename)?.SciControl;
             if (sci is null) return;
             var group = FindGroup(sci.FileName);
             if (group is null) return;
