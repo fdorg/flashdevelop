@@ -1446,7 +1446,7 @@ namespace AirProperties
             //Save active 
             PropertyManager.SetProperty("name", NameField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
             PropertyManager.SetProperty("description", DescriptionField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
-            using LocaleManager frmLocaleMan = new LocaleManager(_locales);
+            using var frmLocaleMan = new LocaleManager(_locales);
             if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
             {
                 //Check to see if any locales have been removed
@@ -1556,10 +1556,10 @@ namespace AirProperties
         {
             List<string> locales = new List<string>();
             locales.AddRange(SupportedLanguagesField.Text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
-            using LocaleManager frmLocaleMan = new LocaleManager(locales);
+            using var frmLocaleMan = new LocaleManager(locales);
             if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
             {
-                SupportedLanguagesField.Text = string.Join(" ", locales.ToArray());
+                SupportedLanguagesField.Text = string.Join(" ", locales);
             }
         }
 

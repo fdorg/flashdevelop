@@ -101,20 +101,14 @@ namespace ScintillaNet.Configuration
         public bool RemoveExtension(string extension)
         {
             var extensions = new List<string>(fileextensions.Split(','));
-            bool anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
-            fileextensions = string.Join(",", extensions.ToArray());
+            var anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
+            fileextensions = string.Join(",", extensions);
             return anyRemoved;
         }
 
-        public bool HasExtension(string extension)
-        {
-            return fileextensions.Split(',').Contains(extension);
-        }
+        public bool HasExtension(string extension) => fileextensions.Split(',').Contains(extension);
 
-        public override string ToString()
-        {
-            return name;
-        }
+        public override string ToString() => name;
 
         public void SaveExtensions()
         {

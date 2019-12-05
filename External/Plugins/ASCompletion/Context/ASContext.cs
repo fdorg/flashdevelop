@@ -1546,7 +1546,7 @@ namespace ASCompletion.Context
                 if (name.LastIndexOf('.') is var p3 && p3 > 0) name = name.Substring(p3 + 1);
                 if (!keywords.Contains(name)) keywords.Add(name);
             }
-            return string.Join(" ", keywords.ToArray());
+            return string.Join(" ", keywords);
         }
     }
     #endregion

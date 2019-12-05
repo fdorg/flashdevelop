@@ -7,7 +7,7 @@ using ProjectManager.Controls.TreeView;
 
 namespace SourceControl.Sources.Subversion
 {
-    class MenuItems : IVCMenuItems
+    internal class MenuItems : IVCMenuItems
     {
         TreeNode[] currentNodes;
         IVCManager currentManager;
@@ -43,7 +43,7 @@ namespace SourceControl.Sources.Subversion
         public ToolStripItem Revert => revert;
         public ToolStripItem EditConflict => editConflict;
 
-        private readonly Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        readonly Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
         public Dictionary<ToolStripItem, VCMenuItemProperties> Items => items;
 
         public MenuItems()
@@ -63,16 +63,16 @@ namespace SourceControl.Sources.Subversion
             editConflict = new ToolStripMenuItem(TextHelper.GetString("Label.EditConflict"), PluginBase.MainForm.FindImage("196"), EditConflict_Click);
         }
 
-        private string GetPaths()
+        string GetPaths()
         {
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
             if (currentNodes != null)
-                foreach (TreeNode node in currentNodes)
+                foreach (var node in currentNodes)
                 {
-                    if (node is GenericNode)
-                        paths.Add((node as GenericNode).BackingPath);
+                    if (node is GenericNode genericNode)
+                        paths.Add(genericNode.BackingPath);
                 }
-            return string.Join("*", paths.ToArray());
+            return string.Join("*", paths);
         }
 
         void EditConflict_Click(object sender, EventArgs e)
