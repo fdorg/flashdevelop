@@ -11,11 +11,20 @@ namespace FlashDevelop
 {
     public class MainForm : Form, IMainForm
     {
-        public void RefreshUI() => throw new NotImplementedException();
+        public void RefreshUI()
+        {
+            throw new NotImplementedException();
+        }
 
-        public void KillProcess() => throw new NotImplementedException();
+        public void KillProcess()
+        {
+            throw new NotImplementedException();
+        }
 
-        public void RefreshSciConfig() => throw new NotImplementedException();
+        public void RefreshSciConfig()
+        {
+            throw new NotImplementedException();
+        }
 
         public void RestartRequired()
         {
@@ -278,8 +287,6 @@ namespace FlashDevelop
         public ITabbedDocument CurrentDocument { get; set; }
 
         public ITabbedDocument[] Documents => throw new NotImplementedException();
-
-        public IEnumerable<ITabbedDocument> EnumerateDocuments() => throw new NotImplementedException();
 
         public bool HasModifiedDocuments => throw new NotImplementedException();
 

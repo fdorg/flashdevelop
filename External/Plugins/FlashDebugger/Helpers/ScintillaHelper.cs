@@ -245,31 +245,33 @@ namespace FlashDebugger
 
         #region Document Management
 
-        public static ScintillaControl GetScintillaControl(string fileName)
+        public static ScintillaControl GetScintillaControl(string name)
         {
-            foreach (var document in PluginBase.MainForm.EnumerateDocuments())
+            foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (document.SciControl is { } sci && sci.FileName == fileName) return sci;
+                var sci = document.SciControl;
+                if (sci != null && name == sci.FileName) return sci;
             }
             return null;
         }
 
         public static int GetScintillaControlIndex(ScintillaControl sci)
         {
-            var i = 0;
-            foreach (var document in PluginBase.MainForm.EnumerateDocuments())
+            var documents = PluginBase.MainForm.Documents;
+            for (int i = 0; i < documents.Length; i++)
             {
-                if (document.SciControl == sci) return i;
-                i++;
+                if (documents[i].SciControl == sci) return i;
             }
             return -1;
         }
 
-        public static ITabbedDocument GetDocument(string fileName)
+        public static ITabbedDocument GetDocument(string filefullpath)
         {
-            foreach (var document in PluginBase.MainForm.EnumerateDocuments())
+            var documents = PluginBase.MainForm.Documents;
+            foreach (var document in documents)
             {
-                if (document.SciControl is { } sci && sci.FileName == fileName) return document;
+                var sci = document.SciControl;
+                if (sci != null && filefullpath == sci.FileName) return document;
             }
             return null;
         }
@@ -346,12 +348,11 @@ namespace FlashDebugger
         {
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                var sci = doc.SciControl;
-                var list = PluginMain.breakPointManager.GetMarkers(sci, markerBPEnabled);
+                var list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPEnabled);
                 foreach (int line in list)
                 {
-                    sci.MarkerDelete(line, markerBPEnabled);
-                    sci.MarkerAdd(line, markerBPDisabled);
+                    doc.SciControl.MarkerDelete(line, markerBPEnabled);
+                    doc.SciControl.MarkerAdd(line, markerBPDisabled);
                 }
             }
         }
@@ -360,16 +361,16 @@ namespace FlashDebugger
         {
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                var sci = doc.SciControl;
-                var list = PluginMain.breakPointManager.GetMarkers(sci, markerBPDisabled);
+                var list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPDisabled);
                 foreach (int line in list)
                 {
-                    sci.MarkerDelete(line, markerBPDisabled);
-                    sci.MarkerAdd(line, markerBPEnabled);
+                    doc.SciControl.MarkerDelete(line, markerBPDisabled);
+                    doc.SciControl.MarkerAdd(line, markerBPEnabled);
                 }
             }
         }
         
         #endregion
+
     }
 }

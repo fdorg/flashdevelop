@@ -730,7 +730,7 @@ namespace ASCompletion.Completion
             var ext = Path.GetExtension(model.FileName);
             if (string.IsNullOrEmpty(ext)) ext = model.Context.GetExplorerMask()[0].Replace("*", string.Empty);
             var dummyFile = Path.Combine(Path.GetDirectoryName(model.FileName), "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
-            foreach (var doc in PluginBase.MainForm.EnumerateDocuments())
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
                 if (doc.FileName == dummyFile)
                 {
@@ -751,7 +751,9 @@ namespace ASCompletion.Completion
         }
 
         public static void LocateMember(string keyword, string name, int line)
-            => LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
+        {
+            LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
+        }
 
         public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
         {
@@ -760,7 +762,9 @@ namespace ASCompletion.Completion
         }
 
         protected virtual void LocateMember(ScintillaControl sci, int line, string keyword, string name)
-            => LocateMember(sci, line, $"{keyword ?? ""}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
+        {
+            LocateMember(sci, line, $"{keyword ?? ""}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
+        }
 
         protected void LocateMember(ScintillaControl sci, int line, string pattern)
         {
@@ -4816,9 +4820,13 @@ namespace ASCompletion.Completion
         public static string GetCodeTipCode(ASResult result)
         {
             if (result.Member is null) return result.Type?.ToString();
+
             var file = GetFileContents(result.InFile);
             if (string.IsNullOrEmpty(file))
+            {
                 return MemberTooltipText(result.Member, ClassModel.VoidClass);
+            }
+
             var eolMode = LineEndDetector.DetectNewLineMarker(file, (int)PluginBase.Settings.EOLMode);
             var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
             var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
@@ -4834,7 +4842,7 @@ namespace ASCompletion.Completion
         static string GetFileContents(FileModel model)
         {
             if (string.IsNullOrEmpty(model?.FileName) || !File.Exists(model.FileName)) return null;
-            foreach (var doc in PluginBase.MainForm.EnumerateDocuments())
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
                 if (doc.SciControl is { } sci && string.Equals(sci.FileName, model.FileName, StringComparison.CurrentCultureIgnoreCase))
                 {

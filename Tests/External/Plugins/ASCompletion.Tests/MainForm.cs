@@ -13,9 +13,15 @@ namespace FlashDevelop
 {
     public class MainForm : Form, IMainForm
     {
-        public void RefreshUI() => throw new NotImplementedException();
+        public void RefreshUI()
+        {
+            throw new NotImplementedException();
+        }
 
-        public void KillProcess() => throw new NotImplementedException();
+        public void KillProcess()
+        {
+            throw new NotImplementedException();
+        }
 
         public void RefreshSciConfig()
         {
@@ -220,9 +226,15 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
-        public Image FindImageAndSetAdjust(string data) => throw new NotImplementedException();
+        public Image FindImageAndSetAdjust(string data)
+        {
+            throw new NotImplementedException();
+        }
 
-        public int GetInstanceCount() => throw new NotImplementedException();
+        public int GetInstanceCount()
+        {
+            throw new NotImplementedException();
+        }
 
         public void SetUseTheme(object parent, bool use)
         {
@@ -266,8 +278,6 @@ namespace FlashDevelop
         public ITabbedDocument CurrentDocument { get; set; }
 
         public ITabbedDocument[] Documents { get; set; }
-
-        public IEnumerable<ITabbedDocument> EnumerateDocuments() => throw new NotImplementedException();
 
         public bool HasModifiedDocuments => throw new NotImplementedException();
 

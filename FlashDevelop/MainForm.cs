@@ -239,27 +239,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Returns an enumerable collection of the all available documents
-        /// </summary>
-        public IEnumerable<ITabbedDocument> EnumerateDocuments()
-        {
-            foreach (var pane in DockPanel.Panes)
-            {
-                if (pane.DockState != DockState.Document) continue;
-                foreach (var content in pane.Contents)
-                {
-                    if (content is TabbedDocument document)
-                    {
-                        yield return document;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Does FlashDevelop hold modified documents?
         /// </summary> 
-        public bool HasModifiedDocuments => EnumerateDocuments().Any(document => document.IsModified);
+        public bool HasModifiedDocuments => Documents.Any(document => document.IsModified);
 
         /// <summary>
         /// Gets or sets the WorkingDirectory
@@ -499,7 +481,7 @@ namespace FlashDevelop
             }
             try
             {
-                foreach (var doc in EnumerateDocuments())
+                foreach (var doc in Documents)
                 {
                     if (doc.SciControl?.FileName is { } fileName && string.Equals(fileName, file, StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -1925,7 +1907,7 @@ namespace FlashDevelop
             var currentPane = current?.DockHandler.PanelPane;
             CloseAllCanceled = false;
             closingAll = true;
-            foreach (var document in Documents)
+            foreach (var document in Documents.ToArray())
             {
                 var close = !(exceptCurrent && document == current);
                 if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane) close = false;
@@ -2115,11 +2097,10 @@ namespace FlashDevelop
                 contents = Regex.Replace(contents, @"\r\n?|\n", lineEndChar);
                 string processed = ProcessArgString(contents);
                 var actionPoint = SnippetHelper.ProcessActionPoint(processed);
-                var documents = Documents;
-                if (documents.Length == 1 && documents[0].IsUntitled)
+                if (Documents.Length == 1 && Documents[0].IsUntitled)
                 {
                     closingForOpenFile = true;
-                    documents[0].Close();
+                    Documents[0].Close();
                     closingForOpenFile = false;
                 }
                 var te = new TextEvent(EventType.FileTemplate, fileName);
@@ -2152,11 +2133,10 @@ namespace FlashDevelop
                 FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, PluginBase.Settings.SaveUnicodeWithBOM);
                 if (actionPoint.EntryPosition != -1)
                 {
-                    var documents = Documents;
-                    if (documents.Length == 1 && documents[0].IsUntitled)
+                    if (Documents.Length == 1 && Documents[0].IsUntitled)
                     {
                         closingForOpenFile = true;
-                        documents[0].Close();
+                        Documents[0].Close();
                         closingForOpenFile = false;
                     }
                     var te = new TextEvent(EventType.FileTemplate, newFilePath);
