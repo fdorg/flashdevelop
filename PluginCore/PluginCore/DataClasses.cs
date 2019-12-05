@@ -32,8 +32,8 @@ namespace PluginCore
     [Serializable]
     public class Argument
     {
-        private string key = string.Empty;
-        private string value = string.Empty;
+        string key = string.Empty;
+        string value = string.Empty;
 
         public Argument() { }
         public Argument(string key, string value)
@@ -91,14 +91,13 @@ namespace PluginCore
     {
         public static readonly InstalledSDK INVALID_SDK = new InstalledSDK(null);
 
-        private string path;
-        private string name;
-        private string version;
-        private string classPath;
-        private bool isValid;
+        string path;
+        string name;
+        string version;
+        string classPath;
+        bool isValid;
 
-        [field: NonSerialized]
-        private InstalledSDKOwner owner;
+        [field: NonSerialized] InstalledSDKOwner owner;
 
         [Category("Location")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]

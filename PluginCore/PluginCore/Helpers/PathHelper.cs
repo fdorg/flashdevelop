@@ -332,7 +332,7 @@ namespace PluginCore.Helpers
             return key.GetValue("JavaHome").ToString();
         }
 
-        private static string GetAssemblyPath(Assembly assembly)
+        static string GetAssemblyPath(Assembly assembly)
         {
             string codeBase = assembly.CodeBase;
 
@@ -399,8 +399,8 @@ namespace PluginCore.Helpers
             /// </summary>
             public const string EllipsisChars = "...";
 
-            private static readonly Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
-            private static readonly Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
+            static readonly Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
+            static readonly Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
 
             /// <summary>
             /// Truncates a text string to fit within a given width by replacing trimmed text with ellipses. 
@@ -550,5 +550,4 @@ namespace PluginCore.Helpers
             }
         }
     }
-
 }

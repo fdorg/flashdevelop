@@ -43,7 +43,7 @@ namespace ProjectManager.Projects.AS2
             if (IsLibraryAsset(path) && !isInjectionTarget)
                 return GetAsset(path).ID;
 
-            if (FileInspector.IsActionScript(inFile, Path.GetExtension(inFile).ToLower()))
+            if (FileInspector.IsActionScript(Path.GetExtension(inFile).ToLower()))
                 return ProjectPaths.GetRelativePath(Path.GetDirectoryName(ProjectPath), path).Replace('\\', '/');
             return ProjectPaths.GetRelativePath(Path.GetDirectoryName(inFile), path).Replace('\\', '/');
         }

@@ -15,8 +15,8 @@ namespace PluginCore.Helpers
 
             try
             {
-                StringFormat format = new StringFormat();
-                RectangleF rect = new RectangleF(0, 0, 1000, 1000);
+                var format = new StringFormat();
+                var rect = new RectangleF(0, 0, 1000, 1000);
                 CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
                 format.SetMeasurableCharacterRanges(ranges);
                 var regions = graphics.MeasureCharacterRanges(text, font, rect, format);
@@ -28,7 +28,5 @@ namespace PluginCore.Helpers
                 return 0;
             }
         }
-
     }
-
 }

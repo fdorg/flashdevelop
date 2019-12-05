@@ -67,7 +67,7 @@ namespace System.Windows.Forms
         public void SaveExpandedState()
         {
             State.ExpandedPaths.Clear();
-            AddExpandedPaths(base.Nodes);
+            AddExpandedPaths(Nodes);
         }
 
         public void RestoreExpandedState()
@@ -96,19 +96,17 @@ namespace System.Windows.Forms
         {
             get
             {
-                TreeNode bottomNode = null;
-                FindBottom(base.Nodes,ref bottomNode);
-                return bottomNode;
+                TreeNode result = null;
+                FindBottom(Nodes, ref result);
+                return result;
             }
         }
 
-        private void FindBottom(TreeNodeCollection nodes, ref TreeNode bottomNode)
+        static void FindBottom(IEnumerable nodes, ref TreeNode bottomNode)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.IsVisible)
-                    bottomNode = node;
-
+                if (node.IsVisible) bottomNode = node;
                 else if (bottomNode != null)
                     return; // this node is the first invisible node after finding visible ones
 
@@ -119,29 +117,26 @@ namespace System.Windows.Forms
 
         public void SaveScrollState()
         {
-            if (base.Nodes.Count == 0) return;
+            if (Nodes.Count == 0) return;
 
             // store what nodes were at the top and bottom so we can try and preserve scroll
             // use the tag instead of node reference because you're most likely rebuilding
             // the tree
-            TreeNode node = base.TopNode;
-            if (node != null) State.TopPath = node.FullPath;
-            else State.TopPath = null;
+            TreeNode node = TopNode;
+            State.TopPath = node?.FullPath;
             //
-            node = this.BottomNode;
-            if (node != null) State.BottomPath = node.FullPath;
-            else State.BottomPath = null;
+            node = BottomNode;
+            State.BottomPath = node?.FullPath;
         }
 
         public void RestoreScrollState()
         {
-            if (base.Nodes.Count == 0) return;
+            if (Nodes.Count == 0) return;
 
-            TreeNode bottomNode = FindClosestPath(State.BottomPath);
-            TreeNode topNode = FindClosestPath(State.TopPath);
+            var bottomNode = FindClosestPath(State.BottomPath);
+            var topNode = FindClosestPath(State.TopPath);
 
             bottomNode?.EnsureVisible();
-
             topNode?.EnsureVisible();
 
             // manually scroll all the way to the left
@@ -152,13 +147,12 @@ namespace System.Windows.Forms
         {
             if (string.IsNullOrEmpty(path)) return null;
             Queue queue = new Queue(path.Split('\\'));
-            return FindClosestPath(base.Nodes,queue);
+            return FindClosestPath(Nodes,queue);
         }
 
-        private TreeNode FindClosestPath(TreeNodeCollection nodes, Queue queue)
+        static TreeNode FindClosestPath(IEnumerable nodes, Queue queue)
         {
-            string nextChunk = queue.Dequeue() as string;
-
+            var nextChunk = (string) queue.Dequeue();
             foreach (TreeNode node in nodes)
             {
                 if (node.Text == nextChunk)
@@ -174,5 +168,4 @@ namespace System.Windows.Forms
         #endregion
 
     }
-
 }

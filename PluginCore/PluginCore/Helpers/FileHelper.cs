@@ -57,10 +57,10 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string ReadFile(string file, Encoding encoding)
         {
-            using var sr = new StreamReader(file, encoding);
-            string src = sr.ReadToEnd();
-            sr.Close();
-            return src;
+            using var reader = new StreamReader(file, encoding);
+            var result = reader.ReadToEnd();
+            reader.Close();
+            return result;
         }
         
         /// <summary>
@@ -77,10 +77,10 @@ namespace PluginCore.Helpers
             if (encoding == Encoding.UTF7) encoding = new UTF7EncodingFixed();
             if (!File.Exists(file) && Path.GetDirectoryName(file) is var dir && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            using var fs = new FileStream(file, File.Exists(file) ? FileMode.Truncate : FileMode.CreateNew);
-            using var sw = useSkipBomWriter ? new StreamWriter(fs) : new StreamWriter(fs, encoding);
-            sw.Write(text);
-            sw.Close();
+            using var stream = new FileStream(file, File.Exists(file) ? FileMode.Truncate : FileMode.CreateNew);
+            using var writer = useSkipBomWriter ? new StreamWriter(stream) : new StreamWriter(stream, encoding);
+            writer.Write(text);
+            writer.Close();
         }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void AddToFile(string file, string text, Encoding encoding)
         {
-            using var sw = new StreamWriter(file, true, encoding);
-            sw.Write(text);
-            sw.Close();
+            using var writer = new StreamWriter(file, true, encoding);
+            writer.Write(text);
+            writer.Close();
         }
 
         /// <summary>
@@ -100,11 +100,10 @@ namespace PluginCore.Helpers
         {
             try
             {
-                string newFile = file + ".new";
-                string delFile = file + ".del";
+                var newFile = file + ".new";
                 if (File.Exists(newFile))
                 {
-                    string oldFile = newFile.Substring(0, newFile.Length - 4);
+                    var oldFile = newFile.Substring(0, newFile.Length - 4);
                     if (File.Exists(oldFile))
                     {
                         File.Copy(newFile, oldFile, true);
@@ -112,6 +111,7 @@ namespace PluginCore.Helpers
                     }
                     else File.Move(newFile, oldFile);
                 }
+                var delFile = file + ".del";
                 if (File.Exists(delFile))
                 {
                     File.Delete(file);
@@ -151,8 +151,8 @@ namespace PluginCore.Helpers
             try
             {
                 if (!File.Exists(file)) return false;
-                FileAttributes fileAttr = File.GetAttributes(file);
-                return (fileAttr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
+                var attributes = File.GetAttributes(file);
+                return (attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
             }
             catch (Exception)
             {
@@ -462,5 +462,4 @@ namespace PluginCore.Helpers
         public bool ContainsBOM;
         public int BomLength = 0;
     }
-
 }

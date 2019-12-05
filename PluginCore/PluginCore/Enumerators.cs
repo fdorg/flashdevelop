@@ -109,5 +109,4 @@ namespace PluginCore
         UTF8 = 65001,
         UTF7 = 65000
     }
-
 }

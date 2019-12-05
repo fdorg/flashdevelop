@@ -432,7 +432,7 @@ namespace ProjectManager
                 case EventType.FileSave:
                     // refresh the tree to update any included <mx:Script> tags
                     string path = PluginBase.MainForm.CurrentDocument.FileName;
-                    if (Settings.EnableMxmlMapping && FileInspector.IsMxml(path, Path.GetExtension(path).ToLower()) && Tree.NodeMap.ContainsKey(path))
+                    if (Settings.EnableMxmlMapping && FileInspector.IsMxml(Path.GetExtension(path).ToLower()) && Tree.NodeMap.ContainsKey(path))
                     {
                         Tree.RefreshNode(Tree.NodeMap[path]);
                     }
@@ -797,7 +797,7 @@ namespace ProjectManager
         public void OpenFile(string path)
         {
             if (FileInspector.ShouldUseShellExecute(path)) ShellOpenFile(path);
-            else if (FileInspector.IsSwf(path, Path.GetExtension(path).ToLower())) PlaySwf(path);
+            else if (FileInspector.IsSwf(Path.GetExtension(path).ToLower())) PlaySwf(path);
             else if (path.IndexOfOrdinal("::") > 0)
             {
                 var de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
@@ -1512,9 +1512,9 @@ namespace ProjectManager
         static bool IsBuildable(string path)
         {
             var ext = Path.GetExtension(path).ToLower();
-            return FileInspector.IsAS2Project(path, ext)
+            return FileInspector.IsAS2Project(ext)
                    || FileInspector.IsAS3Project(path, ext)
-                   || FileInspector.IsHaxeProject(path, ext);
+                   || FileInspector.IsHaxeProject(ext);
         }
 
         void AddSourcePath()

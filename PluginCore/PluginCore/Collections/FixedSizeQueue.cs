@@ -12,13 +12,13 @@ namespace PluginCore.Collections
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [DebuggerNonUserCode]
     [Serializable]
-    public class FixedSizeQueue<T> : ICollection<T>, IEnumerable<T>, IEnumerable
+    public class FixedSizeQueue<T> : ICollection<T>
     {
-        private T[] _array;
-        private int _capacity;
-        private int _head;
-        private int _tail;
-        private int _version;
+        T[] _array;
+        int _capacity;
+        int _head;
+        int _tail;
+        int _version;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FixedSizeQueue{T}"/> class that is empty and has the specified initial capacity.
@@ -318,26 +318,17 @@ namespace PluginCore.Collections
         /// <summary>
         /// Returns an <see cref="Enumerator"/> object that iterates through the <see cref="FixedSizeQueue{T}"/>.
         /// </summary>
-        public Enumerator GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        public Enumerator GetEnumerator() => new Enumerator(this);
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
         /// </summary>
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
         /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
         /// <summary>
         /// Returns the element at the beginning of the <see cref="FixedSizeQueue{T}"/> without removing it.
@@ -448,10 +439,10 @@ namespace PluginCore.Collections
         [Serializable]
         public sealed class Enumerator : IEnumerator<T>
         {
-            private T m_current;
-            private int m_index;
-            private readonly FixedSizeQueue<T> m_queue;
-            private int m_version;
+            T m_current;
+            int m_index;
+            readonly FixedSizeQueue<T> m_queue;
+            int m_version;
 
             [DebuggerHidden]
             internal Enumerator(FixedSizeQueue<T> queue)

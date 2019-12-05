@@ -2976,12 +2976,14 @@ namespace ASCompletion.Completion
 
         static ClassModel FindClassOf(MemberModel aDecl)
         {
-            if (aDecl.InFile != null) 
-                foreach (ClassModel aClass in aDecl.InFile.Classes)
+            if (aDecl.InFile is null) return ClassModel.VoidClass;
+            foreach (var aClass in aDecl.InFile.Classes)
+            {
+                if (aClass.Members.Any(member => member == aDecl))
                 {
-                    foreach (MemberModel member in aClass.Members)
-                        if (member == aDecl) return aClass;
+                    return aClass;
                 }
+            }
             return ClassModel.VoidClass;
         }
 
@@ -2998,13 +3000,14 @@ namespace ASCompletion.Completion
             if (inFile is null || inFile == ctx.CurrentModel)
             {
                 var isQualified = cname.Contains('.');
-                foreach (MemberModel aDecl in ctx.GetVisibleExternalElements())
+                foreach (var aDecl in ctx.GetVisibleExternalElements())
                 {
                     if (aDecl.Name == cname || (isQualified && aDecl.Type == cname))
                     {
                         if (aDecl.InFile is null) return ctx.ResolveType(aDecl.Type, inFile);
                         foreach (var aClass in aDecl.InFile.Classes)
-                            if (aClass.Name == aDecl.Name) return aClass;
+                            if (aClass.Name == aDecl.Name)
+                                return aClass;
                         return ctx.GetModel(aDecl.InFile.Package, cname, inFile?.Package);
                     }
                 }
@@ -4150,8 +4153,8 @@ namespace ASCompletion.Completion
             if (expression.ContextFunction?.Parameters != null)
             {
                 ctx.CodeComplete.ParseLocalVars(expression, model);
-                var functionArguments = ctx.Features.functionArguments;
-                if (functionArguments != null) model.Members.MergeByLine(functionArguments);
+                var arguments = ctx.Features.functionArguments;
+                if (arguments != null) model.Members.MergeByLine(arguments);
             }
             return model.Members;
         }
@@ -4513,20 +4516,20 @@ namespace ASCompletion.Completion
                 }
             }
 
-            var list = new List<ICompletionListItem>();
+            var result = new List<ICompletionListItem>();
             string prev = null;
             var mask = (classesOnly)
                 ? FlagType.Class | FlagType.Interface | FlagType.Enum | FlagType.Delegate | FlagType.Struct | FlagType.TypeDef
                 : (FlagType)uint.MaxValue;
-            foreach (MemberModel member in known)
+            foreach (var member in known)
             {
                 if ((member.Flags & mask) == 0 || prev == member.Name)
                     if (!showClassVars || member.Type != "Class") continue;
                 prev = member.Name;
-                list.Add(new MemberItem(member));
+                result.Add(new MemberItem(member));
             }
 
-            return list;
+            return result;
         }
 
         static MemberList GetVisibleElements()

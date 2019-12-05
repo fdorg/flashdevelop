@@ -63,8 +63,8 @@ namespace ProjectManager.Projects.AS3
                 }
                 return $"{pre}Embed(source=\"{relPath}\", symbol=\"{export}\"){post}";
             }
-            if (FileInspector.IsImage(relPath, fileExt) || IsText(fileExt) 
-                || FileInspector.IsFont(relPath, fileExt) || FileInspector.IsSound(relPath, fileExt))
+            if (FileInspector.IsImage(fileExt) || IsText(fileExt) 
+                || FileInspector.IsFont(fileExt) || FileInspector.IsSound(fileExt))
             {
                 return $"{pre}Embed(source=\"{relPath}\"){post}";
             }
