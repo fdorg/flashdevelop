@@ -545,9 +545,9 @@ namespace FlashDevelop.Controls
             {
                 if (document.IsEditable)
                 {
-                    var find = RectangleToScreen(ClientRectangle);
-                    var rect = document.RectangleToScreen(document.ClientRectangle);
-                    if (Visible && rect.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, Height - 1);
+                    Rectangle find = RectangleToScreen(ClientRectangle);
+                    Rectangle doc = document.RectangleToScreen(document.ClientRectangle);
+                    if (Visible && doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, Height - 1);
                     else document.Padding = new Padding(0);
                 }
             }

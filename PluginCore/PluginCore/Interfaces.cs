@@ -307,97 +307,74 @@ namespace PluginCore
         /// Gets the <see cref="ISettings"/> interface.
         /// </summary>
         ISettings Settings { get; }
-        
         /// <summary>
         /// Gets the tool strip.
         /// </summary>
         ToolStrip ToolStrip { get; }
-        
         /// <summary>
         /// Gets the menu strip.
         /// </summary>
         MenuStrip MenuStrip { get; }
-        
         /// <summary>
         /// Gets the <see cref="Scintilla"/> configuration.
         /// </summary>
         Scintilla SciConfig { get; }
-        
         /// <summary>
         /// Gets the dock panel.
         /// </summary>
         DockPanel DockPanel { get; }
-        
         /// <summary>
         /// Gets the application start arguments.
         /// </summary>
         string[] StartArguments { get; }
-        
         /// <summary>
         /// Gets the application custom arguments.
         /// </summary>
         List<Argument> CustomArguments { get; }
-        
         /// <summary>
         /// Gets the status strip.
         /// </summary>
         StatusStrip StatusStrip { get; }
-        
         /// <summary>
         /// Gets or sets the working directory.
         /// </summary>
         string WorkingDirectory { get; set; }
-        
         /// <summary>
         /// Gets the tool strip panel.
         /// </summary>
         ToolStripPanel ToolStripPanel { get; }
-        
         /// <summary>
         /// Gets the tool strip status label.
         /// </summary>
         ToolStripStatusLabel StatusLabel { get; }
-        
         /// <summary>
         /// Gets the tool strip progress label.
         /// </summary>
         ToolStripStatusLabel ProgressLabel { get; }
-
         /// <summary>
         /// Gets the tool strip progress bar.
         /// </summary>
         ToolStripProgressBar ProgressBar { get; }
-
         /// <summary>
         /// Gets the collection of controls contained within this control.
         /// </summary>
         Control.ControlCollection Controls { get; }
-
         /// <summary>
         /// Gets the tab menu.
         /// </summary>
         ContextMenuStrip TabMenu { get; }
-
         /// <summary>
         /// Gets the editor menu.
         /// </summary>
         ContextMenuStrip EditorMenu { get; }
-
         /// <summary>
         /// Gets the current <see cref="ITabbedDocument"/> object.
         /// </summary>
         ITabbedDocument CurrentDocument { get; }
-
         /// <summary>
         /// Gets all available documents.
         /// </summary>
         ITabbedDocument[] Documents { get; }
-
-        /// <summary>
-        /// Returns an enumerable collection of the all available documents
-        /// </summary>
-        IEnumerable<ITabbedDocument> EnumerateDocuments();
-
         /// <summary>
         /// Gets whether FlashDevelop holds modified documents.
         /// </summary>

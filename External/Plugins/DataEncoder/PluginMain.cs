@@ -202,7 +202,7 @@ namespace DataEncoder
         /// </summary>
         bool IsXmlSaveable(string file)
         {
-            foreach (var document in PluginBase.MainForm.EnumerateDocuments())
+            foreach (var document in PluginBase.MainForm.Documents)
             {
                 if (document.SciControl is { } sci && (sci.FileName == file || sci.FileName == oldFileName))
                 {
