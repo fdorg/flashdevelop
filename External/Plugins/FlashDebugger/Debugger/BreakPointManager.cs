@@ -154,9 +154,9 @@ namespace FlashDebugger
         public void SetBreakPointsToEditor(ITabbedDocument[] documents)
         {
             m_bAccessable = false;
-            foreach (ITabbedDocument document in documents)
+            foreach (var document in documents)
             {
-                ScintillaControl sci = document.SciControl;
+                var sci = document.SciControl;
                 if (sci is null) continue;
                 if (Path.GetExtension(sci.FileName) == ".as" || Path.GetExtension(sci.FileName) == ".mxml")
                 {
