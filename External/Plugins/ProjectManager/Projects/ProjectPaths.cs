@@ -49,7 +49,7 @@ namespace ProjectManager.Projects
             for (int j = i; j < b.Length; j++)
                 relPath.Add(b[j]);
 
-            string relativePath = string.Join(slash.ToString(), relPath.ToArray());
+            string relativePath = string.Join(slash.ToString(), relPath);
             string special = (relativePath.Length > 0) ? relativePath : "."; // special case
 
             if (special.StartsWith("..", StringComparison.Ordinal) && special.Contains(":")) // invalid relative path...

@@ -84,7 +84,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
                 {
-                    ErrorManager.ShowInfo(string.Join("\n", errors.ToArray()));
+                    ErrorManager.ShowInfo(string.Join("\n", errors));
                 });
             }
         }

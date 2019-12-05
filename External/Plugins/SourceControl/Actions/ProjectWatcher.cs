@@ -206,8 +206,8 @@ namespace SourceControl.Actions
 
         static string GetSomeFiles(List<string> list)
         {
-            if (list.Count < 10) return string.Join("\n", list.ToArray());
-            return string.Join("\n", list.GetRange(0, 9).ToArray()) + "\n(...)\n" + list[list.Count - 1];
+            if (list.Count < 10) return string.Join("\n", list);
+            return string.Join("\n", list.GetRange(0, 9)) + "\n(...)\n" + list[list.Count - 1];
         }
 
         static void GetAllFiles(string path, ICollection<string> files)

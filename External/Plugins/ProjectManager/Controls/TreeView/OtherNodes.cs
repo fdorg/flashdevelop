@@ -134,7 +134,7 @@ namespace ProjectManager.Controls.TreeView
                 }
             }
             label.Reverse();
-            Text = string.Join("/", label.ToArray());
+            Text = string.Join("/", label);
             ToolTipText = classpath;
         }
 

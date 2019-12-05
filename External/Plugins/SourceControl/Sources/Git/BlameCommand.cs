@@ -82,7 +82,7 @@ namespace SourceControl.Sources.Git
                     }
                     if (errors.Count > 0)
                     {
-                        document.ShowError(string.Join("\n", errors.ToArray()));
+                        document.ShowError(string.Join("\n", errors));
                     }
                 }
                 catch (Exception e)
