@@ -133,9 +133,9 @@ namespace ProjectManager.Helpers
         {
             dest = ReplaceKeywords(dest); // you can use keywords in filenames too
             string ext = Path.GetExtension(source).ToLower();
-            if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(source, ext))
+            if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(ext))
             {
-                if (FileInspector.IsTemplate(source, ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
+                if (FileInspector.IsTemplate(ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
 
                 bool saveBOM = PluginBase.Settings.SaveUnicodeWithBOM;
                 Encoding encoding = Encoding.GetEncoding((int)PluginBase.Settings.DefaultCodePage);

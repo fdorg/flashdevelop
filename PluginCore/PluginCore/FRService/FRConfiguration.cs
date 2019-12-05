@@ -70,6 +70,7 @@ namespace PluginCore.FRService
             this.search = search;
             this.files = files;
         }
+
         public FRConfiguration(string fileName, string source, FRSearch search)
         {
             type = OperationType.FindInSource;
@@ -77,12 +78,14 @@ namespace PluginCore.FRService
             this.search = search;
             this.source = source;
         }
+        
         public FRConfiguration(string fileName, FRSearch search)
         {
             type = OperationType.FindInFile;
             path = fileName;
             this.search = search;
         }
+        
         public FRConfiguration(string path, string fileMask, bool recursive, FRSearch search)
         {
             this.path = path;

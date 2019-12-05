@@ -41,7 +41,7 @@ namespace ProjectManager.Controls.TreeView
 
             string ext = Path.GetExtension(filePath).ToLower();
 
-            if (FileInspector.IsSwf(filePath, ext) || FileInspector.IsSwc(filePath, ext))
+            if (FileInspector.IsSwf(ext) || FileInspector.IsSwc(filePath, ext))
                 return new SwfFileNode(filePath);
             if (FileAssociations.ContainsKey(ext)) // custom nodes building
                 return FileAssociations[ext](filePath);
@@ -57,11 +57,11 @@ namespace ProjectManager.Controls.TreeView
 
             if (project != null && project.IsPathHidden(path))
                 ImageIndex = Icons.HiddenFile.Index;
-            else if ((FileInspector.IsActionScript(path, ext) || FileInspector.IsHaxeFile(path, ext)) && project.IsCompileTarget(path))
+            else if ((FileInspector.IsActionScript(ext) || FileInspector.IsHaxeFile(ext)) && project.IsCompileTarget(path))
                 ImageIndex = Icons.ActionScriptCompile.Index;
-            else if (FileInspector.IsMxml(path, ext) && project.IsCompileTarget(path))
+            else if (FileInspector.IsMxml(ext) && project.IsCompileTarget(path))
                 ImageIndex = Icons.MxmlFileCompile.Index;
-            else if (FileInspector.IsCss(path, ext) && project.IsCompileTarget(path))
+            else if (FileInspector.IsCss(ext) && project.IsCompileTarget(path))
                 ImageIndex = Icons.ActionScriptCompile.Index;
             else if (FileInspector.IsSwc(path) && Parent is null) // external SWC library
                 ImageIndex = Icons.Classpath.Index;

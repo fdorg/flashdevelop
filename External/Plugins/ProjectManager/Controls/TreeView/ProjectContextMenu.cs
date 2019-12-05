@@ -280,13 +280,13 @@ namespace ProjectManager.Controls.TreeView
             else if (node is FileNode)
             {
                 string ext = Path.GetExtension(path).ToLower();
-                if (FileInspector.IsActionScript(path, ext)) AddClassItems(menu, path);
-                else if (FileInspector.IsHaxeFile(path, ext)) AddClassItems(menu, path);
-                else if (FileInspector.IsMxml(path, ext)) AddClassItems(menu, path);
-                else if (FileInspector.IsCss(path, ext)) AddCssItems(menu, path);
-                else if (FileInspector.IsSwf(path, ext)) AddSwfItems(menu, path);
+                if (FileInspector.IsActionScript(ext)) AddClassItems(menu, path);
+                else if (FileInspector.IsHaxeFile(ext)) AddClassItems(menu, path);
+                else if (FileInspector.IsMxml(ext)) AddClassItems(menu, path);
+                else if (FileInspector.IsCss(ext)) AddCssItems(menu, path);
+                else if (FileInspector.IsSwf(ext)) AddSwfItems(menu, path);
                 else if (FileInspector.IsSwc(path, ext)) AddSwcItems(menu, path);
-                else if (FileInspector.IsResource(path, ext)) AddOtherResourceItems(menu, path);
+                else if (FileInspector.IsResource(ext)) AddOtherResourceItems(menu, path);
                 else AddGenericFileItems(menu, path);
             }
         }
@@ -508,9 +508,9 @@ namespace ProjectManager.Controls.TreeView
         static bool IsBuildable(string path)
         {
             var ext = Path.GetExtension(path).ToLower();
-            return FileInspector.IsAS2Project(path, ext)
+            return FileInspector.IsAS2Project(ext)
                    || FileInspector.IsAS3Project(path, ext)
-                   || FileInspector.IsHaxeProject(path, ext);
+                   || FileInspector.IsHaxeProject(ext);
         }
 
         bool IsExternalSwc(string file)

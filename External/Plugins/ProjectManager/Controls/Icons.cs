@@ -218,27 +218,27 @@ namespace ProjectManager.Controls
             if (string.IsNullOrEmpty(file))
                 return BlankFile;
             string ext = Path.GetExtension(file).ToLower();
-            if (FileInspector.IsActionScript(file, ext))
+            if (FileInspector.IsActionScript(ext))
                 return ActionScript;
-            if (FileInspector.IsHaxeFile(file, ext))
+            if (FileInspector.IsHaxeFile(ext))
                 return HaxeFile;
-            if (FileInspector.IsMxml(file, ext))
+            if (FileInspector.IsMxml(ext))
                 return MxmlFile;
-            if (FileInspector.IsFont(file, ext))
+            if (FileInspector.IsFont(ext))
                 return Font;
-            if (FileInspector.IsImage(file, ext) || ext == ".ico")
+            if (FileInspector.IsImage(ext) || ext == ".ico")
                 return ImageResource;
-            if (FileInspector.IsSwf(file, ext))
+            if (FileInspector.IsSwf(ext))
                 return SwfFile;
             if (FileInspector.IsSwc(file, ext))
                 return SwcFile;
-            if (FileInspector.IsHtml(file, ext))
+            if (FileInspector.IsHtml(ext))
                 return HtmlFile;
-            if (FileInspector.IsXml(file, ext))
+            if (FileInspector.IsXml(ext))
                 return XmlFile;
             if (FileInspector.IsText(file, ext))
                 return TextFile;
-            if (FileInspector.IsFLA(file, ext))
+            if (FileInspector.IsFLA(ext))
                 return FlashCS3;
             return ExtractIconIfNecessary(file);
         }

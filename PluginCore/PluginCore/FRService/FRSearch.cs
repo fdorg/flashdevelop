@@ -66,26 +66,26 @@ namespace PluginCore.FRService
         /// <param name="text">Text to unescape</param>
         public static string Unescape(string text)
         {
-            int p = text.IndexOf('\\');
-            if (p < 0) return text;
+            var p = text.IndexOf('\\');
+            if (p == -1) return text;
 
-            string result = text.Substring(0, p);
-            int n = text.Length;
-            for (int i = p; i < n; i++)
+            var result = new StringBuilder(text.Substring(0, p));
+            var n = text.Length;
+            for (var i = p; i < n; i++)
             {
                 if (i < n - 1 && text[i] == '\\')
                 {
                     i++;
-                    char c = text[i];
-                    if (c == 'r') result += '\r';
-                    else if (c == 'n') result += '\n';
-                    else if (c == 't') result += '\t';
-                    else if (c == 'v') result += '\v';
-                    else result += c;
+                    var c = text[i];
+                    if (c == 'r') result.Append('\r');
+                    else if (c == 'n') result.Append('\n');
+                    else if (c == 't') result.Append('\t');
+                    else if (c == 'v') result.Append('\v');
+                    else result.Append(c);
                 }
-                else result += text[i];
+                else result.Append(text[i]);
             }
-            return result;
+            return result.ToString();
         }
 
         /// <summary>
@@ -336,12 +336,12 @@ namespace PluginCore.FRService
 
                 string ext = Path.GetExtension(SourceFile).ToLowerInvariant();
 
-                isHaxeFile = FileInspector.IsHaxeFile(SourceFile, ext);
+                isHaxeFile = FileInspector.IsHaxeFile(ext);
 
                 // Haxe, ActionScript, JavaScript and LoomScript support Regex literals
-                hasRegexLiterals = isHaxeFile || FileInspector.IsActionScript(SourceFile, ext) ||
-                                   FileInspector.IsMxml(SourceFile, ext) ||
-                                   FileInspector.IsHtml(SourceFile, ext) || ext == ".js" || ext == ".ls" ||
+                hasRegexLiterals = isHaxeFile || FileInspector.IsActionScript(ext) ||
+                                   FileInspector.IsMxml(ext) ||
+                                   FileInspector.IsHtml(ext) || ext == ".js" || ext == ".ls" ||
                                    ext == ".ts";
             }
         }
