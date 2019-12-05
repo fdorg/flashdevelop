@@ -9,13 +9,13 @@ namespace PluginCore.Helpers
     {
         public Dictionary<string, string> Flatten()
         {
-            var flat = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
             foreach (var section in this)
             {
                 foreach (var entry in section.Value)
-                    flat[entry.Key] = entry.Value;
+                    result[entry.Key] = entry.Value;
             }
-            return flat;
+            return result;
         }
     }
 
@@ -30,19 +30,19 @@ namespace PluginCore.Helpers
         {
             if (cache && Cache.ContainsKey(configPath)) return Cache[configPath];
 
-            SimpleIni ini = new SimpleIni();
-            Dictionary<string, string> config = new Dictionary<string, string>();
-            string currentSection = "Default";
+            var result = new SimpleIni();
+            var config = new Dictionary<string, string>();
+            var currentSection = "Default";
             if (File.Exists(configPath))
             {
-                string[] lines = File.ReadAllLines(configPath);
+                var lines = File.ReadAllLines(configPath);
                 foreach (string rawLine in lines)
                 {
                     string line = rawLine.Trim();
                     if (line.Length < 2 || line.StartsWith("#", StringComparison.Ordinal) || line.StartsWith(";", StringComparison.Ordinal)) continue;
                     if (line.StartsWith("[", StringComparison.Ordinal))
                     {
-                        ini.Add(currentSection, config);
+                        result.Add(currentSection, config);
                         config = new Dictionary<string, string>();
                         currentSection = line.Substring(1, line.Length - 2);
                     }
@@ -54,10 +54,10 @@ namespace PluginCore.Helpers
                     }
                 }
             }
-            ini.Add(currentSection, config);
+            result.Add(currentSection, config);
 
-            if (cache) Cache[configPath] = ini;
-            return ini;
+            if (cache) Cache[configPath] = result;
+            return result;
         }
     }
 }

@@ -32,10 +32,10 @@ namespace ProjectManager.Projects
             SwfMode = SwfAssetMode.Library;
         }
 
-        public bool IsImage => FileInspector.IsImage(Path, Extension);
-        public bool IsSound => FileInspector.IsSound(Path, Extension);
-        public bool IsFont => FileInspector.IsFont(Path, Extension);
-        public bool IsSwf => FileInspector.IsSwf(Path, Extension);
+        public bool IsImage => FileInspector.IsImage(Extension);
+        public bool IsSound => FileInspector.IsSound(Extension);
+        public bool IsFont => FileInspector.IsFont(Extension);
+        public bool IsSwf => FileInspector.IsSwf(Extension);
         public bool IsSwc => FileInspector.IsSwc(Path, Extension);
 
         public string Extension => System.IO.Path.GetExtension(Path).ToLower();

@@ -19,12 +19,7 @@ namespace PluginCore.Helpers
         {
             try
             {
-                if (Directory.Exists(path))
-                {
-                    return Directory.GetFileSystemEntries(path).Length == 0;
-                }
-
-                return false;
+                return Directory.Exists(path) && Directory.GetFileSystemEntries(path).Length == 0;
             }
             catch { return false; }
         }
@@ -32,10 +27,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks if the directory name is illegal
         /// </summary>
-        public static bool IsIllegalFolderName(string name)
-        {
-            return IllegalFolderNames.Contains(name.ToUpper());
-        }
+        public static bool IsIllegalFolderName(string name) => IllegalFolderNames.Contains(name.ToUpper());
 
         /// <summary>
         /// Gets a name of the folder 
@@ -101,7 +93,5 @@ namespace PluginCore.Helpers
                 ErrorManager.ShowError(ex);
             }
         }
-
     }
-
 }

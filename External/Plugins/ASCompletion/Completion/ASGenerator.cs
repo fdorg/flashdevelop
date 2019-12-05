@@ -2549,17 +2549,17 @@ namespace ASCompletion.Completion
 
         static int GetContextOwnerEndPos(ScintillaControl sci, int wordStartPos)
         {
-            var pos = wordStartPos - 1;
+            var result = wordStartPos - 1;
             var dotFound = false;
-            while (pos > 0)
+            while (result > 0)
             {
-                var c = (char) sci.CharAt(pos);
+                var c = (char) sci.CharAt(result);
                 if (c == '.' && !dotFound) dotFound = true;
                 else if (c == '\t' || c == '\n' || c == '\r' || c == ' ') { /* skip */ }
-                else return dotFound ? pos + 1 : -1;
-                pos--;
+                else return dotFound ? result + 1 : -1;
+                result--;
             }
-            return pos;
+            return result;
         }
 
         public static string Capitalize(string name)
@@ -3135,7 +3135,7 @@ namespace ASCompletion.Completion
             else maxLine = ASContext.Context.CurrentModel.PrivateSectionIndex;
             while (line < maxLine)
             {
-                string text = sci.GetLine(line++);
+                var text = sci.GetLine(line++);
                 if (text.Contains('{'))
                 {
                     firstVar = true;
@@ -3706,7 +3706,7 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        static string GetPrivateAccessor(MemberModel member, ClassModel inClass)
+        static string GetPrivateAccessor(MemberModel member, MemberModel inClass)
         {
             var acc = GetStaticKeyword(member);
             if (!string.IsNullOrEmpty(acc)) acc += " ";
@@ -3992,21 +3992,21 @@ namespace ASCompletion.Completion
         {
             var name = newMember.Name;
             if (!ofClass.Members.Contains(name, FlagType.Getter, 0)) return string.Empty;
-            var template = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
-            template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Member", $"super.{name}");
-            return template;
+            var result = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
+            result = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, result);
+            result = TemplateUtils.ReplaceTemplateVariable(result, "Member", $"super.{name}");
+            return result;
         }
 
         protected virtual string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
             var name = newMember.Name;
             if (!ofClass.Members.Contains(name, FlagType.Setter, 0)) return string.Empty;
-            var template = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
-            template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Member", $"super.{name}");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ASContext.Context.Features.voidKey ?? "void");
-            return template;
+            var result = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
+            result = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, result);
+            result = TemplateUtils.ReplaceTemplateVariable(result, "Member", $"super.{name}");
+            result = TemplateUtils.ReplaceTemplateVariable(result, "Void", ASContext.Context.Features.voidKey ?? "void");
+            return result;
         }
 
         public static void GenerateDelegateMethods(ScintillaControl sci, MemberModel member, Dictionary<MemberModel, ClassModel> selectedMembers, ClassModel classModel, ClassModel inClass)
@@ -4198,7 +4198,7 @@ namespace ASCompletion.Completion
             return type;
         }
 
-        static string GetSuperCall(MemberModel member, List<string> typesUsed)
+        static string GetSuperCall(MemberModel member, ICollection<string> typesUsed)
         {
             string args = "";
             if (member.Parameters != null)
@@ -4212,23 +4212,23 @@ namespace ASCompletion.Completion
             bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
             if (!noRet) AddTypeOnce(typesUsed, member.Type);
 
-            string action = "";
+            var result = "";
             if ((member.Flags & FlagType.Function) > 0)
             {
-                action =
+                result =
                     (noRet ? "" : "return ")
                     + "super." + member.Name
                     + ((args.Length > 2) ? "(" + args.Substring(2) + ")" : "()") + ";";
             }
             else if ((member.Flags & FlagType.Setter) > 0 && args.Length > 0)
             {
-                action = "super." + member.Name + " = " + member.Parameters[0].Name + ";";
+                result = "super." + member.Name + " = " + member.Parameters[0].Name + ";";
             }
             else if ((member.Flags & FlagType.Getter) > 0)
             {
-                action = "return super." + member.Name + ";";
+                result = "return super." + member.Name + ";";
             }
-            return action;
+            return result;
         }
 
         #endregion
@@ -4588,4 +4588,3 @@ namespace ASCompletion.Completion
     }
     #endregion
 }
-

@@ -293,6 +293,4 @@ namespace PluginCore
         #endregion
 
     }
-
 }
-

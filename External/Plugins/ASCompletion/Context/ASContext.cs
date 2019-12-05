@@ -125,17 +125,15 @@ namespace ASCompletion.Context
             get => cLine;
             set
             {
-                if (cFile != null)
+                if (cFile is null) return;
+                if (cLine != value)
                 {
-                    if (cLine != value)
-                    {
-                        cLine = value;
-                        if (cFile.OutOfDate) UpdateCurrentFile(true);
-                        else UpdateContext(cLine);
-                    }
-                    // require context
-                    if (Context != this) Context = this;
+                    cLine = value;
+                    if (cFile.OutOfDate) UpdateCurrentFile(true);
+                    else UpdateContext(cLine);
                 }
+                // require context
+                if (Context != this) Context = this;
             }
         }
 
@@ -538,7 +536,7 @@ namespace ASCompletion.Context
 
         protected virtual void ManualExploration(PathModel path, IEnumerable<string> hideDirectories)
         {
-            PathExplorer explorer = new PathExplorer(this, path);
+            var explorer = new PathExplorer(this, path);
             path.InUse = true;
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
             explorer.OnExplorationDone += RefreshContextCache;
@@ -559,7 +557,7 @@ namespace ASCompletion.Context
                 && (!Settings.LazyClasspathExploration || path.IsVirtual))
             {
                 //TraceManager.Add("EXPLORE: " + path.Path);
-                PathExplorer explorer = new PathExplorer(this, path);
+                var explorer = new PathExplorer(this, path);
                 explorer.OnExplorationDone += RefreshContextCache;
                 explorer.OnExplorationProgress += (state, value, max) => plugin.Panel.SetStatus(state, value, max);
                 explorer.UseCache = !CommonSettings.DisableCache;
@@ -613,8 +611,7 @@ namespace ASCompletion.Context
         /// <param name="path">Path to add</param>
         public virtual bool SetTemporaryPath(string path)
         {
-            if (temporaryPath == path)
-                return false;
+            if (temporaryPath == path) return false;
             if (temporaryPath != null)
             {
                 while (classPath.Count > 0 && classPath[0].IsTemporaryPath)
@@ -624,33 +621,30 @@ namespace ASCompletion.Context
                 }
                 temporaryPath = null;
             }
-            if (path != null && Directory.Exists(path))
-            {
-                // avoid duplicated pathes
-                path = NormalizePath(path);
-                foreach (PathModel apath in classPath)
-                    if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
-                    {
-                        temporaryPath = null;
-                        return false;
-                    }
-                // add path
-                temporaryPath = path;
-                var tempModel = PathModel.GetModel(temporaryPath, this);
-                if (!tempModel.WasExplored)
+            if (path is null || !Directory.Exists(path)) return false;
+            // avoid duplicated pathes
+            path = NormalizePath(path);
+            foreach (var apath in classPath)
+                if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
                 {
-                    tempModel.IsTemporaryPath = true;
-                    tempModel.ReleaseWatcher();
+                    temporaryPath = null;
+                    return false;
                 }
-                tempModel.InUse = true;
-                classPath.Insert(0, tempModel);
-                return true;
+            // add path
+            temporaryPath = path;
+            var tempModel = PathModel.GetModel(temporaryPath, this);
+            if (!tempModel.WasExplored)
+            {
+                tempModel.IsTemporaryPath = true;
+                tempModel.ReleaseWatcher();
             }
-            return false;
+            tempModel.InUse = true;
+            classPath.Insert(0, tempModel);
+            return true;
         }
 
         /// <summary>
-        /// Classpathes & classes cache initialisation
+        /// Classpathes & classes cache initialization
         /// </summary>
         public virtual void BuildClassPath()
         {
@@ -723,9 +717,9 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual bool UnsetOutOfDate()
         {
-            bool state = cFile.OutOfDate;
+            var result = cFile.OutOfDate;
             if (cFile != FileModel.Ignore) cFile.OutOfDate = false;
-            return state;
+            return result;
         }
 
         /// <summary>
@@ -738,23 +732,23 @@ namespace ASCompletion.Context
             if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName)) 
                 return new FileModel(fileName);
 
-            FileModel nFile;
+            FileModel result;
             fileName = PathHelper.GetLongPathName(fileName);
             if (classPath != null)
             {
                 // check if in cache
                 foreach (PathModel aPath in classPath)
                 {
-                    if (aPath.TryGetFile(fileName, out nFile))
+                    if (aPath.TryGetFile(fileName, out result))
                     {
-                        nFile.Check();
-                        return nFile;
+                        result.Check();
+                        return result;
                     }
                 }
             }
 
             // parse and add to cache
-            nFile = GetFileModel(fileName);
+            result = GetFileModel(fileName);
             if (classPath != null)
             {
                 string upName = fileName.ToUpper();
@@ -762,14 +756,14 @@ namespace ASCompletion.Context
                 {
                     if (upName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
                     {
-                        aPath.AddFile(nFile);
-                        return nFile;
+                        aPath.AddFile(result);
+                        return result;
                     }
                 }
             }
 
             // not owned
-            return nFile;
+            return result;
         }
 
         /// <summary>
@@ -795,12 +789,10 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual void CheckModel(bool onFileOpen)
         {
-            if (cFile.OutOfDate)
-            {
-                cFile.Check();
-                // update outline
-                if (Context == this) Context = this;
-            }
+            if (!cFile.OutOfDate) return;
+            cFile.Check();
+            // update outline
+            if (Context == this) Context = this;
         }
 
         /// <summary>

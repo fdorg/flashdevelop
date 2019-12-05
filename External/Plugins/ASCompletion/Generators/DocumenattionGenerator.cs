@@ -84,13 +84,13 @@ namespace ASCompletion.Generators
 
         static bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
         {
-            var escaped = false;
+            var result = false;
             for (var i = position - 1; i >= 0; i--)
             {
                 if (sci.CharAt(i) != escapeChar) break;
-                escaped = !escaped;
+                result = !result;
             }
-            return escaped;
+            return result;
         }
 
         void GenerateJob(DocumentationGeneratorJobType job, string context)
@@ -99,7 +99,7 @@ namespace ASCompletion.Generators
             {
                 case Empty:
                 case MethodDetails:
-                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     sci.BeginUndoAction();
                     try
                     {

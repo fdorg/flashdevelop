@@ -59,7 +59,7 @@ namespace ProjectManager.Projects.Haxe
                 return GetAsset(path).ID;
 
             var dirName = inFile;
-            if (FileInspector.IsHaxeFile(inFile, Path.GetExtension(inFile).ToLower()))
+            if (FileInspector.IsHaxeFile(Path.GetExtension(inFile).ToLower()))
                 dirName = ProjectPath;
 
             return '"' + ProjectPaths.GetRelativePath(Path.GetDirectoryName(dirName), path).Replace('\\', '/') + '"'; 
@@ -67,7 +67,7 @@ namespace ProjectManager.Projects.Haxe
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
         {
-            if (isDirectory || !FileInspector.IsHaxeFile(path, Path.GetExtension(path))) return CompileTargetType.None;
+            if (isDirectory || !FileInspector.IsHaxeFile(Path.GetExtension(path))) return CompileTargetType.None;
 
             foreach (string cp in AbsoluteClasspaths)
                 if (path.StartsWith(cp, StringComparison.OrdinalIgnoreCase))
