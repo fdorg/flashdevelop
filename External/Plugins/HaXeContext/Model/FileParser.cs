@@ -1103,6 +1103,17 @@ namespace HaXeContext.Model
                                 evalToken = 0;
                                 addChar = true;
                             }
+                            /**
+                             * Haxe4
+                             * for example: function foo(e:(e<position>:T)->R)
+                             */
+                            else if (inType && c1 == ':'
+                                     && length > 0
+                                     && buffer[0] == '(')
+                            {
+                                evalToken = 0;
+                                addChar = true;
+                            }
                             else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;

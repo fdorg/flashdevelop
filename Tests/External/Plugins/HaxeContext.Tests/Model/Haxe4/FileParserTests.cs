@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ASCompletion;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using NUnit.Framework;
 using PluginCore;
 
@@ -79,6 +80,63 @@ namespace HaXeContext.Model.Haxe4
                 .Classes.FirstOrDefault(sci.CurrentLine)
                 .Members.FirstOrDefault(sci.CurrentLine);
             return member.Value;
+        }
+
+        static IEnumerable<TestCaseData> Issue2933TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2933_1")
+                    .Returns(new MemberModel
+                    {
+                        Name = "foo",
+                        Access = Visibility.Private,
+                        Flags = FlagType.Dynamic | FlagType.Function,
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel
+                            {
+                                Name = "e",
+                                Type = "(e:E)->R",
+                                Flags = FlagType.Variable | FlagType.ParameterVar,
+                            }
+                        },
+                    })
+                    .SetName("Haxe4. function foo(e:(e:E)->R). Issue 2933. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2933");
+                yield return new TestCaseData("Issue2933_2")
+                    .Returns(new MemberModel
+                    {
+                        Name = "foo",
+                        Access = Visibility.Private,
+                        Flags = FlagType.Dynamic | FlagType.Function,
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel
+                            {
+                                Name = "e",
+                                Type = "Void->((e:E)->Void)",
+                                Flags = FlagType.Variable | FlagType.ParameterVar,
+                            }
+                        },
+                    })
+                    .SetName("Haxe4. function foo(e:Void->((e:E)->Void)). Issue 2933. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2933");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(Issue2933TestCases)),
+        ]
+        public MemberModel ParseFile_Issue2933(string fileName)
+        {
+            var sourceText = Haxe3.FileParserTests.ReadAllText(fileName);
+            SetSrc(sci, sourceText);
+            var member = ASContext.Context.CurrentModel
+                .Classes.FirstOrDefault(sci.CurrentLine)
+                .Members.FirstOrDefault(sci.CurrentLine);
+            return member;
         }
     }
 }
