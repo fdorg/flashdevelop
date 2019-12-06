@@ -19,7 +19,6 @@ namespace PluginCore.Controls
         public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
         public static string HLBgStyleEnd = "[/BGCOLOR]";
 
-
         // state
         protected string currentText;
         protected int currentHLStart;
@@ -112,7 +111,6 @@ namespace PluginCore.Controls
             if (start != end)
             {
                 string savedRawText = rawText;
-
                 try
                 {
                     rawText = rawText.Substring(0, start)
@@ -227,7 +225,8 @@ namespace PluginCore.Controls
         #endregion
 
         #region Controls fading on Control key
-        private static bool faded;
+
+        static bool faded;
 
         internal void FadeOut()
         {

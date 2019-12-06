@@ -13,11 +13,11 @@ namespace MacroManager
 {
     public class PluginMain : IPlugin
     {
-        private ToolStripSeparator toolbarSeparator;
-        private List<ToolStripItem> toolbarItems;
-        private ToolStripMenuItem macroMenuItem;
-        private ToolStripMenuItem editMenuItem;
-        private string settingFilename;
+        ToolStripSeparator toolbarSeparator;
+        List<ToolStripItem> toolbarItems;
+        ToolStripMenuItem macroMenuItem;
+        ToolStripMenuItem editMenuItem;
+        string settingFilename;
 
         #region Required Properties
 
@@ -119,7 +119,7 @@ namespace MacroManager
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        private void InitBasics()
+        void InitBasics()
         {
             toolbarItems = new List<ToolStripItem>();
             toolbarSeparator = new ToolStripSeparator();
@@ -133,7 +133,7 @@ namespace MacroManager
         /// <summary>
         /// Creates the nesessary main menu item
         /// </summary>
-        private void CreateMainMenuItems()
+        void CreateMainMenuItems()
         {
             var mainMenu = PluginBase.MainForm.MenuStrip;
             macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
@@ -218,7 +218,7 @@ namespace MacroManager
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        private void LoadSettings()
+        void LoadSettings()
         {
             AppSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -243,7 +243,7 @@ namespace MacroManager
         /// <summary>
         /// Runs the macros that have autorun enabled
         /// </summary>
-        private void RunAutoRunMacros()
+        void RunAutoRunMacros()
         {
             try
             {
@@ -268,7 +268,7 @@ namespace MacroManager
         /// <summary>
         /// Executes the clicked macro
         /// </summary>
-        private void MacroMenuItemClick(object sender, EventArgs e)
+        static void MacroMenuItemClick(object sender, EventArgs e)
         {
             try
             {
@@ -298,12 +298,12 @@ namespace MacroManager
         /// <summary>
         /// Opens the macro manager dialog
         /// </summary>
-        private void EditMenuItemClick(object sender, EventArgs e) => ManagerDialog.Show(this);
+        void EditMenuItemClick(object sender, EventArgs e) => ManagerDialog.Show(this);
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        private void SaveSettings() => ObjectSerializer.Serialize(settingFilename, AppSettings);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, AppSettings);
 
         #endregion
 

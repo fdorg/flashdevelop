@@ -184,7 +184,7 @@ namespace AS3Context
 
                         if (PluginBase.MainForm.CurrentDocument is { } sci)
                         {
-                            inMXML = Path.GetExtension(sci.FileName).ToLower() == ".mxml";
+                            inMXML = Path.GetExtension(sci.FileName)?.ToLower() == ".mxml";
                             MxmlComplete.IsDirty = true;
                         }
                         else inMXML = false;

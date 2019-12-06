@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
@@ -351,9 +352,7 @@ namespace PluginCore.Controls
         public static void UpdateTip(object sender, System.Timers.ElapsedEventArgs e)
         {
             tempoTip.Stop();
-            if (currentItem is null || faded)
-                return;
-
+            if (currentItem is null || faded) return;
             UITools.Tip.SetText(currentItem.Description ?? "", false);
             UITools.Tip.Redraw(false);
 

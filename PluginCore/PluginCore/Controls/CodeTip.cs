@@ -38,10 +38,7 @@ namespace PluginCore.Controls
             codeTip.BringToFront();
         }
 
-        public void Hide()
-        {
-            codeTip.Visible = false;
-        }
+        public void Hide() => codeTip.Visible = false;
 
         void ConfigureEditor(ScintillaControl sci, string code)
         {
@@ -59,8 +56,7 @@ namespace PluginCore.Controls
             editor.SetProperty("lexer.cpp.track.preprocessor", "0");
 
             Language language = GetLanguage(editor.ConfigurationLanguage);
-            if (language is null)
-                return;
+            if (language is null) return;
 
             UseStyle defaultStyle = null;
             foreach (var useStyle in language.usestyles)
@@ -86,11 +82,7 @@ namespace PluginCore.Controls
             for (var index = 0; index < editor.LineCount; index++)
             {
                 var indentation = editor.GetLineIndentation(index);
-                if (indentation == 0)
-                {
-                    continue;
-                }
-
+                if (indentation == 0) continue;
                 minIndentation = Math.Min(minIndentation, indentation);
             }
 
@@ -99,11 +91,7 @@ namespace PluginCore.Controls
                 for (var index = 0; index < editor.LineCount; index++)
                 {
                     var indentation = editor.GetLineIndentation(index);
-                    if (indentation == 0)
-                    {
-                        continue;
-                    }
-
+                    if (indentation == 0) continue;
                     editor.SetLineIndentation(index, indentation - minIndentation);
                 }
             }
@@ -149,13 +137,6 @@ namespace PluginCore.Controls
                 codeTip.Left = mainForm.ClientSize.Width - codeTip.Width;
         }
 
-        Language GetLanguage(string name)
-        {
-            if (PluginBase.MainForm is null || PluginBase.MainForm.SciConfig is null)
-                return null;
-
-            Language language = PluginBase.MainForm.SciConfig.GetLanguage(name);
-            return language;
-        }
+        static Language GetLanguage(string name) => PluginBase.MainForm?.SciConfig?.GetLanguage(name);
     }
 }

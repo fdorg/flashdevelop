@@ -98,7 +98,7 @@ namespace ScintillaNet
         /// <summary>
         /// Updates the scrollbar theme and applies old defaults
         /// </summary>
-        void UpdateScrollBarTheme(ScintillaControl sender)
+        static void UpdateScrollBarTheme(ScintillaControl sender)
         {
             PluginBase.MainForm.ThemeControls(sender.vScrollBar);
             PluginBase.MainForm.ThemeControls(sender.hScrollBar);
@@ -134,7 +134,7 @@ namespace ScintillaNet
             if (value == "True" || (value is null && PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty))
             {
                 sender.AddScrollBars(sender);
-                sender.UpdateScrollBarTheme(sender);
+                UpdateScrollBarTheme(sender);
             }
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
@@ -142,7 +142,7 @@ namespace ScintillaNet
         /// <summary>
         /// Update the scrollbars on sci control ui update
         /// </summary>
-        void OnScrollUpdate(ScintillaControl sender)
+        static void OnScrollUpdate(ScintillaControl sender)
         {
             var vTotal = sender.LinesVisible;
             var vPage = sender.LinesOnScreen;
@@ -192,7 +192,7 @@ namespace ScintillaNet
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
             sender.Controls.Add(sender.scrollerCorner);
-            sender.Painted += sender.OnScrollUpdate;
+            sender.Painted += OnScrollUpdate;
             sender.IsVScrollBar = sender.IsVScrollBar;
             sender.IsHScrollBar = sender.IsHScrollBar;
             sender.OnResize(null, null);
@@ -210,7 +210,7 @@ namespace ScintillaNet
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
             sender.Controls.Remove(sender.scrollerCorner);
-            sender.Painted -= sender.OnScrollUpdate;
+            sender.Painted -= OnScrollUpdate;
             sender.IsVScrollBar = sender.IsVScrollBar;
             sender.IsHScrollBar = sender.IsHScrollBar;
             sender.OnResize(null, null);

@@ -238,10 +238,8 @@ namespace PluginCore.Controls
                         Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int)m.WParam, (int)m.LParam);
                         return true;
                     }
-
                     return false;
                 }
-
                 return false;
             }
 
@@ -280,7 +278,7 @@ namespace PluginCore.Controls
             Application.RemoveMessageFilter(this);
             if (lockedSciControl != null && lockedSciControl.IsAlive)
             {
-                ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
+                var sci = (ScintillaControl)lockedSciControl.Target;
                 sci.IgnoreAllKeys = false;
             }
             lockedSciControl = null;

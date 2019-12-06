@@ -1363,11 +1363,11 @@ namespace FlashDevelop
         public void OnScintillaControlModifyRO(ScintillaControl sci)
         {
             if (!sci.Enabled || !File.Exists(sci.FileName)) return;
-            TextEvent te = new TextEvent(EventType.FileModifyRO, sci.FileName);
+            var te = new TextEvent(EventType.FileModifyRO, sci.FileName);
             EventManager.DispatchEvent(this, te);
             if (te.Handled) return; // Let plugin handle this...
-            string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-            string message = TextHelper.GetString("Info.MakeReadOnlyWritable");
+            var dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+            var message = TextHelper.GetString("Info.MakeReadOnlyWritable");
             if (MessageBox.Show(this, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 ScintillaManager.MakeFileWritable(sci);
@@ -1400,7 +1400,7 @@ namespace FlashDevelop
         public void OnScintillaControlMarginClick(ScintillaControl sci, int modifiers, int position, int margin)
         {
             if (margin != ScintillaManager.FoldingMargin) return;
-            int line = sci.LineFromPosition(position);
+            var line = sci.LineFromPosition(position);
             if (ModifierKeys == Keys.Control) MarkerManager.ToggleMarker(sci, 0, line);
             else sci.ToggleFold(line);
         }
@@ -1502,7 +1502,7 @@ namespace FlashDevelop
         /// </summary>
         public void OnSyntaxChange(string language)
         {
-            TextEvent te = new TextEvent(EventType.SyntaxChange, language);
+            var te = new TextEvent(EventType.SyntaxChange, language);
             EventManager.DispatchEvent(this, te);
         }
 
@@ -1907,7 +1907,7 @@ namespace FlashDevelop
             var currentPane = current?.DockHandler.PanelPane;
             CloseAllCanceled = false;
             closingAll = true;
-            foreach (var document in Documents.ToArray())
+            foreach (var document in Documents)
             {
                 var close = !(exceptCurrent && document == current);
                 if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane) close = false;
@@ -2133,10 +2133,11 @@ namespace FlashDevelop
                 FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, PluginBase.Settings.SaveUnicodeWithBOM);
                 if (actionPoint.EntryPosition != -1)
                 {
-                    if (Documents.Length == 1 && Documents[0].IsUntitled)
+                    var documents = Documents;
+                    if (documents.Length == 1 && documents[0].IsUntitled)
                     {
                         closingForOpenFile = true;
-                        Documents[0].Close();
+                        documents[0].Close();
                         closingForOpenFile = false;
                     }
                     var te = new TextEvent(EventType.FileTemplate, newFilePath);
@@ -2181,9 +2182,9 @@ namespace FlashDevelop
         /// </summary>
         public void OpenIn(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            int encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-            Encoding encoding = Encoding.GetEncoding(encMode);
+            var button = (ToolStripItem)sender;
+            var encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
+            var encoding = Encoding.GetEncoding(encMode);
             openFileDialog.Multiselect = true; // Allow multiple...
             openFileDialog.InitialDirectory = WorkingDirectory;
             if (openFileDialog.ShowDialog(this) == DialogResult.OK && openFileDialog.FileName.Length != 0)
@@ -2280,8 +2281,8 @@ namespace FlashDevelop
                 {
                     if (sci.SelTextSize > 0) sci.Clear();
                     sci.Home();
-                    int pos = sci.CurrentPos;
-                    int lines = sci.LineCount;
+                    var pos = sci.CurrentPos;
+                    var lines = sci.LineCount;
                     sci.Paste();
                     lines = sci.LineCount - lines; // = # of lines in the pasted text
                     sci.ReindentLines(sci.LineFromPosition(pos), lines);
@@ -2348,20 +2349,7 @@ namespace FlashDevelop
         {
             try
             {
-                if (CurrentDocument.IsUntitled)
-                {
-                    saveFileDialog.FileName = CurrentDocument.FileName;
-                    saveFileDialog.InitialDirectory = WorkingDirectory;
-                    if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
-                    {
-                        ButtonManager.AddNewReopenMenuItem(saveFileDialog.FileName);
-                        CurrentDocument.Save(saveFileDialog.FileName);
-                        NotifyEvent ne = new NotifyEvent(EventType.FileSwitch);
-                        EventManager.DispatchEvent(this, ne);
-                        NotifyEvent ce = new NotifyEvent(EventType.Completion);
-                        EventManager.DispatchEvent(this, ce);
-                    }
-                }
+                if (CurrentDocument.IsUntitled) SaveAs();
                 else if (CurrentDocument.IsModified)
                 {
                     var reason = ((ItemData)((ToolStripItem)sender).Tag).Tag;
@@ -2377,19 +2365,22 @@ namespace FlashDevelop
         /// <summary>
         /// Saves the current document with the specified file name
         /// </summary>
-        public void SaveAs(object sender, EventArgs e)
+        public void SaveAs(object sender, EventArgs e) => SaveAs();
+
+        /// <summary>
+        /// Saves the current document with the specified file name
+        /// </summary>
+        void SaveAs()
         {
             saveFileDialog.FileName = CurrentDocument.FileName;
             saveFileDialog.InitialDirectory = WorkingDirectory;
-            if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
-            {
-                ButtonManager.AddNewReopenMenuItem(saveFileDialog.FileName);
-                CurrentDocument.Save(saveFileDialog.FileName);
-                NotifyEvent ne = new NotifyEvent(EventType.FileSwitch);
-                EventManager.DispatchEvent(this, ne);
-                NotifyEvent ce = new NotifyEvent(EventType.Completion);
-                EventManager.DispatchEvent(this, ce);
-            }
+            if (saveFileDialog.ShowDialog(this) != DialogResult.OK || saveFileDialog.FileName.Length == 0) return;
+            ButtonManager.AddNewReopenMenuItem(saveFileDialog.FileName);
+            CurrentDocument.Save(saveFileDialog.FileName);
+            var ne = new NotifyEvent(EventType.FileSwitch);
+            EventManager.DispatchEvent(this, ne);
+            var ce = new NotifyEvent(EventType.Completion);
+            EventManager.DispatchEvent(this, ce);
         }
 
         /// <summary>
@@ -2492,7 +2483,7 @@ namespace FlashDevelop
         {
             try
             {
-                string filter = "*";
+                var filter = "*";
                 SavingMultiple = true;
                 filter = ((ItemData)((ToolStripItem)sender).Tag).Tag + filter;
                 var active = CurrentDocument;
@@ -2562,7 +2553,7 @@ namespace FlashDevelop
         {
             if (CurrentDocument.SciControl.TextLength == 0)
             {
-                string message = TextHelper.GetString("Info.NothingToPrint");
+                var message = TextHelper.GetString("Info.NothingToPrint");
                 ErrorManager.ShowInfo(message);
                 return;
             }
@@ -2966,7 +2957,7 @@ namespace FlashDevelop
         public void CheckUpdates(object sender, EventArgs e) => UpdateDialog.Show(false);
 
         /// <summary>
-        /// Toggles the currect document to and from split view
+        /// Toggles the current document to and from split view
         /// </summary>
         public void ToggleSplitView(object sender, EventArgs e)
         {

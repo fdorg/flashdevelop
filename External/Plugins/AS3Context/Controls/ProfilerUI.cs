@@ -25,7 +25,6 @@ namespace AS3Context.Controls
         static bool gcWanted;
         static byte[] snapshotWanted;
         public DockContent PanelRef;
-        bool autoStart;
         bool running;
         string current;
         readonly List<string> previous = new List<string>();
@@ -38,7 +37,7 @@ namespace AS3Context.Controls
         string profilerItemsCheck;
         string profilerSWF;
 
-        public bool AutoStart => autoStart;
+        public bool AutoStart { get; private set; }
 
         public static void HandleFlashConnect(object sender, object data)
         {
@@ -100,7 +99,7 @@ namespace AS3Context.Controls
             liveObjectsView.OnViewObject += liveObjectsView_OnViewObject;
             objectRefsView = new ProfilerObjectsView(objectRefsGrid);
 
-            configureProfilerChooser();
+            ConfigureProfilerChooser();
 
             StopProfiling();
         }
@@ -190,7 +189,7 @@ namespace AS3Context.Controls
             gcButton.Enabled = false;
 
             if (!SetProfilerCfg(true)) StopProfiling();
-            else if (autoStart)
+            else if (AutoStart)
             {
                 detectDisconnect.Interval = 5000; // expecting connection before 5s
                 detectDisconnect.Start();
@@ -199,23 +198,23 @@ namespace AS3Context.Controls
 
         void autoButton_Click(object sender, EventArgs e)
         {
-            autoStart = !autoStart;
-            autoButton.Image = PluginBase.MainForm.FindImage(autoStart ? "510" : "514");
-            autoButton.Text = TextHelper.GetString(autoStart ? "Label.AutoStartProfilerON" : "Label.AutoStartProfilerOFF");
+            AutoStart = !AutoStart;
+            autoButton.Image = PluginBase.MainForm.FindImage(AutoStart ? "510" : "514");
+            autoButton.Text = TextHelper.GetString(AutoStart ? "Label.AutoStartProfilerON" : "Label.AutoStartProfilerOFF");
         }
 
         #endregion
 
         #region Profiler selector
 
-        void configureProfilerChooser()
+        void ConfigureProfilerChooser()
         {
             profilerChooser.Image = PluginBase.MainForm.FindImage("274");
-            profilerChooser.DropDownOpening += profilerChooser_DropDownOpening;
+            profilerChooser.DropDownOpening += ProfilerChooser_DropDownOpening;
 
             profilerItems = new List<ToolStripMenuItem>();
             defaultToolStripMenuItem.Checked = true;
-            defaultToolStripMenuItem.Click += changeProfiler_Click;
+            defaultToolStripMenuItem.Click += ChangeProfiler_Click;
 
             profilerSWF = null; // default
             string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
@@ -227,7 +226,7 @@ namespace AS3Context.Controls
             }
         }
 
-        void profilerChooser_DropDownOpening(object sender, EventArgs e)
+        void ProfilerChooser_DropDownOpening(object sender, EventArgs e)
         {
             var swfs = PluginMain.Settings.CustomProfilers;
             if (swfs.IsNullOrEmpty()) return;
@@ -245,7 +244,7 @@ namespace AS3Context.Controls
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(Path.GetFileNameWithoutExtension(swf));
                     item.Tag = swf;
-                    item.Click += changeProfiler_Click;
+                    item.Click += ChangeProfiler_Click;
                     profilerItems.Add(item);
                 }
             }
@@ -260,17 +259,17 @@ namespace AS3Context.Controls
                 }
         }
 
-        void changeProfiler_Click(object sender, EventArgs e)
+        void ChangeProfiler_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            var item = sender as ToolStripMenuItem;
             if (item is null || item.Checked) return;
 
-            foreach (ToolStripMenuItem it in profilerItems)
+            foreach (var it in profilerItems)
                 it.Checked = false;
             item.Checked = true;
             profilerSWF = item.Tag as string;
 
-            string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
+            var active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
             File.WriteAllText(active, profilerSWF ?? "");
         }
 
@@ -346,33 +345,33 @@ namespace AS3Context.Controls
             return true;
         }
 
-        string AddDefaultProfiler()
+        static string AddDefaultProfiler()
         {
             string swfPath = ResolvePath(CheckResource("Profiler5.swf", "Profiler.swf"));
             ASCompletion.Commands.CreateTrustFile.Run("FDProfiler.cfg", Path.GetDirectoryName(swfPath));
-            FlashConnect.Settings settings = GetFlashConnectSettings();
+            var settings = GetFlashConnectSettings();
             return "\r\nPreloadSwf=" + swfPath + "?host=" + settings.Host + "&port=" + settings.Port + "\r\n";
         }
 
         string AddCustomProfiler()
         {
-            string swfPath = ResolvePath(profilerSWF);
-            if (swfPath is null) return null;
-            ASCompletion.Commands.CreateTrustFile.Run("FDProfiler.cfg", Path.GetDirectoryName(swfPath));
-            return "\r\nPreloadSwf=" + swfPath + "\r\n";
+            var path = ResolvePath(profilerSWF);
+            if (path is null) return null;
+            ASCompletion.Commands.CreateTrustFile.Run("FDProfiler.cfg", Path.GetDirectoryName(path));
+            return "\r\nPreloadSwf=" + path + "\r\n";
         }
 
-        string ResolvePath(string path)
+        static string ResolvePath(string path)
         {
             return PluginBase.CurrentProject != null
                 ? PathHelper.ResolvePath(path, Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath))
                 : PathHelper.ResolvePath(path);
         }
 
-        FlashConnect.Settings GetFlashConnectSettings()
+        static FlashConnect.Settings GetFlashConnectSettings()
         {
-            IPlugin flashConnect = PluginBase.MainForm.FindPlugin("425ae753-fdc2-4fdf-8277-c47c39c2e26b");
-            return flashConnect != null ? (FlashConnect.Settings)flashConnect.Settings : new FlashConnect.Settings();
+            var plugin = PluginBase.MainForm.FindPlugin("425ae753-fdc2-4fdf-8277-c47c39c2e26b");
+            return plugin != null ? (FlashConnect.Settings)plugin.Settings : new FlashConnect.Settings();
         }
 
         static string CheckResource(string fileName, string resName)
