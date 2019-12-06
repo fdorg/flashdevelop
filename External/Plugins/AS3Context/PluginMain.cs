@@ -182,7 +182,7 @@ namespace AS3Context
                     case EventType.FileSwitch:
                         contextInstance?.OnFileOperation(e);
 
-                        if (PluginBase.MainForm.CurrentDocument?.SciControl?.FileName is { } fileName)
+                        if (PluginBase.MainForm.CurrentDocument?.FileName is { } fileName)
                         {
                             inMXML = Path.GetExtension(fileName).ToLower() == ".mxml";
                             MxmlComplete.IsDirty = true;
