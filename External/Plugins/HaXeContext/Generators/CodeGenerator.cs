@@ -753,7 +753,11 @@ namespace HaXeContext.Generators
             }
             value = value.Replace(".[", "[");
             if (ctx.WordBefore == "new") value = "new " + value;
-            var statement = value + "." + member.Name + "(" + string.Join(", ", parameters.Skip(1).Select(it => it.result.Context.Value)) + ");";
+            var statement = value + "." + member.Name + "(" + string.Join(", ", parameters.Skip(1).Select(it =>
+            {
+                if (it.result.Member is MemberModel model) return model.ToDeclarationString();
+                return it.result.Context.Value;
+            })) + ");";
             sci.SetSel(startPos, endPos);
             sci.ReplaceSel(statement);
             if (isImported) return;

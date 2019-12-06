@@ -2080,6 +2080,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> ConvertStaticMethodCallToStaticExtensionCallIssue2939TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1"))
+                    .SetName("var v = StringTools.trim(' string ', foo()) -> var v = ' string '.trim(foo())")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2939");
+            }
+        }
+
         static IEnumerable<TestCaseData> InitializeLocalVariable2762TestCases
         {
             get
@@ -2195,6 +2206,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
             TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),
             TestCaseSource(nameof(ConvertStaticMethodCallToStaticExtensionCallIssue1565TestCases)),
+            TestCaseSource(nameof(ConvertStaticMethodCallToStaticExtensionCallIssue2939TestCases)),
             TestCaseSource(nameof(InitializeLocalVariable2762TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
