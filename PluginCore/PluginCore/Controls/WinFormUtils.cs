@@ -5,8 +5,7 @@ namespace PluginCore.Controls
 {
     public class WinFormUtils
     {
-
-        private static readonly RichTextBox _tempRTB = new RichTextBox();
+        static readonly RichTextBox _tempRTB = new RichTextBox();
 
         public static Size MeasureRichTextBox(RichTextBox richTextBox)
         {
@@ -88,7 +87,7 @@ namespace PluginCore.Controls
                         continue;
                     }
 
-                    var delta = lerp(maxDelta, -0.1f * maxDelta, currW / ((float)width));
+                    var delta = Lerp(maxDelta, -0.1f * maxDelta, currW / ((float)width));
 
                     if (delta < 1.0f)
                         delta = 1.0f;
@@ -105,11 +104,10 @@ namespace PluginCore.Controls
         }
 
         // Linear interpolation
-        private static float lerp(float a, float b, float pos/*[0..1]*/)
+        static float Lerp(float a, float b, float pos/*[0..1]*/)
         {
             if (pos < 0.0f) pos = 0.0f;
             if (pos > 1.0f) pos = 1.0f;
-
             return a + pos * (b - a);
         }
     }

@@ -194,11 +194,8 @@ namespace PluginCore.Controls
             toolTip.BringToFront();
         }
 
-        public void UpdateTip(ScintillaControl sci)
-        {
-            OnUpdateSimpleTip?.Invoke(sci, mousePos);
-        }
-        
+        public void UpdateTip(ScintillaControl sci) => OnUpdateSimpleTip?.Invoke(sci, mousePos);
+
         public virtual void Hide()
         {
             if (toolTip.Visible)
@@ -217,16 +214,14 @@ namespace PluginCore.Controls
         public void SetText(string rawText, bool redraw)
         {
             this.rawText = rawText ?? "";
-
-            if (redraw)
-                Redraw();
+            if (redraw) Redraw();
         }
 
         public void Redraw() => Redraw(true);
 
         public void Redraw(bool autoSize)
         {
-            toolTipRTB.Rtf = getRtfFor(rawText);
+            toolTipRTB.Rtf = GetRtfFor(rawText);
 
             Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
@@ -239,7 +234,7 @@ namespace PluginCore.Controls
                 AutoSize();
         }
 
-        protected string getRtfFor(string bbCodeText)
+        protected string GetRtfFor(string bbCodeText)
         {
             if (rtfCache.ContainsKey(bbCodeText))
                 return rtfCache[bbCodeText];
@@ -258,21 +253,19 @@ namespace PluginCore.Controls
             toolTipRTB.WordWrap = false;
 
             rtfCacheList.Add(bbCodeText);
-            var text = bbCodeText;
+            var result = bbCodeText;
             var matches = reEscapedSequence.Matches(bbCodeText);
-            if (matches.Count > 0) text = reEscapedSequence.Replace(text, "`__escaped_sequence__`");
-            text = BBCodeUtils.bbCodeToRtf(text, toolTipRTB);
+            if (matches.Count > 0) result = reEscapedSequence.Replace(result, "`__escaped_sequence__`");
+            result = BBCodeUtils.bbCodeToRtf(result, toolTipRTB);
             if (matches.Count > 0)
             {
                 var i  = 0;
-                text = reEscapedSequence.Replace(text, _ => matches[i++].Value);
+                result = reEscapedSequence.Replace(result, _ => matches[i++].Value);
             }
-            rtfCache[bbCodeText] = text;
-            return text;
+            rtfCache[bbCodeText] = result;
+            return result;
         }
 
         #endregion
-
     }
-
 }
