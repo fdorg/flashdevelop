@@ -325,7 +325,7 @@ namespace ASCompletion.Context
             context.CurrentFile = null;
 
             // check document
-            var sci = doc.SciControl;
+            var sci = doc?.SciControl;
             var fileName = string.Empty;
             if (!string.IsNullOrEmpty(sci?.FileName))
             {

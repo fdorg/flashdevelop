@@ -1156,6 +1156,7 @@ namespace ResultsPanel
                 foreach (var document in PluginBase.MainForm.Documents)
                 {
                     var sci = document.SciControl;
+                    if (sci is null) continue;
                     if (sci.FileName != fileName) continue;
                     if (!cleared.Contains(fileName))
                     {
@@ -1206,10 +1207,7 @@ namespace ResultsPanel
         /// <summary>
         /// Get file name from a list view item
         /// </summary>
-        static string GetFileName(ListViewItem item)
-        {
-            return (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/', '\\');
-        }
+        static string GetFileName(ListViewItem item) => (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/', '\\');
 
         #endregion
 
