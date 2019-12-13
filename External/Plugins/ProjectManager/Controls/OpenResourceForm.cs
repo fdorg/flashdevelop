@@ -481,16 +481,16 @@ namespace ProjectManager.Controls
     internal struct SearchResult
     {
         public double Score;
-        public double FolderScore;
+        public double DirScore;
         public string Value;
     }
 
     public class SearchUtil
     {
-        public static List<string> getMatchedItems(List<string> source, string searchText, string pathSeparator, int limit)
-        {
-            return getMatchedItems(source, searchText, pathSeparator[0], limit);
-        }
+        // Note: These values may need more tuning to get best results.
+        private const double FileScoreWeightFactor = 1.0;
+        // Put more weight on directory scores, since file scores tend to have more variation due to their dependency on file name length.
+        private const double DirScoreWeightFactor = 4.0;
 
         public static List<string> getMatchedItems(List<string> source, string searchText, char pathSeparator, int limit)
         {
@@ -502,44 +502,72 @@ namespace ProjectManager.Controls
             {
                 searchFile = Path.GetFileName(searchText);
                 searchDir = Path.GetDirectoryName(searchText);
+                if (searchDir == null) searchDir = "";
+                if (searchFile == "" && searchDir == "") return new List<string>();
             }
             catch (ArgumentException)
             {
                 return new List<string>();
             }
 
+            // If query contains any upper-case letters, consider case significant and match
+            bool fileCaseMatters = !string.Equals(searchFile.ToLowerInvariant(), searchFile);
+            bool dirCaseMatters = !string.Equals(searchDir.ToLowerInvariant(), searchDir);
+            double fileScoreWeight = FileScoreWeightFactor * searchFile.Length;
+            double dirScoreWeight = DirScoreWeightFactor * String.Join("", searchDir.Split(pathSeparator)).Length;
+
+            double score;
+            double dirScore;
+            double maxScore = 0;
+            double maxDirScore = 0;
+
             foreach (var item in source)
             {
-                double score;
                 var file = Path.GetFileName(item);
                 var dir = Path.GetDirectoryName(item);
 
-                //score file name
-                if (AdvancedSearchMatch(file, searchFile))
-                    score = 1000.0;
+                if (fileScoreWeight != 0)
+                {
+                    score = ScoreFileName(file, searchFile, fileCaseMatters);
+                    if (score <= 0) continue;
+                    if (score > maxScore) maxScore = score;
+                }
                 else
-                    score = Score(file, searchFile, pathSeparator);
+                {
+                    score = 0;
+                }
 
-                //score /= file.Length; //divide by length to prefer shorter results
-
-                if (score <= 0) continue;
-
-                //score folder path
-                var folderScore = 0.0;
-                if (!string.IsNullOrEmpty(searchDir))
-                    folderScore = ScoreWithoutNormalize(dir, searchDir, pathSeparator); //do not divide by length here, because short folders should not be favoured too much
+                if (dirScoreWeight != 0)
+                {
+                    dirScore = ScoreDirName(dir, searchDir, dirCaseMatters, pathSeparator);
+                    if (dirScore <= 0) continue;
+                    if (dirScore > maxDirScore) maxDirScore = dirScore;
+                }
+                else
+                {
+                    dirScore = 0;
+                }
 
                 var result = new SearchResult
                 {
                     Score = score,
-                    FolderScore = folderScore,
+                    DirScore = dirScore,
                     Value = item
                 };
                 matchedItems.Add(result);
             }
 
-            //sort results in following priority: folderScore, score, length (folderScore being the most important one)
-            var sortedMatches = matchedItems.OrderByDescending(r => r.FolderScore).ThenByDescending(r => r.Score).ThenBy(r => r.Value.Length);
+            if (maxScore == 0) maxScore = 1;
+            if (maxDirScore == 0) maxDirScore = 1;
+
+            // File and directory (path) score are first normalized (division by maxScore/maxDirScore).
+            // Final score is a weighted sum of file and directory (path) scores.
+            // The weights are respectively the number of file and path query characters (excluding path separator characters),
+            // multiplied by tunable constant values (FileScoreWeightFactor and DirScoreWeightFactor).
+            var sortedMatches = matchedItems
+                .OrderByDescending(r => fileScoreWeight * r.Score / maxScore + dirScoreWeight * r.DirScore / maxDirScore)
+                .ThenBy(r => r.Value.Length)
+                .ThenBy(r => r.Value);
 
             var results = new List<string>();
             foreach (var r in sortedMatches)
@@ -551,73 +579,85 @@ namespace ProjectManager.Controls
             return results;
         }
 
-        static bool AdvancedSearchMatch(string file, string searchText)
+        static double ScoreFileName(string str, string query, bool caseMatters)
         {
-            if (!string.Equals(searchText.ToUpperInvariant(), searchText)) return false;
-
-            int i = 0; int j = 0;
-            if (file.Length < searchText.Length) return false;
-            var text = file.ToCharArray();
-            var pattern = searchText.ToCharArray();
-            while (i < pattern.Length)
-            {
-                while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
-                {
-                    i++;
-                    j++;
-                }
-                if (i == pattern.Length) return true;
-                if (char.IsLower(pattern[i])) return false;
-                while (j < text.Length && char.IsLower(text[j]))
-                {
-                    j++;
-                }
-                if (j == text.Length) return false;
-                if (pattern[i] != text[j]) return false;
-            }
-            return i == pattern.Length;
+            // Prefer shorter results. The effect is less pronounced when query length is increased.
+            return Score(str, query, caseMatters) / (str.Length + query.Length);
         }
 
-        static double Score(string str, string query, char pathSeparator)
+        static double ScoreDirName(string str, string query, bool caseMatters, char pathSeparator)
         {
-            var score = ScoreWithoutNormalize(str, query, pathSeparator);
-
-            return (score / str.Length + score / query.Length) / 2;
+            return Score(str, query, caseMatters, pathSeparator);
         }
 
         /**
-         * Ported from: https://github.com/atom/fuzzaldrin/
+         * Based on: https://github.com/atom/fuzzaldrin/
          */
-        static double ScoreWithoutNormalize(string str, string query, char pathSeparator)
+        static double Score(string str, string query, bool caseMatters, char? pathSeparator = null)
         {
+            if (str.StartsWith(query, caseMatters ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
+                return query.Length + 1; // Exact match at the beginning - highest score
+
+            if (pathSeparator == null && (caseMatters ? str.Contains(query) : str.ToLower().Contains(query.ToLower())))
+                return query.Length; // Exact match somewhere - second highest score
+
             double score = 0;
-
-            if (str.StartsWith(query, StringComparison.OrdinalIgnoreCase)) //Starts with bonus
-                return query.Length + 1;
-
-            if (str.ToLower().Contains(query.ToLower())) //Contains bonus
-                return query.Length;
-
             int strIndex = 0;
 
             for (int i = 0; i < query.Length; i++)
             {
-                var character = query[i].ToString();
+                var queryChar = query[i];
 
-                var index = str.IndexOf(character, strIndex, StringComparison.OrdinalIgnoreCase);
+                // Use case-sensitive matching if caseMatters is true. Should provide results similar to the superseded `AdvancedSearchMatch`.
+                var index = str.IndexOf(queryChar.ToString(), strIndex, caseMatters ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
+                if (index == -1) return 0;
 
-                if (index == -1)
-                    return 0;
+                double charScore;
 
-                var charScore = 0.1;
+                if (queryChar != pathSeparator)
+                {
+                    charScore = 0.1;
 
-                if (str[index] == query[i]) //same case bonus
-                    charScore += 0.1;
+                    if (str[index] == queryChar)
+                        charScore += 0.1; // Exact character match (same case if character is a letter)
 
-                if (index == 0 || str[index - 1] == pathSeparator) //start of string bonus
-                    charScore += 0.8;
-                else if (i == index) //equivalent position bonus
-                    charScore += 0.5;
+                    if (pathSeparator != null && index > 0)
+                    {
+                        // Score a directory (path). Prefer when each path component in the query matches a single path component in the directory.
+                        if (index == strIndex || str.IndexOf(pathSeparator.Value, strIndex, index - strIndex) == -1)
+                            charScore += 0.5; // Consecutive path component
+
+                        if (str[index - 1] == pathSeparator)
+                            charScore += 0.3; // Position at the beginning of path component
+                        else if ((!Char.IsLetter(str[index - 1]) && Char.IsLetter(queryChar)) || (Char.IsLower(str[index - 1]) && Char.IsUpper(str[index])))
+                            charScore += 0.3; // Position at the beginning of a word boundary (non-word to word or camelCase lower to upper case)
+                        else if (index == i)
+                            charScore += 0.2; // Consecutive position at the beginning of string
+                        else if (index == strIndex)
+                            charScore += 0.1; // Consecutive position relative to previous matched character
+                    }
+                    else
+                    {
+                        // Score a file. Prefer first character to match at the beginning of string, next characters at word boundaries.
+                        if (index == 0)
+                            charScore += 0.8; // Position at the beginning of string
+                        else if ((!Char.IsLetter(str[index - 1]) && Char.IsLetter(queryChar)) || (Char.IsLower(str[index - 1]) && Char.IsUpper(str[index])))
+                            charScore += 0.7; // Position at the beginning of a word boundary (non-word to word or camelCase lower to upper case)
+                        else if (index == i)
+                            charScore += 0.5; // Consecutive position at the beginning of string
+                        else if (index == strIndex)
+                            charScore += 0.3; // Consecutive position relative to previous matched character
+                    }
+                }
+                else
+                {
+                    charScore = 0.2;
+
+                    if (index == i)
+                        charScore += 0.5; // Consecutive position at the beginning of string
+                    else if (index == strIndex)
+                        charScore += 0.3; // Consecutive position relative to previous matched character
+                }
 
                 score += charScore;
                 strIndex = index + 1;

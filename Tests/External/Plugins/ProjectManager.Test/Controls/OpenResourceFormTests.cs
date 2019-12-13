@@ -95,9 +95,6 @@ namespace ProjectManager.Controls
                 //"test\\TestModule.hx" should be first, because it has test in the path and also in the beginning of the file name
                 Assert.AreEqual("src\\com\\module\\test\\TestModule.hx", results[0]);
                 Assert.AreEqual("src\\com\\module\\test\\ITestModule.hx", results[1]);
-                //these have no test in the path
-                Assert.AreEqual("src\\com\\module\\TestModule.hx", results[2]);
-                Assert.AreEqual("src\\com\\module\\ITestModule.hx", results[3]);
             }
         }
     }

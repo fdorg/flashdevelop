@@ -8,9 +8,6 @@ set PATH=%PATH%;C:\Program Files\7-Zip\
 
 :flashdevelop
 
-:: Check for build errors
-if %errorlevel% neq 0 goto :error
-
 :: Extract version from HEAD
 call SetVersion.bat
 
