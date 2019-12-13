@@ -651,7 +651,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using var dialog = new SnippetDialog();
+            /*using*/ var dialog = new SnippetDialog();
             dialog.CenterToParent();
             dialog.Show(PluginBase.MainForm);
         }

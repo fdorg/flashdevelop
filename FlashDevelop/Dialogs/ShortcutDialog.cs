@@ -651,7 +651,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using var dialog = new ShortcutDialog();
+            /*using*/ var dialog = new ShortcutDialog();
             dialog.CenterToParent();
             dialog.Show(PluginBase.MainForm);
             dialog.filterTextBox.Focus();
