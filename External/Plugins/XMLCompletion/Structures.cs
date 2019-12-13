@@ -58,10 +58,10 @@ namespace XMLCompletion
 
     public class HtmlTagItem : IHtmlCompletionListItem
     {
-        private readonly string name;
-        private readonly string tag;
-        private readonly string label;
-        private readonly string uri;
+        readonly string name;
+        readonly string tag;
+        readonly string label;
+        readonly string uri;
 
         public HtmlTagItem(string name, string tag, string uri)
         {
@@ -106,8 +106,8 @@ namespace XMLCompletion
 
     public class NamespaceItem : ICompletionListItem
     {
-        private readonly string label;
-        private readonly string uri;
+        readonly string label;
+        readonly string uri;
 
         public NamespaceItem(string name, string uri)
         {
@@ -143,12 +143,12 @@ namespace XMLCompletion
 
     public class HtmlAttributeItem : IHtmlCompletionListItem
     {
-        private string name;
-        private string label;
-        private string desc;
-        private Bitmap icon;
-        private string type;
-        private string className;
+        string name;
+        string label;
+        string desc;
+        Bitmap icon;
+        string type;
+        string className;
 
         public HtmlAttributeItem(string name, string type, string className, string ns)
         {
@@ -163,7 +163,7 @@ namespace XMLCompletion
             setExt(type, className);
         }
 
-        private void setExt(string type, string className)
+        void setExt(string type, string className)
         {
             this.type = type;
             this.className = className;
@@ -184,7 +184,7 @@ namespace XMLCompletion
             setName(name);
         }
 
-        private void setName(string name)
+        void setName(string name)
         {
             int p = name.LastIndexOf(':');
             if (p > 0)
@@ -254,9 +254,9 @@ namespace XMLCompletion
 
     public class XMLBlockItem : ICompletionListItem
     {
-        private readonly string desc;
-        private readonly string label;
-        private readonly string replace;
+        readonly string desc;
+        readonly string label;
+        readonly string replace;
  
         public XMLBlockItem(string label, string desc, string replace)
         {

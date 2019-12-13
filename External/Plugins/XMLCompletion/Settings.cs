@@ -7,13 +7,13 @@ namespace XMLCompletion
     [Serializable]
     public class Settings
     {
-        private bool disableZenCoding = false;
-        private bool closeTags = true;
-        private bool insertQuotes = true;
-        private bool smartIndenter = true;
-        private bool upperCaseHtmlTags = false;
-        private bool enableXMLCompletion = true;
-        private static Settings instance = null;
+        bool disableZenCoding = false;
+        bool closeTags = true;
+        bool insertQuotes = true;
+        bool smartIndenter = true;
+        bool upperCaseHtmlTags = false;
+        bool enableXMLCompletion = true;
+        static Settings instance = null;
 
         public Settings()
         {

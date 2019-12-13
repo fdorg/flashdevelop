@@ -28,7 +28,7 @@ namespace XMLCompletion
             if (def.ContainsKey("inline_level")) ParseSet(inline_level, (string)def["inline_level"]);
         }
 
-        private void ParseSet(Hashtable set, string def)
+        void ParseSet(Hashtable set, string def)
         {
             string[] tokens = def.Split(',');
             foreach (string token in tokens) set[token] = true;
@@ -57,7 +57,7 @@ namespace XMLCompletion
             return ReadZenSettings(reader);
         }
 
-        private static ZenSettings ReadZenSettings(JsonReader reader)
+        static ZenSettings ReadZenSettings(JsonReader reader)
         {
             ZenSettings settings = new ZenSettings();
 
@@ -98,7 +98,7 @@ namespace XMLCompletion
             return settings;
         }
 
-        private static void ExtendLang(ZenLang lang, ZenLang lang2)
+        static void ExtendLang(ZenLang lang, ZenLang lang2)
         {
             MergeHashtable(ref lang.abbreviations, ref lang2.abbreviations);
             MergeHashtable(ref lang.snippets, ref lang2.snippets);
@@ -111,7 +111,7 @@ namespace XMLCompletion
             }
         }
 
-        private static void MergeHashtable(ref Hashtable t1, ref Hashtable t2)
+        static void MergeHashtable(ref Hashtable t1, ref Hashtable t2)
         {
             if (t1 is null) t1 = t2.Clone() as Hashtable;
             else if (t2 != null)
@@ -119,7 +119,7 @@ namespace XMLCompletion
                     if (!t1.ContainsKey(key)) t1[key] = t2[key];
         }
 
-        private static Hashtable ReadHashtable(JsonReader reader)
+        static Hashtable ReadHashtable(JsonReader reader)
         {
             Hashtable table = new Hashtable();
             string currentKey = null;
@@ -132,7 +132,7 @@ namespace XMLCompletion
             return table;
         }
 
-        private static ZenLang ReadZenLang(JsonReader reader)
+        static ZenLang ReadZenLang(JsonReader reader)
         {
             ZenLang lang = new ZenLang();
             Type objType = lang.GetType();
@@ -165,7 +165,7 @@ namespace XMLCompletion
             return lang;
         }
 
-        private static string SanitizeJSon(string src)
+        static string SanitizeJSon(string src)
         {
             src = src.Substring(src.IndexOf('{'));
             src = src.Substring(0, src.LastIndexOf('}') + 1);
@@ -178,15 +178,16 @@ namespace XMLCompletion
 
     public class ZenCoding
     {
-        private static ZenLang lang;
-        private static bool inited;
-        private static ZenSettings settings;
-        private static Timer delayOpenConfig;
-        private static FileSystemWatcher watcherConfig;
-        private static readonly Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
+        static ZenLang lang;
+        static bool inited;
+        static ZenSettings settings;
+        static Timer delayOpenConfig;
+        static FileSystemWatcher watcherConfig;
+        static readonly Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
 
         #region initialization
-        private static void init()
+
+        static void init()
         {
             if (!inited)
             {
@@ -198,7 +199,7 @@ namespace XMLCompletion
                 {
                     delayOpenConfig = new Timer();
                     delayOpenConfig.Interval = 100;
-                    delayOpenConfig.Tick += delayOpenConfig_Tick;
+                    delayOpenConfig.Tick += DelayOpenConfig_Tick;
                 }
                 if (watcherConfig is null) // watching config files changes
                 {
@@ -223,14 +224,14 @@ namespace XMLCompletion
             inited = false;
         }
 
-        static void delayOpenConfig_Tick(object sender, EventArgs e)
+        static void DelayOpenConfig_Tick(object sender, EventArgs e)
         {
             delayOpenConfig.Stop();
             string path = Path.Combine(PathHelper.DataDir, "XMLCompletion");
             PluginBase.MainForm.OpenEditableDocument(Path.Combine(path, "zen_settings.js"));
         }
 
-        private static void LoadResource(string file)
+        static void LoadResource(string file)
         {
             string filePath = Path.Combine(PathHelper.DataDir, "XMLCompletion", file);
             try
@@ -245,7 +246,7 @@ namespace XMLCompletion
             }
         }
 
-        private static bool WriteResource(string file, string filePath)
+        static bool WriteResource(string file, string filePath)
         {
             try
             {
@@ -347,7 +348,7 @@ namespace XMLCompletion
             return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
         }
 
-        private static string expandZen(string expr)
+        static string expandZen(string expr)
         {
             if (expr.Length == 0) 
                 throw new ZenExpandException("Empty expression found");
@@ -519,12 +520,12 @@ namespace XMLCompletion
             return src;
         }
 
-        private static string ProcessVars(string tag)
+        static string ProcessVars(string tag)
         {
             return reVariable.Replace(tag, VarReplacer);
         }
 
-        private static string VarReplacer(Match m)
+        static string VarReplacer(Match m)
         {
             string name = m.Groups[1].Value;
             if (name != "child" && settings.variables.ContainsKey(name)) 
@@ -532,7 +533,7 @@ namespace XMLCompletion
             return m.Value;
         }
 
-        private static string addIndent(string res)
+        static string addIndent(string res)
         {
             string[] lines = res.Split('\n');
             res = "";
@@ -540,12 +541,12 @@ namespace XMLCompletion
             return res.Trim();
         }
 
-        private static bool isBlock(string tag)
+        static bool isBlock(string tag)
         {
             return lang.element_types.block_level.ContainsKey(tag);
         }
 
-        private static bool isInline(string tag)
+        static bool isInline(string tag)
         {
             if (tag.Length > 3 && tag[0] == '<') 
             {
@@ -555,7 +556,7 @@ namespace XMLCompletion
             return lang.element_types.inline_level.ContainsKey(tag);
         }
 
-        private static string extractEnd(char sep, ref string part)
+        static string extractEnd(char sep, ref string part)
         {
             int p = part.LastIndexOf(sep);
             if (p == 0)
