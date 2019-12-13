@@ -10,8 +10,8 @@ namespace XMLCompletion
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private Settings settingObject;
+        string settingFilename;
+        Settings settingObject;
 
         #region Required Properties
 
