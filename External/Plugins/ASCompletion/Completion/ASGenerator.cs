@@ -2500,7 +2500,7 @@ namespace ASCompletion.Completion
                     else if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                         returnTypeStr = returnType.Member.Type;
                 }
-                else if (returnType.Type != null) returnTypeStr = GetShortType(returnType.Type.Type);
+                else if (returnType.Type != null) returnTypeStr = GetShortType(returnType.Type.QualifiedName);
                 if (ASContext.Context.Settings.GenerateImports)
                 {
                     ClassModel inClassForImport;
