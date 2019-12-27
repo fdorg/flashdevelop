@@ -1802,6 +1802,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2933_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2933_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateVariable_issue2952_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateVariable_issue2952_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
