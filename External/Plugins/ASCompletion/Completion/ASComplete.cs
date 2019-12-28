@@ -2031,7 +2031,7 @@ namespace ASCompletion.Completion
             ctx.ResolveDotContext(sci, result, mix);
 
             // local vars are the first thing to try
-            if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null) mix.Merge(expr.LocalVars);
+            if ((result.IsNull() || dotIndex < 0) && expr.ContextFunction != null) mix.Merge(expr.LocalVars);
 
             // list package elements
             if (result.IsPackage)
@@ -2053,21 +2053,23 @@ namespace ASCompletion.Completion
                     GetInstanceMembers(autoHide, result, inClass, mask, dotIndex, mix);
             }
 
-            // known classes / toplevel vars/methods
-            if (argumentType is null && (result.IsNull() || (dotIndex < 0)))
+            // known types/toplevel vars/methods
+            if (argumentType is null && (result.IsNull() || dotIndex < 0))
             {
                 mix.Merge(ctx.CurrentModel.GetSortedMembersList());
                 IEnumerable<MemberModel> topLevelElements = ctx.GetTopLevelElements();
                 if (expr.ContextFunction != null && expr.ContextFunction.Flags.HasFlag(FlagType.Static))
                     topLevelElements = topLevelElements.Where(it => it.Flags.HasFlag(FlagType.Static));
                 mix.Merge(topLevelElements);
+                if (!ctx.Settings.LazyClasspathExploration && ctx.Settings.CompletionListAllTypes)
+                    mix.Merge(ctx.GetAllProjectClasses());
                 mix.Merge(ctx.GetVisibleExternalElements());
                 mix.Merge(GetKeywords());
             }
 
             // show
             if (list is null) list = new List<ICompletionListItem>();
-            foreach (MemberModel member in mix)
+            foreach (var member in mix)
             {
                 if ((member.Flags & FlagType.Template) > 0) list.Add(new TemplateItem(member));
                 else list.Add(new MemberItem(member));
@@ -2077,7 +2079,6 @@ namespace ASCompletion.Completion
             CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
-            //if (!features.externalCompletion)
             AutoselectDotToken(inClass, tail);
 
             if (outOfDate) ctx.SetOutOfDate();
@@ -2192,7 +2193,7 @@ namespace ASCompletion.Completion
             // show completion
             var list = new List<ICompletionListItem>();
             var testActive = !CompletionList.Active && expr.Position != position;
-            foreach (MemberModel member in items)
+            foreach (var member in items)
             {
                 if (testActive && member.Name == word)
                     return;
@@ -2217,7 +2218,7 @@ namespace ASCompletion.Completion
                 var ctx = ASContext.Context;
                 // try local var
                 expr.LocalVars = ParseLocalVars(expr);
-                foreach (MemberModel localVar in expr.LocalVars)
+                foreach (var localVar in expr.LocalVars)
                 {
                     if (localVar.LineTo == ctx.CurrentLine)
                     {
@@ -4461,7 +4462,8 @@ namespace ASCompletion.Completion
 
         static List<ICompletionListItem> GetAllClasses(ScintillaControl sci, bool classesOnly, bool showClassVars)
         {
-            var known = ASContext.Context.GetAllProjectClasses();
+            var ctx = ASContext.Context;
+            var known = ctx.GetAllProjectClasses();
             if (known.Count == 0) return null;
 
             // get local Class vars
@@ -4472,10 +4474,10 @@ namespace ASCompletion.Completion
                 var expr = GetExpression(sci, sci.CurrentPos);
                 if (expr.Value != null)
                 {
-                    var locals = ParseLocalVars(expr);
-                    foreach (MemberModel local in locals)
-                        if (local.Type == "Class")
-                            found.Add(local);
+                    var list = ParseLocalVars(expr);
+                    foreach (var it in list)
+                        if (it.Type == "Class")
+                            found.Add(it);
                 }
 
                 if (found.Count > 0)
@@ -4486,13 +4488,13 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (!ASContext.Context.CurrentClass.IsVoid())
+            if (!ctx.CurrentClass.IsVoid())
             {
-                if (ASContext.Context.Features.hasDelegates)
+                if (ctx.Features.hasDelegates)
                 {
                     var delegates = new MemberList();
 
-                    foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
+                    foreach (var field in ctx.CurrentClass.Members)
                         if ((field.Flags & FlagType.Delegate) > 0)
                             delegates.Add(field);
 
@@ -4504,7 +4506,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                if (ASContext.Context.Features.hasGenerics)
+                if (ctx.Features.hasGenerics)
                 {
                     var typeParams = GetVisibleTypeParameters();
                     if (!typeParams.IsNullOrEmpty())
@@ -4528,7 +4530,6 @@ namespace ASCompletion.Completion
                 prev = member.Name;
                 result.Add(new MemberItem(member));
             }
-
             return result;
         }
 
@@ -4586,32 +4587,7 @@ namespace ASCompletion.Completion
             return quote == '"' && IsStringStyle(style) || quote == '\'' && IsCharStyle(style);
         }
 
-        /// <summary>
-        /// Whether the character at the position is inside of the
-        /// brackets of haxe metadata (@:allow(path) etc)
-        /// </summary>
-        static bool IsMetadataArgument(ScintillaControl sci, int position)
-        {
-            if (!ASContext.Context.CurrentModel.haXe || ASContext.Context.CurrentMember != null)
-                return false;
-
-            char next = (char)sci.CharAt(position);
-            bool openingBracket = false;
-
-            for (int i = position; i > 0; i--)
-            {
-                var c = next;
-                next = (char)sci.CharAt(i);
-
-                if (c == ')' || c == '}' || c == ';')
-                    return false;
-                if (c == '(')
-                    openingBracket = true;
-                if (openingBracket && c == ':' && next == '@')
-                    return true;
-            }
-            return false;
-        }
+        protected virtual bool IsMetadataArgument(ScintillaControl sci, int position) => false;
 
         static bool IsXmlType(ClassModel model)
         {
@@ -4980,11 +4956,11 @@ namespace ASCompletion.Completion
             {
                 int textEndPosition = position + text.Length;
                 // was a fully qualified type inserted?
-                ASExpr expr = GetExpression(sci, textEndPosition);
+                var expr = GetExpression(sci, textEndPosition);
                 if (expr.Value is null) return;
-                ASResult type = GetExpressionType(sci, textEndPosition);
+                var type = GetExpressionType(sci, textEndPosition);
                 if (type.IsPackage) return;
-                ContextFeatures features = ASContext.Context.Features;
+                var features = ASContext.Context.Features;
 
                 // add ; for imports
                 if (" \n\t".Contains(trigger) && expr.WordBefore != null
@@ -5107,21 +5083,22 @@ namespace ASCompletion.Completion
 
         static bool ShouldShortenType(ScintillaControl sci, int position, MemberModel import, FileModel cFile, ref int offset)
         {
-            if (!ASContext.Context.Settings.GenerateImports) return false;
-            if (IsMetadataArgument(sci, position)) return false;
+            var ctx = ASContext.Context;
+            if (!ctx.Settings.GenerateImports) return false;
+            if (ctx.CodeComplete.IsMetadataArgument(sci, position)) return false;
             var importName = import.Name;
             var curLine = sci.LineFromPosition(position);
-            if (ASContext.Context.IsImported(import, curLine))
+            if (ctx.IsImported(import, curLine))
             {
                 var importType = import.Type;
-                var imports = ASContext.Context.ResolveImports(cFile);
+                var imports = ctx.ResolveImports(cFile);
                 return !imports.Any(it => it.Name == importName && it.Type != importType);
             }
             // insert import
             sci.BeginUndoAction();
             try
             {
-                var imports = ASContext.Context.ResolveImports(cFile);
+                var imports = ctx.ResolveImports(cFile);
                 offset = ASGenerator.InsertImport(import, true);
                 if (imports.Any(it => it.Name == importName)) return false;
             }
