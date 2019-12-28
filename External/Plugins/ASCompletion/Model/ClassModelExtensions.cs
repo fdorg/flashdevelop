@@ -25,20 +25,19 @@ namespace ASCompletion.Model
         /// <returns>All matches</returns>
         static MemberList GetMembers(this ClassModel @this, FlagType mask) => new MemberList(@this.Members.Where(it => (it.Flags & mask) == mask));
 
-        public static bool HasMember(this ClassModel @this, FlagType flags, bool recursive)
+        public static bool ContainsMember(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (!recursive) @this.HasMember(flags);
+            if (!recursive) @this.ContainsMember(flags);
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this.Extends;
             while (!type.IsVoid())
             {
-                if (type.HasMember(flags)) return true;
+                if (type.ContainsMember(flags)) return true;
                 type = type.Extends;
             }
             return false;
         }
 
-
-        static bool HasMember(this ClassModel @this, FlagType mask) => @this.Members.Any(it => (it.Flags & mask) == mask);
+        static bool ContainsMember(this ClassModel @this, FlagType mask) => @this.Members.Any(it => (it.Flags & mask) == mask);
     }
 }

@@ -143,6 +143,23 @@ namespace HaXeContext.Completion
             bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is { } t && !t.IsVoid();
         }
 
+        protected override bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword, List<ICompletionListItem> list)
+        {
+            list = list
+                .Where(it =>
+                {
+                    if (it is MemberItem item)
+                    {
+                        if ((item.Member.Flags & FlagType.Interface) != 0 || (item.Member.Flags & FlagType.Enum) != 0) return false;
+                        if (item.Member is ClassModel @class) return @class.ContainsMember(FlagType.Function | FlagType.Constructor, true);
+                        return true;
+                    }
+                    return true;
+                })
+                .ToList();
+            return base.HandleNewCompletion(sci, tail, autoHide, keyword, list);
+        }
+
         /// <inheritdoc />
         protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
         {

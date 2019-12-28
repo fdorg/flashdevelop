@@ -2941,7 +2941,7 @@ namespace ASCompletion.Completion
                 template = TemplateUtils.GetTemplate("Constructor");
                 template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(member, template);
                 string super = null;
-                if (inClass.HasMember(FlagType.Function | FlagType.Constructor, true))
+                if (inClass.ContainsMember(FlagType.Function | FlagType.Constructor, true))
                 {
                     var value = new StringBuilder();
                     foreach (var parameter in member.Parameters)
