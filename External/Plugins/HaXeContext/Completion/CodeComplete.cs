@@ -31,6 +31,35 @@ namespace HaXeContext.Completion
                    || (sci.GetWordFromPosition(position) is { } word && (word == "cast" || word == "new"));
         }
 
+        /// <summary>
+        /// Whether the character at the position is inside of the
+        /// brackets of haxe metadata (@:allow(path) etc)
+        /// </summary>
+        protected override bool IsMetadataArgument(ScintillaControl sci, int position)
+        {
+            if (ASContext.Context.CurrentMember != null) return false;
+            var next = (char)sci.CharAt(position);
+            var openingBracket = false;
+            for (var i = position; i > 0; i--)
+            {
+                var c = next;
+                next = (char)sci.CharAt(i);
+                switch (c)
+                {
+                    case ')':
+                    case '}':
+                    case ';':
+                        return false;
+                    case '(':
+                        openingBracket = true;
+                        break;
+                }
+                if (openingBracket && c == ':' && next == '@')
+                    return true;
+            }
+            return false;
+        }
+
         public override bool IsRegexStyle(ScintillaControl sci, int position)
         {
             return base.IsRegexStyle(sci, position)
@@ -173,7 +202,7 @@ namespace HaXeContext.Completion
             var currentLine = sci.CurrentLine;
             var line = sci.GetLine(currentLine);
             // for example: @:forward() <complete>
-            if (line.LastIndexOf(')') is int p && (p != -1 && (sci.PositionFromLine(currentLine) + p) < sci.CurrentPos)) return false;
+            if (line.LastIndexOf(')') is { } p && (p != -1 && (sci.PositionFromLine(currentLine) + p) < sci.CurrentPos)) return false;
             string metaName;
             FlagType mask;
             if (line.StartsWithOrdinal("@:forward("))

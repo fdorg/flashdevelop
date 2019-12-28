@@ -902,17 +902,17 @@ namespace HaXeContext
             if (!completionCache.IsDirty && completionCache.AllTypes != null)
                 return completionCache.AllTypes;
 
-            MemberList fullList = new MemberList();
+            var result = new MemberList();
             MemberModel item;
             // public & internal classes
-            string package = CurrentModel?.Package;
+            var package = CurrentModel?.Package;
             foreach (var aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     aPath.ForeachFile(aFile =>
                     {
-                        string module = aFile.Module;
-                        bool needModule = true;
+                        var module = aFile.Module;
+                        var needModule = true;
                         if (aFile.Classes.Count > 0 && !aFile.Classes[0].IsVoid())
                             foreach (var aClass in aFile.Classes)
                             {
@@ -924,7 +924,7 @@ namespace HaXeContext
                                     item = aClass.ToMemberModel();
                                     //if (tpackage != package) 
                                     if (item.Type != null) item.Name = item.Type;
-                                    fullList.Add(item);
+                                    result.Add(item);
                                 }
                             }
                         // HX files correspond to a "module" which should appear in code completion
@@ -932,7 +932,7 @@ namespace HaXeContext
                         if (needModule && aFile.FullPackage is { } qmodule)
                         {
                             item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
-                            fullList.Add(item);
+                            result.Add(item);
                         }
                         return true;
                     });
@@ -944,18 +944,18 @@ namespace HaXeContext
             {
                 if ((import.Flags & mask) > 0)
                 {
-                    fullList.Add(import);
+                    result.Add(import);
                 }
             }
 
             if (cFile != null)
                 foreach(var aClass in cFile.Classes)
-                    fullList.Add(aClass.ToMemberModel());
+                    result.Add(aClass.ToMemberModel());
 
             // in cache
-            fullList.Sort();
-            completionCache.AllTypes = fullList;
-            return fullList;
+            result.Sort();
+            completionCache.AllTypes = result;
+            return result;
         }
 
         public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
@@ -2056,7 +2056,7 @@ namespace HaXeContext
                 if (baseElements != null)
                 {
                     elements.Add(baseElements.Imports);
-                    foreach(MemberModel decl in baseElements.Members)
+                    foreach(var decl in baseElements.Members)
                         if ((decl.Flags & (FlagType.Class | FlagType.Enum | FlagType.TypeDef | FlagType.Abstract)) > 0)
                             elements.Add(decl);
                 }
@@ -2072,7 +2072,7 @@ namespace HaXeContext
                         var packageElements = ResolvePackage(package, false);
                         if (packageElements != null)
                         {
-                            foreach (MemberModel member in packageElements.Imports)
+                            foreach (var member in packageElements.Imports)
                             {
                                 if (member.Flags != FlagType.Package && member.Type.LastIndexOf('.') == pLen)
                                 {
@@ -2080,7 +2080,7 @@ namespace HaXeContext
                                     elements.Add(member);
                                 }
                             }
-                            foreach (MemberModel member in packageElements.Members)
+                            foreach (var member in packageElements.Members)
                             {
                                 var pkg = member.InFile.Package;
                                 //if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
@@ -2108,7 +2108,7 @@ namespace HaXeContext
                 // imports
                 var imports = ResolveImports(CurrentModel);
                 elements.Add(imports);
-                foreach (MemberModel import in imports)
+                foreach (var import in imports)
                 {
                     TryAddEnums(import as ClassModel ?? ResolveType(import.Name, cFile), other);
                 }
