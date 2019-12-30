@@ -27,9 +27,9 @@ namespace ASCompletion.Model
 
         public static bool ContainsMember(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (!recursive) @this.ContainsMember(flags);
+            if (!recursive) return @this.ContainsMember(flags);
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this.Extends;
+            var type = @this;
             while (!type.IsVoid())
             {
                 if (type.ContainsMember(flags)) return true;

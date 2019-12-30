@@ -148,11 +148,15 @@ namespace HaXeContext.Completion
             list = list
                 .Where(it =>
                 {
-                    if (it is MemberItem item)
+                    if (it is MemberItem item && item.Member is { } member)
                     {
-                        if ((item.Member.Flags & FlagType.Interface) != 0 || (item.Member.Flags & FlagType.Enum) != 0) return false;
-                        if (item.Member is ClassModel @class) return @class.ContainsMember(FlagType.Function | FlagType.Constructor, true);
-                        return true;
+                        var flags = member.Flags;
+                        if ((flags & FlagType.Interface) != 0 || (flags & FlagType.Enum) != 0) return false;
+                        var @class = member as ClassModel ?? ResolveType(member.Type, ASContext.Context.CurrentModel);
+                        if (@class is null) return false;
+                        var recursive = (@class.Flags & FlagType.Abstract) == 0;
+                        return @class.ContainsMember(FlagType.Access | FlagType.Function | FlagType.Constructor, recursive)
+                            || @class.ContainsMember(FlagType.Function | FlagType.Constructor, recursive);
                     }
                     return true;
                 })

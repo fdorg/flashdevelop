@@ -2393,8 +2393,8 @@ namespace HaXeContext.Completion.Haxe3
         [Test, TestCaseSource(nameof(ParseClass_Issue104TestCases))]
         public string ParseFile_Issue104(string name, FlagType flags)
         {
-            var visibleExternalElements = ASContext.Context.GetVisibleExternalElements();
-            var result = visibleExternalElements.Search(name, flags, 0);
+            var list = ASContext.Context.GetVisibleExternalElements();
+            var result = list.Search(name, flags, 0);
             return result.Comments;
         }
 
