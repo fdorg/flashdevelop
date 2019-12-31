@@ -51,6 +51,47 @@ namespace ASCompletion.Model
             return null;
         }
 
+        /// <summary>
+        /// Return the first MemberModel instance match in the ClassModel's members
+        /// </summary>
+        /// <param name="flags">Flags mask</param>
+        /// <param name="recursive"></param>
+        /// <returns>First match</returns>
+        public static MemberModel SearchMember(this ClassModel @this, FlagType flags, bool recursive)
+        {
+            if (!recursive) return @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this;
+            while (!type.IsVoid())
+            {
+                var result = type.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+                if (result != null) return result;
+                type = type.Extends;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Return the first MemberModel instance match in the ClassModel's members
+        /// </summary>
+        /// <param name="flags">Flags mask</param>
+        /// <param name="access">Visibility mask</param>
+        /// <param name="recursive"></param>
+        /// <returns>First match</returns>
+        public static MemberModel SearchMember(this ClassModel @this, FlagType flags, Visibility access, bool recursive)
+        {
+            if (!recursive) return @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags && (it.Access & access) != 0);
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this;
+            while (!type.IsVoid())
+            {
+                var result = type.Members.FirstOrDefault(it => (it.Flags & flags) == flags && (it.Access & access) != 0);
+                if (result != null) return result;
+                type = type.Extends;
+            }
+            return null;
+        }
+
         public static bool ContainsMember(this ClassModel @this, FlagType flags, bool recursive)
         {
             if (!recursive) return @this.ContainsMember(flags);
