@@ -1804,6 +1804,17 @@
     <EmbeddedResource Include="Test Files\parser\Issue2933_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateVariable_issue2952_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateVariable_issue2952_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_10.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_11.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

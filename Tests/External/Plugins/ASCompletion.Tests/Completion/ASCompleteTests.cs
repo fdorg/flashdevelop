@@ -4,6 +4,7 @@ using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
@@ -89,6 +90,14 @@ namespace ASCompletion.Completion
             Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
             Assert.IsTrue(passed);
             EventManager.RemoveEventHandler(handler);
+        }
+
+        protected static void OnChar(ScintillaControl sci, string sourceText, char addedChar, bool autoHide, EqualConstraint selectedLabelEqualConstraint)
+        {
+            SetSrc(sci, sourceText);
+            ASContext.HasContext = true;
+            ASComplete.OnChar(sci, addedChar, autoHide);
+            Assert.That(CompletionList.SelectedLabel, selectedLabelEqualConstraint);
         }
 
         protected static string OnCharAndReplaceText(ScintillaControl sci, string sourceText, char addedChar, bool autoHide)
@@ -1043,7 +1052,7 @@ namespace ASCompletion.Completion
         [TestFixture]
         public class AddClosingBraces : ASCompleteTests
         {
-            private const string prefix = "AddClosingBraces: ";
+            const string prefix = "AddClosingBraces: ";
 
             [TestFixtureSetUp]
             public void AddClosingBracesSetUp() => ASContext.CommonSettings.AddClosingBraces = true;
@@ -1221,7 +1230,7 @@ namespace ASCompletion.Completion
                 return Common(text, sci);
             }
 
-            private static string Common(string text, ScintillaControl sci)
+            static string Common(string text, ScintillaControl sci)
             {
                 text = "\n" + text + "\n"; // Surround with new line characters to enable colourisation
                 int cursor = text.IndexOf('+'); // Char before is added

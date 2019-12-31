@@ -1967,7 +1967,7 @@ namespace ASCompletion.Completion
                     if (!string.IsNullOrEmpty(expr.Value)) return HandleDeclarationCompletion(sci, expr.Value, autoHide);
                     if (ctx.CurrentModel.Version >= 2) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, features.overrideKey);
                 }
-                else if (cMember != null && sci.LineFromPosition(position) is int line && line == cMember.LineFrom)
+                else if (cMember != null && sci.LineFromPosition(position) is { } line && line == cMember.LineFrom)
                 {
                     var text = sci.GetLine(line);
                     int p;

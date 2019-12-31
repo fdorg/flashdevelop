@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
@@ -93,9 +92,6 @@ namespace PluginCore.Controls
         /// </summary> 
         public static bool Active { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static bool HasMouseIn
         {
             get
