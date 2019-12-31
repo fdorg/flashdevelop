@@ -2350,9 +2350,7 @@ namespace HaXeContext.Model
         #endregion
 
         public static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features) where T : MemberModel, new()
-        {
-            return FunctionTypeToMemberModel(type, features, new T());
-        }
+            => FunctionTypeToMemberModel(type, features, new T());
 
         internal static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features, T result) where T : MemberModel
         {
@@ -2439,7 +2437,7 @@ namespace HaXeContext.Model
                 {
                     if (c == '<') genCount++;
                     else if (c == '>' && type[i - 1] != '-') genCount--;
-                    else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && type[p] == '>')
+                    else if (genCount == 0 && c == '-' && i + 1 is { } p && p < length && type[p] == '>')
                         return true;
                 }
             }
@@ -2451,7 +2449,8 @@ namespace HaXeContext.Model
             if (!string.IsNullOrEmpty(type))
             {
                 var parCount = 0;
-                while (type.Length is int length && length > 2
+                while (type.Length is { } length
+                       && length > 2
                        && type[0] == '(' && type[length - 1] == ')')
                 {
                     foreach (var c in type)

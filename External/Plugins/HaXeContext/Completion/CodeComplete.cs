@@ -1674,7 +1674,9 @@ namespace HaXeContext.Completion
                     type = ResolveType(member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
                     if (!type.IsVoid()) result.Type = type;
                 }
-                else if (member.Flags.HasFlag(FlagType.Function) && member.Type.Contains('<'))
+                else if (result.RelClass?.IndexType is { } indexType
+                         && member.Flags.HasFlag(FlagType.Function)
+                         && (member.Type.Contains('<') || (member.Parameters?.Any(it => it.Type.Contains('<')) ?? false)))
                 {
                     var i = 1;
                 }
