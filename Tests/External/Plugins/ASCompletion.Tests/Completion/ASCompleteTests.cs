@@ -876,6 +876,22 @@ namespace ASCompletion.Completion
             ]
             public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
+            static IEnumerable<TestCaseData> OnCharIssue2955TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnCharIssue2955_1", '.', false, Is.Not.EqualTo("flash.display.IBitmapDrawable"))
+                        .SetName("new IBitmapDrawable<complete>' Issue2105. Case 1.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(OnCharIssue2955TestCases))
+            ]
+            public void OnChar(string fileName, char addedChar, bool autoHide, EqualConstraint selecvtedLabelEqualConstraint) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, selecvtedLabelEqualConstraint);
+
             static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2076TestCases
             {
                 get
