@@ -4,20 +4,6 @@ namespace ASCompletion.Model
 {
     public static class ClassModelExtensions
     {
-        public static MemberList GetMembers(this ClassModel @this, FlagType flags, bool recursive)
-        {
-            if (!recursive) @this.SearchMembers(flags);
-            if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this.Extends;
-            while (!type.IsVoid())
-            {
-                var result = type.SearchMembers(flags);
-                if (result.Count > 0) return result;
-                type = type.Extends;
-            }
-            return null;
-        }
-
         public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive)
         {
             if (!recursive) return @this.Members.Search(name, 0, 0);
@@ -27,6 +13,20 @@ namespace ASCompletion.Model
             {
                 var result = type.Members.Search(name, 0, 0);
                 if (result != null) return result;
+                type = type.Extends;
+            }
+            return null;
+        }
+
+        public static MemberList SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
+        {
+            if (!recursive) @this.SearchMembers(flags);
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this.Extends;
+            while (!type.IsVoid())
+            {
+                var result = type.SearchMembers(flags);
+                if (result.Count > 0) return result;
                 type = type.Extends;
             }
             return null;

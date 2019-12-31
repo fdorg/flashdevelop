@@ -1015,15 +1015,21 @@ namespace HaXeContext.Completion
         {
             var ctx = ASContext.Context;
             var template = ctx.CurrentMember?.Template ?? ctx.CurrentClass?.Template;
-            if (!string.IsNullOrEmpty(template) && !string.IsNullOrEmpty(var.Type)
-                && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
+            return TryInferGenericType(var, template, ctx.CurrentModel);
+        }
+
+        static ClassModel TryInferGenericType(MemberModel var, string template, FileModel inFile)
+        {
+            if (!string.IsNullOrEmpty(template)
+                && !string.IsNullOrEmpty(var.Type)
+                && ResolveType(var.Type, inFile).IsVoid())
             {
                 var templates = template.Substring(1, template.Length - 2).Split(',');
                 foreach (var it in templates)
                 {
                     var parts = it.Split(':');
                     if (parts.Length == 1 || parts[0] != var.Type) continue;
-                    var type = ResolveType(parts[1], ctx.CurrentModel);
+                    var type = ResolveType(parts[1], inFile);
                     var.Type = type.Name;
                     var.Flags |= FlagType.Inferred;
                     return type;
@@ -1492,14 +1498,14 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            else if (context != null
-                     && member != null && (member.Flags.HasFlag(FlagType.Function)
+            else if (context != null && member != null && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
+                var template = member.Template;
                 var subExpressions = context.SubExpressions;
-                if (!string.IsNullOrEmpty(member.Template) && subExpressions?.LastOrDefault() is { } subExpression && subExpression.Length > 2)
+                if (!string.IsNullOrEmpty(template) && subExpressions?.LastOrDefault() is { } subExpression && subExpression.Length > 2)
                 {
                     var subExpressionPosition = context.SubExpressionPositions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
@@ -1534,11 +1540,11 @@ namespace HaXeContext.Completion
                         }
                     }
                     member = (MemberModel) member.Clone();
-                    var templates = member.Template.Substring(1, member.Template.Length - 2).Split(',');
+                    var templates = template.Substring(1, template.Length - 2).Split(',');
                     for (var i = 0; i < templates.Length; i++)
                     {
                         string newType = null;
-                        var template = templates[i];
+                        template = templates[i];
                         // try transform T:{} to T
                         if (template.Contains(':', out var p)) template = template.Substring(0, p);
                         var reTemplateType = new Regex($"\\b{template}\\b");
@@ -1601,9 +1607,19 @@ namespace HaXeContext.Completion
                 }
             }
             // for example: Null<SomeType>
-            if (inClass.ExtendsType is { } extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != ASContext.Context.Features.objectKey
-                && inClass.Extends.IsVoid() && !string.IsNullOrEmpty(inClass.Template) && !string.IsNullOrEmpty(inClass.IndexType))
+            if (inClass.ExtendsType is { } extendsType
+                && !string.IsNullOrEmpty(extendsType)
+                && extendsType != ASContext.Context.Features.objectKey
+                && inClass.Extends.IsVoid()
+                && !string.IsNullOrEmpty(inClass.Template)
+                && !string.IsNullOrEmpty(inClass.IndexType))
             {
+                // for example, Haxe 4: extendsType => haxe.ds.Map<K,V>, inClass.IndexType => Int, Int
+                if (extendsType.Contains('<', out var p)
+                    && extendsType.Substring(p) is { } template
+                    && template == inClass.Template
+                    && template != inClass.IndexType)
+                    extendsType = extendsType.Substring(0, p) + '<' + inClass.IndexType + '>';
                 var type = ResolveType(extendsType, ASContext.Context.CurrentModel);
                 if (!type.IsVoid()) inClass = type;
             }
@@ -1629,32 +1645,39 @@ namespace HaXeContext.Completion
                 }
             }
             member = result.Member;
-            if (member?.Type != null && (result.Type is null || result.Type.IsVoid()))
+            if (member?.Type != null)
             {
-                /**
-                 * for example:
-                 * class Some<T:String> {
-                 *     var v:T;
-                 *     function test() {
-                 *         v.<complete>
-                 *     }
-                 * }
-                 */
-                var clone = (MemberModel) member.Clone();
-                var type = TryInferGenericType(clone);
-                if (!type.IsVoid())
+                if (result.Type is null || result.Type.IsVoid())
                 {
-                    result.Member = clone;
-                    result.Type = type;
-                    return;
+                    /**
+                     * for example:
+                     * class Some<T:String> {
+                     *     var v:T;
+                     *     function test() {
+                     *         v.<complete>
+                     *     }
+                     * }
+                     */
+                    var clone = (MemberModel) member.Clone();
+                    var type = TryInferGenericType(clone);
+                    if (!type.IsVoid())
+                    {
+                        result.Member = clone;
+                        result.Type = type;
+                        return;
+                    }
+                    /**
+                     * for example:
+                     * var v = (variable:IInterface).someMethod<T:{}>((param0:Class<T>): String):T;
+                     * v.<complete>
+                     */
+                    type = ResolveType(member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
+                    if (!type.IsVoid()) result.Type = type;
                 }
-                /**
-                 * for example:
-                 * var v = (variable:IInterface).someMethod<T:{}>((param0:Class<T>): String):T;
-                 * v.<complete>
-                 */
-                type = ResolveType(member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
-                if (!type.IsVoid()) result.Type = type;
+                else if (member.Flags.HasFlag(FlagType.Function) && member.Type.Contains('<'))
+                {
+                    var i = 1;
+                }
             }
         }
 
@@ -1701,7 +1724,7 @@ namespace HaXeContext.Completion
         /// <param name="position">Current cursor position</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        bool HandleSwitchCaseCompletion(ScintillaControl sci, int position, bool autoHide)
+        static bool HandleSwitchCaseCompletion(ScintillaControl sci, int position, bool autoHide)
         {
             var ctx = ASContext.Context;
             var member = ctx.CurrentMember ?? ctx.CurrentClass;

@@ -2752,7 +2752,7 @@ namespace ASCompletion.Completion
             const FlagType flags = FlagType.Function | FlagType.Constructor;
             var member = new MemberModel(inClass.Name, inClass.QualifiedName, flags, Visibility.Public)
             {
-                Parameters = inClass.GetMembers(flags, true)?[0].Parameters
+                Parameters = inClass.SearchMembers(flags, true)?[0].Parameters
                              // for example: new Ty<generator>pe(value);
                              ?? ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true))
                                  .Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0))
