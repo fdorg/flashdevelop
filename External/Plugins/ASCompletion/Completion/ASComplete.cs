@@ -1967,7 +1967,7 @@ namespace ASCompletion.Completion
                     if (!string.IsNullOrEmpty(expr.Value)) return HandleDeclarationCompletion(sci, expr.Value, autoHide);
                     if (ctx.CurrentModel.Version >= 2) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, features.overrideKey);
                 }
-                else if (cMember != null && sci.LineFromPosition(position) is int line && line == cMember.LineFrom)
+                else if (cMember != null && sci.LineFromPosition(position) is { } line && line == cMember.LineFrom)
                 {
                     var text = sci.GetLine(line);
                     int p;
@@ -2250,9 +2250,7 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.Settings.LazyClasspathExploration
                 && ASContext.Context.Settings.CompletionListAllTypes)
             {
-                // show all project classes
                 list = GetAllClasses(sci, true, true);
-
                 if (list is null) return true;
             }
             else
@@ -2263,7 +2261,11 @@ namespace ASCompletion.Completion
                     .Select(member => new MemberItem(new MemberModel(member.Type, member.Type, member.Flags, member.Access)))
                     .ToList<ICompletionListItem>();
             }
+            return ASContext.Context.CodeComplete.HandleNewCompletion(sci, tail, autoHide, keyword, list);
+        }
 
+        protected virtual bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword, List<ICompletionListItem> list)
+        {
             // If we are instantiating a class:
             //    1. Type exists:
             //       a. Generic type -> Show it with our index type.
@@ -2294,10 +2296,8 @@ namespace ASCompletion.Completion
                         itemIndex = itemIndex > 0 ? itemIndex : 0;
                     }
                     else itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
-
                     list.Insert(itemIndex, newItem);
                 }
-
                 CompletionList.Show(list, autoHide, tail);
                 CompletionList.SelectItem(newItemType);
             }

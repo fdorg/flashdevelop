@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
@@ -93,9 +92,6 @@ namespace PluginCore.Controls
         /// </summary> 
         public static bool Active { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static bool HasMouseIn
         {
             get
@@ -231,8 +227,8 @@ namespace PluginCore.Controls
             if (needResize && !string.IsNullOrEmpty(widestLabel))
             {
                 needResize = false;
-                Graphics g = cl.CreateGraphics();
-                SizeF size = g.MeasureString(widestLabel, cl.Font);
+                var g = cl.CreateGraphics();
+                var size = g.MeasureString(widestLabel, cl.Font);
                 cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), ScaleHelper.Scale(400)) + ScaleHelper.Scale(10);
             }
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
@@ -337,7 +333,7 @@ namespace PluginCore.Controls
                 else g.DrawString(item.Label, e.Font, textBrush, bounds, StringFormat.GenericDefault);
             }
             e.DrawFocusRectangle();
-            if ((item != null) && ((e.State & DrawItemState.Selected) > 0))
+            if (item != null && (e.State & DrawItemState.Selected) > 0)
             {
                 UITools.Tip.Hide();
                 currentItem = item;

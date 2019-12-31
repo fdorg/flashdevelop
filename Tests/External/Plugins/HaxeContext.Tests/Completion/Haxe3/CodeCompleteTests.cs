@@ -7,6 +7,7 @@ using ASCompletion.Settings;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using PluginCore;
 using PluginCore.Controls;
 
@@ -447,6 +448,57 @@ namespace HaXeContext.Completion.Haxe3
         {
             ((HaXeSettings) ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+        }
+
+
+        static IEnumerable<TestCaseData> OnCharIssue2955TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2955_1", '.', false, Is.Not.EqualTo("IInterface"))
+                    .SetName("new IInterface<complete> Issue 2955. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_2", '.', false, Is.Not.EqualTo("Enum"))
+                    .SetName("new Enum<complete> Issue 2955. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_3", '.', false, Is.Not.EqualTo("Typedef"))
+                    .SetName("new Typedef<complete> Issue 2955. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_4", '.', false, Is.Not.EqualTo("EnumAbstract"))
+                    .SetName("new EnumAbstract<complete> Issue 2955. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_5", '.', false, Is.Not.EqualTo("ClassWithoutConstructor"))
+                    .SetName("new ClassWithoutConstructor<complete> Issue 2955. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_6", '.', false, Is.EqualTo("String"))
+                    .SetName("new ClassWithConstructor<complete> Issue 2955. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_7", '.', false, Is.Not.EqualTo("Float"))
+                    .SetName("new Float<complete> Issue 2955. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_8", '.', false, Is.Not.EqualTo("Iterator"))
+                    .SetName("new Iterator<complete> Issue 2955. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_9", '.', false, Is.Not.EqualTo("ValueType"))
+                    .SetName("new ValueType<complete> Issue 2955. Case 9")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_10", '.', false, Is.EqualTo("Map"))
+                    .SetName("new Map<complete> Issue 2955. Case 10")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                yield return new TestCaseData("BeforeOnChar_issue2955_11", '.', false, Is.EqualTo("Array"))
+                    .SetName("new Array<complete> Issue 2955. Case 11")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(OnCharIssue2955TestCases)),
+        ]
+        public void OnChar(string fileName, char addedChar, bool autoHide, EqualConstraint selectedLabelEqualConstraint)
+        {
+            ((HaXeSettings) ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
+            OnChar(sci, ReadAllText(fileName), addedChar, autoHide, selectedLabelEqualConstraint);
         }
 
         static IEnumerable<TestCaseData> GetToolTipTextTestCases
@@ -2393,8 +2445,8 @@ namespace HaXeContext.Completion.Haxe3
         [Test, TestCaseSource(nameof(ParseClass_Issue104TestCases))]
         public string ParseFile_Issue104(string name, FlagType flags)
         {
-            var visibleExternalElements = ASContext.Context.GetVisibleExternalElements();
-            var result = visibleExternalElements.Search(name, flags, 0);
+            var list = ASContext.Context.GetVisibleExternalElements();
+            var result = list.Search(name, flags, 0);
             return result.Comments;
         }
 

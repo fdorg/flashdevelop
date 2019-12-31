@@ -4,6 +4,7 @@ using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
@@ -89,6 +90,14 @@ namespace ASCompletion.Completion
             Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
             Assert.IsTrue(passed);
             EventManager.RemoveEventHandler(handler);
+        }
+
+        protected static void OnChar(ScintillaControl sci, string sourceText, char addedChar, bool autoHide, EqualConstraint selectedLabelEqualConstraint)
+        {
+            SetSrc(sci, sourceText);
+            ASContext.HasContext = true;
+            ASComplete.OnChar(sci, addedChar, autoHide);
+            Assert.That(CompletionList.SelectedLabel, selectedLabelEqualConstraint);
         }
 
         protected static string OnCharAndReplaceText(ScintillaControl sci, string sourceText, char addedChar, bool autoHide)
@@ -867,6 +876,22 @@ namespace ASCompletion.Completion
             ]
             public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
+            static IEnumerable<TestCaseData> OnCharIssue2955TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnCharIssue2955_1", '.', false, Is.Not.EqualTo("flash.display.IBitmapDrawable"))
+                        .SetName("new IBitmapDrawable<complete>' Issue2105. Case 1.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(OnCharIssue2955TestCases))
+            ]
+            public void OnChar(string fileName, char addedChar, bool autoHide, EqualConstraint selecvtedLabelEqualConstraint) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, selecvtedLabelEqualConstraint);
+
             static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2076TestCases
             {
                 get
@@ -1043,7 +1068,7 @@ namespace ASCompletion.Completion
         [TestFixture]
         public class AddClosingBraces : ASCompleteTests
         {
-            private const string prefix = "AddClosingBraces: ";
+            const string prefix = "AddClosingBraces: ";
 
             [TestFixtureSetUp]
             public void AddClosingBracesSetUp() => ASContext.CommonSettings.AddClosingBraces = true;
@@ -1221,7 +1246,7 @@ namespace ASCompletion.Completion
                 return Common(text, sci);
             }
 
-            private static string Common(string text, ScintillaControl sci)
+            static string Common(string text, ScintillaControl sci)
             {
                 text = "\n" + text + "\n"; // Surround with new line characters to enable colourisation
                 int cursor = text.IndexOf('+'); // Char before is added

@@ -143,6 +143,30 @@ namespace HaXeContext.Completion
             bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is { } t && !t.IsVoid();
         }
 
+        protected override bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword, List<ICompletionListItem> list)
+        {
+            if (keyword == "new")
+            {
+                list = list
+                    .Where(it =>
+                    {
+                        if (it is MemberItem item && item.Member is { } member)
+                        {
+                            var flags = member.Flags;
+                            if ((flags & FlagType.Interface) != 0 || (flags & FlagType.Enum) != 0) return false;
+                            var @class = member as ClassModel ?? ResolveType(member.Type, ASContext.Context.CurrentModel);
+                            if (@class is null) return false;
+                            var recursive = (@class.Flags & FlagType.Abstract) == 0;
+                            return @class.ContainsMember(FlagType.Access | FlagType.Function | FlagType.Constructor, recursive)
+                                   || @class.ContainsMember(FlagType.Function | FlagType.Constructor, recursive);
+                        }
+                        return true;
+                    })
+                    .ToList();
+            }
+            return base.HandleNewCompletion(sci, tail, autoHide, keyword, list);
+        }
+
         /// <inheritdoc />
         protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
         {

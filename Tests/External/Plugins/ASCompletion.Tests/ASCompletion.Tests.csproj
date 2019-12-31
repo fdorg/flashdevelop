@@ -794,6 +794,7 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2624_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2628_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2628_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2955_1.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
