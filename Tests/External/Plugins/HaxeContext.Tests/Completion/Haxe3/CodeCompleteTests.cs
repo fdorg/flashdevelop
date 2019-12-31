@@ -482,7 +482,7 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("BeforeOnChar_issue2955_9", '.', false, Is.Not.EqualTo("ValueType"))
                     .SetName("new ValueType<complete> Issue 2955. Case 9")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
-                yield return new TestCaseData("BeforeOnChar_issue2955_10", '.', false, Is.EqualTo("haxe.ds.Map"))
+                yield return new TestCaseData("BeforeOnChar_issue2955_10", '.', false, Is.EqualTo("Map"))
                     .SetName("new Map<complete> Issue 2955. Case 10")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
                 yield return new TestCaseData("BeforeOnChar_issue2955_11", '.', false, Is.EqualTo("Array"))
