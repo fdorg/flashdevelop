@@ -724,16 +724,10 @@ namespace HaXeContext.Completion
                     exprType.ResolveExtends();
                     while (!exprType.IsVoid())
                     {
-                        // typedef Ints = Array<Int>
-                        if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
-                        {
-                            exprType = InferTypedefType(sci, exprType);
-                            continue;
-                        }
-                        var members = exprType.Members;
-                        var iterator = members.Search("iterator", 0, 0);
+                        var iterator = exprType.SearchMember("iterator", true);
                         if (iterator is null)
                         {
+                            var members = exprType.Members;
                             if (members.Contains("hasNext", 0, 0))
                             {
                                 iterator = members.Search("next", 0, 0);
@@ -741,7 +735,8 @@ namespace HaXeContext.Completion
                             }
                             var exprTypeIndexType = exprType.IndexType;
                             if (exprType.Name.StartsWithOrdinal("Iterator<")
-                                && !string.IsNullOrEmpty(exprTypeIndexType) && ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                                && !string.IsNullOrEmpty(exprTypeIndexType)
+                                && ResolveType(exprTypeIndexType, currentModel).IsVoid())
                             {
                                 exprType = expr.InClass;
                                 break;
