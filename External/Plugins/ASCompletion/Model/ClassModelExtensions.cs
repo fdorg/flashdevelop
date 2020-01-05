@@ -4,6 +4,12 @@ namespace ASCompletion.Model
 {
     public static class ClassModelExtensions
     {
+        /// <summary>
+        /// Return the first MemberModel instance match in the ClassModel's members
+        /// </summary>
+        /// <param name="name">Member name to mach</param>
+        /// <param name="recursive"></param>
+        /// <returns>First match</returns>
         public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive)
         {
             if (!recursive) return @this.Members.Search(name, 0, 0);
@@ -20,7 +26,7 @@ namespace ASCompletion.Model
 
         public static MemberList SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (!recursive) @this.SearchMembers(flags);
+            if (!recursive) return @this.SearchMembers(flags);
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this.Extends;
             while (!type.IsVoid())
@@ -33,11 +39,11 @@ namespace ASCompletion.Model
         }
 
         /// <summary>
-        /// Return all MemberModel instance matches in the ClassModel
+        /// Return all MemberModel instance matches in the ClassModel's members
         /// </summary>
-        /// <param name="mask">Flags mask</param>
+        /// <param name="flags">Flags flags</param>
         /// <returns>All matches</returns>
-        static MemberList SearchMembers(this ClassModel @this, FlagType mask) => new MemberList(@this.Members.Where(it => (it.Flags & mask) == mask));
+        static MemberList SearchMembers(this ClassModel @this, FlagType flags) => new MemberList(@this.Members.Where(it => (it.Flags & flags) == flags));
 
         public static bool ContainsMember(this ClassModel @this, FlagType flags, bool recursive)
         {
