@@ -598,11 +598,6 @@ namespace ASCompletion.Completion
                    && found.InClass.Implements.Count > 0;
         }
 
-
-
-        /// <summary>
-        /// TODO slavara: дописать документация
-        /// </summary>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
@@ -715,10 +710,7 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    else
-                    {
-                        target = contextOwnerResult.Member.Name;
-                    }
+                    else target = contextOwnerResult.Member.Name;
                 }
             }
             
@@ -2957,9 +2949,7 @@ namespace ASCompletion.Completion
         }
 
         protected void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name)
-        {
-            GenerateClass(sci, position, inClass, name, new Hashtable());
-        }
+            => GenerateClass(sci, position, inClass, name, new Hashtable());
 
         protected virtual void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name, Hashtable info)
         {
@@ -2984,9 +2974,7 @@ namespace ASCompletion.Completion
         }
 
         static void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name)
-        {
-            ((ASGenerator)ASContext.Context.CodeGenerator).GenerateInterface(sci, inClass, name, new Hashtable());
-        }
+            => ((ASGenerator)ASContext.Context.CodeGenerator).GenerateInterface(sci, inClass, name, new Hashtable());
 
         protected virtual void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name, Hashtable info)
         {
@@ -3060,11 +3048,7 @@ namespace ASCompletion.Completion
             sci.SetSel(position, position);
 
             var flags = FlagType.Function;
-            if ((found.Member.Flags & FlagType.Static) > 0)
-            {
-                flags |= FlagType.Static;
-            }
-
+            if ((found.Member.Flags & FlagType.Static) > 0) flags |= FlagType.Static;
             var member = new MemberModel(newName, ctx.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
             template = NewLine + TemplateUtils.GetTemplate("Function");
             template = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(member, template);
@@ -3569,10 +3553,9 @@ namespace ASCompletion.Completion
 
         protected static bool TryImportType(string type, ref int delta, int atLine)
         {
-            var eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
-            if (eventClass.IsVoid()) return false;
-            var typesUsed = new List<string> {type};
-            delta += AddImportsByName(typesUsed, atLine);
+            var @class = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (@class.IsVoid()) return false;
+            delta += AddImportsByName(new List<string> {type}, atLine);
             return true;
         }
 
@@ -3634,7 +3617,7 @@ namespace ASCompletion.Completion
             if (template.Length == 0)
             {
                 GenerateSetter(name, member, position);
-                (PluginBase.MainForm.CurrentDocument?.SciControl).SetSel(position, position);
+                PluginBase.MainForm.CurrentDocument?.SciControl.SetSel(position, position);
                 GenerateGetter(name, member, position);
                 return;
             }
@@ -3660,9 +3643,9 @@ namespace ASCompletion.Completion
 
         static string GetPrivateAccessor(MemberModel member, MemberModel inClass)
         {
-            var acc = GetStaticKeyword(member);
-            if (!string.IsNullOrEmpty(acc)) acc += " ";
-            return acc + GetPrivateKeyword(inClass);
+            var result = GetStaticKeyword(member);
+            if (!string.IsNullOrEmpty(result)) result += " ";
+            return result + GetPrivateKeyword(inClass);
         }
 
         static string GetPrivateKeyword(MemberModel inClass)
