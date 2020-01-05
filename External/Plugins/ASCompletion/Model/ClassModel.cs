@@ -104,11 +104,11 @@ namespace ASCompletion.Model
         /// </summary>
         public void ResolveExtends()
         {
-            var aClass = this;
+            var @class = this;
             var extensionList = new List<ClassModel> {this};
-            while (!aClass.IsVoid())
+            while (!@class.IsVoid())
             {
-                aClass = aClass.ResolveExtendedType(extensionList);
+                @class = @class.ResolveExtendedType(extensionList);
             }
         }
 
@@ -142,26 +142,26 @@ namespace ASCompletion.Model
                     return VoidClass;
                 }
             }
-            var extends = InFile.Context.ResolveType(ExtendsType, InFile);
-            if (!extends.IsVoid())
+            var result = InFile.Context.ResolveType(ExtendsType, InFile);
+            if (!result.IsVoid())
             {
                 // check loops in inheritance
-                if (extends.Name != objectKey)
+                if (result.Name != objectKey)
                 {
                     foreach(ClassModel model in extensionList)
                     {
-                        if (model.QualifiedName != extends.QualifiedName) continue;
+                        if (model.QualifiedName != result.QualifiedName) continue;
                         var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
                         MessageBar.ShowWarning(info);
                         resolvedExtend = null;
                         return VoidClass;
                     }
                 }
-                extensionList.Add(extends);
-                extends.InFile.Check();
+                extensionList.Add(result);
+                result.InFile.Check();
             }
-            resolvedExtend = new WeakReference(extends);
-            return extends;
+            resolvedExtend = new WeakReference(result);
+            return result;
         }
 
         public ClassModel()
@@ -232,11 +232,11 @@ namespace ASCompletion.Model
 
         public MemberList GetSortedMembersList()
         {
-            var items = new MemberList();
-            foreach (MemberModel item in Members)
-                if ((item.Flags & FlagType.Constructor) == 0) items.Add(item);
-            items.Sort();
-            return items;
+            var result = new MemberList();
+            foreach (var item in Members)
+                if ((item.Flags & FlagType.Constructor) == 0) result.Add(item);
+            result.Sort();
+            return result;
         }
 
         /// <summary>
@@ -245,19 +245,18 @@ namespace ASCompletion.Model
         /// </summary>
         internal MemberList GetSortedInheritedMembersList()
         {
-            var items = new MemberList();
-            var curClass = this;
-            curClass.ResolveExtends();
+            var result = new MemberList();
+            var @class = this;
+            @class.ResolveExtends();
             do
             {
-                curClass = curClass.Extends;
-                var newMembers = curClass.GetSortedMembersList();
-                items.Merge(newMembers);
+                @class = @class.Extends;
+                result.Merge(@class.GetSortedMembersList());
                 
-            } while (!curClass.Extends.IsVoid());
-            items.RemoveAllWithFlag(FlagType.Static);
-            items.Sort();
-            return items;
+            } while (!@class.Extends.IsVoid());
+            result.RemoveAllWithFlag(FlagType.Static);
+            result.Sort();
+            return result;
         }
 
         #endregion
@@ -284,21 +283,6 @@ namespace ASCompletion.Model
             string tab0 = (!caching && InFile.Version == 3) ? "\t" : "";
             string tab = (caching) ? "" : ((InFile.Version == 3) ? "\t\t" : "\t");
             bool preventVis = (Flags & FlagType.Interface) > 0;
-
-            // SPECIAL DELEGATE
-            /*if ((Flags & FlagType.Delegate) > 0)
-            {
-                if (Members.Count > 0)
-                {
-                    MemberModel ctor = Members[0].Clone() as MemberModel;
-                    ctor.Flags |= FlagType.Delegate;
-                    ctor.Access = Access;
-                    String comment = CommentDeclaration(ctor.Comments, tab0);
-                    sb.Append(comment);
-                    sb.Append(tab0).Append(MemberDeclaration(ctor, preventVis)).Append(semi).Append(nl);
-                    return sb.ToString();
-                }
-            }*/
             
             // META
             ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab0);
@@ -549,10 +533,8 @@ namespace ASCompletion.Model
 
         static string GetCorrectComment(string comment, string eolSrc, string eolRepl)
         {
-            MatchCollection mc = reAsdocWord.Matches(comment);
-
-            string outComment = "";
-
+            string result = "";
+            var mc = reAsdocWord.Matches(comment);
             int j0 = 0;
             int i, l = mc.Count;
             for (i = 0; i <= l; i++)
@@ -564,19 +546,18 @@ namespace ASCompletion.Model
                 if (i > 0)
                     s = s.Replace(eolSrc, eolRepl);
 
-                outComment += s;
+                result += s;
 
                 if (i < l)
                 {
                     if (i == 0 && MoreLines(comment, 5))
-                        outComment += "\n";
+                        result += "\n";
 
-                    outComment += mc[i].Value;
+                    result += mc[i].Value;
                     j0 = mc[i].Index + mc[i].Length;
                 }
             }
-
-            return outComment;
+            return result;
         }
 
         static bool MoreLines(string text, int count)

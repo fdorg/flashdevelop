@@ -7,7 +7,7 @@ namespace ASCompletion.Model
         /// <summary>
         /// Return all MemberModel instance matches in the ClassModel's members
         /// </summary>
-        /// <param name="mask">Flags mask</param>
+        /// <param name="flags">Flags mask</param>
         /// <param name="recursive"></param>
         /// <returns>All matches</returns>
         public static MemberList SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
@@ -27,9 +27,9 @@ namespace ASCompletion.Model
         /// <summary>
         /// Return all MemberModel instance matches in the ClassModel's members
         /// </summary>
-        /// <param name="mask">Flags mask</param>
+        /// <param name="flags">Flags mask</param>
         /// <returns>All matches</returns>
-        static MemberList SearchMembers(this ClassModel @this, FlagType mask) => new MemberList(@this.Members.Where(it => (it.Flags & mask) == mask));
+        static MemberList SearchMembers(this ClassModel @this, FlagType flags) => new MemberList(@this.Members.Where(it => (it.Flags & flags) == flags));
 
         /// <summary>
         /// Return the first MemberModel instance match in the ClassModel's members
@@ -75,7 +75,7 @@ namespace ASCompletion.Model
         /// Return the first MemberModel instance match in the ClassModel's members
         /// </summary>
         /// <param name="flags">Flags mask</param>
-        /// <param name="access">Visibility mask</param>
+        /// <param name="access">Visibility flags</param>
         /// <param name="recursive"></param>
         /// <returns>First match</returns>
         public static MemberModel SearchMember(this ClassModel @this, FlagType flags, Visibility access, bool recursive)

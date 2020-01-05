@@ -705,14 +705,13 @@ namespace ASCompletion.Completion
                 name = inClass.Name;
                 isClass = true;
                 // constructor
-                foreach (MemberModel member in inClass.Members)
-                    if ((member.Flags & FlagType.Constructor) > 0)
-                    {
-                        line = member.LineFrom;
-                        name = member.Name;
-                        isClass = false;
-                        break;
-                    }
+                var member = inClass.SearchMember(FlagType.Constructor, false);
+                if (member != null)
+                {
+                    line = member.LineFrom;
+                    name = member.Name;
+                    isClass = false;
+                }
             }
             // select
             if (line > 0)
