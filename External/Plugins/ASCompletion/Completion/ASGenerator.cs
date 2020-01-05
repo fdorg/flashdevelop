@@ -3356,14 +3356,9 @@ namespace ASCompletion.Completion
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 var mGeneric = Regex.Match(type, "<([^>]+)>");
-                if (mGeneric.Success)
-                {
-                    return GetQualifiedType(mGeneric.Groups[1].Value, aType);
-                }
+                if (mGeneric.Success) return GetQualifiedType(mGeneric.Groups[1].Value, aType);
             }
-
             if (type.IndexOf('.') > 0) return type;
-
             var aClass = ASContext.Context.ResolveType(type, aType.InFile);
             return !aClass.IsVoid()
                 ? aClass.QualifiedName
