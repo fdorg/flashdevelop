@@ -1808,7 +1808,6 @@ namespace ASCompletion.Completion
             {
                 AddLookupPosition();
                 lookupPosition = -1;
-
                 PluginBase.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 var fileModel = ASContext.Context.GetFileModel(funcResult.Type.InFile.FileName);
@@ -1820,23 +1819,12 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-
                 inClass = funcResult.Type;
                 ASContext.Context.UpdateContext(inClass.LineFrom);
             }
-
-            foreach (MemberModel m in inClass.Members)
-            {
-                if ((m.Flags & FlagType.Constructor) > 0)
-                {
-                    funcResult.Member = m;
-                    break;
-                }
-            }
-
+            funcResult.Member = inClass.SearchMember(FlagType.Constructor, false);
             if (funcResult.Member is null) return;
             if (!string.IsNullOrEmpty(ASContext.Context.Features.ConstructorKey)) funcResult.Member.Name = ASContext.Context.Features.ConstructorKey;
-
             ChangeDecl(sci, inClass, funcResult.Member, parameters);
         }
 
@@ -3995,23 +3983,9 @@ namespace ASCompletion.Completion
                 {
                     var mCopy = (MemberModel) m.Clone();
                     var methodTemplate = NewLine;
-                    var overrideFound = false;
                     var baseClassType = inClass;
-                    while (!baseClassType.IsVoid())
-                    {
-                        var inClassMembers = baseClassType.Members;
-                        foreach (MemberModel inClassMember in inClassMembers)
-                        {
-                            if ((inClassMember.Flags & FlagType.Function) > 0 && m.Name.Equals(inClassMember.Name))
-                            {
-                                mCopy.Flags |= FlagType.Override;
-                                overrideFound = true;
-                                break;
-                            }
-                        }
-                        if (overrideFound) break;
-                        baseClassType = baseClassType.Extends;
-                    }
+                    if (baseClassType.ContainsMember(m.Name, FlagType.Function, true)) 
+                        mCopy.Flags |= FlagType.Override;
                     var flags = m.Flags;
                     if (isStaticMember && (flags & FlagType.Static) == 0) mCopy.Flags |= FlagType.Static;
                     var variableTemplate = string.Empty;
@@ -4041,8 +4015,7 @@ namespace ASCompletion.Completion
                         if (!isVararg)
                         {
                             callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Name", member.Name + "." + m.Name);
-                            callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Arguments", 
-                                TemplateUtils.CallParametersString(m));
+                            callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Arguments", TemplateUtils.CallParametersString(m));
                             callMethodTemplate += ";";
                         }
                         else 
