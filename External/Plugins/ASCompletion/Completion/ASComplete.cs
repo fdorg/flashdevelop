@@ -1557,21 +1557,13 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             // get expression at cursor position
             var expr = GetExpression(sci, position, true);
-            if (string.IsNullOrEmpty(expr.Value)
-                || (expr.WordBefore == ctx.Features.functionKey && expr.Separator == " "))
+            if (string.IsNullOrEmpty(expr.Value) || (expr.WordBefore == ctx.Features.functionKey && expr.Separator == " "))
                 return false;
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
             var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, true);
             if (result.Member is null && result.Type != null)
-            {
-                foreach (MemberModel member in result.Type.Members)
-                    if (member.Name == result.Type.Constructor)
-                    {
-                        result.Member = member;
-                        break;
-                    }
-            }
+                result.Member = result.Type.SearchMember(result.Type.Constructor, true);
             return ResolveFunction(sci, position, result, autoHide);
         }
 
