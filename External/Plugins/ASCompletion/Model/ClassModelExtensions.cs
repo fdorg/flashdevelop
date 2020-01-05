@@ -49,7 +49,7 @@ namespace ASCompletion.Model
                 type = type.Extends;
             }
             return null;
-        }        
+        }
         
         public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive, out ClassModel inClass)
         {
@@ -152,5 +152,18 @@ namespace ASCompletion.Model
         }
 
         static bool ContainsMember(this ClassModel @this, FlagType mask) => @this.Members.Any(it => (it.Flags & mask) == mask);
+
+        public static bool ContainsMember(this ClassModel @this, string name, FlagType flags, bool recursive)
+        {
+            if (!recursive) return @this.Members.Contains(name, flags, 0);
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this;
+            while (!type.IsVoid())
+            {
+                if (type.Members.Contains(name, flags, 0)) return true;
+                type = type.Extends;
+            }
+            return false;
+        }
     }
 }

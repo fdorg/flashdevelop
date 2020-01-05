@@ -281,29 +281,17 @@ namespace ASCompletion.Completion
                 // "add to interface" suggestion
                 if (CanShowAddToInterfaceList(sci, position, resolve, found))
                 {
-                    var funcName = found.Member.Name;
+                    var name = found.Member.Name;
                     var flags = found.Member.Flags & ~FlagType.Access;
-                    var interfaces = new List<string>();
-                    foreach (string interf in found.InClass.Implements)
+                    var list = new List<string>();
+                    foreach (var it in found.InClass.Implements)
                     {
-                        var skip = false;
-                        var cm = ctx.ResolveType(interf, ctx.CurrentModel);
-                        foreach (MemberModel m in cm.Members)
-                        {
-                            if (m.Name.Equals(funcName) && m.Flags.Equals(flags))
-                            {
-                                skip = true;
-                                break;
-                            }
-                        }
-                        if (!skip)
-                        {
-                            interfaces.Add(interf);
-                        }
+                        var cm = ctx.ResolveType(it, ctx.CurrentModel);
+                        if (!cm.ContainsMember(name, flags, false)) list.Add(it);
                     }
-                    if (interfaces.Count > 0)
+                    if (list.Count > 0)
                     {
-                        ShowAddInterfaceDefList(found, interfaces, options);
+                        ShowAddInterfaceDefList(found, list, options);
                         return;
                     }
                 }
