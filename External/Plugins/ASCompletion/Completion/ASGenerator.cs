@@ -434,16 +434,9 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             contextMatch = m;
-                            MemberModel constructor = null;
                             var type = resolve.Type;
-                            type.ResolveExtends();
-                            while (!type.IsVoid())
-                            {
-                                constructor = type.Members.Search(type.Name, FlagType.Constructor, 0);
-                                if (constructor != null) break;
-                                type = type.Extends;
-                            }
-                            if (constructor is null) ShowConstructorAndToStringList(new FoundDeclaration { InClass = resolve.Type }, false, true, options);
+                            var constructor = type.SearchMember(FlagType.Constructor, true);
+                            if (constructor is null) ShowConstructorAndToStringList(new FoundDeclaration {InClass = resolve.Type}, false, true, options);
                             else
                             {
                                 var constructorParametersCount = constructor.Parameters?.Count ?? 0;
