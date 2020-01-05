@@ -49,6 +49,29 @@ namespace ASCompletion.Model
                 type = type.Extends;
             }
             return null;
+        }        
+        
+        public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive, out ClassModel inClass)
+        {
+            if (!recursive)
+            {
+                inClass = @this;
+                return @this.Members.Search(name, 0, 0);
+            }
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this;
+            while (!type.IsVoid())
+            {
+                var result = type.Members.Search(name, 0, 0);
+                if (result != null)
+                {
+                    inClass = type;
+                    return result;
+                }
+                type = type.Extends;
+            }
+            inClass = ClassModel.VoidClass;
+            return null;
         }
 
         /// <summary>
@@ -68,6 +91,29 @@ namespace ASCompletion.Model
                 if (result != null) return result;
                 type = type.Extends;
             }
+            return null;
+        }
+        
+        public static MemberModel SearchMember(this ClassModel @this, FlagType flags, bool recursive, out ClassModel inClass)
+        {
+            if (!recursive)
+            {
+                inClass = @this;
+                return @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+            }
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this;
+            while (!type.IsVoid())
+            {
+                var result = type.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+                if (result != null)
+                {
+                    inClass = type;
+                    return result;
+                }
+                type = type.Extends;
+            }
+            inClass = null;
             return null;
         }
 

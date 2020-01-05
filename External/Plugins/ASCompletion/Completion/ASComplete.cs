@@ -625,21 +625,14 @@ namespace ASCompletion.Completion
                 var member = ctx.CurrentMember;
                 if ((member.Flags & FlagType.Override) > 0)
                 {
-                    ctx.CurrentClass.ResolveExtends();
-                    var tmpClass = ctx.CurrentClass.Extends;
-                    while (!tmpClass.IsVoid())
+                    var found = ctx.CurrentClass.Extends.SearchMember(member.Name, true, out var inClass);
+                    if (found != null)
                     {
-                        var found = tmpClass.Members.Search(member.Name, 0, 0);
-                        if (found != null)
-                        {
-                            result = new ASResult();
-                            result.Member = found;
-                            result.InFile = tmpClass.InFile;
-                            result.InClass = tmpClass;
-                            OpenDocumentToDeclaration(sci, result);
-                            break;
-                        }
-                        tmpClass = tmpClass.Extends;
+                        result = new ASResult();
+                        result.Member = found;
+                        result.InFile = inClass.InFile;
+                        result.InClass = inClass;
+                        OpenDocumentToDeclaration(sci, result);
                     }
                 }
             }

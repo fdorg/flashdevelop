@@ -223,19 +223,7 @@ namespace ASClassWizard
                     if (!cmodel.IsVoid())
                     {
                         if ((cmodel.Flags & FlagType.TypeDef) != 0)
-                        {
-                            var tmp = cmodel;
-                            tmp.ResolveExtends();
-                            while (!tmp.IsVoid())
-                            {
-                                if (!string.IsNullOrEmpty(tmp.Constructor))
-                                {
-                                    cmodel = tmp;
-                                    break;
-                                }
-                                tmp = tmp.Extends;
-                            }
-                        }
+                            cmodel.SearchMember(FlagType.Constructor, true, out cmodel);
                         foreach (var member in cmodel.Members)
                         {
                             if (member.Name != cmodel.Constructor) continue;
