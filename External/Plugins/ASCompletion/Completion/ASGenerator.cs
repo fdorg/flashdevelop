@@ -2076,13 +2076,11 @@ namespace ASCompletion.Completion
 
             SnippetHelper.InsertSnippetText(sci, bodyStart, template);
 
-            //TODO: We also need to check parent classes!!!
-            foreach (MemberModel classMember in inClass.Members)
-                if (classMember.Name.Equals(varName))
-                {
-                    ASContext.Panel.RestoreLastLookupPosition();
-                    return;
-                }
+            if (inClass.ContainsMember(varName, true))
+            {
+                ASContext.Panel.RestoreLastLookupPosition();
+                return;
+            }
 
             var latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), new MemberModel());
             if (latest is null) return;
@@ -2330,26 +2328,16 @@ namespace ASCompletion.Completion
         static void GenerateToString(ScintillaControl sci, ClassModel inClass)
         {
             var resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
-            var isOverride = false;
             inClass.ResolveExtends();
-            var aType = inClass.Extends;
-            while (!aType.IsVoid() && aType.QualifiedName != "Object")
+            var extends = inClass.Extends;
+            while (!extends.IsVoid() && extends.QualifiedName != "Object")
             {
-                foreach (MemberModel method in aType.Members)
-                {
-                    if (method.Name == "toString")
-                    {
-                        isOverride = true;
-                        break;
-                    }
-                }
-                if (isOverride)
+                if (extends.Members.Contains("toString", 0, 0))
                 {
                     resultMember.Flags |= FlagType.Override;
                     break;
                 }
-                // interface inheritance
-                aType = aType.Extends;
+                extends = extends.Extends;
             }
             var membersString = new StringBuilder();
             var len = 0;

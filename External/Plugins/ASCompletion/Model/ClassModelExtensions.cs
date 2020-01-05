@@ -138,6 +138,19 @@ namespace ASCompletion.Model
             return null;
         }
 
+        public static bool ContainsMember(this ClassModel @this, string name, bool recursive)
+        {
+            if (!recursive) return @this.Members.Contains(name, 0, 0);
+            if (@this.Extends.IsVoid()) @this.ResolveExtends();
+            var type = @this;
+            while (!type.IsVoid())
+            {
+                if (type.Members.Contains(name, 0, 0)) return true;
+                type = type.Extends;
+            }
+            return false;
+        }
+
         public static bool ContainsMember(this ClassModel @this, FlagType flags, bool recursive)
         {
             if (!recursive) return @this.ContainsMember(flags);
