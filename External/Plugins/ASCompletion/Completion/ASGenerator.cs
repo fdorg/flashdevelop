@@ -3418,7 +3418,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        public static bool RenameMember(ScintillaControl Sci, MemberModel member, string newName)
+        public static bool RenameMember(ScintillaControl sci, MemberModel member, string newName)
         {
             var features = ASContext.Context.Features;
             var kind = features.varKey;
@@ -3430,14 +3430,14 @@ namespace ASCompletion.Completion
             var reMember = new Regex($@"{kind}\s+({member.Name})[\s:]");
             for (var i = member.LineFrom; i <= member.LineTo; i++)
             {
-                var line = Sci.GetLine(i);
+                var line = sci.GetLine(i);
                 var m = reMember.Match(line);
                 if (m.Success)
                 {
-                    var index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    var position = Sci.PositionFromLine(i) + index;
-                    Sci.SetSel(position, position + member.Name.Length);
-                    Sci.ReplaceSel(newName);
+                    var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    var position = sci.PositionFromLine(i) + index;
+                    sci.SetSel(position, position + member.Name.Length);
+                    sci.ReplaceSel(newName);
                     UpdateLookupPosition(position, 1);
                     return true;
                 }
@@ -3683,15 +3683,9 @@ namespace ASCompletion.Completion
             }
             else
             {
-                if ((isStatic.Flags & FlagType.Static) > 0)
-                {
-                    latest = FindLatest(FlagType.Variable | FlagType.Static, access, inClass)
-                             ?? FindLatest(FlagType.Variable | FlagType.Static, 0, inClass, true, false);
-                }
-                else
-                {
-                    latest = FindLatest(FlagType.Variable, access, inClass);
-                }
+                latest = (isStatic.Flags & FlagType.Static) > 0
+                    ? FindLatest(FlagType.Variable | FlagType.Static, access, inClass) ?? FindLatest(FlagType.Variable | FlagType.Static, 0, inClass, true, false)
+                    : FindLatest(FlagType.Variable, access, inClass);
             }
             return latest ?? FindLatest(FlagType.Variable, access, inClass, false, false);
         }
@@ -4084,7 +4078,7 @@ namespace ASCompletion.Completion
         static void GetStartPos(string currentText, ref int startPos, string keyword)
         {
             if (keyword is null) return;
-            int p = currentText.IndexOfOrdinal(keyword);
+            var p = currentText.IndexOfOrdinal(keyword);
             if (p > 0 && p < startPos) startPos = p;
         }
 
@@ -4093,7 +4087,7 @@ namespace ASCompletion.Completion
         protected static string GetShortType(string type)
         {
             if (string.IsNullOrEmpty(type)) return type;
-            if (!type.Contains('@') && type.LastIndexOf('.') is int startIndex && startIndex != -1)
+            if (!type.Contains('@') && type.LastIndexOf('.') is { } startIndex && startIndex != -1)
             {
                 var importName = type.Substring(startIndex + 1);
                 var imports = ASContext.Context.ResolveImports(ASContext.Context.CurrentModel);
@@ -4170,12 +4164,11 @@ namespace ASCompletion.Completion
             foreach (var type in typesUsed)
             {
                 var cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || !cleanType.Contains('.'))
                     continue;
                 addedTypes.Add(cleanType);
                 var import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
-                if (!context.IsImported(import, atLine))
-                    length += InsertImport(import, false);
+                if (!context.IsImported(import, atLine)) length += InsertImport(import, false);
             }
             return length;
         }
@@ -4306,13 +4299,12 @@ namespace ASCompletion.Completion
         /// </summary>
         static string FixModifiersLocation(string src, string[] modifierOrder)
         {
-            bool needUpdate = false;
-            string[] lines = src.Split('\n');
-            for (int i = 0; i < lines.Length; i++)
+            var needUpdate = false;
+            var lines = src.Split('\n');
+            for (var i = 0; i < lines.Length; i++)
             {
-                string line = lines[i];
-
-                Match m = reModifiers.Match(line);
+                var line = lines[i];
+                var m = reModifiers.Match(line);
                 if (!m.Success) continue;
 
                 Group decl = m.Groups[2];
@@ -4486,7 +4478,7 @@ namespace ASCompletion.Completion
 
         public FunctionParameter(string parameter, string paramType, string paramQualType, ASResult result)
         {
-            this.paramName = parameter;
+            paramName = parameter;
             this.paramType = paramType;
             this.paramQualType = paramQualType;
             this.result = result;

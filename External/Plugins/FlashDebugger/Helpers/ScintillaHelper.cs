@@ -53,10 +53,10 @@ namespace FlashDebugger
             sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
             sci.MarginClick += SciControl_MarginClick;
-            sci.Modified += sci_Modified;
+            sci.Modified += Sci_Modified;
         }
 
-        public static void sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
+        public static void Sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
         {
             if (linesAdded != 0)
             {
@@ -250,7 +250,7 @@ namespace FlashDebugger
             foreach (var document in PluginBase.MainForm.Documents)
             {
                 var sci = document.SciControl;
-                if (sci != null && name == sci.FileName) return sci;
+                if (sci != null && sci.FileName == name) return sci;
             }
             return null;
         }
@@ -271,7 +271,7 @@ namespace FlashDebugger
             foreach (var document in documents)
             {
                 var sci = document.SciControl;
-                if (sci != null && filefullpath == sci.FileName) return document;
+                if (sci != null && sci.FileName == filefullpath) return document;
             }
             return null;
         }
@@ -292,8 +292,7 @@ namespace FlashDebugger
                     int end = start + sci.LineLength(line);
                     sci.SetSel(start, end);
                 }
-                else
-                    sci.SetSel(start, start);
+                else sci.SetSel(start, start);
             }
             return sci;
         }
@@ -371,6 +370,5 @@ namespace FlashDebugger
         }
         
         #endregion
-
     }
 }
