@@ -755,7 +755,7 @@ namespace HaXeContext.Generators
             if (ctx.WordBefore == "new") value = "new " + value;
             var statement = value + "." + member.Name + "(" + string.Join(", ", parameters.Skip(1).Select(it =>
             {
-                if (it.result.Member is MemberModel model) return model.ToDeclarationString();
+                if (it.result.Member is { } model) return model.ToDeclarationString();
                 return it.result.Context.Value;
             })) + ");";
             sci.SetSel(startPos, endPos);

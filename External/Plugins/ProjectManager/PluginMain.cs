@@ -121,10 +121,7 @@ namespace ProjectManager
 
         void PatchSettings()
         {
-            if (Settings.WebserverPort == 0)
-            {
-                Settings.WebserverPort = 2000;
-            }
+            if (Settings.WebserverPort == 0) Settings.WebserverPort = 2000;
             // remove 'obj' from the excluded directory names - now /obj a hidden directory
             if (Settings.ExcludedDirectories.Length > 0 && Settings.ExcludedDirectories[0] == "obj")
             {
@@ -298,8 +295,7 @@ namespace ProjectManager
 
         void BuildProjectClick(object sender, EventArgs e)
         {
-            if (uiStatus == ProjectManagerUIStatus.NotBuilding)
-                BuildProject();
+            if (uiStatus == ProjectManagerUIStatus.NotBuilding) BuildProject();
             else if (uiStatus == ProjectManagerUIStatus.Building)
             {
                 string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
@@ -325,7 +321,7 @@ namespace ProjectManager
             projectActions.UpdateASCompletion(PluginBase.MainForm, project);
         }
 
-        void TargetBuildSelector_KeyDown(object sender, KeyEventArgs e)
+        static void TargetBuildSelector_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) // leave target build input field to apply
                 PluginBase.MainForm.CurrentDocument.Activate();
@@ -1067,11 +1063,7 @@ namespace ProjectManager
             if (projectActions.OpenFolder() is { } project) SetProject(project);
         }
 
-        void OpenFolderSilent(string path)
-        {
-            var project = projectActions.OpenFolderSilent(path);
-            SetProject(project);
-        }
+        void OpenFolderSilent(string path) => SetProject(projectActions.OpenFolderSilent(path));
 
         void ImportProject(object sender, EventArgs eventArgs)
         {

@@ -17,9 +17,9 @@ namespace CodeRefactor.Provider
         internal const string ParamSetter = "set";
         internal const string PrefixGetter = "get_";
         internal const string PrefixSetter = "set_";
-        private static readonly Queue<Rename> queue = new Queue<Rename>();
-        private static Rename currentCommand;
-        private static StartState startState;
+        static readonly Queue<Rename> queue = new Queue<Rename>();
+        static Rename currentCommand;
+        static StartState startState;
 
         internal static void AddToQueue(Rename command)
         {
@@ -45,7 +45,7 @@ namespace CodeRefactor.Provider
             }
             else if (HasGetterSetter(target))
             {
-                if (target.Member.Parameters is { } list && list.Count is int count && count > 0)
+                if (target.Member.Parameters is { } list && list.Count is { } count && count > 0)
                 {
                     if (list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + command.OldName, PrefixGetter + command.NewName, outputResults);
                     if (count > 1 && list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + command.OldName, PrefixSetter + command.NewName, outputResults);
@@ -81,14 +81,14 @@ namespace CodeRefactor.Provider
             return null;
         }
 
-        private static Rename RenameMember(ASResult target, string name, string newName, bool outputResults)
+        static Rename RenameMember(ASResult target, string name, string newName, bool outputResults)
         {
             return FindGetterSetter(target, name) is { } result
                 ? new Rename(result, outputResults, newName)
                 : null;
         }
 
-        private static void ExecuteFirst()
+        static void ExecuteFirst()
         {
             try
             {
@@ -105,7 +105,7 @@ namespace CodeRefactor.Provider
             }
         }
 
-        private static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> e)
+        static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> e)
         {
             currentCommand.OnRefactorComplete -= OnRefactorComplete;
             if (queue.Count == 0)
@@ -117,7 +117,7 @@ namespace CodeRefactor.Provider
             else ExecuteFirst();
         }
 
-        private static void RestoreStartState()
+        static void RestoreStartState()
         {
             var pos = startState.CursorPosition;
             GetOffset(startState.Commands[0], ref pos);
@@ -128,7 +128,7 @@ namespace CodeRefactor.Provider
             ASContext.Context.UpdateCurrentFile(true);
         }
 
-        private static void GetOffset(Rename command, ref int pos)
+        static void GetOffset(Rename command, ref int pos)
         {
             if (command is null) return;
             foreach (var entry in command.Results)

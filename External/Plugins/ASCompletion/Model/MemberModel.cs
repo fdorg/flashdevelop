@@ -107,8 +107,8 @@ namespace ASCompletion.Model
 
         public string ToDeclarationString(bool wrapWithSpaces, bool concatValue)
         {
+            string result = FullName;
             string colon = wrapWithSpaces ? " : " : ":";
-            string res = FullName;
             string type = null;
             string comment = "";
             if ((Flags & (FlagType.Function | FlagType.Setter | FlagType.Getter)) > 0)
@@ -116,35 +116,34 @@ namespace ASCompletion.Model
                 if ((Flags & FlagType.Function) > 0 && (Flags & FlagType.Getter | Flags & FlagType.Variable) > 0)
                 {
                     if ((Flags & FlagType.Variable) == 0)
-                        res += "()";
+                        result += "()";
 
                     type = "Function";
                     if (!Parameters.IsNullOrEmpty())
                     {
                         comment = "/*(" + ParametersString(true) + ")";
-                        if (!string.IsNullOrEmpty(Type))
-                            comment += colon + FormatType(Type);
+                        if (!string.IsNullOrEmpty(Type)) comment += colon + FormatType(Type);
                         comment += "*/";
                     }
                 }
                 else
                 {
-                    res += "(" + ParametersString(true) + ")";
+                    result += "(" + ParametersString(true) + ")";
                 }
             }
 
             if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(Type))
                 type = FormatType(Type);
 
-            if ((Flags & FlagType.Constructor) > 0) return res;
-            if (!string.IsNullOrEmpty(type)) res += colon + type;
+            if ((Flags & FlagType.Constructor) > 0) return result;
+            if (!string.IsNullOrEmpty(type)) result += colon + type;
 
-            res += comment;
+            result += comment;
 
             if (concatValue && Value != null)
-                res += (wrapWithSpaces ? " = " : "=") + Value.Trim();
+                result += (wrapWithSpaces ? " = " : "=") + Value.Trim();
 
-            return res;
+            return result;
         }
 
         public string ParametersString() => ParametersString(false);

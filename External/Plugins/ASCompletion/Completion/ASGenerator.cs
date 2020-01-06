@@ -132,7 +132,7 @@ namespace ASCompletion.Completion
                         foreach (var it in resolve.RelClass.Implements)
                         {
                             string interfaceName;
-                            if (it.IndexOf('<') is int p && p != -1) interfaceName = it.Substring(0, p);
+                            if (it.IndexOf('<') is { } p && p != -1) interfaceName = it.Substring(0, p);
                             else interfaceName = it;
                             if (interfaceName != name) continue;
                             contextParam = it;
@@ -794,7 +794,7 @@ namespace ASCompletion.Completion
         internal static string CheckEventType(string name)
         {
             if (name.Contains('"')) return "Event";
-            if (name.IndexOf('.') is int index && index > 0) name = name.Substring(0, index);
+            if (name.IndexOf('.') is { } index && index > 0) name = name.Substring(0, index);
             var model = ASContext.Context.ResolveType(name, ASContext.Context.CurrentModel);
             if (model.IsVoid() || model.Name == "Event") return "Event";
             model.ResolveExtends();
@@ -1717,7 +1717,7 @@ namespace ASCompletion.Completion
                 var latest = GetLatestMemberForVariable(GeneratorJobType.Constant, inClass, Visibility.Private, new MemberModel("", "", FlagType.Static, 0));
                 if (latest != null)
                 {
-                    if (!member.Flags.HasFlag(FlagType.Function) && sci.LineFromPosition(wordPosStart) is int line && latest.LineFrom >= line)
+                    if (!member.Flags.HasFlag(FlagType.Function) && sci.LineFromPosition(wordPosStart) is { } line && latest.LineFrom >= line)
                     {
                         position = sci.LineIndentPosition(line);
                         sci.SetSel(position, position);

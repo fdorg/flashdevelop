@@ -278,7 +278,7 @@ namespace ASClassWizard
             {
                 if (prevImport == import) continue;
                 prevImport = import;
-                if (import.LastIndexOf('.') is int p && (p == -1 || import.Substring(0, p) == lastFileOptions.Package)) continue;
+                if (import.LastIndexOf('.') is { } p && (p == -1 || import.Substring(0, p) == lastFileOptions.Package)) continue;
                 importsSrc += (lastFileOptions.Language == "as3" ? "\t" : "") + "import " + import + ";" + lineBreak;
             }
             if (importsSrc.Length > 0) importsSrc += (lastFileOptions.Language == "as3" ? "\t" : "") + lineBreak;

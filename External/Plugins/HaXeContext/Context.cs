@@ -1674,7 +1674,7 @@ namespace HaXeContext
                          */
                         var paramType = Context.ResolveType(firstParamType, null);
                         if (!paramType.Flags.HasFlag(FlagType.TypeDef)) return false;
-                        foreach (MemberModel typedefMember in paramType.Members)
+                        foreach (var typedefMember in paramType.Members)
                         {
                             if (!type.Members.Contains(typedefMember.Name, typedefMember.Flags, 0)) return false;
                         }
