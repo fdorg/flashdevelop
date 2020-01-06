@@ -9,15 +9,12 @@ namespace FlashDebugger.Controls.DataTree
 {
     public class VariableNode : ValueNode, IComparable<VariableNode>
     {
-
         public override string Value
         {
             get => base.Value;
             set
             {
-                if (m_Variable is null)
-                    return;
-
+                if (variable is null) return;
                 var flashInterface = PluginMain.debugManager.FlashInterface;
                 var b = new ASTBuilder(false);
                 var exp = b.parse(new StringReader(this.GetVariablePath() + "=" + value));
@@ -26,19 +23,20 @@ namespace FlashDebugger.Controls.DataTree
             }
         }
 
-        private Variable m_Variable;
+        Variable variable;
+
         public Variable Variable
         {
-            get => m_Variable;
+            get => variable;
             set
             {
-                if (m_Variable == value) return;
+                if (variable == value) return;
 
-                m_Variable = value;
-                if (m_Variable != null)
+                variable = value;
+                if (variable != null)
                 {
-                    m_Value = m_Variable.getValue();
-                    Text = m_Variable.getName();
+                    m_Value = variable.getValue();
+                    Text = variable.getName();
                 } 
                 else
                 {
@@ -56,7 +54,7 @@ namespace FlashDebugger.Controls.DataTree
         public VariableNode(Variable variable)
             : base(variable.getName())
         {
-            m_Variable = variable;
+            this.variable = variable;
             m_Value = variable.getValue();
         }
 
@@ -81,7 +79,7 @@ namespace FlashDebugger.Controls.DataTree
             {
                 return result;
             }
-            return m_Variable.getName().length() > 0 && m_Variable.getName().startsWith("_") ? 1 : -1;
+            return variable.getName().length() > 0 && variable.getName().startsWith("_") ? 1 : -1;
         }
 
     }
@@ -90,23 +88,23 @@ namespace FlashDebugger.Controls.DataTree
     {
         public static string GetVariablePath(this Node node)
         {
-            string ret = string.Empty;
+            var result = string.Empty;
             if (node.Tag is string tag) return tag; // fix for: live tip value has no parent
-            if (node.Parent != null) ret = node.Parent.GetVariablePath();
-            VariableNode datanode = node as VariableNode;
+            if (node.Parent != null) result = node.Parent.GetVariablePath();
+            var datanode = node as VariableNode;
             if (datanode?.Variable != null)
             {
-                if (ret == "") return datanode.Variable.getName();
+                if (result == "") return datanode.Variable.getName();
                 if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
                 {
-                    ret += "[\"" + datanode.Variable.getName() + "\"]";
+                    result += "[\"" + datanode.Variable.getName() + "\"]";
                 }
                 else
                 {
-                    ret += "." + datanode.Variable.getName();
+                    result += "." + datanode.Variable.getName();
                 }
             }
-            return ret;
+            return result;
         }
 
     }

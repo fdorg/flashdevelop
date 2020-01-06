@@ -223,19 +223,7 @@ namespace ASClassWizard
                     if (!cmodel.IsVoid())
                     {
                         if ((cmodel.Flags & FlagType.TypeDef) != 0)
-                        {
-                            var tmp = cmodel;
-                            tmp.ResolveExtends();
-                            while (!tmp.IsVoid())
-                            {
-                                if (!string.IsNullOrEmpty(tmp.Constructor))
-                                {
-                                    cmodel = tmp;
-                                    break;
-                                }
-                                tmp = tmp.Extends;
-                            }
-                        }
+                            cmodel.SearchMember(FlagType.Constructor, true, out cmodel);
                         foreach (var member in cmodel.Members)
                         {
                             if (member.Name != cmodel.Constructor) continue;
@@ -290,7 +278,7 @@ namespace ASClassWizard
             {
                 if (prevImport == import) continue;
                 prevImport = import;
-                if (import.LastIndexOf('.') is int p && (p == -1 || import.Substring(0, p) == lastFileOptions.Package)) continue;
+                if (import.LastIndexOf('.') is { } p && (p == -1 || import.Substring(0, p) == lastFileOptions.Package)) continue;
                 importsSrc += (lastFileOptions.Language == "as3" ? "\t" : "") + "import " + import + ";" + lineBreak;
             }
             if (importsSrc.Length > 0) importsSrc += (lastFileOptions.Language == "as3" ? "\t" : "") + lineBreak;
