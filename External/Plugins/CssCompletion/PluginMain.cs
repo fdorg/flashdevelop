@@ -17,15 +17,15 @@ namespace CssCompletion
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private Settings settingObject;
-        private Dictionary<string, CssFeatures> enabledLanguages;
-        private SimpleIni config;
-        private Completion completion;
-        private CssFeatures features;
-        private Timer updater;
-        private string updateFile;
-        private CssFeatures updateFeatures;
+        string settingFilename;
+        Settings settingObject;
+        Dictionary<string, CssFeatures> enabledLanguages;
+        SimpleIni config;
+        Completion completion;
+        CssFeatures features;
+        Timer updater;
+        string updateFile;
+        CssFeatures updateFeatures;
 
         #region Required Properties
 
@@ -157,7 +157,7 @@ namespace CssCompletion
             updater.Interval = 100;
             updater.AutoReset = false;
             updater.SynchronizingObject = PluginBase.MainForm as Form;
-            updater.Elapsed += updater_Elapsed;
+            updater.Elapsed += Updater_Elapsed;
 
             CompletionItem.TagIcon = (Bitmap)PluginBase.MainForm.FindImage("417");
             CompletionItem.PropertyIcon = (Bitmap)PluginBase.MainForm.FindImage("532");
@@ -167,10 +167,7 @@ namespace CssCompletion
             CompletionItem.PrefixesIcon = (Bitmap)PluginBase.MainForm.FindImage("480");
         }
 
-        void updater_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Optimizer.ProcessFile(updateFile, updateFeatures, settingObject);
-        }
+        void Updater_Elapsed(object sender, ElapsedEventArgs e) => Optimizer.ProcessFile(updateFile, updateFeatures, settingObject);
 
         /// <summary>
         /// Adds the required event handlers
@@ -221,13 +218,13 @@ namespace CssCompletion
 
         #region UI events
 
-        private void CompletionList_OnInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
+        void CompletionList_OnInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
             if (completion != null && sender.ConfigurationLanguage == "css")
                 completion.OnInsert(sender, position, text, trigger, item);
         }
 
-        private void SciControlTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        void SciControlTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (completion != null && sender.ConfigurationLanguage == "css")
                 completion.OnTextChanged(sender, position, length, linesAdded); 
@@ -236,7 +233,7 @@ namespace CssCompletion
         /// <summary>
         /// Shows the completion list atomaticly after typing three chars
         /// </summary>
-        private void SciControlCharAdded(ScintillaControl sci, int value)
+        void SciControlCharAdded(ScintillaControl sci, int value)
         {
             if (completion != null && sci.ConfigurationLanguage == "css")
                 completion.OnCharAdded(sci, sci.CurrentPos, value);

@@ -19,7 +19,7 @@ namespace CssCompletion
         public bool AutoCompile;
         public bool AutoMinify;
 
-        public CssFeatures(string mode, Dictionary<string, string> config)
+        public CssFeatures(string mode, IDictionary<string, string> config)
         {
             Mode = mode;
             string compile = GetParam("compile", config);
@@ -44,14 +44,14 @@ namespace CssCompletion
                 Trigger = trigger[0];
         }
 
-        private string GetParam(string name, IDictionary<string, string> config)
+        static string GetParam(string name, IDictionary<string, string> config)
         {
             if (!config.ContainsKey(name)) return "";
             return config[name].Trim();
         }
     }
 
-    class LocalContext
+    internal class LocalContext
     {
         public ScintillaControl Sci;
         public char Separator;
@@ -70,7 +70,7 @@ namespace CssCompletion
         }
     }
 
-    class CssBlock
+    internal class CssBlock
     {
         public CssBlock Parent;
         public List<CssBlock> Children = new List<CssBlock>();
@@ -80,7 +80,7 @@ namespace CssCompletion
         public int ColTo;
     }
 
-    enum CompleteMode
+    internal enum CompleteMode
     {
         None,
         Selector,
@@ -112,7 +112,7 @@ namespace CssCompletion
         public static Bitmap ValueIcon;
         public static Bitmap PseudoIcon;
         public static Bitmap PrefixesIcon;
-        private readonly string description;
+        readonly string description;
 
         public CompletionItem(string label, ItemKind kind)
         {
@@ -170,7 +170,7 @@ namespace CssCompletion
 
         public string Value => Label;
 
-        int IComparable.CompareTo(object obj) => string.Compare(Label, (obj as ICompletionListItem).Label, true);
+        int IComparable.CompareTo(object obj) => string.Compare(Label, ((ICompletionListItem) obj).Label, true);
 
         int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other) => string.Compare(Label, other.Label, true);
     }

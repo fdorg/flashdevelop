@@ -625,21 +625,14 @@ namespace ASCompletion.Completion
                 var member = ctx.CurrentMember;
                 if ((member.Flags & FlagType.Override) > 0)
                 {
-                    ctx.CurrentClass.ResolveExtends();
-                    var tmpClass = ctx.CurrentClass.Extends;
-                    while (!tmpClass.IsVoid())
+                    var found = ctx.CurrentClass.Extends.SearchMember(member.Name, true, out var inClass);
+                    if (found != null)
                     {
-                        var found = tmpClass.Members.Search(member.Name, 0, 0);
-                        if (found != null)
-                        {
-                            result = new ASResult();
-                            result.Member = found;
-                            result.InFile = tmpClass.InFile;
-                            result.InClass = tmpClass;
-                            OpenDocumentToDeclaration(sci, result);
-                            break;
-                        }
-                        tmpClass = tmpClass.Extends;
+                        result = new ASResult();
+                        result.Member = found;
+                        result.InFile = inClass.InFile;
+                        result.InClass = inClass;
+                        OpenDocumentToDeclaration(sci, result);
                     }
                 }
             }
@@ -705,14 +698,13 @@ namespace ASCompletion.Completion
                 name = inClass.Name;
                 isClass = true;
                 // constructor
-                foreach (MemberModel member in inClass.Members)
-                    if ((member.Flags & FlagType.Constructor) > 0)
-                    {
-                        line = member.LineFrom;
-                        name = member.Name;
-                        isClass = false;
-                        break;
-                    }
+                var member = inClass.SearchMember(FlagType.Constructor, false);
+                if (member != null)
+                {
+                    line = member.LineFrom;
+                    name = member.Name;
+                    isClass = false;
+                }
             }
             // select
             if (line > 0)
@@ -824,7 +816,7 @@ namespace ASCompletion.Completion
                 ASResult result;
                 if (context.IsFileValid
                     // comments
-                    && sci.BaseStyleAt(currentPos) is int style && !IsCommentStyle(style)
+                    && sci.BaseStyleAt(currentPos) is { } style && !IsCommentStyle(style)
                     // keywords
                     && ((style != 19 && style != 24) || (!string.IsNullOrEmpty(features.ConstructorKey) && sci.GetWordFromPosition(currentPos) == features.ConstructorKey)))
                 {
@@ -1565,21 +1557,13 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             // get expression at cursor position
             var expr = GetExpression(sci, position, true);
-            if (string.IsNullOrEmpty(expr.Value)
-                || (expr.WordBefore == ctx.Features.functionKey && expr.Separator == " "))
+            if (string.IsNullOrEmpty(expr.Value) || (expr.WordBefore == ctx.Features.functionKey && expr.Separator == " "))
                 return false;
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
             var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, true);
             if (result.Member is null && result.Type != null)
-            {
-                foreach (MemberModel member in result.Type.Members)
-                    if (member.Name == result.Type.Constructor)
-                    {
-                        result.Member = member;
-                        break;
-                    }
-            }
+                result.Member = result.Type.SearchMember(result.Type.Constructor, true);
             return ResolveFunction(sci, position, result, autoHide);
         }
 

@@ -2449,8 +2449,7 @@ namespace HaXeContext.Model
             if (!string.IsNullOrEmpty(type))
             {
                 var parCount = 0;
-                while (type.Length is { } length
-                       && length > 2
+                while (type.Length is { } length && length > 2
                        && type[0] == '(' && type[length - 1] == ')')
                 {
                     foreach (var c in type)

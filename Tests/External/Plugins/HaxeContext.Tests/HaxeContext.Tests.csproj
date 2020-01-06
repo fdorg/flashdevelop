@@ -1815,6 +1815,10 @@
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_9.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_10.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_11.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateToString_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateToString_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateToString_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateToString_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -44,7 +44,7 @@ namespace FlashDebugger
             }
         }
 
-        string GetBreakpointsFile(string path)
+        static string GetBreakpointsFile(string path)
         {
             string cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Breakpoints");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
@@ -86,24 +86,22 @@ namespace FlashDebugger
 
         public List<int> GetMarkers(ScintillaControl sci, int markerNum)
         {
-            int line = 0;
-            List<int> markerLines = new List<int>();
+            var line = 0;
+            var result = new List<int>();
             while (true)
             {
                 if ((sci.MarkerNext(line, GetMarkerMask(markerNum)) == -1) || (line > sci.LineCount)) break;
                 line = sci.MarkerNext(line, GetMarkerMask(markerNum));
-                markerLines.Add(line);
+                result.Add(line);
                 line++;
             }
-            return markerLines;
+            return result;
         }
 
         static int GetMarkerMask(int marker) => 1 << marker;
 
         public int GetBreakPointIndex(string fileName, int line)
-        {
-            return BreakPoints.FindIndex(info => info.FileFullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase) && info.Line == line);
-        }
+            => BreakPoints.FindIndex(info => info.FileFullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase) && info.Line == line);
 
         public bool ShouldBreak(SourceFile file, int line) => ShouldBreak(file, line, null);
 

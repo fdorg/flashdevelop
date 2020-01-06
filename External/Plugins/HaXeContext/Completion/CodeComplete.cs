@@ -115,7 +115,7 @@ namespace HaXeContext.Completion
                     break;
                 case '(':
                     // for example: SomeType->(<complete>
-                    if (prevValue == '>' && (currentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
+                    if (prevValue == '>' && (currentPos - 3) is { } p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     // for example: someFunction(<complete>
                     if (HandleFunctionCompletion(sci, currentPos, autoHide)) return false;
@@ -1281,8 +1281,8 @@ namespace HaXeContext.Completion
                 if (expr.Type is { } leftExprType
                     && expr.Context.RightOperator is { } @operator
                     && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
-                    && expr.Context.Position is int position
-                    && GetCharLeft(sci, true, ref position) is char c
+                    && expr.Context.Position is { } position
+                    && GetCharLeft(sci, true, ref position) is { } c
                     && @operator.Contains(c))
                 {
                     if (leftExprType.Flags.HasFlag(FlagType.Abstract))
@@ -1688,7 +1688,7 @@ namespace HaXeContext.Completion
             var result = base.TypesAffinity(context, inClass, withClass);
             if (context != null
                 && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
-                && context.WordBefore == "privateAccess" && context.WordBeforePosition is int p
+                && context.WordBefore == "privateAccess" && context.WordBeforePosition is { } p
                 && sci.CharAt(p - 2) == '@' && sci.CharAt(p - 1) == ':') result |= Visibility.Private;
             return result;
         }
@@ -1807,7 +1807,7 @@ namespace HaXeContext.Completion
                     var startIndex = s.IndexOfOrdinal("Null<");
                     if (startIndex == -1) return s;
                     startIndex += 5;
-                    while (s.IndexOfOrdinal("Null<", startIndex) is int p && p != -1)
+                    while (s.IndexOfOrdinal("Null<", startIndex) is { } p && p != -1)
                     {
                         startIndex = p + 5;
                     }

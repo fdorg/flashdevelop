@@ -132,7 +132,7 @@ namespace ASCompletion.Completion
                         foreach (var it in resolve.RelClass.Implements)
                         {
                             string interfaceName;
-                            if (it.IndexOf('<') is int p && p != -1) interfaceName = it.Substring(0, p);
+                            if (it.IndexOf('<') is { } p && p != -1) interfaceName = it.Substring(0, p);
                             else interfaceName = it;
                             if (interfaceName != name) continue;
                             contextParam = it;
@@ -281,29 +281,17 @@ namespace ASCompletion.Completion
                 // "add to interface" suggestion
                 if (CanShowAddToInterfaceList(sci, position, resolve, found))
                 {
-                    var funcName = found.Member.Name;
+                    var name = found.Member.Name;
                     var flags = found.Member.Flags & ~FlagType.Access;
-                    var interfaces = new List<string>();
-                    foreach (string interf in found.InClass.Implements)
+                    var list = new List<string>();
+                    foreach (var it in found.InClass.Implements)
                     {
-                        var skip = false;
-                        var cm = ctx.ResolveType(interf, ctx.CurrentModel);
-                        foreach (MemberModel m in cm.Members)
-                        {
-                            if (m.Name.Equals(funcName) && m.Flags.Equals(flags))
-                            {
-                                skip = true;
-                                break;
-                            }
-                        }
-                        if (!skip)
-                        {
-                            interfaces.Add(interf);
-                        }
+                        var cm = ctx.ResolveType(it, ctx.CurrentModel);
+                        if (!cm.ContainsMember(name, flags, false)) list.Add(it);
                     }
-                    if (interfaces.Count > 0)
+                    if (list.Count > 0)
                     {
-                        ShowAddInterfaceDefList(found, interfaces, options);
+                        ShowAddInterfaceDefList(found, list, options);
                         return;
                     }
                 }
@@ -434,16 +422,9 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             contextMatch = m;
-                            MemberModel constructor = null;
                             var type = resolve.Type;
-                            type.ResolveExtends();
-                            while (!type.IsVoid())
-                            {
-                                constructor = type.Members.Search(type.Name, FlagType.Constructor, 0);
-                                if (constructor != null) break;
-                                type = type.Extends;
-                            }
-                            if (constructor is null) ShowConstructorAndToStringList(new FoundDeclaration { InClass = resolve.Type }, false, true, options);
+                            var constructor = type.SearchMember(FlagType.Constructor, true);
+                            if (constructor is null) ShowConstructorAndToStringList(new FoundDeclaration {InClass = resolve.Type}, false, true, options);
                             else
                             {
                                 var constructorParametersCount = constructor.Parameters?.Count ?? 0;
@@ -617,11 +598,6 @@ namespace ASCompletion.Completion
                    && found.InClass.Implements.Count > 0;
         }
 
-
-
-        /// <summary>
-        /// TODO slavara: дописать документация
-        /// </summary>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
@@ -734,10 +710,7 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    else
-                    {
-                        target = contextOwnerResult.Member.Name;
-                    }
+                    else target = contextOwnerResult.Member.Name;
                 }
             }
             
@@ -821,7 +794,7 @@ namespace ASCompletion.Completion
         internal static string CheckEventType(string name)
         {
             if (name.Contains('"')) return "Event";
-            if (name.IndexOf('.') is int index && index > 0) name = name.Substring(0, index);
+            if (name.IndexOf('.') is { } index && index > 0) name = name.Substring(0, index);
             var model = ASContext.Context.ResolveType(name, ASContext.Context.CurrentModel);
             if (model.IsVoid() || model.Name == "Event") return "Event";
             model.ResolveExtends();
@@ -1744,7 +1717,7 @@ namespace ASCompletion.Completion
                 var latest = GetLatestMemberForVariable(GeneratorJobType.Constant, inClass, Visibility.Private, new MemberModel("", "", FlagType.Static, 0));
                 if (latest != null)
                 {
-                    if (!member.Flags.HasFlag(FlagType.Function) && sci.LineFromPosition(wordPosStart) is int line && latest.LineFrom >= line)
+                    if (!member.Flags.HasFlag(FlagType.Function) && sci.LineFromPosition(wordPosStart) is { } line && latest.LineFrom >= line)
                     {
                         position = sci.LineIndentPosition(line);
                         sci.SetSel(position, position);
@@ -1827,7 +1800,6 @@ namespace ASCompletion.Completion
             {
                 AddLookupPosition();
                 lookupPosition = -1;
-
                 PluginBase.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 var fileModel = ASContext.Context.GetFileModel(funcResult.Type.InFile.FileName);
@@ -1839,23 +1811,12 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-
                 inClass = funcResult.Type;
                 ASContext.Context.UpdateContext(inClass.LineFrom);
             }
-
-            foreach (MemberModel m in inClass.Members)
-            {
-                if ((m.Flags & FlagType.Constructor) > 0)
-                {
-                    funcResult.Member = m;
-                    break;
-                }
-            }
-
+            funcResult.Member = inClass.SearchMember(FlagType.Constructor, false);
             if (funcResult.Member is null) return;
             if (!string.IsNullOrEmpty(ASContext.Context.Features.ConstructorKey)) funcResult.Member.Name = ASContext.Context.Features.ConstructorKey;
-
             ChangeDecl(sci, inClass, funcResult.Member, parameters);
         }
 
@@ -2095,13 +2056,11 @@ namespace ASCompletion.Completion
 
             SnippetHelper.InsertSnippetText(sci, bodyStart, template);
 
-            //TODO: We also need to check parent classes!!!
-            foreach (MemberModel classMember in inClass.Members)
-                if (classMember.Name.Equals(varName))
-                {
-                    ASContext.Panel.RestoreLastLookupPosition();
-                    return;
-                }
+            if (inClass.ContainsMember(varName, true))
+            {
+                ASContext.Panel.RestoreLastLookupPosition();
+                return;
+            }
 
             var latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), new MemberModel());
             if (latest is null) return;
@@ -2349,30 +2308,20 @@ namespace ASCompletion.Completion
         static void GenerateToString(ScintillaControl sci, ClassModel inClass)
         {
             var resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
-            var isOverride = false;
             inClass.ResolveExtends();
-            var aType = inClass.Extends;
-            while (!aType.IsVoid() && aType.QualifiedName != "Object")
+            var extends = inClass.Extends;
+            while (!extends.IsVoid() && extends.QualifiedName != "Object")
             {
-                foreach (MemberModel method in aType.Members)
-                {
-                    if (method.Name == "toString")
-                    {
-                        isOverride = true;
-                        break;
-                    }
-                }
-                if (isOverride)
+                if (extends.Members.Contains("toString", 0, 0))
                 {
                     resultMember.Flags |= FlagType.Override;
                     break;
                 }
-                // interface inheritance
-                aType = aType.Extends;
+                extends = extends.Extends;
             }
             var membersString = new StringBuilder();
             var len = 0;
-            foreach (MemberModel m in inClass.Members)
+            foreach (var m in inClass.Members)
             {
                 if (((m.Flags & FlagType.Variable) > 0 || (m.Flags & FlagType.Getter) > 0)
                     && (m.Access & Visibility.Public) > 0
@@ -3000,9 +2949,7 @@ namespace ASCompletion.Completion
         }
 
         protected void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name)
-        {
-            GenerateClass(sci, position, inClass, name, new Hashtable());
-        }
+            => GenerateClass(sci, position, inClass, name, new Hashtable());
 
         protected virtual void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name, Hashtable info)
         {
@@ -3027,9 +2974,7 @@ namespace ASCompletion.Completion
         }
 
         static void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name)
-        {
-            ((ASGenerator)ASContext.Context.CodeGenerator).GenerateInterface(sci, inClass, name, new Hashtable());
-        }
+            => ((ASGenerator)ASContext.Context.CodeGenerator).GenerateInterface(sci, inClass, name, new Hashtable());
 
         protected virtual void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name, Hashtable info)
         {
@@ -3103,11 +3048,7 @@ namespace ASCompletion.Completion
             sci.SetSel(position, position);
 
             var flags = FlagType.Function;
-            if ((found.Member.Flags & FlagType.Static) > 0)
-            {
-                flags |= FlagType.Static;
-            }
-
+            if ((found.Member.Flags & FlagType.Static) > 0) flags |= FlagType.Static;
             var member = new MemberModel(newName, ctx.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
             template = NewLine + TemplateUtils.GetTemplate("Function");
             template = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(member, template);
@@ -3399,14 +3340,9 @@ namespace ASCompletion.Completion
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 var mGeneric = Regex.Match(type, "<([^>]+)>");
-                if (mGeneric.Success)
-                {
-                    return GetQualifiedType(mGeneric.Groups[1].Value, aType);
-                }
+                if (mGeneric.Success) return GetQualifiedType(mGeneric.Groups[1].Value, aType);
             }
-
             if (type.IndexOf('.') > 0) return type;
-
             var aClass = ASContext.Context.ResolveType(type, aType.InFile);
             return !aClass.IsVoid()
                 ? aClass.QualifiedName
@@ -3482,7 +3418,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        public static bool RenameMember(ScintillaControl Sci, MemberModel member, string newName)
+        public static bool RenameMember(ScintillaControl sci, MemberModel member, string newName)
         {
             var features = ASContext.Context.Features;
             var kind = features.varKey;
@@ -3494,14 +3430,14 @@ namespace ASCompletion.Completion
             var reMember = new Regex($@"{kind}\s+({member.Name})[\s:]");
             for (var i = member.LineFrom; i <= member.LineTo; i++)
             {
-                var line = Sci.GetLine(i);
+                var line = sci.GetLine(i);
                 var m = reMember.Match(line);
                 if (m.Success)
                 {
-                    var index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    var position = Sci.PositionFromLine(i) + index;
-                    Sci.SetSel(position, position + member.Name.Length);
-                    Sci.ReplaceSel(newName);
+                    var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    var position = sci.PositionFromLine(i) + index;
+                    sci.SetSel(position, position + member.Name.Length);
+                    sci.ReplaceSel(newName);
                     UpdateLookupPosition(position, 1);
                     return true;
                 }
@@ -3617,10 +3553,9 @@ namespace ASCompletion.Completion
 
         protected static bool TryImportType(string type, ref int delta, int atLine)
         {
-            var eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
-            if (eventClass.IsVoid()) return false;
-            var typesUsed = new List<string> {type};
-            delta += AddImportsByName(typesUsed, atLine);
+            var @class = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (@class.IsVoid()) return false;
+            delta += AddImportsByName(new List<string> {type}, atLine);
             return true;
         }
 
@@ -3682,7 +3617,7 @@ namespace ASCompletion.Completion
             if (template.Length == 0)
             {
                 GenerateSetter(name, member, position);
-                (PluginBase.MainForm.CurrentDocument?.SciControl).SetSel(position, position);
+                PluginBase.MainForm.CurrentDocument?.SciControl.SetSel(position, position);
                 GenerateGetter(name, member, position);
                 return;
             }
@@ -3708,9 +3643,9 @@ namespace ASCompletion.Completion
 
         static string GetPrivateAccessor(MemberModel member, MemberModel inClass)
         {
-            var acc = GetStaticKeyword(member);
-            if (!string.IsNullOrEmpty(acc)) acc += " ";
-            return acc + GetPrivateKeyword(inClass);
+            var result = GetStaticKeyword(member);
+            if (!string.IsNullOrEmpty(result)) result += " ";
+            return result + GetPrivateKeyword(inClass);
         }
 
         static string GetPrivateKeyword(MemberModel inClass)
@@ -3748,15 +3683,9 @@ namespace ASCompletion.Completion
             }
             else
             {
-                if ((isStatic.Flags & FlagType.Static) > 0)
-                {
-                    latest = FindLatest(FlagType.Variable | FlagType.Static, access, inClass)
-                             ?? FindLatest(FlagType.Variable | FlagType.Static, 0, inClass, true, false);
-                }
-                else
-                {
-                    latest = FindLatest(FlagType.Variable, access, inClass);
-                }
+                latest = (isStatic.Flags & FlagType.Static) > 0
+                    ? FindLatest(FlagType.Variable | FlagType.Static, access, inClass) ?? FindLatest(FlagType.Variable | FlagType.Static, 0, inClass, true, false)
+                    : FindLatest(FlagType.Variable, access, inClass);
             }
             return latest ?? FindLatest(FlagType.Variable, access, inClass, false, false);
         }
@@ -4026,23 +3955,9 @@ namespace ASCompletion.Completion
                 {
                     var mCopy = (MemberModel) m.Clone();
                     var methodTemplate = NewLine;
-                    var overrideFound = false;
                     var baseClassType = inClass;
-                    while (!baseClassType.IsVoid())
-                    {
-                        var inClassMembers = baseClassType.Members;
-                        foreach (MemberModel inClassMember in inClassMembers)
-                        {
-                            if ((inClassMember.Flags & FlagType.Function) > 0 && m.Name.Equals(inClassMember.Name))
-                            {
-                                mCopy.Flags |= FlagType.Override;
-                                overrideFound = true;
-                                break;
-                            }
-                        }
-                        if (overrideFound) break;
-                        baseClassType = baseClassType.Extends;
-                    }
+                    if (baseClassType.ContainsMember(m.Name, FlagType.Function, true)) 
+                        mCopy.Flags |= FlagType.Override;
                     var flags = m.Flags;
                     if (isStaticMember && (flags & FlagType.Static) == 0) mCopy.Flags |= FlagType.Static;
                     var variableTemplate = string.Empty;
@@ -4072,8 +3987,7 @@ namespace ASCompletion.Completion
                         if (!isVararg)
                         {
                             callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Name", member.Name + "." + m.Name);
-                            callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Arguments", 
-                                TemplateUtils.CallParametersString(m));
+                            callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Arguments", TemplateUtils.CallParametersString(m));
                             callMethodTemplate += ";";
                         }
                         else 
@@ -4164,7 +4078,7 @@ namespace ASCompletion.Completion
         static void GetStartPos(string currentText, ref int startPos, string keyword)
         {
             if (keyword is null) return;
-            int p = currentText.IndexOfOrdinal(keyword);
+            var p = currentText.IndexOfOrdinal(keyword);
             if (p > 0 && p < startPos) startPos = p;
         }
 
@@ -4173,7 +4087,7 @@ namespace ASCompletion.Completion
         protected static string GetShortType(string type)
         {
             if (string.IsNullOrEmpty(type)) return type;
-            if (!type.Contains('@') && type.LastIndexOf('.') is int startIndex && startIndex != -1)
+            if (!type.Contains('@') && type.LastIndexOf('.') is { } startIndex && startIndex != -1)
             {
                 var importName = type.Substring(startIndex + 1);
                 var imports = ASContext.Context.ResolveImports(ASContext.Context.CurrentModel);
@@ -4250,12 +4164,11 @@ namespace ASCompletion.Completion
             foreach (var type in typesUsed)
             {
                 var cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || !cleanType.Contains('.'))
                     continue;
                 addedTypes.Add(cleanType);
                 var import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
-                if (!context.IsImported(import, atLine))
-                    length += InsertImport(import, false);
+                if (!context.IsImported(import, atLine)) length += InsertImport(import, false);
             }
             return length;
         }
@@ -4386,13 +4299,12 @@ namespace ASCompletion.Completion
         /// </summary>
         static string FixModifiersLocation(string src, string[] modifierOrder)
         {
-            bool needUpdate = false;
-            string[] lines = src.Split('\n');
-            for (int i = 0; i < lines.Length; i++)
+            var needUpdate = false;
+            var lines = src.Split('\n');
+            for (var i = 0; i < lines.Length; i++)
             {
-                string line = lines[i];
-
-                Match m = reModifiers.Match(line);
+                var line = lines[i];
+                var m = reModifiers.Match(line);
                 if (!m.Success) continue;
 
                 Group decl = m.Groups[2];
@@ -4566,7 +4478,7 @@ namespace ASCompletion.Completion
 
         public FunctionParameter(string parameter, string paramType, string paramQualType, ASResult result)
         {
-            this.paramName = parameter;
+            paramName = parameter;
             this.paramType = paramType;
             this.paramQualType = paramQualType;
             this.result = result;

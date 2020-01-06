@@ -59,7 +59,7 @@ namespace PluginCore.Helpers
 
         private static string ExpandArguments(string value, IDictionary<string, string> config, int depth)
         {
-            while (value.IndexOf("${", StringComparison.Ordinal) is int start && start >= 0)
+            while (value.IndexOf("${", StringComparison.Ordinal) is { } start && start >= 0)
             {
                 int end = value.IndexOf('}', start);
                 if (end < start) return value;
@@ -80,7 +80,7 @@ namespace PluginCore.Helpers
             var home = GetJavaHome(jvmConfig, flexSdkPath);
             if (!string.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
-                return Path.Combine(home, "bin","java");
+                return Path.Combine(home, "bin", "java");
             }
             return "java";
         }

@@ -173,31 +173,31 @@ namespace HaXeContext
 
         protected virtual int GetDisplayPosition()
         {
-            var pos = Expr.Position;
+            var result = Expr.Position;
 
             switch (CompilerService)
             {
                 case HaxeCompilerService.COMPLETION:
                     // locate a . or (
-                    while (pos > 1 && Sci.CharAt(pos - 1) != '.' && Sci.CharAt(pos - 1) != '(')
-                        pos--;
+                    while (result > 1 && Sci.CharAt(result - 1) != '.' && Sci.CharAt(result - 1) != '(')
+                        result--;
                     break;
 
                 case HaxeCompilerService.POSITION:
                 case HaxeCompilerService.USAGE:
-                    pos = Sci.WordEndPosition(Sci.CurrentPos, true);
+                    result = Sci.WordEndPosition(Sci.CurrentPos, true);
                     // necessary to get results with older versions due to a compiler bug
-                    if (haxeVersion < "3.3.0") pos++;
+                    if (haxeVersion < "3.3.0") result++;
                     break;
                 case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
                 case HaxeCompilerService.DIAGNOSTICS:
-                    pos = 0;
+                    result = 0;
                     break;
             }
 
             // account for BOM characters
-            pos += FileHelper.GetEncodingFileInfo(FileName).BomLength;
-            return pos;
+            result += FileHelper.GetEncodingFileInfo(FileName).BomLength;
+            return result;
         }
 
         /* PROCESS RESPONSE */
@@ -474,16 +474,16 @@ namespace HaXeContext
             var name = reader.GetAttribute("n");
             if (name is null) return null;
 
-            var member = new MemberModel();
-            member.Name = name;
-            member.Access = Visibility.Public;
-            member.Flags = reader.GetAttribute("k") switch
+            var result = new MemberModel();
+            result.Name = name;
+            result.Access = Visibility.Public;
+            result.Flags = reader.GetAttribute("k") switch
             {
                 "var" => FlagType.Variable,
                 "method" => FlagType.Function,
                 _ => (FlagType) 0,
             };
-            return member;
+            return result;
         }
 
         static void ExtractType(XmlReader reader, MemberModel member)
