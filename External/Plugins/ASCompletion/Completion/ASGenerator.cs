@@ -2321,7 +2321,7 @@ namespace ASCompletion.Completion
             }
             var membersString = new StringBuilder();
             var len = 0;
-            foreach (MemberModel m in inClass.Members)
+            foreach (var m in inClass.Members)
             {
                 if (((m.Flags & FlagType.Variable) > 0 || (m.Flags & FlagType.Getter) > 0)
                     && (m.Access & Visibility.Public) > 0

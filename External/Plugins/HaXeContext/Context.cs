@@ -1236,28 +1236,30 @@ namespace HaXeContext
             }
             else 
             {
-                // search in file
+                var found = false;
                 if (inFile != null)
+                {
+                    // search in file
                     foreach (var aClass in inFile.Classes)
                         if (aClass.Name == cname)
                             return aClass;
 
-                // search in imported classes
-                var found = false;
-                var imports = ResolveImports(inFile);
-                foreach (MemberModel import in imports)
-                {
-                    if (import.Name != cname) continue;
-                    if (import.Type != null && import.Type.Length > import.Name.Length)
+                    // search in imported classes
+                    var imports = ResolveImports(inFile);
+                    foreach (var import in imports)
                     {
-                        var type = import.Type;
-                        var temp = type.IndexOf('<');
-                        if (temp > 0) type = type.Substring(0, temp);
-                        var dotIndex = type.LastIndexOf('.');
-                        if (dotIndex > 0) package = type.Substring(0, dotIndex);
+                        if (import.Name != cname) continue;
+                        if (import.Type != null && import.Type.Length > import.Name.Length)
+                        {
+                            var type = import.Type;
+                            var temp = type.IndexOf('<');
+                            if (temp > 0) type = type.Substring(0, temp);
+                            var dotIndex = type.LastIndexOf('.');
+                            if (dotIndex > 0) package = type.Substring(0, dotIndex);
+                        }
+                        found = true;
+                        break;
                     }
-                    found = true;
-                    break;
                 }
                 if (!found && cname == "Function") return StubFunctionClass;
             }
@@ -1375,7 +1377,7 @@ namespace HaXeContext
             // quick check in current file
             if (inFile != null && inFile.Classes.Count > 0)
             {
-                foreach (ClassModel aClass in inFile.Classes)
+                foreach (var aClass in inFile.Classes)
                     if (aClass.Name == cname && (package == "" || package == inFile.Package))
                         return aClass;
             }
@@ -1400,9 +1402,9 @@ namespace HaXeContext
                 return result;
             }
 
-            FileModel aFile = aClass.InFile;
+            var aFile = aClass.InFile;
             // is the type already cloned?
-            foreach (ClassModel otherClass in aFile.Classes)
+            foreach (var otherClass in aFile.Classes)
                 if (otherClass.IndexType == indexType && otherClass.BaseType == baseType)
                     return otherClass;
 
@@ -1429,7 +1431,7 @@ namespace HaXeContext
                 aClass.ExtendsType = indexType;
             }
 
-            foreach (MemberModel member in aClass.Members)
+            foreach (var member in aClass.Members)
             {
                 if (member.Type != null && member.Type.Contains(Tname))
                 {
@@ -1437,7 +1439,7 @@ namespace HaXeContext
                 }
                 if (member.Parameters != null)
                 {
-                    foreach (MemberModel param in member.Parameters)
+                    foreach (var param in member.Parameters)
                     {
                         if (param.Type != null && param.Type.Contains(Tname))
                         {
@@ -2239,10 +2241,7 @@ namespace HaXeContext
 
         internal void OnPositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
-            if (hc.Sci.InvokeRequired)
-            {
-                hc.Sci.BeginInvoke((MethodInvoker)(() => HandlePositionResult(hc, result, status)));
-            }
+            if (hc.Sci.InvokeRequired) hc.Sci.BeginInvoke((MethodInvoker) (() => HandlePositionResult(hc, result, status)));
             else HandlePositionResult(hc, result, status); 
         }
 
