@@ -1675,6 +1675,7 @@ namespace HaXeContext.Completion
                     if (!type.IsVoid()) result.Type = type;
                 }
                 else if (result.RelClass?.IndexType is { } indexType
+                         && result.RelClass.Template != '<' + indexType + '>'
                          && member.Flags.HasFlag(FlagType.Function)
                          && (member.Type.Contains('<') || (member.Parameters?.Any(it => it.Type.Contains('<')) ?? false)))
                 {
