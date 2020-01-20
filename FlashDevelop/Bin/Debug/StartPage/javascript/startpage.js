@@ -1,6 +1,6 @@
 ﻿/**
-* Templates used by the start page.
-*/
+ * Templates used by the start page.
+ */
 var rssFeedItemTemplate = "<li><span class=\"rssItemTitle\"><a href=\"javascript:window.external.ShowURL('{1}');\">{0}</a></span><span class=\"rssItemContent\">{2}</span></li>";
 var projectItemTemplate = "<li><a href=\"javascript:window.external.OpenProject('{1}');\" onmouseover=\"showToolTip('{1}','{2}','{3}','{4}');\" onmouseout=\"hideToolTip();\">{0}</a></li>";
 var tooltipTextTemplate = "{0}<br /><b>" + getLocaleString("tooltipTextType") + "</b> {1}<br /><b>" + getLocaleString("tooltipTextCreated") + "</b> {2}<br /><b>" + getLocaleString("tooltipTextModified") + "</b> {3}";
@@ -9,8 +9,8 @@ var versionOutOfDateTemplate = "<br/><span class=\"alertRed\">" + getLocaleStrin
 var versionNotAvailableTemplate = "<span>" + getLocaleString("versionInfoNotAvailable") + "</span>";
 
 /**
-* Parses XML document from string.
-*/
+ * Parses XML document from string.
+ */
 function parseXmlDocument(xml)
 {
 	var parser = new ActiveXObject("Microsoft.XMLDOM");
@@ -20,11 +20,16 @@ function parseXmlDocument(xml)
 }
 
 /**
-* Downloads text document from url.
-*/
-function loadTextDocument(url, callback)
-{
-	var loader = new ActiveXObject("Microsoft.XMLHTTP");
+ * Downloads text document from url.
+ */
+function loadTextDocument(url, callback) {
+    var loader;
+	if (window.XMLHttpRequest) {
+        loader = new XMLHttpRequest();
+	} else {
+		// old IE browsers
+        loader = new ActiveXObject("Microsoft.XMLHTTP");
+    }
 	loader.onreadystatechange = function()
 	{
 		if (loader.readyState == 4)
@@ -33,16 +38,18 @@ function loadTextDocument(url, callback)
 		}
 	};
 	loader.open("GET", url, true);
-	loader.send(null);
+    try {
+        loader.send(null);
+	} catch (e) {
+    }
 }
 
 /**
-* Parses the recent project xml document.
-*/
+ * Parses the recent project xml document.
+ */
 function handleProjectXml(xml)
 {
 	var html = "";
-	var projects = new Array();
 	var nodes = xml.getElementsByTagName("RecentProject");
 	if (nodes.length === 0) html = getLocaleString("recentProjectsNotFound");
 	for (var i = 0; i < nodes.length; i++)
@@ -64,15 +71,14 @@ function addSlashes(s)
 }
 
 /**
-* Parses the rss feed xml document.
-*/
+ * Parses the rss feed xml document.
+ */
 function handleRssFeedXml(text, status)
 {
 	var html = "";
 	var xml = parseXmlDocument(text);
 	if (status == 200)
 	{
-		var items = new Array();
 		var xmlItems = xml.getElementsByTagName("item");
 		var xmlTitle = getNodeText(xml.getElementsByTagName("title"));
 		document.getElementById("rssTitle").innerHTML = xmlTitle;
@@ -91,8 +97,8 @@ function handleRssFeedXml(text, status)
 }
 
 /**
-* Safe text extraction
-*/
+ * Safe text extraction
+ */
 function getNodeText(nodes)
 {
 	if (nodes == null) return ""; //"#ERR#1";
@@ -102,8 +108,8 @@ function getNodeText(nodes)
 }
 
 /**
-* Handles the downloaded version info.
-*/
+ * Handles the downloaded version info.
+ */
 function handleVersionInfo(text, status)
 {
 	var html = "";
@@ -123,8 +129,8 @@ function handleVersionInfo(text, status)
 }
 
 /**
-* Shows the tooltip.
-*/
+ * Shows the tooltip.
+ */
 function showToolTip(path, type, created, modified)
 {
 	var tooltip = document.getElementById("tooltip");
@@ -137,8 +143,8 @@ function showToolTip(path, type, created, modified)
 }
 
 /**
-* Hides the tooltip.
-*/
+ * Hides the tooltip.
+ */
 function hideToolTip()
 {
 	var tooltip = document.getElementById("tooltip");
@@ -146,8 +152,8 @@ function hideToolTip()
 }
 
 /**
-* Gets the localized text for the id.
-*/
+ * Gets the localized text for the id.
+ */
 function getLocaleString(id)
 {
 	var lang = getUrlParameter("l") || "en_US";
@@ -155,8 +161,8 @@ function getLocaleString(id)
 }
 
 /**
-* Gets the type of the project file.
-*/
+ * Gets the type of the project file.
+ */
 function getProjectType(extension)
 {
 	switch (extension)
@@ -172,20 +178,20 @@ function getProjectType(extension)
 }
 
 /**
-* Gets the value of the specified url parameter.
-*/
+ * Gets the value of the specified url parameter.
+ */
 function getUrlParameter(id)
 {
 	id = id.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 	var regex = new RegExp("[?&]" + id + "=([^&#]*)");
 	var results = regex.exec(unescape(window.location.href));
 	if (results == null) return "";
-	else return results[1];
+	return results[1];
 }
 
 /**
-* Formats the string with the specified arguments.
-*/
+ * Formats the string with the specified arguments.
+ */
 function formatString(text)
 {
 	var result = text;
@@ -201,8 +207,8 @@ function formatString(text)
 }
 
 /**
-* Handles the data sent by FlashDevelop.
-*/
+ * Handles the data sent by FlashDevelop.
+ */
 function handleXmlData(projectXml, rssUrl)
 {
 	if (rssUrl != null)

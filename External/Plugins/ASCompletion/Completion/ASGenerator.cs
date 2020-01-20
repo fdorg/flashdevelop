@@ -1508,13 +1508,12 @@ namespace ASCompletion.Completion
                 // for example: typeof v, delete o[k], ...
                 if (((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, inClass, context)) return;
                 // for example: 1 + 1, 1 << 1, ...
-                var operators = ctx.Features.ArithmeticOperators
+                var operators = Enumerable.ToHashSet(ctx.Features.ArithmeticOperators
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
                     .Concat(ctx.Features.BitwiseOperators)
                     .Concat(ctx.Features.BooleanOperators)
-                    .Concat(ctx.Features.TernaryOperators)
-                    .ToHashSet();
+                    .Concat(ctx.Features.TernaryOperators));
                 var sep = new[] {' '};
                 var isValid = new Func<ASExpr, bool>(c => c.Separator.Contains(' ') 
                     && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries).Any(it => operators.Contains(it.Trim())));
