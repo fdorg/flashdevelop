@@ -18,14 +18,14 @@ Download
 Platform
 --------
 
-* Microsoft Windows .NET 4.0 application for XP, Vista, 7, 8 and 10
+* Microsoft Windows [.NET 4.8](https://dotnet.microsoft.com/download/dotnet-framework/net48) application for 7, 8.1 and 10
 * Mac OSX/Linux compatible using virtualization software or Wine/CrossOver
 * Native (Qt) Mac OSX/Linux helper is available to improve OS integration
 
 Building
 --------
 
-* Open in Visual Studio 2019 (Community version is free),
+* Open in [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) (Community version is free),
 * Click the solution and select "Release|x86" from "Active config" in Properties panel,
 * Build the entire solution, the built binary will run in standalone mode
 
