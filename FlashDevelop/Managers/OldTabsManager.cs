@@ -32,7 +32,7 @@ namespace FlashDevelop.Managers
         public static void SaveOldTabDocument(string filename)
         {
             if (!OldTabs.Contains(filename)) OldTabs.Insert(0, filename);
-            if (OldTabs.Count - 10 is var count && count > 0) OldTabs.RemoveRange(10, count);
+            if (OldTabs.Count - 10 is { } count && count > 0) OldTabs.RemoveRange(10, count);
         }
     }
 }
