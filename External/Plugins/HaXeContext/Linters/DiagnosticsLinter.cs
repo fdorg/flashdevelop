@@ -100,14 +100,13 @@ namespace HaXeContext.Linters
             ConfigurationLanguage = "haxe"
         };
 
-        void AddDiagnosticsResults(ICollection<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
+        static void AddDiagnosticsResults(ICollection<LintingResult> list, HaxeCompleteStatus status, IReadOnlyCollection<HaxeDiagnosticsResult> results, HaxeComplete hc)
         {
             if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
             {
                 foreach (var res in results)
                 {
                     var range = res.Range ?? res.Args.Range;
-
                     var result = new LintingResult
                     {
                         File = range.Path,
@@ -152,10 +151,7 @@ namespace HaXeContext.Linters
             }
             else if (status == HaxeCompleteStatus.ERROR)
             {
-                PluginBase.RunAsync(() =>
-                {
-                    TraceManager.Add(hc.Errors, (int)TraceType.Error);
-                });
+                PluginBase.RunAsync(() => TraceManager.Add(hc.Errors, (int)TraceType.Error));
             }
         }
     }
@@ -201,9 +197,7 @@ namespace HaXeContext.Linters
         {
             Task task = null;
             task = Task.Factory.StartNew(() => action(() => TaskFinished(task)));
-
             return task;
         }
-
     }
 }
