@@ -91,12 +91,9 @@ namespace HaXeContext
         {
             if (e.Data is null) return;
             TraceManager.AddAsync(e.Data, 2);
-            if (Regex.IsMatch(e.Data, "Error.*--wait"))
-            {
-                if (!failure) 
-                    FallbackNeeded?.Invoke(true);
-                failure = true;
-            }
+            if (!Regex.IsMatch(e.Data, "Error.*--wait")) return;
+            if (!failure) FallbackNeeded?.Invoke(true);
+            failure = true;
         }
 
         void HaxeProcess_Exited(object sender, EventArgs e) => isRunning = false;

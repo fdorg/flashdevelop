@@ -305,20 +305,17 @@ namespace HaXeContext
         HaxeCompleteStatus ProcessResponse(XmlReader reader)
         {
             reader.MoveToContent();
-
-            switch (reader.Name)
+            if (reader.Name == "type")
             {
-                case "type":
-                    ProcessType(reader);
-                    return HaxeCompleteStatus.TYPE;
-
-                case "list":
-                    return ProcessList(reader);
-
-                case "il":
-                    return ProcessTopLevel(reader);
+                ProcessType(reader);
+                return HaxeCompleteStatus.TYPE;
             }
-            return HaxeCompleteStatus.FAILED;
+            return reader.Name switch
+            {
+                "list" => ProcessList(reader),
+                "il" => ProcessTopLevel(reader),
+                _ => HaxeCompleteStatus.FAILED
+            };
         }
 
         void ProcessType(XmlReader reader)
@@ -326,9 +323,7 @@ namespace HaXeContext
             var parts = Expr.Value.Split('.');
             var name = parts[parts.Length - 1];
 
-            var type = new MemberModel();
-            type.Name = name;
-            type.Comments = reader.GetAttribute("d");
+            var type = new MemberModel {Name = name, Comments = reader.GetAttribute("d")};
             ExtractType(reader, type);
             result = new HaxeCompleteResult();
             result.Type = type;
@@ -486,11 +481,7 @@ namespace HaXeContext
             return result;
         }
 
-        static void ExtractType(XmlReader reader, MemberModel member)
-        {
-            var type = ReadValue(reader);
-            ExtractType(type, member);
-        }
+        static void ExtractType(XmlReader reader, MemberModel member) => ExtractType(ReadValue(reader), member);
 
         static void ExtractType(string type, MemberModel member)
         {

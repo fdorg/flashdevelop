@@ -15,23 +15,15 @@ namespace HaXeContext.Helpers
             list = new FlagCheckedListBox<CompletionFeatures>();
         }
 
-        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
-        {
-            return UITypeEditorEditStyle.DropDown;
-        }
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context) => UITypeEditorEditStyle.DropDown;
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             if (context?.PropertyDescriptor is null) return null;
-
             var service = (IWindowsFormsEditorService) provider.GetService(typeof(IWindowsFormsEditorService));
-
             list.Value = EnumHelper.ConvertToInt(value);
             service.DropDownControl(list);
-
             return (CompletionFeatures)list.Value;
-
-            //return base.EditValue(context, provider, value);
         }
     }
 
@@ -40,10 +32,7 @@ namespace HaXeContext.Helpers
         public int IntValue;
         public T Value;
 
-        public override string ToString()
-        {
-            return Enum.GetName(typeof(T), Value);
-        }
+        public override string ToString() => Enum.GetName(typeof(T), Value);
     }
 
     class FlagCheckedListBox<T> : CheckedListBox
@@ -88,14 +77,6 @@ namespace HaXeContext.Helpers
 
     class EnumHelper
     {
-        public static int ConvertToInt<T>(T value)
-        {
-            return (int)Convert.ChangeType(value, typeof(int));
-        }
-
-        //public static T ConvertToEnum<T>(int value)
-        //{
-        //    return (T)Convert.ChangeType(value, typeof(Enum));
-        //}
+        public static int ConvertToInt<T>(T value) => (int)Convert.ChangeType(value, typeof(int));
     }
 }
