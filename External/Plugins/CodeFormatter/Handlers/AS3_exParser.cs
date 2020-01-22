@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // $ANTLR 3.1.1 AS3_ex.g3 2015-02-17 22:17:17
 
 using System.Collections.Generic;
