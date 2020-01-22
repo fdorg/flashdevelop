@@ -333,7 +333,7 @@ namespace ICSharpCode.SharpZipLib.LZW
         /// </summary>
         /// <param name="bitPosition"></param>
         /// <returns></returns>
-        private int ResetBuf(int bitPosition) {
+        int ResetBuf(int bitPosition) {
             int pos = bitPosition >> 3;
             Array.Copy(data, pos, data, 0, end - pos);
             end -= pos;
@@ -341,7 +341,7 @@ namespace ICSharpCode.SharpZipLib.LZW
         }
 
 
-        private void Fill() {
+        void Fill() {
             got = baseInputStream.Read(data, end, data.Length - 1 - end);
             if (got > 0) {
                 end += got;
@@ -349,7 +349,7 @@ namespace ICSharpCode.SharpZipLib.LZW
         }
 
 
-        private void ParseHeader() {
+        void ParseHeader() {
             headerParsed = true;
 
             byte[] hdr = new byte[LzwConstants.HDR_SIZE];
@@ -536,33 +536,33 @@ namespace ICSharpCode.SharpZipLib.LZW
         bool headerParsed;
 
         // string table stuff
-        private const int TBL_CLEAR = 0x100;
-        private const int TBL_FIRST = TBL_CLEAR + 1;
+        const int TBL_CLEAR = 0x100;
+        const int TBL_FIRST = TBL_CLEAR + 1;
 
-        private int[] tabPrefix;
-        private byte[] tabSuffix;
-        private readonly int[] zeros = new int[256];
-        private byte[] stack;
+        int[] tabPrefix;
+        byte[] tabSuffix;
+        readonly int[] zeros = new int[256];
+        byte[] stack;
 
         // various state
-        private bool blockMode;
-        private int nBits;
-        private int maxBits;
-        private int maxMaxCode;
-        private int maxCode;
-        private int bitMask;
-        private int oldCode;
-        private byte finChar;
-        private int stackP;
-        private int freeEnt;
+        bool blockMode;
+        int nBits;
+        int maxBits;
+        int maxMaxCode;
+        int maxCode;
+        int bitMask;
+        int oldCode;
+        byte finChar;
+        int stackP;
+        int freeEnt;
 
         // input buffer
-        private readonly byte[] data = new byte[1024 * 8];
-        private int bitPos;
-        private int end;
+        readonly byte[] data = new byte[1024 * 8];
+        int bitPos;
+        int end;
         int got;
-        private bool eof;
-        private const int EXTRA = 64;
+        bool eof;
+        const int EXTRA = 64;
         #endregion
     }
 }

@@ -6,7 +6,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public class DockContentEventArgs : EventArgs
     {
-        private readonly IDockContent m_content;
+        readonly IDockContent m_content;
 
         public DockContentEventArgs(IDockContent content)
         {

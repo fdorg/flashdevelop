@@ -19,7 +19,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]        
         protected internal class Tab : IDisposable
         {
-            private readonly IDockContent m_content;
+            readonly IDockContent m_content;
 
             public Tab(IDockContent content)
             {
@@ -68,7 +68,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_dockPane = pane;
             }
 
-            private readonly DockPane m_dockPane;
+            readonly DockPane m_dockPane;
             public DockPane DockPane => m_dockPane;
 
             public int Count => DockPane.DisplayingContents.Count;
@@ -117,12 +117,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             AllowDrop = true;
         }
 
-        private readonly DockPane m_dockPane;
+        readonly DockPane m_dockPane;
         protected DockPane DockPane => m_dockPane;
 
         protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
-        private TabCollection m_tabs = null;
+        TabCollection m_tabs = null;
         protected TabCollection Tabs
         {
             get

@@ -78,9 +78,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             window[windowEnd++] = (byte) value;
             windowEnd &= WindowMask;
         }
-        
-        
-        private void SlowRepeat(int repStart, int length, int distance)
+
+
+        void SlowRepeat(int repStart, int length, int distance)
         {
             while (length-- > 0) {
                 window[windowEnd++] = window[repStart++];

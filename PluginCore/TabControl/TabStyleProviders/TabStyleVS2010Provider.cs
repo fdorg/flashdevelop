@@ -64,8 +64,8 @@ namespace System.Windows.Forms
 			
 			return fillBrush;
 		}
-		
-		private static Blend GetBackgroundBlend(){
+
+        static Blend GetBackgroundBlend(){
 			float[] relativeIntensities = new[]{0f, 0.5f, 1f, 1f};
 			float[] relativePositions = new[]{0f, 0.5f, 0.51f, 1f};
 
@@ -128,8 +128,8 @@ namespace System.Windows.Forms
 
 			}
 		}
-			
-		private static GraphicsPath GetCloserButtonPath(Rectangle closerRect){
+
+        static GraphicsPath GetCloserButtonPath(Rectangle closerRect){
 			GraphicsPath closerPath = new GraphicsPath();
 			closerPath.AddLine(closerRect.X - 1, closerRect.Y - 2, closerRect.Right + 1, closerRect.Y - 2);
 			closerPath.AddLine(closerRect.Right + 2, closerRect.Y - 1, closerRect.Right + 2, closerRect.Bottom + 1);

@@ -1738,8 +1738,11 @@ namespace AirProperties
                 //wants to add it.
                 foreach (var existingExtension in _extensions)
                 {
-                    if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
-                    break;
+                    if (existingExtension.ExtensionId == extensionId)
+                    {
+                        extension = existingExtension;
+                        break;
+                    }
                 }
                 if (extension is null)
                 {

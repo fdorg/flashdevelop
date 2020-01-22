@@ -14,8 +14,8 @@ namespace ScintillaNet.Configuration
     {
         protected Assembly _assembly;
 
-        private const string coloringStart = "<!-- COLORING_START -->";
-        private const string coloringEnd = "<!-- COLORING_END -->";
+        const string coloringStart = "<!-- COLORING_START -->";
+        const string coloringEnd = "<!-- COLORING_END -->";
 
         protected virtual byte[] LoadFile(string filename, ConfigFile parent)
         {

@@ -88,7 +88,7 @@ namespace ScintillaNet.Configuration
         /// <summary>
         /// Converts ARGB color value to Scintilla's Colour format (BGR)
         /// </summary>
-        private int TO_COLORREF(int color)
+        int TO_COLORREF(int color)
         {
             return ((color & 0xFF0000) >> 16) + (color & 0x00FF00) + ((color & 0x0000FF) << 16);
         }

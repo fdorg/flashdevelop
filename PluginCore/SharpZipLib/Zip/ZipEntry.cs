@@ -949,7 +949,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         // For AES the method in the entry is 99, and the real compression method is in the extradata
         //
-        private void ProcessAESExtraData(ZipExtraData extraData) {
+        void ProcessAESExtraData(ZipExtraData extraData) {
 
 #if !NET_1_1 && !NETCF_2_0
             if (extraData.Find(0x9901)) {

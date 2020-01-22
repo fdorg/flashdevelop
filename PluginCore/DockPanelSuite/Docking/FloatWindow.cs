@@ -11,7 +11,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public class FloatWindow : Form, INestedPanesContainer, IDockDragSource
     {
-        private NestedPaneCollection m_nestedPanes;
+        NestedPaneCollection m_nestedPanes;
         internal const int WM_CHECKDISPOSE = (int)(Win32.Msgs.WM_USER + 1);
 
         protected internal FloatWindow(DockPanel dockPanel, DockPane pane)
@@ -24,7 +24,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             InternalConstruct(dockPanel, pane, true, bounds);
         }
 
-        private void InternalConstruct(DockPanel dockPanel, DockPane pane, bool boundsSpecified, Rectangle bounds)
+        void InternalConstruct(DockPanel dockPanel, DockPane pane, bool boundsSpecified, Rectangle bounds)
         {
             if (dockPanel is null)
                 throw(new ArgumentNullException(Strings.FloatWindow_Constructor_NullDockPanel));
@@ -69,14 +69,14 @@ namespace WeifenLuo.WinFormsUI.Docking
             base.Dispose(disposing);
         }
 
-        private bool m_allowEndUserDocking = true;
+        bool m_allowEndUserDocking = true;
         public bool AllowEndUserDocking
         {
             get => m_allowEndUserDocking;
             set => m_allowEndUserDocking = value;
         }
 
-        private bool m_doubleClickTitleBarToDock = true;
+        bool m_doubleClickTitleBarToDock = true;
         public bool DoubleClickTitleBarToDock
         {
             get => m_doubleClickTitleBarToDock;
@@ -87,7 +87,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public VisibleNestedPaneCollection VisibleNestedPanes => NestedPanes.VisibleNestedPanes;
 
-        private DockPanel m_dockPanel;
+        DockPanel m_dockPanel;
         public DockPanel DockPanel => m_dockPanel;
 
         public DockState DockState => DockState.Float;
@@ -385,7 +385,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             MergeNestedPanes(VisibleNestedPanes, nestedPanesTo, prevPane, DockAlignment.Left, 0.5);
         }
 
-        private static void MergeNestedPanes(VisibleNestedPaneCollection nestedPanesFrom, NestedPaneCollection nestedPanesTo, DockPane prevPane, DockAlignment alignment, double proportion)
+        static void MergeNestedPanes(VisibleNestedPaneCollection nestedPanesFrom, NestedPaneCollection nestedPanesTo, DockPane prevPane, DockAlignment alignment, double proportion)
         {
             if (nestedPanesFrom.Count == 0)
                 return;

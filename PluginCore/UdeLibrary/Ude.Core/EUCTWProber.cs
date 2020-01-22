@@ -42,9 +42,9 @@ namespace Ude.Core
 {
     public class EUCTWProber : CharsetProber
     {
-        private readonly CodingStateMachine codingSM;
-        private readonly EUCTWDistributionAnalyser distributionAnalyser;
-        private readonly byte[] lastChar = new byte[2];
+        readonly CodingStateMachine codingSM;
+        readonly EUCTWDistributionAnalyser distributionAnalyser;
+        readonly byte[] lastChar = new byte[2];
 
         public EUCTWProber()
         {

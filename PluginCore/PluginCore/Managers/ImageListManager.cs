@@ -13,7 +13,7 @@ namespace PluginCore.Managers
     /// </summary>
     public class ImageListManager : IDisposable
     {
-        private static readonly List<WeakReference> instances;
+        static readonly List<WeakReference> instances;
 
         #region Constructors
 
@@ -179,13 +179,13 @@ namespace PluginCore.Managers
         /// Adds a weak reference of an instance to the <see cref="instances"/> list.
         /// </summary>
         /// <param name="instance">An instance of <see cref="ImageListManager"/>.</param>
-        private static void AddInstance(ImageListManager instance) => instances.Add(new WeakReference(instance));
+        static void AddInstance(ImageListManager instance) => instances.Add(new WeakReference(instance));
 
         /// <summary>
         /// Removes a weak reference to an instance from the instances list.
         /// </summary>
         /// <param name="instance">An instance of <see cref="ImageListManager"/>.</param>
-        private static void RemoveInstance(ImageListManager instance)
+        static void RemoveInstance(ImageListManager instance)
         {
             for (int i = 0, length = instances.Count; i < length; i++)
             {

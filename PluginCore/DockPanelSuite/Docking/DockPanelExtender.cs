@@ -45,7 +45,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         #region DefaultDockPaneFactory
-        private class DefaultDockPaneFactory : IDockPaneFactory
+
+        class DefaultDockPaneFactory : IDockPaneFactory
         {
             public DockPane CreateDockPane(IDockContent content, DockState visibleState, bool show)
             {
@@ -70,7 +71,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         #endregion
 
         #region DefaultFloatWindowFactory
-        private class DefaultFloatWindowFactory : IFloatWindowFactory
+
+        class DefaultFloatWindowFactory : IFloatWindowFactory
         {
             public FloatWindow CreateFloatWindow(DockPanel dockPanel, DockPane pane)
             {
@@ -85,7 +87,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         #endregion
 
         #region DefaultDockPaneCaptionFactory
-        private class DefaultDockPaneCaptionFactory : IDockPaneCaptionFactory
+
+        class DefaultDockPaneCaptionFactory : IDockPaneCaptionFactory
         {
             public DockPaneCaptionBase CreateDockPaneCaption(DockPane pane)
             {
@@ -95,7 +98,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         #endregion
 
         #region DefaultDockPaneTabStripFactory
-        private class DefaultDockPaneStripFactory : IDockPaneStripFactory
+
+        class DefaultDockPaneStripFactory : IDockPaneStripFactory
         {
             public DockPaneStripBase CreateDockPaneStrip(DockPane pane)
             {
@@ -105,7 +109,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         #endregion
 
         #region DefaultAutoHideStripFactory
-        private class DefaultAutoHideStripFactory : IAutoHideStripFactory
+
+        class DefaultAutoHideStripFactory : IAutoHideStripFactory
         {
             public AutoHideStripBase CreateAutoHideStrip(DockPanel panel)
             {
@@ -119,10 +124,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockPanel = dockPanel;
         }
 
-        private readonly DockPanel m_dockPanel;
-        private DockPanel DockPanel => m_dockPanel;
+        readonly DockPanel m_dockPanel;
+        DockPanel DockPanel => m_dockPanel;
 
-        private IDockPaneFactory m_dockPaneFactory = null;
+        IDockPaneFactory m_dockPaneFactory = null;
         public IDockPaneFactory DockPaneFactory
         {
             get
@@ -141,7 +146,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IFloatWindowFactory m_floatWindowFactory = null;
+        IFloatWindowFactory m_floatWindowFactory = null;
         public IFloatWindowFactory FloatWindowFactory
         {
             get
@@ -160,7 +165,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IDockPaneCaptionFactory m_dockPaneCaptionFactory = null;
+        IDockPaneCaptionFactory m_dockPaneCaptionFactory = null;
         public IDockPaneCaptionFactory DockPaneCaptionFactory
         {   
             get
@@ -179,7 +184,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IDockPaneStripFactory m_dockPaneStripFactory = null;
+        IDockPaneStripFactory m_dockPaneStripFactory = null;
         public IDockPaneStripFactory DockPaneStripFactory
         {
             get
@@ -198,7 +203,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IAutoHideStripFactory m_autoHideStripFactory = null;
+        IAutoHideStripFactory m_autoHideStripFactory = null;
         public IAutoHideStripFactory AutoHideStripFactory
         {   
             get

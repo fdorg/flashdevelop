@@ -12,10 +12,10 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     internal class VS2005DockPaneCaption : DockPaneCaptionBase
     {
-        private sealed class InertButton : InertButtonBase
+        sealed class InertButton : InertButtonBase
         {
-            private readonly Bitmap m_image;
-            private readonly Bitmap m_imageAutoHide;
+            readonly Bitmap m_image;
+            readonly Bitmap m_imageAutoHide;
 
             public InertButton(VS2005DockPaneCaption dockPaneCaption, Bitmap image, Bitmap imageAutoHide)
             {
@@ -25,7 +25,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 RefreshChanges();
             }
 
-            private VS2005DockPaneCaption DockPaneCaption { get; }
+            VS2005DockPaneCaption DockPaneCaption { get; }
 
             public bool IsAutoHide => DockPaneCaption.DockPane.IsAutoHide;
 
@@ -41,7 +41,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private readonly ToolTip m_toolTip;
+        readonly ToolTip m_toolTip;
 
         public VS2005DockPaneCaption(DockPane pane) : base(pane)
         {
@@ -75,8 +75,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             ResumeLayout();
         }
 
-        private static Bitmap _imageButtonClose;
-        private static Bitmap ImageButtonClose
+        static Bitmap _imageButtonClose;
+
+        static Bitmap ImageButtonClose
         {
             get
             {
@@ -87,8 +88,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private InertButton m_buttonClose;
-        private InertButton ButtonClose
+        InertButton m_buttonClose;
+
+        InertButton ButtonClose
         {
             get
             {
@@ -104,8 +106,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Bitmap _imageButtonAutoHide;
-        private static Bitmap ImageButtonAutoHide
+        static Bitmap _imageButtonAutoHide;
+
+        static Bitmap ImageButtonAutoHide
         {
             get
             {
@@ -116,8 +119,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Bitmap _imageButtonDock;
-        private static Bitmap ImageButtonDock
+        static Bitmap _imageButtonDock;
+
+        static Bitmap ImageButtonDock
         {
             get
             {
@@ -128,8 +132,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private InertButton m_buttonAutoHide;
-        private InertButton ButtonAutoHide
+        InertButton m_buttonAutoHide;
+
+        InertButton ButtonAutoHide
         {
             get
             {
@@ -145,8 +150,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Bitmap _imageButtonOptions;
-        private static Bitmap ImageButtonOptions
+        static Bitmap _imageButtonOptions;
+
+        static Bitmap ImageButtonOptions
         {
             get
             {
@@ -157,8 +163,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private InertButton m_buttonOptions;
-        private InertButton ButtonOptions
+        InertButton m_buttonOptions;
+
+        InertButton ButtonOptions
         {
             get
             {
@@ -173,7 +180,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IContainer Components { get; }
+        IContainer Components { get; }
 
         protected override void Dispose(bool disposing)
         {
@@ -186,22 +193,23 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         static int TextGapBottom { get; set; } = 1;
 
-        private static int TextGapLeft { get; } = 3;
+        static int TextGapLeft { get; } = 3;
 
-        private static int TextGapRight { get; } = 3;
+        static int TextGapRight { get; } = 3;
 
-        private static int ButtonGapTop { get; } = 3;
+        static int ButtonGapTop { get; } = 3;
 
         static int ButtonGapBottom { get; set; } = 3;
 
-        private static int ButtonGapLeft { get; } = 3;
+        static int ButtonGapLeft { get; } = 3;
 
-        private static int ButtonGapRight { get; } = 3;
+        static int ButtonGapRight { get; } = 3;
 
-        private static int ButtonGapBetween { get; } = 1;
+        static int ButtonGapBetween { get; } = 1;
 
-        private static string _toolTipClose;
-        private static string ToolTipClose
+        static string _toolTipClose;
+
+        static string ToolTipClose
         {
             get
             {   
@@ -212,8 +220,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static string _toolTipOptions;
-        private static string ToolTipOptions
+        static string _toolTipOptions;
+
+        static string ToolTipOptions
         {
             get
             {
@@ -224,8 +233,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static string _toolTipAutoHide;
-        private static string ToolTipAutoHide
+        static string _toolTipAutoHide;
+
+        static string ToolTipAutoHide
         {
             get
             {   
@@ -236,8 +246,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Blend _activeBackColorGradientBlend;
-        private static Blend ActiveBackColorGradientBlend
+        static Blend _activeBackColorGradientBlend;
+
+        static Blend ActiveBackColorGradientBlend
         {
             get
             {
@@ -254,7 +265,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Color ActiveBackColorGradientBegin
+        static Color ActiveBackColorGradientBegin
         {
             get 
             {
@@ -263,7 +274,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Color ActiveBackColorGradientEnd
+        static Color ActiveBackColorGradientEnd
         {
             get 
             {
@@ -272,7 +283,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Color InactiveBackColor
+        static Color InactiveBackColor
         {
             get
             {
@@ -282,11 +293,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Color ActiveTextColor => SystemColors.ActiveCaptionText;
+        static Color ActiveTextColor => SystemColors.ActiveCaptionText;
 
-        private static Color InactiveTextColor => SystemColors.ControlText;
+        static Color InactiveTextColor => SystemColors.ControlText;
 
-        private Color TextColor
+        Color TextColor
         {
             get
             {
@@ -301,7 +312,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private Color ImageColor
+        Color ImageColor
         {
             get
             {
@@ -313,11 +324,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static readonly TextFormatFlags _textFormat =
+        static readonly TextFormatFlags _textFormat =
             TextFormatFlags.SingleLine |
             TextFormatFlags.EndEllipsis |
             TextFormatFlags.VerticalCenter;
-        private TextFormatFlags TextFormat
+
+        TextFormatFlags TextFormat
         {
             get
             {
@@ -343,7 +355,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             DrawCaption(e.Graphics);
         }
 
-        private void DrawCaption(Graphics g)
+        void DrawCaption(Graphics g)
         {
             if (ClientRectangle.Width == 0 || ClientRectangle.Height == 0)
                 return;
@@ -402,11 +414,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             Invalidate();
         }
 
-        private bool CloseButtonEnabled => DockPane.ActiveContent?.DockHandler.CloseButton ?? false;
+        bool CloseButtonEnabled => DockPane.ActiveContent?.DockHandler.CloseButton ?? false;
 
-        private bool ShouldShowAutoHideButton => !DockPane.IsFloat;
+        bool ShouldShowAutoHideButton => !DockPane.IsFloat;
 
-        private void SetButtons()
+        void SetButtons()
         {
             ButtonClose.Enabled = CloseButtonEnabled;
             ButtonAutoHide.Visible = ShouldShowAutoHideButton;
@@ -418,7 +430,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             SetButtonsPosition();
         }
 
-        private void SetButtonsPosition()
+        void SetButtonsPosition()
         {
             // set the size and location for close and auto-hide buttons
             Rectangle rectCaption = ClientRectangle;
@@ -442,19 +454,19 @@ namespace WeifenLuo.WinFormsUI.Docking
             ButtonOptions.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
         }
 
-        private void Close_Click(object sender, EventArgs e)
+        void Close_Click(object sender, EventArgs e)
         {
             DockPane.CloseActiveContent();
         }
 
-        private void AutoHide_Click(object sender, EventArgs e)
+        void AutoHide_Click(object sender, EventArgs e)
         {
             if (!DockPane.IsAutoHide)
                 DockPane.ActiveContent.DockHandler.GiveUpFocus();
             DockPane.DockState = DockHelper.ToggleAutoHideState(DockPane.DockState);
         }
 
-        private void Options_Click(object sender, EventArgs e)
+        void Options_Click(object sender, EventArgs e)
         {
             ShowTabPageContextMenu(PointToClient(MousePosition));
         }

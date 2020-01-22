@@ -240,7 +240,7 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// Initialise an instance of <see cref="StreamUtils"></see>
         /// </summary>
-        private StreamUtils()
+        StreamUtils()
         {
             // Do nothing.
         }

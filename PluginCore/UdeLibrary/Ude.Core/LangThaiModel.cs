@@ -49,7 +49,7 @@ namespace Ude.Core
         252: 0 - 9
         *****************************************************************/
         // The following result for thai was collected from a limited sample (1M) 
-        private static readonly byte[] TIS620_CHAR_TO_ORDER_MAP = {
+        static readonly byte[] TIS620_CHAR_TO_ORDER_MAP = {
         255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
         255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
         +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253, //20
@@ -74,7 +74,7 @@ namespace Ude.Core
         //first 1024 sequences:7.3177%
         //rest  sequences:     1.0230%
         //negative sequences:  0.0436% 
-        private static readonly byte[] THAI_LANG_MODEL = {
+        static readonly byte[] THAI_LANG_MODEL = {
         0,1,3,3,3,3,0,0,3,3,0,3,3,0,3,3,3,3,3,3,3,3,0,0,3,3,3,0,3,3,3,3,
         0,3,3,0,0,0,1,3,0,3,3,2,3,3,0,1,2,3,3,3,3,0,2,0,2,0,0,3,2,1,2,2,
         3,0,3,3,2,3,0,0,3,3,0,3,3,0,3,3,3,3,3,3,3,3,3,0,3,2,3,0,2,2,2,3,

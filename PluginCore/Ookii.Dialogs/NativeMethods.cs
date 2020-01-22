@@ -10,7 +10,7 @@ using Ookii.Dialogs.Interop;
 
 namespace Ookii.Dialogs
 {
-    static class NativeMethods
+    internal static class NativeMethods
     {
         public static bool IsWindowsVistaOrLater => Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= new Version(6, 0, 6000);
 

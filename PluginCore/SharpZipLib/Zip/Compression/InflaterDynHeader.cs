@@ -42,8 +42,7 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression 
 {
-    
-    class InflaterDynHeader
+    internal class InflaterDynHeader
     {
         #region Constants
         const int LNUM   = 0;

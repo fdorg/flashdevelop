@@ -42,9 +42,9 @@ namespace Ude.Core
 {
     public class UTF8Prober : CharsetProber
     {
-        private static readonly float ONE_CHAR_PROB = 0.50f;
-        private readonly CodingStateMachine codingSM;
-        private int numOfMBChar;
+        static readonly float ONE_CHAR_PROB = 0.50f;
+        readonly CodingStateMachine codingSM;
+        int numOfMBChar;
 
         public UTF8Prober()
         {

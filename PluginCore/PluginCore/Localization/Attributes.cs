@@ -19,7 +19,7 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {
-        private bool initialized;
+        bool initialized;
 
         public LocalizedDescriptionAttribute(string key) : base(key) { }
 

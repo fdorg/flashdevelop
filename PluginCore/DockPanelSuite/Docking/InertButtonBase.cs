@@ -22,7 +22,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get;
         }
 
-        private bool m_isMouseOver = false;
+        bool m_isMouseOver = false;
         protected bool IsMouseOver
         {
             get => m_isMouseOver;

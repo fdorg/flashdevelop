@@ -276,12 +276,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         }
 
         #region Instance Fields
-        private byte[] window_;
-        private int windowStart_;
-        private int windowEnd_;
 
-        private uint buffer_;
-        private int bitsInBuffer_;
+        byte[] window_;
+        int windowStart_;
+        int windowEnd_;
+
+        uint buffer_;
+        int bitsInBuffer_;
         #endregion
     }
 }

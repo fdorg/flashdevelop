@@ -74,7 +74,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <summary>
         /// Initialise a default instance of <see cref="TarEntry"/>.
         /// </summary>
-        private TarEntry()
+        TarEntry()
         {
             header = new TarHeader();
         }

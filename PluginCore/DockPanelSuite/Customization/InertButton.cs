@@ -10,7 +10,7 @@ namespace WeifenLuo.WinFormsUI
 {
     internal class InertButton : Button
     {
-        private enum RepeatClickStatus
+        enum RepeatClickStatus
         {
             Disabled,
             Started,
@@ -18,7 +18,7 @@ namespace WeifenLuo.WinFormsUI
             Stopped
         }
 
-        private class RepeatClickEventArgs : EventArgs
+        class RepeatClickEventArgs : EventArgs
         {
             static RepeatClickEventArgs()
             {
@@ -28,19 +28,19 @@ namespace WeifenLuo.WinFormsUI
             public new static RepeatClickEventArgs Empty { get; private set; }
         }
 
-        private readonly IContainer components = new Container();
-        private int m_borderWidth = 1;
-        private bool m_mouseOver = false;
-        private bool m_mouseCapture = false;
-        private bool m_isPopup = false;
-        private Image m_imageEnabled = null;
-        private Image m_imageDisabled = null;
-        private int m_imageIndexEnabled = -1;
-        private int m_imageIndexDisabled = -1;
-        private bool m_monochrom = true;
-        private ToolTip m_toolTip = null;
-        private string m_toolTipText = "";
-        private Color m_borderColor = Color.Empty;
+        readonly IContainer components = new Container();
+        int m_borderWidth = 1;
+        bool m_mouseOver = false;
+        bool m_mouseCapture = false;
+        bool m_isPopup = false;
+        Image m_imageEnabled = null;
+        Image m_imageDisabled = null;
+        int m_imageIndexEnabled = -1;
+        int m_imageIndexDisabled = -1;
+        bool m_monochrom = true;
+        ToolTip m_toolTip = null;
+        string m_toolTipText = "";
+        Color m_borderColor = Color.Empty;
 
         public InertButton()
         {
@@ -56,8 +56,8 @@ namespace WeifenLuo.WinFormsUI
         {
             InternalConstruct(imageEnabled, imageDisabled);
         }
-        
-        private void InternalConstruct(Image imageEnabled, Image imageDisabled)
+
+        void InternalConstruct(Image imageEnabled, Image imageDisabled)
         {
             // Remember parameters
             ImageEnabled = imageEnabled;
@@ -103,7 +103,7 @@ namespace WeifenLuo.WinFormsUI
             }
         }
 
-        private bool ShouldSerializeBorderColor()
+        bool ShouldSerializeBorderColor()
         {
             return (m_borderColor != Color.Empty);
         }
@@ -152,7 +152,7 @@ namespace WeifenLuo.WinFormsUI
             }
         }
 
-        private bool ShouldSerializeImageEnabled()
+        bool ShouldSerializeImageEnabled()
         {
             return (m_imageEnabled != null);
         }
@@ -244,8 +244,9 @@ namespace WeifenLuo.WinFormsUI
             set => ClickStatus = RepeatClickStatus.Stopped;
         }
 
-        private RepeatClickStatus m_clickStatus = RepeatClickStatus.Disabled;
-        private RepeatClickStatus ClickStatus
+        RepeatClickStatus m_clickStatus = RepeatClickStatus.Disabled;
+
+        RepeatClickStatus ClickStatus
         {
             get => m_clickStatus;
             set
@@ -268,7 +269,7 @@ namespace WeifenLuo.WinFormsUI
 
         public int RepeatClickDelay { get; set; } = 500;
         public int RepeatClickInterval { get; set; } = 100;
-        private Timer Timer { get; set; }
+        Timer Timer { get; set; }
 
         public string ToolTipText
         {
@@ -285,7 +286,7 @@ namespace WeifenLuo.WinFormsUI
             }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        void Timer_Tick(object sender, EventArgs e)
         {
             if (m_mouseCapture && m_mouseOver)
                 OnClick(RepeatClickEventArgs.Empty);
@@ -406,13 +407,13 @@ namespace WeifenLuo.WinFormsUI
             DrawBorder(e.Graphics);
         }
 
-        private void DrawBackground(Graphics g)
+        void DrawBackground(Graphics g)
         {
             using var brush = new SolidBrush(BackColor);
             g.FillRectangle(brush, ClientRectangle);
         }
 
-        private void DrawImage(Graphics g)
+        void DrawImage(Graphics g)
         {
             Image image = this.Enabled ? ImageEnabled : ImageDisabled ?? ImageEnabled;
             ImageAttributes imageAttr = null;
@@ -466,9 +467,9 @@ namespace WeifenLuo.WinFormsUI
                 else
                     g.DrawImage(image, pts, rect, GraphicsUnit.Pixel, imageAttr);
             }
-        }   
+        }
 
-        private void DrawText(Graphics g)
+        void DrawText(Graphics g)
         {
             if (Text.Length == 0) return;
             var rect = ClientRectangle;
@@ -529,7 +530,7 @@ namespace WeifenLuo.WinFormsUI
             g.DrawString(Text, Font, brush, rect, stringFormat);
         }
 
-        private void DrawBorder(Graphics g)
+        void DrawBorder(Graphics g)
         {
             ButtonBorderStyle bs;
 

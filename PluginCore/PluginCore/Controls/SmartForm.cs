@@ -14,9 +14,9 @@ namespace PluginCore.Controls
 {
     public class SmartForm : FormEx, IEventHandler
     {
-        private string formGuid;
-        private string helpLink;
-        private FormProps formProps;
+        string formGuid;
+        string helpLink;
+        FormProps formProps;
         public event SavePropsHandler SaveProps;
         public event ApplyPropsHandler ApplyProps;
         public delegate void ApplyPropsHandler(SmartForm form);
@@ -57,12 +57,12 @@ namespace PluginCore.Controls
         /// <summary>
         /// Path to the unique setting file
         /// </summary>
-        private string FormPropsFile => Path.Combine(this.FormStatesDir, this.formGuid + ".fdb");
+        string FormPropsFile => Path.Combine(this.FormStatesDir, this.formGuid + ".fdb");
 
         /// <summary>
         /// Path to the form state file directory
         /// </summary>
-        private string FormStatesDir
+        string FormStatesDir
         {
             get
             {
@@ -75,7 +75,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Apply theming properties to the controls
         /// </summary>
-        private void ApplyTheming()
+        void ApplyTheming()
         {
             PluginBase.MainForm.SetUseTheme(this, this.UseTheme);
             if (this.UseTheme)
@@ -96,7 +96,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Load the form state from a setting file and applies it
         /// </summary>
-        private void SmartFormLoad(object sender, EventArgs e)
+        void SmartFormLoad(object sender, EventArgs e)
         {
             this.ApplyTheming();
             if (this.StartPosition == FormStartPosition.CenterParent)
@@ -123,7 +123,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Saves the current form state to a setting file
         /// </summary>
-        private void SmartFormClosed(object sender, FormClosedEventArgs e)
+        void SmartFormClosed(object sender, FormClosedEventArgs e)
         {
             SaveProps?.Invoke(this);
             if (!string.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
@@ -136,7 +136,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Browse to the specified help link
         /// </summary>
-        private void SmartFormHelpButtonClick(object sender, CancelEventArgs e)
+        void SmartFormHelpButtonClick(object sender, CancelEventArgs e)
         {
             PluginBase.MainForm.CallCommand("Browse", this.helpLink);
         }

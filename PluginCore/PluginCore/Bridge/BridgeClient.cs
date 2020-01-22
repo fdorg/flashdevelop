@@ -9,7 +9,8 @@ namespace PluginCore.Bridge
     public class BridgeClient : ServerSocket
     {
         #region configuration
-        private static string ip;
+
+        static string ip;
 
         public static string BridgeIP
         {

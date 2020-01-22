@@ -46,11 +46,11 @@ namespace System.Windows.Forms
 
     public class DockPanelStripRenderer : ToolStripRenderer
     {
-        private readonly bool useTheme;
-        private ToolStrip toolStrip;
-        private readonly bool drawBottomBorder;
-        private readonly ProfessionalColorTable colorTable;
-        private static ToolStripRenderer renderer;
+        readonly bool useTheme;
+        ToolStrip toolStrip;
+        readonly bool drawBottomBorder;
+        readonly ProfessionalColorTable colorTable;
+        static ToolStripRenderer renderer;
 
         public DockPanelStripRenderer() : this(true) {}
         public DockPanelStripRenderer(bool drawBottomBorder) : this(drawBottomBorder, true) {}
@@ -64,7 +64,7 @@ namespace System.Windows.Forms
             else renderer = new ToolStripProfessionalRenderer(this.colorTable);
         }
 
-        private Color GetThemeColor(string id)
+        Color GetThemeColor(string id)
         {
             if (!useTheme) return Color.Empty;
             return PluginBase.MainForm.GetThemeColor(id);
@@ -109,7 +109,7 @@ namespace System.Windows.Forms
             }
         }
 
-        private void OnToolStripPaint(object sender, PaintEventArgs e)
+        void OnToolStripPaint(object sender, PaintEventArgs e)
         {
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
@@ -454,7 +454,8 @@ namespace System.Windows.Forms
             }
             else renderer.DrawStatusStripSizingGrip(e);
         }
-        private void DrawGripGlyph(Graphics g, int x, int y, Brush darkBrush, Brush lightBrush)
+
+        void DrawGripGlyph(Graphics g, int x, int y, Brush darkBrush, Brush lightBrush)
         {
             g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
             g.FillRectangle(darkBrush, x, y, 2, 2);

@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 namespace SevenZip.Compression.RangeCoder
 {
-    struct BitEncoder
+    internal struct BitEncoder
     {
         public const int kNumBitModelTotalBits = 11;
         public const uint kBitModelTotal = (1 << kNumBitModelTotalBits);
@@ -45,7 +45,7 @@ namespace SevenZip.Compression.RangeCoder
             }
         }
 
-        private static readonly uint[] ProbPrices = new uint[kBitModelTotal >> kNumMoveReducingBits];
+        static readonly uint[] ProbPrices = new uint[kBitModelTotal >> kNumMoveReducingBits];
 
         static BitEncoder()
         {
@@ -68,7 +68,7 @@ namespace SevenZip.Compression.RangeCoder
         public uint GetPrice1() { return ProbPrices[(kBitModelTotal - Prob) >> kNumMoveReducingBits]; }
     }
 
-    struct BitDecoder
+    internal struct BitDecoder
     {
         public const int kNumBitModelTotalBits = 11;
         public const uint kBitModelTotal = (1 << kNumBitModelTotalBits);

@@ -477,7 +477,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <summary>
     /// A factory that creates <see cref="ITaggedData">tagged data</see> instances.
     /// </summary>
-    interface ITaggedDataFactory
+    internal interface ITaggedDataFactory
     {
         /// <summary>
         /// Get data for a specific tag value.
@@ -576,7 +576,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         /// <param name="tag">The tag to search for.</param>
         /// <returns>Returns a <see cref="ITaggedData">tagged value</see> or null if none found.</returns>
-        private ITaggedData GetData(short tag)
+        ITaggedData GetData(short tag)
         {
             ITaggedData result = null;
             if (Find(tag))

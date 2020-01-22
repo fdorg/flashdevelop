@@ -29,9 +29,9 @@ namespace LitJson
 
     internal struct ArrayMetadata
     {
-        private Type element_type;
-        private bool is_array;
-        private bool is_list;
+        Type element_type;
+        bool is_array;
+        bool is_list;
 
 
         public Type ElementType {
@@ -59,10 +59,10 @@ namespace LitJson
 
     internal struct ObjectMetadata
     {
-        private Type element_type;
-        private bool is_dictionary;
+        Type element_type;
+        bool is_dictionary;
 
-        private IDictionary<string, PropertyMetadata> properties;
+        IDictionary<string, PropertyMetadata> properties;
 
 
         public Type ElementType {
@@ -100,34 +100,38 @@ namespace LitJson
     public class JsonMapper
     {
         #region Fields
-        private static readonly int max_nesting_depth;
 
-        private static readonly IFormatProvider datetime_format;
+        static readonly int max_nesting_depth;
 
-        private static readonly IDictionary<Type, ExporterFunc> base_exporters_table;
-        private static readonly IDictionary<Type, ExporterFunc> custom_exporters_table;
+        static readonly IFormatProvider datetime_format;
 
-        private static readonly IDictionary<Type,
+        static readonly IDictionary<Type, ExporterFunc> base_exporters_table;
+        static readonly IDictionary<Type, ExporterFunc> custom_exporters_table;
+
+        static readonly IDictionary<Type,
                 IDictionary<Type, ImporterFunc>> base_importers_table;
-        private static readonly IDictionary<Type,
+
+        static readonly IDictionary<Type,
                 IDictionary<Type, ImporterFunc>> custom_importers_table;
 
-        private static readonly IDictionary<Type, ArrayMetadata> array_metadata;
-        private static readonly object array_metadata_lock = new object ();
+        static readonly IDictionary<Type, ArrayMetadata> array_metadata;
+        static readonly object array_metadata_lock = new object ();
 
-        private static readonly IDictionary<Type,
+        static readonly IDictionary<Type,
                 IDictionary<Type, MethodInfo>> conv_ops;
-        private static readonly object conv_ops_lock = new object ();
 
-        private static readonly IDictionary<Type, ObjectMetadata> object_metadata;
-        private static readonly object object_metadata_lock = new object ();
+        static readonly object conv_ops_lock = new object ();
 
-        private static readonly IDictionary<Type,
+        static readonly IDictionary<Type, ObjectMetadata> object_metadata;
+        static readonly object object_metadata_lock = new object ();
+
+        static readonly IDictionary<Type,
                 IList<PropertyMetadata>> type_properties;
-        private static readonly object type_properties_lock = new object ();
 
-        private static readonly JsonWriter      static_writer;
-        private static readonly object static_writer_lock = new object ();
+        static readonly object type_properties_lock = new object ();
+
+        static readonly JsonWriter      static_writer;
+        static readonly object static_writer_lock = new object ();
         #endregion
 
 
@@ -161,7 +165,8 @@ namespace LitJson
 
 
         #region Private Methods
-        private static void AddArrayMetadata (Type type)
+
+        static void AddArrayMetadata (Type type)
         {
             if (array_metadata.ContainsKey (type))
                 return;
@@ -195,7 +200,7 @@ namespace LitJson
             }
         }
 
-        private static void AddObjectMetadata (Type type)
+        static void AddObjectMetadata (Type type)
         {
             if (object_metadata.ContainsKey (type))
                 return;
@@ -245,7 +250,7 @@ namespace LitJson
             }
         }
 
-        private static void AddTypeProperties (Type type)
+        static void AddTypeProperties (Type type)
         {
             if (type_properties.ContainsKey (type))
                 return;
@@ -279,7 +284,7 @@ namespace LitJson
             }
         }
 
-        private static MethodInfo GetConvOp (Type t1, Type t2)
+        static MethodInfo GetConvOp (Type t1, Type t2)
         {
             lock (conv_ops_lock) {
                 if (! conv_ops.ContainsKey (t1))
@@ -303,7 +308,7 @@ namespace LitJson
             return op;
         }
 
-        private static object ReadValue (Type inst_type, JsonReader reader)
+        static object ReadValue (Type inst_type, JsonReader reader)
         {
             reader.Read ();
 
@@ -456,7 +461,7 @@ namespace LitJson
             return instance;
         }
 
-        private static IJsonWrapper ReadValue (WrapperFactory factory,
+        static IJsonWrapper ReadValue (WrapperFactory factory,
                                                JsonReader reader)
         {
             reader.Read ();
@@ -523,7 +528,7 @@ namespace LitJson
             return instance;
         }
 
-        private static void RegisterBaseExporters ()
+        static void RegisterBaseExporters ()
         {
             base_exporters_table[typeof (byte)] =
                 delegate (object obj, JsonWriter writer) {
@@ -572,7 +577,7 @@ namespace LitJson
                 };
         }
 
-        private static void RegisterBaseImporters ()
+        static void RegisterBaseImporters ()
         {
             ImporterFunc importer;
 
@@ -650,7 +655,7 @@ namespace LitJson
                               typeof (DateTime), importer);
         }
 
-        private static void RegisterImporter (
+        static void RegisterImporter (
             IDictionary<Type, IDictionary<Type, ImporterFunc>> table,
             Type json_type, Type value_type, ImporterFunc importer)
         {
@@ -660,7 +665,7 @@ namespace LitJson
             table[json_type][value_type] = importer;
         }
 
-        private static void WriteValue (object obj, JsonWriter writer,
+        static void WriteValue (object obj, JsonWriter writer,
                                         bool writer_is_private,
                                         int depth)
         {

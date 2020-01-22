@@ -41,21 +41,22 @@ namespace LitJson
     public class JsonReader
     {
         #region Fields
-        private static IDictionary<int, IDictionary<int, int[]>> parse_table;
 
-        private readonly Stack<int>    automaton_stack;
-        private int           current_input;
-        private int           current_symbol;
-        private bool          end_of_json;
-        private bool          end_of_input;
-        private readonly Lexer         lexer;
-        private bool          parser_in_string;
-        private bool          parser_return;
-        private bool          read_started;
-        private TextReader    reader;
-        private readonly bool          reader_is_owned;
-        private object        token_value;
-        private JsonToken     token;
+        static IDictionary<int, IDictionary<int, int[]>> parse_table;
+
+        readonly Stack<int>    automaton_stack;
+        int           current_input;
+        int           current_symbol;
+        bool          end_of_json;
+        bool          end_of_input;
+        readonly Lexer         lexer;
+        bool          parser_in_string;
+        bool          parser_return;
+        bool          read_started;
+        TextReader    reader;
+        readonly bool          reader_is_owned;
+        object        token_value;
+        JsonToken     token;
         #endregion
 
 
@@ -97,7 +98,7 @@ namespace LitJson
         {
         }
 
-        private JsonReader (TextReader reader, bool owned)
+        JsonReader (TextReader reader, bool owned)
         {
             if (reader is null)
                 throw new ArgumentNullException (nameof(reader));
@@ -122,7 +123,8 @@ namespace LitJson
 
 
         #region Static Methods
-        private static void PopulateParseTable ()
+
+        static void PopulateParseTable ()
         {
             parse_table = new Dictionary<int, IDictionary<int, int[]>> ();
 
@@ -228,13 +230,13 @@ namespace LitJson
                          (int) ParserToken.Epsilon);
         }
 
-        private static void TableAddCol (ParserToken row, int col,
+        static void TableAddCol (ParserToken row, int col,
                                          params int[] symbols)
         {
             parse_table[(int) row].Add (col, symbols);
         }
 
-        private static void TableAddRow (ParserToken rule)
+        static void TableAddRow (ParserToken rule)
         {
             parse_table.Add ((int) rule, new Dictionary<int, int[]> ());
         }
@@ -242,7 +244,8 @@ namespace LitJson
 
 
         #region Private Methods
-        private void ProcessNumber (string number)
+
+        void ProcessNumber (string number)
         {
             if (number.IndexOf ('.') != -1 ||
                 number.IndexOf ('e') != -1 ||
@@ -278,7 +281,7 @@ namespace LitJson
             token_value = 0;
         }
 
-        private void ProcessSymbol ()
+        void ProcessSymbol ()
         {
             if (current_symbol == '[')  {
                 token = JsonToken.ArrayStart;
@@ -337,7 +340,7 @@ namespace LitJson
             }
         }
 
-        private bool ReadToken ()
+        bool ReadToken ()
         {
             if (end_of_input)
                 return false;

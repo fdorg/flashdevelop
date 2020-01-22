@@ -187,7 +187,7 @@ namespace Ude.Core
     
     public class Koi8rModel : CyrillicModel
     {
-        private static readonly byte[] KOI8R_CHAR_TO_ORDER_MAP = {
+        static readonly byte[] KOI8R_CHAR_TO_ORDER_MAP = {
         255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
         255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
         +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -213,7 +213,7 @@ namespace Ude.Core
     
     public class Win1251Model : CyrillicModel
     {
-        private static readonly byte[] WIN1251_CHAR_TO_ORDER_MAP = {
+        static readonly byte[] WIN1251_CHAR_TO_ORDER_MAP = {
         255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
         255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
         +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -239,7 +239,7 @@ namespace Ude.Core
     
     public class Latin5Model : CyrillicModel
     {
-        private static readonly byte[] LATIN5_CHAR_TO_ORDER_MAP = {
+        static readonly byte[] LATIN5_CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -265,7 +265,7 @@ namespace Ude.Core
     
     public class MacCyrillicModel : CyrillicModel
     {
-        private static readonly byte[] MACCYRILLIC_CHAR_TO_ORDER_MAP = {
+        static readonly byte[] MACCYRILLIC_CHAR_TO_ORDER_MAP = {
         255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
         255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
         +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -292,7 +292,7 @@ namespace Ude.Core
 
     public class Ibm855Model : CyrillicModel
     {
-        private static readonly byte[] IBM855_BYTE_TO_ORDER_MAP = {
+        static readonly byte[] IBM855_BYTE_TO_ORDER_MAP = {
         255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
         255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
         +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -318,7 +318,7 @@ namespace Ude.Core
 
     public class Ibm866Model : CyrillicModel
     {
-        private static readonly byte[] IBM866_CHAR_TO_ORDER_MAP = {
+        static readonly byte[] IBM866_CHAR_TO_ORDER_MAP = {
         255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
         255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
         +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20

@@ -130,9 +130,9 @@ namespace PluginCore.Bridge
 
         #region regular watcher implementation
 
-        private static readonly Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
+        static readonly Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
-        private void SetupRegularWatcher()
+        void SetupRegularWatcher()
         {
             watcher = new FileSystemWatcher(path);
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -152,22 +152,25 @@ namespace PluginCore.Bridge
             watcher.Renamed += watcher_Renamed;
         }
 
-        private void watcher_Created(object sender, FileSystemEventArgs e)
+        void watcher_Created(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
             Created?.Invoke(this, e);
         }
-        private void watcher_Changed(object sender, FileSystemEventArgs e)
+
+        void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
             Changed?.Invoke(this, e);
         }
-        private void watcher_Deleted(object sender, FileSystemEventArgs e)
+
+        void watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
             Deleted?.Invoke(this, e);
         }
-        private void watcher_Renamed(object sender, RenamedEventArgs e)
+
+        void watcher_Renamed(object sender, RenamedEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
             Renamed?.Invoke(this, e);

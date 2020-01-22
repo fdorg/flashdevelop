@@ -44,11 +44,11 @@ namespace Ude.Core
 {
     public class SBCSGroupProber : CharsetProber
     {
-        private const int PROBERS_NUM = 13;
-        private readonly CharsetProber[] probers = new CharsetProber[PROBERS_NUM];        
-        private readonly bool[] isActive = new bool[PROBERS_NUM];
-        private int bestGuess;
-        private int activeNum;
+        const int PROBERS_NUM = 13;
+        readonly CharsetProber[] probers = new CharsetProber[PROBERS_NUM];
+        readonly bool[] isActive = new bool[PROBERS_NUM];
+        int bestGuess;
+        int activeNum;
         
         public SBCSGroupProber()
         {

@@ -503,7 +503,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             }
         }
 
-        private void GetAuthCodeIfAES() {
+        void GetAuthCodeIfAES() {
 #if !NET_1_1 && !NETCF_2_0
             if (cryptoTransform_ is ZipAESTransform) {
                 AESAuthCode = ((ZipAESTransform)cryptoTransform_).GetAuthCode();
@@ -569,7 +569,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 
 #if !NET_1_1 && !NETCF_2_0
         // Static to help ensure that multiple files within a zip will get different random salt
-        private static RNGCryptoServiceProvider _aesRnd;
+        static RNGCryptoServiceProvider _aesRnd;
 #endif
         #endregion
     }

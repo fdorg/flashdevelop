@@ -77,16 +77,17 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         }
 
         // The final n bytes of the AES stream contain the Auth Code.
-        private const int AUTH_CODE_LENGTH = 10;
+        const int AUTH_CODE_LENGTH = 10;
 
-        private readonly Stream _stream;
-        private readonly ZipAESTransform _transform;
-        private readonly byte[] _slideBuffer;
-        private int _slideBufStartPos;
-        private int _slideBufFreePos;
+        readonly Stream _stream;
+        readonly ZipAESTransform _transform;
+        readonly byte[] _slideBuffer;
+        int _slideBufStartPos;
+
+        int _slideBufFreePos;
         // Blocksize is always 16 here, even for AES-256 which has transform.InputBlockSize of 32.
-        private const int CRYPTO_BLOCK_SIZE = 16;
-        private readonly int _blockAndAuth;
+        const int CRYPTO_BLOCK_SIZE = 16;
+        readonly int _blockAndAuth;
 
         /// <summary>
         /// Reads a sequence of bytes from the current CryptoStream into buffer,

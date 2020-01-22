@@ -36,7 +36,7 @@ namespace PluginCore.Utilities
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         static extern int SHFileOperation([In] ref SHFILEOPSTRUCT lpFileOp);
 
-        private SHFILEOPSTRUCT _ShFile;
+        SHFILEOPSTRUCT _ShFile;
         public FILEOP_FLAGS fFlags;
 
         public IntPtr hwnd
@@ -94,7 +94,7 @@ namespace PluginCore.Utilities
         public class FILEOP_FLAGS
         {
             [Flags]
-            private enum FILEOP_FLAGS_ENUM : ushort
+            enum FILEOP_FLAGS_ENUM : ushort
             {
                 FOF_MULTIDESTFILES = 0x0001,
                 FOF_CONFIRMMOUSE = 0x0002,

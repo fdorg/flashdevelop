@@ -49,27 +49,26 @@ namespace ICSharpCode.SharpZipLib.Encryption {
     /// Transforms stream using AES in CTR mode
     /// </summary>
     internal class ZipAESTransform : ICryptoTransform {
-
-        private const int PWD_VER_LENGTH = 2;
+        const int PWD_VER_LENGTH = 2;
 
         // WinZip use iteration count of 1000 for PBKDF2 key generation
-        private const int KEY_ROUNDS = 1000;
+        const int KEY_ROUNDS = 1000;
 
         // For 128-bit AES (16 bytes) the encryption is implemented as expected.
         // For 256-bit AES (32 bytes) WinZip do full 256 bit AES of the nonce to create the encryption
         // block but use only the first 16 bytes of it, and discard the second half.
-        private const int ENCRYPT_BLOCK = 16;
+        const int ENCRYPT_BLOCK = 16;
 
-        private readonly int _blockSize;
-        private readonly ICryptoTransform _encryptor;
-        private readonly byte[] _counterNonce;
-        private readonly byte[] _encryptBuffer;
-        private int _encrPos;
-        private readonly byte[] _pwdVerifier;
-        private readonly HMACSHA1 _hmacsha1;
-        private bool _finalised;
+        readonly int _blockSize;
+        readonly ICryptoTransform _encryptor;
+        readonly byte[] _counterNonce;
+        readonly byte[] _encryptBuffer;
+        int _encrPos;
+        readonly byte[] _pwdVerifier;
+        readonly HMACSHA1 _hmacsha1;
+        bool _finalised;
 
-        private readonly bool _writeMode;
+        readonly bool _writeMode;
 
         /// <summary>
         /// Constructor.

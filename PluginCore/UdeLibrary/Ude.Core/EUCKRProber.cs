@@ -41,9 +41,9 @@ namespace Ude.Core
 {
     public class EUCKRProber : CharsetProber
     {
-        private readonly CodingStateMachine codingSM;
-        private readonly EUCKRDistributionAnalyser distributionAnalyser;
-        private readonly byte[] lastChar = new byte[2];
+        readonly CodingStateMachine codingSM;
+        readonly EUCKRDistributionAnalyser distributionAnalyser;
+        readonly byte[] lastChar = new byte[2];
 
         public EUCKRProber()
         {
