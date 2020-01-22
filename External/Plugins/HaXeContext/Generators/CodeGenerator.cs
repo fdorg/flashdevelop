@@ -79,25 +79,18 @@ namespace HaXeContext.Generators
 
         /// <inheritdoc />
         protected override bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
-        {
-            if (!base.CanShowAssignStatementToVariable(sci, expr)) return false;
-            // for example: return cast expr<generator>, return untyped expr<generator>
-            return (expr.Context.WordBefore != "cast" || expr.Context.WordBefore != "untyped")
-                   && sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return";
-        }
+            => sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return"
+               && base.CanShowAssignStatementToVariable(sci, expr);
 
         /// <inheritdoc />
         protected override bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
-        {
-            return !ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position) 
-                && base.CanShowConvertToConst(sci, position, expr, found);
-        }
+            => !ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position)
+               && base.CanShowConvertToConst(sci, position, expr, found);
 
         /// <inheritdoc />
         protected override bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
-        {
-            return expr.Context.Separator != "=" && base.CanShowImplementInterfaceList(sci, position, expr, found);
-        }
+            => expr.Context.Separator != "="
+               && base.CanShowImplementInterfaceList(sci, position, expr, found);
 
         /// <inheritdoc />
         protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
@@ -159,7 +152,7 @@ namespace HaXeContext.Generators
         protected override bool CanShowGetSetList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass ?? ClassModel.VoidClass;
-            return !inClass.Flags.HasFlag(FlagType.Abstract) && base.CanShowGetSetList(sci, position, expr, found);
+            return !inClass.Flags.HasFlag(FlagType.Abstract);
         }
 
         /// <inheritdoc />
@@ -691,7 +684,7 @@ namespace HaXeContext.Generators
         static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, ASResult expr)
         {
             return expr.Member is { } member
-                   && member.Parameters?.Count > 0
+                   && !member.Parameters.IsNullOrEmpty()
                    && (member.LineFrom != sci.CurrentLine || !expr.Context.BeforeBody)
                    && member.Flags.HasFlag(FlagType.Static | FlagType.Function);
         }
@@ -890,10 +883,9 @@ namespace HaXeContext.Generators
         static void GenerateSwitch(ScintillaControl sci, ASResult expr)
         {
             var start = expr.Context.PositionExpression;
-            int end;
-            if (expr.Type.QualifiedName == ASContext.Context.ResolveType("Function", null).QualifiedName)
-                end = GetEndOfStatement(start, sci.Length, sci) - 1;
-            else end = expr.Context.Position;
+            var end = expr.Type.QualifiedName == ASContext.Context.ResolveType("Function", null).QualifiedName
+                ? GetEndOfStatement(start, sci.Length, sci) - 1
+                : expr.Context.Position;
             sci.SetSel(start, end);
             var template = TemplateUtils.GetTemplate("Switch");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);

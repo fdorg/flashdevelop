@@ -493,7 +493,7 @@ namespace HaXeContext
                     if (haxeTarget == "flash")
                         lang = (majorVersion >= 6 && majorVersion < 9) ? FLASH_OLD : FLASH_NEW;
 
-                    PathModel std = PathModel.GetModel(haxeCP, this);
+                    var std = PathModel.GetModel(haxeCP, this);
                     if (!std.WasExplored && !Settings.LazyClasspathExploration)
                     {
                         var hide = new List<string>();
@@ -710,7 +710,7 @@ namespace HaXeContext
             {
                 foreach (var member in result.Members)
                 {
-                    if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
+                    if (!member.Flags.HasFlag(FlagType.Function) || member.Parameters.IsNullOrEmpty()) continue;
                     foreach (var parameter in member.Parameters)
                     {
                         if (parameter.Name[0] != '?') continue;
@@ -1262,8 +1262,7 @@ namespace HaXeContext
                     }
                     return ResolveType(features.arrayKey, inFile);
                 }
-                if (first == '{' && last == '}')
-                    return ResolveType(features.dynamicKey, null);
+                if (first == '{' && last == '}') return ResolveType(features.dynamicKey, null);
                 if (first == '(' && last == ')')
                 {
                     if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
@@ -2566,9 +2565,7 @@ namespace HaXeContext
                                  // a < b $(EntryPoint)&&
                                  || c == '&'
                                  // a <$(EntryPoint)= b
-                                 || c == '='
-                                 // a < b$(EntryPoint);
-                                 || c == ';')
+                                 || c == '=')
                             return -1;
                         // Array<Int->$(EntryPoint){v:Type}>
                         else if (parCount == 0 && c == '{') genCount++;
