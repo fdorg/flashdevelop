@@ -143,7 +143,5 @@ namespace FlashDevelop.Utilities
             }
             return nearestMatch;
         }
-
     }
-
 }

@@ -8,10 +8,10 @@ using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
-    class CleanupManager
+    internal class CleanupManager
     {
-        private const string coloringStart = "<!-- COLORING_START -->";
-        private const string coloringEnd = "<!-- COLORING_END -->";
+        const string coloringStart = "<!-- COLORING_START -->";
+        const string coloringEnd = "<!-- COLORING_END -->";
 
         /// <summary>
         /// Reverts the language config files fully or keeping the coloring.

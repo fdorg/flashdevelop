@@ -209,7 +209,5 @@ namespace FlashDevelop.Managers
         {
             return string.Compare(Label, other.Label, true);
         }
-
     }
-
 }
