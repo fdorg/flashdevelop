@@ -124,7 +124,5 @@ namespace FlashDevelop.Managers
                 }
             }
         }
-
     }
-
 }

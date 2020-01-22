@@ -15,7 +15,7 @@ namespace PluginCore.Utilities
     public class SingleInstanceApp
     {
         //a utility window to communicate between application instances
-        private class SIANativeWindow : NativeWindow
+        class SIANativeWindow : NativeWindow
         {
             public SIANativeWindow()
             {
@@ -59,7 +59,7 @@ namespace PluginCore.Utilities
         //Utility window for communication between apps
         SIANativeWindow _notifcationWindow;
 
-        private void Dispose()
+        void Dispose()
         {
             //release the mutex handle
             _instanceCounter?.Close();
@@ -67,13 +67,13 @@ namespace PluginCore.Utilities
             _notifcationWindow?.DestroyHandle();
         }
 
-        private void Init()
+        void Init()
         {
             _notifcationWindow = new SIANativeWindow();
         }
 
         //returns a uniqe Id representing the application. This is basically the name of the .exe 
-        private static string GetAppId()
+        static string GetAppId()
         {
             var fileName = Path.GetFileName(Application.ExecutablePath);
             var justName = fileName.Split('.')[0];
@@ -81,9 +81,9 @@ namespace PluginCore.Utilities
         }
 
         //notify event handler
-        private void OnNewInstanceMessage(object message) => NewInstanceMessage?.Invoke(this, message);
+        void OnNewInstanceMessage(object message) => NewInstanceMessage?.Invoke(this, message);
 
-        private SingleInstanceApp()
+        SingleInstanceApp()
         {
             _id = "SIA_" + GetAppId();
            
@@ -102,10 +102,10 @@ namespace PluginCore.Utilities
             }
         }
 
-        private bool Exists => !_firstInstance;
+        bool Exists => !_firstInstance;
 
         //send a notification to the already existing instance that a new instance was started
-        private bool NotifyPreviousInstance(object message)
+        bool NotifyPreviousInstance(object message)
         {
             //First, find the window of the previous instance
             var handle = Win32.FindWindow(null, _id);
@@ -147,13 +147,13 @@ namespace PluginCore.Utilities
         }
 
         //2 utility methods for object serialization\deserialization
-        private static object Deserialize(byte[] buffer)
+        static object Deserialize(byte[] buffer)
         {
             using var stream = new MemoryStream(buffer);
             return new BinaryFormatter().Deserialize(stream);
         }
 
-        private static byte[] Serialize(object obj)
+        static byte[] Serialize(object obj)
         {
             using var stream = new MemoryStream();
             new BinaryFormatter().Serialize(stream, obj);

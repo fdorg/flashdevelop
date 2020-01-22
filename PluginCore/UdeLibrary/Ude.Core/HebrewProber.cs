@@ -145,24 +145,24 @@ namespace Ude.Core
     public class HebrewProber : CharsetProber
     {
         // windows-1255 / ISO-8859-8 code points of interest
-        private const byte FINAL_KAF  = 0xEA;
-        private const byte NORMAL_KAF = 0xEB;
-        private const byte FINAL_MEM  = 0xED;
-        private const byte NORMAL_MEM = 0xEE;
-        private const byte FINAL_NUN  = 0xEF;
-        private const byte NORMAL_NUN = 0xF0;
-        private const byte FINAL_PE = 0xF3;
-        private const byte NORMAL_PE = 0xF4;
-        private const byte FINAL_TSADI = 0xF5;
-        private const byte NORMAL_TSADI = 0xF6;
+        const byte FINAL_KAF  = 0xEA;
+        const byte NORMAL_KAF = 0xEB;
+        const byte FINAL_MEM  = 0xED;
+        const byte NORMAL_MEM = 0xEE;
+        const byte FINAL_NUN  = 0xEF;
+        const byte NORMAL_NUN = 0xF0;
+        const byte FINAL_PE = 0xF3;
+        const byte NORMAL_PE = 0xF4;
+        const byte FINAL_TSADI = 0xF5;
+        const byte NORMAL_TSADI = 0xF6;
 
         // Minimum Visual vs Logical final letter score difference.
         // If the difference is below this, don't rely solely on the final letter score distance.
-        private const int MIN_FINAL_CHAR_DISTANCE = 5;
+        const int MIN_FINAL_CHAR_DISTANCE = 5;
 
         // Minimum Visual vs Logical model score difference.
         // If the difference is below this, don't rely at all on the model score distance.
-        private const float MIN_MODEL_DISTANCE = 0.01f;
+        const float MIN_MODEL_DISTANCE = 0.01f;
 
         protected const string VISUAL_HEBREW_NAME = "ISO-8859-8";
         protected const string LOGICAL_HEBREW_NAME = "windows-1255";

@@ -247,8 +247,5 @@ namespace FlashDevelop.Managers
             get => prop;
             set => prop = value;
         }
-
     }
-
 }
-

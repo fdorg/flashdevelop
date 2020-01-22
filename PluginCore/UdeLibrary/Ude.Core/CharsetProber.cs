@@ -53,13 +53,13 @@ namespace Ude.Core
         protected ProbingState state;
         
         // ASCII codes
-        private const byte SPACE = 0x20;
-        private const byte CAPITAL_A = 0x41;
-        private const byte CAPITAL_Z = 0x5A;
-        private const byte SMALL_A = 0x61;
-        private const byte SMALL_Z = 0x7A;
-        private const byte LESS_THAN = 0x3C;        
-        private const byte GREATER_THAN = 0x3E;
+        const byte SPACE = 0x20;
+        const byte CAPITAL_A = 0x41;
+        const byte CAPITAL_Z = 0x5A;
+        const byte SMALL_A = 0x61;
+        const byte SMALL_Z = 0x7A;
+        const byte LESS_THAN = 0x3C;
+        const byte GREATER_THAN = 0x3E;
         
         /// <summary>
         /// Feed data to the prober

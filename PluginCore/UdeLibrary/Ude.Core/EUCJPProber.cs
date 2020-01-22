@@ -39,10 +39,10 @@ namespace Ude.Core
 {
     public class EUCJPProber : CharsetProber
     {
-        private readonly CodingStateMachine codingSM;
-        private readonly EUCJPContextAnalyser contextAnalyser;
-        private readonly EUCJPDistributionAnalyser distributionAnalyser;
-        private readonly byte[] lastChar = new byte[2];
+        readonly CodingStateMachine codingSM;
+        readonly EUCJPContextAnalyser contextAnalyser;
+        readonly EUCJPDistributionAnalyser distributionAnalyser;
+        readonly byte[] lastChar = new byte[2];
         
         public EUCJPProber()
         {

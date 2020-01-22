@@ -662,7 +662,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Base stream the inflater reads from.
         /// </summary>
-        private readonly Stream baseInputStream;
+        readonly Stream baseInputStream;
         
         /// <summary>
         /// The compressed size

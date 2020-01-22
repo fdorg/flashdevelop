@@ -114,9 +114,9 @@ namespace System.Windows.Forms
 
 				
 			}
-		}	
+		}
 
-		private static GraphicsPath GetCloserButtonPath(Rectangle closerRect){
+        static GraphicsPath GetCloserButtonPath(Rectangle closerRect){
 			GraphicsPath closerPath = new GraphicsPath();
 			closerPath.AddEllipse(new Rectangle(closerRect.X - 2, closerRect.Y - 2, closerRect.Width + 4, closerRect.Height + 4));
 			closerPath.CloseFigure();

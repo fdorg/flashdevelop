@@ -10,8 +10,9 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Private properties
         /// </summary>
-        private static double curScale = double.MinValue;
-        private static readonly HashSet<Control> adjustedItems = new HashSet<Control>();
+        static double curScale = double.MinValue;
+
+        static readonly HashSet<Control> adjustedItems = new HashSet<Control>();
 
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.
@@ -96,7 +97,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Keep track and adjust forms only once
         /// </summary>
-        private static bool IsAdjusted(Control control)
+        static bool IsAdjusted(Control control)
         {
             if (!(control is Form)) return false;
             if (adjustedItems.Contains(control)) return true;

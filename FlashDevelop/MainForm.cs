@@ -61,7 +61,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes some extra error logging
         /// </summary>
-        void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        static void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
         /// <summary>
         /// Handles the catched unhandled exception and logs it

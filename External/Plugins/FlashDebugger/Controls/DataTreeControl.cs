@@ -19,17 +19,17 @@ namespace FlashDebugger.Controls
     {
         public event EventHandler ValueChanged;
 
-        private readonly DataTreeModel _model;
-        private static ViewerForm viewerForm;
-        private readonly ContextMenuStrip _contextMenuStrip;
-        private readonly ToolStripMenuItem copyMenuItem;
-        private readonly ToolStripMenuItem viewerMenuItem;
-        private readonly ToolStripMenuItem watchMenuItem;
-        private readonly ToolStripMenuItem copyValueMenuItem;
-        private readonly ToolStripMenuItem copyIdMenuItem;
-        private DataTreeState state;
-        private readonly bool watchMode;
-        private bool addingNewExpression;
+        readonly DataTreeModel _model;
+        static ViewerForm viewerForm;
+        readonly ContextMenuStrip _contextMenuStrip;
+        readonly ToolStripMenuItem copyMenuItem;
+        readonly ToolStripMenuItem viewerMenuItem;
+        readonly ToolStripMenuItem watchMenuItem;
+        readonly ToolStripMenuItem copyValueMenuItem;
+        readonly ToolStripMenuItem copyIdMenuItem;
+        DataTreeState state;
+        readonly bool watchMode;
+        bool addingNewExpression;
 
         public Collection<Node> Nodes => _model.Root.Nodes;
 
@@ -339,12 +339,13 @@ namespace FlashDebugger.Controls
             return _model.GetFullPath(node);
         }
 
-        private void CopyItemClick(object sender, EventArgs e)
+        void CopyItemClick(object sender, EventArgs e)
         {
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             Clipboard.SetText($"{node.Text} = {node.Value}");
         }
-        private void ViewerItemClick(object sender, EventArgs e)
+
+        void ViewerItemClick(object sender, EventArgs e)
         {
             if (viewerForm is null)
             {
@@ -372,7 +373,7 @@ namespace FlashDebugger.Controls
             viewerForm.ShowDialog();
         }
 
-        private void WatchItemClick(object sender, EventArgs e)
+        void WatchItemClick(object sender, EventArgs e)
         {
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             if (watchMode) PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Index);
@@ -550,7 +551,7 @@ namespace FlashDebugger.Controls
             SaveScrollState();
         }
 
-        private void SaveExpanded(IEnumerable<Node> nodes)
+        void SaveExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -562,7 +563,7 @@ namespace FlashDebugger.Controls
             }
         }
 
-        private void SaveScrollState()
+        void SaveScrollState()
         {
             if (Nodes.Count == 0)
             {
@@ -583,7 +584,7 @@ namespace FlashDebugger.Controls
             RestoreScrollState();
         }
 
-        private void RestoreExpanded(IEnumerable<Node> nodes)
+        void RestoreExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -595,7 +596,7 @@ namespace FlashDebugger.Controls
             }
         }
 
-        private void RestoreScrollState()
+        void RestoreScrollState()
         {
             if (Nodes.Count == 0) return;
 
@@ -637,7 +638,7 @@ namespace FlashDebugger.Controls
 
         #region State Class
 
-        private class DataTreeState
+        class DataTreeState
         {
 
             public readonly HashSet<string> Expanded = new HashSet<string>();
@@ -650,7 +651,7 @@ namespace FlashDebugger.Controls
         
         #region Copy Value, ID, Tree
 
-        private void CopyItemValueClick(object sender, EventArgs e)
+        void CopyItemValueClick(object sender, EventArgs e)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
             string value = node.Value;
@@ -660,7 +661,7 @@ namespace FlashDebugger.Controls
                 Clipboard.Clear();
         }
 
-        private void CopyItemIdClick(object sender, EventArgs e)
+        void CopyItemIdClick(object sender, EventArgs e)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
             string id = node.Id;
@@ -670,13 +671,13 @@ namespace FlashDebugger.Controls
                 Clipboard.Clear();
         }
 
-        private void CopyItemTreeClick(object sender, EventArgs e)
+        void CopyItemTreeClick(object sender, EventArgs e)
         {
             string exporterKey = (string) ((ToolStripItem) sender).Tag;
             CopyTreeInternal(exporterKey, 0);
         }
 
-        private void CopyTreeInternal(string exporterKey, int levelLimit)
+        void CopyTreeInternal(string exporterKey, int levelLimit)
         {
             var node = Tree.SelectedNode.Tag as ValueNode;
             var exporter = Helpers.DataTreeExporterFactory.Exporters[exporterKey];

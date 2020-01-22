@@ -6,7 +6,7 @@ namespace FlashDebugger.Controls
 {
     public class DataTreeModel : TreeModel
     {
-        private static char[] chTrims = { '.' };
+        static char[] chTrims = { '.' };
 
         public string GetFullPath(Node node)
         {
@@ -29,7 +29,7 @@ namespace FlashDebugger.Controls
             return FindNode(Root, path, new StringBuilder());
         }
 
-        private Node FindNode(Node root, string path, StringBuilder nodePath)
+        Node FindNode(Node root, string path, StringBuilder nodePath)
         {
             int initialLength = nodePath.Length;
             foreach (Node node in root.Nodes)

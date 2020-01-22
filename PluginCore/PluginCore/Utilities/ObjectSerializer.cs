@@ -12,7 +12,7 @@ namespace PluginCore.Utilities
 {
     public class ObjectSerializer
     {
-        private static readonly BinaryFormatter formatter = new BinaryFormatter();
+        static readonly BinaryFormatter formatter = new BinaryFormatter();
 
         static ObjectSerializer()
         {
@@ -103,7 +103,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Fixes some common issues when serializing
         /// </summary>
-        private static object InternalDeserialize(string file, Type type)
+        static object InternalDeserialize(string file, Type type)
         {
             FileInfo info = new FileInfo(file);
             if (!info.Exists)

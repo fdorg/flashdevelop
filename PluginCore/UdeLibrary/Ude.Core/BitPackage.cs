@@ -56,11 +56,11 @@ namespace Ude.Core
         public static int UNIT_MASK_8BITS  = 0x000000FF;
         public static int UNIT_MASK_16BITS = 0x0000FFFF;
 
-        private readonly int indexShift;
-        private readonly int shiftMask;
-        private readonly int bitShift;
-        private readonly int unitMask;
-        private readonly int[] data;
+        readonly int indexShift;
+        readonly int shiftMask;
+        readonly int bitShift;
+        readonly int unitMask;
+        readonly int[] data;
         
         public BitPackage(int indexShift, int shiftMask,
                 int bitShift, int unitMask, int[] data)

@@ -242,7 +242,8 @@ namespace ScintillaNet.Configuration
             }
             return 0;
         }
-        private int TO_COLORREF(int c)
+
+        int TO_COLORREF(int c)
         {
             return (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00) );
         }
@@ -306,7 +307,7 @@ namespace ScintillaNet.Configuration
             return name;
         }
 
-        private static bool IsFontInstalled(string fontName)
+        static bool IsFontInstalled(string fontName)
         {
             using var testFont = new Font(fontName, 9);
             return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);

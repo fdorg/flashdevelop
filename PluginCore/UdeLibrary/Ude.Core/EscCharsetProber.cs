@@ -39,9 +39,9 @@ namespace Ude.Core
 {
     public class EscCharsetProber : CharsetProber
     {
-        private const int CHARSETS_NUM = 4;
-        private string detectedCharset;
-        private readonly CodingStateMachine[] codingSM; 
+        const int CHARSETS_NUM = 4;
+        string detectedCharset;
+        readonly CodingStateMachine[] codingSM; 
         int activeSM;
 
         public EscCharsetProber()

@@ -23,7 +23,7 @@ namespace PluginCore.BBCode
             _init(isTagOpener, tagIndex, tagValue, tagName, tagParam, numOpenBraceSlashes, numCloseBraceSlashes, autoGenerateCloserInfo);
         }
 
-        private void _init(bool isTagOpener,
+        void _init(bool isTagOpener,
                             int tagIndex,
                             string tagValue,
                             string tagName,
@@ -47,8 +47,8 @@ namespace PluginCore.BBCode
                 _tagCloserInfos.Add(new BBCodeTagInfo(false, tagName, null));
         }
 
-        private List<BBCodeTagInfo> _tagCloserInfos;
-        private BBCodeStyle _bbCodeStyle;
+        List<BBCodeTagInfo> _tagCloserInfos;
+        BBCodeStyle _bbCodeStyle;
 
         public int tagIndex { get; private set; }
 

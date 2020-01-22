@@ -9,7 +9,7 @@ namespace ScintillaNet.Configuration
     [Serializable()]
     public class Scintilla : ConfigFile
     {
-        private Language[] _languages;
+        Language[] _languages;
         
         [XmlArrayItem("value")]
         [XmlArray("globals")]

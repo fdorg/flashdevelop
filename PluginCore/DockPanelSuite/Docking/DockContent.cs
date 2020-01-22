@@ -15,7 +15,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockHandler.IsActivatedChanged += DockHandler_IsActivatedChanged;
         }
 
-        private readonly DockContentHandler m_dockHandler = null;
+        readonly DockContentHandler m_dockHandler = null;
         [Browsable(false)]
         public DockContentHandler DockHandler => m_dockHandler;
 
@@ -55,7 +55,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             get => DockHandler.TabText;
             set => DockHandler.TabText = value;
         }
-        private bool ShouldSerializeTabText()
+
+        bool ShouldSerializeTabText()
         {
             return (DockHandler.TabText != null);
         }
@@ -255,12 +256,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         #region Events
-        private void DockHandler_DockStateChanged(object sender, EventArgs e)
+
+        void DockHandler_DockStateChanged(object sender, EventArgs e)
         {
             OnDockStateChanged(e);
         }
 
-        private static readonly object DockStateChangedEvent = new object();
+        static readonly object DockStateChangedEvent = new object();
         [LocalizedCategory("Category_PropertyChanged")]
         [LocalizedDescription("Pane_DockStateChanged_Description")]
         public event EventHandler DockStateChanged
@@ -274,12 +276,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             handler?.Invoke(this, e);
         }
 
-        private void DockHandler_IsActivatedChanged(object sender, EventArgs e)
+        void DockHandler_IsActivatedChanged(object sender, EventArgs e)
         {
             OnIsActivatedChanged(e);
         }
 
-        private static readonly object IsActivatedChangedEvent = new object();
+        static readonly object IsActivatedChangedEvent = new object();
         public event EventHandler IsActivatedChanged
         {
             add => Events.AddHandler(IsActivatedChangedEvent, value);

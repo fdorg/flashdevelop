@@ -1904,7 +1904,7 @@ namespace PluginCore.Controls
         protected ScrollBarEx vScrollBar;
         protected ScrollBarEx hScrollBar;
         protected Control scrollerCorner;
-        bool disposed = false;
+        bool disposed;
 
         /// <summary>
         /// Initialize ScrollerBase
@@ -2063,13 +2063,10 @@ namespace PluginCore.Controls
             hScrollBar.Scroll += OnScroll;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         protected virtual void OnResize(object sender, EventArgs e)
         {
             int borderWidth = 0;
-            if (control is PropertyGrid && borderWidth == 0) borderWidth = 1;
+            if (control is PropertyGrid) borderWidth = 1;
             int vScrollBarHeight = (control.Height - (borderWidth * 2)) - (hScrollBar.Visible ? hScrollBar.Height : 0);
             if (control is PropertyGrid)
             {
@@ -2077,9 +2074,9 @@ namespace PluginCore.Controls
                 {
                     if (ctrl.Text == "PropertyGridView")
                     {
-                        Type type = ctrl.GetType();
-                        FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
-                        var scrollBar = field.GetValue(ctrl) as ScrollBar;
+                        var type = ctrl.GetType();
+                        var field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                        var scrollBar = (ScrollBar) field.GetValue(ctrl);
                         vScrollBarHeight = scrollBar.Height;
                     }
                 }
@@ -2112,7 +2109,7 @@ namespace PluginCore.Controls
 
     public class TextBoxScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         TextBox textBox;
 
         /// <summary>
@@ -2130,10 +2127,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                textBox = null;
-            }
+            if (disposing) textBox = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2141,26 +2135,17 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the current line index
         /// </summary>
-        public int GetLineIndex(int index)
-        {
-            return Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
-        }
+        public int GetLineIndex(int index) => Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
 
         /// <summary>
         /// Gets the amount of lines, also with wrapping
         /// </summary>
-        public int GetLineCount()
-        {
-            return Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
-        }
+        public int GetLineCount() => Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
 
         /// <summary>
         /// Gets the first visible line on screen
         /// </summary>
-        public int GetFirstVisibleLine()
-        {
-            return Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
-        }
+        public int GetFirstVisibleLine() => Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
 
         /// <summary>
         /// Gets the amount of visible lines
@@ -2212,7 +2197,7 @@ namespace PluginCore.Controls
 
     public class RichTextBoxScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         RichTextBox textBox;
 
         /// <summary>
@@ -2259,7 +2244,7 @@ namespace PluginCore.Controls
 
     public class PropertyGridScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         PropertyGrid propertyGrid;
 
         /// <summary>
@@ -2277,10 +2262,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                propertyGrid = null;
-            }
+            if (disposing) propertyGrid = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2328,9 +2310,9 @@ namespace PluginCore.Controls
             {
                 if (ctrl.Text == "PropertyGridView")
                 {
-                    Type type = ctrl.GetType();
-                    FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
-                    return field.GetValue(ctrl) as ScrollBar;
+                    var type = ctrl.GetType();
+                    var field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                    return (ScrollBar) field.GetValue(ctrl);
                 }
             }
             return null;
@@ -2373,7 +2355,7 @@ namespace PluginCore.Controls
 
     public class TreeViewScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         TreeView treeView;
 
         /// <summary>
@@ -2439,7 +2421,7 @@ namespace PluginCore.Controls
 
     public class ListViewScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         protected ListView listView;
 
         /// <summary>
@@ -2457,10 +2439,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                listView = null;
-            }
+            if (disposing) listView = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2493,7 +2472,7 @@ namespace PluginCore.Controls
 
     public class ListBoxScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         ListBox listBox;
 
         /// <summary>
@@ -2538,7 +2517,7 @@ namespace PluginCore.Controls
 
     public class DataGridViewScroller : ScrollerBase
     {
-        bool disposed = false;
+        bool disposed;
         DataGridView dataGridView;
 
         /// <summary>
@@ -2556,10 +2535,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                dataGridView = null;
-            }
+            if (disposing) dataGridView = null;
             disposed = true;
             base.Dispose(disposing);
         }

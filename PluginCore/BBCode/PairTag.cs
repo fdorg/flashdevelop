@@ -9,8 +9,8 @@ namespace PluginCore.BBCode
         }
 
 
-        private readonly IPairTagMatch _openerMatch;
-        private readonly IPairTagMatch _closerMatch;
+        readonly IPairTagMatch _openerMatch;
+        readonly IPairTagMatch _closerMatch;
 
 
         public IPairTagMatch openerMatch => _openerMatch;
@@ -38,13 +38,14 @@ namespace PluginCore.BBCode
         {
             _init(tagIndex);
         }
-        private void _init(int tagIndex)
+
+        void _init(int tagIndex)
         {
             _tagIndex = tagIndex;
         }
 
 
-        private int _tagIndex;
+        int _tagIndex;
 
 
         public bool isTagOpener => false;

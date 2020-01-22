@@ -443,7 +443,7 @@ namespace PluginCore.Helpers
     /// <summary>
     /// UTF-7 encoding with correct BOM
     /// </summary>
-    class UTF7EncodingFixed : UTF7Encoding
+    internal class UTF7EncodingFixed : UTF7Encoding
     {
         public override byte[] GetPreamble()
         {

@@ -11,7 +11,7 @@ using Microsoft.Win32.SafeHandles;
 namespace Ookii.Dialogs
 {
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
-    class SafeGDIHandle : SafeHandleZeroOrMinusOneIsInvalid
+    internal class SafeGDIHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal SafeGDIHandle()
             : base(true)
@@ -31,7 +31,7 @@ namespace Ookii.Dialogs
     }
 
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
-    class SafeDeviceHandle : SafeHandleZeroOrMinusOneIsInvalid
+    internal class SafeDeviceHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal SafeDeviceHandle()
             : base(true)
@@ -51,7 +51,7 @@ namespace Ookii.Dialogs
         }
     }
 
-    class SafeModuleHandle : SafeHandle
+    internal class SafeModuleHandle : SafeHandle
     {
         public SafeModuleHandle()
             : base(IntPtr.Zero, true)

@@ -100,7 +100,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     /// PkzipClassicCryptoBase provides the low level facilities for encryption
     /// and decryption using the PkzipClassic algorithm.
     /// </summary>
-    class PkzipClassicCryptoBase
+    internal class PkzipClassicCryptoBase
     {
         /// <summary>
         /// Transform a single byte 
@@ -163,7 +163,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     /// <summary>
     /// PkzipClassic CryptoTransform for encryption.
     /// </summary>
-    class PkzipClassicEncryptCryptoTransform : PkzipClassicCryptoBase, ICryptoTransform
+    internal class PkzipClassicEncryptCryptoTransform : PkzipClassicCryptoBase, ICryptoTransform
     {
         /// <summary>
         /// Initialise a new instance of <see cref="PkzipClassicEncryptCryptoTransform"></see>
@@ -249,7 +249,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     /// <summary>
     /// PkzipClassic CryptoTransform for decryption.
     /// </summary>
-    class PkzipClassicDecryptCryptoTransform : PkzipClassicCryptoBase, ICryptoTransform
+    internal class PkzipClassicDecryptCryptoTransform : PkzipClassicCryptoBase, ICryptoTransform
     {
         /// <summary>
         /// Initialise a new instance of <see cref="PkzipClassicDecryptCryptoTransform"></see>.

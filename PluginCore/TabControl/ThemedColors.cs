@@ -14,12 +14,12 @@ namespace System.Drawing
 
 		#region "    Variables and Constants "
 
-		private const string NormalColor = "NormalColor";
-		private const string HomeStead = "HomeStead";
-		private const string Metallic = "Metallic";
-		private const string NoTheme = "NoTheme";
+        const string NormalColor = "NormalColor";
+        const string HomeStead = "HomeStead";
+        const string Metallic = "Metallic";
+        const string NoTheme = "NoTheme";
 
-		private static readonly Color[] _toolBorder;
+        static readonly Color[] _toolBorder;
 		#endregion
 
 		#region "    Properties "
@@ -39,11 +39,11 @@ namespace System.Drawing
 			ThemedColors._toolBorder = new[] {Color.FromArgb(127, 157, 185), Color.FromArgb(164, 185, 127), Color.FromArgb(165, 172, 178), Color.FromArgb(132, 130, 132)};
 		}
 
-		private ThemedColors(){}
+        ThemedColors(){}
 
 		#endregion
 
-		private static ColorScheme GetCurrentThemeIndex()
+        static ColorScheme GetCurrentThemeIndex()
 		{
 			ColorScheme theme = ColorScheme.NoTheme;
 

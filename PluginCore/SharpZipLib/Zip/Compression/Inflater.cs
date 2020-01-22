@@ -238,7 +238,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <exception cref="SharpZipBaseException">
         /// The header is invalid.
         /// </exception>
-        private bool DecodeHeader()
+        bool DecodeHeader()
         {
             int header = input.PeekBits(16);
             if (header < 0) {
@@ -278,7 +278,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <returns>
         /// False if more input is needed.
         /// </returns>
-        private bool DecodeDict()
+        bool DecodeDict()
         {
             while (neededBits > 0) {
                 int dictByte = input.PeekBits(8);
@@ -302,7 +302,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <exception cref="SharpZipBaseException">
         /// if deflated stream is invalid.
         /// </exception>
-        private bool DecodeHuffman()
+        bool DecodeHuffman()
         {
             int free = outputWindow.GetFreeSpace();
             while (free >= 258) 
@@ -414,7 +414,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <exception cref="SharpZipBaseException">
         /// If checksum doesn't match.
         /// </exception>
-        private bool DecodeChksum()
+        bool DecodeChksum()
         {
             while (neededBits > 0) {
                 int chkByte = input.PeekBits(8);
@@ -443,7 +443,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <exception cref="SharpZipBaseException">
         /// if deflated stream is invalid.
         /// </exception>
-        private bool Decode()
+        bool Decode()
         {
             switch (mode) {
                 case DECODE_HEADER:

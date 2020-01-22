@@ -194,8 +194,8 @@ namespace PluginCore.BBCode
         {
             _normalizeTree( tree, 0 );
         }
-        
-        private static int _normalizeTree( IndexTree tree, int offset )
+
+        static int _normalizeTree( IndexTree tree, int offset )
         {
             if( tree is null )
                 return offset;
@@ -305,7 +305,8 @@ namespace PluginCore.BBCode
         {
             _init(indexA, indexB, offsetA, offsetB, data, parentNode);
         }
-        private void _init( int indexA,
+
+        void _init( int indexA,
                             int indexB,
                             int offsetA,
                             int offsetB,

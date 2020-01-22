@@ -5,7 +5,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     partial class DockPane
     {
-        private class SplitterControl : Control, ISplitterDragSource
+        class SplitterControl : Control, ISplitterDragSource
         {
             readonly DockPane m_pane;
 
@@ -17,7 +17,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public DockPane DockPane => m_pane;
 
-            private DockAlignment m_alignment;
+            DockAlignment m_alignment;
             public DockAlignment Alignment
             {
                 get => m_alignment;
@@ -130,8 +130,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             #endregion
         }
 
-        private SplitterControl m_splitter;
-        private SplitterControl Splitter => m_splitter;
+        SplitterControl m_splitter;
+        SplitterControl Splitter => m_splitter;
 
         internal Rectangle SplitterBounds
         {

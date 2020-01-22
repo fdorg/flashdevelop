@@ -44,10 +44,10 @@ namespace Ude.Core
     /// </summary>
     public class CodingStateMachine
     {
-        private int currentState;
-        private readonly SMModel model;
-        private int currentCharLen;
-        private int currentBytePos;
+        int currentState;
+        readonly SMModel model;
+        int currentCharLen;
+        int currentBytePos;
         
         public CodingStateMachine(SMModel model) 
         {

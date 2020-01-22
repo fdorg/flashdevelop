@@ -5,14 +5,14 @@ using PluginCore.Controls;
 
 namespace FlashDebugger
 {
-    class ThreadsUI : DockPanelControl
+    internal class ThreadsUI : DockPanelControl
     {
-        private readonly ListViewEx lv;
-        private readonly ColumnHeader imageColumnHeader;
-        private readonly ColumnHeader frameColumnHeader;
-        private PluginMain pluginMain;
-        private readonly int runningImageIndex;
-        private readonly int suspendedImageIndex;
+        readonly ListViewEx lv;
+        readonly ColumnHeader imageColumnHeader;
+        readonly ColumnHeader frameColumnHeader;
+        PluginMain pluginMain;
+        readonly int runningImageIndex;
+        readonly int suspendedImageIndex;
 
         public ThreadsUI(PluginMain pluginMain, ImageList imageList)
         {

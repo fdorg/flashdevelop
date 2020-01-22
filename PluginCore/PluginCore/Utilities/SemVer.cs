@@ -12,7 +12,7 @@
         public readonly int Minor;
         public readonly int Patch;
 
-        private SemVer()
+        SemVer()
         {
         }
 

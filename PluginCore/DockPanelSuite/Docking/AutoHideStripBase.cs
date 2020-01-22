@@ -13,7 +13,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         protected class Tab : IDisposable
         {
-            private readonly IDockContent m_content;
+            readonly IDockContent m_content;
 
             protected internal Tab(IDockContent content)
             {
@@ -60,7 +60,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_dockPane = pane;
             }
 
-            private readonly DockPane m_dockPane = null;
+            readonly DockPane m_dockPane = null;
             public DockPane DockPane => m_dockPane;
 
             public DockPanel DockPanel => DockPane.DockPanel;
@@ -107,7 +107,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         protected class Pane : IDisposable
         {
-            private readonly DockPane m_dockPane;
+            readonly DockPane m_dockPane;
 
             protected internal Pane(DockPane dockPane)
             {
@@ -145,7 +145,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         protected sealed class PaneCollection : IEnumerable<Pane>
         {
-            private class AutoHideState
+            class AutoHideState
             {
                 public readonly DockState m_dockState;
                 public bool m_selected = false;
@@ -164,9 +164,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            private class AutoHideStateCollection
+            class AutoHideStateCollection
             {
-                private readonly AutoHideState[] m_states;
+                readonly AutoHideState[] m_states;
 
                 public AutoHideStateCollection()
                 {
@@ -215,11 +215,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                 States[DockState.DockRightAutoHide].Selected = (dockState == DockState.DockRightAutoHide);
             }
 
-            private readonly DockPanel m_dockPanel;
+            readonly DockPanel m_dockPanel;
             public DockPanel DockPanel => m_dockPanel;
 
-            private readonly AutoHideStateCollection m_states;
-            private AutoHideStateCollection States => m_states;
+            readonly AutoHideStateCollection m_states;
+            AutoHideStateCollection States => m_states;
 
             public int Count
             {
@@ -312,19 +312,19 @@ namespace WeifenLuo.WinFormsUI.Docking
             SetStyle(ControlStyles.Selectable, false);
         }
 
-        private readonly DockPanel m_dockPanel;
+        readonly DockPanel m_dockPanel;
         protected DockPanel DockPanel => m_dockPanel;
 
-        private readonly PaneCollection m_panesTop;
+        readonly PaneCollection m_panesTop;
         protected PaneCollection PanesTop => m_panesTop;
 
-        private readonly PaneCollection m_panesBottom;
+        readonly PaneCollection m_panesBottom;
         protected PaneCollection PanesBottom => m_panesBottom;
 
-        private readonly PaneCollection m_panesLeft;
+        readonly PaneCollection m_panesLeft;
         protected PaneCollection PanesLeft => m_panesLeft;
 
-        private readonly PaneCollection m_panesRight;
+        readonly PaneCollection m_panesRight;
         protected PaneCollection PanesRight => m_panesRight;
 
         protected PaneCollection GetPanes(DockState dockState)
@@ -395,8 +395,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             return Rectangle.Empty;
         }
 
-        private GraphicsPath m_displayingArea = null;
-        private GraphicsPath DisplayingArea
+        GraphicsPath m_displayingArea = null;
+
+        GraphicsPath DisplayingArea
         {
             get
             {
@@ -407,7 +408,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private void SetRegion()
+        void SetRegion()
         {
             DisplayingArea.Reset();
             DisplayingArea.AddRectangle(RectangleTopLeft);
@@ -450,7 +451,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             ResetMouseEventArgs();
         }
 
-        private void SetActiveAutoHideContent(IDockContent content)
+        void SetActiveAutoHideContent(IDockContent content)
         {
             if (content != null && DockPanel.ActiveAutoHideContent != content) DockPanel.ActiveAutoHideContent = content;
         }
@@ -474,7 +475,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected internal abstract int MeasureHeight();
 
-        private IDockContent HitTest()
+        IDockContent HitTest()
         {
             Point ptMouse = PointToClient(Control.MousePosition);
             return HitTest(ptMouse);

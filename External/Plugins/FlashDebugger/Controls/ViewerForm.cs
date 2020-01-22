@@ -24,7 +24,7 @@ namespace FlashDebugger.Controls
             InitializeLocalization();
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             label1.Text = TextHelper.GetString("Label.Exp");
             label2.Text = TextHelper.GetString("Label.Value");
@@ -36,33 +36,33 @@ namespace FlashDebugger.Controls
             Text = " " + TextHelper.GetStringWithoutMnemonics("Label.Viewer");
         }
 
-        private void ViewerForm_FormClosing(object sender, FormClosingEventArgs e)
+        void ViewerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             Visible = false;
         }
 
-        private void Closebutton_Click(object sender, EventArgs e)
+        void Closebutton_Click(object sender, EventArgs e)
         {
             Visible = false;
         }
 
-        private void WordWrapcheckBox_CheckedChanged(object sender, EventArgs e)
+        void WordWrapcheckBox_CheckedChanged(object sender, EventArgs e)
         {
             ValuetextBox.WordWrap = WordWrapcheckBox.Checked;
         }
 
-        private void CopyExpbutton_Click(object sender, EventArgs e)
+        void CopyExpbutton_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(ExptextBox.Text);
         }
 
-        private void CopyValuebutton_Click(object sender, EventArgs e)
+        void CopyValuebutton_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(ValuetextBox.Text);
         }
 
-        private void CopyAllbutton_Click(object sender, EventArgs e)
+        void CopyAllbutton_Click(object sender, EventArgs e)
         {
             Clipboard.SetText($"{ExptextBox.Text} = {ValuetextBox.Text}");
         }

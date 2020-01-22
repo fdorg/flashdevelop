@@ -20,12 +20,12 @@ namespace Ookii.Dialogs
     [DefaultEvent("HelpRequest"), Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"), DefaultProperty("SelectedPath"), Description("Prompts the user to select a folder.")]
     public sealed class VistaFolderBrowserDialog : CommonDialog
     {
-        private readonly FolderBrowserDialog _downlevelDialog;
-        private string _description;
-        private bool _useDescriptionForTitle;
-        private string[] _selectedPaths;
-        private System.Environment.SpecialFolder _rootFolder;
-        private bool _multiselect;
+        readonly FolderBrowserDialog _downlevelDialog;
+        string _description;
+        bool _useDescriptionForTitle;
+        string[] _selectedPaths;
+        System.Environment.SpecialFolder _rootFolder;
+        bool _multiselect;
 
         /// <summary>
         /// Occurs when the user clicks the Help button on the dialog box.
@@ -159,7 +159,7 @@ namespace Ookii.Dialogs
             }
         }
 
-        private bool _showNewFolderButton;
+        bool _showNewFolderButton;
 
         /// <summary>
         /// Gets or sets a value indicating whether the New Folder button appears in the folder browser dialog box. This
@@ -295,7 +295,7 @@ namespace Ookii.Dialogs
 
         #region Private Methods
 
-        private void SetDialogProperties(Ookii.Dialogs.Interop.IFileDialog dialog)
+        void SetDialogProperties(Ookii.Dialogs.Interop.IFileDialog dialog)
         {
             // Description
             if( !string.IsNullOrEmpty(_description) )
@@ -332,7 +332,7 @@ namespace Ookii.Dialogs
             }
         }
 
-        private void GetResult(Ookii.Dialogs.Interop.IFileDialog dialog)
+        void GetResult(Ookii.Dialogs.Interop.IFileDialog dialog)
         {
             if (Multiselect)
             {

@@ -268,7 +268,7 @@ namespace SevenZip.CommandLineParser
         }
     }
 
-    class CommandSubCharsSet
+    internal class CommandSubCharsSet
     {
         public string Chars = "";
         public bool EmptyAllowed = false;

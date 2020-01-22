@@ -119,19 +119,21 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         public const  int DEFLATED = 8;
         #endregion
         #region Local Constants
-        private const  int IS_SETDICT              = 0x01;
-        private const  int IS_FLUSHING             = 0x04;
-        private const  int IS_FINISHING            = 0x08;
-        
-        private const  int INIT_STATE              = 0x00;
-        private const  int SETDICT_STATE           = 0x01;
+
+        const  int IS_SETDICT              = 0x01;
+        const  int IS_FLUSHING             = 0x04;
+        const  int IS_FINISHING            = 0x08;
+
+        const  int INIT_STATE              = 0x00;
+
+        const  int SETDICT_STATE           = 0x01;
         //      private static  int INIT_FINISHING_STATE    = 0x08;
         //      private static  int SETDICT_FINISHING_STATE = 0x09;
-        private const  int BUSY_STATE              = 0x10;
-        private const  int FLUSHING_STATE          = 0x14;
-        private const  int FINISHING_STATE         = 0x1c;
-        private const  int FINISHED_STATE          = 0x1e;
-        private const  int CLOSED_STATE            = 0x7f;
+        const  int BUSY_STATE              = 0x10;
+        const  int FLUSHING_STATE          = 0x14;
+        const  int FINISHING_STATE         = 0x1c;
+        const  int FINISHED_STATE          = 0x1e;
+        const  int CLOSED_STATE            = 0x7f;
         #endregion
         #region Constructors
         /// <summary>

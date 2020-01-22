@@ -43,14 +43,14 @@ namespace Ude.Core
 
     public class SingleByteCharSetProber : CharsetProber
     {
-        private const int SAMPLE_SIZE = 64;
-        private const int SB_ENOUGH_REL_THRESHOLD = 1024;
-        private const float POSITIVE_SHORTCUT_THRESHOLD = 0.95f;
-        private const float NEGATIVE_SHORTCUT_THRESHOLD = 0.05f;
-        private const int SYMBOL_CAT_ORDER = 250;
-        private const int NUMBER_OF_SEQ_CAT = 4;
-        private const int POSITIVE_CAT = NUMBER_OF_SEQ_CAT-1;
-        private const int NEGATIVE_CAT = 0;
+        const int SAMPLE_SIZE = 64;
+        const int SB_ENOUGH_REL_THRESHOLD = 1024;
+        const float POSITIVE_SHORTCUT_THRESHOLD = 0.95f;
+        const float NEGATIVE_SHORTCUT_THRESHOLD = 0.05f;
+        const int SYMBOL_CAT_ORDER = 250;
+        const int NUMBER_OF_SEQ_CAT = 4;
+        const int POSITIVE_CAT = NUMBER_OF_SEQ_CAT-1;
+        const int NEGATIVE_CAT = 0;
         
         protected SequenceModel model;
         

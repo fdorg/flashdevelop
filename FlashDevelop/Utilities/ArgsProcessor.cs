@@ -101,8 +101,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return PluginBase.MainForm.WorkingDirectory;
-            return Path.GetDirectoryName(GetCurFile());
+            return !PluginBase.MainForm.CurrentDocument.IsEditable
+                ? PluginBase.MainForm.WorkingDirectory
+                : Path.GetDirectoryName(GetCurFile());
         }
         
         /// <summary>
@@ -110,8 +111,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilename()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return string.Empty;
-            return Path.GetFileName(GetCurFile());
+            return !PluginBase.MainForm.CurrentDocument.IsEditable
+                ? string.Empty
+                : Path.GetFileName(GetCurFile());
         }
 
         /// <summary>
@@ -119,8 +121,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilenameNoExt()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return string.Empty;
-            return Path.GetFileNameWithoutExtension(GetCurFile());
+            return !PluginBase.MainForm.CurrentDocument.IsEditable
+                ? string.Empty
+                : Path.GetFileNameWithoutExtension(GetCurFile());
         }
 
         /// <summary>
@@ -131,35 +134,23 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the desktop path
         /// </summary>
-        public static string GetDesktopDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        }
-        
+        public static string GetDesktopDir() => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
         /// <summary>
         /// Gets the system path
         /// </summary>
-        public static string GetSystemDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.System);
-        }
-        
+        public static string GetSystemDir() => Environment.GetFolderPath(Environment.SpecialFolder.System);
+
         /// <summary>
         /// Gets the program files path
         /// </summary>
-        public static string GetProgramsDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-        }
-        
+        public static string GetProgramsDir() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
         /// <summary>
         /// Gets the users personal files path
         /// </summary>
-        public static string GetPersonalDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        }
-        
+        public static string GetPersonalDir() => Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
         /// <summary>
         /// Gets the working directory
         /// </summary>
@@ -213,11 +204,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the comment block indent
         /// </summary>
-        public static string GetCBI()
-        {
-            var cbs = PluginBase.Settings.CommentBlockStyle;
-            return cbs == CommentBlockStyle.Indented ? " " : "";
-        }
+        public static string GetCBI() => PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
 
         /// <summary>
         /// Gets the space or tab character based on settings
@@ -321,11 +308,8 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Match evaluator for tabs
         /// </summary>
-        public static string ReplaceTabs(Match match)
-        {
-            return new string(' ', match.Length * PluginBase.Settings.IndentSize);
-        }
-        
+        public static string ReplaceTabs(Match match) => new string(' ', match.Length * PluginBase.Settings.IndentSize);
+
         /// <summary>
         /// Match evaluator for vars
         /// </summary>
@@ -407,8 +391,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ReplaceUserArgs(Match match)
         {
-            if (match.Groups.Count > 0) return userArgs[match.Groups[1].Value];
-            return match.Value;
+            return match.Groups.Count > 0
+                ? userArgs[match.Groups[1].Value]
+                : match.Value;
         }
 
         /// <summary>
@@ -416,8 +401,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ReplaceEnvArgs(Match match)
         {
-            if (match.Groups.Count > 0) return Environment.GetEnvironmentVariable(match.Groups[1].Value);
-            return match.Value;
+            return match.Groups.Count > 0
+                ? Environment.GetEnvironmentVariable(match.Groups[1].Value)
+                : match.Value;
         }
 
         /// <summary>

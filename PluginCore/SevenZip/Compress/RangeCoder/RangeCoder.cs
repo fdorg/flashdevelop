@@ -2,7 +2,7 @@ using System.IO;
 
 namespace SevenZip.Compression.RangeCoder
 {
-    class Encoder
+    internal class Encoder
     {
         public const uint kTopValue = (1 << 24);
 
@@ -119,7 +119,7 @@ namespace SevenZip.Compression.RangeCoder
         }
     }
 
-    class Decoder
+    internal class Decoder
     {
         public const uint kTopValue = (1 << 24);
         public uint Range;

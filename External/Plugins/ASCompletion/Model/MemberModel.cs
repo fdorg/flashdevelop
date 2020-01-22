@@ -508,11 +508,7 @@ namespace ASCompletion.Model
                 if (d2 > 0) return -1;
                 return cmp.Compare(import1, import2);
             }
-            if (d2 < 0) 
-            {
-                if (d1 > 0) return 1;
-                return cmp.Compare(import1, import2);
-            }
+            if (d2 < 0) return 1;
             // compare package
             var pkg1 = import1.Substring(0, d1);
             var pkg2 = import2.Substring(0, d2);

@@ -11,8 +11,8 @@ namespace FlashDebugger.Controls
 {
     public class WatchUI : DockPanelControl
     {
-        private readonly DataTreeControl treeControl;
-        private readonly WatchManager watchManager;
+        readonly DataTreeControl treeControl;
+        readonly WatchManager watchManager;
 
         public WatchUI(WatchManager watchManager)
         {
@@ -34,35 +34,35 @@ namespace FlashDebugger.Controls
             this.watchManager.ExpressionsLoaded += WatchManager_ExpressionsLoaded;
         }
 
-        private void TreeControlResize(object sender, EventArgs e)
+        void TreeControlResize(object sender, EventArgs e)
         {
             int w = treeControl.Width / 2;
             treeControl.Tree.Columns[0].Width = w;
             treeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        private void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)
+        void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)
         {
             treeControl.Nodes.Insert(e.Position, GetExpressionNode(e.Expression));
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionRemoved(object sender, WatchExpressionArgs e)
+        void WatchManager_ExpressionRemoved(object sender, WatchExpressionArgs e)
         {
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionReplaced(object sender, WatchExpressionReplaceArgs e)
+        void WatchManager_ExpressionReplaced(object sender, WatchExpressionReplaceArgs e)
         {
             treeControl.Nodes[e.Position] = GetExpressionNode(e.NewExpression);
         }
 
-        private void WatchManager_ExpressionsCleared(object sender, EventArgs e)
+        void WatchManager_ExpressionsCleared(object sender, EventArgs e)
         {
             treeControl.Nodes.Clear();
         }
 
-        private void WatchManager_ExpressionsLoaded(object sender, EventArgs e)
+        void WatchManager_ExpressionsLoaded(object sender, EventArgs e)
         {
             UpdateElements();
         }
@@ -108,7 +108,7 @@ namespace FlashDebugger.Controls
             treeControl.Enabled = true;
         }
 
-        private DataNode GetExpressionNode(string item)
+        DataNode GetExpressionNode(string item)
         {
             DataNode node;
             try

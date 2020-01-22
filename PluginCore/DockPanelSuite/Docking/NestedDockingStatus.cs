@@ -9,40 +9,40 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockPane = pane;
         }
 
-        private readonly DockPane m_dockPane = null;
+        readonly DockPane m_dockPane = null;
         public DockPane DockPane => m_dockPane;
 
-        private NestedPaneCollection m_nestedPanes = null;
+        NestedPaneCollection m_nestedPanes = null;
         public NestedPaneCollection NestedPanes => m_nestedPanes;
 
-        private DockPane m_previousPane = null;
+        DockPane m_previousPane = null;
         public DockPane PreviousPane => m_previousPane;
 
-        private DockAlignment m_alignment = DockAlignment.Left;
+        DockAlignment m_alignment = DockAlignment.Left;
         public DockAlignment Alignment => m_alignment;
 
-        private double m_proportion = 0.5;
+        double m_proportion = 0.5;
         public double Proportion => m_proportion;
 
-        private bool m_isDisplaying = false;
+        bool m_isDisplaying = false;
         public bool IsDisplaying => m_isDisplaying;
 
-        private DockPane m_displayingPreviousPane = null;
+        DockPane m_displayingPreviousPane = null;
         public DockPane DisplayingPreviousPane => m_displayingPreviousPane;
 
-        private DockAlignment m_displayingAlignment = DockAlignment.Left;
+        DockAlignment m_displayingAlignment = DockAlignment.Left;
         public DockAlignment DisplayingAlignment => m_displayingAlignment;
 
-        private double m_displayingProportion = 0.5;
+        double m_displayingProportion = 0.5;
         public double DisplayingProportion => m_displayingProportion;
 
-        private Rectangle m_logicalBounds = Rectangle.Empty; 
+        Rectangle m_logicalBounds = Rectangle.Empty; 
         public Rectangle LogicalBounds => m_logicalBounds;
 
-        private Rectangle m_paneBounds = Rectangle.Empty;
+        Rectangle m_paneBounds = Rectangle.Empty;
         public Rectangle PaneBounds => m_paneBounds;
 
-        private Rectangle m_splitterBounds = Rectangle.Empty;
+        Rectangle m_splitterBounds = Rectangle.Empty;
         public Rectangle SplitterBounds => m_splitterBounds;
 
         internal void SetStatus(NestedPaneCollection nestedPanes, DockPane previousPane, DockAlignment alignment, double proportion)
