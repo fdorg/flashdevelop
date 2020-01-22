@@ -11,7 +11,7 @@ namespace FlashDebugger.Controls.DataTree
 {
     public class ValueNode : DataNode
     {
-        private int m_ChildrenShowLimit = 500;
+        int m_ChildrenShowLimit = 500;
         public int ChildrenShowLimit
         {
             get => m_ChildrenShowLimit;
@@ -22,7 +22,7 @@ namespace FlashDebugger.Controls.DataTree
         public bool HideClassId { get; set; }
 
         protected Value m_Value;
-        private bool m_bEditing = false;
+        bool m_bEditing = false;
 
         /// <summary>
         /// Get the display value based on user's preferences

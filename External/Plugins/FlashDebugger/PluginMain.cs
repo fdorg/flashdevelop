@@ -15,11 +15,11 @@ namespace FlashDebugger
 {
     public class PluginMain : IPlugin
     {
-        private PanelsHelper panelsHelpers;
-        private MenusHelper menusHelper;
-        private string settingFilename;
-        private Image pluginImage;
-        private bool firstRun;
+        PanelsHelper panelsHelpers;
+        MenusHelper menusHelper;
+        string settingFilename;
+        Image pluginImage;
+        bool firstRun;
 
         internal static Settings settingObject;
         internal static LiveDataTip liveDataTip;
@@ -211,7 +211,7 @@ namespace FlashDebugger
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        private void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -226,12 +226,12 @@ namespace FlashDebugger
         /// <summary>
         /// Creates the required menu items
         /// </summary>
-        private void CreateMenuItems() => menusHelper = new MenusHelper(pluginImage, debugManager);
+        void CreateMenuItems() => menusHelper = new MenusHelper(pluginImage, debugManager);
 
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        private void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             panelsHelpers = new PanelsHelper(this, pluginImage);
             if (firstRun) panelsHelpers.DockTogether();
@@ -240,12 +240,12 @@ namespace FlashDebugger
         /// <summary>
         /// Initializes the localization of the plugin
         /// </summary>
-        private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
+        void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        private void AddEventHandlers()
+        void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.FileOpen | EventType.UIClosing | EventType.FileSwitch | EventType.ApplySettings);
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);

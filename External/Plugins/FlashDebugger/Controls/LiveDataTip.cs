@@ -14,17 +14,17 @@ using ScintillaNet;
 
 namespace FlashDebugger
 {
-    class LiveDataTip
+    internal class LiveDataTip
     {
-        private DataTipForm m_ToolTip;
-        private MouseMessageFilter m_MouseMessageFilter;
+        DataTipForm m_ToolTip;
+        MouseMessageFilter m_MouseMessageFilter;
 
         public LiveDataTip()
         {
             UITools.Manager.OnMouseHover += Manager_OnMouseHover;
         }
 
-        private void Initialize()
+        void Initialize()
         {
             m_ToolTip = new DataTipForm();
             m_ToolTip.Dock = DockStyle.Fill;
@@ -52,7 +52,7 @@ namespace FlashDebugger
                 m_ToolTip.Visible = false;
         }
 
-        private void MouseMessageFilter_MouseDownEvent(MouseButtons button, Point e)
+        void MouseMessageFilter_MouseDownEvent(MouseButtons button, Point e)
         {
             if (m_ToolTip.Visible &&
                 !m_ToolTip.DataTree.Tree.ContextMenuStrip.Visible &&
@@ -62,7 +62,7 @@ namespace FlashDebugger
             }
         }
 
-        private void MouseMessageFilter_KeyDownEvent(object sender, EventArgs e)
+        void MouseMessageFilter_KeyDownEvent(object sender, EventArgs e)
         {
             if (m_ToolTip.Visible &&
                 !m_ToolTip.DataTree.Tree.ContextMenuStrip.Visible &&
@@ -72,7 +72,7 @@ namespace FlashDebugger
             }
         }
 
-        private void Manager_OnMouseHover(ScintillaControl sci, int position)
+        void Manager_OnMouseHover(ScintillaControl sci, int position)
         {
             if (m_ToolTip is null)
                 Initialize();
@@ -146,7 +146,7 @@ namespace FlashDebugger
     {
         public event MouseDownEventHandler MouseDownEvent = null;
         public event EventHandler KeyDownEvent = null;
-        private Control[] m_ControlList;
+        Control[] m_ControlList;
 
         public void AddControls(Control[] controls)
         {

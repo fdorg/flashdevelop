@@ -48,7 +48,7 @@ namespace FlashDebugger.Controls
             DoResize();
         }
 
-        private void Tree_SizeChanged(object sender, EventArgs e)
+        void Tree_SizeChanged(object sender, EventArgs e)
         {
             DoResize();
         }
@@ -99,7 +99,7 @@ namespace FlashDebugger.Controls
             }
         }
 
-        private Win32.HitTest DoHitTest(int X, int Y)
+        Win32.HitTest DoHitTest(int X, int Y)
         {
             int cornerWidth = Math.Min(Width / 2, SystemInformation.HorizontalScrollBarArrowWidth);
             int cornerHeight = Math.Min(Height / 2, SystemInformation.VerticalScrollBarArrowHeight);
@@ -149,7 +149,7 @@ namespace FlashDebugger.Controls
             return Win32.HitTest.HTCLIENT;
         }
 
-        private void DoResize()
+        void DoResize()
         {
             using Graphics g = Tree.CreateGraphics();
             int nameMaxW = TextWidth(g, Tree.Columns[0].Header) + DataTree.Margin.Horizontal;
@@ -180,7 +180,7 @@ namespace FlashDebugger.Controls
             Height = h;
         }
 
-        private bool CalcHeightWidth(Graphics g, TreeNodeAdv node, ref int height, ref int widthName, ref int widthValue)
+        bool CalcHeightWidth(Graphics g, TreeNodeAdv node, ref int height, ref int widthName, ref int widthValue)
         {
             if (node.IsExpanded)
             {
@@ -212,7 +212,7 @@ namespace FlashDebugger.Controls
             return true;
         }
 
-        private int TextWidth(Graphics g, string str)
+        int TextWidth(Graphics g, string str)
         {
             SizeF textSize = g.MeasureString(str, Tree.Font);
             return (int)textSize.Width;

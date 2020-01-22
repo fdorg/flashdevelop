@@ -9,11 +9,11 @@ using PluginCore;
 
 namespace FlashDebugger
 {
-    class LocalsUI : DockPanelControl
+    internal class LocalsUI : DockPanelControl
     {
-        private PluginMain pluginMain;
-        private readonly DataTreeControl treeControl;
-        private static char[] chTrims = { '.' };
+        PluginMain pluginMain;
+        readonly DataTreeControl treeControl;
+        static char[] chTrims = { '.' };
 
         public LocalsUI(PluginMain pluginMain)
         {
@@ -29,7 +29,7 @@ namespace FlashDebugger
             Controls.Add(treeControl);
         }
 
-        private void TreeControlResize(object sender, EventArgs e)
+        void TreeControlResize(object sender, EventArgs e)
         {
             int w = treeControl.Width / 2;
             treeControl.Tree.Columns[0].Width = w;
