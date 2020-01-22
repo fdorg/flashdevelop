@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.IO;
 using Ookii.Dialogs.Interop;
-using PluginCore.Collections;
 
 namespace Ookii.Dialogs
 {
@@ -211,7 +210,7 @@ namespace Ookii.Dialogs
             {
                 if (_selectedPaths is null)
                 {
-                    return EmptyArray<string>.Instance;
+                    return Array.Empty<string>();
                 }
                 return (string[])_selectedPaths.Clone();
             }

@@ -5,7 +5,6 @@ using System.Drawing.Design;
 using System.Runtime.Serialization;
 using LayoutManager.Controls;
 using Ookii.Dialogs;
-using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace FlashDebugger
@@ -105,7 +104,7 @@ namespace FlashDebugger
         [Editor(typeof(ArrayEditor), typeof(UITypeEditor))]
         public Folder[] SourcePaths
         {
-            get => m_SourcePaths ??= EmptyArray<Folder>.Instance;
+            get => m_SourcePaths ??= Array.Empty<Folder>();
             set => m_SourcePaths = value;
         }
 

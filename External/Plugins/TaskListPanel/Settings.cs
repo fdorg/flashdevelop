@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace TaskListPanel
@@ -19,7 +18,7 @@ namespace TaskListPanel
         int[] images = new[] { 229, 197, 197 };
         string[] extensions = new[] { ".txt" };
         string[] groups = new[] { "TODO", "FIXME", "BUG" };
-        string[] excluded = EmptyArray<string>.Instance;
+        string[] excluded = Array.Empty<string>();
 
         /// <summary> 
         /// Exploring mode, the way we should operate
