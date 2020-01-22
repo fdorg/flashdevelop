@@ -318,7 +318,6 @@
     </Compile>
     <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
-    <Compile Include="PluginCore\Collections\EmptyArray.cs" />
     <Compile Include="PluginCore\Collections\FixedSizeQueue.cs" />
     <Compile Include="PluginCore\Controls\CodeTip.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
