@@ -40,7 +40,7 @@ namespace Mono.GetOptions
         // Fields
         public bool BreakSingleDashManyLettersIntoManyOptions;
         public bool EndOptionProcessingWithDoubleDash;
-        private OptionList optionParser;
+        OptionList optionParser;
         public OptionsParsingMode ParsingMode;
         public string[] RemainingArguments;
     }

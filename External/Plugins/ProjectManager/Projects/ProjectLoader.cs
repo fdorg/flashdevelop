@@ -5,7 +5,7 @@ using ProjectManager.Helpers;
 
 namespace ProjectManager.Projects
 {
-    class ProjectLoader
+    internal class ProjectLoader
     {
         public static Project Load(string file)
         {

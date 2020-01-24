@@ -6,9 +6,9 @@ using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls.AS3
 {
-    static class MxmlFileMapping
+    internal static class MxmlFileMapping
     {
-        private static readonly Regex reSource = new Regex("\\ssource=\"(?<file>[^\"]+)\"", RegexOptions.Compiled);
+        static readonly Regex reSource = new Regex("\\ssource=\"(?<file>[^\"]+)\"", RegexOptions.Compiled);
 
         public static void AddMxmlMapping(FileMappingRequest request)
         {
@@ -20,7 +20,7 @@ namespace ProjectManager.Controls.AS3
                 }
         }
 
-        private static string[] GetIncludedFiles(string mxmlFile)
+        static string[] GetIncludedFiles(string mxmlFile)
         {
             string dir = Path.GetDirectoryName(mxmlFile);
             List<string> included = new List<string>();

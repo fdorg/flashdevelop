@@ -72,7 +72,7 @@ namespace System.Windows.Forms
             }
         }
 
-        private void FindBottom(TreeNodeCollection nodes, ref TreeNode bottomNode)
+        void FindBottom(TreeNodeCollection nodes, ref TreeNode bottomNode)
         {
             foreach (TreeNode node in nodes)
             {
@@ -118,14 +118,14 @@ namespace System.Windows.Forms
             if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);
         }
 
-        private TreeNode FindClosestPath(string path)
+        TreeNode FindClosestPath(string path)
         {
             if (string.IsNullOrEmpty(path)) return null;
             Queue queue = new Queue(path.Split('\\'));
             return FindClosestPath(base.Nodes,queue);
         }
 
-        private TreeNode FindClosestPath(TreeNodeCollection nodes, Queue queue)
+        TreeNode FindClosestPath(TreeNodeCollection nodes, Queue queue)
         {
             string nextChunk = queue.Dequeue() as string;
 

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace FDBuild.Building
 {
-    class SwfmillLibraryBuilder
+    internal class SwfmillLibraryBuilder
     {
         public static string ExecutablePath;
 

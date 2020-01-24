@@ -66,7 +66,7 @@ namespace Mono.GetOptions
             SetValues(shortDescription, shortForm, longForm, alternateForm, maxOccurs);
         }
 
-        private void SetValues(string shortDescription, char shortForm, string longForm, string alternateForm, int maxOccurs)
+        void SetValues(string shortDescription, char shortForm, string longForm, string alternateForm, int maxOccurs)
         {
             ShortDescription = shortDescription;
             ShortForm = shortForm;

@@ -488,9 +488,9 @@ namespace ProjectManager.Controls
     public class SearchUtil
     {
         // Note: These values may need more tuning to get best results.
-        private const double FileScoreWeightFactor = 1.0;
+        const double FileScoreWeightFactor = 1.0;
         // Put more weight on directory scores, since file scores tend to have more variation due to their dependency on file name length.
-        private const double DirScoreWeightFactor = 4.0;
+        const double DirScoreWeightFactor = 4.0;
 
         public static List<string> getMatchedItems(List<string> source, string searchText, char pathSeparator, int limit)
         {

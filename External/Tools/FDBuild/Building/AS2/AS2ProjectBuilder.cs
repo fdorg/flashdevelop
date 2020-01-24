@@ -96,7 +96,7 @@ namespace ProjectManager.Building.AS2
             }
         }
 
-        private void KeepUpdated()
+        void KeepUpdated()
         {
             foreach (LibraryAsset asset in project.LibraryAssets)
                 if (asset.UpdatePath != null)

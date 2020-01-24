@@ -1,6 +1,6 @@
 namespace Mono.GetOptions
 {
-    enum OptionProcessingResult
+    internal enum OptionProcessingResult
     {
         NotThisOption,
         OptionAlone,
