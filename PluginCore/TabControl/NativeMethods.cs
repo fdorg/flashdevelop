@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 			                                                | BindingFlags.IgnoreCase 
 			                                                | BindingFlags.Instance);
 			
-			object[] args = new object[] {message};
+			object[] args = {message};
 			wproc.Invoke(control, args);
 			
 			return ((Message)args[0]).Result;

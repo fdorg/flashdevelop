@@ -152,8 +152,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     static readonly Bitmap _bitmapPaneDiamondHotSpot = ScaleHelper.Scale(Resources.DockIndicator_PaneDiamond_Hotspot);
                     static readonly Bitmap _bitmapPaneDiamondHotSpotIndex = Resources.DockIndicator_PaneDiamond_HotspotIndex;
 
-                    static readonly HotSpotIndex[] _hotSpots = new[]
-            {
+                    static readonly HotSpotIndex[] _hotSpots = {
                 new HotSpotIndex(1, 0, DockStyle.Top),
                 new HotSpotIndex(0, 1, DockStyle.Left),
                 new HotSpotIndex(1, 1, DockStyle.Fill),
