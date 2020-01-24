@@ -7,13 +7,13 @@ namespace ProjectManager.Projects.Haxe
     [Serializable]
     public class HaxeOptions : CompilerOptions
     {
-        string[] directives = { };
+        string[] directives = Array.Empty<string>();
         string mainClass = "";
         bool flashStrict = false;
         bool enableDebug = false;
         bool noInlineOnDebug = false;
-        string[] additional = { };
-        string[] libraries = { };
+        string[] additional = Array.Empty<string>();
+        string[] libraries = Array.Empty<string>();
 
         [LocalizedCategory("ProjectManager.Category.CompilerOptions")]
         [DisplayName("Additional Compiler Options")]

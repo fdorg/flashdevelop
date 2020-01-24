@@ -189,12 +189,13 @@ namespace ProjectManager.Projects.AS3
 
         #region Advanced options
 
-        string[] additional = { };
+        string[] additional = Array.Empty<string>();
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [DisplayName("Additional Compiler Options")]
         [LocalizedDescription("ProjectManager.Description.Additional")]
         [DefaultValue(new string[] { })]
-        public string[] Additional {
+        public string[] Additional
+        {
             get => additional;
             set => additional = value;
         }
@@ -204,7 +205,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Advanced Telemetry")]
         [LocalizedDescription("ProjectManager.Description.AdvancedTelemetry")]
         [DefaultValue(false)]
-        public bool AdvancedTelemetry {
+        public bool AdvancedTelemetry
+        {
             get => advancedTelemetry;
             set => advancedTelemetry = value;
         }
@@ -214,7 +216,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Advanced Telemetry Password")]
         [LocalizedDescription("ProjectManager.Description.AdvancedTelemetryPassword")]
         [DefaultValue("")]
-        public string AdvancedTelemetryPassword {
+        public string AdvancedTelemetryPassword
+        {
             get => advancedTelemetryPassword;
             set => advancedTelemetryPassword = value;
         }
@@ -229,7 +232,7 @@ namespace ProjectManager.Projects.AS3
             set => inlineFunctions = value;
         }
 
-        string[] compilerConstants = { };
+        string[] compilerConstants = Array.Empty<string>();
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [DisplayName("Compiler Constants")]
         [LocalizedDescription("ProjectManager.Description.CompilerConstants")]
@@ -244,12 +247,13 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Player Minor Version")]
         [LocalizedDescription("ProjectManager.Description.MinorVersion")]
         [DefaultValue("")]
-        public string MinorVersion {
+        public string MinorVersion
+        {
             get => minorVersion;
             set => minorVersion = value;
         }
 
-        string[] intrinsicPaths = { };
+        string[] intrinsicPaths = Array.Empty<string>();
         [DisplayName("Intrinsic Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.IntrinsicPaths")]
@@ -260,7 +264,7 @@ namespace ProjectManager.Projects.AS3
             set => intrinsicPaths = value;
         }
 
-        string[] externalLibraryPaths = { };
+        string[] externalLibraryPaths = Array.Empty<string>();
         [DisplayName("External Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.ExternalLibraryPaths")]
@@ -271,7 +275,7 @@ namespace ProjectManager.Projects.AS3
             set => externalLibraryPaths = value;
         }
 
-        string[] includeLibraries = { };
+        string[] includeLibraries = Array.Empty<string>();
         [DisplayName("SWC Include Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.IncludeLibraries")]
@@ -282,7 +286,7 @@ namespace ProjectManager.Projects.AS3
             set => includeLibraries = value;
         }
         
-        string[] libraryPaths = { };
+        string[] libraryPaths = Array.Empty<string>();
         [DisplayName("SWC Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.LibraryPaths")]
@@ -293,7 +297,7 @@ namespace ProjectManager.Projects.AS3
             set => libraryPaths = value;
         }
 
-        string[] rslPaths = { };
+        string[] rslPaths = Array.Empty<string>();
         [DisplayName("Runtime Shared Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.RSLPaths")]
