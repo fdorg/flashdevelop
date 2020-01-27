@@ -1678,7 +1678,7 @@ namespace HaXeContext.Model
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
                 // members
-                if (token == "var")
+                if (token == "var" || token == "final")
                 {
                     foundKeyword = FlagType.Variable;
                 }
