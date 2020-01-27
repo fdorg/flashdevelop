@@ -170,7 +170,7 @@ namespace HaXeContext
             features.importKey = "import";
             features.importKeyAlt = "using";
             features.varKey = "var";
-            //features.finalKey = "final";
+            features.finalKey = "final";
             features.overrideKey = "override";
             features.functionKey = "function";
             features.staticKey = "static";
