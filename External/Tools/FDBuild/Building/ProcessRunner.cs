@@ -47,7 +47,7 @@ namespace ProjectManager.Building
         }
     }
 
-    class LineFilter
+    internal class LineFilter
     {
         static readonly Regex reSplitError = new Regex(@"\.[a-z]+:[0-9]+$");
         readonly TextReader reader;

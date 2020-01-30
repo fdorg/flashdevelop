@@ -44,7 +44,7 @@ namespace ProjectManager.Controls.TreeView
             Expand();
         }
 
-        private void NotifyProjectRefresh()
+        void NotifyProjectRefresh()
         {
             base.NotifyRefresh();
         }
@@ -54,7 +54,7 @@ namespace ProjectManager.Controls.TreeView
             // do nothing yet, we are not finished
         }
 
-        private void RefreshReferences(bool recursive)
+        void RefreshReferences(bool recursive)
         {
             if (References != null && References.Parent is null)
             {
@@ -63,7 +63,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void RemoveReferences()
+        void RemoveReferences()
         {
             if (References != null && References.Parent == this)
                 Nodes.Remove(References);
@@ -302,7 +302,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
+        GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
         {
             foreach (GenericNode node in nodesToDie)
                 if (node.BackingPath == absolute)

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace FDBuild.Building.AS3
 {
-    class FlexConfigWriter : XmlTextWriter
+    internal class FlexConfigWriter : XmlTextWriter
     {
         AS3Project project;
         bool flex4;
@@ -31,7 +31,7 @@ namespace FDBuild.Building.AS3
             finally { Close(); }
         }
 
-        private void InternalWriteConfig(string[] extraClasspaths, bool debugMode)
+        void InternalWriteConfig(string[] extraClasspaths, bool debugMode)
         {
             MxmlcOptions options = project.CompilerOptions;
 
@@ -55,7 +55,7 @@ namespace FDBuild.Building.AS3
             WriteEndElement();
         }
 
-        private void AddCompilerConstants(MxmlcOptions options, bool debugMode)
+        void AddCompilerConstants(MxmlcOptions options, bool debugMode)
         {
             WriteDefine("CONFIG::debug", debugMode ? "true" : "false");
             WriteDefine("CONFIG::release", debugMode ? "false" : "true");
@@ -77,7 +77,7 @@ namespace FDBuild.Building.AS3
             }
         }
 
-        private void WriteDefine(string name, string value)
+        void WriteDefine(string name, string value)
         {
             WriteStartElement("define");
                 WriteAttributeString("append", "true");
@@ -86,7 +86,7 @@ namespace FDBuild.Building.AS3
             WriteEndElement();
         }
 
-        private void AddCompilerOptions(MxmlcOptions options, bool debugMode)
+        void AddCompilerOptions(MxmlcOptions options, bool debugMode)
         {
             if (options.Locale.Length > 0)
             {
@@ -115,7 +115,7 @@ namespace FDBuild.Building.AS3
             else WriteElementString("verbose-stacktraces", options.VerboseStackTraces ? "true" : "false");
         }
 
-        private void AddBaseOptions(MxmlcOptions options)
+        void AddBaseOptions(MxmlcOptions options)
         {
             if (!asc2)
             {
@@ -127,7 +127,7 @@ namespace FDBuild.Building.AS3
             if (!options.Warnings) WriteElementString("warnings", "false");
         }
 
-        private void AddTargetPlayer(MxmlcOptions options)
+        void AddTargetPlayer(MxmlcOptions options)
         {
             int majorVersion = project.MovieOptions.MajorVersion;
             int minorVersion = project.MovieOptions.MinorVersion;
@@ -145,7 +145,7 @@ namespace FDBuild.Building.AS3
             WriteElementString("target-player", version);
         }
 
-        private void AddLibraries()
+        void AddLibraries()
         {
             MxmlcOptions options = project.CompilerOptions;
             string absPath;
@@ -195,7 +195,7 @@ namespace FDBuild.Building.AS3
             }
         }
 
-        private void AddNamespaces(MxmlcOptions options)
+        void AddNamespaces(MxmlcOptions options)
         {
             if (options.Namespaces is null || options.Namespaces.Length == 0) return;
 
@@ -220,35 +220,30 @@ namespace FDBuild.Building.AS3
             WriteEndElement();
         }
 
-        private void AddRSLs()
+        void AddRSLs()
         {
-            MxmlcOptions options = project.CompilerOptions;
-            if (options.RSLPaths.Length > 0)
+            var options = project.CompilerOptions;
+            if (options.RSLPaths.Length == 0) return;
+            foreach (string path in options.RSLPaths)
             {
-                foreach (string path in options.RSLPaths)
+                string[] parts = path.Split(',');
+                if (parts.Length < 2) continue;
+                if (parts[0].Trim().Length == 0) continue;
+                string absPath = project.GetAbsolutePath(parts[0]);
+                if (File.Exists(absPath))
                 {
-                    string[] parts = path.Split(',');
-                    if (parts.Length < 2) continue;
-                    if (parts[0].Trim().Length == 0) continue;
-                    string absPath = project.GetAbsolutePath(parts[0]);
-                    if (File.Exists(absPath))
-                    {
-                        WriteStartElement("runtime-shared-library-path");
-                            WriteElementString("path-element", absPath);
-                            WriteElementString("rsl-url", parts[1]);
-                            if (parts.Length > 2)
-                                WriteElementString("policy-file-url", parts[2]);
-                            if (parts.Length > 3)
-                                WriteElementString("rsl-url", parts[3]);
-                            if (parts.Length > 4)
-                                WriteElementString("policy-file-url", parts[4]);
-                        WriteEndElement();
-                    }
+                    WriteStartElement("runtime-shared-library-path");
+                    WriteElementString("path-element", absPath);
+                    WriteElementString("rsl-url", parts[1]);
+                    if (parts.Length > 2) WriteElementString("policy-file-url", parts[2]);
+                    if (parts.Length > 3) WriteElementString("rsl-url", parts[3]);
+                    if (parts.Length > 4) WriteElementString("policy-file-url", parts[4]);
+                    WriteEndElement();
                 }
             }
         }
 
-        private void AddMovieOptions()
+        void AddMovieOptions()
         {
             WriteElementString("default-background-color", project.MovieOptions.Background);
             WriteElementString("default-frame-rate", project.MovieOptions.Fps.ToString());
@@ -276,7 +271,7 @@ namespace FDBuild.Building.AS3
             WriteEndElement();
         }
 
-        private void WriteElementPathString(string name, string path)
+        void WriteElementPathString(string name, string path)
         {
             if (Directory.Exists(path) || File.Exists(path))
                 WriteElementString(name, path);

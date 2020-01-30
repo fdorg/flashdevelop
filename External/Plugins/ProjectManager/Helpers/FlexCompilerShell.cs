@@ -13,7 +13,7 @@ namespace ProjectManager.Helpers
     public class FlexCompilerShell : MarshalByRefObject
     {
         //C:\...\Main.as(17): col: 15 Warning: variable 'yc' has no type declaration.
-        private static readonly Regex reWarning
+        static readonly Regex reWarning
             = new Regex("\\([0-9]+\\): col: [0-9]+ Warning:", RegexOptions.Compiled);
 
         // fcsh.exe process
@@ -69,8 +69,6 @@ namespace ProjectManager.Helpers
             errorThread.Start();
             return ReadUntilPrompt();
         }
-
-        void process_Exited(object sender, EventArgs e) => throw new Exception("Process Exited");
 
         public void Compile(string projectPath,
                             bool configChanged,
@@ -163,7 +161,7 @@ namespace ProjectManager.Helpers
                 }
         }
 
-        void ClearOldCompile()
+        static void ClearOldCompile()
         {
             process.StandardInput.WriteLine("clear " + lastCompileID);
             ReadUntilPrompt();
@@ -177,33 +175,33 @@ namespace ProjectManager.Helpers
             bool skipWarning = false;
             while (process != null && !process.StandardError.EndOfStream)
             {
-                string line = process.StandardError.ReadLine().TrimEnd();
+                var line = process.StandardError.ReadLine().TrimEnd();
                 lock (errorList)
-                lock (warningList)
-                {
-                    if (line.Length > 0)
+                    lock (warningList)
                     {
-                        if (skipWarning)
+                        if (line.Length > 0)
                         {
-                            if (line.Contains("Warning") || line.Contains("Error")) skipWarning = false;
+                            if (skipWarning)
+                            {
+                                if (line.Contains("Warning") || line.Contains("Error")) skipWarning = false;
+                                else
+                                {
+                                    if (line.Contains("^")) skipWarning = false;
+                                    continue;
+                                }
+                            }
+                            if (line.Contains("Warning:"))
+                            {
+                                warningList.Add(line);
+                                if (reWarning.IsMatch(line)) skipWarning = true;
+                            }
                             else
                             {
-                                if (line.Contains("^")) skipWarning = false;
-                                continue;
+                                errorList.Add(line);
+                                foundErrors = true;
                             }
                         }
-                        if (line.Contains("Warning:"))
-                        {
-                            warningList.Add(line);
-                            if (reWarning.IsMatch(line)) skipWarning = true;
-                        }
-                        else
-                        {
-                            errorList.Add(line);
-                            foundErrors = true;
-                        }
                     }
-                }
             }
         }
 
@@ -226,9 +224,9 @@ namespace ProjectManager.Helpers
         /// Read the compile id fsch returns
         /// </summary>
         /// <returns></returns>
-        private int ReadCompileID()
+        static int ReadCompileID()
         {
-            string line = "";
+            string line;
             lock (typeof(FlexCompilerShell))
                 line = process.StandardOutput.ReadLine();
 
@@ -254,20 +252,19 @@ namespace ProjectManager.Helpers
         /// Read until fcsh is in idle state, displaying its (fcsh) prompt
         /// </summary>
         /// <returns></returns>
-        private string ReadUntilPrompt() => ReadUntilToken("(fcsh)");
+        static string ReadUntilPrompt() => ReadUntilToken("(fcsh)");
 
-        private string ReadUntilToken(string token)
+        static string ReadUntilToken(string token)
         {
-            StringBuilder output = new StringBuilder();
-            Queue<char> queue = new Queue<char>();
+            var output = new StringBuilder();
+            var queue = new Queue<char>();
 
             lock (typeof(FlexCompilerShell))
             {
                 bool keepProcessing = true;
                 while (keepProcessing)
                 {
-                    if (process.HasExited)
-                        keepProcessing = false;
+                    if (process.HasExited) keepProcessing = false;
                     else
                     {
                         char c = (char)process.StandardOutput.Read();

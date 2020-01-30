@@ -41,18 +41,18 @@ namespace ProjectManager.Actions
             this.pluginMain = pluginMain;
 
             // setup FDProcess helper class
-            this.fdProcess = new FDProcessRunner(mainForm);
+            fdProcess = new FDProcessRunner(mainForm);
 
             // setup remoting service so FDBuild can use our in-memory services like FlexCompilerShell
-            this.IPCName = Guid.NewGuid().ToString();
+            IPCName = Guid.NewGuid().ToString();
             SetupRemotingServer();
         }
 
-        private void SetupRemotingServer()
+        void SetupRemotingServer()
         {
-            IpcChannel channel = new IpcChannel(IPCName);
+            var channel = new IpcChannel(IPCName);
             ChannelServices.RegisterChannel(channel, false);
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(FlexCompilerShell), "FlexCompilerShell", WellKnownObjectMode.Singleton);
+            RemotingConfiguration.RegisterWellKnownServiceType(typeof(FlexCompilerShell), nameof(FlexCompilerShell), WellKnownObjectMode.Singleton);
         }
 
         public bool Build(Project project, bool runOutput, bool releaseMode)
@@ -280,11 +280,11 @@ namespace ProjectManager.Actions
                 return InstalledSDK.INVALID_SDK;
             }
 
-            var parts = (";;" + preferredSDK).Split(';'); // name;version
+            var parts = (";;" + preferredSDK).Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries); // name;version
             
             // match name
-            string name = parts[parts.Length - 3];
-            if (name != "")
+            var name = parts[parts.Length - 3];
+            if (name.Length != 0)
                 foreach (InstalledSDK sdk in sdks)
                     if (sdk.IsValid && ((name.StartsWithOrdinal("Haxe Shim ") && sdk.IsHaxeShim) || sdk.Name == name))
                     {
@@ -293,8 +293,8 @@ namespace ProjectManager.Actions
                     }
 
             // match version
-            string version = parts[parts.Length - 2];
-            if (version != "")
+            var version = parts[parts.Length - 2];
+            if (version.Length != 0)
             {
                 InstalledSDK bestMatch = null;
                 int bestScore = int.MaxValue;
@@ -326,7 +326,7 @@ namespace ProjectManager.Actions
             return newSdk;
         }
 
-        private static int CompareVersions(string sdkVersion, string version)
+        static int CompareVersions(string sdkVersion, string version)
         {
             int score = 0;
             string[] sa = sdkVersion.Split(',');

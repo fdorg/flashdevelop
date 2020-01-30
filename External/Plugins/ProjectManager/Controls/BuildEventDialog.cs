@@ -14,24 +14,24 @@ namespace ProjectManager.Controls
 
         #region Windows Form Designer
 
-        private System.Windows.Forms.StatusBar statusBar;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ListView listView;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.ColumnHeader nameColumn;
-        private System.Windows.Forms.ColumnHeader valueColumn;
-        private System.Windows.Forms.TextBox textBox;
-        private System.Windows.Forms.ToolTip toolTip;
-        private System.ComponentModel.IContainer components;
-        private System.Windows.Forms.Button insertButton;
+        System.Windows.Forms.StatusBar statusBar;
+        System.Windows.Forms.Panel panel1;
+        System.Windows.Forms.ListView listView;
+        System.Windows.Forms.Button cancelButton;
+        System.Windows.Forms.Button okButton;
+        System.Windows.Forms.Splitter splitter1;
+        System.Windows.Forms.ColumnHeader nameColumn;
+        System.Windows.Forms.ColumnHeader valueColumn;
+        System.Windows.Forms.TextBox textBox;
+        System.Windows.Forms.ToolTip toolTip;
+        System.ComponentModel.IContainer components;
+        System.Windows.Forms.Button insertButton;
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.statusBar = new System.Windows.Forms.StatusBarEx();
@@ -207,7 +207,7 @@ namespace ProjectManager.Controls
             set => textBox.Text = value;
         }
 
-        private void Add(BuildEventInfo info)
+        void Add(BuildEventInfo info)
         {
             ListViewItem item = new ListViewItem(info.Name);
             item.SubItems.Add(info.Value);
@@ -215,23 +215,23 @@ namespace ProjectManager.Controls
             listView.Items.Add(item);
         }
 
-        private void textBox_TextChanged(object sender, System.EventArgs e)
+        void textBox_TextChanged(object sender, System.EventArgs e)
         {
             okButton.Enabled = true;
         }
 
-        private void listView_DoubleClick(object sender, System.EventArgs e)
+        void listView_DoubleClick(object sender, System.EventArgs e)
         {
             if (listView.SelectedItems.Count > 0)
                 DoInsert();
         }
 
-        private void insertButton_Click(object sender, System.EventArgs e)
+        void insertButton_Click(object sender, System.EventArgs e)
         {
             DoInsert();
         }
 
-        private void DoInsert()
+        void DoInsert()
         {
             BuildEventInfo info = listView.SelectedItems[0].Tag as BuildEventInfo;
             
@@ -239,7 +239,7 @@ namespace ProjectManager.Controls
             SendKeys.Send(info.SendKeysName);
         }
 
-        private void listView_SelectedIndexChanged(object sender, System.EventArgs e)
+        void listView_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             insertButton.Enabled = (listView.SelectedItems.Count > 0);
         }
@@ -250,7 +250,7 @@ namespace ProjectManager.Controls
             valueColumn.Width = listView.Width - 10 - nameColumn.Width;
         }
 
-        private void listView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        void listView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             ListViewItem item = listView.GetItemAt(e.X,e.Y);
             

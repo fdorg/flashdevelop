@@ -19,7 +19,7 @@ namespace ProjectManager
     {
         public event SettingChangeHandler Changed;
 
-        private bool searchExternalClassPath = true;
+        bool searchExternalClassPath = true;
         List<ProjectPreferences> projectPrefList = new List<ProjectPreferences>();
         readonly List<string> recentProjects = new List<string>();
         bool showProjectClasspaths = true;
@@ -281,17 +281,17 @@ namespace ProjectManager
             return newPrefs;
         }
 
-        private void CleanOldPrefs()
+        void CleanOldPrefs()
         {
             for (int i = 0; i < projectPrefList.Count; i++)
                 if (!File.Exists(projectPrefList[i].ProjectPath))
                     projectPrefList.RemoveAt(i--); // search this index again
         }
 
-        private void FireChanged(string setting) => Changed?.Invoke(setting);
+        void FireChanged(string setting) => Changed?.Invoke(setting);
 
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        void OnDeserialized(StreamingContext context)
         {
             string[] extraFilteredDirectoryNames = { "github", "gitlab", "haxelib", "library" };
             var filteredDirectoryNames = new List<string>(this.filteredDirectoryNames);

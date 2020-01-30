@@ -40,7 +40,7 @@ namespace ProjectManager.Controls
             return newMenu;
         }
 
-        private bool Matches(MergableItem item)
+        bool Matches(MergableItem item)
         {
             foreach (MergableItem existingItem in List)
             {

@@ -9,7 +9,7 @@ using ProjectManager.Projects.AS3;
 
 namespace FDBuild.Building.AS3
 {
-    class FlexJSProjectBuilder : ProjectBuilder
+    internal class FlexJSProjectBuilder : ProjectBuilder
     {
         readonly AS3Project project;
         readonly string mxmlcPath;

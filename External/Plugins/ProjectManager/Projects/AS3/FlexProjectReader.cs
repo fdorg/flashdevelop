@@ -8,15 +8,15 @@ using PluginCore.Helpers;
 
 namespace ProjectManager.Projects.AS3
 {
-    class FlexProjectReader : ProjectReader
+    internal class FlexProjectReader : ProjectReader
     {
-        private static readonly Regex reArgs = new Regex(@"\$\{(\w+)\}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-        
-        private readonly AS3Project project;
-        private string mainApp;
-        private string outputPath;
-        private string fpVersion;
-        private PathCollection applications;
+        static readonly Regex reArgs = new Regex(@"\$\{(\w+)\}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        readonly AS3Project project;
+        string mainApp;
+        string outputPath;
+        string fpVersion;
+        PathCollection applications;
 
         public IDictionary<string, string> EnvironmentPaths { get; set; }
 
@@ -47,7 +47,7 @@ namespace ProjectManager.Projects.AS3
                 }
         }
 
-        private void ReadCompilerOptions()
+        void ReadCompilerOptions()
         {
             outputPath = GetAttribute("outputFolderLocation") ?? (GetAttribute("outputFolderPath") ?? "");
 
@@ -114,7 +114,7 @@ namespace ProjectManager.Projects.AS3
                 ProcessCompilerOptionNode(Name);
         }
 
-        private void ProcessCompilerOptionNode(string name)
+        void ProcessCompilerOptionNode(string name)
         {
             if (NodeType == XmlNodeType.Element)
                 switch (name)
@@ -124,7 +124,7 @@ namespace ProjectManager.Projects.AS3
                 }
         }
 
-        private void ReadCompilerSourcePaths()
+        void ReadCompilerSourcePaths()
         {
             if (!IsEmptyElement)
             {
@@ -148,7 +148,7 @@ namespace ProjectManager.Projects.AS3
             }
         }
 
-        private void ReadLibraryPaths()
+        void ReadLibraryPaths()
         {
             if (!IsStartElement())
                 return;
@@ -202,7 +202,7 @@ namespace ProjectManager.Projects.AS3
             }
         }
 
-        private void ReadModules()
+        void ReadModules()
         {
             ReadStartElement("modules");
             while (Name == "module")
@@ -216,7 +216,7 @@ namespace ProjectManager.Projects.AS3
             }
         }
 
-        private void ReadTheme()
+        void ReadTheme()
         {
             char s = Path.DirectorySeparatorChar;
             string themeLocation = OSPath(GetAttribute("themeLocation"));
@@ -285,7 +285,7 @@ namespace ProjectManager.Projects.AS3
             project.RebuildCompilerOptions();
         }
 
-        private void ReadBuildTargets()
+        void ReadBuildTargets()
         {
             ReadStartElement("buildTargets");
             while (Name == "buildTarget")
@@ -310,7 +310,7 @@ namespace ProjectManager.Projects.AS3
             return null;
         }
 
-        private string ReplaceVars(Match match)
+        string ReplaceVars(Match match)
         {
             if (match.Groups.Count > 0)
             {
