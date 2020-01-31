@@ -384,7 +384,7 @@ namespace HaXeContext
                 ? new[] {'!'}
                 : Array.Empty<char>();
 
-            if(version >= "4")
+            if (version >= "4")
             {
                 features.finalKey = "final";
 
