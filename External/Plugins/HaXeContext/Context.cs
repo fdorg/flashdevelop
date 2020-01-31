@@ -170,7 +170,6 @@ namespace HaXeContext
             features.importKey = "import";
             features.importKeyAlt = "using";
             features.varKey = "var";
-            features.finalKey = "final";
             features.overrideKey = "override";
             features.functionKey = "function";
             features.staticKey = "static";
@@ -185,11 +184,11 @@ namespace HaXeContext
             features.ConstructorKey = "new";
             features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, features.ConstructorKey, features.ExtendsKey, features.ImplementsKey};
             features.codeKeywords = new[] {
-                "var", "final", "function", "new", "cast", "return", "break",
+                "var", "function", "new", "cast", "return", "break",
                 "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
                 "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
             };
-            features.declKeywords = new[] {features.varKey, features.functionKey, features.finalKey};
+            features.declKeywords = new[] {features.varKey, features.functionKey};
             features.accessKeywords = new[] {features.intrinsicKey, features.inlineKey, "dynamic", "macro", features.overrideKey, features.publicKey, features.privateKey, features.staticKey};
             features.typesKeywords = new[] {features.importKey, features.importKeyAlt, "class", "interface", "typedef", "enum", "abstract" };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
@@ -379,9 +378,34 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
+            var version = GetCurrentSDKVersion();
+
+            features.SpecialPostfixOperators = version >= "3.3.0"
                 ? new[] {'!'}
                 : Array.Empty<char>();
+
+            if(version >= "4")
+            {
+                features.finalKey = "final";
+
+                if (Array.IndexOf(features.codeKeywords, "final") < 0)
+                {
+                    Array.Resize(ref features.codeKeywords, features.codeKeywords.Length + 1);
+                    features.codeKeywords[features.codeKeywords.Length - 1] = "final";
+                }
+
+                if (Array.IndexOf(features.declKeywords, "final") < 0)
+                {
+                    Array.Resize(ref features.declKeywords, features.declKeywords.Length + 1);
+                    features.declKeywords[features.declKeywords.Length - 1] = "final";
+                }
+            }
+            else
+            {
+                features.finalKey = null;
+                features.codeKeywords = features.codeKeywords.Where(w => w != "final").ToArray();
+                features.declKeywords = features.declKeywords.Where(w => w != "final").ToArray();
+            }
 
             UseGenericsShortNotationChange();
         }
