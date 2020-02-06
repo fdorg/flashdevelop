@@ -1,7 +1,7 @@
 :: Builds the binary on the server for CI
 
 :: Set paths
-set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
+::set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
 set PATH=%PATH%;C:\Program Files (x86)\NSIS
 set PATH=%PATH%;C:\Program Files\7-Zip\
@@ -12,7 +12,7 @@ set PATH=%PATH%;C:\Program Files\7-Zip\
 call SetVersion.bat
 
 :: Build the main solution and run tests
-msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
+msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform=x86 /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -37,7 +37,7 @@ if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
 )
 
 :: Build AnyCPU version for 64bits support
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x64/t:Build %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -75,7 +75,7 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solutions
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x64 /t:Rebuild
 ping -n 5 127.0.0.1 > nul
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
