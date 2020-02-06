@@ -3792,19 +3792,19 @@ namespace ScintillaNet
 
         public int SPerform(int message, int wParam, uint lParam)
         {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
+            if (Win32.ShouldUseWin32() && !Environment.Is64BitOperatingSystem) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
             return Encoding.ASCII.CodePage;
         }
 
         public int SPerform(int message, int wParam, int lParam)
         {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
+            if (Win32.ShouldUseWin32() && !Environment.Is64BitOperatingSystem) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
             return Encoding.ASCII.CodePage;
         }
 
         public int SPerform(int message, int wParam, IntPtr lParam)
         {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, lParam);
+            if (Win32.ShouldUseWin32() && !Environment.Is64BitOperatingSystem) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, lParam);
             return Encoding.ASCII.CodePage;
         }
 
