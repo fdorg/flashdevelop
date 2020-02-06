@@ -1,8 +1,8 @@
 :: Builds the binary locally and launches the installer
 
 :: Set paths
-::set PATH=%PATH%;C:\Program Files (x86)\MSBuild\14.0\Bin\
-::set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin
+set PATH=%PATH%;C:\Program Files (x86)\MSBuild\14.0\Bin\
+set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin
 set PATH=%PATH%;C:\Program Files\Git\bin\
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
 set PATH=%PATH%;C:\Program Files\7-Zip\
@@ -32,7 +32,7 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solutions
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x64 /t:Rebuild
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 ping -n 5 127.0.0.1 > nul
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
