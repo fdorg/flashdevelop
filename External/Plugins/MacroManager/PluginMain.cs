@@ -347,7 +347,7 @@ namespace MacroManager
         /// Gets and sets the entries
         /// </summary>
         [LocalizedDescription("MacroManager.Description.Entries")]
-        public string[] Entries { get; set; } = EmptyArray<string>.Instance;
+        public string[] Entries { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// Gets and sets the showInToolbar

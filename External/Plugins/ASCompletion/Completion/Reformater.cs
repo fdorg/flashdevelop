@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using PluginCore;
 using PluginCore.Collections;
@@ -13,7 +14,7 @@ namespace ASCompletion.Completion
         public bool SpaceBeforeFunctionCall = false;
         public string CompactChars = "";
         public string SpacedChars = "";
-        public string[] AddSpaceAfter = EmptyArray<string>.Instance;
+        public string[] AddSpaceAfter = Array.Empty<string>();
         public string Operators = "=+-*/%<>&|^";
         public bool IsPhp = false;
         public bool IsHaXe = false;

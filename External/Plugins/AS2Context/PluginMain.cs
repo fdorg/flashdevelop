@@ -132,7 +132,7 @@ namespace AS2Context
             {
                 settingObject.UserClasspath = settingObject.MMClassPath != null
                                             ? new[] { settingObject.MMClassPath }
-                                            : EmptyArray<string>.Instance;
+                                            : Array.Empty<string>();
             }
         }
 

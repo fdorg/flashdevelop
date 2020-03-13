@@ -1077,7 +1077,7 @@ namespace CodeFormatter.Handlers
                     lines = new[] { "", "" };
                 //if all whitespace but no carriage returns, then we don't want to go through the loop
                 else if (!token.Text.Contains('\n') && AntlrUtilities.asTrim(token.Text).Length == 0)
-                    lines = EmptyArray<string>.Instance;
+                    lines = Array.Empty<string>();
                 foreach (var line in lines)
                 {
                     string lineData = line;

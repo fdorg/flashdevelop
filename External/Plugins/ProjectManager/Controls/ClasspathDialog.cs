@@ -55,7 +55,7 @@ namespace ProjectManager.Controls
             // classpathControl
             // 
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
+            this.classpathControl.Classpaths = Array.Empty<string>();
             this.classpathControl.Location = new System.Drawing.Point(10, 19);
             this.classpathControl.Name = "classpathControl";
             this.classpathControl.Size = new System.Drawing.Size(357, 135);

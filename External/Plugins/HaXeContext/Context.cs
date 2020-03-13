@@ -382,7 +382,7 @@ namespace HaXeContext
 
             features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
                 ? new[] {'!'}
-                : EmptyArray<char>.Instance;
+                : Array.Empty<char>();
 
             UseGenericsShortNotationChange();
         }

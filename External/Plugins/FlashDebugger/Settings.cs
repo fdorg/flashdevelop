@@ -38,7 +38,7 @@ namespace FlashDebugger
     [Serializable]
     public class Settings
     {
-        private Folder[] m_SourcePaths = EmptyArray<Folder>.Instance;
+        private Folder[] m_SourcePaths = Array.Empty<Folder>();
         private bool m_SaveBreakPoints = true;
         private bool m_DisablePanelsAutoshow;
         private bool m_VerboseOutput;
@@ -105,7 +105,7 @@ namespace FlashDebugger
         [Editor(typeof(ArrayEditor), typeof(UITypeEditor))]
         public Folder[] SourcePaths
         {
-            get => m_SourcePaths ??= EmptyArray<Folder>.Instance;
+            get => m_SourcePaths ??= Array.Empty<Folder>();
             set => m_SourcePaths = value;
         }
 

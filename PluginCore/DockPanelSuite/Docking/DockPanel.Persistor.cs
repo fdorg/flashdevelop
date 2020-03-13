@@ -5,7 +5,6 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Globalization;
-using PluginCore.Collections;
 using PluginCore.DockPanelSuite;
 
 namespace WeifenLuo.WinFormsUI.Docking
@@ -15,7 +14,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private static class Persistor
         {
             private const string ConfigFileVersion = "1.0";
-            private static readonly string[] CompatibleConfigFileVersions = EmptyArray<string>.Instance;
+            private static readonly string[] CompatibleConfigFileVersions = Array.Empty<string>();
 
             private class DummyContent : DockContent
             {

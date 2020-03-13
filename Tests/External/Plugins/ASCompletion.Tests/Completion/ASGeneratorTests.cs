@@ -1005,7 +1005,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), EmptyArray<string>.Instance)
+                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), Array.Empty<string>.Instance)
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})

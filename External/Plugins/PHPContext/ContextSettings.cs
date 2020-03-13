@@ -179,7 +179,7 @@ namespace PHPContext
         [Browsable(false)]
         public InstalledSDK[] InstalledSDKs
         {
-            get => EmptyArray<InstalledSDK>.Instance;
+            get => Array.Empty<InstalledSDK>();
             set { /* Do nothing..*/ }
         }
 
