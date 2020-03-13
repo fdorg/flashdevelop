@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using PluginCore.Collections;
 
 namespace ScintillaNet.Configuration
 {
@@ -213,10 +214,10 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (languages is null) languages = new Language[0];
-            if (styleclasses is null)  styleclasses = new StyleClass[0];
-            if (keywordclass is null) keywordclass = new KeywordClass[0];
-            if (globals is null) globals = new Value[0];
+            if (languages is null) languages = EmptyArray<Language>.Instance;
+            if (styleclasses is null) styleclasses = EmptyArray<StyleClass>.Instance;
+            if (keywordclass is null) keywordclass = EmptyArray<KeywordClass>.Instance;
+            if (globals is null) globals = EmptyArray<Value>.Instance;
             foreach (var it in languages)
             {
                 it.init(utility, _parent);
@@ -233,7 +234,7 @@ namespace ScintillaNet.Configuration
             {
                 it.init(utility, _parent);
             }
-            if (characterclasses is null) characterclasses = new CharacterClass[0];
+            if (characterclasses is null) characterclasses = EmptyArray<CharacterClass>.Instance;
             foreach (var it in characterclasses)
             {
                 it.init(utility, _parent);

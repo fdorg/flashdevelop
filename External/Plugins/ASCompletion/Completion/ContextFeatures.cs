@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Model;
+using PluginCore.Collections;
 
 namespace ASCompletion.Completion
 {
@@ -82,11 +83,11 @@ namespace ASCompletion.Completion
         public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
-        public string[] typesPreKeys = { };
-        public string[] accessKeywords = { };
-        public string[] codeKeywords = { };
-        public string[] declKeywords = { };
-        public string[] typesKeywords = { };
+        public string[] typesPreKeys = EmptyArray<string>.Instance;
+        public string[] accessKeywords = EmptyArray<string>.Instance;
+        public string[] codeKeywords = EmptyArray<string>.Instance;
+        public string[] declKeywords = EmptyArray<string>.Instance;
+        public string[] typesKeywords = EmptyArray<string>.Instance;
         public HashSet<string> Literals = new HashSet<string>();
         public string varKey;
         public string constKey;
@@ -110,14 +111,14 @@ namespace ASCompletion.Completion
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
         public MemberModel functionArguments;
-        public char[] SpecialPostfixOperators = {};
+        public char[] SpecialPostfixOperators = EmptyArray<char>.Instance;
         public string ConstructorKey;
         public bool HasGenericsShortNotation;
         public HashSet<char> ArithmeticOperators = new HashSet<char>();
-        public string[] IncrementDecrementOperators = {};
-        public string[] BitwiseOperators = { };
-        public string[] BooleanOperators = { };
-        public string[] TernaryOperators = { };
+        public string[] IncrementDecrementOperators = EmptyArray<string>.Instance;
+        public string[] BitwiseOperators = EmptyArray<string>.Instance;
+        public string[] BooleanOperators = EmptyArray<string>.Instance;
+        public string[] TernaryOperators = EmptyArray<string>.Instance;
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')

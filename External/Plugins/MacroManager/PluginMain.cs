@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -346,7 +347,7 @@ namespace MacroManager
         /// Gets and sets the entries
         /// </summary>
         [LocalizedDescription("MacroManager.Description.Entries")]
-        public string[] Entries { get; set; } = new string[0];
+        public string[] Entries { get; set; } = EmptyArray<string>.Instance;
 
         /// <summary>
         /// Gets and sets the showInToolbar

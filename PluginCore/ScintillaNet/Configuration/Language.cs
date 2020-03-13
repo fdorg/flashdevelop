@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 
 namespace ScintillaNet.Configuration
@@ -69,8 +70,8 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (usekeywords is null) usekeywords = new UseKeyword[0];
-            if (usestyles is null) usestyles = new UseStyle[0];
+            if (usekeywords is null) usekeywords = EmptyArray<UseKeyword>.Instance;
+            if (usestyles is null) usestyles = EmptyArray<UseStyle>.Instance;
             for (int j = 0; j<usekeywords.Length; j++)
             {
                 usekeywords[j].init(utility, _parent);

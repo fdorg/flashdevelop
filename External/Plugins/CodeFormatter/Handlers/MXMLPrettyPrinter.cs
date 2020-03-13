@@ -7,6 +7,7 @@ using Antlr.Runtime;
 using CodeFormatter.InfoCollector;
 using CodeFormatter.Preferences;
 using PluginCore;
+using PluginCore.Collections;
 
 #pragma warning disable 414
 
@@ -1076,7 +1077,7 @@ namespace CodeFormatter.Handlers
                     lines = new[] { "", "" };
                 //if all whitespace but no carriage returns, then we don't want to go through the loop
                 else if (!token.Text.Contains('\n') && AntlrUtilities.asTrim(token.Text).Length == 0)
-                    lines = new string[] { };
+                    lines = EmptyArray<string>.Instance;
                 foreach (var line in lines)
                 {
                     string lineData = line;

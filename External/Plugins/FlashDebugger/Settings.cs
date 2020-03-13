@@ -38,7 +38,7 @@ namespace FlashDebugger
     [Serializable]
     public class Settings
     {
-        private Folder[] m_SourcePaths = {};
+        private Folder[] m_SourcePaths = EmptyArray<Folder>.Instance;
         private bool m_SaveBreakPoints = true;
         private bool m_DisablePanelsAutoshow;
         private bool m_VerboseOutput;
