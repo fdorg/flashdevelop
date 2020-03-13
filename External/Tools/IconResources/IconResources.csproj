@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IconResources</RootNamespace>
     <AssemblyName>winres</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Win32Resource>Properties\IconResources.res</Win32Resource>
     <TargetZone>LocalIntranet</TargetZone>
