@@ -16,7 +16,7 @@
     <ApplicationIcon>Resources\FlashDevelopIcon.ico</ApplicationIcon>
     <OldToolsVersion>3.5</OldToolsVersion>
     <ApplicationManifest>Properties\Program.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>

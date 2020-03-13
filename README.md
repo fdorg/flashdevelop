@@ -18,7 +18,7 @@ Download
 Platform
 --------
 
-* Microsoft Windows .NET 4.0 application for XP, Vista, 7, 8 and 10
+* Microsoft Windows .NET 4.5 application for XP, Vista, 7, 8 and 10
 * Mac OSX/Linux compatible using virtualization software or Wine/CrossOver
 * Native (Qt) Mac OSX/Linux helper is available to improve OS integration
 
