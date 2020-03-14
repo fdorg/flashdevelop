@@ -77,11 +77,10 @@ namespace HaXeContext.Generators
 
         /// <inheritdoc />
         protected override bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
-        {
-            if (!base.CanShowAssignStatementToVariable(sci, expr)) return false;
+        { 
             // for example: return cast expr<generator>, return untyped expr<generator>
-            return (expr.Context.WordBefore != "cast" || expr.Context.WordBefore != "untyped")
-                   && sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return";
+            return sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return"
+                && base.CanShowAssignStatementToVariable(sci, expr);
         }
 
         /// <inheritdoc />
