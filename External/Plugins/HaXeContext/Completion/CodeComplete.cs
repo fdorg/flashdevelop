@@ -214,8 +214,8 @@ namespace HaXeContext.Completion
                 member.Comments = meta.Value;
                 member.Type = "Compiler Metadata";
                 list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide);
             }
-            CompletionList.Show(list, autoHide);
             return true;
         }
 
@@ -1706,7 +1706,7 @@ namespace HaXeContext.Completion
         /// <param name="position">Current cursor position</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        static bool HandleSwitchCaseCompletion(ScintillaControl sci, int position, bool autoHide)
+        bool HandleSwitchCaseCompletion(ScintillaControl sci, int position, bool autoHide)
         {
             var ctx = ASContext.Context;
             var member = ctx.CurrentMember ?? ctx.CurrentClass;

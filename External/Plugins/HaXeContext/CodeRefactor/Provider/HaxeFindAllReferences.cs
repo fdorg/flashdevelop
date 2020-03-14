@@ -9,7 +9,7 @@ namespace HaXeContext.CodeRefactor.Commands
 {
     public class HaxeFindAllReferences : FindAllReferences
     {
-        bool includeStrings;
+        bool includeStrings = false;
 
         public HaxeFindAllReferences(ASResult target, bool output, bool ignoreDeclarations) : base(target, output, ignoreDeclarations)
         {

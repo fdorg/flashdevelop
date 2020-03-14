@@ -66,12 +66,12 @@ namespace HaXeContext.Generators
         /// <returns>Member list</returns>
         static IEnumerable<MemberModel> ParseMethodParameters(string parameters)
         {
-            var result = new List<MemberModel>();
-            if (parameters is null) return result;
+            var list = new List<MemberModel>();
+            if (parameters is null) return list;
             var p = parameters.IndexOf('(');
             if (p >= 0) parameters = parameters.Substring(p + 1, parameters.IndexOf(')') - p - 1);
             parameters = parameters.Trim();
-            if (parameters.Length == 0) return result;
+            if (parameters.Length == 0) return list;
             var toClean = new[] {' ', '\t', '\n', '\r', '?'};
             var braCount = 0;
             var genCount = 0;
@@ -104,11 +104,11 @@ namespace HaXeContext.Generators
                     var param = new MemberModel {Name = name.Trim(toClean), Type = type.Trim(toClean)};
                     if (param.Name.Length == 0) continue;
                     param.Flags = FlagType.Variable | FlagType.Dynamic;
-                    result.Add(param);
+                    list.Add(param);
                 }
                 else sb.Append(c);
             }
-            return result;
+            return list;
         }
     }
 }
