@@ -63,7 +63,7 @@ namespace ASCompletion.Generators
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
                    && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
-                   && expr.IsNull() && expr.Context.ContextFunction == null && expr.Context.ContextMember == null;
+                   && expr.IsNull() && expr.Context.ContextFunction is null && expr.Context.ContextMember is null;
         }
 
         protected virtual void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
