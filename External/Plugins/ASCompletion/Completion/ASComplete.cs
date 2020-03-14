@@ -114,7 +114,7 @@ namespace ASCompletion.Completion
                  * "
                  * ".<complete>
                  */
-                else if (features.HasMultilineString && value == '.' && sci.GetStringType(position - 1) is { } c && (c == '\"' || c == '\''))
+                else if (features.HasMultilineString && value == '.' && sci.GetStringType(position - 1) is var c && (c == '\"' || c == '\''))
                     skipQuoteCheck = true;
 
                 if (!skipQuoteCheck)
@@ -4329,7 +4329,7 @@ namespace ASCompletion.Completion
             {
                 if (!sci.PositionIsOnComment(position))
                 {
-                    if (sci.CharAt(position) is { } c && (!skipWhiteSpace || c > ' ')) return (char) c;
+                    if (sci.CharAt(position) is var c && (!skipWhiteSpace || c > ' ')) return (char) c;
                 }
                 --position;
             }
@@ -4345,7 +4345,7 @@ namespace ASCompletion.Completion
             {
                 if (!sci.PositionIsOnComment(position))
                 {
-                    if (sci.CharAt(position) is { } c && (!skipWhiteSpace || c > ' ')) return (char) c;
+                    if (sci.CharAt(position) is var c && (!skipWhiteSpace || c > ' ')) return (char) c;
                 }
                 ++position;
             }

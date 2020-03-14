@@ -56,7 +56,7 @@ namespace ProjectManager.Projects.AS3
             string fileExt = Path.GetExtension(path).ToLower();
             if (export != null)
             {
-                if (export.IndexOf('(') is { } p && p > 0)
+                if (export.IndexOf('(') is var p && p > 0)
                 {
                     var fontName = export.Substring(0, p).Trim();
                     return $"{pre}Embed(source=\"{relPath}\", fontFamily=\"{fontName}\"){post}";
