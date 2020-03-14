@@ -9,9 +9,9 @@ namespace FlashDebugger.Debugger
 {
     public class WatchManager
     {
-        IProject m_Project;
-        string m_SaveFileFullPath;
-        List<string> m_WatchList = new List<string>();
+        private IProject m_Project;
+        private string m_SaveFileFullPath;
+        private List<string> m_WatchList = new List<string>();
 
         public event EventHandler<WatchExpressionArgs> ExpressionAdded;
         public event EventHandler<WatchExpressionArgs> ExpressionRemoved;
@@ -35,7 +35,7 @@ namespace FlashDebugger.Debugger
             }
         }
 
-        string GetWatchFile(string path)
+        private string GetWatchFile(string path)
         {
             string cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Watch");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);

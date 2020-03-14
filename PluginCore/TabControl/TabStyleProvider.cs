@@ -637,7 +637,7 @@ namespace System.Windows.Forms
 		
 		#region Background brushes
 
-        Blend GetBackgroundBlend(){
+		private Blend GetBackgroundBlend(){
 			float[] relativeIntensities = new[]{0f, 0.7f, 1f};
 			float[] relativePositions = new[]{0f, 0.6f, 1f};
 

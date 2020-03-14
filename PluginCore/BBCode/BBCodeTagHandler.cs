@@ -32,8 +32,8 @@ namespace PluginCore.BBCode
 
         protected Dictionary<string, DHandler> _handlers;
 
-        BBCodeTagMatch _tm;
-        string _tmName;
+        private BBCodeTagMatch _tm;
+        private string _tmName;
 
 
         public bool handleTag(IPairTagMatch tagMatch)

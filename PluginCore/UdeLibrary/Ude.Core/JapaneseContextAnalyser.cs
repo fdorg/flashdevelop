@@ -241,7 +241,7 @@ namespace Ude.Core
     
     public class SJISContextAnalyser : JapaneseContextAnalyser
     {
-        const byte HIRAGANA_FIRST_BYTE = 0x82;
+        private const byte HIRAGANA_FIRST_BYTE = 0x82;
 
         protected override int GetOrder(byte[] buf, int offset, out int charLen)
         {
@@ -276,7 +276,7 @@ namespace Ude.Core
     
     public class EUCJPContextAnalyser : JapaneseContextAnalyser
     {
-        const byte HIRAGANA_FIRST_BYTE = 0xA4;
+        private const byte HIRAGANA_FIRST_BYTE = 0xA4;
         
         protected override int GetOrder(byte[] buf, int offset, out int charLen)
         {

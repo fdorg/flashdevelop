@@ -46,7 +46,7 @@ namespace Ude.Core
         //first 1024 sequences:3.0618%
         //rest  sequences:     0.2992%
         //negative sequences:  0.0020% 
-        static readonly byte[] BULGARIAN_LANG_MODEL = {
+        private static readonly byte[] BULGARIAN_LANG_MODEL = {
             0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,3,3,3,3,3,3,3,3,2,3,3,3,3,3,
             3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,3,3,3,2,2,3,2,2,1,2,2,
             3,1,3,3,2,3,3,3,3,3,3,3,3,3,3,3,3,0,3,3,3,3,3,3,3,3,3,3,0,3,0,1,
@@ -193,7 +193,7 @@ namespace Ude.Core
         // Character Mapping Table:
         // this table is modified base on win1251BulgarianCharToOrderMap, so 
         // only number <64 is sure valid
-        static readonly byte[] LATIN5_CHAR_TO_ORDER_MAP = {
+        private static readonly byte[] LATIN5_CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -219,7 +219,7 @@ namespace Ude.Core
     
     public class Win1251BulgarianModel : BulgarianModel
     {
-        static readonly byte[] WIN1251__CHAR_TO_ORDER_MAP = {
+        private static readonly byte[] WIN1251__CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20

@@ -13,11 +13,11 @@ namespace PluginCore.Controls
         const string WarningIcon = "196";
         const string QuestionIcon = "222";
 
-        ToolTip tip;
-        Label label;
-        InertButton buttonClose;
+        private ToolTip tip;
+        private Label label;
+        private InertButton buttonClose;
         InertButton[] optionButtons;
-        string currentMessage;
+        private string currentMessage;
 
         public MessageBar() : this(WarningIcon) //warning
         {
@@ -191,8 +191,8 @@ namespace PluginCore.Controls
         #endregion
         
         #region Methods And Event Handlers
-
-        void InitializeGraphics(string icon)
+        
+        private void InitializeGraphics(string icon)
         {
             label.Image = PluginBase.MainForm.FindImage16(icon);
             buttonClose.ImageEnabled = ResourceHelper.LoadBitmap("MessageBarClose.bmp");

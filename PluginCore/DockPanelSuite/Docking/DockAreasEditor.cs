@@ -10,15 +10,15 @@ namespace WeifenLuo.WinFormsUI.Docking
 {   
     internal class DockAreasEditor : UITypeEditor
     {
-        class DockAreasEditorControl : System.Windows.Forms.UserControl
+        private class DockAreasEditorControl : System.Windows.Forms.UserControl
         {
-            readonly CheckBox checkBoxFloat;
-            readonly CheckBox checkBoxDockLeft;
-            readonly CheckBox checkBoxDockRight;
-            readonly CheckBox checkBoxDockTop;
-            readonly CheckBox checkBoxDockBottom;
-            readonly CheckBox checkBoxDockFill;
-            DockAreas m_oldDockAreas;
+            private readonly CheckBox checkBoxFloat;
+            private readonly CheckBox checkBoxDockLeft;
+            private readonly CheckBox checkBoxDockRight;
+            private readonly CheckBox checkBoxDockTop;
+            private readonly CheckBox checkBoxDockBottom;
+            private readonly CheckBox checkBoxDockFill;
+            private DockAreas m_oldDockAreas;
 
             public DockAreas DockAreas
             {
@@ -108,6 +108,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     checkBoxDockRight.Checked = true;
                 if ((dockAreas & DockAreas.DockTop) != 0)
                     checkBoxDockTop.Checked = true;
+                if ((dockAreas & DockAreas.DockTop) != 0)
+                    checkBoxDockTop.Checked = true;
                 if ((dockAreas & DockAreas.DockBottom) != 0)
                     checkBoxDockBottom.Checked = true;
                 if ((dockAreas & DockAreas.Document) != 0)
@@ -117,7 +119,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        DockAreasEditor.DockAreasEditorControl m_ui = null;
+        private DockAreasEditor.DockAreasEditorControl m_ui = null;
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {

@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace FlashDebugger
 {
-    internal class PanelsHelper
+    class PanelsHelper
     {
         public static string localsGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
         public static DockContent localsPanel;

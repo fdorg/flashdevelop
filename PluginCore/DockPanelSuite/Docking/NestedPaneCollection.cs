@@ -32,7 +32,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             oldNestedPanes?.CheckFloatWindowDispose();
         }
 
-        void CheckFloatWindowDispose()
+        private void CheckFloatWindowDispose()
         {
             if (Count != 0 || Container.DockState != DockState.Float) return;
 
@@ -50,7 +50,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             CheckFloatWindowDispose();
         }
 
-        void InternalRemove(DockPane pane)
+        private void InternalRemove(DockPane pane)
         {
             if (!Contains(pane))
                 return;

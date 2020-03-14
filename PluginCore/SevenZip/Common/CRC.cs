@@ -2,7 +2,7 @@
 
 namespace SevenZip
 {
-    internal class CRC
+    class CRC
     {
         public static readonly uint[] Table;
 

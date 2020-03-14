@@ -44,20 +44,20 @@ namespace Ude.Core
     // latin-1 and iso8859-2
     public class Latin1Prober : CharsetProber
     {
-        const int FREQ_CAT_NUM = 4;
+        private const int FREQ_CAT_NUM = 4;
 
-        const int UDF = 0;       // undefined
-        const int OTH = 1;       // other
-        const int ASC = 2;       // ascii capital letter
-        const int ASS = 3;       // ascii small letter
-        const int ACV = 4;       // accent capital vowel
-        const int ACO = 5;       // accent capital other
-        const int ASV = 6;       // accent small vowel
-        const int ASO = 7;       // accent small other
-
-        const int CLASS_NUM = 8; // total classes
-
-        static readonly byte[] Latin1_CharToClass = {
+        private const int UDF = 0;       // undefined
+        private const int OTH = 1;       // other
+        private const int ASC = 2;       // ascii capital letter
+        private const int ASS = 3;       // ascii small letter
+        private const int ACV = 4;       // accent capital vowel
+        private const int ACO = 5;       // accent capital other
+        private const int ASV = 6;       // accent small vowel
+        private const int ASO = 7;       // accent small other
+        
+        private const int CLASS_NUM = 8; // total classes
+        
+        private static readonly byte[] Latin1_CharToClass = {
           OTH, OTH, OTH, OTH, OTH, OTH, OTH, OTH,   // 00 - 07
           OTH, OTH, OTH, OTH, OTH, OTH, OTH, OTH,   // 08 - 0F
           OTH, OTH, OTH, OTH, OTH, OTH, OTH, OTH,   // 10 - 17
@@ -97,7 +97,7 @@ namespace Ude.Core
            2 : normal 
            3 : very likely
         */
-        static readonly byte[] Latin1ClassModel = {
+        private static readonly byte[] Latin1ClassModel = {
             /*      UDF OTH ASC ASS ACV ACO ASV ASO  */
             /*UDF*/  0,  0,  0,  0,  0,  0,  0,  0,
             /*OTH*/  0,  3,  3,  3,  3,  3,  3,  3,
@@ -109,8 +109,8 @@ namespace Ude.Core
             /*ASO*/  0,  3,  1,  3,  1,  1,  3,  3,
         };
 
-        byte lastCharClass;
-        readonly int[] freqCounter = new int[FREQ_CAT_NUM];
+        private byte lastCharClass;
+        private readonly int[] freqCounter = new int[FREQ_CAT_NUM];
         
         public Latin1Prober()
         {

@@ -57,7 +57,7 @@ namespace PluginCore.Helpers
             return config;
         }
 
-        static string ExpandArguments(string value, IDictionary<string, string> config, int depth)
+        private static string ExpandArguments(string value, IDictionary<string, string> config, int depth)
         {
             while (value.IndexOf("${", StringComparison.Ordinal) is { } start && start >= 0)
             {
@@ -102,7 +102,7 @@ namespace PluginCore.Helpers
 
         // Duplicated from 'PluginCore.PathHelper.ResolvePath()'
         // because JvmConfigHelper is used in external tool 'FDBuild'
-        static string ResolvePath(string path, string relativeTo)
+        private static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
             bool isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
@@ -120,7 +120,7 @@ namespace PluginCore.Helpers
             return null;
         }
 
-        static string AppDir => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        private static string AppDir => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
     }
 
 }

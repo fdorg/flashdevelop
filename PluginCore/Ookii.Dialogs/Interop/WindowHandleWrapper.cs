@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace Ookii.Dialogs.Interop
 {
-    internal class WindowHandleWrapper : IWin32Window
+    class WindowHandleWrapper : IWin32Window
     {
-        readonly IntPtr _handle;
+        private readonly IntPtr _handle;
 
         public WindowHandleWrapper(IntPtr handle)
         {

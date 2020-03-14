@@ -9,11 +9,11 @@ namespace System.Windows.Forms
 	[System.ComponentModel.ToolboxItem(false)]
 	public class TabStyleFlatProvider : TabStyleProvider, IEventHandler
 	{
-        Color TabBackColor { get; set; } = SystemColors.Control;
-        Color TabBackColorHot { get; set; } = SystemColors.Highlight;
-        Color TabBackColorActive { get; set; } = SystemColors.Highlight;
-        Color TabBackColorDisabled { get; set; } = SystemColors.Control;
-        Color TabActiveSeparator { get; set; } = SystemColors.Window;
+        private Color TabBackColor { get; set; } = SystemColors.Control;
+        private Color TabBackColorHot { get; set; } = SystemColors.Highlight;
+        private Color TabBackColorActive { get; set; } = SystemColors.Highlight;
+        private Color TabBackColorDisabled { get; set; } = SystemColors.Control;
+        private Color TabActiveSeparator { get; set; } = SystemColors.Window;
 
         public TabStyleFlatProvider(CustomTabControl tabControl) : base(tabControl)
         {
@@ -26,7 +26,7 @@ namespace System.Windows.Forms
             this.RefreshColors();
         }
 
-        Color GetThemeColor(string id)
+        private Color GetThemeColor(string id)
         {
             return PluginBase.MainForm.GetThemeColor(id);
         }

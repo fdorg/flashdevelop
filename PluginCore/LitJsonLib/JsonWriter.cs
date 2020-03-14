@@ -37,19 +37,18 @@ namespace LitJson
     public class JsonWriter
     {
         #region Fields
+        private static readonly NumberFormatInfo number_format;
 
-        static readonly NumberFormatInfo number_format;
-
-        WriterContext        context;
-        Stack<WriterContext> ctx_stack;
-        bool                 has_reached_end;
-        char[]               hex_seq;
-        int                  indentation;
-        int                  indent_value;
-        readonly StringBuilder        inst_string_builder;
-        bool                 pretty_print;
-        bool                 validate;
-        readonly TextWriter           writer;
+        private WriterContext        context;
+        private Stack<WriterContext> ctx_stack;
+        private bool                 has_reached_end;
+        private char[]               hex_seq;
+        private int                  indentation;
+        private int                  indent_value;
+        private readonly StringBuilder        inst_string_builder;
+        private bool                 pretty_print;
+        private bool                 validate;
+        private readonly TextWriter           writer;
         #endregion
 
 
@@ -108,8 +107,7 @@ namespace LitJson
 
 
         #region Private Methods
-
-        void DoValidation (Condition cond)
+        private void DoValidation (Condition cond)
         {
             if (! context.ExpectingValue)
                 context.Count++;
@@ -156,7 +154,7 @@ namespace LitJson
             }
         }
 
-        void Init ()
+        private void Init ()
         {
             has_reached_end = false;
             hex_seq = new char[4];
@@ -170,7 +168,7 @@ namespace LitJson
             ctx_stack.Push (context);
         }
 
-        static void IntToHex (int n, char[] hex)
+        private static void IntToHex (int n, char[] hex)
         {
             int num;
 
@@ -186,14 +184,14 @@ namespace LitJson
             }
         }
 
-        void Indent ()
+        private void Indent ()
         {
             if (pretty_print)
                 indentation += indent_value;
         }
 
 
-        void Put (string str)
+        private void Put (string str)
         {
             if (pretty_print && ! context.ExpectingValue)
                 for (int i = 0; i < indentation; i++)
@@ -202,12 +200,12 @@ namespace LitJson
             writer.Write (str);
         }
 
-        void PutNewline ()
+        private void PutNewline ()
         {
             PutNewline (true);
         }
 
-        void PutNewline (bool add_comma)
+        private void PutNewline (bool add_comma)
         {
             if (add_comma && ! context.ExpectingValue &&
                 context.Count > 1)
@@ -217,7 +215,7 @@ namespace LitJson
                 writer.Write ('\n');
         }
 
-        void PutString (string str)
+        private void PutString (string str)
         {
             Put (string.Empty);
 
@@ -267,7 +265,7 @@ namespace LitJson
             writer.Write ('"');
         }
 
-        void Unindent ()
+        private void Unindent ()
         {
             if (pretty_print)
                 indentation -= indent_value;

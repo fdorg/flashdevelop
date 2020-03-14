@@ -183,7 +183,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Write an unsigned short in little endian byte order.
         /// </summary>
-        void WriteLeShort(int value)
+        private void WriteLeShort(int value)
         {
             unchecked {
                 baseOutputStream_.WriteByte((byte)(value & 0xff));
@@ -194,7 +194,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Write an int in little endian byte order.
         /// </summary>
-        void WriteLeInt(int value)
+        private void WriteLeInt(int value)
         {
             unchecked {
                 WriteLeShort(value);
@@ -205,7 +205,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Write an int in little endian byte order.
         /// </summary>
-        void WriteLeLong(long value)
+        private void WriteLeLong(long value)
         {
             unchecked {
                 WriteLeInt((int)value);
@@ -576,7 +576,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         }
 
 #if !NET_1_1 && !NETCF_2_0
-        static void AddExtraDataAES(ZipEntry entry, ZipExtraData extraData) {
+        private static void AddExtraDataAES(ZipEntry entry, ZipExtraData extraData) {
 
             // Vendor Version: AE-1 IS 1. AE-2 is 2. With AE-2 no CRC is required and 0 is stored.
             const int VENDOR_VERSION = 2;
@@ -594,7 +594,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         // Replaces WriteEncryptionHeader for AES
         //
-        void WriteAESHeader(ZipEntry entry) {
+        private void WriteAESHeader(ZipEntry entry) {
             byte[] salt;
             byte[] pwdVerifier;
             InitializeAESPassword(entry, Password, out salt, out pwdVerifier);

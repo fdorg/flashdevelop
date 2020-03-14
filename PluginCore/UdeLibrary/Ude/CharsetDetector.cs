@@ -70,9 +70,9 @@ namespace Ude
     /// </summary>                
     public class CharsetDetector : UniversalDetector, ICharsetDetector
     {
-        string charset;
-
-        float confidence;
+        private string charset;
+        
+        private float confidence;
         
         //public event DetectorFinished Finished;
         

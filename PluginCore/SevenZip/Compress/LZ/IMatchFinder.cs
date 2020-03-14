@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SevenZip.Compression.LZ
 {
-    internal interface IInWindowStream
+    interface IInWindowStream
     {
         void SetStream(Stream inStream);
         void Init();
@@ -14,7 +14,7 @@ namespace SevenZip.Compression.LZ
         uint GetNumAvailableBytes();
     }
 
-    internal interface IMatchFinder : IInWindowStream
+    interface IMatchFinder : IInWindowStream
     {
         void Create(uint historySize, uint keepAddBufferBefore,
                 uint matchMaxLen, uint keepAddBufferAfter);

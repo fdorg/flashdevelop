@@ -148,8 +148,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// Backend constant
         /// </summary>
         public const int OvershootBytes = 20;
-
-        BZip2Constants()
+        
+        private BZip2Constants()
         {
         }
     }

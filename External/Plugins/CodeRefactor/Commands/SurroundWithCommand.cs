@@ -45,7 +45,7 @@ namespace CodeRefactor.Commands
                 int pos = snippet.IndexOfOrdinal("{0}");
                 if (pos > -1)
                 {
-                    while (pos > 0)
+                    while (pos >= 0)
                     {
                         string c = snippet.Substring(--pos, 1);
                         if (c.Equals("\t"))

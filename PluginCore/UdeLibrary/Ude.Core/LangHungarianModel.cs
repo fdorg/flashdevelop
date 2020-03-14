@@ -45,7 +45,7 @@ namespace Ude.Core
         //first 1024 sequences:5.2623%
         //rest  sequences:     0.8894%
         //negative sequences:  0.0009% 
-        static readonly byte[] HUNGARIAN_LANG_MODEL = {
+        private static readonly byte[] HUNGARIAN_LANG_MODEL = {
             0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
             3,3,3,3,3,3,3,3,3,3,2,3,3,3,3,3,3,3,3,2,2,3,3,1,1,2,2,2,2,2,1,2,
             3,2,2,3,3,3,3,3,2,3,3,3,3,3,3,1,2,3,3,3,3,2,3,3,1,1,3,3,0,1,1,1,
@@ -185,7 +185,7 @@ namespace Ude.Core
     
     public class Latin2HungarianModel : HungarianModel
     {
-        static readonly byte[] LATIN2_CHAR_TO_ORDER_MAP = {
+        private static readonly byte[] LATIN2_CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -211,7 +211,7 @@ namespace Ude.Core
     
     public class Win1250HungarianModel : HungarianModel
     {
-        static readonly byte[] WIN1250_CHAR_TO_ORDER_MAP = {
+        private static readonly byte[] WIN1250_CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20

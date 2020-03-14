@@ -5,7 +5,7 @@ namespace PluginCore.Bridge
 {
     public class BridgeManager
     {
-        static BridgeClient remoteClient;
+        private static BridgeClient remoteClient;
 
         #region Properties
 

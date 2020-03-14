@@ -6,7 +6,7 @@ namespace WeifenLuo.WinFormsUI.Docking
     [AttributeUsage(AttributeTargets.All)]
     internal sealed class LocalizedDescriptionAttribute : DescriptionAttribute
     {
-        bool m_initialized = false;
+        private bool m_initialized = false;
 
         public LocalizedDescriptionAttribute(string key) : base(key)
         {

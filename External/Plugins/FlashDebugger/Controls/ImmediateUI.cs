@@ -11,8 +11,8 @@ namespace FlashDebugger.Controls
 {
     public partial class ImmediateUI : DockPanelControl
     {
-        readonly List<string> history;
-        int historyPos;
+        private readonly List<string> history;
+        private int historyPos;
 
         public ImmediateUI()
         {
@@ -23,7 +23,7 @@ namespace FlashDebugger.Controls
             ScrollBarEx.Attach(textBox);
         }
 
-        void textBox_KeyDown(object sender, KeyEventArgs e)
+        private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Back && textBox.GetFirstCharIndexOfCurrentLine() == textBox.SelectionStart) e.SuppressKeyPress = true;
             if (e.KeyCode == Keys.Up && historyPos > 0)
@@ -113,7 +113,7 @@ namespace FlashDebugger.Controls
             }
         }
 
-        string processSwfs()
+        private string processSwfs()
         {
                 StringBuilder ret = new StringBuilder();
 
@@ -127,7 +127,7 @@ namespace FlashDebugger.Controls
                 return ret.ToString();
         }
 
-        string processExpr(string expr)
+        private string processExpr(string expr)
         {
             IASTBuilder builder = new ASTBuilder(true);
             ValueExp exp = builder.parse(new java.io.StringReader(expr));
@@ -138,7 +138,7 @@ namespace FlashDebugger.Controls
             return obj.toString();
         }
 
-        string processGlobal(string expr)
+        private string processGlobal(string expr)
         {
             var val = PluginMain.debugManager.FlashInterface.Session.getGlobal(expr);
             //var val = PluginMain.debugManager.FlashInterface.Session.getValue(Convert.ToInt64(expr));
@@ -146,24 +146,24 @@ namespace FlashDebugger.Controls
             return ctx.FormatValue(val);
         }
 
-        void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Clear();
             history.Clear();
             historyPos = 0;
         }
 
-        void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Cut();
         }
 
-        void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Copy();
         }
 
-        void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Paste();
         }

@@ -78,7 +78,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         #endregion
     }
 
-    internal class EntryPatchData
+    class EntryPatchData
     {
         public long SizePatchOffset
         {

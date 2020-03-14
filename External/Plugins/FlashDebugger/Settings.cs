@@ -13,7 +13,7 @@ namespace FlashDebugger
     [DefaultProperty("Path")]
     public class Folder
     {
-        string path;
+        private string path;
 
         public Folder() : this(string.Empty)
         {
@@ -37,19 +37,19 @@ namespace FlashDebugger
     [Serializable]
     public class Settings
     {
-        Folder[] m_SourcePaths = {};
-        bool m_SaveBreakPoints = true;
-        bool m_DisablePanelsAutoshow;
-        bool m_VerboseOutput;
-        bool m_StartDebuggerOnTestMovie = true;
-        bool m_BreakOnThrow;
-        string  m_SwitchToLayout;
-        bool m_CombineInherited;
-        bool m_HideStaticMembers;
-        bool m_HideFullClassPaths;
-        bool m_HideClassIds;
-        int m_CopyTreeMaxRecursion = 10;
-        int m_CopyTreeMaxChars = 1000000;
+        private Folder[] m_SourcePaths = {};
+        private bool m_SaveBreakPoints = true;
+        private bool m_DisablePanelsAutoshow;
+        private bool m_VerboseOutput;
+        private bool m_StartDebuggerOnTestMovie = true;
+        private bool m_BreakOnThrow;
+        private string  m_SwitchToLayout;
+        private bool m_CombineInherited;
+        private bool m_HideStaticMembers;
+        private bool m_HideFullClassPaths;
+        private bool m_HideClassIds;
+        private int m_CopyTreeMaxRecursion = 10;
+        private int m_CopyTreeMaxChars = 1000000;
 
         [field: NonSerialized]
         public event EventHandler BreakOnThrowChanged;
@@ -245,7 +245,7 @@ namespace FlashDebugger
         }
 
         [OnDeserialized]
-        void OnDeserialized(StreamingContext context)
+        private void OnDeserialized(StreamingContext context)
         {
             if (m_CopyTreeMaxChars == 0)
                 m_CopyTreeMaxChars = 1000000;

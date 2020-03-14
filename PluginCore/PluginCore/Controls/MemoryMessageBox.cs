@@ -40,7 +40,7 @@ namespace PluginCore.PluginCore.Controls
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        void ApplyLocalizedTexts()
+        private void ApplyLocalizedTexts()
         {
             yesButton.Text = TextHelper.GetString("Label.Yes");
             yesToAllButton.Text = TextHelper.GetString("Label.YesToAll");
@@ -86,35 +86,35 @@ namespace PluginCore.PluginCore.Controls
             base.OnShown(e);
         }
 
-        void OnYesButtonClick(object sender, EventArgs e)
+        private void OnYesButtonClick(object sender, EventArgs e)
         {
             Result = MemoryMessageBoxResult.Yes;
             lastResult = MemoryMessageBoxResult.Yes;
             DialogResult = DialogResult.Yes;
         }
 
-        void OnYesToAllButtonClick(object sender, EventArgs e)
+        private void OnYesToAllButtonClick(object sender, EventArgs e)
         {
             Result = MemoryMessageBoxResult.Yes;
             lastResult = MemoryMessageBoxResult.YesToAll;
             DialogResult = DialogResult.Yes;
         }
 
-        void OnNoButtonClick(object sender, EventArgs e)
+        private void OnNoButtonClick(object sender, EventArgs e)
         {
             Result = MemoryMessageBoxResult.No;
             lastResult = MemoryMessageBoxResult.No;
             DialogResult = DialogResult.No;
         }
 
-        void OnNoToAllButtonClick(object sender, EventArgs e)
+        private void OnNoToAllButtonClick(object sender, EventArgs e)
         {
             Result = MemoryMessageBoxResult.No;
             lastResult = MemoryMessageBoxResult.NoToAll;
             DialogResult = DialogResult.No;
         }
 
-        void OnCancelButtonClick(object sender, EventArgs e)
+        private void OnCancelButtonClick(object sender, EventArgs e)
         {
             Result = MemoryMessageBoxResult.Cancel;
             lastResult = MemoryMessageBoxResult.Cancel;

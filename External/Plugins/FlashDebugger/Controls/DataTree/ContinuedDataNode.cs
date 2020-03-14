@@ -1,6 +1,6 @@
 namespace FlashDebugger.Controls.DataTree
 {
-    internal class ContinuedDataNode : ScalarNode
+    class ContinuedDataNode : ScalarNode
     {
         public ContinuedDataNode()
             : base("...", "")

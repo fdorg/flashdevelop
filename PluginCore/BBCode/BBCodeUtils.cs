@@ -176,10 +176,10 @@ namespace PluginCore.BBCode
         }
 
 
-        static BottomUpParser bbCodeParser = null;
-        static RichTextBox tempRTB = null;
+        private static BottomUpParser bbCodeParser = null;
+        private static RichTextBox tempRTB = null;
 
-        static void _init()
+        private static void _init()
         {
             if (bbCodeParser is null)
             {
@@ -221,7 +221,7 @@ namespace PluginCore.BBCode
         }
 
 
-        static string _replaceEnclosures(string input)
+        private static string _replaceEnclosures(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return input;

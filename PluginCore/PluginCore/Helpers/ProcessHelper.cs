@@ -67,7 +67,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a basic process
         /// </summary>
-        static void Start(string path)
+        private static void Start(string path)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with arguments
         /// </summary>
-        static void Start(string path, string arguments)
+        private static void Start(string path, string arguments)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with start info
         /// </summary>
-        static void Start(ProcessStartInfo psi)
+        private static void Start(ProcessStartInfo psi)
         {
             try
             {
@@ -112,11 +112,9 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Event delegates of the class
         /// </summary>
-        delegate void StartDelegate1(string path);
-
-        delegate void StartDelegate2(string path, string arguments);
-
-        delegate void StartDelegate3(ProcessStartInfo psi);
+        private delegate void StartDelegate1(string path);
+        private delegate void StartDelegate2(string path, string arguments);
+        private delegate void StartDelegate3(ProcessStartInfo psi);
 
     }
 

@@ -10,22 +10,22 @@ namespace WeifenLuo.WinFormsUI.Docking
             Init();
         }
 
-        void Init()
+        private void Init()
         {
             SetValues(Rectangle.Empty, null, DockStyle.None, -1);
             SaveOldValues();
         }
 
-        Rectangle m_oldFloatWindowBounds;
+        private Rectangle m_oldFloatWindowBounds;
         protected Rectangle OldFloatWindowBounds => m_oldFloatWindowBounds;
 
-        Control m_oldDockTo;
+        private Control m_oldDockTo;
         protected Control OldDockTo => m_oldDockTo;
 
-        DockStyle m_oldDock;
+        private DockStyle m_oldDock;
         protected DockStyle OldDock => m_oldDock;
 
-        int m_oldContentIndex;
+        private int m_oldContentIndex;
         protected int OldContentIndex => m_oldContentIndex;
 
         protected bool SameAsOldValue =>
@@ -34,28 +34,28 @@ namespace WeifenLuo.WinFormsUI.Docking
             Dock == OldDock &&
             ContentIndex == OldContentIndex;
 
-        Rectangle m_floatWindowBounds;
+        private Rectangle m_floatWindowBounds;
         public Rectangle FloatWindowBounds => m_floatWindowBounds;
 
-        Control m_dockTo;
+        private Control m_dockTo;
         public Control DockTo => m_dockTo;
 
-        DockStyle m_dock;
+        private DockStyle m_dock;
         public DockStyle Dock => m_dock;
 
-        int m_contentIndex;
+        private int m_contentIndex;
         public int ContentIndex => m_contentIndex;
 
         public bool FlagFullEdge => m_contentIndex != 0;
 
-        bool m_flagTestDrop = false;
+        private bool m_flagTestDrop = false;
         public bool FlagTestDrop
         {
             get => m_flagTestDrop;
             set => m_flagTestDrop = value;
         }
 
-        void SaveOldValues()
+        private void SaveOldValues()
         {
             m_oldDockTo = m_dockTo;
             m_oldDock = m_dock;
@@ -67,7 +67,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected abstract void OnClose();
 
-        void SetValues(Rectangle floatWindowBounds, Control dockTo, DockStyle dock, int contentIndex)
+        private void SetValues(Rectangle floatWindowBounds, Control dockTo, DockStyle dock, int contentIndex)
         {
             m_floatWindowBounds = floatWindowBounds;
             m_dockTo = dockTo;
@@ -76,7 +76,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             FlagTestDrop = true;
         }
 
-        void TestChange()
+        private void TestChange()
         {
             if (m_floatWindowBounds != m_oldFloatWindowBounds ||
                 m_dockTo != m_oldDockTo ||

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace PluginCore.Helpers
 {
-    internal class ResourceHelper
+    class ResourceHelper
     {
         /// <summary>
         /// Loads a bitmap from the internal resources

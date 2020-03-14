@@ -15,7 +15,7 @@ namespace System.Windows.Forms
 	//[SecurityPermission(SecurityAction.Assert, Flags=SecurityPermissionFlag.UnmanagedCode)]
 	internal sealed class NativeMethods
 	{
-        NativeMethods(){}
+		private NativeMethods(){}
 		
 #region Windows Constants
 

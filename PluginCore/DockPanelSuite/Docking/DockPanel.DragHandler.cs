@@ -12,7 +12,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         ///      and message filtering.
         ///   2. Override the OnDragging and OnEndDrag methods.
         /// </summary>
-        abstract class DragHandlerBase : NativeWindow, IMessageFilter
+        private abstract class DragHandlerBase : NativeWindow, IMessageFilter
         {
             protected DragHandlerBase()
             {
@@ -23,7 +23,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 get;
             }
 
-            Point m_startMousePosition = Point.Empty;
+            private Point m_startMousePosition = Point.Empty;
             protected Point StartMousePosition
             {
                 get => m_startMousePosition;
@@ -55,7 +55,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             protected abstract void OnEndDrag(bool abort);
 
-            void EndDrag(bool abort)
+            private void EndDrag(bool abort)
             {
                 ReleaseHandle();
                 Application.RemoveMessageFilter(this);
@@ -92,9 +92,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        abstract class DragHandler : DragHandlerBase
+        private abstract class DragHandler : DragHandlerBase
         {
-            readonly DockPanel m_dockPanel;
+            private readonly DockPanel m_dockPanel;
 
             protected DragHandler(DockPanel dockPanel)
             {
@@ -103,7 +103,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public DockPanel DockPanel => m_dockPanel;
 
-            IDragSource m_dragSource;
+            private IDragSource m_dragSource;
             protected IDragSource DragSource
             {
                 get => m_dragSource;

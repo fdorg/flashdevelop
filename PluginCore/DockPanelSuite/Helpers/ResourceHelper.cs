@@ -4,9 +4,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     internal static class ResourceHelper
     {
-        static ResourceManager _resourceManager = null;
+        private static ResourceManager _resourceManager = null;
 
-        static ResourceManager ResourceManager
+        private static ResourceManager ResourceManager
         {
             get
             {

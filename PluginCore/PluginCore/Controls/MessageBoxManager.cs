@@ -8,61 +8,60 @@ namespace System.Windows.Forms
 {
     public class MessageBoxManager
     {
-        delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
 
-        delegate bool EnumChildProc(IntPtr hWnd, IntPtr lParam);
+        private const int WH_CALLWNDPROCRET = 12;
+        private const int WM_DESTROY = 0x0002;
+        private const int WM_INITDIALOG = 0x0110;
+        private const int WM_TIMER = 0x0113;
+        private const int WM_USER = 0x400;
+        private const int DM_GETDEFID = WM_USER + 0;
 
-        const int WH_CALLWNDPROCRET = 12;
-        const int WM_DESTROY = 0x0002;
-        const int WM_INITDIALOG = 0x0110;
-        const int WM_TIMER = 0x0113;
-        const int WM_USER = 0x400;
-        const int DM_GETDEFID = WM_USER + 0;
+        private const int MBOK = 1;
+        private const int MBCancel = 2;
+        private const int MBAbort = 3;
+        private const int MBRetry = 4;
+        private const int MBIgnore = 5;
+        private const int MBYes = 6;
+        private const int MBNo = 7;
 
-        const int MBOK = 1;
-        const int MBCancel = 2;
-        const int MBAbort = 3;
-        const int MBRetry = 4;
-        const int MBIgnore = 5;
-        const int MBYes = 6;
-        const int MBNo = 7;
-
-
-        [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
-        static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
+        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
-        static extern int UnhookWindowsHookEx(IntPtr idHook);
+        private static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
 
         [DllImport("user32.dll")]
-        static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, IntPtr wParam, IntPtr lParam);
+        private static extern int UnhookWindowsHookEx(IntPtr idHook);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowTextLengthW", CharSet = CharSet.Unicode)]
-        static extern int GetWindowTextLength(IntPtr hWnd);
+        private static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowTextW", CharSet = CharSet.Unicode)]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int maxLength);
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int maxLength);
 
         [DllImport("user32.dll")]
-        static extern int EndDialog(IntPtr hDlg, IntPtr nResult);
+        private static extern int EndDialog(IntPtr hDlg, IntPtr nResult);
 
         [DllImport("user32.dll")]
-        static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
+        private static extern bool EnumChildWindows(IntPtr hWndParent, EnumChildProc lpEnumFunc, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "GetClassNameW", CharSet = CharSet.Unicode)]
-        static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("user32.dll")]
-        static extern int GetDlgCtrlID(IntPtr hwndCtl);
+        private static extern int GetDlgCtrlID(IntPtr hwndCtl);
 
         [DllImport("user32.dll")]
-        static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+        private static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowTextW", CharSet = CharSet.Unicode)]
-        static extern bool SetWindowText(IntPtr hWnd, string lpString);
+        private static extern bool SetWindowText(IntPtr hWnd, string lpString);
 
 
         [StructLayout(LayoutKind.Sequential)]
@@ -75,10 +74,12 @@ namespace System.Windows.Forms
             public IntPtr hwnd;
         };
 
-        static readonly HookProc hookProc;
-        static readonly EnumChildProc enumProc;
-        [ThreadStatic] static IntPtr hHook;
-        [ThreadStatic] static int nButton;
+        private static readonly HookProc hookProc;
+        private static readonly EnumChildProc enumProc;
+        [ThreadStatic]
+        private static IntPtr hHook;
+        [ThreadStatic]
+        private static int nButton;
 
         /// <summary>
         /// OK text
@@ -145,7 +146,7 @@ namespace System.Windows.Forms
             }
         }
 
-        static IntPtr MessageBoxHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        private static IntPtr MessageBoxHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode < 0)
                 return CallNextHookEx(hHook, nCode, wParam, lParam);
@@ -173,7 +174,7 @@ namespace System.Windows.Forms
             return CallNextHookEx(hook, nCode, wParam, lParam);
         }
 
-        static bool MessageBoxEnumProc(IntPtr hWnd, IntPtr lParam)
+        private static bool MessageBoxEnumProc(IntPtr hWnd, IntPtr lParam)
         {
             StringBuilder className = new StringBuilder(10);
             GetClassName(hWnd, className, className.Capacity);
