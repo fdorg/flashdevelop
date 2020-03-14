@@ -283,7 +283,7 @@ namespace ProjectManager.Actions
             var parts = (";;" + preferredSDK).Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries); // name;version
             
             // match name
-            var name = parts[parts.Length - 2];
+            var name = parts[parts.Length - 3];
             if (name.Length != 0)
                 foreach (InstalledSDK sdk in sdks)
                     if (sdk.IsValid && ((name.StartsWithOrdinal("Haxe Shim ") && sdk.IsHaxeShim) || sdk.Name == name))
