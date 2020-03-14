@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -131,7 +132,7 @@ namespace AS2Context
             {
                 settingObject.UserClasspath = settingObject.MMClassPath != null
                                             ? new[] { settingObject.MMClassPath }
-                                            : new string[] {};
+                                            : Array.Empty<string>();
             }
         }
 

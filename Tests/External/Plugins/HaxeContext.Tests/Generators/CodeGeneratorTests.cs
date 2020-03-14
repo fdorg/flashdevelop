@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -3215,7 +3216,7 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return new TestCaseData("BeforeGenerateEventHandler", EmptyArray<string>.Instance)
+                yield return new TestCaseData("BeforeGenerateEventHandler", Array.Empty<string>())
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData("BeforeGenerateEventHandler", new[] { "Event.ADDED", "Event.REMOVED" })
@@ -3263,7 +3264,7 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateEventHandler", new[] { "Event.ADDED", "Event.REMOVED" })
                     .Returns(ReadAllText("AfterGeneratePrivateEventHandlerWithDefaultModifier"))
                     .SetName("Generate private event handler with default modifier declaration");
-                yield return new TestCaseData("BeforeGeneratePrivateStaticEventHandler", EmptyArray<string>.Instance)
+                yield return new TestCaseData("BeforeGeneratePrivateStaticEventHandler", Array.Empty<string>())
                     .Returns(ReadAllText("AfterGeneratePrivateStaticEventHandlerWithDefaultModifier"))
                     .SetName("Generate private static event handler with default modifier declaration");
             }

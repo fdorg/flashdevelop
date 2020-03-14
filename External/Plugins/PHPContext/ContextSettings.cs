@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using ASCompletion.Settings;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace PHPContext
@@ -178,7 +179,7 @@ namespace PHPContext
         [Browsable(false)]
         public InstalledSDK[] InstalledSDKs
         {
-            get => new InstalledSDK[0];
+            get => Array.Empty<InstalledSDK>();
             set { /* Do nothing..*/ }
         }
 

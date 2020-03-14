@@ -221,7 +221,7 @@ namespace ProjectManager.Controls.TreeView
             get
             {
                 var selectedNodes = SelectedNodes;
-                if (selectedNodes.IsNullOrEmpty()) return EmptyArray<string>.Instance;
+                if (selectedNodes.IsNullOrEmpty()) return Array.Empty<string>();
                 var result = new List<string>();
                 foreach (GenericNode node in selectedNodes)
                 {
