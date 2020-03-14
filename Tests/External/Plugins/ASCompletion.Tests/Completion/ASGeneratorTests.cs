@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1005,7 +1006,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), Array.Empty<string>.Instance)
+                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), Array.Empty<string>())
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})

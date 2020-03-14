@@ -115,7 +115,7 @@ namespace ASCompletion.TestUtils
             });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
-            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? Array.Empty<string>.Instance));
+            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? Array.Empty<string>()));
             mock.Classpath.Returns(context.Classpath);
             mock.CreateFileModel(null).ReturnsForAnyArgs(it => context.CreateFileModel(it.ArgAt<string>(0)));
             var allProjectClasses = context.GetAllProjectClasses();
