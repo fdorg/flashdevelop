@@ -50,13 +50,13 @@ namespace System.Windows.Forms
             }
         }
 
-        void IgnoreNextLabelEdit()
+        private void IgnoreNextLabelEdit()
         {
             labelEditTimer.Enabled = false;
             labelEditTimer.Enabled = true;
         }
 
-        void labelEditTimer_Tick(object sender, EventArgs e)
+        private void labelEditTimer_Tick(object sender, EventArgs e)
         {
             labelEditTimer.Enabled = false;
         }
@@ -154,8 +154,8 @@ namespace System.Windows.Forms
 
         #region MultiSelect
 
-        bool IsCtrlDown => (ModifierKeys & Keys.Control) > 0;
-        bool IsShiftDown => (ModifierKeys & Keys.Shift) > 0;
+        private bool IsCtrlDown => (ModifierKeys & Keys.Control) > 0;
+        private bool IsShiftDown => (ModifierKeys & Keys.Shift) > 0;
 
         protected override void OnBeforeSelect(TreeViewCancelEventArgs e)
         {
@@ -203,8 +203,8 @@ namespace System.Windows.Forms
             
             base.OnAfterSelect (e);
         }
-
-        TreeNode FindSelectedNode(TreeNode excludeNode)
+        
+        private TreeNode FindSelectedNode(TreeNode excludeNode)
         {
             foreach (TreeNode node in selectedNodes)
                 if (node != excludeNode)
@@ -212,7 +212,7 @@ namespace System.Windows.Forms
             return null;
         }
 
-        void SelectSingle(TreeNode node)
+        private void SelectSingle(TreeNode node)
         {
             // unselect all nodes
             foreach (TreeNode selectedNode in selectedNodes)
@@ -223,7 +223,7 @@ namespace System.Windows.Forms
             beginRange = node;
         }
 
-        void SelectRange(TreeNode node1, TreeNode node2)
+        private void SelectRange(TreeNode node1, TreeNode node2)
         {
             // just walk the whole damn tree looking for these nodes
             if (node1 == node2) return; // nice try
@@ -232,7 +232,7 @@ namespace System.Windows.Forms
             SelectRange(base.Nodes, node1, node2, ref found, ref finished);
         }
 
-        void SelectRange(IEnumerable nodes, TreeNode node1, TreeNode node2, ref bool found, ref bool finished)
+        private void SelectRange(IEnumerable nodes, TreeNode node1, TreeNode node2, ref bool found, ref bool finished)
         {
             foreach (TreeNode node in nodes)
             {
@@ -252,14 +252,14 @@ namespace System.Windows.Forms
             }
         }
 
-        void UnselectAllExcept(TreeNode node)
+        private void UnselectAllExcept(TreeNode node)
         {
             foreach (var selectedNode in selectedNodes.ToArray())
                 if (selectedNode != node)
                     UnselectNode(selectedNode);
         }
 
-        void SelectNode(TreeNode node)
+        private void SelectNode(TreeNode node)
         {
             if (!selectedNodes.Contains(node))
             {
@@ -268,7 +268,7 @@ namespace System.Windows.Forms
             }
         }
 
-        void UnselectNode(TreeNode node)
+        private void UnselectNode(TreeNode node)
         {
             if (selectedNodes.Contains(node))
             {
@@ -277,7 +277,7 @@ namespace System.Windows.Forms
             }
         }
 
-        void PaintNode(TreeNode node)
+        private void PaintNode(TreeNode node)
         {
             if (!originalColor.Contains(node))
             {
@@ -288,7 +288,7 @@ namespace System.Windows.Forms
             }
         }
 
-        void UnpaintNode(TreeNode node)
+        private void UnpaintNode(TreeNode node)
         {
             if (originalColor.Contains(node))
             {

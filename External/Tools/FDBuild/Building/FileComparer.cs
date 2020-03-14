@@ -3,7 +3,7 @@ using System.IO;
 namespace ProjectManager.Building
 {
     // from: http://support.microsoft.com/default.aspx?scid=kb;EN-US;320348
-    internal class FileComparer
+    class FileComparer
     {
         // This method accepts two strings the represent two files to
         // compare. A return value of 0 indicates that the contents of the files

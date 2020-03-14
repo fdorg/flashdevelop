@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -83,11 +82,11 @@ namespace ASCompletion.Completion
         public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
-        public string[] typesPreKeys = Array.Empty<string>();
-        public string[] accessKeywords = Array.Empty<string>();
-        public string[] codeKeywords = Array.Empty<string>();
-        public string[] declKeywords = Array.Empty<string>();
-        public string[] typesKeywords = Array.Empty<string>();
+        public string[] typesPreKeys = { };
+        public string[] accessKeywords = { };
+        public string[] codeKeywords = { };
+        public string[] declKeywords = { };
+        public string[] typesKeywords = { };
         public HashSet<string> Literals = new HashSet<string>();
         public string varKey;
         public string constKey;
@@ -111,14 +110,14 @@ namespace ASCompletion.Completion
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
         public MemberModel functionArguments;
-        public char[] SpecialPostfixOperators = Array.Empty<char>();
+        public char[] SpecialPostfixOperators = {};
         public string ConstructorKey;
         public bool HasGenericsShortNotation;
         public HashSet<char> ArithmeticOperators = new HashSet<char>();
-        public string[] IncrementDecrementOperators = Array.Empty<string>();
-        public string[] BitwiseOperators = Array.Empty<string>();
-        public string[] BooleanOperators = Array.Empty<string>();
-        public string[] TernaryOperators = Array.Empty<string>();
+        public string[] IncrementDecrementOperators = {};
+        public string[] BitwiseOperators = { };
+        public string[] BooleanOperators = { };
+        public string[] TernaryOperators = { };
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')

@@ -91,7 +91,7 @@ namespace ProjectManager.Controls
             EnableTargetBuildSelector(false);
         }
 
-        int GetThemeWidth(string themeId, int defaultValue)
+        private int GetThemeWidth(string themeId, int defaultValue)
         {
             string strValue = PluginBase.MainForm.GetThemeValue(themeId);
             return int.TryParse(strValue, out var intValue) ? intValue : defaultValue;
@@ -190,7 +190,7 @@ namespace ProjectManager.Controls
         public ToolStripMenuItem CleanProject;
         public ToolStripMenuItem Properties;
 
-        readonly List<ToolStripItem> AllItems;
+        private readonly List<ToolStripItem> AllItems;
 
         public ProjectMenu()
         {

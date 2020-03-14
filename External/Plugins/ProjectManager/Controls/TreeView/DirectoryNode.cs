@@ -134,7 +134,7 @@ namespace ProjectManager.Controls.TreeView
             if (dirty) PopulateChildNodes(false);
         }
 
-        void PopulateChildNodes(bool recursive)
+        private void PopulateChildNodes(bool recursive)
         {
             dirty = false;
 
@@ -175,7 +175,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        void PopulateDirectories(GenericNodeList nodesToDie, bool recursive)
+        private void PopulateDirectories(GenericNodeList nodesToDie, bool recursive)
         {
             foreach (string directory in Directory.GetDirectories(BackingPath))
             {
@@ -204,7 +204,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        void PopulateFiles(GenericNodeList nodesToDie, bool recursive)
+        private void PopulateFiles(GenericNodeList nodesToDie, bool recursive)
         {
             string[] files = Directory.GetFiles(BackingPath);
 
@@ -246,7 +246,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        void EnsureParentedBy(GenericNode child, GenericNode parent)
+        private void EnsureParentedBy(GenericNode child, GenericNode parent)
         {
             if (child.Parent != parent)
             {
@@ -256,7 +256,7 @@ namespace ProjectManager.Controls.TreeView
         }
 
         // Let another plugin extend the tree by specifying mapping
-        FileMapping GetFileMapping(string[] files)
+        private FileMapping GetFileMapping(string[] files)
         {
             FileMappingRequest request = new FileMappingRequest(files);
 
@@ -276,7 +276,7 @@ namespace ProjectManager.Controls.TreeView
         /// directories first, then files).
         /// </summary>
         /// <param name="node"></param>
-        static void InsertNode(TreeNodeCollection nodes, GenericNode node)
+        private static void InsertNode(TreeNodeCollection nodes, GenericNode node)
         {
             bool inserted = false;
 

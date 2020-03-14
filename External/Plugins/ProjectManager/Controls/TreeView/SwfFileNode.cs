@@ -53,7 +53,7 @@ namespace ProjectManager.Controls.TreeView
             ImageIndex = SelectedImageIndex = Icons.ImageResource.Index;
         }
 
-        static string SafeFileName(string export)
+        private static string SafeFileName(string export)
         {
             return reSafeChars.Replace(export, "?");
         }
@@ -210,7 +210,7 @@ namespace ProjectManager.Controls.TreeView
                 Explore();
         }
 
-        void Explore()
+        private void Explore()
         {
             explored = true;
 
@@ -224,18 +224,18 @@ namespace ProjectManager.Controls.TreeView
             runner.RunWorkerAsync(parser);
         }
 
-        void runner_DoWork(object sender, DoWorkEventArgs e)
+        private void runner_DoWork(object sender, DoWorkEventArgs e)
         {
             (e.Argument as ContentParser).Run();
         }
 
-        void runner_ProcessEnded(object sender, RunWorkerCompletedEventArgs e)
+        private void runner_ProcessEnded(object sender, RunWorkerCompletedEventArgs e)
         {
             // marshal to GUI thread
             TreeView.Invoke(new MethodInvoker(AddExports));
         }
 
-        void AddExports()
+        private void AddExports()
         {
             // remove WorkingNode
             TreeView.BeginUpdate();
@@ -372,12 +372,12 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        string FormatDimensions(Rectangle rect)
+        private string FormatDimensions(Rectangle rect)
         {
             return rect.Width + "x" + rect.Height;
         }
 
-        Rectangle GetSwfRect(byte[] bytes)
+        private Rectangle GetSwfRect(byte[] bytes)
         {
             BitArray ba = BitParser.GetBitValues(bytes);
             int Nbits = BitParser.ReadUInt32(ba, 5);
@@ -395,7 +395,7 @@ namespace ProjectManager.Controls.TreeView
         public string FormatBytes(long bytes)
         {
             const int scale = 1024;
-            string[] orders = { "Gb", "Mb", "Kb", "b" };
+            string[] orders = new[] { "Gb", "Mb", "Kb", "b" };
             long max = (long)Math.Pow(scale, orders.Length - 1);
 
             foreach (string order in orders)
@@ -411,7 +411,7 @@ namespace ProjectManager.Controls.TreeView
         class ExportComparer : IComparer<DeclEntry>
         {
             public readonly Dictionary<int, List<string>> groups = new Dictionary<int, List<string>>();
-            List<DeclEntry> frames;
+            private List<DeclEntry> frames;
 
             public ExportComparer(List<DeclEntry> swfFrames)
             {

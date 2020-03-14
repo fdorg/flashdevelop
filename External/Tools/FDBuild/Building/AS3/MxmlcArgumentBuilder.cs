@@ -3,7 +3,7 @@ using ProjectManager.Projects.AS3;
 
 namespace ProjectManager.Building.AS3
 {
-    internal class MxmlcArgumentBuilder : ArgumentBuilder
+    class MxmlcArgumentBuilder : ArgumentBuilder
     {
         readonly AS3Project project;
         readonly bool flex45;

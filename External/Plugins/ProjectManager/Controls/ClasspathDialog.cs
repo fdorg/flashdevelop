@@ -11,16 +11,16 @@ namespace ProjectManager.Controls
     {
         #region Form Designer
 
-        ClasspathControl classpathControl;
-        Button btnCancel;
-        Button btnOK;
-        Label label2;
-        GroupBox groupBox1;
+        private ClasspathControl classpathControl;
+        private Button btnCancel;
+        private Button btnOK;
+        private Label label2;
+        private GroupBox groupBox1;
 
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        readonly System.ComponentModel.IContainer components = null;
+        private readonly System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -174,12 +174,12 @@ namespace ProjectManager.Controls
             set => classpathControl.Classpaths = value;
         }
 
-        void classpathControl_Changed(object sender, EventArgs e)
+        private void classpathControl_Changed(object sender, EventArgs e)
         {
             pathChanged = true;
         }
 
-        void classpathControl_IndexChanged(object sender, EventArgs e)
+        private void classpathControl_IndexChanged(object sender, EventArgs e)
         {
             SaveClasspath();
             int index = classpathControl.LanguageBox.SelectedIndex;
@@ -187,7 +187,7 @@ namespace ProjectManager.Controls
             this.Classpaths = this.settings.GetGlobalClasspaths(this.Language).ToArray();
         }
 
-        void SaveClasspath()
+        private void SaveClasspath()
         {
             if (pathChanged)
             {
@@ -198,14 +198,14 @@ namespace ProjectManager.Controls
             }
         }
 
-        void btnOK_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             SaveClasspath();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        void btnCancel_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();

@@ -8,12 +8,11 @@ namespace PluginCore.Localization
     // with localized descriptions for the PropertyGrid, but we don't want fdbuild
     // to have to reference PluginCore.
 
-    internal class LocalizedDescriptionAttribute : Attribute
+    class LocalizedDescriptionAttribute : Attribute
     {
         public LocalizedDescriptionAttribute(string fake) { }
     }
-
-    internal class LocalizedCategoryAttribute : Attribute
+    class LocalizedCategoryAttribute : Attribute
     {
         public LocalizedCategoryAttribute(string fake) { }
     }
@@ -21,7 +20,7 @@ namespace PluginCore.Localization
 
 namespace PluginCore
 {
-    internal interface IProject { }
+    interface IProject { }
 }
 
 namespace ProjectManager.Controls
@@ -42,12 +41,12 @@ namespace ProjectManager.Helpers
     /// <summary>
     /// Can be extended at runtime by a FlashDevelop plugin, but not in the command line
     /// </summary>
-    internal class ProjectCreator
+    class ProjectCreator
     {
-        static readonly Hashtable projectTypes = new Hashtable();
-        static bool projectTypesSet;
+        private static readonly Hashtable projectTypes = new Hashtable();
+        private static bool projectTypesSet;
 
-        static void SetInitialProjectHash()
+        private static void SetInitialProjectHash()
         {
             projectTypes["project.fdp"] = typeof(Projects.AS2.AS2Project);
             projectTypes["project.as2proj"] = typeof(Projects.AS2.AS2Project);
@@ -82,8 +81,10 @@ namespace ProjectManager.Projects.AS3
 {
     internal class FlexProjectReader : ProjectReader
     {
-        public FlexProjectReader(string filename) : base(filename, new AS3Project(filename))
+        public FlexProjectReader(string filename)
+            : base(filename, new AS3Project(filename))
         {
         }
     }
+
 }

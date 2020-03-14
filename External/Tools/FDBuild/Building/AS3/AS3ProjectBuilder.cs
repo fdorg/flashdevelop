@@ -24,7 +24,8 @@ namespace ProjectManager.Building.AS3
         readonly bool asc2Mode;
         Dictionary<string, string> jvmConfig;
 
-        public AS3ProjectBuilder(AS3Project project, string compilerPath, string ipcName) : base(project, compilerPath)
+        public AS3ProjectBuilder(AS3Project project, string compilerPath, string ipcName)
+            : base(project, compilerPath)
         {
             this.project = project;
             
@@ -54,7 +55,7 @@ namespace ProjectManager.Building.AS3
 
         #region Grab Flex SDK Path from Project Manager
 
-        void DetectFlexSdk(string flexsdkPath)
+        private void DetectFlexSdk(string flexsdkPath)
         {
             flexsdkPath = ResolveFlexSdk(flexsdkPath);
             if (Path.GetFileName(flexsdkPath) == "bin")
@@ -95,7 +96,7 @@ namespace ProjectManager.Building.AS3
                 VMARGS = jvmConfig["java.args"];
         }
 
-        bool ShouldCopyASCSH(string lib, string ascsh)
+        private bool ShouldCopyASCSH(string lib, string ascsh)
         {
             if (File.Exists(ascsh + ".disabled")) return false;
             if (!File.Exists(ascsh)) return true;
@@ -115,7 +116,7 @@ namespace ProjectManager.Building.AS3
             return false;
         }
 
-        string ResolveFlexSdk(string flexsdkPath)
+        private string ResolveFlexSdk(string flexsdkPath)
         {
             if (flexsdkPath != null)
             {
@@ -146,7 +147,8 @@ namespace ProjectManager.Building.AS3
             string envPath = Environment.ExpandEnvironmentVariables("%FLEX_HOME%");
             if (!envPath.StartsWith("%", StringComparison.Ordinal))
             {
-                if (!Directory.Exists(envPath)) Console.WriteLine("Environment path %FLEX_HOME% doesn't exist:\n" + envPath);
+                if (!Directory.Exists(envPath))
+                    Console.WriteLine("Environment path %FLEX_HOME% doesn't exist:\n" + envPath);
                 else
                 {
                     Console.WriteLine("Using Flex SDK defined in environment path %FLEX_HOME%");
@@ -183,19 +185,21 @@ namespace ProjectManager.Building.AS3
                     File.Copy(configFile, backupConfig, true);
 
                 //write "new" config to tmp 
-                var config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
+                FlexConfigWriter config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
                 config.WriteConfig(project, sdkVersion, extraClasspaths, noTrace == false, asc2Mode);
 
                 //compare tmp to current
                 bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) || !FileComparer.IsEqual(configFileTmp, configFile);
 
                 //copy temp file to config if there is a change
-                if (configChanged) File.Copy(configFileTmp, configFile, true);
+                if (configChanged){
+                    File.Copy(configFileTmp, configFile, true);
+                }
 
                 //remove temp
                 File.Delete(configFileTmp);
 
-                var mxmlc = new MxmlcArgumentBuilder(project, sdkVersion, asc2Mode);
+                MxmlcArgumentBuilder mxmlc = new MxmlcArgumentBuilder(project, sdkVersion, asc2Mode);
 
                 mxmlc.AddConfig(configFile);
                 mxmlc.AddOptions(noTrace, fcsh != null);
@@ -221,12 +225,14 @@ namespace ProjectManager.Building.AS3
             finally { if (tempFile != null && File.Exists(tempFile)) File.Delete(tempFile); }
         }
 
-        string AddBaseConfig(string args)
+        private string AddBaseConfig(string args)
         {
-            var m = Regex.Match(args, "configname[\\s=]+([a-z0-9_-]+)", RegexOptions.IgnoreCase);
-            var baseConfig = m.Success ? m.Groups[1].Value : "flex";
-            var configFile = $"{sdkPath}/frameworks/{baseConfig}-config.xml";
-            if (File.Exists(configFile)) args = $"-load-config=\"{configFile}\" {args}";
+            Match m = Regex.Match(args, "configname[\\s=]+([a-z0-9_-]+)", RegexOptions.IgnoreCase);
+            string baseConfig = "flex";
+            if (m.Success) baseConfig = m.Groups[1].Value;
+            string configFile = sdkPath + "/frameworks/" + baseConfig + "-config.xml";
+            if (File.Exists(configFile))
+                args = "-load-config=\"" + configFile + "\" " + args;
             return args;
         }
 
@@ -244,8 +250,10 @@ namespace ProjectManager.Building.AS3
         {
             if (fcsh != null)
             {
-                var jar = ascshPath ?? fcshPath;
-                var jvmarg = $"{VMARGS} -Dapplication.home=\"{sdkPath}\" -jar \"{jar}\"";
+                string jar = ascshPath ?? fcshPath;
+                string jvmarg = VMARGS + " -Dapplication.home=\"" + sdkPath 
+                    //+ "\" -Dflexlib=\"" + Path.Combine(sdkPath, "frameworks")
+                    + "\" -jar \"" + jar + "\"";
                 fcsh.Compile(workingdir, configChanged, arguments, out var output, out var errors, out var warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
 
                 string[] lines = output.Split('\n');

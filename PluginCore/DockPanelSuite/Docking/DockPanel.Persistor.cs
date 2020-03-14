@@ -14,7 +14,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         static class Persistor
         {
             const string ConfigFileVersion = "1.0";
-            static readonly string[] CompatibleConfigFileVersions = Array.Empty<string>();
+            static readonly string[] CompatibleConfigFileVersions = new string[] { };
 
             class DummyContent : DockContent
             {

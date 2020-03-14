@@ -8,10 +8,10 @@ namespace System.Windows.Forms
     /// </summary>
     public class ToolTippedTreeView : DragDropTreeView
     {
-        const int TVS_NOTOOLTIPS = 0x80;
-        ToolTip tip;
-        int px;
-        int py;
+        private const int TVS_NOTOOLTIPS = 0x80;
+        private ToolTip tip;
+        private int px;
+        private int py;
 
         // disable the automatic tooltips
         protected override System.Windows.Forms.CreateParams CreateParams

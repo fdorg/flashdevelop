@@ -5,7 +5,7 @@ using ProjectManager.Projects.AS2;
 
 namespace ProjectManager.Building.AS2
 {
-    internal class MtascArgumentBuilder : ArgumentBuilder
+    class MtascArgumentBuilder : ArgumentBuilder
     {
         readonly AS2Project project;
 

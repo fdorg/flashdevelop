@@ -71,7 +71,7 @@ namespace ProjectManager.Projects.AS3
             return $"{pre}Embed(source=\"{relPath}\", mimeType=\"application/octet-stream\"){post}";
         }
 
-        bool IsText(string ext) => ext == ".txt" || ext == ".xml";
+        private bool IsText(string ext) => ext == ".txt" || ext == ".xml";
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
         {
@@ -243,7 +243,7 @@ namespace ProjectManager.Projects.AS3
             CompilerOptions.ExternalLibraryPaths = GetLibraryPaths(SwfAssetMode.ExternalLibrary);
         }
 
-        string[] GetLibraryPaths(SwfAssetMode mode)
+        private string[] GetLibraryPaths(SwfAssetMode mode)
         {
             List<string> paths = new List<string>();
             foreach (LibraryAsset asset in SwcLibraries)

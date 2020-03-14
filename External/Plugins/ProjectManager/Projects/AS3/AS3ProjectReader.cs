@@ -62,32 +62,32 @@ namespace ProjectManager.Projects.AS3
                 }
         }
 
-        void ReadIntrinsicPaths()
+        private void ReadIntrinsicPaths()
         {
             project.CompilerOptions.IntrinsicPaths = ReadLibrary("intrinsics", SwfAssetMode.Ignore);
         }
 
-        void ReadRSLPaths()
+        private void ReadRSLPaths()
         {
             project.CompilerOptions.RSLPaths = ReadLibrary("rslPaths", SwfAssetMode.Ignore);
         }
 
-        void ReadExternalLibraryPaths()
+        private void ReadExternalLibraryPaths()
         {
             project.CompilerOptions.ExternalLibraryPaths = ReadLibrary("externalLibraryPaths", SwfAssetMode.ExternalLibrary);
         }
 
-        void ReadLibrayPath()
+        private void ReadLibrayPath()
         {
             project.CompilerOptions.LibraryPaths = ReadLibrary("libraryPaths", SwfAssetMode.Library);
         }
 
-        void ReadIncludeLibraries()
+        private void ReadIncludeLibraries()
         {
             project.CompilerOptions.IncludeLibraries = ReadLibrary("includeLibraries", SwfAssetMode.IncludedLibrary);
         }
 
-        string[] ReadLibrary(string name, SwfAssetMode mode)
+        private string[] ReadLibrary(string name, SwfAssetMode mode)
         {
             ReadStartElement(name);
             List<string> elements = new List<string>();
@@ -175,7 +175,7 @@ namespace ProjectManager.Projects.AS3
             ReadEndElement();
         }
 
-        MxmlNamespace[] ReadNamespaces()
+        private MxmlNamespace[] ReadNamespaces()
         {
             var data = Value.Split('\n');
             int entriesNo = data.Length;

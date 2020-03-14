@@ -165,7 +165,7 @@ namespace ProjectManager
         /// <summary>
         /// Instructions panel link clicked
         /// </summary>
-        void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string action = e.Link.LinkData as string;
             if (action == "create" && NewProject != null) NewProject(sender, e);
@@ -193,7 +193,7 @@ namespace ProjectManager
         /// <summary>
         /// We don't want to trigger these while editing
         /// </summary>
-        void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        private void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (!e.CancelEdit)
             {
@@ -207,7 +207,7 @@ namespace ProjectManager
         /// <summary>
         /// Happens if you back out
         /// </summary>
-        void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             string languageDisplayName = "(" + project.LanguageDisplayName + ")";
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
@@ -266,7 +266,7 @@ namespace ProjectManager
         /// <summary>
         /// Customize the context menu
         /// </summary>
-        void tree_AfterSelect(object sender, TreeViewEventArgs e)
+        private void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (Tree.SelectedNodes.Count == 0) return;
             Project project = Tree.ProjectOf(Tree.SelectedNodes[0] as GenericNode);
@@ -280,7 +280,7 @@ namespace ProjectManager
         /// A new file was created and we want it to be selected after
         /// the filesystemwatcher finds it and makes us refresh
         /// </summary>
-        void NewFileCreated(string path)
+        private void NewFileCreated(string path)
         {
             Tree.PathToSelect = path;
             WatchParentOf(path);
@@ -289,7 +289,7 @@ namespace ProjectManager
         /// <summary>
         /// 
         /// </summary>
-        void RenameNode(object sender, EventArgs e)
+        private void RenameNode(object sender, EventArgs e)
         {
             if (Tree.SelectedNode is ProjectNode)
             {
@@ -303,7 +303,7 @@ namespace ProjectManager
         /// <summary>
         /// The project has changed, so refresh the tree
         /// </summary>
-        void ProjectModified(string[] paths)
+        private void ProjectModified(string[] paths)
         {
             Tree.RefreshTree(paths);
         }
