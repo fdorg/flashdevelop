@@ -1212,7 +1212,7 @@ namespace HaXeContext.Completion
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
                 }
-                if (expression.Length > 1 && expression[0] is { } c && (c == '\'' || c == '"'))
+                if (expression.Length > 1 && expression[0] is char c && (c == '\'' || c == '"'))
                 {
                     var type = ResolveType(ctx.Features.stringKey, inFile);
                     // for example: ""|, ''|

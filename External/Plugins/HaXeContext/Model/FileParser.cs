@@ -765,7 +765,7 @@ namespace HaXeContext.Model
                             var start = valueLength - 5;
                             for (var j = valueLength - 1; j >= 0; j--)
                             {
-                                if (valueBuffer[j] is { } c && (c == '<' || c == '>' || char.IsPunctuation(c)))
+                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(c)))
                                 {
                                     start = j + 1;
                                     break;
