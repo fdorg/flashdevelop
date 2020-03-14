@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using ASCompletion.Generators;
-using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -2412,9 +2411,9 @@ namespace ASCompletion.Completion
             var latest = GetLatestMemberForVariable(job, inClass, visibility, isStatic);
             int position;
             // if we generate variable in current class..
-            if (!isOtherClass && (member == null
+            if (!isOtherClass && (member is null
                                   // TODO slavara: temporary solution for #2477
-                                  || (member.Name == null && member.Type == null && member.Access == 0 && member.Flags == FlagType.Static)))
+                                  || (member.Name is null && member.Type is null && member.Access == 0 && member.Flags == FlagType.Static)))
             {
                 detach = false;
                 lookupPosition = -1;
