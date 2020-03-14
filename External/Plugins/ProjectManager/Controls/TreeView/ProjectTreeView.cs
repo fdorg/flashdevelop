@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Managers;
 
 namespace ProjectManager.Controls.TreeView
@@ -220,7 +221,7 @@ namespace ProjectManager.Controls.TreeView
             get
             {
                 var selectedNodes = SelectedNodes;
-                if (selectedNodes.IsNullOrEmpty()) return Array.Empty<string>();
+                if (selectedNodes.IsNullOrEmpty()) return EmptyArray<string>.Instance;
                 var result = new List<string>();
                 foreach (GenericNode node in selectedNodes)
                 {

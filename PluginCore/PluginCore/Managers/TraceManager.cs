@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Timers;
 using System.Windows.Forms;
+using PluginCore.Collections;
 using Timer = System.Timers.Timer;
 
 namespace PluginCore.Managers
@@ -158,7 +159,7 @@ namespace PluginCore.Managers
                 return true;
             }
             groupId = groupData;
-            args = Array.Empty<string>();
+            args = EmptyArray<string>.Instance;
             return false;
         }
 

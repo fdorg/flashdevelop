@@ -20,6 +20,7 @@ using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
 using HaXeContext.Model;
+using PluginCore.Collections;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -380,7 +381,7 @@ namespace HaXeContext
 
             features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
                 ? new[] {'!'}
-                : Array.Empty<char>();
+                : EmptyArray<char>.Instance;
 
             UseGenericsShortNotationChange();
         }

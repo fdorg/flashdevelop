@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using ASCompletion.Generators;
+using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;

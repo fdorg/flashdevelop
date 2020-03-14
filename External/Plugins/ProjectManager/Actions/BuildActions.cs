@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -269,7 +270,7 @@ namespace ProjectManager.Actions
 
         public static InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
         {
-            if (sdks is null) sdks = Array.Empty<InstalledSDK>();
+            if (sdks is null) sdks = EmptyArray<InstalledSDK>.Instance;
 
             // default sdk
             if (string.IsNullOrEmpty(preferredSDK))
