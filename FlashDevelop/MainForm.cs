@@ -3709,7 +3709,7 @@ namespace FlashDevelop
                 var command = ((ItemData)button.Tag).Tag;
                 var sci = CurrentDocument.SciControl;
                 var mfType = sci.GetType();
-                var method = mfType.GetMethod(command, EmptyArray<Type>.Instance);
+                var method = mfType.GetMethod(command, Array.Empty<Type>());
                 method.Invoke(sci, null);
             }
             catch (Exception ex)

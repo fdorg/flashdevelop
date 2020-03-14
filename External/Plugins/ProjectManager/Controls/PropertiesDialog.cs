@@ -815,7 +815,7 @@ namespace ProjectManager.Controls
         {
             this.classpathControl = new ProjectManager.Controls.ClasspathControl();
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
+            this.classpathControl.Classpaths = Array.Empty<string>();
             this.classpathControl.Language = null;
             this.classpathControl.Location = new System.Drawing.Point(17, 22);
             this.classpathControl.Name = "classpathControl";

@@ -69,8 +69,8 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (usekeywords is null) usekeywords = new UseKeyword[0];
-            if (usestyles is null) usestyles = new UseStyle[0];
+            if (usekeywords is null) usekeywords = Array.Empty<UseKeyword>();
+            if (usestyles is null) usestyles = Array.Empty<UseStyle>();
             for (int j = 0; j<usekeywords.Length; j++)
             {
                 usekeywords[j].init(utility, _parent);
