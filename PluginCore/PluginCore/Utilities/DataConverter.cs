@@ -92,8 +92,7 @@ namespace PluginCore.Utilities
             }
             return 0;
         }
-
-        static int TO_COLORREF(int c) => (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
+        private static int TO_COLORREF(int c) => (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
 
         /// <summary>
         /// Converts a color to a string

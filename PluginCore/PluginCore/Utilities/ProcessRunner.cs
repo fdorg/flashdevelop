@@ -89,8 +89,8 @@ namespace PluginCore.Utilities
                 ErrorManager.ShowError(ex);
             }
         }
-
-        void ReadOutput()
+        
+        private void ReadOutput()
         {
             while (true)
             {
@@ -99,8 +99,8 @@ namespace PluginCore.Utilities
                 Output?.Invoke(this, line);
             }
         }
-
-        void ReadError()
+        
+        private void ReadError()
         {
             while (true)
             {
@@ -109,8 +109,8 @@ namespace PluginCore.Utilities
                 Error?.Invoke(this, line);
             }
         }
-
-        void TaskFinished(IAsyncResult result)
+        
+        private void TaskFinished(IAsyncResult result)
         {
             lock (this) 
             {
@@ -135,6 +135,5 @@ namespace PluginCore.Utilities
     public delegate void LineOutputHandler(object sender, string line);
     public delegate void ProcessEndedHandler(object sender, int exitCode);
     public delegate void ProcessOutputHandler(object sender, string line);
-
-    internal delegate void NextTask();
+    delegate void NextTask();
 }

@@ -1543,7 +1543,7 @@ namespace ASCompletion.Context
                     if (name.Contains(".<", out var p2) && p2 > 0) name = name.Substring(0, p2);
                     else name = name.Substring(0, p1);
                 }
-                if (name.LastIndexOf('.') is { } p3 && p3 > 0) name = name.Substring(p3 + 1);
+                if (name.LastIndexOf('.') is var p3 && p3 > 0) name = name.Substring(p3 + 1);
                 if (!keywords.Contains(name)) keywords.Add(name);
             }
             return string.Join(" ", keywords);

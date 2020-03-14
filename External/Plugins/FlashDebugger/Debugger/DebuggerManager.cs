@@ -34,11 +34,11 @@ namespace FlashDebugger
         public event StateChangedEventHandler StateChangedEvent;
 
         internal Project currentProject;
-        BackgroundWorker bgWorker;
-        Location m_CurrentLocation;
-        readonly Dictionary<string, string> m_PathMap = new Dictionary<string, string>();
-        int m_CurrentFrame;
-        static bool jvm_up;
+        private BackgroundWorker bgWorker;
+        private Location m_CurrentLocation;
+        private readonly Dictionary<string, string> m_PathMap = new Dictionary<string, string>();
+        private int m_CurrentFrame;
+        private static bool jvm_up;
 
         public DebuggerManager()
         {
@@ -62,7 +62,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        bool CheckCurrent()
+        private bool CheckCurrent()
         {
             try
             {
@@ -152,7 +152,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void bgWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -303,7 +303,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void UpdateMenuState(DebuggerState state) => StateChangedEvent?.Invoke(this, state);
+        private void UpdateMenuState(DebuggerState state) => StateChangedEvent?.Invoke(this, state);
 
         #endregion
 
@@ -312,7 +312,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_StartedEvent(object sender)
+        private void flashInterface_StartedEvent(object sender)
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -343,7 +343,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_DisconnectedEvent(object sender)
+        private void flashInterface_DisconnectedEvent(object sender)
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -377,22 +377,22 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_BreakpointEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
+        private void flashInterface_BreakpointEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_FaultEvent(object sender) => UpdateUI(DebuggerState.ExceptionHalt);
+        private void flashInterface_FaultEvent(object sender) => UpdateUI(DebuggerState.ExceptionHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_StepEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
+        private void flashInterface_StepEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_ScriptLoadedEvent(object sender)
+        private void flashInterface_ScriptLoadedEvent(object sender)
         {
             // this was moved directly into flashInterface
             // force all breakpoints update after new as code loaded into debug movie 
@@ -404,17 +404,17 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_WatchpointEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
+        private void flashInterface_WatchpointEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_UnknownHaltEvent(object sender) => UpdateUI(DebuggerState.ExceptionHalt);
+        private void flashInterface_UnknownHaltEvent(object sender) => UpdateUI(DebuggerState.ExceptionHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_PauseEvent(object sender) => UpdateUI(DebuggerState.PauseHalt);
+        private void flashInterface_PauseEvent(object sender) => UpdateUI(DebuggerState.PauseHalt);
 
         /// <summary>
         /// 
@@ -437,7 +437,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void UpdateUI(DebuggerState state)
+        private void UpdateUI(DebuggerState state)
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -462,7 +462,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void UpdateStackUI()
+        private void UpdateStackUI()
         {
             m_CurrentFrame = 0;
             var frames = FlashInterface.GetFrames();
@@ -472,7 +472,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void UpdateLocalsUI()
+        private void UpdateLocalsUI()
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -497,7 +497,7 @@ namespace FlashDebugger
             else CurrentLocation = null;
         }
 
-        void UpdateThreadsUI()
+        private void UpdateThreadsUI()
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -510,7 +510,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void ResetCurrentLocation()
+        private void ResetCurrentLocation()
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -531,7 +531,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void GotoCurrentLocation(bool bSetMarker)
+        private void GotoCurrentLocation(bool bSetMarker)
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
@@ -551,7 +551,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        void flashInterface_ProgressEvent(object sender, int current, int total)
+        private void flashInterface_ProgressEvent(object sender, int current, int total)
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {

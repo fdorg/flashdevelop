@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using PluginCore.Collections;
 
 namespace PluginCore.Managers
 {
@@ -22,7 +23,7 @@ namespace PluginCore.Managers
             highObjects = new List<EventObject>();
             normalObjects = new List<EventObject>();
             lowObjects = new List<EventObject>();
-            eventObjectsSnapshot = Array.Empty<EventObject>();
+            eventObjectsSnapshot = EmptyArray<EventObject>.Instance;
             snapshotInvalid = false;
         }
 

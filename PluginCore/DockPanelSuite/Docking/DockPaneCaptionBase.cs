@@ -20,7 +20,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             SetStyle(ControlStyles.Selectable, false);
         }
 
-        readonly DockPane m_dockPane;
+        private readonly DockPane m_dockPane;
         protected DockPane DockPane => m_dockPane;
 
         protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;

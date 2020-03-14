@@ -20,7 +20,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a value entry from the config.
         /// </summary>
-        public static string GetThemeValue(string id) => valueMap.TryGetValue(id, out var result) ? result : null;
+        public static string GetThemeValue(string id)
+        {
+            return valueMap.TryGetValue(id, out var result) ? result : null;
+        }
 
         /// <summary>
         /// Gets a color entry from the config.

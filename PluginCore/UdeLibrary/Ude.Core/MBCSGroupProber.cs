@@ -45,15 +45,13 @@ namespace Ude.Core
     /// </summary>
     public class MBCSGroupProber : CharsetProber
     {
-        const int PROBERS_NUM = 7;
-
-        static readonly string[] ProberName = 
+        private const int PROBERS_NUM = 7;
+        private static readonly string[] ProberName = 
             { "UTF8", "SJIS", "EUCJP", "GB18030", "EUCKR", "Big5", "EUCTW" };
-
-        readonly CharsetProber[] probers = new CharsetProber[PROBERS_NUM];
-        readonly bool[] isActive = new bool[PROBERS_NUM];
-        int bestGuess;
-        int activeNum;
+        private readonly CharsetProber[] probers = new CharsetProber[PROBERS_NUM];
+        private readonly bool[] isActive = new bool[PROBERS_NUM];
+        private int bestGuess;
+        private int activeNum;
             
         public MBCSGroupProber()
         {

@@ -45,7 +45,7 @@ namespace Ude.Core
 {
     public class HZSMModel : SMModel
     {
-        static readonly int[] HZ_cls = {
+        private static readonly int[] HZ_cls = {
             BitPackage.Pack4bits(1,0,0,0,0,0,0,0),  // 00 - 07 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 08 - 0f 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 10 - 17 
@@ -80,7 +80,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(1,1,1,1,1,1,1,1)   // f8 - ff 
         };
 
-        static readonly int[] HZ_st = {
+        private static readonly int[] HZ_st = {
             BitPackage.Pack4bits(START, ERROR,     3, START, START, START, ERROR, ERROR),//00-07 
             BitPackage.Pack4bits(ERROR, ERROR, ERROR, ERROR, ITSME, ITSME, ITSME, ITSME),//08-0f 
             BitPackage.Pack4bits(ITSME, ITSME, ERROR, ERROR, START, START,     4, ERROR),//10-17 
@@ -89,7 +89,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(    4, ITSME, START, START, START, START, START, START) //28-2f 
         };
 
-        static readonly int[] HZCharLenTable = {0, 0, 0, 0, 0, 0};
+        private static readonly int[] HZCharLenTable = {0, 0, 0, 0, 0, 0};
         
         public HZSMModel() : base(
               new BitPackage(BitPackage.INDEX_SHIFT_4BITS, 
@@ -109,7 +109,7 @@ namespace Ude.Core
     
     public class ISO2022CNSMModel : SMModel
     {
-        static readonly int[] ISO2022CN_cls = {
+        private static readonly int[] ISO2022CN_cls = {
             BitPackage.Pack4bits(2,0,0,0,0,0,0,0),  // 00 - 07 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 08 - 0f 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 10 - 17 
@@ -144,7 +144,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(2,2,2,2,2,2,2,2)   // f8 - ff 
         };
 
-        static readonly int[] ISO2022CN_st = {
+        private static readonly int[] ISO2022CN_st = {
                 BitPackage.Pack4bits(START,    3,ERROR,START,START,START,START,START),//00-07 
                 BitPackage.Pack4bits(START,ERROR,ERROR,ERROR,ERROR,ERROR,ERROR,ERROR),//08-0f 
                 BitPackage.Pack4bits(ERROR,ERROR,ITSME,ITSME,ITSME,ITSME,ITSME,ITSME),//10-17 
@@ -155,7 +155,7 @@ namespace Ude.Core
                 BitPackage.Pack4bits(ERROR,ERROR,ERROR,ERROR,ERROR,ITSME,ERROR,START) //38-3f 
         };
 
-        static readonly int[] ISO2022CNCharLenTable = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        private static readonly int[] ISO2022CNCharLenTable = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         public ISO2022CNSMModel() : base(
               new BitPackage(BitPackage.INDEX_SHIFT_4BITS, 
@@ -175,7 +175,7 @@ namespace Ude.Core
     
     public class ISO2022JPSMModel : SMModel
     {
-        static readonly int[] ISO2022JP_cls = {
+        private static readonly int[] ISO2022JP_cls = {
             BitPackage.Pack4bits(2,0,0,0,0,0,0,0),  // 00 - 07 
             BitPackage.Pack4bits(0,0,0,0,0,0,2,2),  // 08 - 0f 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 10 - 17 
@@ -210,7 +210,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(2,2,2,2,2,2,2,2)   // f8 - ff 
         };
 
-        static readonly int[] ISO2022JP_st = {
+        private static readonly int[] ISO2022JP_st = {
             BitPackage.Pack4bits(START,     3, ERROR,START,START,START,START,START),//00-07 
             BitPackage.Pack4bits(START, START, ERROR,ERROR,ERROR,ERROR,ERROR,ERROR),//08-0f 
             BitPackage.Pack4bits(ERROR, ERROR, ERROR,ERROR,ITSME,ITSME,ITSME,ITSME),//10-17 
@@ -222,7 +222,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(ERROR, ERROR, ERROR,ERROR,ITSME,ERROR,START,START) //40-47 
         };
 
-        static readonly int[] ISO2022JPCharLenTable = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        private static readonly int[] ISO2022JPCharLenTable = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         public ISO2022JPSMModel() : base(
               new BitPackage(BitPackage.INDEX_SHIFT_4BITS, 
@@ -242,8 +242,8 @@ namespace Ude.Core
     }
     
     public class ISO2022KRSMModel : SMModel
-    {
-        static readonly int[] ISO2022KR_cls = {
+    {   
+        private static readonly int[] ISO2022KR_cls = {
             BitPackage.Pack4bits(2,0,0,0,0,0,0,0),  // 00 - 07 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 08 - 0f 
             BitPackage.Pack4bits(0,0,0,0,0,0,0,0),  // 10 - 17 
@@ -278,7 +278,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(2,2,2,2,2,2,2,2)   // f8 - ff 
         };
 
-        static readonly int[] ISO2022KR_st = {
+        private static readonly int[] ISO2022KR_st = {
             BitPackage.Pack4bits(START,    3,ERROR,START,START,START,ERROR,ERROR),//00-07 
             BitPackage.Pack4bits(ERROR,ERROR,ERROR,ERROR,ITSME,ITSME,ITSME,ITSME),//08-0f 
             BitPackage.Pack4bits(ITSME,ITSME,ERROR,ERROR,ERROR,    4,ERROR,ERROR),//10-17 
@@ -286,7 +286,7 @@ namespace Ude.Core
             BitPackage.Pack4bits(ERROR,ERROR,ERROR,ITSME,START,START,START,START) //20-27 
         };
 
-        static readonly int[] ISO2022KRCharLenTable = {0, 0, 0, 0, 0, 0};
+        private static readonly int[] ISO2022KRCharLenTable = {0, 0, 0, 0, 0, 0};
 
         public ISO2022KRSMModel() : base(
               new BitPackage(BitPackage.INDEX_SHIFT_4BITS, 

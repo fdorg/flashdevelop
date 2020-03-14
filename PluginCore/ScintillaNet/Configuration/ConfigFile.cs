@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using PluginCore.Collections;
 
 namespace ScintillaNet.Configuration
 {
@@ -31,9 +32,9 @@ namespace ScintillaNet.Configuration
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
-            includedFiles = Array.Empty<ConfigFile>();
+            includedFiles = EmptyArray<ConfigFile>.Instance;
             base.init(utility, theParent);
-            if (includes is null) includes = Array.Empty<include>();
+            if (includes is null) includes = EmptyArray<include>.Instance;
             foreach (var include in includes) include.init(utility, _parent);
             foreach (var include in includes)
             {

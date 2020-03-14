@@ -33,5 +33,3 @@ Thumbs.db
 **/nunit.framework.dll
 **/nunit.framework.xml
 .vs/
-FlashDevelop/Bin/Debug/Castle.Core.*
-FlashDevelop/Bin/Debug/System.Threading.Tasks.Extensions.*

@@ -6,7 +6,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public sealed class VisibleNestedPaneCollection : ReadOnlyCollection<DockPane>
     {
-        readonly NestedPaneCollection m_nestedPanes;
+        private readonly NestedPaneCollection m_nestedPanes;
 
         internal VisibleNestedPaneCollection(NestedPaneCollection nestedPanes)
             : base(new List<DockPane>())
@@ -52,7 +52,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        void Remove(DockPane pane)
+        private void Remove(DockPane pane)
         {
             if (!Contains(pane))
                 return;
@@ -88,7 +88,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             statusPane.SetDisplayingStatus(false, null, DockAlignment.Left, 0.5);
         }
 
-        void CalculateBounds()
+        private void CalculateBounds()
         {
             if (Count == 0)
                 return;

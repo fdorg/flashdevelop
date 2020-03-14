@@ -8,13 +8,13 @@ namespace PluginCore.Controls
     {
         #region Win32
 
-        const uint MA_ACTIVATE = 1;
-        const uint MA_ACTIVATEANDEAT = 2;
-        const uint WM_MOUSEACTIVATE = 0x21;
+        private const uint MA_ACTIVATE = 1;
+        private const uint MA_ACTIVATEANDEAT = 2;
+        private const uint WM_MOUSEACTIVATE = 0x21;
 
         #endregion
 
-        bool clickThrough = true;
+        private bool clickThrough = true;
 
         /// <summary>
         /// Listen for all items added
@@ -29,7 +29,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// When the main form loses or gains input focus, clear all selections and repaint
         /// </summary>
-        void OnFormDeactivate(object sender, EventArgs e)
+        private void OnFormDeactivate(object sender, EventArgs e)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// When button is added, listen for it's hover events
         /// </summary>
-        void OnItemAdded(object sender, ToolStripItemEventArgs e)
+        private void OnItemAdded(object sender, ToolStripItemEventArgs e)
         {
             if (e.Item is ToolStripButton)
             {
@@ -55,7 +55,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Invalidate button if it is not selected to workaround the "textbox selected, no button hover" issue. :)
         /// </summary>
-        void OnOverChange(object sender, EventArgs e)
+        private void OnOverChange(object sender, EventArgs e)
         {
             ToolStripItem item = sender as ToolStripItem;
             if (!item.Selected) item.Invalidate();

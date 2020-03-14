@@ -30,15 +30,14 @@ namespace ProjectManager.Projects.AS2
         TraceMode traceMode = TraceMode.FlashConnectExtended;
         string traceFunction = "";
         string libraryPrefix = "";
-        string[] includePackages = Array.Empty<string>();
+        string[] includePackages = new string[] { };
         string excludeFile = "";
 
         [DisplayName("Strict Mode")]
         [LocalizedCategory("ProjectManager.Category.General")]
         [LocalizedDescription("ProjectManager.Description.Strict")]
         [DefaultValue(false)]
-        public bool Strict
-        {
+        public bool Strict {
             get => strict;
             set => strict = value;
         }
@@ -47,8 +46,7 @@ namespace ProjectManager.Projects.AS2
         [LocalizedCategory("ProjectManager.Category.General")]
         [LocalizedDescription("ProjectManager.Description.Infer")]
         [DefaultValue(false)]
-        public bool Infer
-        {
+        public bool Infer {
             get => infer;
             set => infer = value;
         }
@@ -57,8 +55,7 @@ namespace ProjectManager.Projects.AS2
         [LocalizedCategory("ProjectManager.Category.General")]
         [LocalizedDescription("ProjectManager.Description.Verbose")]
         [DefaultValue(false)]
-        public bool Verbose
-        {
+        public bool Verbose {
             get => verbose;
             set => verbose = value;
         }
@@ -107,8 +104,7 @@ namespace ProjectManager.Projects.AS2
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.UseMain")]
         [DefaultValue(true)]
-        public bool UseMain
-        {
+        public bool UseMain {
             get => useMain;
             set => useMain = value;
         }
@@ -147,8 +143,7 @@ namespace ProjectManager.Projects.AS2
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.UseMX")]
         [DefaultValue(true)]
-        public bool UseMX
-        {
+        public bool UseMX {
             get => useMX;
             set => useMX = value;
         }

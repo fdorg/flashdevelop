@@ -5,7 +5,7 @@ using PluginCore;
 
 namespace FlashDevelop.Managers
 {
-    internal class TabbingManager
+    class TabbingManager
     {
         public static Timer TabTimer;
         public static List<ITabbedDocument> TabHistory;
@@ -23,7 +23,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Checks to see if the Control key has been released
         /// </summary>
-        static void OnTabTimer(object sender, EventArgs e)
+        private static void OnTabTimer(object sender, EventArgs e)
         {
             if ((Control.ModifierKeys & Keys.Control) == 0)
             {

@@ -68,19 +68,19 @@ namespace System.Windows.Forms
 		
 		#region Private variables
 
-        Bitmap _BackImage;
-        Bitmap _BackBuffer;
-        Graphics _BackBufferGraphics;
-        Bitmap _TabBuffer;
-        Graphics _TabBufferGraphics;
+		private Bitmap _BackImage;
+		private Bitmap _BackBuffer;
+		private Graphics _BackBufferGraphics;
+		private Bitmap _TabBuffer;
+		private Graphics _TabBufferGraphics;
+		
+		private int _oldValue;
+		private Point _dragStartPosition = Point.Empty;
 
-        int _oldValue;
-        Point _dragStartPosition = Point.Empty;
+		private TabStyle _Style;
+		private TabStyleProvider _StyleProvider;
 
-        TabStyle _Style;
-        TabStyleProvider _StyleProvider;
-
-        List<TabPage> _TabPages;
+		private List<TabPage> _TabPages;
 
 		#endregion
 		
@@ -314,12 +314,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-        bool IsValidTabIndex(int index){
+		private bool IsValidTabIndex(int index){
 			this.BackupTabPages();
 			return ((index >= 0) && (index < this._TabPages.Count));
 		}
 
-        void BackupTabPages(){
+		private void BackupTabPages(){
 			if (this._TabPages is null){
 				this._TabPages = new List<TabPage>();
 				foreach (TabPage page in this.TabPages){
@@ -389,8 +389,8 @@ namespace System.Windows.Forms
               	//	deal with hidden tab handling?
               }
   		}
-
-        void StartDragDrop(){
+  		
+  		private void StartDragDrop(){
   			if (!this._dragStartPosition.IsEmpty){
   			    TabPage dragTab = this.SelectedTab;
   			    if (dragTab != null){
@@ -473,8 +473,8 @@ namespace System.Windows.Forms
 			}
 			base.OnParentBackgroundImageChanged(e);
 		}
-
-        void OnParentResize(object sender, EventArgs e){
+		
+		private void OnParentResize(object sender, EventArgs e){
 			if (this.Visible){
 				this.Invalidate();
 			}
@@ -655,7 +655,7 @@ namespace System.Windows.Forms
         }*/
 
         // HACK: Modded
-        bool _painting = false;
+        private bool _painting = false;
         protected override void OnPaint(PaintEventArgs e)
         {
             //	We must always paint the entire area of the tab control
@@ -672,7 +672,7 @@ namespace System.Windows.Forms
             }
         }
 
-        void CustomPaint(Graphics screenGraphics){
+        private void CustomPaint(Graphics screenGraphics){
 			//	We render into a bitmap that is then drawn in one shot rather than using
 			//	double buffering built into the control as the built in buffering
 			// 	messes up the background painting.
@@ -792,8 +792,8 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-
-        void DrawTabPage(int index, Graphics graphics)
+		
+		private void DrawTabPage(int index, Graphics graphics)
 		{
 			graphics.SmoothingMode = SmoothingMode.HighSpeed;
 			
@@ -821,7 +821,7 @@ namespace System.Windows.Forms
             this.DrawTabBorder(tabPageBorderPath, index, graphics);
         }
 
-        void DrawTabBorder(GraphicsPath path, int index, Graphics graphics)
+		private void DrawTabBorder(GraphicsPath path, int index, Graphics graphics)
 		{
 			graphics.SmoothingMode = SmoothingMode.HighQuality;
 			Color borderColor;
@@ -837,7 +837,7 @@ namespace System.Windows.Forms
             graphics.DrawPath(borderPen, path);
         }
 
-        void DrawTabText(int index, Graphics graphics)
+		private void DrawTabText(int index, Graphics graphics)
 		{
 			graphics.SmoothingMode = SmoothingMode.HighQuality;
 			graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
@@ -860,7 +860,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-        void DrawTabImage(int index, Graphics graphics){
+		private void DrawTabImage(int index, Graphics graphics){
 			Image tabImage = null;
 			if (this.TabPages[index].ImageIndex > -1 && this.ImageList != null && this.ImageList.Images.Count > this.TabPages[index].ImageIndex){
 				tabImage = this.ImageList.Images[this.TabPages[index].ImageIndex];
@@ -886,7 +886,7 @@ namespace System.Windows.Forms
 
 		#region String formatting
 
-        StringFormat GetStringFormat()
+		private StringFormat GetStringFormat()
 		{
             //	Rotate Text by 90 degrees for left and right tabs
             var format = Alignment switch
@@ -912,8 +912,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Tab borders and bounds properties
-
-        GraphicsPath GetTabPageBorder(int index){
+		
+		private GraphicsPath GetTabPageBorder(int index){
 			
 			GraphicsPath path = new GraphicsPath();
 			Rectangle pageBounds = this.GetPageBounds(index);
@@ -938,7 +938,7 @@ namespace System.Windows.Forms
 			return pageBounds;
 		}
 
-        Rectangle GetTabTextRect(int index){
+		private Rectangle GetTabTextRect(int index){
 			Rectangle textRect = new Rectangle();
 			using (GraphicsPath path = this._StyleProvider.GetTabBorder(index)){
 				RectangleF tabBounds = path.GetBounds();
@@ -1168,8 +1168,8 @@ namespace System.Windows.Forms
 			}
 			return firstTabinRow;
 		}
-
-        void AddPageBorder(GraphicsPath path, Rectangle pageBounds, Rectangle tabBounds){
+		
+		private void AddPageBorder(GraphicsPath path, Rectangle pageBounds, Rectangle tabBounds){
 			switch (this.Alignment) {
 				case TabAlignment.Top:
 					path.AddLine(tabBounds.Right, pageBounds.Y, pageBounds.Right, pageBounds.Y);
@@ -1202,13 +1202,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-        Rectangle GetTabImageRect(int index)
+		private Rectangle GetTabImageRect(int index)
         {
             using GraphicsPath tabBorderPath = this._StyleProvider.GetTabBorder(index);
             return this.GetTabImageRect(tabBorderPath);
         }
-
-        Rectangle GetTabImageRect(GraphicsPath tabBorderPath){
+		private Rectangle GetTabImageRect(GraphicsPath tabBorderPath){
 			Rectangle imageRect = new Rectangle();
 			RectangleF rect = tabBorderPath.GetBounds();
 			

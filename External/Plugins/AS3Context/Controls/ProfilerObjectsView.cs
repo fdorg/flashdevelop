@@ -28,13 +28,13 @@ namespace AS3Context.Controls
 
             // action
             var openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
-            openItem.Click += ObjectsGrid_Open;
+            openItem.Click += objectsGrid_Open;
 
             ObjectsGrid.ContextMenuStrip = new ContextMenuStrip();
             ObjectsGrid.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             ObjectsGrid.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             ObjectsGrid.ContextMenuStrip.Items.Add(openItem);
-            ObjectsGrid.DoubleClick += ObjectsGrid_Open;
+            ObjectsGrid.DoubleClick += objectsGrid_Open;
         }
 
         void delayOpen_Tick(object sender, EventArgs e)
@@ -58,7 +58,7 @@ namespace AS3Context.Controls
             }
         }
 
-        void ObjectsGrid_Open(object sender, EventArgs e)
+        void objectsGrid_Open(object sender, EventArgs e)
         {
             if (ObjectsGrid.SelectedNode?.Tag is ObjectRefsNode node && node.Line.Length > 0)
             {

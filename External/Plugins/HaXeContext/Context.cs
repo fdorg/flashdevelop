@@ -20,6 +20,7 @@ using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
 using HaXeContext.Model;
+using PluginCore.Collections;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -216,7 +217,7 @@ namespace HaXeContext
 
         #region classpath management
 
-        IEnumerable<string> LookupLibrary(string lib)
+        List<string> LookupLibrary(string lib)
         {
             try
             {
@@ -241,11 +242,12 @@ namespace HaXeContext
             }
             if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
 
-            var process = StartHiddenProcess(haxePath, "path " + lib);
+            Process p = StartHiddenProcess(haxePath, "path " + lib);
+
             var paths = new List<string>();
             do
             {
-                var line = process.StandardOutput.ReadLine();
+                var line = p.StandardOutput.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
                 if (line.Contains("not installed"))
                 {
@@ -264,10 +266,10 @@ namespace HaXeContext
                     }
                 }
             }
-            while (!process.StandardOutput.EndOfStream);
+            while (!p.StandardOutput.EndOfStream);
 
-            process.WaitForExit();
-            process.Close();
+            p.WaitForExit();
+            p.Close();
 
             if (paths.Count == 0) return null;
             haxelibsCache.Add(lib, paths);
@@ -296,7 +298,7 @@ namespace HaXeContext
             var isPathExpected = false;
             do
             {
-                var line = p.StandardOutput.ReadLine();
+                string line = p.StandardOutput.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
                 if (!line.StartsWith('-') && isPathExpected)
                 {
@@ -322,7 +324,7 @@ namespace HaXeContext
 
         Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
-            var hxPath = currentSDK;
+            string hxPath = currentSDK;
             if (hxPath != null && Path.IsPathRooted(hxPath))
             {
                 if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
@@ -380,7 +382,7 @@ namespace HaXeContext
 
             features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
                 ? new[] {'!'}
-                : Array.Empty<char>();
+                : EmptyArray<char>.Instance;
 
             UseGenericsShortNotationChange();
         }
@@ -491,7 +493,7 @@ namespace HaXeContext
                     if (haxeTarget == "flash")
                         lang = (majorVersion >= 6 && majorVersion < 9) ? FLASH_OLD : FLASH_NEW;
 
-                    var std = PathModel.GetModel(haxeCP, this);
+                    PathModel std = PathModel.GetModel(haxeCP, this);
                     if (!std.WasExplored && !Settings.LazyClasspathExploration)
                     {
                         var hide = new List<string>();
@@ -708,7 +710,7 @@ namespace HaXeContext
             {
                 foreach (var member in result.Members)
                 {
-                    if (!member.Flags.HasFlag(FlagType.Function) || member.Parameters.IsNullOrEmpty()) continue;
+                    if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
                     foreach (var parameter in member.Parameters)
                     {
                         if (parameter.Name[0] != '?') continue;
@@ -956,7 +958,52 @@ namespace HaXeContext
             return result;
         }
 
-        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger) => false;
+        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
+        {
+            // Commented out: the consensus is to not detect and add the type index type.
+
+            /*if (text.Length > 0 && Char.IsUpper(text[0]))
+            {
+                string insert = null;
+                string line = sci.GetLine(sci.LineFromPosition(position));
+                Match m = Regex.Match(line, @"\svar\s+(?<varname>.+)\s*:\s*(?<type>[a-z0-9_.]+)\<(?<indextype>.+)(?=(>\s*=))", RegexOptions.IgnoreCase);
+                if (m.Success)
+                {
+                    insert = String.Format("<{0}>", m.Groups["indextype"].Value);
+                }
+                else
+                {
+                    m = Regex.Match(line, @"\s*=\s*new");
+                    if (m.Success)
+                    {
+                        ASResult result = ASComplete.GetExpressionType(sci, sci.PositionFromLine(sci.LineFromPosition(position)) + m.Index);
+                        if (result != null && !result.IsNull() && result.Member != null && result.Member.Type != null)
+                        {
+                            m = Regex.Match(result.Member.Type, @"(?<=<).+(?=>)");
+                            if (m.Success)
+                            {
+                                insert = String.Format("<{0}>", m.Value);
+                            }
+                        }
+                    }
+                }
+                if (insert is null) return false;
+                if (trigger == '.')
+                {
+                    sci.InsertText(position + text.Length, insert.Substring(1));
+                    sci.CurrentPos = position + text.Length;
+                }
+                else
+                {
+                    sci.InsertText(position + text.Length, insert);
+                    sci.CurrentPos = position + text.Length + insert.Length;
+                }
+                sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                return true;
+            }*/
+
+            return false;
+        }
 
         /// <summary>
         /// Return imported classes list (not null)
@@ -1223,7 +1270,7 @@ namespace HaXeContext
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            var tokenLength = token?.Length ?? 0;
+            var tokenLength = token != null ? token.Length : 0;
             if (tokenLength > 0)
             {
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
@@ -1260,7 +1307,8 @@ namespace HaXeContext
                     }
                     return ResolveType(features.arrayKey, inFile);
                 }
-                if (first == '{' && last == '}') return ResolveType(features.dynamicKey, null);
+                if (first == '{' && last == '}')
+                    return ResolveType(features.dynamicKey, null);
                 if (first == '(' && last == ')')
                 {
                     if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
@@ -2563,7 +2611,9 @@ namespace HaXeContext
                                  // a < b $(EntryPoint)&&
                                  || c == '&'
                                  // a <$(EntryPoint)= b
-                                 || c == '=')
+                                 || c == '='
+                                 // a < b$(EntryPoint);
+                                 || c == ';')
                             return -1;
                         // Array<Int->$(EntryPoint){v:Type}>
                         else if (parCount == 0 && c == '{') genCount++;

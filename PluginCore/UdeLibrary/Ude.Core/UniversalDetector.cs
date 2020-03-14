@@ -38,7 +38,8 @@
 
 namespace Ude.Core
 {
-    internal enum InputState { PureASCII=0, EscASCII=1, Highbyte=2 };
+
+    enum InputState { PureASCII=0, EscASCII=1, Highbyte=2 };
 
     public abstract class UniversalDetector 
     {

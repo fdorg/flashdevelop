@@ -7,6 +7,7 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using NSubstitute;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;
@@ -114,7 +115,7 @@ namespace ASCompletion.TestUtils
             });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
-            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? Array.Empty<string>()));
+            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? EmptyArray<string>.Instance));
             mock.Classpath.Returns(context.Classpath);
             mock.CreateFileModel(null).ReturnsForAnyArgs(it => context.CreateFileModel(it.ArgAt<string>(0)));
             var allProjectClasses = context.GetAllProjectClasses();

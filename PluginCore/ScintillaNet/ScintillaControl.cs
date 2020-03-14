@@ -4375,7 +4375,7 @@ namespace ScintillaNet
                 if (!escaped) return current;
             }
             // for example: '${v}'
-            if (i == 0 && (char) CharAt(0) is { } c && (c == '\'' || c == '"')) return c;
+            if (i == 0 && (char) CharAt(0) is char c && (c == '\'' || c == '"')) return c;
             return ' ';
         }
 

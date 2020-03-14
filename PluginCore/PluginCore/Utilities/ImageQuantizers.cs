@@ -101,17 +101,17 @@ namespace PluginCore.PluginCore.Utilities
         /// <summary>
         /// Stores the tree
         /// </summary>
-        readonly Octree _octree;
+        private readonly Octree _octree;
 
         /// <summary>
         /// Maximum allowed color depth
         /// </summary>
-        readonly int _maxColors;
+        private readonly int _maxColors;
 
         /// <summary>
         /// Class which does the actual quantization
         /// </summary>
-        class Octree
+        private class Octree
         {
             /// <summary>
             /// Construct the octree
@@ -231,37 +231,37 @@ namespace PluginCore.PluginCore.Utilities
             /// <summary>
             /// Mask used when getting the appropriate pixels for a given node
             /// </summary>
-            static readonly int[] mask = new int[8] { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+            private static readonly int[] mask = new int[8] { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
             /// <summary>
             /// The root of the octree
             /// </summary>
-            readonly OctreeNode _root;
+            private readonly OctreeNode _root;
 
             /// <summary>
             /// Number of leaves in the tree
             /// </summary>
-            int _leafCount;
+            private int _leafCount;
 
             /// <summary>
             /// Array of reducible nodes
             /// </summary>
-            readonly OctreeNode[] _reducibleNodes;
+            private readonly OctreeNode[] _reducibleNodes;
 
             /// <summary>
             /// Maximum number of significant bits in the image
             /// </summary>
-            readonly int _maxColorBits;
+            private readonly int _maxColorBits;
 
             /// <summary>
             /// Store the last node quantized
             /// </summary>
-            OctreeNode _previousNode;
+            private OctreeNode _previousNode;
 
             /// <summary>
             /// Cache the previous color quantized
             /// </summary>
-            int _previousColor;
+            private int _previousColor;
 
             /// <summary>
             /// Class which encapsulates each node in the tree
@@ -444,42 +444,42 @@ namespace PluginCore.PluginCore.Utilities
                 /// <summary>
                 /// Flag indicating that this is a leaf node
                 /// </summary>
-                bool _leaf;
+                private bool _leaf;
 
                 /// <summary>
                 /// Number of pixels in this node
                 /// </summary>
-                int _pixelCount;
+                private int _pixelCount;
 
                 /// <summary>
                 /// Red component
                 /// </summary>
-                int _red;
+                private int _red;
 
                 /// <summary>
                 /// Green Component
                 /// </summary>
-                int _green;
+                private int _green;
 
                 /// <summary>
                 /// Blue component
                 /// </summary>
-                int _blue;
+                private int _blue;
 
                 /// <summary>
                 /// Pointers to any child nodes
                 /// </summary>
-                readonly OctreeNode[] _children;
+                private readonly OctreeNode[] _children;
 
                 /// <summary>
                 /// Pointer to next reducible node
                 /// </summary>
-                OctreeNode _nextReducible;
+                private OctreeNode _nextReducible;
 
                 /// <summary>
                 /// The index of this node in the palette
                 /// </summary>
-                int _paletteIndex;
+                private int _paletteIndex;
 
             }
         }
@@ -728,7 +728,7 @@ namespace PluginCore.PluginCore.Utilities
         /// <summary>
         /// Flag used to indicate whether a single pass or two passes are needed for quantization.
         /// </summary>
-        readonly bool _singlePass;
+        private readonly bool _singlePass;
 
         /// <summary>
         /// Struct that defines a 32 bpp colour

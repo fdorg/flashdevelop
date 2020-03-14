@@ -765,7 +765,7 @@ namespace HaXeContext.Model
                             var start = valueLength - 5;
                             for (var j = valueLength - 1; j >= 0; j--)
                             {
-                                if (valueBuffer[j] is { } c && (c == '<' || c == '>' || char.IsPunctuation(c)))
+                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(c)))
                                 {
                                     start = j + 1;
                                     break;
@@ -990,7 +990,7 @@ namespace HaXeContext.Model
                         // for example: function foo() return null;
                         if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
                             && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
-                            && curClass.Flags is { } f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
+                            && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
                         {
                             inFunction = true;
                             inType = false;

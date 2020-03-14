@@ -19,7 +19,7 @@ namespace ProjectManager.Building
         }
 
         //parse line into command/argument pair
-        string[] tokenize(string line)
+        private string[] tokenize(string line)
         {
             string[] result = new string[2];
 

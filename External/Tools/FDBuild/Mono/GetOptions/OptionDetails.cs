@@ -4,7 +4,7 @@ namespace Mono.GetOptions
     using System.Collections;
     using System.Reflection;
 
-    internal class OptionDetails : IComparable
+    class OptionDetails : IComparable
     {
         // Methods
         static OptionDetails()
@@ -80,7 +80,7 @@ namespace Mono.GetOptions
             }
         }
 
-        void DoIt(bool setValue)
+        private void DoIt(bool setValue)
         {
             if (!NeedsParameter)
             {
@@ -104,7 +104,7 @@ namespace Mono.GetOptions
             }
         }
 
-        void DoIt(string parameterValue)
+        private void DoIt(string parameterValue)
         {
             if (parameterValue is null)
             {
@@ -171,7 +171,7 @@ namespace Mono.GetOptions
             }
         }
 
-        string ExtractParamName(string shortDescription)
+        private string ExtractParamName(string shortDescription)
         {
             int num1 = shortDescription.IndexOf('{');
             if (num1 < 0)
@@ -202,7 +202,7 @@ namespace Mono.GetOptions
             return arg == ShortForm || arg == LongForm || arg == AlternateForm;
         }
 
-        void Occurred(int howMany)
+        private void Occurred(int howMany)
         {
             Occurs += howMany;
             if (MaxOccurs > 0 && Occurs > MaxOccurs)
@@ -303,7 +303,7 @@ namespace Mono.GetOptions
             }
         }
 
-        static Type TypeOfMember(MemberInfo memberInfo)
+        private static Type TypeOfMember(MemberInfo memberInfo)
         {
             if (memberInfo.MemberType == MemberTypes.Field && memberInfo is FieldInfo fieldInfo)
             {
@@ -347,11 +347,11 @@ namespace Mono.GetOptions
 
         internal string Key => LongForm + " " + ShortForm;
 
-        string linuxLongPrefix => (parsingMode & OptionsParsingMode.GNU_DoubleDash) != OptionsParsingMode.GNU_DoubleDash ? "-" : "--";
+        private string linuxLongPrefix => (parsingMode & OptionsParsingMode.GNU_DoubleDash) != OptionsParsingMode.GNU_DoubleDash ? "-" : "--";
 
         public string ParamName => paramName;
 
-        OptionsParsingMode parsingMode => OptionBundle.ParsingMode;
+        private OptionsParsingMode parsingMode => OptionBundle.ParsingMode;
 
         // Fields
         public string AlternateForm;
@@ -362,7 +362,7 @@ namespace Mono.GetOptions
         public bool NeedsParameter;
         public int Occurs;
         public Options OptionBundle;
-        string optionHelp;
+        private string optionHelp;
         public Type ParameterType;
         public string paramName;
         public bool SecondLevelHelp;

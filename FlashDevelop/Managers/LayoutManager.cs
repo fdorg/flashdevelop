@@ -9,12 +9,12 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace FlashDevelop.Managers
 {
-    internal class LayoutManager
+    class LayoutManager
     {
         public static List<DockContent> PluginPanels;
-        static readonly DeserializeDockContent contentDeserializer;
-        static readonly HashSet<string> savedPersistStrings;
-        static readonly List<DockContent> dynamicContentTemplates;
+        private static readonly DeserializeDockContent contentDeserializer;
+        private static readonly HashSet<string> savedPersistStrings;
+        private static readonly List<DockContent> dynamicContentTemplates;
 
         static LayoutManager()
         {
@@ -55,7 +55,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Retrieves the content by persist string
         /// </summary>
-        static DockContent GetContentFromPersistString(string persistString)
+        private static DockContent GetContentFromPersistString(string persistString)
         {
             foreach (var pluginPanel in PluginPanels)
             {
@@ -128,7 +128,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Closes the document contents for xml restoring
         /// </summary>
-        static void CloseDocumentContents(IDockContent[] documents)
+        private static void CloseDocumentContents(IDockContent[] documents)
         {
             foreach (DockContent document in documents)
             {
@@ -139,7 +139,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Shows the document contents for xml restoring
         /// </summary>
-        static void ShowDocumentContents(IDockContent[] documents, DockPanel dockPanel)
+        private static void ShowDocumentContents(IDockContent[] documents, DockPanel dockPanel)
         {
             foreach (DockContent document in documents)
             {
@@ -150,7 +150,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Closes the plugin panel contents for xml restoring
         /// </summary>
-        static void ClosePluginPanelContents()
+        private static void ClosePluginPanelContents()
         {
             for (int i = PluginPanels.Count - 1; i >= 0; i--)
             {
@@ -170,7 +170,7 @@ namespace FlashDevelop.Managers
         /// Restore the plugins that have not been restored yet.
         /// These plugins may have been added later to the plugins dir.
         /// </summary>
-        static void RestoreUnrestoredPlugins(DockPanel dockPanel)
+        private static void RestoreUnrestoredPlugins(DockPanel dockPanel)
         {
             foreach (var pluginPanel in PluginPanels)
             {
@@ -181,7 +181,7 @@ namespace FlashDevelop.Managers
             }
         }
 
-        static void CloseDynamicContentTemplates()
+        private static void CloseDynamicContentTemplates()
         {
             foreach (var template in dynamicContentTemplates)
             {
@@ -189,7 +189,7 @@ namespace FlashDevelop.Managers
             }
         }
 
-        static void RestoreDynamicContentTemplates()
+        private static void RestoreDynamicContentTemplates()
         {
             for (int i = dynamicContentTemplates.Count - 1; i >= 0; i--)
             {

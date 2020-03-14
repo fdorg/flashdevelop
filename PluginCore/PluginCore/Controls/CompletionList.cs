@@ -323,7 +323,7 @@ namespace PluginCore.Controls
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(item.Icon, 1, e.Bounds.Top + ((e.Bounds.Height - newHeight) / 2), newHeight, newHeight);
                 if (!selected && !(item is ICompletionListSpecialItem)
-                    && item.Label.LastIndexOf('.') is { } p && p > 0)
+                    && item.Label.LastIndexOf('.') is var p && p > 0)
                 {
                     var package = item.Label.Substring(0, p + 1);
                     g.DrawString(package, e.Font, packageBrush, bounds, StringFormat.GenericDefault);

@@ -76,19 +76,19 @@ namespace FlashDebugger
 
         #region Private Properties
 
-        DebuggerState m_CurrentState = DebuggerState.Initializing;
-        bool m_RequestPause;
-        bool m_RequestResume;
-        bool m_RequestStop;
-        bool m_RequestDetach;
-        bool m_StepResume;
-        readonly EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
-        bool m_SuspendWaiting;
-        int m_activeSession; // 1 is m_session else lookup runningIsolates
+        private DebuggerState m_CurrentState = DebuggerState.Initializing;
+        private bool m_RequestPause;
+        private bool m_RequestResume;
+        private bool m_RequestStop;
+        private bool m_RequestDetach;
+        private bool m_StepResume;
+        private readonly EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private bool m_SuspendWaiting;
+        private int m_activeSession; // 1 is m_session else lookup runningIsolates
 
         // Isolates 
 
-        IsolateInfo addRunningIsolate(int i_id)
+        private IsolateInfo addRunningIsolate(int i_id)
         {
             removeRunningIsolate(i_id);
             IsolateSessions[i_id] = new IsolateInfo();
@@ -96,7 +96,7 @@ namespace FlashDebugger
             return IsolateSessions[i_id];
         }
 
-        void removeRunningIsolate(int i_id)
+        private void removeRunningIsolate(int i_id)
         {
             if (IsolateSessions.ContainsKey(i_id))
             {
@@ -117,17 +117,17 @@ namespace FlashDebugger
         }
 
         // breakpoint mappings
-        readonly Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
+        private readonly Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
 
         // Global Properties
-        readonly int m_HaltTimeout;
-        readonly int m_UpdateDelay;
+        private readonly int m_HaltTimeout;
+        private readonly int m_UpdateDelay;
 
         // Session Properties
-        int m_MetadataAttemptsPeriod;   // 1/4s per attempt
-        int m_MetadataNotAvailable;     // counter for failures
-        int m_MetadataAttempts;
-        int m_PlayerFullSupport;
+        private int m_MetadataAttemptsPeriod;   // 1/4s per attempt
+        private int m_MetadataNotAvailable;     // counter for failures
+        private int m_MetadataAttempts;
+        private int m_PlayerFullSupport;
 
         #endregion
 
@@ -453,14 +453,14 @@ namespace FlashDebugger
                     catch {}
                 }
             }
-            catch (SocketException)
+            catch (SocketException ex)
             {
                 // No errors if requested
-                if (!m_RequestStop) throw;
+                if (!m_RequestStop) throw ex;
             }
-            catch (SocketTimeoutException)
+            catch (SocketTimeoutException ex)
             {
-                if (m_CurrentState != DebuggerState.Starting) throw;
+                if (m_CurrentState != DebuggerState.Starting) throw ex;
                 TraceManager.AddAsync("[No debug Flash player connection request]", -1);
             }
             finally
@@ -537,9 +537,9 @@ namespace FlashDebugger
             m_SuspendWait.Set();
         }
 
-        bool haveConnection() => Session != null && Session.isConnected();
+        private bool haveConnection() => Session != null && Session.isConnected();
 
-        void waitForMetaData()
+        private void waitForMetaData()
         {
             // perform a query to see if our metadata has loaded
             int metadatatries = m_MetadataAttempts;
@@ -554,10 +554,10 @@ namespace FlashDebugger
                     tries = waitForMetaData(tries);
                     remain = metadatatries - tries; // update our used count
                 }
-                catch (InProgressException)
+                catch (InProgressException ipe)
                 {
                     m_MetadataAttempts = remain;
-                    throw;
+                    throw ipe;
                 }
             }
         }
@@ -1112,12 +1112,12 @@ namespace FlashDebugger
             }
         }
 
-        void UpdateIsolateBreakpoints(List<BreakPointInfo> breakpoints, IsolateInfo ii)
+        private void UpdateIsolateBreakpoints(List<BreakPointInfo> breakpoints, IsolateInfo ii)
         {
             commonUpdateBreakpoints(breakpoints, ii.breakpointLocations, ii.i_Session);
         }
 
-        void commonUpdateBreakpoints(List<BreakPointInfo> breakpoints, Dictionary<BreakPointInfo, Location> breakpointLocations, IsolateSession i_Session)
+        private void commonUpdateBreakpoints(List<BreakPointInfo> breakpoints, Dictionary<BreakPointInfo, Location> breakpointLocations, IsolateSession i_Session)
         {
             Dictionary<string, int> files = new Dictionary<string, int>();
             foreach (BreakPointInfo bp in breakpoints)
@@ -1178,7 +1178,7 @@ namespace FlashDebugger
             }
         }
 
-        void clearBreakpoints()
+        private void clearBreakpoints()
         {
             if (isDebuggerStarted)
             {
@@ -1196,7 +1196,7 @@ namespace FlashDebugger
                 }
         }
 
-        static string replaceInlineReferences(string text, IDictionary parameters)
+        private static string replaceInlineReferences(string text, IDictionary parameters)
         {
             if (parameters is null) return text;
             int depth = 100;

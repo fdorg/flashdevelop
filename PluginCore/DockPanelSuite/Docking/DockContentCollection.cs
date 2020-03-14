@@ -6,7 +6,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public class DockContentCollection : ReadOnlyCollection<IDockContent>
     {
-        static readonly List<IDockContent> _emptyList = new List<IDockContent>(0);
+        private static readonly List<IDockContent> _emptyList = new List<IDockContent>(0);
 
         internal DockContentCollection()
             : base(new List<IDockContent>())
@@ -19,8 +19,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockPane = pane;
         }
 
-        readonly DockPane m_dockPane = null;
-        DockPane DockPane => m_dockPane;
+        private readonly DockPane m_dockPane = null;
+        private DockPane DockPane => m_dockPane;
 
         public new IDockContent this[int index]
         {
@@ -102,7 +102,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             Items.Remove(content);
         }
 
-        int CountOfVisibleContents
+        private int CountOfVisibleContents
         {
             get
             {
@@ -121,7 +121,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        IDockContent GetVisibleContent(int index)
+        private IDockContent GetVisibleContent(int index)
         {
 #if DEBUG
             if (DockPane is null)
@@ -140,7 +140,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             throw (new ArgumentOutOfRangeException());
         }
 
-        int GetIndexOfVisibleContents(IDockContent content)
+        private int GetIndexOfVisibleContents(IDockContent content)
         {
 #if DEBUG
             if (DockPane is null)

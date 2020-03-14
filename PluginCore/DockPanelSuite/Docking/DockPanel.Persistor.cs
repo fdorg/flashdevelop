@@ -11,53 +11,53 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     partial class DockPanel
     {
-        static class Persistor
+        private static class Persistor
         {
-            const string ConfigFileVersion = "1.0";
-            static readonly string[] CompatibleConfigFileVersions = Array.Empty<string>();
+            private const string ConfigFileVersion = "1.0";
+            private static readonly string[] CompatibleConfigFileVersions = new string[] { };
 
-            class DummyContent : DockContent
+            private class DummyContent : DockContent
             {
             }
 
-            struct DockPanelStruct
+            private struct DockPanelStruct
             {
-                double m_dockLeftPortion;
+                private double m_dockLeftPortion;
                 public double DockLeftPortion
                 {
                     get => m_dockLeftPortion;
                     set => m_dockLeftPortion = value;
                 }
 
-                double m_dockRightPortion;
+                private double m_dockRightPortion;
                 public double DockRightPortion
                 {
                     get => m_dockRightPortion;
                     set => m_dockRightPortion = value;
                 }
 
-                double m_dockTopPortion;
+                private double m_dockTopPortion;
                 public double DockTopPortion
                 {
                     get => m_dockTopPortion;
                     set => m_dockTopPortion = value;
                 }
 
-                double m_dockBottomPortion;
+                private double m_dockBottomPortion;
                 public double DockBottomPortion
                 {
                     get => m_dockBottomPortion;
                     set => m_dockBottomPortion = value;
                 }
 
-                int m_indexActiveDocumentPane;
+                private int m_indexActiveDocumentPane;
                 public int IndexActiveDocumentPane
                 {
                     get => m_indexActiveDocumentPane;
                     set => m_indexActiveDocumentPane = value;
                 }
 
-                int m_indexActivePane;
+                private int m_indexActivePane;
                 public int IndexActivePane
                 {
                     get => m_indexActivePane;
@@ -65,30 +65,30 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            struct ContentStruct
+            private struct ContentStruct
             {
-                string m_persistString;
+                private string m_persistString;
                 public string PersistString
                 {
                     get => m_persistString;
                     set => m_persistString = value;
                 }
 
-                double m_autoHidePortion;
+                private double m_autoHidePortion;
                 public double AutoHidePortion
                 {
                     get => m_autoHidePortion;
                     set => m_autoHidePortion = value;
                 }
 
-                bool m_isHidden;
+                private bool m_isHidden;
                 public bool IsHidden
                 {
                     get => m_isHidden;
                     set => m_isHidden = value;
                 }
 
-                bool m_isFloat;
+                private bool m_isFloat;
                 public bool IsFloat
                 {
                     get => m_isFloat;
@@ -96,30 +96,30 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            struct PaneStruct
+            private struct PaneStruct
             {
-                DockState m_dockState;
+                private DockState m_dockState;
                 public DockState DockState
                 {
                     get => m_dockState;
                     set => m_dockState = value;
                 }
 
-                int m_indexActiveContent;
+                private int m_indexActiveContent;
                 public int IndexActiveContent
                 {
                     get => m_indexActiveContent;
                     set => m_indexActiveContent = value;
                 }
 
-                int[] m_indexContents;
+                private int[] m_indexContents;
                 public int[] IndexContents
                 {
                     get => m_indexContents;
                     set => m_indexContents = value;
                 }
 
-                int m_zOrderIndex;
+                private int m_zOrderIndex;
                 public int ZOrderIndex
                 {
                     get => m_zOrderIndex;
@@ -127,30 +127,30 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            struct NestedPane
+            private struct NestedPane
             {
-                int m_indexPane;
+                private int m_indexPane;
                 public int IndexPane
                 {
                     get => m_indexPane;
                     set => m_indexPane = value;
                 }
 
-                int m_indexPrevPane;
+                private int m_indexPrevPane;
                 public int IndexPrevPane
                 {
                     get => m_indexPrevPane;
                     set => m_indexPrevPane = value;
                 }
 
-                DockAlignment m_alignment;
+                private DockAlignment m_alignment;
                 public DockAlignment Alignment
                 {
                     get => m_alignment;
                     set => m_alignment = value;
                 }
 
-                double m_proportion;
+                private double m_proportion;
                 public double Proportion
                 {
                     get => m_proportion;
@@ -158,23 +158,23 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            struct DockWindowStruct
+            private struct DockWindowStruct
             {
-                DockState m_dockState;
+                private DockState m_dockState;
                 public DockState DockState
                 {
                     get => m_dockState;
                     set => m_dockState = value;
                 }
 
-                int m_zOrderIndex;
+                private int m_zOrderIndex;
                 public int ZOrderIndex
                 {
                     get => m_zOrderIndex;
                     set => m_zOrderIndex = value;
                 }
 
-                NestedPane[] m_nestedPanes;
+                private NestedPane[] m_nestedPanes;
                 public NestedPane[] NestedPanes
                 {
                     get => m_nestedPanes;
@@ -182,23 +182,23 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            struct FloatWindowStruct
+            private struct FloatWindowStruct
             {
-                Rectangle m_bounds;
+                private Rectangle m_bounds;
                 public Rectangle Bounds
                 {
                     get => m_bounds;
                     set => m_bounds = value;
                 }
 
-                int m_zOrderIndex;
+                private int m_zOrderIndex;
                 public int ZOrderIndex
                 {
                     get => m_zOrderIndex;
                     set => m_zOrderIndex = value;
                 }
 
-                NestedPane[] m_nestedPanes;
+                private NestedPane[] m_nestedPanes;
                 public NestedPane[] NestedPanes
                 {
                     get => m_nestedPanes;
@@ -376,7 +376,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 LoadFromXml(dockPanel, stream, deserializeContent, true);
             }
 
-            static ContentStruct[] LoadContents(XmlTextReader xmlIn)
+            private static ContentStruct[] LoadContents(XmlTextReader xmlIn)
             {
                 int countOfContents = Convert.ToInt32(xmlIn.GetAttribute("Count"), CultureInfo.InvariantCulture);
                 ContentStruct[] contents = new ContentStruct[countOfContents];
@@ -397,7 +397,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return contents;
             }
 
-            static PaneStruct[] LoadPanes(XmlTextReader xmlIn)
+            private static PaneStruct[] LoadPanes(XmlTextReader xmlIn)
             {
                 EnumConverter dockStateConverter = new EnumConverter(typeof(DockState));
                 int countOfPanes = Convert.ToInt32(xmlIn.GetAttribute("Count"), CultureInfo.InvariantCulture);
@@ -433,7 +433,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return panes;
             }
 
-            static DockWindowStruct[] LoadDockWindows(XmlTextReader xmlIn, DockPanel dockPanel)
+            private static DockWindowStruct[] LoadDockWindows(XmlTextReader xmlIn, DockPanel dockPanel)
             {
                 EnumConverter dockStateConverter = new EnumConverter(typeof(DockState));
                 EnumConverter dockAlignmentConverter = new EnumConverter(typeof(DockAlignment));
@@ -470,7 +470,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return dockWindows;
             }
 
-            static FloatWindowStruct[] LoadFloatWindows(XmlTextReader xmlIn)
+            private static FloatWindowStruct[] LoadFloatWindows(XmlTextReader xmlIn)
             {
                 EnumConverter dockAlignmentConverter = new EnumConverter(typeof(DockAlignment));
                 RectangleConverter rectConverter = new RectangleConverter();
@@ -713,7 +713,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 dockPanel.ResumeLayout(true, true);
             }
 
-            static bool MoveToNextElement(XmlTextReader xmlIn)
+            private static bool MoveToNextElement(XmlTextReader xmlIn)
             {
                 if (!xmlIn.Read())
                     return false;
@@ -727,7 +727,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return true;
             }
 
-            static bool IsFormatVersionValid(string formatVersion)
+            private static bool IsFormatVersionValid(string formatVersion)
             {
                 if (formatVersion == ConfigFileVersion)
                     return true;

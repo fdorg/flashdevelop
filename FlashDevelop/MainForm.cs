@@ -19,6 +19,7 @@ using FlashDevelop.Settings;
 using FlashDevelop.Utilities;
 using ICSharpCode.SharpZipLib.Zip;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -61,7 +62,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes some extra error logging
         /// </summary>
-        static void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
         /// <summary>
         /// Handles the catched unhandled exception and logs it
@@ -3708,7 +3709,7 @@ namespace FlashDevelop
                 var command = ((ItemData)button.Tag).Tag;
                 var sci = CurrentDocument.SciControl;
                 var mfType = sci.GetType();
-                var method = mfType.GetMethod(command, Array.Empty<Type>());
+                var method = mfType.GetMethod(command, EmptyArray<Type>.Instance);
                 method.Invoke(sci, null);
             }
             catch (Exception ex)

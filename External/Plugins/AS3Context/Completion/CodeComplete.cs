@@ -85,7 +85,7 @@ namespace AS3Context.Completion
                     }
                 }
 
-                if (expression.Length > 1 && expression[0] is { } c && (c == '"' || c == '\''))
+                if (expression.Length > 1 && expression[0] is char c && (c == '"' || c == '\''))
                 {
                     var type = ResolveType(features.stringKey, inFile);
                     // for example: ""|, ''|

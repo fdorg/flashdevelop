@@ -7,16 +7,16 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     partial class DockPanel
     {
-        class AutoHideWindowControl : Panel, ISplitterDragSource
+        private class AutoHideWindowControl : Panel, ISplitterDragSource
         {
-            class SplitterControl : SplitterBase
+            private class SplitterControl : SplitterBase
             {
                 public SplitterControl(AutoHideWindowControl autoHideWindow)
                 {
                     AutoHideWindow = autoHideWindow;
                 }
 
-                AutoHideWindowControl AutoHideWindow { get; }
+                private AutoHideWindowControl AutoHideWindow { get; }
 
                 protected override int SplitterSize => Measures.SplitterSize;
 
@@ -27,12 +27,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             #region consts
-
-            const int ANIMATE_TIME = 100;   // in mini-seconds
+            private const int ANIMATE_TIME = 100;   // in mini-seconds
             #endregion
 
-            readonly Timer m_timerMouseTrack;
-            readonly SplitterControl m_splitter;
+            private readonly Timer m_timerMouseTrack;
+            private readonly SplitterControl m_splitter;
 
             public AutoHideWindowControl(DockPanel dockPanel)
             {
@@ -59,7 +58,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public DockPane ActivePane { get; private set; }
 
-            void SetActivePane()
+            private void SetActivePane()
             {
                 DockPane value = ActiveContent?.DockHandler.Pane;
 
@@ -69,7 +68,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 ActivePane = value;
             }
 
-            IDockContent m_activeContent = null;
+            private IDockContent m_activeContent = null;
             public IDockContent ActiveContent
             {
                 get => m_activeContent;
@@ -112,15 +111,14 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public DockState DockState => ActiveContent?.DockHandler.DockState ?? DockState.Unknown;
 
-            bool m_flagAnimate = true;
-
-            bool FlagAnimate
+            private bool m_flagAnimate = true;
+            private bool FlagAnimate
             {
                 get => m_flagAnimate;
                 set => m_flagAnimate = value;
             }
 
-            bool m_flagDragging = false;
+            private bool m_flagDragging = false;
             internal bool FlagDragging
             {
                 get => m_flagDragging;
@@ -134,7 +132,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            void AnimateWindow(bool show)
+            private void AnimateWindow(bool show)
             {
                 if (!FlagAnimate && Visible != show)
                 {
@@ -226,7 +224,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Parent.ResumeLayout();
             }
 
-            void LayoutAnimateWindow(Rectangle rect)
+            private void LayoutAnimateWindow(Rectangle rect)
             {
                 Bounds = DockPanel.GetAutoHideWindowBounds(rect);
 
@@ -238,7 +236,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     ActivePane.Location = new Point(ActivePane.Location.X, rectClient.Bottom - 2 - Measures.SplitterSize - ActivePane.Height);
             }
 
-            Rectangle GetRectangle(bool show)
+            private Rectangle GetRectangle(bool show)
             {
                 if (DockState == DockState.Unknown)
                     return Rectangle.Empty;
@@ -266,7 +264,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return rect;
             }
 
-            void SetTimerMouseTrack()
+            private void SetTimerMouseTrack()
             {
                 if (ActivePane is null || ActivePane.IsActivated || FlagDragging)
                 {
@@ -405,7 +403,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 SetTimerMouseTrack();
             }
 
-            void TimerMouseTrack_Tick(object sender, EventArgs e)
+            private void TimerMouseTrack_Tick(object sender, EventArgs e)
             {
                 if (IsDisposed) return;
                 if (ActivePane is null || ActivePane.IsActivated)
@@ -505,7 +503,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             #endregion
         }
 
-        AutoHideWindowControl AutoHideWindow => m_autoHideWindow;
+        private AutoHideWindowControl AutoHideWindow => m_autoHideWindow;
 
         internal Control AutoHideControl => m_autoHideWindow;
 

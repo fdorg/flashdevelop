@@ -20,19 +20,18 @@ namespace LitJson
     public class JsonData : IJsonWrapper, IEquatable<JsonData>
     {
         #region Fields
-
-        IList<JsonData>               inst_array;
-        bool                          inst_boolean;
-        double                        inst_double;
-        int                           inst_int;
-        long                          inst_long;
-        IDictionary<string, JsonData> inst_object;
-        string                        inst_string;
-        string                        json;
-        JsonType                      type;
+        private IList<JsonData>               inst_array;
+        private bool                          inst_boolean;
+        private double                        inst_double;
+        private int                           inst_int;
+        private long                          inst_long;
+        private IDictionary<string, JsonData> inst_object;
+        private string                        inst_string;
+        private string                        json;
+        private JsonType                      type;
 
         // Used to implement the IOrderedDictionary interface
-        IList<KeyValuePair<string, JsonData>> object_list;
+        private IList<KeyValuePair<string, JsonData>> object_list;
         #endregion
 
 
@@ -622,8 +621,7 @@ namespace LitJson
 
 
         #region Private Methods
-
-        ICollection EnsureCollection ()
+        private ICollection EnsureCollection ()
         {
             if (type == JsonType.Array)
                 return (ICollection) inst_array;
@@ -635,7 +633,7 @@ namespace LitJson
                 "The JsonData instance has to be initialized first");
         }
 
-        IDictionary EnsureDictionary ()
+        private IDictionary EnsureDictionary ()
         {
             if (type == JsonType.Object)
                 return (IDictionary) inst_object;
@@ -651,7 +649,7 @@ namespace LitJson
             return (IDictionary) inst_object;
         }
 
-        IList EnsureList ()
+        private IList EnsureList ()
         {
             if (type == JsonType.Array)
                 return (IList) inst_array;
@@ -666,7 +664,7 @@ namespace LitJson
             return (IList) inst_array;
         }
 
-        JsonData ToJsonData (object obj)
+        private JsonData ToJsonData (object obj)
         {
             if (obj is null)
                 return null;
@@ -677,7 +675,7 @@ namespace LitJson
             return new JsonData (obj);
         }
 
-        static void WriteJson (IJsonWrapper obj, JsonWriter writer)
+        private static void WriteJson (IJsonWrapper obj, JsonWriter writer)
         {
             if (obj.IsString) {
                 writer.Write (obj.GetString ());

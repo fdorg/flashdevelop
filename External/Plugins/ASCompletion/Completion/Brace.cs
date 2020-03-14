@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using PluginCore;
+using PluginCore.Collections;
 
 namespace ASCompletion.Completion
 {
@@ -50,7 +51,7 @@ namespace ASCompletion.Completion
         public Rule[] Rules
         {
             get => rules;
-            set => rules = value ?? Array.Empty<Rule>();
+            set => rules = value ?? EmptyArray<Rule>.Instance;
         }
         
         /// <summary>
@@ -164,7 +165,7 @@ namespace ASCompletion.Completion
 
             public Style[] AfterStyles
             {
-                get => afterStyles ?? Array.Empty<Style>();
+                get => afterStyles ?? EmptyArray<Style>.Instance;
                 set => afterStyles = value.IsNullOrEmpty() ? null : value;
             }
             
@@ -188,7 +189,7 @@ namespace ASCompletion.Completion
 
             public Style[] BeforeStyles
             {
-                get => beforeStyles ?? Array.Empty<Style>();
+                get => beforeStyles ?? EmptyArray<Style>.Instance;
                 set => beforeStyles = value.IsNullOrEmpty() ? null : value;
             }
 

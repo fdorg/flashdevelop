@@ -8,21 +8,21 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     internal class VS2005AutoHideStrip : AutoHideStripBase
     {
-        class TabVS2005 : Tab
+        private class TabVS2005 : Tab
         {
             internal TabVS2005(IDockContent content)
                 : base(content)
             {
             }
 
-            int m_tabX = 0;
+            private int m_tabX = 0;
             public int TabX
             {
                 get => m_tabX;
                 set => m_tabX = value;
             }
 
-            int m_tabWidth = 0;
+            private int m_tabWidth = 0;
             public int TabWidth
             {
                 get => m_tabWidth;
@@ -32,23 +32,21 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         // CHANGED - NICK
-        const int _ImageHeight = 16;
-        const int _ImageWidth = 16;
-        const int _ImageGapTop = 4;
-        const int _ImageGapLeft = 5;
-        const int _ImageGapRight = 2;
-        const int _ImageGapBottom = 2;
-        const int _TextGapLeft = 0;
-        const int _TextGapRight = 3;
-        const int _TabGapTop = 3;
-        const int _TabGapLeft = 3;
-        const int _TabGapBetween = 4;
+        private const int _ImageHeight = 16;
+        private const int _ImageWidth = 16;
+        private const int _ImageGapTop = 4;
+        private const int _ImageGapLeft = 5;
+        private const int _ImageGapRight = 2;
+        private const int _ImageGapBottom = 2;
+        private const int _TextGapLeft = 0;
+        private const int _TextGapRight = 3;
+        private const int _TabGapTop = 3;
+        private const int _TabGapLeft = 3;
+        private const int _TabGapBetween = 4;
 
         #region Customizable Properties
-
-        static StringFormat _stringFormatTabHorizontal;
-
-        StringFormat StringFormatTabHorizontal
+        private static StringFormat _stringFormatTabHorizontal;
+        private StringFormat StringFormatTabHorizontal
         {
             get
             {
@@ -69,9 +67,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        static StringFormat _stringFormatTabVertical;
-
-        StringFormat StringFormatTabVertical
+        private static StringFormat _stringFormatTabVertical;
+        private StringFormat StringFormatTabVertical
         {
             get
             {   
@@ -91,29 +88,29 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        static int ImageHeight => ScaleHelper.Scale(_ImageHeight);
+        private static int ImageHeight => ScaleHelper.Scale(_ImageHeight);
 
-        static int ImageWidth => ScaleHelper.Scale(_ImageWidth);
+        private static int ImageWidth => ScaleHelper.Scale(_ImageWidth);
 
-        static int ImageGapTop => ScaleHelper.Scale(_ImageGapTop);
+        private static int ImageGapTop => ScaleHelper.Scale(_ImageGapTop);
 
-        static int ImageGapLeft => ScaleHelper.Scale(_ImageGapLeft);
+        private static int ImageGapLeft => ScaleHelper.Scale(_ImageGapLeft);
 
-        static int ImageGapRight => ScaleHelper.Scale(_ImageGapRight);
+        private static int ImageGapRight => ScaleHelper.Scale(_ImageGapRight);
 
-        static int ImageGapBottom => ScaleHelper.Scale(_ImageGapBottom);
+        private static int ImageGapBottom => ScaleHelper.Scale(_ImageGapBottom);
 
-        static int TextGapLeft => ScaleHelper.Scale(_TextGapLeft);
+        private static int TextGapLeft => ScaleHelper.Scale(_TextGapLeft);
 
-        static int TextGapRight => ScaleHelper.Scale(_TextGapRight);
+        private static int TextGapRight => ScaleHelper.Scale(_TextGapRight);
 
-        static int TabGapTop => ScaleHelper.Scale(_TabGapTop);
+        private static int TabGapTop => ScaleHelper.Scale(_TabGapTop);
 
-        static int TabGapLeft => ScaleHelper.Scale(_TabGapLeft);
+        private static int TabGapLeft => ScaleHelper.Scale(_TabGapLeft);
 
-        static int TabGapBetween => ScaleHelper.Scale(_TabGapBetween);
+        private static int TabGapBetween => ScaleHelper.Scale(_TabGapBetween);
 
-        static Brush BrushTabBackground
+        private static Brush BrushTabBackground
         {
             get 
             {
@@ -123,7 +120,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        static Pen PenTabBorder
+        private static Pen PenTabBorder
         {
             get 
             {
@@ -133,7 +130,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        static Brush BrushTabText
+        private static Brush BrushTabText
         {
             get 
             {
@@ -144,12 +141,11 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
         #endregion
 
-        static readonly Matrix _matrixIdentity = new Matrix();
-        static Matrix MatrixIdentity => _matrixIdentity;
+        private static readonly Matrix _matrixIdentity = new Matrix();
+        private static Matrix MatrixIdentity => _matrixIdentity;
 
-        static DockState[] _dockStates;
-
-        static DockState[] DockStates
+        private static DockState[] _dockStates;
+        private static DockState[] DockStates
         {
             get
             {
@@ -165,7 +161,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        static GraphicsPath _graphicsPath;
+        private static GraphicsPath _graphicsPath;
         internal static GraphicsPath GraphicsPath
         {
             get
@@ -197,7 +193,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             base.OnLayout (levent);
         }
 
-        void DrawTabStrip(Graphics g)
+        private void DrawTabStrip(Graphics g)
         {
             DrawTabStrip(g, DockState.DockTopAutoHide);
             DrawTabStrip(g, DockState.DockBottomAutoHide);
@@ -205,7 +201,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             DrawTabStrip(g, DockState.DockRightAutoHide);
         }
 
-        void DrawTabStrip(Graphics g, DockState dockState)
+        private void DrawTabStrip(Graphics g, DockState dockState)
         {
             Rectangle rectTabStrip = GetLogicalTabStripRectangle(dockState);
 
@@ -229,7 +225,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             g.Transform = matrixIdentity;
         }
 
-        void CalculateTabs()
+        private void CalculateTabs()
         {
             CalculateTabs(DockState.DockTopAutoHide);
             CalculateTabs(DockState.DockBottomAutoHide);
@@ -237,7 +233,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             CalculateTabs(DockState.DockRightAutoHide);
         }
 
-        void CalculateTabs(DockState dockState)
+        private void CalculateTabs(DockState dockState)
         {
             Rectangle rectTabStrip = GetLogicalTabStripRectangle(dockState);
 
@@ -274,7 +270,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        Rectangle RtlTransform(Rectangle rect, DockState dockState)
+        private Rectangle RtlTransform(Rectangle rect, DockState dockState)
         {
             Rectangle rectTransformed;
             if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
@@ -285,7 +281,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return rectTransformed;
         }
 
-        GraphicsPath GetTabOutline(TabVS2005 tab, bool transformed, bool rtlTransform)
+        private GraphicsPath GetTabOutline(TabVS2005 tab, bool transformed, bool rtlTransform)
         {
             DockState dockState = tab.Content.DockHandler.DockState;
             Rectangle rectTab = GetTabRectangle(tab, transformed);
@@ -297,7 +293,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return GraphicsPath;
         }
 
-        void DrawTab(Graphics g, TabVS2005 tab)
+        private void DrawTab(Graphics g, TabVS2005 tab)
         {
             Rectangle rectTabOrigin = GetTabRectangle(tab);
             if (rectTabOrigin.IsEmpty)
@@ -380,12 +376,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             g.Transform = matrixRotate;
         }
 
-        Rectangle GetLogicalTabStripRectangle(DockState dockState)
+        private Rectangle GetLogicalTabStripRectangle(DockState dockState)
         {
             return GetLogicalTabStripRectangle(dockState, false);
         }
 
-        Rectangle GetLogicalTabStripRectangle(DockState dockState, bool transformed)
+        private Rectangle GetLogicalTabStripRectangle(DockState dockState, bool transformed)
         {
             if (!DockHelper.IsDockStateAutoHide(dockState))
                 return Rectangle.Empty;
@@ -434,12 +430,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             return GetTransformedRectangle(dockState, new Rectangle(x, y, width, height));
         }
 
-        Rectangle GetTabRectangle(TabVS2005 tab)
+        private Rectangle GetTabRectangle(TabVS2005 tab)
         {
             return GetTabRectangle(tab, false);
         }
 
-        Rectangle GetTabRectangle(TabVS2005 tab, bool transformed)
+        private Rectangle GetTabRectangle(TabVS2005 tab, bool transformed)
         {
             DockState dockState = tab.Content.DockHandler.DockState;
             Rectangle rectTabStrip = GetLogicalTabStripRectangle(dockState);
@@ -459,7 +455,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return GetTransformedRectangle(dockState, new Rectangle(x, y, width, height));
         }
 
-        Rectangle GetTransformedRectangle(DockState dockState, Rectangle rect)
+        private Rectangle GetTransformedRectangle(DockState dockState, Rectangle rect)
         {
             if (dockState != DockState.DockLeftAutoHide && dockState != DockState.DockRightAutoHide)
                 return rect;

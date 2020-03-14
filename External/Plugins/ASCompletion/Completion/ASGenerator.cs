@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using ASCompletion.Generators;
+using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -1507,12 +1508,13 @@ namespace ASCompletion.Completion
                 // for example: typeof v, delete o[k], ...
                 if (((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, inClass, context)) return;
                 // for example: 1 + 1, 1 << 1, ...
-                var operators = Enumerable.ToHashSet(ctx.Features.ArithmeticOperators
+                var operators = ctx.Features.ArithmeticOperators
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
                     .Concat(ctx.Features.BitwiseOperators)
                     .Concat(ctx.Features.BooleanOperators)
-                    .Concat(ctx.Features.TernaryOperators));
+                    .Concat(ctx.Features.TernaryOperators)
+                    .ToHashSet();
                 var sep = new[] {' '};
                 var isValid = new Func<ASExpr, bool>(c => c.Separator.Contains(' ') 
                     && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries).Any(it => operators.Contains(it.Trim())));

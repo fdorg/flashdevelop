@@ -153,7 +153,7 @@ namespace PluginCore.BBCode
 
         public class Color
         {
-            delegate float DColorChannelMixer(float back, float fore);
+            private delegate float DColorChannelMixer(float back, float fore);
 
             #region Statics
 
@@ -218,17 +218,17 @@ namespace PluginCore.BBCode
                 return Mode.NORMAL;
             }
 
-            static float lerp(float a, float b, float pos)
+            private static float lerp(float a, float b, float pos)
             {
                 return a + pos * (b - a);
             }
 
 
-            static bool _isInitedStatics = false;
-            static Dictionary<Mode, DColorChannelMixer> _colorChannelMixers;
-            static Dictionary<string, Mode> _colorChannelMixersHash;
+            private static bool _isInitedStatics = false;
+            private static Dictionary<Mode, DColorChannelMixer> _colorChannelMixers;
+            private static Dictionary<string, Mode> _colorChannelMixersHash;
 
-            static void _InitStatics()
+            private static void _InitStatics()
             {
                 if (_isInitedStatics)
                     return;
@@ -259,49 +259,41 @@ namespace PluginCore.BBCode
             }
 
 
-            static float _channelMixer_NORMAL(float back, float fore)
+            private static float _channelMixer_NORMAL(float back, float fore)
             {
                 return fore;
             }
-
-            static float _channelMixer_ADD(float back, float fore)
+            private static float _channelMixer_ADD(float back, float fore)
             {
                 return back + fore;
             }
-
-            static float _channelMixer_SUBTRACT(float back, float fore)
+            private static float _channelMixer_SUBTRACT(float back, float fore)
             {
                 return back + fore - 1.0f;
             }
-
-            static float _channelMixer_MULTIPLY(float back, float fore)
+            private static float _channelMixer_MULTIPLY(float back, float fore)
             {
                 return back * fore;
             }
-
-            static float _channelMixer_DIVIDE(float back, float fore)
+            private static float _channelMixer_DIVIDE(float back, float fore)
             {
                 return back / fore;
             }
-
-            static float _channelMixer_DIFFERENCE(float back, float fore)
+            private static float _channelMixer_DIFFERENCE(float back, float fore)
             {
                 return Math.Abs(back - fore);
             }
-
-            static float _channelMixer_EXCLUSION(float back, float fore)
+            private static float _channelMixer_EXCLUSION(float back, float fore)
             {
                 return back + fore - 2.0f * back * fore;
             }
-
-            static float _channelMixer_OVERLAY(float back, float fore)
+            private static float _channelMixer_OVERLAY(float back, float fore)
             {
                 if (back < 0.5)
                     return 2.0f * back * fore;
                 return 2.0f * (0.5f - (1.0f - fore) * (1.0f - back));
             }
-
-            static float _channelMixer_HARDLIGHT(float back, float fore)
+            private static float _channelMixer_HARDLIGHT(float back, float fore)
             {
                 return _channelMixer_OVERLAY(fore, back);
             }

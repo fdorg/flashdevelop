@@ -10,10 +10,10 @@ namespace ProjectManager.Controls
 
     public class RecentProjectsMenu : ToolStripMenuItem
     {
-        readonly ToolStripMenuItem cleanItemMenu;
-        readonly ToolStripMenuItem cleanItemToolbar;
-        readonly ToolStripMenuItem clearItemMenu;
-        readonly ToolStripMenuItem clearItemToolbar;
+        private readonly ToolStripMenuItem cleanItemMenu;
+        private readonly ToolStripMenuItem cleanItemToolbar;
+        private readonly ToolStripMenuItem clearItemMenu;
+        private readonly ToolStripMenuItem clearItemToolbar;
         public event ProjectEventHandler ProjectSelected;
         public ToolStripDropDownButton ToolbarSelector;
 
@@ -56,7 +56,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        void RebuildList()
+        private void RebuildList()
         {
             int count = PluginMain.Settings.RecentProjects.Count;
             int max = PluginMain.Settings.MaxRecentProjects;
@@ -82,7 +82,7 @@ namespace ProjectManager.Controls
             ToolbarSelector.Enabled = Enabled = true;
         }
 
-        ToolStripMenuItem BuildItem(string projectPath, bool showPath)
+        private ToolStripMenuItem BuildItem(string projectPath, bool showPath)
         {
             ToolStripMenuItem item = new ToolStripMenuItem();
             string name = Path.GetFileNameWithoutExtension(projectPath);
@@ -109,13 +109,13 @@ namespace ProjectManager.Controls
             return item;
         }
 
-        void CleanAllItems()
+        private void CleanAllItems()
         {
             FileHelper.FilterByExisting(PluginMain.Settings.RecentProjects, true);
             RebuildList();
         }
 
-        void ClearAllItems()
+        private void ClearAllItems()
         {
             PluginMain.Settings.RecentProjects.Clear();
             DropDownItems.Clear();
@@ -124,7 +124,7 @@ namespace ProjectManager.Controls
             ToolbarSelector.Enabled = false;
         }
 
-        void OnProjectSelected(string projectPath)
+        private void OnProjectSelected(string projectPath)
         {
             // if the project no longer exists, fail with a nice message.
             if (!File.Exists(projectPath))

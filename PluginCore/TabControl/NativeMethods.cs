@@ -15,7 +15,7 @@ namespace System.Windows.Forms
 	//[SecurityPermission(SecurityAction.Assert, Flags=SecurityPermissionFlag.UnmanagedCode)]
 	internal sealed class NativeMethods
 	{
-        NativeMethods(){}
+		private NativeMethods(){}
 		
 #region Windows Constants
 
@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 			                                                | BindingFlags.IgnoreCase 
 			                                                | BindingFlags.Instance);
 			
-			object[] args = {message};
+			object[] args = new object[] {message};
 			wproc.Invoke(control, args);
 			
 			return ((Message)args[0]).Result;

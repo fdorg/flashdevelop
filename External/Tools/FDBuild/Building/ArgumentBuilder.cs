@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjectManager.Building
 {
-    internal class ArgumentBuilder
+    class ArgumentBuilder
     {
         readonly List<string> args;
 

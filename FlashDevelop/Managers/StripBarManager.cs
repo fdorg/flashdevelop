@@ -12,7 +12,7 @@ using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
-    internal static class StripBarManager
+    static class StripBarManager
     {
         public static List<ToolStripItem> Items = new List<ToolStripItem>();
 
@@ -225,7 +225,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the dynamic syntax menu xml (easy integration :)
         /// </summary>
-        static string GetSyntaxMenuXml()
+        private static string GetSyntaxMenuXml()
         {
             string syntaxXml = "";
             string[] syntaxFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
@@ -241,7 +241,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Strips normal label characters from the string
         /// </summary>
-        static string GetStrippedString(string text, bool removeWhite)
+        private static string GetStrippedString(string text, bool removeWhite)
         {
             text = TextHelper.RemoveMnemonicsAndEllipsis(text);
             if (removeWhite)
@@ -255,7 +255,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a localized string if available
         /// </summary>
-        static string GetLocalizedString(string key)
+        private static string GetLocalizedString(string key)
         {
             try
             {
@@ -286,7 +286,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a shortcut key string from a string
         /// </summary>
-        static string GetKeyText(string data)
+        private static string GetKeyText(string data)
         {
             data = data.Replace("|", "+");
             data = data.Replace("Control", "Ctrl");
@@ -296,7 +296,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a shortcut keys from a string
         /// </summary>
-        static Keys GetKeys(string data)
+        private static Keys GetKeys(string data)
         {
             try
             {
@@ -317,7 +317,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a click handler from a string
         /// </summary>
-        static EventHandler GetEventHandler(string method)
+        private static EventHandler GetEventHandler(string method)
         {
             try
             {
@@ -329,5 +329,7 @@ namespace FlashDevelop.Managers
                 return null;
             }
         }
+
     }
+
 }

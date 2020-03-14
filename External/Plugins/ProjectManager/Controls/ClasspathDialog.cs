@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Collections;
 
 namespace ProjectManager.Controls
 {
@@ -11,16 +12,16 @@ namespace ProjectManager.Controls
     {
         #region Form Designer
 
-        ClasspathControl classpathControl;
-        Button btnCancel;
-        Button btnOK;
-        Label label2;
-        GroupBox groupBox1;
+        private ClasspathControl classpathControl;
+        private Button btnCancel;
+        private Button btnOK;
+        private Label label2;
+        private GroupBox groupBox1;
 
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        readonly System.ComponentModel.IContainer components = null;
+        private readonly System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -54,7 +55,7 @@ namespace ProjectManager.Controls
             // classpathControl
             // 
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.classpathControl.Classpaths = Array.Empty<string>();
+            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
             this.classpathControl.Location = new System.Drawing.Point(10, 19);
             this.classpathControl.Name = "classpathControl";
             this.classpathControl.Size = new System.Drawing.Size(357, 135);
@@ -174,12 +175,12 @@ namespace ProjectManager.Controls
             set => classpathControl.Classpaths = value;
         }
 
-        void classpathControl_Changed(object sender, EventArgs e)
+        private void classpathControl_Changed(object sender, EventArgs e)
         {
             pathChanged = true;
         }
 
-        void classpathControl_IndexChanged(object sender, EventArgs e)
+        private void classpathControl_IndexChanged(object sender, EventArgs e)
         {
             SaveClasspath();
             int index = classpathControl.LanguageBox.SelectedIndex;
@@ -187,7 +188,7 @@ namespace ProjectManager.Controls
             this.Classpaths = this.settings.GetGlobalClasspaths(this.Language).ToArray();
         }
 
-        void SaveClasspath()
+        private void SaveClasspath()
         {
             if (pathChanged)
             {
@@ -198,14 +199,14 @@ namespace ProjectManager.Controls
             }
         }
 
-        void btnOK_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             SaveClasspath();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        void btnCancel_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();

@@ -13,12 +13,12 @@ namespace PluginCore.Utilities
 
         public event PathWalkerCompleteHandler OnComplete;
 
-        readonly string basePath;
-        readonly string fileMask;
-        readonly bool recursive;
-        List<string> knownPathes;
-        List<string> foundFiles;
-        readonly Regex reUnsafeMask = new Regex("^\\*(\\.[a-z0-9]{3})$"); 
+        private readonly string basePath;
+        private readonly string fileMask;
+        private readonly bool recursive;
+        private List<string> knownPathes;
+        private List<string> foundFiles;
+        private readonly Regex reUnsafeMask = new Regex("^\\*(\\.[a-z0-9]{3})$"); 
 
         public PathWalker(string basePath, string fileMask, bool recursive)
         {
@@ -73,7 +73,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Explores the content of the folder
         /// </summary> 
-        void ExploreFolder(string path)
+        private void ExploreFolder(string path)
         {
             //Avoids performing the split if there are no semi-colons or if fileMask is null which would throw a null-object-reference exception
             //Not sure if the fileMask NULL case is handled outside, I'll leave that for you to decide whether or not to keep
@@ -93,7 +93,7 @@ namespace PluginCore.Utilities
         /// </summary>
         /// <param name="path">The root folder to explore.</param>
         /// <param name="masks">A collection of file masks to match against.</param>
-        void ExploreFolderWithMasks(string path, string[] masks)
+        private void ExploreFolderWithMasks(string path, string[] masks)
         {
             knownPathes.Add(path);
 
@@ -133,7 +133,7 @@ namespace PluginCore.Utilities
             }
         }
 
-        string getMaskControl(string mask)
+        private string getMaskControl(string mask)
         {
             var m = reUnsafeMask.Match(mask);
             return m.Success ? m.Groups[1].Value : null;
