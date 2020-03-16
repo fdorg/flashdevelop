@@ -206,16 +206,10 @@ namespace HaXeContext.Completion
 
         static bool HandleMetadataCompletion(bool autoHide)
         {
-            var list = new List<ICompletionListItem>();
-            foreach (var meta in ASContext.Context.Features.metadata)
-            {
-                var member = new MemberModel();
-                member.Name = meta.Key;
-                member.Comments = meta.Value;
-                member.Type = "Compiler Metadata";
-                list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide);
-            }
+            var list = ASContext.Context.Features.metadata
+                .Select(meta => new MemberItem(new MemberModel {Name = meta.Key, Comments = meta.Value, Type = "Compiler Metadata"}))
+                .ToList<ICompletionListItem>();
+            CompletionList.Show(list, autoHide);
             return true;
         }
 
