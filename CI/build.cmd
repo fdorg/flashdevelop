@@ -27,7 +27,7 @@ del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
 del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
 del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
 del "FlashDevelop\Bin/Debug\System.Threading.Tasks.Extensions.*" /Q
-del "FlashDevelop\Bin/Debug\SystemCastle.Core.*" /Q
+del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
 del "FlashDevelop\Bin/Debug\System.Runtime.CompilerServices.Unsafe.*" /Q
 
 :: Check if the build was triggered by a pull request
