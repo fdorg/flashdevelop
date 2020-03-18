@@ -4,7 +4,7 @@
 :: set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
 :: set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
 :: set PATH=%PATH%;C:\Program Files (x86)\NSIS
-set PATH=%PATH%;C:\Program Files\7-Zip\
+:: set PATH=%PATH%;C:\Program Files\7-Zip\
 
 :flashdevelop
 
@@ -23,12 +23,12 @@ if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
 if %errorlevel% neq 0 goto :error
 
 :: Remove testing binaries so we can reuse the current build
-del "FlashDevelop/Bin/Debug/*.Tests.*" /Q
-del "FlashDevelop/Bin/Debug/NSubstitute.*" /Q
-del "FlashDevelop/Bin/Debug/nunit.framework.*" /Q
-del "FlashDevelop/Bin/Debug/System.Threading.Tasks.Extensions.*" /Q
-del "FlashDevelop/Bin/Debug/SystemCastle.Core.*" /Q
-del "FlashDevelop/Bin/Debug/System.Runtime.CompilerServices.Unsafe.*" /Q
+del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
+del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
+del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
+del "FlashDevelop\Bin/Debug\System.Threading.Tasks.Extensions.*" /Q
+del "FlashDevelop\Bin/Debug\SystemCastle.Core.*" /Q
+del "FlashDevelop\Bin/Debug\System.Runtime.CompilerServices.Unsafe.*" /Q
 
 :: Check if the build was triggered by a pull request
 if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
