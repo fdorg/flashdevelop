@@ -1,4 +1,4 @@
-Thumbs.db
+﻿Thumbs.db
 *.config
 *.fda
 *.fdb
@@ -32,4 +32,7 @@ Thumbs.db
 **/NSubstitute.xml
 **/nunit.framework.dll
 **/nunit.framework.xml
+**/System.Threading.Tasks.Extensions.*
+**/Castle.Core.*
+**/System.Runtime.CompilerServices.Unsafe.*
 .vs/
