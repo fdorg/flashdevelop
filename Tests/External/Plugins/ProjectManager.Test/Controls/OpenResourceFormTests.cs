@@ -11,8 +11,8 @@ namespace ProjectManager.Controls
             [Test]
             public void SimpleTest()
             {
-                List<string> files = new List<string>();
-                files.AddRange(new[] {
+                var files = new List<string>
+                {
                     "src\\Main.hx",
                     "src\\StaticClass.hx",
                     "src\\com\\Test.xml",
@@ -27,23 +27,22 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\example\\IExampleModule.hx",
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
-                });
+                };
                 var results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
-                
                 Assert.AreEqual("src\\Main.hx", results[0]); //shortest and also starts with an "m", so should be first
             }
 
             [Test]
             public void LimitTest()
             {
-                List<string> files = new List<string>();
-                files.AddRange(new[] {
+                var files = new List<string>
+                {
                     "Main.hx",
                     "src\\com\\module\\example\\ExampleModule.hx",
                     "src\\com\\module\\example\\IExampleModule.hx",
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
-                });
+                };
                 var results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
                 Assert.AreEqual(results.Count, 1);
 
@@ -54,8 +53,8 @@ namespace ProjectManager.Controls
             [Test]
             public void IClassTest()
             {
-                List<string> files = new List<string>();
-                files.AddRange(new[] {
+                var files = new List<string>
+                {
                     "hexannotation\\hex\\annotation\\AnnotationData.hx",
                     "hexannotation\\hex\\annotation\\AnnotationReader.hx",
                     "hexannotation\\hex\\annotation\\ArgumentData.hx",
@@ -66,7 +65,7 @@ namespace ProjectManager.Controls
                     "hexannotation\\hex\\annotation\\PropertyAnnotationData.hx",
                     "src\\Main.hx",
                     "src\\StaticClass.hx"
-                });
+                };
                 var results = SearchUtil.getMatchedItems(files, "iclass", '\\', 2);
 
                 //since the file name starts with iclass, it should be prefered over "src\\StaticClass.hx", which has 
@@ -79,8 +78,8 @@ namespace ProjectManager.Controls
             [Test]
             public void TestTest()
             {
-                List<string> files = new List<string>();
-                files.AddRange(new[] {
+                var files = new List<string>
+                {
                     "src\\StaticClass.hx",
                     "src\\com\\module\\ITestModule.hx",
                     "src\\com\\module\\TestModule.hx",
@@ -88,7 +87,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\example\\IExampleModule.hx",
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
-                });
+                };
 
                 var results = SearchUtil.getMatchedItems(files, "test\\test", '\\', 0);
 
