@@ -15,7 +15,7 @@ namespace HaXeContext.Generators
     [TestFixture]
     public class CodeGeneratorTests2 : ASCompletionTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};

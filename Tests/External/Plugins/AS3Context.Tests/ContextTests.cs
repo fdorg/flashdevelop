@@ -15,7 +15,7 @@ namespace AS3Context
 
         protected static string GetFullPath(string fileName) => $"{nameof(AS3Context)}.Test_Files.parser.{fileName}.as";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public new void FixtureSetUp()
         {
             ASContext.Context.SetAs3Features();

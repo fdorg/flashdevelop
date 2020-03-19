@@ -270,7 +270,7 @@ namespace ProjectManager.Actions
 
         public static InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
         {
-            if (sdks is null) sdks = EmptyArray<InstalledSDK>.Instance;
+            if (sdks is null) sdks = Array.Empty<InstalledSDK>();
 
             // default sdk
             if (string.IsNullOrEmpty(preferredSDK))

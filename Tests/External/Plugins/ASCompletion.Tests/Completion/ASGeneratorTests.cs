@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +12,7 @@ using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
-using PluginCore.Collections;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 
 // TODO: Tests with different formatting options using parameterized tests
@@ -28,7 +29,7 @@ namespace ASCompletion.Completion
         static void SetCurrentFileName(string fileName)
         {
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -38,7 +39,7 @@ namespace ASCompletion.Completion
 
         static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};
@@ -664,8 +665,7 @@ namespace ASCompletion.Completion
                         GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_increment4"))
                     .SetName("++1 * ++1|");
-                yield return new TestCaseData(ReadAllText("BeforeAssignStatementToVar_typeof1"),
-                        GeneratorJobType.AssignStatementToVar, true)
+                yield return new TestCaseData(ReadAllText("BeforeAssignStatementToVar_typeof1"), GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_typeof1"))
                     .SetName("typeof value. Issue 1908.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
@@ -1005,7 +1005,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), EmptyArray<string>.Instance)
+                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), Array.Empty<string>())
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})

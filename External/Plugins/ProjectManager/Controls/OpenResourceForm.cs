@@ -502,7 +502,7 @@ namespace ProjectManager.Controls
             {
                 searchFile = Path.GetFileName(searchText);
                 searchDir = Path.GetDirectoryName(searchText);
-                if (searchDir == null) searchDir = "";
+                if (searchDir is null) searchDir = "";
                 if (searchFile == "" && searchDir == "") return new List<string>();
             }
             catch (ArgumentException)
@@ -598,7 +598,7 @@ namespace ProjectManager.Controls
             if (str.StartsWith(query, caseMatters ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
                 return query.Length + 1; // Exact match at the beginning - highest score
 
-            if (pathSeparator == null && (caseMatters ? str.Contains(query) : str.ToLower().Contains(query.ToLower())))
+            if (pathSeparator is null && (caseMatters ? str.Contains(query) : str.ToLower().Contains(query.ToLower())))
                 return query.Length; // Exact match somewhere - second highest score
 
             double score = 0;

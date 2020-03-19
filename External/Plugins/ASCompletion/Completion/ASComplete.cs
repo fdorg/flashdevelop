@@ -4321,7 +4321,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        public static char GetCharLeft(ScintillaControl sci,ref int position) => GetCharLeft(sci, true, ref position);
+        public static char GetCharLeft(ScintillaControl sci, ref int position) => GetCharLeft(sci, true, ref position);
 
         public static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
         {

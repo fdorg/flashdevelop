@@ -36,14 +36,14 @@ namespace FlashDebugger
 
         public BreakPointUI(BreakPointManager breakPointManager)
         {
-            init();
+            Init();
             InitializeLocalization();
             this.breakPointManager = breakPointManager;
-            this.breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
-            this.breakPointManager.UpdateBreakPointEvent += breakPointManager_UpdateBreakPointEvent;
+            this.breakPointManager.ChangeBreakPointEvent += BreakPointManager_ChangeBreakPointEvent;
+            this.breakPointManager.UpdateBreakPointEvent += BreakPointManager_UpdateBreakPointEvent;
         }
 
-        void breakPointManager_UpdateBreakPointEvent(object sender, UpdateBreakPointArgs e)
+        void BreakPointManager_UpdateBreakPointEvent(object sender, UpdateBreakPointArgs e)
         {
             int index = ItemIndex(e.FileFullPath, e.OldLine);
             if (index >= 0)
@@ -52,13 +52,13 @@ namespace FlashDebugger
             }
         }
 
-        void breakPointManager_ChangeBreakPointEvent(object sender, BreakPointArgs e)
+        void BreakPointManager_ChangeBreakPointEvent(object sender, BreakPointArgs e)
         {
             if (e.IsDelete) DeleteItem(e.FileFullPath, e.Line + 1);            
             else AddItem(e.FileFullPath, e.Line + 1, e.Exp, e.Enable);
         }
 
-        void init()
+        void Init()
         {
             AutoKeyHandling = true;
             dgv = new DataGridViewEx();
@@ -73,9 +73,7 @@ namespace FlashDebugger
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.Single;
             dgv.EnableHeadersVisualStyles = true;
             dgv.RowHeadersVisible = false;
-            DataGridViewCellStyle viewStyle = new DataGridViewCellStyle();
-            viewStyle.Padding = new Padding(1);
-            dgv.ColumnHeadersDefaultCellStyle = viewStyle;
+            dgv.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle {Padding = new Padding(1)};
             ColumnBreakPointEnable = new DataGridViewCheckBoxColumn();
             ColumnBreakPointFilePath = new DataGridViewTextBoxColumn();
             ColumnBreakPointFileName = new DataGridViewTextBoxColumn();
@@ -97,23 +95,16 @@ namespace FlashDebugger
             ColumnBreakPointExp.HeaderText = TextHelper.GetString("Label.Exp");
             ColumnBreakPointExp.Name = "Exp";
             dgv.AllowUserToAddRows = false;
-            dgv.Columns.AddRange(new DataGridViewColumn[] 
-            {
-                ColumnBreakPointEnable,
-                ColumnBreakPointFilePath,
-                ColumnBreakPointFileName,
-                ColumnBreakPointLine,
-                ColumnBreakPointExp
-            });
+            dgv.Columns.AddRange(ColumnBreakPointEnable, ColumnBreakPointFilePath, ColumnBreakPointFileName, ColumnBreakPointLine, ColumnBreakPointExp);
             foreach (DataGridViewColumn column in dgv.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
             }
             defaultColor = dgv.Rows[dgv.Rows.Add()].DefaultCellStyle.BackColor;
             dgv.Rows.Clear();
-            dgv.CellEndEdit += dgv_CellEndEdit;
-            dgv.CellMouseUp += dgv_CellMouseUp;
-            dgv.CellDoubleClick += dgv_CellDoubleClick;
+            dgv.CellEndEdit += Dgv_CellEndEdit;
+            dgv.CellMouseUp += Dgv_CellMouseUp;
+            dgv.CellDoubleClick += Dgv_CellDoubleClick;
             Controls.Add(dgv);
             InitializeComponent();
             tsbRemoveSelected.Image = PluginBase.MainForm.FindImage("548|27|5|5");
@@ -126,17 +117,17 @@ namespace FlashDebugger
             ScrollBarEx.Attach(dgv);
         }
 
-        void dgv_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        void Dgv_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
-            breakPointManager.ChangeBreakPointEvent -= breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent -= BreakPointManager_ChangeBreakPointEvent;
             if (e.RowIndex < 0 || e.RowIndex >= dgv.Rows.Count) return;
             if (dgv.Rows[e.RowIndex].Cells["Enable"].ColumnIndex == e.ColumnIndex)
             {
                 var row = dgv.Rows[e.RowIndex];
-                string filefullpath = (string)row.Cells["FilePath"].Value;
-                int line = int.Parse((string)row.Cells["Line"].Value) - 1;
-                ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
-                bool value = (bool)row.Cells["Enable"].EditedFormattedValue;
+                var line = int.Parse((string)row.Cells["Line"].Value) - 1;
+                var value = (bool)row.Cells["Enable"].EditedFormattedValue;
+                var filefullpath = (string)row.Cells["FilePath"].Value;
+                var doc = ScintillaHelper.GetDocument(filefullpath);
                 if (doc != null)
                 {
                     // This logic should be handled by BPManager, so we'll just work arround bad BPs and ignore them
@@ -151,40 +142,35 @@ namespace FlashDebugger
                 }
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, false, value);
             }
-            breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent += BreakPointManager_ChangeBreakPointEvent;
         }
 
-        void dgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        void Dgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            DataGridViewRow row = dgv.Rows[e.RowIndex];
-            if ((row.Cells["FilePath"].ColumnIndex == e.ColumnIndex) ||
-                (row.Cells["FileName"].ColumnIndex == e.ColumnIndex) ||
-                (row.Cells["Line"].ColumnIndex == e.ColumnIndex)) 
+            var row = dgv.Rows[e.RowIndex];
+            if ((row.Cells["FilePath"].ColumnIndex == e.ColumnIndex)
+                || (row.Cells["FileName"].ColumnIndex == e.ColumnIndex)
+                || (row.Cells["Line"].ColumnIndex == e.ColumnIndex)) 
             {
-                string filename = (string)row.Cells["FilePath"].Value;
-                int line = int.Parse((string)row.Cells["Line"].Value);
+                var filename = (string)row.Cells["FilePath"].Value;
+                var line = int.Parse((string)row.Cells["Line"].Value);
                 ScintillaHelper.ActivateDocument(filename, line - 1, true);
             }
         }
 
-        void dgv_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        void Dgv_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            if (dgv.Rows[e.RowIndex].Cells["Exp"].ColumnIndex == e.ColumnIndex)
-            {
-                dgv.Rows[e.RowIndex].DefaultCellStyle.BackColor = defaultColor;
-                string filename = (string)dgv.Rows[e.RowIndex].Cells["FilePath"].Value;
-                int line = int.Parse((string)dgv.Rows[e.RowIndex].Cells["Line"].Value);
-                string exp = (string)dgv.Rows[e.RowIndex].Cells["Exp"].Value;
-                breakPointManager.SetBreakPointCondition(filename, line - 1, exp);
-            }
+            if (dgv.Rows[e.RowIndex].Cells["Exp"].ColumnIndex != e.ColumnIndex) return;
+            dgv.Rows[e.RowIndex].DefaultCellStyle.BackColor = defaultColor;
+            var filename = (string)dgv.Rows[e.RowIndex].Cells["FilePath"].Value;
+            var line = int.Parse((string)dgv.Rows[e.RowIndex].Cells["Line"].Value);
+            var exp = (string)dgv.Rows[e.RowIndex].Cells["Exp"].Value;
+            breakPointManager.SetBreakPointCondition(filename, line - 1, exp);
         }
 
-        public void Clear()
-        {
-            dgv.Rows.Clear();
-        }
+        public void Clear() => dgv.Rows.Clear();
 
         public new bool Enabled
         {
@@ -344,7 +330,7 @@ namespace FlashDebugger
         void TsbRemoveSelected_Click(object sender, EventArgs e)
         {
             if (dgv.SelectedCells.Count == 0) return;
-            breakPointManager.ChangeBreakPointEvent -= breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent -= BreakPointManager_ChangeBreakPointEvent;
             var processedRows = new HashSet<DataGridViewRow>();
             foreach (DataGridViewCell selectedCell in dgv.SelectedCells)
             {
@@ -362,14 +348,14 @@ namespace FlashDebugger
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, true, false);
                 dgv.Rows.Remove(selected);
             }
-            breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent += BreakPointManager_ChangeBreakPointEvent;
             breakPointManager.Save();
         }
 
         void TsbRemoveFiltered_Click(object sender, EventArgs e)
         {
             if (dgv.Rows.Count == 0) return;
-            breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent -= BreakPointManager_ChangeBreakPointEvent;
             foreach (DataGridViewRow row in dgv.Rows)
             {
                 var filefullpath = (string)row.Cells["FilePath"].Value;
@@ -383,14 +369,14 @@ namespace FlashDebugger
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, true, false);
             }
             dgv.Rows.Clear();
-            breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent += BreakPointManager_ChangeBreakPointEvent;
             breakPointManager.Save();
         }
 
         void TsbAlternateFiltered_Click(object sender, EventArgs e)
         {
             if (dgv.Rows.Count == 0) return;
-            breakPointManager.ChangeBreakPointEvent -= breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent -= BreakPointManager_ChangeBreakPointEvent;
             foreach (DataGridViewRow row in dgv.Rows)
             {
                 var filefullpath = (string)row.Cells["FilePath"].Value;
@@ -410,7 +396,7 @@ namespace FlashDebugger
                 row.Cells["Enable"].Value = value;
             }
             dgv.EndEdit();
-            breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
+            breakPointManager.ChangeBreakPointEvent += BreakPointManager_ChangeBreakPointEvent;
             breakPointManager.Save();
         }
 
@@ -449,37 +435,35 @@ namespace FlashDebugger
 
         void TstxtFilter_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter) return;
+            try
             {
-                try
+                var regex = new Regex(tstxtFilter.Text, RegexOptions.IgnoreCase);
+                var rows = dgv.Rows.OfType<DataGridViewRow>().ToArray();
+                dgv.Rows.Clear();
+                foreach (var row in rows)
                 {
-                    var regex = new Regex(tstxtFilter.Text, RegexOptions.IgnoreCase);
-                    var rows = dgv.Rows.OfType<DataGridViewRow>().ToArray();
-                    dgv.Rows.Clear();
-                    foreach (var row in rows)
+                    if (tstxtFilter.Text.Length == 0) row.Visible = true;
+                    else
                     {
-                        if (tstxtFilter.Text.Length == 0) row.Visible = true;
-                        else
+                        var matches = false;
+                        var cells = tscbFilterColumns.SelectedIndex == 0 ? row.Cells : (IEnumerable)new[] { row.Cells[tscbFilterColumns.SelectedIndex] };
+                        foreach (DataGridViewCell cell in cells)
                         {
-                            bool matches = false;
-                            IEnumerable cells = tscbFilterColumns.SelectedIndex == 0 ? row.Cells : (IEnumerable)new[] { row.Cells[tscbFilterColumns.SelectedIndex] };
-                            foreach (DataGridViewCell cell in cells)
+                            if (cell.OwningColumn != ColumnBreakPointEnable && ((string)cell.Value).Length > 0 && regex.IsMatch((string)cell.Value))
                             {
-                                if (cell.OwningColumn != ColumnBreakPointEnable && ((string)cell.Value).Length > 0 && regex.IsMatch((string)cell.Value))
-                                {
-                                    matches = true;
-                                    break;
-                                }
+                                matches = true;
+                                break;
                             }
-                            row.Visible = matches;
                         }
+                        row.Visible = matches;
                     }
-                    dgv.Rows.AddRange(rows);
                 }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowWarning("Error filtering list, please ensure you've entered a valid RegEx pattern", ex);
-                }
+                dgv.Rows.AddRange(rows);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowWarning("Error filtering list, please ensure you've entered a valid RegEx pattern", ex);
             }
         }
     }

@@ -206,16 +206,10 @@ namespace HaXeContext.Completion
 
         static bool HandleMetadataCompletion(bool autoHide)
         {
-            var list = new List<ICompletionListItem>();
-            foreach (var meta in ASContext.Context.Features.metadata)
-            {
-                var member = new MemberModel();
-                member.Name = meta.Key;
-                member.Comments = meta.Value;
-                member.Type = "Compiler Metadata";
-                list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide);
-            }
+            var list = ASContext.Context.Features.metadata
+                .Select(meta => new MemberItem(new MemberModel {Name = meta.Key, Comments = meta.Value, Type = "Compiler Metadata"}))
+                .ToList<ICompletionListItem>();
+            CompletionList.Show(list, autoHide);
             return true;
         }
 
@@ -1219,7 +1213,7 @@ namespace HaXeContext.Completion
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
                 }
-                if (expression.Length > 1 && expression[0] is char c && (c == '\'' || c == '"'))
+                if (expression.Length > 1 && expression[0] is { } c && (c == '\'' || c == '"'))
                 {
                     var type = ResolveType(ctx.Features.stringKey, inFile);
                     // for example: ""|, ''|

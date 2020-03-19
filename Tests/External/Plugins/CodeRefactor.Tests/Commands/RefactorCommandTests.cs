@@ -10,6 +10,7 @@ using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace CodeRefactor.Commands
@@ -215,7 +216,7 @@ namespace CodeRefactor.Commands
 
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void OrganizeImportsFixtureSetUp()
             {
                 SetAs3Features(sci);
@@ -329,7 +330,7 @@ namespace CodeRefactor.Commands
                 var sourceText = ReadAllText(fileName);
                 fileName = GetFullPath(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-                fileName = Path.GetFullPath(fileName);
+                fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
                 fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
                 fileName = fileName.Replace(".as", "_withoutEntryPoint.as");
                 ASContext.Context.CurrentModel.FileName = fileName;

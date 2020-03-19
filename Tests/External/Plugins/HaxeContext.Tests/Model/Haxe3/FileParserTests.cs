@@ -13,7 +13,7 @@ namespace HaXeContext.Model.Haxe3
     [TestFixture]
     class FileParserTests : ASCompletionTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup() => SetHaxeFeatures(sci);
 
         internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));

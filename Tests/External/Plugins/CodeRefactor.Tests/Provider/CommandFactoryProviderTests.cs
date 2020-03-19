@@ -7,12 +7,13 @@ using CodeRefactor.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace CodeRefactor.Provider
 {
     class CommandFactoryProviderTests : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup() => SetAs3Features(sci);
 
         static IEnumerable<TestCaseData> RenameValidatorTestCases
@@ -68,7 +69,7 @@ namespace CodeRefactor.Provider
             SetSrc(sci, ReadAllText(fileName));
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\");
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -122,7 +123,7 @@ namespace CodeRefactor.Provider
             SetSrc(sci, ReadAllText(fileName));
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\");
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);

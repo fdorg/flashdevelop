@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using NUnit.Framework;
 using PluginCore;
 using PluginCore.Collections;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 using ScintillaNet;
 
@@ -29,7 +31,7 @@ namespace HaXeContext.Generators
         {
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -39,7 +41,7 @@ namespace HaXeContext.Generators
 
         internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
         
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};
@@ -3215,7 +3217,7 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return new TestCaseData("BeforeGenerateEventHandler", EmptyArray<string>.Instance)
+                yield return new TestCaseData("BeforeGenerateEventHandler", Array.Empty<string>())
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData("BeforeGenerateEventHandler", new[] { "Event.ADDED", "Event.REMOVED" })
@@ -3263,7 +3265,7 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateEventHandler", new[] { "Event.ADDED", "Event.REMOVED" })
                     .Returns(ReadAllText("AfterGeneratePrivateEventHandlerWithDefaultModifier"))
                     .SetName("Generate private event handler with default modifier declaration");
-                yield return new TestCaseData("BeforeGeneratePrivateStaticEventHandler", EmptyArray<string>.Instance)
+                yield return new TestCaseData("BeforeGeneratePrivateStaticEventHandler", Array.Empty<string>())
                     .Returns(ReadAllText("AfterGeneratePrivateStaticEventHandlerWithDefaultModifier"))
                     .SetName("Generate private static event handler with default modifier declaration");
             }

@@ -9,6 +9,7 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Helpers;
 using ProjectManager;
 using ProjectManager.Projects.Haxe;
 
@@ -17,7 +18,7 @@ namespace HaXeContext.CodeRefactor.Commands
     [TestFixture]
     class OrganizeImportsTests : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
@@ -100,7 +101,7 @@ namespace HaXeContext.CodeRefactor.Commands
     {
         static readonly string ProjectPath = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             SetHaxeFeatures(sci);
@@ -219,9 +220,8 @@ namespace HaXeContext.CodeRefactor.Commands
         {
             var sourceText = ReadAllText(fileName);
             fileName = GetFullPath(fileName);
-            fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar)
-                       + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.ChangeExtension(Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar), Path.GetExtension(fileName));
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", ProjectPath);
             fileName = fileName.Replace(".hx", "_withoutEntryPoint.hx");
             ASContext.Context.CurrentModel.FileName = fileName;
