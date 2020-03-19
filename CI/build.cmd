@@ -26,9 +26,10 @@ if %errorlevel% neq 0 goto :error
 del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
 del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
 del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
-del "FlashDevelop\Bin/Debug\System.Threading.Tasks.Extensions.*" /Q
 del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
+del "FlashDevelop\Bin/Debug\System.Threading.Tasks.Extensions.*" /Q
 del "FlashDevelop\Bin/Debug\System.Runtime.CompilerServices.Unsafe.*" /Q
+del "FlashDevelop\Bin/Debug\System.Diagnostics.DiagnosticSource.*" /Q
 
 :: Check if the build was triggered by a pull request
 if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
