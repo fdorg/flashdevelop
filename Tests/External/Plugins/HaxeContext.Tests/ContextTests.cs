@@ -18,7 +18,7 @@ namespace HaXeContext
 
         static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void ContextTestsSetUp() => SetHaxeFeatures(sci);
 
         static IEnumerable<TestCaseData> DecomposeTypesTestCases

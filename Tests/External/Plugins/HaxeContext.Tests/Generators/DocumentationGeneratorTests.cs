@@ -21,7 +21,7 @@ namespace HaXeContext.Generators
 
         protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.documentation.{fileName}.hx";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void DocumentationGeneratorSetUp() => SetHaxeFeatures(sci);
 
         public class ContextualGeneratorTests : DocumentationGeneratorTests

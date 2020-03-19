@@ -41,7 +41,7 @@ namespace HaXeContext.Generators
 
         internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
         
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};

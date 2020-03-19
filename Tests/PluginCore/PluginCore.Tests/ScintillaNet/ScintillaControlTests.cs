@@ -18,7 +18,7 @@ namespace PluginCore.ScintillaNet
         ITabbedDocument doc;
         ScintillaControl sci;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureSetUp()
         {
             settings = Substitute.For<ISettings>();
@@ -41,7 +41,7 @@ namespace PluginCore.ScintillaNet
             sci = GetBaseScintillaControl();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;

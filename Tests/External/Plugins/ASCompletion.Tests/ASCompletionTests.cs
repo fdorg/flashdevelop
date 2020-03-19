@@ -26,7 +26,7 @@ namespace ASCompletion
         ITabbedDocument doc;
         protected ScintillaControl sci;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureSetUp()
         {
 #pragma warning disable CS0436 // Type conflicts with imported type
@@ -60,7 +60,7 @@ namespace ASCompletion
             CompletionList.CreateControl(PluginBase.MainForm);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;

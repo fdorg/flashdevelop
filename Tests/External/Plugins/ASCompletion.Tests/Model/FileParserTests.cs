@@ -7,7 +7,7 @@ namespace ASCompletion.Model
     [TestFixture]
     class FileParserTests : ASCompletionTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup() => SetAs3Features(sci);
 
         static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));

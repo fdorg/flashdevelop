@@ -13,7 +13,7 @@ namespace CodeRefactor.Provider
 {
     class CommandFactoryProviderTests : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup() => SetAs3Features(sci);
 
         static IEnumerable<TestCaseData> RenameValidatorTestCases

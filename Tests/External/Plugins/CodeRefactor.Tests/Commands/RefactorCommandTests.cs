@@ -216,7 +216,7 @@ namespace CodeRefactor.Commands
 
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void OrganizeImportsFixtureSetUp()
             {
                 SetAs3Features(sci);

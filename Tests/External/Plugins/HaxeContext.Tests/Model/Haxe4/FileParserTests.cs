@@ -10,7 +10,7 @@ namespace HaXeContext.Model.Haxe4
     [TestFixture]
     class FileParserTests : ASCompletionTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             SetHaxeFeatures(sci);
