@@ -33,7 +33,7 @@ namespace HaXeContext.Completion.Haxe3
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup() => SetHaxeFeatures(sci);
 
         static IEnumerable<TestCaseData> IsInterpolationStringStyleTestCases
