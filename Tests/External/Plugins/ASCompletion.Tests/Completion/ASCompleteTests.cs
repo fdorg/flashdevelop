@@ -126,7 +126,7 @@ namespace ASCompletion.Completion
 
             static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.as3.{fileName}.as";
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void Setup() => SetAs3Features(sci);
 
             [Test]
