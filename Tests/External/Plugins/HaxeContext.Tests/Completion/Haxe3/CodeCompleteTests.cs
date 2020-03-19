@@ -10,6 +10,7 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 
 namespace HaXeContext.Completion.Haxe3
 {
@@ -26,7 +27,7 @@ namespace HaXeContext.Completion.Haxe3
         {
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -1620,10 +1621,10 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_untyped_1"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("untyped 's'.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_untyped_2"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("untyped [].");
             }
         }
@@ -1633,43 +1634,43 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('s', String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_2"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("return cast('s', String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_3"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('s', String).length");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_4"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('s', String).charAt(0).length");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_5"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('...', String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_6"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('...', String).charAt(0).length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_7"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast(', Int', String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_8"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast ( 's' , String ).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_9"))
-                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('s', String).split('').");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_10"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast('s', String).charAt.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_11"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast [].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_12"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast [].concat.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_cast_13"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("cast [].concat([1]).length.");
             }
         }
@@ -1679,25 +1680,25 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_1"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('s' is String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_2"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("(' is ' is String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_3"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('v is Int' is String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_4"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('(v is Int)' is String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_5"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("( 's' is String ).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_6"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("switch ( 's' is String ).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_is_7"))
-                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Bool", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("return ( 's' is String ).");
             }
         }
@@ -1707,58 +1708,58 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_1"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_2"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("['...'].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_3"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("['=>'].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_4"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[[1 => 2], [2 => 3]].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_5"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[].length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_6"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[].concat.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_7"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[].concat([]).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_8"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[].concat([]).length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_9"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[].concat([])[0].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_10"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("return [].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_11"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("switch [].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_12"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("for(it in [].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_13"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("var l = try [1]. catch(e:Dynamic) 1;");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_14"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("var l = try [1].concat. catch(e:Dynamic) 1;");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_15"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("case [1, 2].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_16"))
-                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<T>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("var a = [1, 2].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_17"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[1 => [1].concat.]");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_arrayInitializer_18"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("{c:[1].concat.}");
             }
         }
@@ -1768,10 +1769,10 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_mapInitializer_1"))
-                    .Returns(new ClassModel { Name = "Map<K, V>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Map<K, V>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("[1=>1].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_mapInitializer_2"))
-                    .Returns(new ClassModel { Name = "Map<K, V>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Map<K, V>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("['...' => 1, '1' => '...'].");
             }
         }
@@ -1781,31 +1782,31 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("\"\".");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_2"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("''.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_3"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("''.length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_4"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("''.charAt.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_5"))
-                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("''.split('').");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_6"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("''.split('').length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_7"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("''.split('')[0].");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_8"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("'...'.length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_stringInitializer_9"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("\"...\".length.");
             }
         }
@@ -1815,13 +1816,13 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_new_1"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("new String('').");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_new_2"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("new String('').charAt.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_new_3"))
-                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("new String('').split('').");
             }
         }
@@ -1831,13 +1832,13 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2362_1"))
-                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("var фывValue. = ''");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2362_2"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("function foo(?фывValue. = '')");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2362_3"))
-                    .Returns(new ClassModel { Name = "VariableType", Flags = FlagType.Class | FlagType.TypeDef })
+                    .Returns(new ClassModel { Name = "VariableType", Flags = FlagType.Class | FlagType.TypeDef, InFile = FileModel.Ignore })
                     .SetName("typedef фывVariableType. = String");
             }
         }
@@ -1847,11 +1848,11 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2373_1"))
-                    .Returns(new ClassModel { Name = "Issue2373Foo", Flags = FlagType.Class | FlagType.Abstract })
+                    .Returns(new ClassModel { Name = "Issue2373Foo", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore })
                     .SetName("var One = 1. Issue 2373. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2373");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2373_2"))
-                    .Returns(new ClassModel { Name = "Issue2373Bar", Flags = FlagType.Class | FlagType.Abstract })
+                    .Returns(new ClassModel { Name = "Issue2373Bar", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore })
                     .SetName("var One = 1. Issue 2373. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2373");
             }
@@ -1862,7 +1863,7 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2401_1"))
-                    .Returns(new ClassModel { Name = "Null<Dynamic>", Flags = FlagType.Class | FlagType.Abstract })
+                    .Returns(new ClassModel { Name = "Null<Dynamic>", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore })
                     .SetName("function foo(?v| = null). Issue 2401. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2401");
             }
@@ -1873,7 +1874,7 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2771_1"))
-                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract })
+                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore })
                     .SetName("v<complete> = switch... Issue 2771. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2771");
             }
@@ -1884,7 +1885,7 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2788_1"))
-                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract })
+                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore })
                     .SetName("v<complete> - foo(this.x = 0). Issue 2788. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2788");
             }
@@ -1895,7 +1896,7 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue2796_1"))
-                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract })
+                    .Returns(new ClassModel { Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore })
                     .SetName("for(v<complete> ... Issue 2796. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2796");
             }
@@ -1906,19 +1907,19 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_ArrayAccess_issue2471_1"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("a[0].<complete> Issue 2471. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_ArrayAccess_issue2471_2"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("a[0].<complete> Issue 2471. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_ArrayAccess_issue2471_3"))
-                    .Returns(new ClassModel { Name = "Array<String->String>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<String->String>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("a[0].<complete> Issue 2471. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_ArrayAccess_issue2471_4"))
-                    .Returns(new ClassModel { Name = "Array<Array<String->String>->String>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<Array<String->String>->String>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("a[0].<complete> Issue 2471. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
             }
@@ -2095,28 +2096,28 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore })
                     .SetName("('s':String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_2"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("return ('s':String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_3"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("return ('...':String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_4"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('...' : String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_5"))
-                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('v:Int' : String).");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_6"))
-                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Int", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('s':String).charAt(0).length.");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_7"))
-                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Array<String>", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('s':String).split('').");
                 yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_typecheck_8"))
-                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class })
+                    .Returns(new ClassModel { Name = "Function", Flags = FlagType.Class, InFile = FileModel.Ignore})
                     .SetName("('s':String).split.");
             }
         }

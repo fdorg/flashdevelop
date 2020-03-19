@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -229,17 +230,18 @@ namespace ScintillaNet
         {
             if (Win32.ShouldUseWin32())
             {
-                IntPtr lib = LoadLibrary(fullPath);
+                fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), fullPath);
+                var lib = LoadLibrary(fullPath);
                 HandleSci = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, Width, Height, Handle, 0, new IntPtr(0), null);
                 directPointer = (IntPtr)SlowPerform(2185, 0, 0);
-                IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
-                if (sciFunctionPointer == IntPtr.Zero) sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
-                if (sciFunctionPointer == IntPtr.Zero)
+                var pointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
+                if (pointer == IntPtr.Zero) pointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
+                if (pointer == IntPtr.Zero)
                 {
-                    string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
+                    var msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
                     throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
                 }
-                _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
+                _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(pointer, typeof(Perform));
                 directPointer = DirectPointer;
             }
             UpdateUI += OnUpdateUI;

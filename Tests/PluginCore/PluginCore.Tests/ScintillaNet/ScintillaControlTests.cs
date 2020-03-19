@@ -69,7 +69,7 @@ namespace PluginCore.ScintillaNet
         [TestFixture]
         class GetWordLeftTests : ScintillaControlTests
         {
-            IEnumerable<TestCaseData> AS3TestCases
+            static IEnumerable<TestCaseData> AS3TestCases
             {
                 get
                 {
@@ -107,7 +107,7 @@ namespace PluginCore.ScintillaNet
         [TestFixture]
         class GetWordRightTests : ScintillaControlTests
         {
-            IEnumerable<TestCaseData> AS3TestCases
+            static IEnumerable<TestCaseData> AS3TestCases
             {
                 get
                 {
@@ -146,7 +146,7 @@ namespace PluginCore.ScintillaNet
         [TestFixture]
         class OnSmartIndent : ScintillaControlTests
         {
-            IEnumerable<TestCaseData> CppTestCases
+            static IEnumerable<TestCaseData> CppTestCases
             {
                 get
                 {

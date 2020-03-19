@@ -6,6 +6,7 @@ using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace ASCompletion.Generators
@@ -22,7 +23,7 @@ namespace ASCompletion.Generators
             [TestFixtureSetUp]
             public void SetUp() => ASContext.Context.SetAs3Features();
 
-            public IEnumerable<TestCaseData> TestCases
+            public static IEnumerable<TestCaseData> TestCases
             {
                 get
                 {
@@ -56,7 +57,7 @@ namespace ASCompletion.Generators
                 var sourceText = ReadAllTextAS3(fileName);
                 fileName = GetFullPathAS3(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-                fileName = Path.GetFullPath(fileName);
+                fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
                 fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(ASCompletion)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(ASCompletion)}.Tests\\Test Files\\");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
