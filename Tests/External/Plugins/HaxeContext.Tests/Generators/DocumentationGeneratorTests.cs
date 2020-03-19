@@ -8,6 +8,7 @@ using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
@@ -31,7 +32,7 @@ namespace HaXeContext.Generators
                 var sourceText = ReadAllText(fileName);
                 fileName = GetFullPath(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-                fileName = Path.GetFullPath(fileName);
+                fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
                 fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -58,7 +59,7 @@ namespace HaXeContext.Generators
 
             public class ContextualGeneratorTestsEnableLeadingAsterisks : ContextualGeneratorTests
             {
-                public IEnumerable<TestCaseData> TestCases
+                static IEnumerable<TestCaseData> TestCases
                 {
                     get
                     {
@@ -98,7 +99,7 @@ namespace HaXeContext.Generators
 
             public class ContextualGeneratorTestsDisableLeadingAsterisks : ContextualGeneratorTests
             {
-                public IEnumerable<TestCaseData> TestCases
+                static IEnumerable<TestCaseData> TestCases
                 {
                     get
                     {

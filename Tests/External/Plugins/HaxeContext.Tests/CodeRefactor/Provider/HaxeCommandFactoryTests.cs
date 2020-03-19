@@ -6,6 +6,7 @@ using CodeRefactor.Commands;
 using CodeRefactor.Provider;
 using HaXeContext.TestUtils;
 using NUnit.Framework;
+using PluginCore.Helpers;
 
 namespace HaXeContext.CodeRefactor.Provider
 {
@@ -47,7 +48,7 @@ namespace HaXeContext.CodeRefactor.Provider
             SetSrc(sci, ReadAllText(fileName));
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
             ASContext.Context.CurrentModel.FileName = fileName;
             var validator = CommandFactoryProvider.GetFactory(ASContext.Context.CurrentModel).GetValidator(typeof(OrganizeImports));
@@ -90,7 +91,7 @@ namespace HaXeContext.CodeRefactor.Provider
             SetSrc(sci, ReadAllText(fileName));
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
             ASContext.Context.CurrentModel.FileName = fileName;
             var validator = CommandFactoryProvider.GetFactory(ASContext.Context.CurrentModel).GetValidator(typeof(DelegateMethods));

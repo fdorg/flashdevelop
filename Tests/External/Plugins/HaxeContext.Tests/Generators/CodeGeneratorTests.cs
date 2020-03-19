@@ -15,6 +15,7 @@ using NUnit.Framework;
 using PluginCore;
 using PluginCore.Collections;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 using ScintillaNet;
 
@@ -30,7 +31,7 @@ namespace HaXeContext.Generators
         {
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-            fileName = Path.GetFullPath(fileName);
+            fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
