@@ -41,7 +41,7 @@ namespace PluginCore.ScintillaNet
             sci = GetBaseScintillaControl();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;

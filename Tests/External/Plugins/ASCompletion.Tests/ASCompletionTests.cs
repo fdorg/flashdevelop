@@ -60,7 +60,7 @@ namespace ASCompletion
             CompletionList.CreateControl(PluginBase.MainForm);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;
