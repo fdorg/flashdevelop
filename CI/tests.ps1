@@ -21,7 +21,7 @@ If ($env:HAXEPATH -eq $null)
 	RefreshEnv
 }
 
-If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
+If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
     $testFiles = [System.IO.Directory]::GetFiles("FlashDevelop\Bin\Debug", "*.Tests.dll")
     IF ($testFiles.Count -eq 0)
@@ -31,7 +31,7 @@ If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $nul
     ELSE
     {
         #Maybe in the future we want to set categories and priorities
-        nunit-console-x86.exe $testFiles
+        nunit3-console.exe $testFiles
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
         #{
