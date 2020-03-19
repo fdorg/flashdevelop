@@ -2350,9 +2350,7 @@ namespace HaXeContext.Model
         #endregion
 
         public static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features) where T : MemberModel, new()
-        {
-            return FunctionTypeToMemberModel(type, features, new T());
-        }
+            => FunctionTypeToMemberModel(type, features, new T());
 
         internal static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features, T result) where T : MemberModel
         {

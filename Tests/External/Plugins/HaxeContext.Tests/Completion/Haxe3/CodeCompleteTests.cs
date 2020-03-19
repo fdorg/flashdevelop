@@ -483,7 +483,7 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("BeforeOnChar_issue2955_9", '.', false, Is.Not.EqualTo("ValueType"))
                     .SetName("new ValueType<complete> Issue 2955. Case 9")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
-                yield return new TestCaseData("BeforeOnChar_issue2955_10", '.', false, Is.EqualTo("Map"))
+                yield return new TestCaseData("BeforeOnChar_issue2955_10", '.', false, Is.EqualTo("haxe.ds.Map"))
                     .SetName("new Map<complete> Issue 2955. Case 10")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2955");
                 yield return new TestCaseData("BeforeOnChar_issue2955_11", '.', false, Is.EqualTo("Array"))
@@ -2435,10 +2435,10 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData("Iterable", FlagType.Class | FlagType.TypeDef)
-                    .Returns("\n\tAn `Iterable` is a data structure which has an `iterator()` method.\n\tSee `Lambda` for generic functions on iterable structures.\n\n\t@see https://haxe.org/manual/lf-iterators.html\n")
+                    .Returns("\r\tAn `Iterable` is a data structure which has an `iterator()` method.\r\tSee `Lambda` for generic functions on iterable structures.\r\r\t@see https://haxe.org/manual/lf-iterators.html\r")
                     .SetName("Issue 104. typedef");
                 yield return new TestCaseData("Any", FlagType.Class | FlagType.Abstract)
-                    .Returns("\n\t`Any` is a type that is compatible with any other in both ways.\n\n\tThis means that a value of any type can be assigned to `Any`, and\n\tvice-versa, a value of `Any` type can be assigned to any other type.\n\n\tIt's a more type-safe alternative to `Dynamic`, because it doesn't\n\tsupport field access or operators and it's bound to monomorphs. So,\n\tto work with the actual value, it needs to be explicitly promoted\n\tto another type.\n")
+                    .Returns("\r\t`Any` is a type that is compatible with any other in both ways.\r\r\tThis means that a value of any type can be assigned to `Any`, and\r\tvice-versa, a value of `Any` type can be assigned to any other type.\r\r\tIt's a more type-safe alternative to `Dynamic`, because it doesn't\r\tsupport field access or operators and it's bound to monomorphs. So,\r\tto work with the actual value, it needs to be explicitly promoted\r\tto another type.\r")
                     .SetName("Issue 104. abstract");
             }
         }
