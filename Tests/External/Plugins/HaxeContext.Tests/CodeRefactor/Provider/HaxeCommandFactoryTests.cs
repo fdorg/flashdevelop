@@ -12,7 +12,7 @@ namespace HaXeContext.CodeRefactor.Provider
 {
     class HaxeCommandFactoryTests : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());

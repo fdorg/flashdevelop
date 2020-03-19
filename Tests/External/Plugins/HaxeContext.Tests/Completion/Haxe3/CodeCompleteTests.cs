@@ -844,7 +844,7 @@ namespace HaXeContext.Completion.Haxe3
 
     class CodeCompleteTests2 : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.ReturnDefaultValue;
@@ -1371,7 +1371,7 @@ namespace HaXeContext.Completion.Haxe3
 
     class CodeCompleteTests3 : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             SetHaxeFeatures(sci);
@@ -1506,7 +1506,7 @@ namespace HaXeContext.Completion.Haxe3
 
     class CodeCompleteTests4 : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup() => SetHaxeFeatures(sci);
 
         static IEnumerable<TestCaseData> GetExpressionTypeTestCases

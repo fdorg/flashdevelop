@@ -18,7 +18,7 @@ namespace HaXeContext.CodeRefactor.Commands
     [TestFixture]
     class OrganizeImportsTests : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
@@ -101,7 +101,7 @@ namespace HaXeContext.CodeRefactor.Commands
     {
         static readonly string ProjectPath = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             SetHaxeFeatures(sci);

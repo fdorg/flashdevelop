@@ -20,7 +20,7 @@ namespace ASCompletion.Generators
 
         public class ContextualGeneratorTests : DocumentationGeneratorTests
         {
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void SetUp() => ASContext.Context.SetAs3Features();
 
             public static IEnumerable<TestCaseData> TestCases

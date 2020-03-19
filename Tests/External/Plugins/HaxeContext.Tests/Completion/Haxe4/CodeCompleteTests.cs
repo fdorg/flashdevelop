@@ -8,7 +8,7 @@ namespace HaXeContext.Completion.Haxe4
 {
     class CodeCompleteTests : ASCompleteTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             SetHaxeFeatures(sci);

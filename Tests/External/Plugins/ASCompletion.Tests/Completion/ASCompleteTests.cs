@@ -1070,7 +1070,7 @@ namespace ASCompletion.Completion
         {
             const string prefix = "AddClosingBraces: ";
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void AddClosingBracesSetUp() => ASContext.CommonSettings.AddClosingBraces = true;
 
             static IEnumerable<TestCaseData> OpenBraceTestCases
