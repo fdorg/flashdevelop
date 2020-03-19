@@ -22,19 +22,17 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Path to the main application directory
         /// </summary>
-        public static string AppDir => Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
+        public static string AppDir => appDir ??= Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
+
+        static string appDir;
 
         /// <summary>
         /// Path to the user's application directory
         /// </summary>
         public static string UserAppDir
-        {
-            get
-            {
-                string userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                return Path.Combine(userAppDir, DistroConfig.DISTRIBUTION_NAME);
-            }
-        }
+            => userAppDir ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DistroConfig.DISTRIBUTION_NAME);
+
+        static string userAppDir;
 
         /// <summary>
         /// Path to the docs directory
