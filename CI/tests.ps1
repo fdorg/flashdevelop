@@ -23,7 +23,8 @@ If ($env:HAXEPATH -eq $null)
 
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
-    $testFiles = [System.IO.Directory]::GetFiles("FlashDevelop\Bin\Debug", "*.Tests.dll")
+    cd "FlashDevelop\Bin\Debug"
+    $testFiles = [System.IO.Directory]::GetFiles(".", "*.Tests.dll")
     IF ($testFiles.Count -eq 0)
     {
         Write-Output "No test assemblies found"
@@ -31,7 +32,7 @@ If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
     ELSE
     {
         #Maybe in the future we want to set categories and priorities
-        nunit3-console.exe --x86 --workers=1 $testFiles
+        nunit3-console.exe --x86 $testFiles
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
         #{
