@@ -32,7 +32,8 @@
 **/NSubstitute.xml
 **/nunit.framework.dll
 **/nunit.framework.xml
-**/System.Threading.Tasks.Extensions.*
 **/Castle.Core.*
+**/System.Threading.Tasks.Extensions.*
 **/System.Runtime.CompilerServices.Unsafe.*
+**/System.Diagnostics.DiagnosticSource.*
 .vs/
