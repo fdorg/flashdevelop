@@ -3044,13 +3044,7 @@ namespace FlashDevelop
         /// <summary>
         /// Toggles the folding of the editor
         /// </summary>
-        public void ToggleFold(object sender, EventArgs e)
-        {
-            var sci = CurrentDocument.SciControl;
-            var pos = sci.CurrentPos;
-            var line = sci.LineFromPosition(pos);
-            sci.ToggleFold(line);
-        }
+        public void ToggleFold(object sender, EventArgs e) => CurrentDocument.SciControl.ToggleFold(CurrentDocument.SciControl.CurrentLine);
 
         /// <summary>
         /// Toggles a boolean setting

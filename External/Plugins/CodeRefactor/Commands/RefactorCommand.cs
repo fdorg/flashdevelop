@@ -29,8 +29,8 @@ namespace CodeRefactor.Commands
 
         public bool OutputResults { get; protected set; }
 
-        private TRefactorResultType results;
-        private DocumentHelper associatedDocumentHelper;
+        TRefactorResultType results;
+        DocumentHelper associatedDocumentHelper;
 
         /// <summary>
         /// 
@@ -126,5 +126,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }
