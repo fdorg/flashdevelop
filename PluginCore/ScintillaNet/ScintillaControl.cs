@@ -15,6 +15,7 @@ using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace ScintillaNet
 {
@@ -230,7 +231,7 @@ namespace ScintillaNet
         {
             if (Win32.ShouldUseWin32())
             {
-                fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), fullPath);
+                fullPath = Path.Combine(PathHelper.AppDir, fullPath);
                 var lib = LoadLibrary(fullPath);
                 HandleSci = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, Width, Height, Handle, 0, new IntPtr(0), null);
                 directPointer = (IntPtr)SlowPerform(2185, 0, 0);

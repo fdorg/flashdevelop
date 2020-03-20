@@ -157,7 +157,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Separates the imports to a container
         /// </summary>
-        private Imports SeparateImports(List<MemberModel> imports, int privateSectionIndex)
+        Imports SeparateImports(List<MemberModel> imports, int privateSectionIndex)
         {
             var separatedImports = new Imports();
             separatedImports.PackageImports = new List<MemberModel>();
@@ -190,7 +190,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets the line indent for the specified import
         /// </summary>
-        private int GetLineIndentFor(MemberModel import)
+        int GetLineIndentFor(MemberModel import)
         {
             foreach (var kvp in importIndents)
             {
@@ -202,7 +202,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Inserts the imports to the current document
         /// </summary>
-        private int InsertImports(ScintillaControl sci, List<string> imports, int startLine, int indent)
+        int InsertImports(ScintillaControl sci, List<string> imports, int startLine, int indent)
         {
             var offset = 0;
             var eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
@@ -219,12 +219,12 @@ namespace CodeRefactor.Commands
                     {
                         sci.NewLine();
                         sci.GotoLine(++curLine);
-                        sci.SetLineIndentation(sci.LineFromPosition(sci.CurrentPos) - 1, indent);
+                        sci.SetLineIndentation(sci.CurrentLine - 1, indent);
                         offset--;
                     }
                     prevPackage = currentPackage;
                 }
-                curLine = sci.LineFromPosition(sci.CurrentPos);
+                curLine = sci.CurrentLine;
                 sci.InsertText(sci.CurrentPos, importStringToInsert);
                 sci.SetLineIndentation(curLine, indent);
                 sci.GotoLine(++curLine);
@@ -269,7 +269,7 @@ namespace CodeRefactor.Commands
     /// <summary>
     /// Compare import statements based on declaration line
     /// </summary>
-    class ImportsComparerLine : IComparer<MemberModel>
+    internal class ImportsComparerLine : IComparer<MemberModel>
     {
         public int Compare(MemberModel item1, MemberModel item2)
         {
@@ -280,7 +280,7 @@ namespace CodeRefactor.Commands
     /// <summary>
     /// Container for file's imports
     /// </summary>
-    class Imports
+    internal class Imports
     {
         public int PackageImportsIndent;
         public int PrivateImportsIndent;

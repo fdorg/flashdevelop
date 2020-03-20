@@ -786,44 +786,41 @@ namespace AS3Context
 
         public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
-            if (text == "Vector")
+            if (text != "Vector") return text.StartsWithOrdinal("Vector.<");
+            string insert = null;
+            var line = sci.GetLine(sci.LineFromPosition(position));
+            var m = Regex.Match(line, @"\s*=\s*new");
+            if (m.Success)
             {
-                string insert = null;
-                var line = sci.GetLine(sci.LineFromPosition(position));
-                var m = Regex.Match(line, @"\s*=\s*new");
-                if (m.Success)
+                var result = ASComplete.GetExpressionType(sci, sci.PositionFromLine(sci.LineFromPosition(position)) + m.Index);
+                if (result != null && !result.IsNull() && result.Member?.Type != null)
                 {
-                    var result = ASComplete.GetExpressionType(sci, sci.PositionFromLine(sci.LineFromPosition(position)) + m.Index);
-                    if (result != null && !result.IsNull() && result.Member?.Type != null)
-                    {
-                        m = Regex.Match(result.Member.Type, @"(?<=<).+(?=>)");
-                        if (m.Success) insert = $".<{m.Value}>";
-                    }
+                    m = Regex.Match(result.Member.Type, @"(?<=<).+(?=>)");
+                    if (m.Success) insert = $".<{m.Value}>";
                 }
-                if (insert is null)
-                {
-                    if (trigger == '.' || trigger == '(') return true;
-                    insert = ".<>";
-                    sci.InsertText(position + text.Length, insert);
-                    sci.CurrentPos = position + text.Length + 2;
-                    sci.SetSel(sci.CurrentPos, sci.CurrentPos);
-                    ASComplete.HandleAllClassesCompletion(sci, "", false, true);
-                    return true;
-                }
-                if (trigger == '.')
-                {
-                    sci.InsertText(position + text.Length, insert.Substring(1));
-                    sci.CurrentPos = position + text.Length;
-                }
-                else
-                {
-                    sci.InsertText(position + text.Length, insert);
-                    sci.CurrentPos = position + text.Length + insert.Length;
-                }
+            }
+            if (insert is null)
+            {
+                if (trigger == '.' || trigger == '(') return true;
+                insert = ".<>";
+                sci.InsertText(position + text.Length, insert);
+                sci.CurrentPos = position + text.Length + 2;
                 sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                ASComplete.HandleAllClassesCompletion(sci, "", false, true);
                 return true;
             }
-            return text.StartsWithOrdinal("Vector.<");
+            if (trigger == '.')
+            {
+                sci.InsertText(position + text.Length, insert.Substring(1));
+                sci.CurrentPos = position + text.Length;
+            }
+            else
+            {
+                sci.InsertText(position + text.Length, insert);
+                sci.CurrentPos = position + text.Length + insert.Length;
+            }
+            sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+            return true;
         }
 
         /// <summary>
