@@ -8,7 +8,6 @@ using PluginCore.Utilities;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
-using PluginCore.Collections;
 
 namespace MacroManager
 {

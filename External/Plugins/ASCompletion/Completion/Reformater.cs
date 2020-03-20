@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using PluginCore;
-using PluginCore.Collections;
 
 namespace ASCompletion.Completion
 {

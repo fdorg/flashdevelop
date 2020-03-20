@@ -7,7 +7,6 @@ using Antlr.Runtime;
 using CodeFormatter.InfoCollector;
 using CodeFormatter.Preferences;
 using PluginCore;
-using PluginCore.Collections;
 
 #pragma warning disable 414
 

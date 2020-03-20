@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using NSubstitute;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;

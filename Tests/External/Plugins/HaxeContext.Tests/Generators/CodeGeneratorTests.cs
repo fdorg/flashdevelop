@@ -13,7 +13,6 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Managers;

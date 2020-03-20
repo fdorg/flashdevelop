@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;

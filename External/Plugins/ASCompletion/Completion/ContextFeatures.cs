@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Model;
-using PluginCore.Collections;
 
 namespace ASCompletion.Completion
 {

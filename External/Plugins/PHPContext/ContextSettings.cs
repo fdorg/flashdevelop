@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using ASCompletion.Settings;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace PHPContext

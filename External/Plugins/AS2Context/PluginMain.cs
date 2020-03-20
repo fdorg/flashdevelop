@@ -6,7 +6,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;

@@ -20,7 +20,6 @@ using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
 using HaXeContext.Model;
-using PluginCore.Collections;
 using PluginCore.Utilities;
 using ScintillaNet;
 

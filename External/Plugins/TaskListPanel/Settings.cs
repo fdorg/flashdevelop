@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace TaskListPanel

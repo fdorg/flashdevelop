@@ -5,7 +5,6 @@ using System.Drawing.Design;
 using System.Runtime.Serialization;
 using LayoutManager.Controls;
 using Ookii.Dialogs;
-using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace FlashDebugger
