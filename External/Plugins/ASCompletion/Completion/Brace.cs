@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using PluginCore;
-using PluginCore.Collections;
 using Array = System.Array;
 
 namespace ASCompletion.Completion

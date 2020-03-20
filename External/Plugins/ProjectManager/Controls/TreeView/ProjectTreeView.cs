@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Managers;
 
 namespace ProjectManager.Controls.TreeView

@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
-using PluginCore.Collections;
 
 namespace ProjectManager.Controls
 {

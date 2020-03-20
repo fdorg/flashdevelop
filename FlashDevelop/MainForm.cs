@@ -19,7 +19,6 @@ using FlashDevelop.Settings;
 using FlashDevelop.Utilities;
 using ICSharpCode.SharpZipLib.Zip;
 using PluginCore;
-using PluginCore.Collections;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
