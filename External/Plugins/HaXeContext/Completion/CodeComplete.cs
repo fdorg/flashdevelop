@@ -810,7 +810,17 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            var word = sci.GetWordRight(rvalueStart, true);
+            var word = sci.GetWordRight(rvalueStart, true); 
+            if (word.IsNullOrEmpty())
+            {
+                // for example: var v = "v<complete> or var v = 'v<complete>
+                var c = (char) sci.CharAt(rvalueStart);
+                if (c == '"' || c == '\'')
+                {
+                    var style = sci.BaseStyleAt(rvalueStart + 1);
+                    if (!IsStringStyle(style) && !IsCharStyle(style) && style != 12) return;
+                }
+            }
             if (word == "new")
             {
                 rvalueStart = sci.WordEndPosition(rvalueStart, false) + 1;

@@ -1947,6 +1947,7 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateToString_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateToString_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateToString_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue2993_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
