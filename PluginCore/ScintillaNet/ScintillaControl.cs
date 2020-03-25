@@ -52,12 +52,12 @@ namespace ScintillaNet
             get
             {
                 if (Controls.Contains(vScrollBar)) return vScrollBar.Visible;
-                return SPerform(2281, 0, 0) != 0;
+                return SPerform(2281) != IntPtr.Zero;
             }
             set
             {
                 if (Controls.Contains(vScrollBar)) vScrollBar.Visible = value;
-                else SPerform(2280, value ? 1 : 0, 0);
+                else SPerform(2280, value ? 1 : 0);
             }
         }
 
@@ -69,12 +69,12 @@ namespace ScintillaNet
             get
             {
                 if (Controls.Contains(hScrollBar)) return hScrollBar.Visible;
-                return SPerform(2131, 0, 0) != 0;
+                return SPerform(2131) != IntPtr.Zero;
             }
             set
             {
                 if (Controls.Contains(hScrollBar)) hScrollBar.Visible = value;
-                else SPerform(2130, value ? 1 : 0, 0);
+                else SPerform(2130, value ? 1 : 0);
             }
         }
 
@@ -233,7 +233,7 @@ namespace ScintillaNet
                 fullPath = Path.Combine(PathHelper.AppDir, fullPath);
                 var lib = LoadLibrary(fullPath);
                 HandleSci = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, Width, Height, Handle, 0, new IntPtr(0), null);
-                directPointer = (IntPtr)SlowPerform(2185, 0, 0);
+                directPointer = SlowPerform(2185, IntPtr.Zero, IntPtr.Zero);
                 var pointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
                 if (pointer == IntPtr.Zero) pointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
                 if (pointer == IntPtr.Zero)
@@ -672,8 +672,8 @@ namespace ScintillaNet
         /// </summary>
         public int CaretLineBackAlpha
         {
-            get => SPerform(2471, 0, 0);
-            set => SPerform(2470, value, 0);
+            get => SPerform(2471).ToInt32();
+            set => SPerform(2470, value);
         }
 
         /// <summary>
@@ -681,8 +681,8 @@ namespace ScintillaNet
         /// </summary>
         public int CaretStyle
         {
-            get => SPerform(2513, 0, 0);
-            set => SPerform(2512, value, 0);
+            get => SPerform(2513).ToInt32();
+            set => SPerform(2512, value);
         }
 
         /// <summary>
@@ -690,8 +690,8 @@ namespace ScintillaNet
         /// </summary>
         public int CurrentIndicator
         {
-            get => SPerform(2501, 0, 0);
-            set => SPerform(2500, value, 0);
+            get => SPerform(2501).ToInt32();
+            set => SPerform(2500, value);
         }
 
         /// <summary>
@@ -699,8 +699,8 @@ namespace ScintillaNet
         /// </summary>
         public int PositionCache
         {
-            get => SPerform(2515, 0, 0);
-            set => SPerform(2514, value, 0);
+            get => SPerform(2515).ToInt32();
+            set => SPerform(2514, value);
         }
 
         /// <summary>
@@ -708,8 +708,8 @@ namespace ScintillaNet
         /// </summary>
         public int IndicatorValue
         {
-            get => SPerform(2503, 0, 0);
-            set => SPerform(2502, value, 0);
+            get => SPerform(2503).ToInt32();
+            set => SPerform(2502, value);
         }
 
         /// <summary>
@@ -725,84 +725,84 @@ namespace ScintillaNet
         /// Length Method for : Retrieve the text of the line containing the caret.
         /// Returns the index of the caret on the line.
         /// </summary>
-        public int CurLineSize => SPerform(2027, 0, 0) - 1;
+        public int CurLineSize => SPerform(2027).ToInt32() - 1;
 
         /// <summary>
         /// Length Method for : Retrieve the contents of a line.
         /// Returns the length of the line.
         /// </summary>
-        public int LineSize => SPerform(2153, 0, 0);
+        public int LineSize => SPerform(2153).ToInt32();
 
         /// <summary>
         /// Length Method for : Retrieve the selected text.
         /// Return the length of the text.
         /// </summary>
-        public int SelTextSize => SPerform(2161, 0, 0) - 1;
+        public int SelTextSize => SPerform(2161).ToInt32() - 1;
 
         /// <summary>
         /// Length Method for : Retrieve all the text in the document.
         /// Returns number of characters retrieved.
         /// </summary>
-        public int TextSize => SPerform(2182, 0, 0);
+        public int TextSize => SPerform(2182).ToInt32();
 
         /// <summary>
         /// Are there any redoable actions in the undo history?
         /// </summary>
-        public bool CanRedo => SPerform(2016, 0, 0) != 0;
+        public bool CanRedo => SPerform(2016) != IntPtr.Zero;
 
         /// <summary>
         /// Is there an auto-completion list visible?
         /// </summary>
-        public bool IsAutoCActive => SPerform(2102, 0, 0) != 0;
+        public bool IsAutoCActive => SPerform(2102) != IntPtr.Zero;
 
         /// <summary>
         /// Retrieve the position of the caret when the auto-completion list was displayed.
         /// </summary>
-        public int AutoCPosStart => SPerform(2103, 0, 0);
+        public int AutoCPosStart => SPerform(2103).ToInt32();
 
         /// <summary>
         /// Will a paste succeed?
         /// </summary>
-        public bool CanPaste => SPerform(2173, 0, 0) != 0;
+        public bool CanPaste => SPerform(2173) != IntPtr.Zero;
 
         /// <summary>
         /// Are there any undoable actions in the undo history?
         /// </summary>
-        public bool CanUndo => SPerform(2174, 0, 0) != 0;
+        public bool CanUndo => SPerform(2174) != IntPtr.Zero;
 
         /// <summary>
         /// Is there an active call tip?
         /// </summary>
-        public bool IsCallTipActive => SPerform(2202, 0, 0) != 0;
+        public bool IsCallTipActive => SPerform(2202) != IntPtr.Zero;
 
         /// <summary>
         /// Retrieve the position where the caret was before displaying the call tip.
         /// </summary>
-        public int CallTipPosStart => SPerform(2203, 0, 0);
+        public int CallTipPosStart => SPerform(2203).ToInt32();
 
         /// <summary>
         /// Create a new document object.
         /// Starts with reference count of 1 and not selected into editor.
         /// </summary>
-        public int CreateDocument => SPerform(2375, 0, 0);
+        public int CreateDocument => SPerform(2375).ToInt32();
 
         /// <summary>
         /// Get currently selected item position in the auto-completion list
         /// </summary>
-        public int AutoCGetCurrent => SPerform(2445, 0, 0);
+        public int AutoCGetCurrent => SPerform(2445).ToInt32();
 
         /// <summary>
         /// Returns the number of characters in the document.
         /// </summary>
-        public int Length => SPerform(2006, 0, 0);
+        public int Length => SPerform(2006).ToInt32();
 
         /// <summary>
         /// Enable/Disable convert-on-paste for line endings
         /// </summary>
         public bool PasteConvertEndings
         {
-            get => SPerform(2468, 0, 0) != 0;
-            set => SPerform(2467, value ? 1 : 0, 0);
+            get => SPerform(2468) != IntPtr.Zero;
+            set => SPerform(2467, value ? 1 : 0);
         }
 
         /// <summary>
@@ -810,8 +810,8 @@ namespace ScintillaNet
         /// </summary>
         public int CurrentPos
         {
-            get => SPerform(2008, 0, 0);
-            set => SPerform(2141, value, 0);
+            get => SPerform(2008).ToInt32();
+            set => SPerform(2141, value);
         }
 
         /// <summary>
@@ -829,8 +829,8 @@ namespace ScintillaNet
         /// </summary>
         public int AnchorPosition
         {
-            get => SPerform(2009, 0, 0);
-            set => SPerform(2026, value, 0);
+            get => SPerform(2009).ToInt32();
+            set => SPerform(2026, value);
         }
 
         /// <summary>
@@ -838,8 +838,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsUndoCollection
         {
-            get => SPerform(2019, 0, 0) != 0;
-            set => SPerform(2012, value ? 1 : 0, 0);
+            get => SPerform(2019) != IntPtr.Zero;
+            set => SPerform(2012, value ? 1 : 0);
         }
 
         /// <summary>
@@ -848,22 +848,22 @@ namespace ScintillaNet
         /// </summary>
         public int ViewWS
         {
-            get => SPerform(2020, 0, 0);
-            set => SPerform(2021, value, 0);
+            get => SPerform(2020).ToInt32();
+            set => SPerform(2021, value);
         }
 
         /// <summary>
         /// Retrieve the position of the last correctly styled character.
         /// </summary>
-        public int EndStyled => SPerform(2028, 0, 0);
+        public int EndStyled => SPerform(2028).ToInt32();
 
         /// <summary>
         /// Retrieve the current end of line mode - one of CRLF, CR, or LF.
         /// </summary>
         public int EOLMode
         {
-            get => SPerform(2030, 0, 0);
-            set => SPerform(2031, value, 0);
+            get => SPerform(2030).ToInt32();
+            set => SPerform(2031, value);
         }
 
         /// <summary>
@@ -871,8 +871,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsBufferedDraw
         {
-            get => SPerform(2034, 0, 0) != 0;
-            set => SPerform(2035, value ? 1 : 0, 0);
+            get => SPerform(2034) != IntPtr.Zero;
+            set => SPerform(2035, value ? 1 : 0);
         }
 
         /// <summary>
@@ -880,8 +880,8 @@ namespace ScintillaNet
         /// </summary>
         public int TabWidth
         {
-            get => SPerform(2121, 0, 0);
-            set => SPerform(2036, value, 0);
+            get => SPerform(2121).ToInt32();
+            set => SPerform(2036, value);
         }
 
         /// <summary>
@@ -889,8 +889,8 @@ namespace ScintillaNet
         /// </summary>
         public int CaretPeriod
         {
-            get => SPerform(2075, 0, 0);
-            set => SPerform(2076, value, 0);
+            get => SPerform(2075).ToInt32();
+            set => SPerform(2076, value);
         }
 
         /// <summary>
@@ -898,22 +898,22 @@ namespace ScintillaNet
         /// </summary>
         public int StyleBits
         {
-            get => SPerform(2091, 0, 0);
-            set => SPerform(2090, value, 0);
+            get => SPerform(2091).ToInt32();
+            set => SPerform(2090, value);
         }
 
         /// <summary>
         /// Retrieve the last line number that has line state.
         /// </summary>
-        public int MaxLineState => SPerform(2094, 0, 0);
+        public int MaxLineState => SPerform(2094).ToInt32();
 
         /// <summary>
         /// Is the background of the line containing the caret in a different colour?
         /// </summary>
         public bool IsCaretLineVisible
         {
-            get => SPerform(2095, 0, 0) != 0;
-            set => SPerform(2096, value ? 1 : 0, 0);
+            get => SPerform(2095) != IntPtr.Zero;
+            set => SPerform(2096, value ? 1 : 0);
         }
 
         /// <summary>
@@ -921,8 +921,8 @@ namespace ScintillaNet
         /// </summary>
         public int CaretLineBack
         {
-            get => SPerform(2097, 0, 0);
-            set => SPerform(2098, value, 0);
+            get => SPerform(2097).ToInt32();
+            set => SPerform(2098, value);
         }
 
         /// <summary>
@@ -930,8 +930,8 @@ namespace ScintillaNet
         /// </summary>
         public int AutoCSeparator
         {
-            get => SPerform(2107, 0, 0);
-            set => SPerform(2106, value, 0);
+            get => SPerform(2107).ToInt32();
+            set => SPerform(2106, value);
         }
 
         /// <summary>
@@ -939,8 +939,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsAutoCGetCancelAtStart
         {
-            get => SPerform(2111, 0, 0) != 0;
-            set => SPerform(2110, value ? 1 : 0, 0);
+            get => SPerform(2111) != IntPtr.Zero;
+            set => SPerform(2110, value ? 1 : 0);
         }
 
         /// <summary>
@@ -948,8 +948,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsAutoCGetChooseSingle
         {
-            get => SPerform(2114, 0, 0) != 0;
-            set => SPerform(2113, value ? 1 : 0, 0);
+            get => SPerform(2114) != IntPtr.Zero;
+            set => SPerform(2113, value ? 1 : 0);
         }
 
         /// <summary>
@@ -957,8 +957,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsAutoCGetIgnoreCase
         {
-            get => SPerform(2116, 0, 0) != 0;
-            set => SPerform(2115, value ? 1 : 0, 0);
+            get => SPerform(2116) != IntPtr.Zero;
+            set => SPerform(2115, value ? 1 : 0);
         }
 
         /// <summary>
@@ -966,8 +966,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsAutoCGetAutoHide
         {
-            get => SPerform(2119, 0, 0) != 0;
-            set => SPerform(2118, value ? 1 : 0, 0);
+            get => SPerform(2119) != IntPtr.Zero;
+            set => SPerform(2118, value ? 1 : 0);
         }
 
         /// <summary>
@@ -976,8 +976,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsAutoCGetDropRestOfWord
         {
-            get => SPerform(2271, 0, 0) != 0;
-            set => SPerform(2270, value ? 1 : 0, 0);
+            get => SPerform(2271) != IntPtr.Zero;
+            set => SPerform(2270, value ? 1 : 0);
         }
 
         /// <summary>
@@ -985,8 +985,8 @@ namespace ScintillaNet
         /// </summary>
         public int AutoCTypeSeparator
         {
-            get => SPerform(2285, 0, 0);
-            set => SPerform(2286, value, 0);
+            get => SPerform(2285).ToInt32();
+            set => SPerform(2286, value);
         }
 
         /// <summary>
@@ -994,8 +994,8 @@ namespace ScintillaNet
         /// </summary>
         public int Indent
         {
-            get => SPerform(2123, 0, 0);
-            set => SPerform(2122, value, 0);
+            get => SPerform(2123).ToInt32();
+            set => SPerform(2122, value);
         }
 
         /// <summary>
@@ -1003,8 +1003,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsUseTabs
         {
-            get => SPerform(2125, 0, 0) != 0;
-            set => SPerform(2124, value ? 1 : 0, 0);
+            get => SPerform(2125) != IntPtr.Zero;
+            set => SPerform(2124, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1012,8 +1012,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsIndentationGuides
         {
-            get => SPerform(2133, 0, 0) != 0;
-            set => SPerform(2132, value ? (int)IndentView : 0, 0);
+            get => SPerform(2133) != IntPtr.Zero;
+            set => SPerform(2132, value ? (int)IndentView : 0);
         }
 
         /// <summary>
@@ -1021,8 +1021,8 @@ namespace ScintillaNet
         /// </summary>
         public int HighlightGuide
         {
-            get => SPerform(2135, 0, 0);
-            set => SPerform(2134, value, 0);
+            get => SPerform(2135).ToInt32();
+            set => SPerform(2134, value);
         }
 
         /// <summary>
@@ -1030,8 +1030,8 @@ namespace ScintillaNet
         /// </summary>
         public int CodePage
         {
-            get => SPerform(2137, 0, 0);
-            set => SPerform(2037, value, 0);
+            get => SPerform(2137).ToInt32();
+            set => SPerform(2037, value);
         }
 
         /// <summary>
@@ -1039,8 +1039,8 @@ namespace ScintillaNet
         /// </summary>
         public int CaretFore
         {
-            get => SPerform(2138, 0, 0);
-            set => SPerform(2069, value, 0);
+            get => SPerform(2138).ToInt32();
+            set => SPerform(2069, value);
         }
 
         /// <summary>
@@ -1048,8 +1048,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsUsePalette
         {
-            get => SPerform(2139, 0, 0) != 0;
-            set => SPerform(2039, value ? 1 : 0, 0);
+            get => SPerform(2139) != IntPtr.Zero;
+            set => SPerform(2039, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1057,8 +1057,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsReadOnly
         {
-            get => SPerform(2140, 0, 0) != 0;
-            set => SPerform(2171, value ? 1 : 0, 0);
+            get => SPerform(2140) != IntPtr.Zero;
+            set => SPerform(2171, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1066,8 +1066,8 @@ namespace ScintillaNet
         /// </summary>
         public int SelectionStart
         {
-            get => SPerform(2143, 0, 0);
-            set => SPerform(2142, value, 0);
+            get => SPerform(2143).ToInt32();
+            set => SPerform(2142, value);
         }
 
         /// <summary>
@@ -1075,8 +1075,8 @@ namespace ScintillaNet
         /// </summary>
         public int SelectionEnd
         {
-            get => SPerform(2145, 0, 0);
-            set => SPerform(2144, value, 0);
+            get => SPerform(2145).ToInt32();
+            set => SPerform(2144, value);
         }
 
         /// <summary>
@@ -1089,8 +1089,8 @@ namespace ScintillaNet
         /// </summary>
         public int PrintMagnification
         {
-            get => SPerform(2147, 0, 0);
-            set => SPerform(2146, value, 0);
+            get => SPerform(2147).ToInt32();
+            set => SPerform(2146, value);
         }
 
         /// <summary>
@@ -1098,8 +1098,8 @@ namespace ScintillaNet
         /// </summary>
         public int PrintColourMode
         {
-            get => SPerform(2149, 0, 0);
-            set => SPerform(2148, value, 0);
+            get => SPerform(2149).ToInt32();
+            set => SPerform(2148, value);
         }
 
         /// <summary>
@@ -1107,21 +1107,21 @@ namespace ScintillaNet
         /// </summary>
         public int FirstVisibleLine
         {
-            set => SPerform(2613, value, 0);
-            get => SPerform(2152, 0, 0);
+            set => SPerform(2613, value);
+            get => SPerform(2152).ToInt32();
         }
 
         /// <summary>
         /// Returns the number of lines in the document. There is always at least one.
         /// </summary>
-        public int LineCount => SPerform(2154, 0, 0);
+        public int LineCount => SPerform(2154).ToInt32();
 
         /// <summary>
         /// Returns the size in pixels of the left margin.
         /// </summary>
         public int MarginLeft
         {
-            get => SPerform(2156, 0, 0);
+            get => SPerform(2156).ToInt32();
             set => SPerform(2155, 0, value);
         }
 
@@ -1130,38 +1130,38 @@ namespace ScintillaNet
         /// </summary>
         public int MarginRight
         {
-            get => SPerform(2158, 0, 0);
+            get => SPerform(2158).ToInt32();
             set => SPerform(2157, 0, value);
         }
 
         /// <summary>
         /// Is the document different from when it was last saved?
         /// </summary>  
-        public bool IsModify => SPerform(2159, 0, 0) != 0;
+        public bool IsModify => SPerform(2159) != IntPtr.Zero;
 
         /// <summary>
         /// Retrieve the number of characters in the document.
         /// </summary>
-        public int TextLength => SPerform(2183, 0, 0);
+        public int TextLength => SPerform(2183).ToInt32();
 
         /// <summary>
         /// Retrieve a pointer to a function that processes messages for this Scintilla.
         /// </summary>
-        public int DirectFunction => SPerform(2184, 0, 0);
+        public int DirectFunction => SPerform(2184).ToInt32();
 
         /// <summary>
         /// Retrieve a pointer value to use as the first argument when calling
         /// the function returned by GetDirectFunction.
         /// </summary>
-        public IntPtr DirectPointer => (IntPtr)SPerform(2185, 0, 0);
+        public IntPtr DirectPointer => SPerform(2185);
 
         /// <summary>
         /// Returns true if overtype mode is active otherwise false is returned.
         /// </summary>
         public bool IsOvertype
         {
-            get => SPerform(2187, 0, 0) != 0;
-            set => SPerform(2186, value ? 1 : 0, 0);
+            get => SPerform(2187) != IntPtr.Zero;
+            set => SPerform(2186, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1169,8 +1169,8 @@ namespace ScintillaNet
         /// </summary>
         public int CaretWidth
         {
-            get => SPerform(2189, 0, 0);
-            set => SPerform(2188, value, 0);
+            get => SPerform(2189).ToInt32();
+            set => SPerform(2188, value);
         }
 
         /// <summary>
@@ -1178,8 +1178,8 @@ namespace ScintillaNet
         /// </summary>
         public int TargetStart
         {
-            get => SPerform(2191, 0, 0);
-            set => SPerform(2190, value, 0);
+            get => SPerform(2191).ToInt32();
+            set => SPerform(2190, value);
         }
 
         /// <summary>
@@ -1187,8 +1187,8 @@ namespace ScintillaNet
         /// </summary>
         public int TargetEnd
         {
-            get => SPerform(2193, 0, 0);
-            set => SPerform(2192, value, 0);
+            get => SPerform(2193).ToInt32();
+            set => SPerform(2192, value);
         }
 
         /// <summary>
@@ -1196,8 +1196,8 @@ namespace ScintillaNet
         /// </summary>
         public int SearchFlags
         {
-            get => SPerform(2199, 0, 0);
-            set => SPerform(2198, value, 0);
+            get => SPerform(2199).ToInt32();
+            set => SPerform(2198, value);
         }
 
         /// <summary>
@@ -1205,8 +1205,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsTabIndents
         {
-            get => SPerform(2261, 0, 0) != 0;
-            set => SPerform(2260, value ? 1 : 0, 0);
+            get => SPerform(2261) != IntPtr.Zero;
+            set => SPerform(2260, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1214,8 +1214,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsBackSpaceUnIndents
         {
-            get => SPerform(2263, 0, 0) != 0;
-            set => SPerform(2262, value ? 1 : 0, 0);
+            get => SPerform(2263) != IntPtr.Zero;
+            set => SPerform(2262, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1223,8 +1223,8 @@ namespace ScintillaNet
         /// </summary>
         public int MouseDwellTime
         {
-            get => SPerform(2265, 0, 0);
-            set => SPerform(2264, value, 0);
+            get => SPerform(2265).ToInt32();
+            set => SPerform(2264, value);
         }
 
         /// <summary>
@@ -1232,8 +1232,8 @@ namespace ScintillaNet
         /// </summary>
         public int WrapMode
         {
-            get => SPerform(2269, 0, 0);
-            set => SPerform(2268, value, 0);
+            get => SPerform(2269).ToInt32();
+            set => SPerform(2268, value);
         }
 
         /// <summary>
@@ -1241,8 +1241,8 @@ namespace ScintillaNet
         /// </summary>
         public int WrapVisualFlags
         {
-            get => SPerform(2461, 0, 0);
-            set => SPerform(2460, value, 0);
+            get => SPerform(2461).ToInt32();
+            set => SPerform(2460, value);
         }
 
         /// <summary>
@@ -1250,8 +1250,8 @@ namespace ScintillaNet
         /// </summary>
         public int WrapVisualFlagsLocation
         {
-            get => SPerform(2463, 0, 0);
-            set => SPerform(2462, value, 0);
+            get => SPerform(2463).ToInt32();
+            set => SPerform(2462, value);
         }
 
         /// <summary>
@@ -1259,8 +1259,8 @@ namespace ScintillaNet
         /// </summary>
         public int WrapStartIndent
         {
-            get => SPerform(2465, 0, 0);
-            set => SPerform(2464, value, 0);
+            get => SPerform(2465).ToInt32();
+            set => SPerform(2464, value);
         }
 
         /// <summary>
@@ -1268,8 +1268,8 @@ namespace ScintillaNet
         /// </summary>
         public int LayoutCache
         {
-            get => SPerform(2273, 0, 0);
-            set => SPerform(2272, value, 0);
+            get => SPerform(2273).ToInt32();
+            set => SPerform(2272, value);
         }
 
         /// <summary>
@@ -1277,8 +1277,8 @@ namespace ScintillaNet
         /// </summary>
         public int ScrollWidth
         {
-            get => SPerform(2275, 0, 0);
-            set => SPerform(2274, value, 0);
+            get => SPerform(2275).ToInt32();
+            set => SPerform(2274, value);
         }
 
         /// <summary>
@@ -1287,8 +1287,8 @@ namespace ScintillaNet
         /// </summary>
         public int EndAtLastLine
         {
-            get => SPerform(2278, 0, 0);
-            set => SPerform(2277, value, 0);
+            get => SPerform(2278).ToInt32();
+            set => SPerform(2277, value);
         }
 
         /// <summary>
@@ -1296,8 +1296,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsTwoPhaseDraw
         {
-            get => SPerform(2283, 0, 0) != 0;
-            set => SPerform(2284, value ? 1 : 0, 0);
+            get => SPerform(2283) != IntPtr.Zero;
+            set => SPerform(2284, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1305,17 +1305,17 @@ namespace ScintillaNet
         /// </summary>
         public bool IsViewEOL
         {
-            get => SPerform(2355, 0, 0) != 0;
-            set => SPerform(2356, value ? 1 : 0, 0);
+            get => SPerform(2355) != IntPtr.Zero;
+            set => SPerform(2356, value ? 1 : 0);
         }
 
         /// <summary>
         /// Retrieve a pointer to the document object.
         /// </summary>
-        public int DocPointer
+        public IntPtr DocPointer
         {
-            get => SPerform(2357, 0, 0);
-            set => SPerform(2358, 0, value);
+            get => SPerform(2357);
+            set => SPerform(2358, IntPtr.Zero, value);
         }
 
         /// <summary>
@@ -1323,8 +1323,8 @@ namespace ScintillaNet
         /// </summary>
         public int EdgeColumn
         {
-            get => SPerform(2360, 0, 0);
-            set => SPerform(2361, value, 0);
+            get => SPerform(2360).ToInt32();
+            set => SPerform(2361, value);
         }
 
         /// <summary>
@@ -1332,8 +1332,8 @@ namespace ScintillaNet
         /// </summary>
         public int EdgeMode
         {
-            get => SPerform(2362, 0, 0);
-            set => SPerform(2363, value, 0);
+            get => SPerform(2362).ToInt32();
+            set => SPerform(2363, value);
         }
 
         /// <summary>
@@ -1341,19 +1341,19 @@ namespace ScintillaNet
         /// </summary>
         public int EdgeColour
         {
-            get => SPerform(2364, 0, 0);
-            set => SPerform(2365, value, 0);
+            get => SPerform(2364).ToInt32();
+            set => SPerform(2365, value);
         }
 
         /// <summary>
         /// Retrieves the number of lines completely visible.
         /// </summary>
-        public int LinesOnScreen => SPerform(2370, 0, 0);
+        public int LinesOnScreen => SPerform(2370).ToInt32();
 
         /// <summary>
         /// Is the selection rectangular? The alternative is the more common stream selection. 
         /// </summary>  
-        public bool IsSelectionRectangle => SPerform(2372, 0, 0) != 0;
+        public bool IsSelectionRectangle => SPerform(2372) != IntPtr.Zero;
 
         /// <summary>
         /// Set the zoom level. This number of points is added to the size of all fonts.
@@ -1361,8 +1361,8 @@ namespace ScintillaNet
         /// </summary>
         public int ZoomLevel
         {
-            get => SPerform(2374, 0, 0);
-            set => SPerform(2373, value, 0);
+            get => SPerform(2374).ToInt32();
+            set => SPerform(2373, value);
         }
 
         /// <summary>
@@ -1370,8 +1370,8 @@ namespace ScintillaNet
         /// </summary>
         public int ModEventMask
         {
-            get => SPerform(2378, 0, 0);
-            set => SPerform(2359, value, 0);
+            get => SPerform(2378).ToInt32();
+            set => SPerform(2359, value);
         }
 
         /// <summary>
@@ -1379,8 +1379,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsFocus
         {
-            get => SPerform(2381, 0, 0) != 0;
-            set => SPerform(2380, value ? 1 : 0, 0);
+            get => SPerform(2381) != IntPtr.Zero;
+            set => SPerform(2380, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1388,8 +1388,8 @@ namespace ScintillaNet
         /// </summary>
         public int Status
         {
-            get => SPerform(2383, 0, 0);
-            set => SPerform(2382, value, 0);
+            get => SPerform(2383).ToInt32();
+            set => SPerform(2382, value);
         }
 
         /// <summary>
@@ -1397,8 +1397,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsMouseDownCaptures
         {
-            get => SPerform(2385, 0, 0) != 0;
-            set => SPerform(2384, value ? 1 : 0, 0);
+            get => SPerform(2385) != IntPtr.Zero;
+            set => SPerform(2384, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1406,8 +1406,8 @@ namespace ScintillaNet
         /// </summary>
         public int CursorType
         {
-            get => SPerform(2387, 0, 0);
-            set => SPerform(2386, value, 0);
+            get => SPerform(2387).ToInt32();
+            set => SPerform(2386, value);
         }
 
         /// <summary>
@@ -1417,8 +1417,8 @@ namespace ScintillaNet
         /// </summary>
         public int ControlCharSymbol
         {
-            get => SPerform(2389, 0, 0);
-            set => SPerform(2388, value, 0);
+            get => SPerform(2389).ToInt32();
+            set => SPerform(2388, value);
         }
 
         /// <summary>
@@ -1426,8 +1426,8 @@ namespace ScintillaNet
         /// </summary>
         public int XOffset
         {
-            get => SPerform(2398, 0, 0);
-            set => SPerform(2397, value, 0);
+            get => SPerform(2398).ToInt32();
+            set => SPerform(2397, value);
         }
 
         /// <summary>
@@ -1435,8 +1435,8 @@ namespace ScintillaNet
         /// </summary>
         public int PrintWrapMode
         {
-            get => SPerform(2407, 0, 0);
-            set => SPerform(2406, value, 0);
+            get => SPerform(2407).ToInt32();
+            set => SPerform(2406, value);
         }
 
         /// <summary>
@@ -1444,8 +1444,8 @@ namespace ScintillaNet
         /// </summary>
         public int SelectionMode
         {
-            get => SPerform(2423, 0, 0);
-            set => SPerform(2422, value, 0);
+            get => SPerform(2423).ToInt32();
+            set => SPerform(2422, value);
         }
 
         /// <summary>
@@ -1453,8 +1453,8 @@ namespace ScintillaNet
         /// </summary>
         public int Lexer
         {
-            get => SPerform(4002, 0, 0);
-            set => SPerform(4001, value, 0);
+            get => SPerform(4002).ToInt32();
+            set => SPerform(4001, value);
         }
 
         /// <summary>
@@ -1464,24 +1464,27 @@ namespace ScintillaNet
         {
             get
             {
-                if (EOLMode == 1) return "\r";
-                if (EOLMode == 2) return "\n";
-                return "\r\n";
+                return EOLMode switch
+                {
+                    1 => "\r",
+                    2 => "\n",
+                    _ => "\r\n"
+                };
             }
         }
 
         /// <summary>
         /// Compact the document buffer and return a read-only pointer to the characters in the document.
         /// </summary>
-        public int CharacterPointer => SPerform(2520, 0, 0);
+        public int CharacterPointer => SPerform(2520).ToInt32();
 
         /// <summary>
         /// Always interpret keyboard input as Unicode
         /// </summary>
         public bool UnicodeKeys
         {
-            get => SPerform(2522, 0, 0) != 0;
-            set => SPerform(2521, value ? 1 : 0, 0);
+            get => SPerform(2522) != IntPtr.Zero;
+            set => SPerform(2521, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1489,8 +1492,8 @@ namespace ScintillaNet
         /// </summary>
         public int ExtraAscent
         {
-            get => SPerform(2526, 0, 0);
-            set => SPerform(2525, value, 0);
+            get => SPerform(2526).ToInt32();
+            set => SPerform(2525, value);
         }
 
         /// <summary>
@@ -1498,8 +1501,8 @@ namespace ScintillaNet
         /// </summary>
         public int ExtraDescent
         {
-            get => SPerform(2528, 0, 0);
-            set => SPerform(2527, value, 0);
+            get => SPerform(2528).ToInt32();
+            set => SPerform(2527, value);
         }
 
         /// <summary>
@@ -1507,8 +1510,8 @@ namespace ScintillaNet
         /// </summary>
         public int MarginStyleOffset
         {
-            get => SPerform(2538, 0, 0);
-            set => SPerform(2537, value, 0);
+            get => SPerform(2538).ToInt32();
+            set => SPerform(2537, value);
         }
 
         /// <summary>
@@ -1516,8 +1519,8 @@ namespace ScintillaNet
         /// </summary>
         public int AnnotationStyleOffset
         {
-            get => SPerform(2551, 0, 0);
-            set => SPerform(2550, value, 0);
+            get => SPerform(2551).ToInt32();
+            set => SPerform(2550, value);
         }
 
         /// <summary>
@@ -1525,8 +1528,8 @@ namespace ScintillaNet
         /// </summary>
         public bool AnnotationVisible
         {
-            get => SPerform(2549, 0, 0) != 0;
-            set => SPerform(2548, value ? 1 : 0, 0);
+            get => SPerform(2549) != IntPtr.Zero;
+            set => SPerform(2548, value ? 1 : 0);
         }
 
         /// <summary>
@@ -1534,8 +1537,8 @@ namespace ScintillaNet
         /// </summary>
         public bool ScrollWidthTracking
         {
-            get => SPerform(2517, 0, 0) != 0;
-            set => SPerform(2516, value ? 1 : 0, 0);
+            get => SPerform(2517) != IntPtr.Zero;
+            set => SPerform(2516, value ? 1 : 0);
         }
 
         #endregion
@@ -1571,7 +1574,7 @@ namespace ScintillaNet
         /// Duplicate the selection. 
         /// If selection empty duplicate the line containing the caret.
         /// </summary>
-        public void SelectionDuplicate() => SPerform(2469, 0, 0);
+        public void SelectionDuplicate() => SPerform(2469);
 
         /// <summary>
         /// Calls SelectionDuplicate and moves the selection
@@ -1593,22 +1596,22 @@ namespace ScintillaNet
         /// <summary>
         /// Can the caret preferred x position only be changed by explicit movement commands?
         /// </summary>
-        public bool GetCaretSticky() => SPerform(2457, 0, 0) != 0;
+        public bool GetCaretSticky() => SPerform(2457) != IntPtr.Zero;
 
         /// <summary>
         /// Stop the caret preferred x position changing when the user types.
         /// </summary>
-        public void SetCaretSticky(bool useSetting) => SPerform(2458, useSetting ? 1 : 0, 0);
+        public void SetCaretSticky(bool useSetting) => SPerform(2458, useSetting ? 1 : 0);
 
         /// <summary>
         /// Switch between sticky and non-sticky: meant to be bound to a key.
         /// </summary>
-        public void ToggleCaretSticky() => SPerform(2459, 0, 0);
+        public void ToggleCaretSticky() => SPerform(2459);
 
         /// <summary>
         /// Retrieve the fold level of a line.
         /// </summary>
-        public int GetFoldLevel(int line) => SPerform(2223, line, 0);
+        public int GetFoldLevel(int line) => SPerform(2223, line).ToInt32();
 
         /// <summary>
         /// Set the fold level of a line.
@@ -1625,22 +1628,22 @@ namespace ScintillaNet
         /// <summary>
         /// Find the last child line of a header line. 
         /// </summary>
-        public int LastChild(int line) => SPerform(2224, line, 0);
+        public int LastChild(int line) => SPerform(2224, line).ToInt32();
 
         /// <summary>
         /// Is a line visible?
         /// </summary>  
-        public bool GetLineVisible(int line) => SPerform(2228, line, 0) != 0;
+        public bool GetLineVisible(int line) => SPerform(2228, new IntPtr(line)) != IntPtr.Zero;
 
         /// <summary>
         /// Find the parent line of a child line.
         /// </summary>
-        public int FoldParent(int line) => SPerform(2225, line, 0);
+        public int FoldParent(int line) => SPerform(2225, line).ToInt32();
 
         /// <summary>
         /// Is a header line expanded?
         /// </summary>
-        public bool FoldExpanded(int line) => SPerform(2230, line, 0) != 0;
+        public bool FoldExpanded(int line) => SPerform(2230, new IntPtr(line)) != IntPtr.Zero;
 
         /// <summary>
         /// Show the children of a header line.
@@ -1650,7 +1653,7 @@ namespace ScintillaNet
         /// <summary>
         /// Clear all the styles and make equivalent to the global default style.
         /// </summary>
-        public void StyleClearAll() => SPerform(2050, 0, 0);
+        public void StyleClearAll() => SPerform(2050);
 
         /// <summary>
         /// Sets the foreground colour of a style.
@@ -1660,7 +1663,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the foreground colour of a style.
         /// </summary>
-        public int StyleGetFore(int style) => SPerform(2481, style, 0);
+        public int StyleGetFore(int style) => SPerform(2481, style).ToInt32();
 
         /// <summary>
         /// Sets the background colour of a style.
@@ -1670,7 +1673,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the background colour of a style
         /// </summary>
-        public int StyleGetBack(int style) => SPerform(2482, style, 0);
+        public int StyleGetBack(int style) => SPerform(2482, style).ToInt32();
 
         /// <summary>
         /// Sets a style to be bold or not.
@@ -1680,7 +1683,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets whether a style is bold or not.
         /// </summary>
-        public bool StyleGetBold(int style) => SPerform(2483, style, 0) != 0;
+        public bool StyleGetBold(int style) => SPerform(2483, new IntPtr(style)) != IntPtr.Zero;
 
         /// <summary>
         /// Sets a style to be italic or not.
@@ -1693,7 +1696,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets whether a style is italic or not.
         /// </summary>
-        public bool StyleGetItalic(int style) => SPerform(2484, style, 0) != 0;
+        public bool StyleGetItalic(int style) => SPerform(2484, new IntPtr(style)) != IntPtr.Zero;
 
         /// <summary>
         /// Sets the size of characters of a style.
@@ -1703,7 +1706,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the size of characters of a style.
         /// </summary>
-        public int StyleGetSize(int style) => SPerform(2485, style, 0);
+        public int StyleGetSize(int style) => SPerform(2485, style).ToInt32();
 
         /// <summary>
         /// Set the font of a style.
@@ -1713,7 +1716,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(fontName)) fontName = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(fontName))
             {
-                SPerform(2056, style, (uint)b);
+                SPerform(2056, style, (IntPtr)b);
             }
         }
 
@@ -1722,7 +1725,7 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string StyleGetFont(int style)
         {
-            var size = SPerform(2486, style, 0);
+            var size = SPerform(2486, style).ToInt32();
             var buffer = new byte[size + 1];
             fixed (byte* b = buffer) SPerform(2486, style, (IntPtr) b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, size);
@@ -1767,7 +1770,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(characters)) characters = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(characters))
             {
-                SPerform(2077, 0, (uint)b);
+                SPerform(2077, IntPtr.Zero, (IntPtr)b);
             }
         }
 
@@ -1775,7 +1778,7 @@ namespace ScintillaNet
         /// Set a style to be changeable or not (read only).
         /// Experimental feature, currently buggy.
         /// </summary>
-        public void StyleSetChangeable(int style, bool changeable) => SPerform(2099, style, changeable ? 1 : 0 );
+        public void StyleSetChangeable(int style, bool changeable) => SPerform(2099, style, changeable ? 1 : 0);
 
         /// <summary>
         /// Define a set of characters that when typed will cause the autocompletion to
@@ -1786,19 +1789,19 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(characterSet)) characterSet = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(characterSet))
             {
-                SPerform(2112, 0, (uint)b);
+                SPerform(2112, 0, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Enable / Disable underlining active hotspots.
         /// </summary>
-        public void HotspotActiveUnderline(bool useSetting) => SPerform(2412, useSetting ? 1 : 0, 0);
+        public void HotspotActiveUnderline(bool useSetting) => SPerform(2412, useSetting ? 1 : 0);
 
         /// <summary>
         /// Limit hotspots to single line so hotspots on two lines don't merge.
         /// </summary>
-        public void HotspotSingleLine(bool useSetting) => SPerform(2421, useSetting ? 1 : 0, 0);
+        public void HotspotSingleLine(bool useSetting) => SPerform(2421, useSetting ? 1 : 0);
 
         /// <summary>
         /// Set a fore colour for active hotspots.
@@ -1813,7 +1816,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the number of bits the current lexer needs for styling.
         /// </summary>
-        public int GetStyleBitsNeeded() => SPerform(4011, 0, 0);
+        public int GetStyleBitsNeeded() => SPerform(4011).ToInt32();
 
         /// <summary>
         /// Set up a value that may be used by a lexer for some optional feature.
@@ -1826,7 +1829,7 @@ namespace ScintillaNet
             {
                 fixed (byte* b2 = Encoding.GetEncoding(CodePage).GetBytes(key))
                 {
-                    SPerform(4004, (int)b2, (uint)b);
+                    SPerform(4004, new IntPtr(b2), new IntPtr(b));
                 }
             }
         }
@@ -1840,7 +1843,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(key)) key = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(key))
             {
-                return SPerform(4010, (int)b, 0);
+                return SPerform(4010, (IntPtr)b).ToInt32();
             }
         }
 
@@ -1852,7 +1855,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(keyWords)) keyWords = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(keyWords))
             {
-                SPerform(4005, keywordSet, (uint)b);
+                SPerform(4005, keywordSet, (IntPtr) b);
             }
         }
 
@@ -1864,14 +1867,14 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(language)) language = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(language))
             {
-                SPerform(4006, 0, (uint)b);
+                SPerform(4006, IntPtr.Zero, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Retrieve the extra styling information for a line.
         /// </summary>
-        public int GetLineState(int line) => SPerform(2093, line, 0);
+        public int GetLineState(int line) => SPerform(2093, line).ToInt32();
 
         /// <summary>
         /// Used to hold extra styling information for each line.
@@ -1881,7 +1884,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the number of columns that a line is indented.
         /// </summary>
-        public int GetLineIndentation(int line) => SPerform(2127, line, 0);
+        public int GetLineIndentation(int line) => SPerform(2127, line).ToInt32();
 
         /// <summary>
         /// Change the indentation of a line to a number of columns.
@@ -1891,32 +1894,32 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the position before the first non indentation character on a line.
         /// </summary>
-        public int LineIndentPosition(int line) => SPerform(2128, line, 0);
+        public int LineIndentPosition(int line) => SPerform(2128, line).ToInt32();
 
         /// <summary>
         /// Retrieve the column number of a position, taking tab width into account.
         /// </summary>
-        public int Column(int pos) => SPerform(2129, pos, 0);
+        public int Column(int pos) => SPerform(2129, pos).ToInt32();
 
         /// <summary>
         /// Get the position after the last visible characters on a line.
         /// </summary>
-        public int LineEndPosition(int line) => SPerform(2136, line, 0);
+        public int LineEndPosition(int line) => SPerform(2136, line).ToInt32();
 
         /// <summary>
         /// Returns the character byte at the position.
         /// </summary>
-        public int CharAt(int pos) => SPerform(2007, pos, 0);
+        public int CharAt(int pos) => SPerform(2007, pos).ToInt32();
 
         /// <summary>
         /// Returns the style byte at the position.
         /// </summary>
-        public int StyleAt(int pos) => SPerform(2010, pos, 0);
+        public int StyleAt(int pos) => SPerform(2010, pos).ToInt32();
 
         /// <summary>
         /// Retrieve the type of a margin.
         /// </summary>
-        public int GetMarginTypeN(int margin) => SPerform(2241, margin, 0);
+        public int GetMarginTypeN(int margin) => SPerform(2241, margin).ToInt32();
 
         /// <summary>
         /// Set a margin to be either numeric or symbolic.
@@ -1926,7 +1929,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the width of a margin in pixels.
         /// </summary>
-        public int GetMarginWidthN(int margin) => SPerform(2243, margin, 0);
+        public int GetMarginWidthN(int margin) => SPerform(2243, margin).ToInt32();
 
         /// <summary>
         /// Set the width of a margin to a width expressed in pixels.
@@ -1936,7 +1939,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the marker mask of a margin.
         /// </summary>
-        public int GetMarginMaskN(int margin) => SPerform(2245, margin, 0);
+        public int GetMarginMaskN(int margin) => SPerform(2245, margin).ToInt32();
 
         /// <summary>
         /// Set a mask that determines which markers are displayed in a margin.
@@ -1946,7 +1949,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the mouse click sensitivity of a margin.
         /// </summary>
-        public bool MarginSensitiveN(int margin) => SPerform(2247, margin, 0) != 0;
+        public bool MarginSensitiveN(int margin) => SPerform(2247, new IntPtr(margin)) != IntPtr.Zero;
 
         /// <summary>
         /// Make a margin sensitive or insensitive to mouse clicks.
@@ -1956,7 +1959,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the cursor of a margin.
         /// </summary>
-        public int GetMarginCursorN(int margin) => SPerform(2249, margin, 0);
+        public int GetMarginCursorN(int margin) => SPerform(2249, margin).ToInt32();
 
         /// <summary>
         /// Set the cursor of a margin.
@@ -1966,7 +1969,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the style of an indicator.
         /// </summary>
-        public int GetIndicStyle(int indic) => SPerform(2081, indic, 0);
+        public int GetIndicStyle(int indic) => SPerform(2081, indic).ToInt32();
 
         /// <summary>
         /// Set an indicator to plain, squiggle or TT.
@@ -1976,7 +1979,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the foreground colour of an indicator.
         /// </summary>
-        public int GetIndicFore(int indic) => SPerform(2083, indic, 0);
+        public int GetIndicFore(int indic) => SPerform(2083, indic).ToInt32();
 
         /// <summary>
         /// Set the foreground colour of an indicator.
@@ -1991,7 +1994,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2001, length, (uint)b);
+                SPerform(2001, length, (IntPtr) b);
             }
         }
 
@@ -2003,7 +2006,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2003, pos, (uint)b);
+                SPerform(2003, pos, (IntPtr) b);
             }
         }
 
@@ -2030,38 +2033,38 @@ namespace ScintillaNet
         /// <summary>
         /// Delete all text in the document.
         /// </summary>
-        public void ClearAll() => SPerform(2004, 0, 0);
+        public void ClearAll() => SPerform(2004);
 
         /// <summary>
         /// Set all style bytes to 0, remove all folding information.
         /// </summary>
-        public void ClearDocumentStyle() => SPerform(2005, 0, 0);
+        public void ClearDocumentStyle() => SPerform(2005);
 
         /// <summary>
         /// Redoes the next action on the undo history.
         /// </summary>
-        public void Redo() => SPerform(2011, 0, 0);
+        public void Redo() => SPerform(2011);
 
         /// <summary>
         /// Select all the text in the document.
         /// </summary>
-        public void SelectAll() => SPerform(2013, 0, 0);
+        public void SelectAll() => SPerform(2013);
 
         /// <summary>
         /// Remember the current position in the undo history as the position
         /// at which the document was saved. 
         /// </summary>
-        public void SetSavePoint() => SPerform(2014, 0, 0);
+        public void SetSavePoint() => SPerform(2014);
 
         /// <summary>
         /// Retrieve the line number at which a particular marker is located.
         /// </summary>
-        public int MarkerLineFromHandle(int handle) => SPerform(2017, handle, 0);
+        public int MarkerLineFromHandle(int handle) => SPerform(2017, handle).ToInt32();
 
         /// <summary>
         /// Delete a marker.
         /// </summary>
-        public void MarkerDeleteHandle(int handle) => SPerform(2018, handle, 0);
+        public void MarkerDeleteHandle(int handle) => SPerform(2018, handle);
 
         /// <summary>
         /// Find the position from a point within the window.
@@ -2077,12 +2080,12 @@ namespace ScintillaNet
         /// <summary>
         /// Set caret to start of a line and ensure it is visible.
         /// </summary>
-        public void GotoLine(int line) => SPerform(2024, line, 0);
+        public void GotoLine(int line) => SPerform(2024, line);
 
         /// <summary>
         /// Set caret to a position and ensure it is visible.
         /// </summary>
-        public void GotoPos(int pos) => SPerform(2025, pos, 0);
+        public void GotoPos(int pos) => SPerform(2025, pos);
 
         /// <summary>
         /// Retrieve the text of the line containing the caret.
@@ -2090,16 +2093,16 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetCurLine(int length)
         {
-            length = Math.Min(length, SPerform(2027, 0, 0) - 1);
+            length = Math.Min(length, SPerform(2027).ToInt32() - 1);
             var buffer = new byte[length + 1];
-            fixed (byte* b = buffer) SPerform(2027, length + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2027, length + 1, (IntPtr) b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, length);
         }
 
         /// <summary>
         /// Convert all line endings in the document to one mode.
         /// </summary>
-        public void ConvertEOLs(int eolMode) => SPerform(2029, eolMode, 0);
+        public void ConvertEOLs(int eolMode) => SPerform(2029, eolMode);
 
         /// <summary>
         /// Set the current styling position to pos and the styling mask to mask.
@@ -2141,12 +2144,12 @@ namespace ScintillaNet
         /// <summary>
         /// Delete all markers with a particular number from all lines.
         /// </summary>
-        public void MarkerDeleteAll(int markerNumber) => SPerform(2045, markerNumber, 0);
+        public void MarkerDeleteAll(int markerNumber) => SPerform(2045, markerNumber);
 
         /// <summary>
         /// Get a bit mask of all the markers set on a line.
         /// </summary>
-        public int MarkerGet(int line) => SPerform(2046, line, 0);
+        public int MarkerGet(int line) => SPerform(2046, line).ToInt32();
 
         /// <summary>
         /// Find the next line after lineStart that includes a marker in mask.
@@ -2166,7 +2169,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(pixmap)) pixmap = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(pixmap))
             {
-                SPerform(2049, markerNumber, (uint)b);
+                SPerform(2049, markerNumber, (IntPtr) b);
             }
         }
 
@@ -2177,20 +2180,20 @@ namespace ScintillaNet
         {
             var rgba = RGBA.ConvertToRGBA(image);
             //SCI_RGBAIMAGESETWIDTH
-            SPerform(2624, image.Width, 0);
+            SPerform(2624, new IntPtr(image.Width), IntPtr.Zero);
             //SCI_RGBAIMAGESETHEIGHT
-            SPerform(2625, image.Height, 0);
+            SPerform(2625, new IntPtr(image.Height), IntPtr.Zero);
             fixed (byte* b = rgba)
             {
                 //SCI_MARKERDEFINERGBAIMAGE
-                SPerform(2626, markerNumber, (uint)b);
+                SPerform(2626, new IntPtr(markerNumber), new IntPtr(b));
             }
         }
 
         /// <summary>
         /// Reset the default style to its state at startup
         /// </summary>
-        public void StyleResetDefault() => SPerform(2058, 0, 0);
+        public void StyleResetDefault() => SPerform(2058);
 
         /// <summary>
         /// Set the foreground colour of the selection and whether to use this setting.
@@ -2210,12 +2213,12 @@ namespace ScintillaNet
         /// <summary>
         /// When key+modifier combination km is pressed do nothing.
         /// </summary>
-        public void ClearCmdKey(int km) => SPerform(2071, km, 0);
+        public void ClearCmdKey(int km) => SPerform(2071, km);
 
         /// <summary>
         /// Drop all key mappings.
         /// </summary>
-        public void ClearAllCmdKeys() => SPerform(2072, 0, 0);
+        public void ClearAllCmdKeys() => SPerform(2072);
 
         /// <summary>
         /// Set the styles for a segment of the document.
@@ -2225,7 +2228,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(styles))
             {
-                SPerform(2073, length, (uint)b);
+                SPerform(2073, length, (IntPtr) b);
             }
         }
 
@@ -2233,12 +2236,12 @@ namespace ScintillaNet
         /// Start a sequence of actions that is undone and redone as a unit.
         /// May be nested.
         /// </summary>
-        public void BeginUndoAction() => SPerform(2078, 0, 0);
+        public void BeginUndoAction() => SPerform(2078);
 
         /// <summary>
         /// End a sequence of actions that is undone and redone as a unit.
         /// </summary>
-        public void EndUndoAction() => SPerform(2079, 0, 0);
+        public void EndUndoAction() => SPerform(2079);
 
         /// <summary>
         /// Set the foreground colour of all whitespace and whether to use this setting.
@@ -2260,19 +2263,19 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(itemList)) itemList = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(itemList))
             {
-                SPerform(2100, lenEntered, (uint)b);
+                SPerform(2100, lenEntered, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Remove the auto-completion list from the screen.
         /// </summary>
-        public void AutoCCancel() => SPerform(2101, 0, 0);
+        public void AutoCCancel() => SPerform(2101);
 
         /// <summary>
         /// User has selected an item so remove the list and insert the selection.
         /// </summary>
-        public void AutoCComplete() => SPerform(2104, 0, 0);
+        public void AutoCComplete() => SPerform(2104);
 
         /// <summary>
         /// Define a set of character that when typed cancel the auto-completion list.
@@ -2282,7 +2285,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(characterSet)) characterSet = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(characterSet))
             {
-                SPerform(2105, 0, (uint)b);
+                SPerform(2105, 0, (IntPtr) b);
             }
         }
 
@@ -2294,7 +2297,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2108, 0, (uint)b);
+                SPerform(2108, 0, (IntPtr) b);
             }
         }
 
@@ -2306,7 +2309,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(itemList)) itemList = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(itemList))
             {
-                SPerform(2117, listType, (uint)b);
+                SPerform(2117, listType, (IntPtr) b);
             }
         }
 
@@ -2318,24 +2321,24 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(xpmData)) xpmData = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(xpmData))
             {
-                SPerform(2405, type, (uint)b);
+                SPerform(2405, type, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Clear all the registered XPM images.
         /// </summary>
-        public void ClearRegisteredImages() => SPerform(2408, 0, 0);
+        public void ClearRegisteredImages() => SPerform(2408);
 
         /// <summary>
         /// Retrieve the contents of a line.
         /// </summary>
         public unsafe string GetLine(int line)
         {
-            var sz = SPerform(2153, line, 0);
+            var sz = SPerform(2153, line).ToInt32();
             var buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2153, line, (uint)b);
-            return sz == 0 ? "" : Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz);
+            fixed (byte* b = buffer) SPerform(2153, line, (IntPtr) b);
+            return sz == 0 ? string.Empty : Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz);
         }
 
         /// <summary>
@@ -2347,7 +2350,7 @@ namespace ScintillaNet
         /// Returns the number of selections currently active. There is always at least one selection.
         /// </summary>
         /// <returns></returns>
-        public int GetSelections() => SPerform(2570, 0, 0);
+        public int GetSelections() => SPerform(2570).ToInt32();
 
         /// <summary>
         /// Set a single selection from anchor to caret as the only selection.
@@ -2369,7 +2372,7 @@ namespace ScintillaNet
         /// </summary>
         /// <param name="selection"></param>
         /// <returns></returns>
-        public int GetSelectionNStart(int selection) => SPerform(2585, selection, 0);
+        public int GetSelectionNStart(int selection) => SPerform(2585, selection).ToInt32();
 
         /// <summary>
         /// Set the start position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
@@ -2384,7 +2387,7 @@ namespace ScintillaNet
         /// </summary>
         /// <param name="selection"></param>
         /// <returns></returns>
-        public int GetSelectionNEnd(int selection) => SPerform(2587, selection, 0);
+        public int GetSelectionNEnd(int selection) => SPerform(2587, selection).ToInt32();
 
         /// <summary>
         /// Set the end position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
@@ -2400,7 +2403,7 @@ namespace ScintillaNet
         /// If there is only one selection, or there is no selection selection, then there is no effect.
         /// </summary>
         /// <param name="selection"></param>
-        public void DropSelectionN(int selection) => SPerform(2671, selection, 0);
+        public void DropSelectionN(int selection) => SPerform(2671, selection);
 
         /// <summary>
         /// Retrieve the selected text.
@@ -2410,11 +2413,11 @@ namespace ScintillaNet
         {
             get
             {
-                var sz = SPerform(2161, 0, 0);
+                var sz = SPerform(2161).ToInt32();
                 var buffer = new byte[sz + 1];
                 fixed (byte* b = buffer)
                 {
-                    SPerform(2161, sz + 1, (uint)b);
+                    SPerform(2161, new IntPtr(sz + 1), (IntPtr)b);
                 }
                 return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
             }
@@ -2437,7 +2440,7 @@ namespace ScintillaNet
                 range->chrg.cpMax = end;
                 range->lpstrText = new IntPtr(bp);
 
-                SPerform(2162 /*SCI_GETTEXTRANGE*/, 0, new IntPtr(range));
+                SPerform(2162 /*SCI_GETTEXTRANGE*/, IntPtr.Zero, new IntPtr(range));
                 return new string((sbyte*)bp, 0, length, Encoding);
             }
         }
@@ -2445,7 +2448,7 @@ namespace ScintillaNet
         /// <summary>
         /// Draw the selection in normal style or with selection highlighted.
         /// </summary>
-        public void HideSelection(bool normal) => SPerform(2163, normal ? 1 : 0, 0);
+        public void HideSelection(bool normal) => SPerform(2163, normal ? 1 : 0);
 
         /// <summary>
         /// Retrieve the x value of the point in the window where a position is displayed.
@@ -2460,12 +2463,12 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the line containing a position.
         /// </summary>
-        public int LineFromPosition(int pos) => SPerform(2166, pos, 0);
+        public int LineFromPosition(int pos) => SPerform(2166, pos).ToInt32();
 
         /// <summary>
         /// Retrieve the position at the start of a line.
         /// </summary>
-        public int PositionFromLine(int line) => SPerform(2167, line, 0);
+        public int PositionFromLine(int line) => SPerform(2167, line).ToInt32();
 
         /// <summary>
         /// Retrieve the text from line before position
@@ -2488,7 +2491,7 @@ namespace ScintillaNet
         /// <summary>
         /// Ensure the caret is visible.
         /// </summary>
-        public void ScrollCaret() => SPerform(2169, 0, 0);
+        public void ScrollCaret() => SPerform(2169);
 
         /// <summary>
         /// Replace the selected text with the argument text.
@@ -2498,36 +2501,36 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2170, 0, (uint)b);
+                SPerform(2170, 0, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Null operation.
         /// </summary>
-        public void Null() => SPerform(2172, 0, 0);
+        public void Null() => SPerform(2172);
 
         /// <summary>
         /// Delete the undo history.
         /// </summary>
-        public void EmptyUndoBuffer() => SPerform(2175, 0, 0);
+        public void EmptyUndoBuffer() => SPerform(2175);
 
         /// <summary>
         /// Undo one action in the undo history.
         /// </summary>
-        public void Undo() => SPerform(2176, 0, 0);
+        public void Undo() => SPerform(2176);
 
         /// <summary>
         /// Cut the selection to the clipboard.
         /// </summary>
-        public void Cut() => SPerform(2177, 0, 0);
+        public void Cut() => SPerform(2177);
 
         /// <summary>
         /// Copy the selection to the clipboard.
         /// </summary>
         public void Copy()
         {
-            SPerform(2178, 0, 0);
+            SPerform(2178);
             // Invoke UI update after copy...
             UpdateUI?.Invoke(this);
         }
@@ -2574,12 +2577,12 @@ namespace ScintillaNet
         /// <summary>
         /// Paste the contents of the clipboard into the document replacing the selection.
         /// </summary>
-        public void Paste() => SPerform(2179, 0, 0);
+        public void Paste() => SPerform(2179);
 
         /// <summary>
         /// Clear the selection.
         /// </summary>
-        public void Clear() => SPerform(2180, 0, 0);
+        public void Clear() => SPerform(2180);
 
         /// <summary>
         /// Replace the contents of the document with the argument text.
@@ -2589,7 +2592,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2181, 0, (uint)b);
+                SPerform(2181, IntPtr.Zero, new IntPtr(b));
             }
         }
 
@@ -2598,9 +2601,9 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetText(int length)
         {
-            var sz = SPerform(2182, length, 0);
+            var sz = SPerform(2182, new IntPtr(length)).ToInt32();
             var buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2182, length + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2182, new IntPtr(length + 1), new IntPtr(b));
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -2614,7 +2617,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                return SPerform(2194, length, (uint)b);
+                return SPerform(2194, length, (IntPtr) b);
             }
         }
 
@@ -2631,7 +2634,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                return SPerform(2195, length, (uint)b);
+                return SPerform(2195, length, (IntPtr) b);
             }
         }
 
@@ -2645,7 +2648,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                return SPerform(2197, length, (uint)b);
+                return SPerform(2197, length, (IntPtr) b);
             }
         }
 
@@ -2657,14 +2660,14 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(definition)) definition = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(definition))
             {
-                SPerform(2200, pos, (uint)b);
+                SPerform(2200, pos, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Remove the call tip from the screen.
         /// </summary>
-        public void CallTipCancel() => SPerform(2201, 0, 0);
+        public void CallTipCancel() => SPerform(2201);
 
         /// <summary>
         /// Highlight a segment of the definition.
@@ -2674,27 +2677,27 @@ namespace ScintillaNet
         /// <summary>
         /// Set the background colour for the call tip.
         /// </summary>
-        public void CallTipSetBack(int color) => SPerform(2205, color, 0);
+        public void CallTipSetBack(int color) => SPerform(2205, color);
 
         /// <summary>
         /// Set the foreground colour for the call tip.
         /// </summary>
-        public void CallTipSetFore(int color) => SPerform(2206, color, 0);
+        public void CallTipSetFore(int color) => SPerform(2206, color);
 
         /// <summary>
         /// Set the foreground colour for the highlighted part of the call tip.
         /// </summary>
-        public void CallTipSetForeHlt(int color) => SPerform(2207, color, 0);
+        public void CallTipSetForeHlt(int color) => SPerform(2207, color);
 
         /// <summary>
         /// Find the display line of a document line taking hidden lines into account.
         /// </summary>
-        public int VisibleFromDocLine(int line) => SPerform(2220, line, 0);
+        public int VisibleFromDocLine(int line) => SPerform(2220, line).ToInt32();
 
         /// <summary>
         /// Find the document line of a display line taking hidden lines into account.
         /// </summary>
-        public int DocLineFromVisible(int lineDisplay) => SPerform(2221, lineDisplay, 0);
+        public int DocLineFromVisible(int lineDisplay) => SPerform(2221, lineDisplay).ToInt32();
 
         /// <summary>
         /// Make a range of lines visible.
@@ -2709,23 +2712,23 @@ namespace ScintillaNet
         /// <summary>
         /// Switch a header line between expanded and contracted.
         /// </summary>
-        public void ToggleFold(int line) => SPerform(2231, line, 0);
+        public void ToggleFold(int line) => SPerform(2231, line);
 
         /// <summary>
         /// Ensure a particular line is visible by expanding any header line hiding it.
         /// </summary>
-        public void EnsureVisible(int line) => SPerform(2232, line, 0);
+        public void EnsureVisible(int line) => SPerform(2232, line);
 
         /// <summary>
         /// Set some style options for folding.
         /// </summary>
-        public void SetFoldFlags(int flags) => SPerform(2233, flags, 0);
+        public void SetFoldFlags(int flags) => SPerform(2233, flags);
 
         /// <summary>
         /// Ensure a particular line is visible by expanding any header line hiding it.
         /// Use the currently set visibility policy to determine which range to display.
         /// </summary>
-        public void EnsureVisibleEnforcePolicy(int line) => SPerform(2234, line, 0);
+        public void EnsureVisibleEnforcePolicy(int line) => SPerform(2234, line);
 
         /// <summary>
         /// Get position of start of word.
@@ -2753,14 +2756,14 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                return SPerform(2276, style, (uint)b);
+                return SPerform(2276, style, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Retrieve the height of a particular line of text in pixels.
         /// </summary>
-        public int TextHeight(int line) => SPerform(2279, line, 0);
+        public int TextHeight(int line) => SPerform(2279, line).ToInt32();
 
         /// <summary>
         /// Append a string to the end of the document without changing the selection.
@@ -2770,25 +2773,25 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2282, length, (uint)b);
+                SPerform(2282, length, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Make the target range start and end be the same as the selection range start and end.
         /// </summary>
-        public void TargetFromSelection() => SPerform(2287, 0, 0);
+        public void TargetFromSelection() => SPerform(2287);
 
         /// <summary>
         /// Join the lines in the target.
         /// </summary>
-        public void LinesJoin() => SPerform(2288, 0, 0);
+        public void LinesJoin() => SPerform(2288);
 
         /// <summary>
         /// Split the lines in the target into lines that are less wide than pixelWidth
         /// where possible.
         /// </summary>
-        public void LinesSplit(int pixelWidth) => SPerform(2289, pixelWidth, 0);
+        public void LinesSplit(int pixelWidth) => SPerform(2289, pixelWidth);
 
         /// <summary>
         /// Set the colours used as a chequerboard pattern in the fold margin
@@ -2803,137 +2806,137 @@ namespace ScintillaNet
         /// <summary>
         /// Move caret down one line.
         /// </summary>
-        public void LineDown() => SPerform(2300, 0, 0);
+        public void LineDown() => SPerform(2300);
 
         /// <summary>
         /// Move caret down one line extending selection to new caret position.
         /// </summary>
-        public void LineDownExtend() => SPerform(2301, 0, 0);
+        public void LineDownExtend() => SPerform(2301);
 
         /// <summary>
         /// Move caret up one line.
         /// </summary>
-        public void LineUp() => SPerform(2302, 0, 0);
+        public void LineUp() => SPerform(2302);
 
         /// <summary>
         /// Move caret up one line extending selection to new caret position.
         /// </summary>
-        public void LineUpExtend() => SPerform(2303, 0, 0);
+        public void LineUpExtend() => SPerform(2303);
 
         /// <summary>
         /// Move caret left one character.
         /// </summary>
-        public void CharLeft() => SPerform(2304, 0, 0);
+        public void CharLeft() => SPerform(2304);
 
         /// <summary>
         /// Move caret left one character extending selection to new caret position.
         /// </summary>
-        public void CharLeftExtend() => SPerform(2305, 0, 0);
+        public void CharLeftExtend() => SPerform(2305);
 
         /// <summary>
         /// Move caret right one character.
         /// </summary>
-        public void CharRight() => SPerform(2306, 0, 0);
+        public void CharRight() => SPerform(2306);
 
         /// <summary>
         /// Move caret right one character extending selection to new caret position.
         /// </summary>
-        public void CharRightExtend() => SPerform(2307, 0, 0);
+        public void CharRightExtend() => SPerform(2307);
 
         /// <summary>
         /// Move caret left one word.
         /// </summary>
-        public void WordLeft() => SPerform(2308, 0, 0);
+        public void WordLeft() => SPerform(2308);
 
         /// <summary>
         /// Move caret left one word extending selection to new caret position.
         /// </summary>
-        public void WordLeftExtend() => SPerform(2309, 0, 0);
+        public void WordLeftExtend() => SPerform(2309);
 
         /// <summary>
         /// Move caret right one word.
         /// </summary>
-        public void WordRight() => SPerform(2310, 0, 0);
+        public void WordRight() => SPerform(2310);
 
         /// <summary>
         /// Move caret right one word extending selection to new caret position.
         /// </summary>
-        public void WordRightExtend() => SPerform(2311, 0, 0);
+        public void WordRightExtend() => SPerform(2311);
 
         /// <summary>
         /// Move caret to first position on line.
         /// </summary>
-        public void Home() => SPerform(2312, 0, 0);
+        public void Home() => SPerform(2312);
 
         /// <summary>
         /// Move caret to first position on line extending selection to new caret position.
         /// </summary>
-        public void HomeExtend() => SPerform(2313, 0, 0);
+        public void HomeExtend() => SPerform(2313);
 
         /// <summary>
         /// Move caret to last position on line.
         /// </summary>
-        public void LineEnd() => SPerform(2314, 0, 0);
+        public void LineEnd() => SPerform(2314);
 
         /// <summary>
         /// Move caret to last position on line extending selection to new caret position.
         /// </summary>
-        public void LineEndExtend() => SPerform(2315, 0, 0);
+        public void LineEndExtend() => SPerform(2315);
 
         /// <summary>
         /// Move caret to first position in document.
         /// </summary>
-        public void DocumentStart() => SPerform(2316, 0, 0);
+        public void DocumentStart() => SPerform(2316);
 
         /// <summary>
         /// Move caret to first position in document extending selection to new caret position.
         /// </summary>
-        public void DocumentStartExtend() => SPerform(2317, 0, 0);
+        public void DocumentStartExtend() => SPerform(2317);
 
         /// <summary>
         /// Move caret to last position in document.
         /// </summary>
-        public void DocumentEnd() => SPerform(2318, 0, 0);
+        public void DocumentEnd() => SPerform(2318);
 
         /// <summary>
         /// Move caret to last position in document extending selection to new caret position.
         /// </summary>
-        public void DocumentEndExtend() => SPerform(2319, 0, 0);
+        public void DocumentEndExtend() => SPerform(2319);
 
         /// <summary>
         /// Move caret one page up.
         /// </summary>
-        public void PageUp() => SPerform(2320, 0, 0);
+        public void PageUp() => SPerform(2320);
 
         /// <summary>
         /// Move caret one page up extending selection to new caret position.
         /// </summary>
-        public void PageUpExtend() => SPerform(2321, 0, 0);
+        public void PageUpExtend() => SPerform(2321);
 
         /// <summary>
         /// Move caret one page down.
         /// </summary>
-        public void PageDown() => SPerform(2322, 0, 0);
+        public void PageDown() => SPerform(2322);
 
         /// <summary>
         /// Move caret one page down extending selection to new caret position.
         /// </summary>
-        public void PageDownExtend() => SPerform(2323, 0, 0);
+        public void PageDownExtend() => SPerform(2323);
 
         /// <summary>
         /// Switch from insert to overtype mode or the reverse.
         /// </summary>
-        public void EditToggleOvertype() => SPerform(2324, 0, 0);
+        public void EditToggleOvertype() => SPerform(2324);
 
         /// <summary>
         /// Cancel any modes such as call tip or auto-completion list display.
         /// </summary>
-        public void Cancel() => SPerform(2325, 0, 0);
+        public void Cancel() => SPerform(2325);
 
         /// <summary>
         /// Delete the selection or if no selection, the character before the caret.
         /// </summary>
-        public void DeleteBack() => SPerform(2326, 0, 0);
+        public void DeleteBack() => SPerform(2326);
 
         /// <summary>
         /// Delete the character after the caret.
@@ -2949,165 +2952,165 @@ namespace ScintillaNet
         /// If selection is empty or all on one line replace the selection with a tab character.
         /// If more than one line selected, indent the lines.
         /// </summary>
-        public void Tab() => SPerform(2327, 0, 0);
+        public void Tab() => SPerform(2327);
 
         /// <summary>
         /// Dedent the selected lines.
         /// </summary>
-        public void BackTab() => SPerform(2328, 0, 0);
+        public void BackTab() => SPerform(2328);
 
         /// <summary>
         /// Insert a new line, may use a CRLF, CR or LF depending on EOL mode.
         /// </summary>
-        public void NewLine() => SPerform(2329, 0, 0);
+        public void NewLine() => SPerform(2329);
 
         /// <summary>
         /// Insert a Form Feed character.
         /// </summary>
-        public void FormFeed() => SPerform(2330, 0, 0);
+        public void FormFeed() => SPerform(2330);
 
         /// <summary>
         /// Move caret to before first visible character on line.
         /// If already there move to first character on line.
         /// </summary>
-        public void VCHome() => SPerform(2331, 0, 0);
+        public void VCHome() => SPerform(2331);
 
         /// <summary>
         /// Like VCHome but extending selection to new caret position.
         /// </summary>
-        public void VCHomeExtend() => SPerform(2332, 0, 0);
+        public void VCHomeExtend() => SPerform(2332);
 
         /// <summary>
         /// Magnify the displayed text by increasing the sizes by 1 point.
         /// </summary>
-        public void ZoomIn() => SPerform(2333, 0, 0);
+        public void ZoomIn() => SPerform(2333);
 
         /// <summary>
         /// Make the displayed text smaller by decreasing the sizes by 1 point.
         /// </summary>
-        public void ZoomOut() => SPerform(2334, 0, 0);
+        public void ZoomOut() => SPerform(2334);
 
         /// <summary>
         /// Reset the text zooming by setting zoom level to 0.
         /// </summary>
-        public void ResetZoom() => SPerform(2373, 0, 0);
+        public void ResetZoom() => SPerform(2373);
 
         /// <summary>
         /// Delete the word to the left of the caret.
         /// </summary>
-        public void DelWordLeft() => SPerform(2335, 0, 0);
+        public void DelWordLeft() => SPerform(2335);
 
         /// <summary>
         /// Delete the word to the right of the caret.
         /// </summary>
-        public void DelWordRight() => SPerform(2336, 0, 0);
+        public void DelWordRight() => SPerform(2336);
 
         /// <summary>
         /// Cut the line containing the caret.
         /// </summary>
-        public void LineCut() => SPerform(2337, 0, 0);
+        public void LineCut() => SPerform(2337);
 
         /// <summary>
         /// Delete the line containing the caret.
         /// </summary>
-        public void LineDelete() => SPerform(2338, 0, 0);
+        public void LineDelete() => SPerform(2338);
 
         /// <summary>
         /// Switch the current line with the previous.
         /// </summary>
-        public void LineTranspose() => SPerform(2339, 0, 0);
+        public void LineTranspose() => SPerform(2339);
 
         /// <summary>
         /// Duplicate the current line.
         /// </summary>
-        public void LineDuplicate() => SPerform(2404, 0, 0);
+        public void LineDuplicate() => SPerform(2404);
 
         /// <summary>
         /// Transform the selection to lower case.
         /// </summary>
-        public void LowerCase() => SPerform(2340, 0, 0);
+        public void LowerCase() => SPerform(2340);
 
         /// <summary>
         /// Transform the selection to upper case.
         /// </summary>
-        public void UpperCase() => SPerform(2341, 0, 0);
+        public void UpperCase() => SPerform(2341);
 
         /// <summary>
         /// Scroll the document down, keeping the caret visible.
         /// </summary>
-        public void LineScrollDown() => SPerform(2342, 0, 0);
+        public void LineScrollDown() => SPerform(2342);
 
         /// <summary>
         /// Scroll the document up, keeping the caret visible.
         /// </summary>
-        public void LineScrollUp() => SPerform(2343, 0, 0);
+        public void LineScrollUp() => SPerform(2343);
 
         /// <summary>
         /// Delete the selection or if no selection, the character before the caret.
         /// Will not delete the character before at the start of a line.
         /// </summary>
-        public void DeleteBackNotLine() => SPerform(2344, 0, 0);
+        public void DeleteBackNotLine() => SPerform(2344);
 
         /// <summary>
         /// Move caret to first position on display line.
         /// </summary>
-        public void HomeDisplay() => SPerform(2345, 0, 0);
+        public void HomeDisplay() => SPerform(2345);
 
         /// <summary>
         /// Move caret to first position on display line extending selection to
         /// new caret position.
         /// </summary>
-        public void HomeDisplayExtend() => SPerform(2346, 0, 0);
+        public void HomeDisplayExtend() => SPerform(2346);
 
         /// <summary>
         /// Move caret to last position on display line.
         /// </summary>
-        public void LineEndDisplay() => SPerform(2347, 0, 0);
+        public void LineEndDisplay() => SPerform(2347);
 
         /// <summary>
         /// Move caret to last position on display line extending selection to new
         /// caret position.
         /// </summary>
-        public void LineEndDisplayExtend() => SPerform(2348, 0, 0);
+        public void LineEndDisplayExtend() => SPerform(2348);
 
         /// <summary>
         /// </summary>
-        public void HomeWrap() => SPerform(2349, 0, 0);
+        public void HomeWrap() => SPerform(2349);
 
         /// <summary>
         /// </summary>
-        public void HomeWrapExtend() => SPerform(2450, 0, 0);
+        public void HomeWrapExtend() => SPerform(2450);
 
         /// <summary>
         /// </summary>
-        public void LineEndWrap() => SPerform(2451, 0, 0);
+        public void LineEndWrap() => SPerform(2451);
 
         /// <summary>
         /// </summary>
-        public void LineEndWrapExtend() => SPerform(2452, 0, 0);
+        public void LineEndWrapExtend() => SPerform(2452);
 
         /// <summary>
         /// </summary>
-        public void VCHomeWrap() => SPerform(2453, 0, 0);
+        public void VCHomeWrap() => SPerform(2453);
 
         /// <summary>
         /// </summary>
-        public void VCHomeWrapExtend() => SPerform(2454, 0, 0);
+        public void VCHomeWrapExtend() => SPerform(2454);
 
         /// <summary>
         /// Copy the line containing the caret.
         /// </summary>
-        public void LineCopy() => SPerform(2455, 0, 0);
+        public void LineCopy() => SPerform(2455);
 
         /// <summary>
         /// Move the caret inside current view if it's not there already.
         /// </summary>
-        public void MoveCaretInsideView() => SPerform(2401, 0, 0);
+        public void MoveCaretInsideView() => SPerform(2401);
 
         /// <summary>
         /// How many characters are on a line, not including end of line characters?
         /// </summary>
-        public int LineLength(int line) => SPerform(2350, line, 0);
+        public int LineLength(int line) => SPerform(2350, line).ToInt32();
 
         /// <summary>
         /// Highlight the characters at two positions.
@@ -3117,17 +3120,17 @@ namespace ScintillaNet
         /// <summary>
         /// Highlight the character at a position indicating there is no matching brace.
         /// </summary>
-        public void BraceBadLight(int pos) => SPerform(2352, pos, 0);
+        public void BraceBadLight(int pos) => SPerform(2352, pos);
 
         /// <summary>
         /// Find the position of a matching brace or INVALID_POSITION if no match.
         /// </summary>
-        public int BraceMatch(int pos) => SPerform(2353, pos, 0);
+        public int BraceMatch(int pos) => SPerform(2353, pos).ToInt32();
 
         /// <summary>
         /// Sets the current caret position to be the search anchor.
         /// </summary>
-        public void SearchAnchor() => SPerform(2366, 0, 0);
+        public void SearchAnchor() => SPerform(2366);
 
         /// <summary>
         /// Find some text starting at the search anchor.
@@ -3138,7 +3141,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                return SPerform(2367, flags, (uint)b);
+                return SPerform(2367, flags, (IntPtr) b);
             }
         }
 
@@ -3151,7 +3154,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                return SPerform(2368, flags, (uint)b);
+                return SPerform(2368, flags, (IntPtr) b);
             }
         }
 
@@ -3159,7 +3162,7 @@ namespace ScintillaNet
         /// Set whether a pop up menu is displayed automatically when the user presses
         /// the wrong mouse button.
         /// </summary>
-        public void UsePopUp(bool allowPopUp) => SPerform(2371, allowPopUp ? 1 : 0, 0);
+        public void UsePopUp(bool allowPopUp) => SPerform(2371, allowPopUp ? 1 : 0);
 
         /// <summary>
         /// Create a new document object.
@@ -3176,24 +3179,24 @@ namespace ScintillaNet
         /// <summary>
         /// Move to the previous change in capitalisation.
         /// </summary>
-        public void WordPartLeft() => SPerform(2390, 0, 0);
+        public void WordPartLeft() => SPerform(2390);
 
         /// <summary>
         /// Move to the previous change in capitalisation extending selection
         /// to new caret position.
         /// </summary>
-        public void WordPartLeftExtend() => SPerform(2391, 0, 0);
+        public void WordPartLeftExtend() => SPerform(2391);
 
         /// <summary>
         /// Move to the change next in capitalisation.
         /// </summary>
-        public void WordPartRight() => SPerform(2392, 0, 0);
+        public void WordPartRight() => SPerform(2392);
 
         /// <summary>
         /// Move to the next change in capitalisation extending selection
         /// to new caret position.
         /// </summary>
-        public void WordPartRightExtend() => SPerform(2393, 0, 0);
+        public void WordPartRightExtend() => SPerform(2393);
 
         /// <summary>
         /// Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.
@@ -3205,23 +3208,23 @@ namespace ScintillaNet
         /// <summary>
         /// Delete back from the current position to the start of the line.
         /// </summary>
-        public void DelLineLeft() => SPerform(2395, 0, 0);
+        public void DelLineLeft() => SPerform(2395);
 
         /// <summary>
         /// Delete forwards from the current position to the end of the line.
         /// </summary>
-        public void DelLineRight() => SPerform(2396, 0, 0);
+        public void DelLineRight() => SPerform(2396);
 
         /// <summary>
         /// Set the last x chosen value to be the caret x position.
         /// </summary>
-        public void ChooseCaretX() => SPerform(2399, 0, 0);
+        public void ChooseCaretX() => SPerform(2399);
 
         /// <summary>
         /// Set the focus to this Scintilla widget.
         /// GTK+ Specific.
         /// </summary>
-        public void GrabFocus() => SPerform(2400, 0, 0);
+        public void GrabFocus() => SPerform(2400);
 
         /// <summary>
         /// Set the way the caret is kept visible when going sideway.
@@ -3238,34 +3241,34 @@ namespace ScintillaNet
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaDown() => SPerform(2413, 0, 0);
+        public void ParaDown() => SPerform(2413);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaDownExtend() => SPerform(2414, 0, 0);
+        public void ParaDownExtend() => SPerform(2414);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaUp() => SPerform(2415, 0, 0);
+        public void ParaUp() => SPerform(2415);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaUpExtend() => SPerform(2416, 0, 0);
+        public void ParaUpExtend() => SPerform(2416);
 
         /// <summary>
         /// Given a valid document position, return the previous position taking code
         /// page into account. Returns 0 if passed 0.
         /// </summary>
-        public int PositionBefore(int pos) => SPerform(2417, pos, 0);
+        public int PositionBefore(int pos) => SPerform(2417, pos).ToInt32();
 
         /// <summary>
         /// Given a valid document position, return the next position taking code
         /// page into account. Maximum value returned is the last position in the document.
         /// </summary>
-        public int PositionAfter(int pos) => SPerform(2418, pos, 0);
+        public int PositionAfter(int pos) => SPerform(2418, pos).ToInt32();
 
         /// <summary>
         /// Copy a range of text to the clipboard. Positions are clipped into the document.
@@ -3280,106 +3283,106 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2420, length, (uint)b);
+                SPerform(2420, length, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
         /// </summary>
-        public int GetLineSelStartPosition(int line) => SPerform(2424, line, 0);
+        public int GetLineSelStartPosition(int line) => SPerform(2424, line).ToInt32();
 
         /// <summary>
         /// Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line).
         /// </summary>
-        public int GetLineSelEndPosition(int line) => SPerform(2425, line, 0);
+        public int GetLineSelEndPosition(int line) => SPerform(2425, line).ToInt32();
 
         /// <summary>
         /// Move caret down one line, extending rectangular selection to new caret position.
         /// </summary>
-        public void LineDownRectExtend() => SPerform(2426, 0, 0);
+        public void LineDownRectExtend() => SPerform(2426);
 
         /// <summary>
         /// Move caret up one line, extending rectangular selection to new caret position. 
         /// </summary>
-        public void LineUpRectExtend() => SPerform(2427, 0, 0);
+        public void LineUpRectExtend() => SPerform(2427);
 
         /// <summary>
         /// Move caret left one character, extending rectangular selection to new caret position.
         /// </summary>
-        public void CharLeftRectExtend() => SPerform(2428, 0, 0);
+        public void CharLeftRectExtend() => SPerform(2428);
 
         /// <summary>
         /// Move caret right one character, extending rectangular selection to new caret position.
         /// </summary>
-        public void CharRightRectExtend() => SPerform(2429, 0, 0);
+        public void CharRightRectExtend() => SPerform(2429);
 
         /// <summary>
         /// Move caret to first position on line, extending rectangular selection to new caret position.
         /// </summary>
-        public void HomeRectExtend() => SPerform(2430, 0, 0);
+        public void HomeRectExtend() => SPerform(2430);
 
         /// <summary>
         /// Move caret to before first visible character on line.
         /// If already there move to first character on line.
         /// In either case, extend rectangular selection to new caret position.
         /// </summary>
-        public void VCHomeRectExtend() => SPerform(2431, 0, 0);
+        public void VCHomeRectExtend() => SPerform(2431);
 
         /// <summary>
         /// Move caret to last position on line, extending rectangular selection to new caret position.
         /// </summary>
-        public void LineEndRectExtend() => SPerform(2432, 0, 0);
+        public void LineEndRectExtend() => SPerform(2432);
 
         /// <summary>
         /// Move caret one page up, extending rectangular selection to new caret position.
         /// </summary>
-        public void PageUpRectExtend() => SPerform(2433, 0, 0);
+        public void PageUpRectExtend() => SPerform(2433);
 
         /// <summary>
         /// Move caret one page down, extending rectangular selection to new caret position.
         /// </summary>
-        public void PageDownRectExtend() => SPerform(2434, 0, 0);
+        public void PageDownRectExtend() => SPerform(2434);
 
         /// <summary>
         /// Move caret to top of page, or one page up if already at top of page.
         /// </summary>
-        public void StutteredPageUp() => SPerform(2435, 0, 0);
+        public void StutteredPageUp() => SPerform(2435);
 
         /// <summary>
         /// Move caret to top of page, or one page up if already at top of page, extending selection to new caret position.
         /// </summary>
-        public void StutteredPageUpExtend() => SPerform(2436, 0, 0);
+        public void StutteredPageUpExtend() => SPerform(2436);
 
         /// <summary>
         /// Move caret to bottom of page, or one page down if already at bottom of page.
         /// </summary>
-        public void StutteredPageDown() => SPerform(2437, 0, 0);
+        public void StutteredPageDown() => SPerform(2437);
 
         /// <summary>
         /// Move caret to bottom of page, or one page down if already at bottom of page, extending selection to new caret position.
         /// </summary>
-        public void StutteredPageDownExtend() => SPerform(2438, 0, 0);
+        public void StutteredPageDownExtend() => SPerform(2438);
 
         /// <summary>
         /// Move caret left one word, position cursor at end of word.
         /// </summary>
-        public void WordLeftEnd() => SPerform(2439, 0, 0);
+        public void WordLeftEnd() => SPerform(2439);
 
         /// <summary>
         /// Move caret left one word, position cursor at end of word, extending selection to new caret position.
         /// </summary>
-        public void WordLeftEndExtend() => SPerform(2440, 0, 0);
+        public void WordLeftEndExtend() => SPerform(2440);
 
         /// <summary>
         /// Move caret right one word, position cursor at end of word.
         /// </summary>
-        public void WordRightEnd() => SPerform(2441, 0, 0);
+        public void WordRightEnd() => SPerform(2441);
 
         /// <summary>
         /// Move caret right one word, position cursor at end of word, extending selection to new caret position.
         /// </summary>
-        public void WordRightEndExtend() => SPerform(2442, 0, 0);
+        public void WordRightEndExtend() => SPerform(2442);
 
         /// <summary>
         /// Set the set of characters making up whitespace for when moving or selecting by word. Should be called after WordChars.
@@ -3389,29 +3392,29 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(characters)) characters = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(characters))
             {
-                SPerform(2443, 0, (uint)b);
+                SPerform(2443, 0, (IntPtr) b);
             }
         }
 
         /// <summary>
         /// Reset the set of characters for whitespace and word characters to the defaults.
         /// </summary>
-        public void SetCharsDefault() => SPerform(2444, 0, 0);
+        public void SetCharsDefault() => SPerform(2444);
 
         /// <summary>
         /// Enlarge the document to a particular size of text bytes.
         /// </summary>
-        public void Allocate(int bytes) => SPerform(2446, bytes, 0);
+        public void Allocate(int bytes) => SPerform(2446, bytes);
 
         /// <summary>
         /// Start notifying the container of all key presses and commands.
         /// </summary>
-        public void StartRecord() => SPerform(3001, 0, 0);
+        public void StartRecord() => SPerform(3001);
 
         /// <summary>
         /// Stop notifying the container of all key presses and commands.
         /// </summary>
-        public void StopRecord() => SPerform(3002, 0, 0);
+        public void StopRecord() => SPerform(3002);
 
         /// <summary>
         /// Colourise a segment of the document using the current lexing language.
@@ -3426,7 +3429,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(path)) path = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(path))
             {
-                SPerform(4007, 0, (uint)b);
+                SPerform(4007, 0, (IntPtr) b);
             }
         }
 
@@ -3449,7 +3452,7 @@ namespace ScintillaNet
         /// <summary>
         /// Are any indicators present at position?
         /// </summary>
-        public int IndicatorAllOnFor(int position) => SPerform(2506, position, 0);
+        public int IndicatorAllOnFor(int position) => SPerform(2506, position).ToInt32();
 
         /// <summary>
         /// What value does a particular indicator have at at a position?
@@ -3471,7 +3474,7 @@ namespace ScintillaNet
         /// </summary>
         public void CopyAllowLine()
         {
-            SPerform(2519, 0, 0);
+            SPerform(2519);
             // Invoke UI update after copy...
             UpdateUI?.Invoke(this);
         }
@@ -3484,12 +3487,12 @@ namespace ScintillaNet
         /// <summary>
         /// Set the alpha fill colour of the given indicator.
         /// </summary>
-        public void GetIndicSetAlpha(int indicator) => SPerform(2524, indicator, 0);
+        public void GetIndicSetAlpha(int indicator) => SPerform(2524, indicator);
 
         /// <summary>
         /// Which symbol was defined for markerNumber with MarkerDefine
         /// </summary>
-        public int GetMarkerSymbolDefined(int markerNumber) => SPerform(2529, markerNumber, 0);
+        public int GetMarkerSymbolDefined(int markerNumber) => SPerform(2529, markerNumber).ToInt32();
 
         /// <summary>
         /// Set the text in the text margin for a line
@@ -3499,12 +3502,12 @@ namespace ScintillaNet
         /// <summary>
         /// Get the style number for the text margin for a line
         /// </summary>
-        public int GetMarginStyle(int line) => SPerform(2533, line, 0);
+        public int GetMarginStyle(int line) => SPerform(2533, line).ToInt32();
 
         /// <summary>
         /// Clear the margin text on all lines
         /// </summary>
-        public void MarginTextClearAll() => SPerform(2536, 0, 0);
+        public void MarginTextClearAll() => SPerform(2536);
 
         /// <summary>
         /// Find the position of a character from a point within the window.
@@ -3529,17 +3532,17 @@ namespace ScintillaNet
         /// <summary>
         /// Get the style number for the annotations for a line
         /// </summary>
-        public int GetAnnotationStyle(int line) => SPerform(2543, line, 0);
+        public int GetAnnotationStyle(int line) => SPerform(2543, line).ToInt32();
 
         /// <summary>
         /// Clear the annotations from all lines
         /// </summary>
-        public void AnnotatioClearAll() => SPerform(2547, 0, 0);
+        public void AnnotatioClearAll() => SPerform(2547);
 
         /// <summary>
         /// Get the number of annotation lines for a line
         /// </summary>
-        public int GetAnnotationLines(int line) => SPerform(2546, line, 0);
+        public int GetAnnotationLines(int line) => SPerform(2546, line).ToInt32();
 
         /// <summary>
         /// Set the text in the text margin for a line
@@ -3549,7 +3552,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2530, line, (uint)b);
+                SPerform(2530, line, (IntPtr) b);
             }
         }
 
@@ -3561,7 +3564,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(styles))
             {
-                SPerform(2534, line, (uint)b);
+                SPerform(2534, line, (IntPtr) b);
             }
         }
 
@@ -3573,7 +3576,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
-                SPerform(2540, line, (uint)b);
+                SPerform(2540, line, (IntPtr) b);
             }
         }
 
@@ -3585,7 +3588,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(styles))
             {
-                SPerform(2544, line, (uint)b);
+                SPerform(2544, line, (IntPtr) b);
             }
         }
 
@@ -3594,9 +3597,9 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetMarginText(int line)
         {
-            var sz = SPerform(2531, line, 0);
+            var sz = SPerform(2531, line).ToInt32();
             var buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2531, line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2531, line + 1, (IntPtr) b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -3605,9 +3608,9 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetMarginStyles(int line)
         {
-            var sz = SPerform(2535, line, 0);
+            var sz = SPerform(2535, line).ToInt32();
             var buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2535, line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2535, line + 1, (IntPtr) b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -3616,9 +3619,9 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetAnnotationText(int line)
         {
-            var sz = SPerform(2541, line, 0);
+            var sz = SPerform(2541, line).ToInt32();
             var buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2541, line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2541, line + 1, (IntPtr) b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -3627,21 +3630,21 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetAnnotationStyles(int line)
         {
-            var sz = SPerform(2545, line, 0);
+            var sz = SPerform(2545, line).ToInt32();
             var buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2545, line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2545, line + 1, (IntPtr) b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
 
         /// <summary>
         /// Set caret behavior in virtual space. (1 = allow rectangular selection, 2 = allow cursor movement, 3 = both)
         /// </summary>
-        public void SetVirtualSpaceOptions(int options) => SPerform(2596, options, 0);
+        public void SetVirtualSpaceOptions(int options) => SPerform(2596, options);
 
         /// <summary>
         /// Returns caret behavior in virtual space. (1 = allow rectangular selection, 2 = allow cursor movement, 3 = both)
         /// </summary>
-        public int GetVirtualSpaceOptions() => SPerform(2597, 0, 0);
+        public int GetVirtualSpaceOptions() => SPerform(2597).ToInt32();
 
         /// <summary>
         /// Set whether pasting, typing, backspace, and delete work on all lines of a multiple selection
@@ -3649,20 +3652,20 @@ namespace ScintillaNet
         public void SetMultiSelectionTyping(bool flag)
         {
             int option = flag ? 1 : 0;
-            SPerform(2565, option, 0);
-            SPerform(2614, option, 0);
+            SPerform(2565, option);
+            SPerform(2614, option);
         }
 
         /// <summary>
         /// Returns whether pasting, typing, backspace, and delete work on all lines of a multiple selection
         /// </summary>
-        public bool GetMultiSelectionTyping() => SPerform(2566, 0, 0) != 0;
+        public bool GetMultiSelectionTyping() => SPerform(2566) != IntPtr.Zero;
 
         /// <summary>
         /// Find the next line at or after lineStart that is a contracted fold header line.
         /// Return -1 when no more lines.
         /// </summary>
-        public int ContractedFoldNext(int lineStart) => SPerform(2618, lineStart, 0);
+        public int ContractedFoldNext(int lineStart) => SPerform(2618, lineStart).ToInt32();
 
         #endregion
 
@@ -3770,8 +3773,8 @@ namespace ScintillaNet
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hdc, int capindex);
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        [DllImport("user32.dll", EntryPoint = "SendMessageW", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
         public static extern int SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
@@ -3789,8 +3792,10 @@ namespace ScintillaNet
 
         public uint SlowPerform(uint message, uint wParam, uint lParam)
         {
-            return (uint)SendMessage(HandleSci, message, (int)wParam, (int)lParam);
+            return (uint) SendMessage(HandleSci, (int) message, (IntPtr)wParam, (IntPtr)lParam);
         }
+
+        public IntPtr SlowPerform(int message, IntPtr wParam, IntPtr lParam) => SendMessage(HandleSci, message, wParam, lParam);
 
         public int SPerform(int message, int wParam, uint lParam)
         {
@@ -3803,6 +3808,17 @@ namespace ScintillaNet
             if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
             return Encoding.ASCII.CodePage;
         }
+
+        public IntPtr SPerform(int message) => SPerform(message, IntPtr.Zero);
+
+        public IntPtr SPerform(int message, int wParam) => SPerform(message, (IntPtr) wParam, IntPtr.Zero);
+
+        public IntPtr SPerform(int message, IntPtr wParam) => SPerform(message, wParam, IntPtr.Zero);
+
+        public IntPtr SPerform(int message, IntPtr wParam, IntPtr lParam)
+            => Win32.ShouldUseWin32()
+                ? _sciFunction(directPointer, message, wParam, lParam)
+                : (IntPtr) Encoding.ASCII.CodePage;
 
         public int SPerform(int message, int wParam, IntPtr lParam)
         {
@@ -3833,13 +3849,7 @@ namespace ScintillaNet
                         break;
                     }
                 case WM_SYSKEYDOWN:
-                    {
-                        return base.PreProcessMessage(ref m);
-                    }
-                case WM_SYSCHAR:
-                    {
-                        return base.PreProcessMessage(ref m);
-                    }
+                case WM_SYSCHAR: return base.PreProcessMessage(ref m);
             }
             return false;
         }
@@ -4092,7 +4102,7 @@ namespace ScintillaNet
             if (highlightDelay is null)
             {
                 highlightDelay = new System.Timers.Timer(PluginBase.Settings.HighlightMatchingWordsDelay);
-                highlightDelay.Elapsed += highlightDelay_Elapsed;
+                highlightDelay.Elapsed += HighlightDelay_Elapsed;
                 highlightDelay.SynchronizingObject = this;
             }
             else highlightDelay.Stop();
@@ -4103,7 +4113,7 @@ namespace ScintillaNet
             highlightDelay.Start();
         }
 
-        void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void HighlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             highlightDelay.Stop();
             HighlightWordsMatchingSelected();
@@ -4140,7 +4150,7 @@ namespace ScintillaNet
         /// <summary>
         /// Cancel highlights if not using aggressive highlighting
         /// </summary>
-        void OnCancelHighlight(ScintillaControl sci)
+        static void OnCancelHighlight(ScintillaControl sci)
         {
             if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0
                 && PluginBase.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
@@ -4452,7 +4462,7 @@ namespace ScintillaNet
         /// <summary>
         /// Free cached data from the control after printing
         /// </summary>
-        public void FormatRangeDone() => SPerform(2151, 0, 0);
+        public void FormatRangeDone() => SPerform(2151);
 
         /// <summary>
         /// This holds the actual encoding of the document
@@ -5162,9 +5172,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe void HandleFileDrop(IntPtr hDrop)
         {
-            int nfiles = DragQueryFileA(hDrop, 0xffffffff, (IntPtr)null, 0);
-            string files = "";
-            byte[] buffer = new byte[PATH_LEN];
+            var nfiles = DragQueryFileA(hDrop, 0xffffffff, IntPtr.Zero, 0);
+            var files = "";
+            var buffer = new byte[PATH_LEN];
             for (uint i = 0; i < nfiles; i++)
             {
                 fixed (byte* b = buffer)
