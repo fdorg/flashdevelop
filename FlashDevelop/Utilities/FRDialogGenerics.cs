@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.FRService;
@@ -89,15 +90,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static List<SearchMatch> FilterMatches(List<SearchMatch> matches, int start, int end)
         {
-            var filtered = new List<SearchMatch>();
-            foreach (SearchMatch match in matches)
-            {
-                if (match.Index >= start && (match.Index + match.Length) <= end)
-                {
-                    filtered.Add(match);
-                }
-            }
-            return filtered;
+            return matches.Where(match => match.Index >= start && (match.Index + match.Length) <= end).ToList();
         }
 
         /// <summary>
@@ -143,7 +136,5 @@ namespace FlashDevelop.Utilities
             }
             return nearestMatch;
         }
-
     }
-
 }

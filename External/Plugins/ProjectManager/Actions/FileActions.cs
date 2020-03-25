@@ -158,10 +158,10 @@ namespace ProjectManager.Actions
                         package = package.Replace(Path.DirectorySeparatorChar, '.');
                     }
 
-                    if (package == "") args = args.Replace(" $(Package)", "");
+                    if (package.Length == 0) args = args.Replace(" $(Package)", "");
                     args = args.Replace("$(Package)", package);
 
-                    if (package != "")
+                    if (package.Length != 0)
                         args = args.Replace("$(FileNameWithPackage)", package + "." + fileName);
                     else
                         args = args.Replace("$(FileNameWithPackage)", fileName);

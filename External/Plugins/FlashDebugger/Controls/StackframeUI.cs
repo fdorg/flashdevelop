@@ -356,8 +356,8 @@ namespace FlashDebugger
         void CopyAllTextClick(object sender, EventArgs e)
         {
             var sb = new StringBuilder();
-            string filter = toolStripTextBoxFilter.Text.Trim();
-            if (filter != string.Empty)
+            var filter = toolStripTextBoxFilter.Text.Trim();
+            if (filter.Length != 0)
             {
                 sb.Append(TextHelper.GetString("Label.Filter")).AppendLine(filter).AppendLine();
             }
@@ -403,10 +403,10 @@ namespace FlashDebugger
         void FilterResults()
         {
             lv.BeginUpdate();
-            string filterText = toolStripTextBoxFilter.Text.Trim();
+            var filterText = toolStripTextBoxFilter.Text.Trim();
             lv.Items.Clear();
             Regex regex = null;
-            Color color = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
+            var color = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
             if (toolStripItemRegEx.Checked)
             {
                 try
@@ -425,7 +425,7 @@ namespace FlashDebugger
             {
                 bool match = true;
                 item.ImageIndex = -1;
-                if (filterText != string.Empty)
+                if (filterText.Length != 0)
                 {
                     if (regex != null) match = regex.IsMatch(item.SubItems[1].Text);
                     else

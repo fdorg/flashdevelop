@@ -78,18 +78,17 @@ namespace CssCompletion
             info.UseShellExecute = false;
             info.RedirectStandardOutput = true;
             info.RedirectStandardError = true;
-            Process p = Process.Start(info);
+            var p = Process.Start(info);
             if (p.WaitForExit(3000))
             {
-                string res = p.StandardOutput.ReadToEnd() ?? "";
-                string err = p.StandardError.ReadToEnd() ?? "";
-
-                MatchCollection matches = features.ErrorPattern.Matches(err);
+                var res = p.StandardOutput.ReadToEnd();
+                var err = p.StandardError.ReadToEnd();
+                var matches = features.ErrorPattern.Matches(err);
                 if (matches.Count > 0)
                     foreach (Match m in matches)
                         TraceManager.Add(fileName + ":" + m.Groups["line"] + ": " + m.Groups["desc"].Value.Trim(), -3);
 
-                if (settings.EnableVerboseCompilation || (err != "" && matches.Count == 0))
+                if (settings.EnableVerboseCompilation || (err.Length != 0 && matches.Count == 0))
                 {
                     if (res.Trim().Length > 0) TraceManager.Add(res);
                     if (err.Trim().Length > 0) TraceManager.Add(err, 3);

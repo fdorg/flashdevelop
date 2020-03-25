@@ -1039,11 +1039,7 @@ namespace ASCompletion
 
         static bool IsMatch(string inputText, string searchText)
         {
-            if (inputText is null || searchText == "")
-            {
-                return false;
-            }
-            return inputText.ToUpper().Contains(searchText);
+            return inputText != null && searchText != "" && inputText.ToUpper().Contains(searchText);
         }
 
         void HighlightAllMatchingDeclaration(string text)

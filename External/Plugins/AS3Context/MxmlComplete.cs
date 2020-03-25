@@ -763,8 +763,8 @@ namespace AS3Context
                     continue;
 
                 p = model.Type.LastIndexOf('.');
-                string pkg = model.Type.Substring(0, p + 1);
-                if (pkg == "") pkg = "*";
+                var pkg = model.Type.Substring(0, p + 1);
+                if (pkg.Length == 0) pkg = "*";
                 if (packages.ContainsKey(pkg))
                 {
                     string ns = packages[pkg];

@@ -2147,7 +2147,7 @@ namespace ASCompletion.Model
         public QType QualifiedName(FileModel InFile, string Name) 
         {
             var qt = new QType();
-            var type = Name;
+            string type;
             if (InFile.Package == "") type = Name;
             else if (InFile.Module == "" || InFile.Module == Name) type = InFile.Package + "." + Name;
             else type = InFile.Package + "." + InFile.Module + "." + Name;

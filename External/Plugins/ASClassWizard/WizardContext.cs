@@ -125,7 +125,7 @@ namespace ASClassWizard
                     foreach (var cp in cps)
                     {
                         package = GetPackage(cp, inDirectory);
-                        if (package == "") continue;
+                        if (package.Length == 0) continue;
                         classpath = cp;
                         break;
                     }

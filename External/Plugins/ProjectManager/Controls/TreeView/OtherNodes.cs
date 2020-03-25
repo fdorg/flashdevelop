@@ -117,10 +117,10 @@ namespace ProjectManager.Controls.TreeView
 
             if (parts.Length > 0)
             {
-                for (int i = parts.Length - 1; i > 0; --i)
+                for (var i = parts.Length - 1; i > 0; --i)
                 {
-                    string part = parts[i];
-                    if (part != "" && part != "." && part != ".." && !excludes.Contains(part.ToLower()))
+                    var part = parts[i];
+                    if (part.Length != 0 && part != "." && part != ".." && !excludes.Contains(part.ToLower()))
                     {
                         if (char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
                         else if (part.Length == 40 && reSHAHash.IsMatch(part)) label.Add(part);

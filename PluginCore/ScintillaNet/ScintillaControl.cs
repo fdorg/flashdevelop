@@ -4971,10 +4971,10 @@ namespace ScintillaNet
         {
             try
             {
-                int startPosition = MBSafeCharPosition(WordStartPosition(position, true));
-                int endPosition = MBSafeCharPosition(WordEndPosition(position, true));
-                string keyword = Text.Substring(startPosition, endPosition - startPosition);
-                if (keyword == "" || keyword == " ") return null;
+                var startPosition = MBSafeCharPosition(WordStartPosition(position, true));
+                var endPosition = MBSafeCharPosition(WordEndPosition(position, true));
+                var keyword = Text.Substring(startPosition, endPosition - startPosition);
+                if (keyword.Length == 0 || keyword == " ") return null;
                 return keyword.Trim();
             }
             catch
@@ -5407,7 +5407,7 @@ namespace ScintillaNet
             for (line = startLine; line < startLine + nLines; ++line)
             {
                 pasteStr = GetLine(line).Trim();
-                if (pasteStr != "")
+                if (pasteStr.Length != 0)
                 {
                     indent = GetLineIndentation(line);
                     if (PositionIsOnComment(PositionFromLine(line) + indent))
@@ -5429,7 +5429,7 @@ namespace ScintillaNet
             for (line = startLine; --line >= 0;)
             {
                 var destStr = GetLine(line).Trim();
-                if (destStr != "")
+                if (destStr.Length != 0)
                 {
                     if (pasteIndent < 0)
                     {
