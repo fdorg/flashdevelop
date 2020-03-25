@@ -1683,7 +1683,6 @@ namespace HaXeContext.Completion
                          && member.Flags.HasFlag(FlagType.Function)
                          && (member.Type.Contains('<') || (member.Parameters?.Any(it => it.Type.Contains('<')) ?? false)))
                 {
-                    var i = 1;
                 }
             }
         }
