@@ -61,7 +61,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes some extra error logging
         /// </summary>
-        void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        static void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
         /// <summary>
         /// Handles the catched unhandled exception and logs it
@@ -438,9 +438,9 @@ namespace FlashDevelop
                 LayoutManager.PluginPanels.Add(result);
                 return result;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                ErrorManager.ShowError(e);
+                ErrorManager.ShowError(ex);
                 return null;
             }
         }
@@ -3305,24 +3305,24 @@ namespace FlashDevelop
         /// </summary>
         public void SortLines(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument.SciControl;
             int curLine = sci.LineFromPosition(sci.SelectionStart);
             int endLine = sci.LineFromPosition(sci.SelectionEnd);
-            List<string> lines = new List<string>();
+            var lines = new List<string>();
             for (int line = curLine; line < endLine + 1; ++line)
             {
                 lines.Add(sci.GetLine(line));
             }
             lines.Sort(CompareLines);
-            StringBuilder result = new StringBuilder();
+            var rb = new StringBuilder();
             foreach (string s in lines)
             {
-                result.Append(s);
+                rb.Append(s);
             }
             int selStart = sci.PositionFromLine(curLine);
             int selEnd = sci.PositionFromLine(endLine) + sci.MBSafeTextLength(sci.GetLine(endLine));
             sci.SetSel(selStart, selEnd);
-            sci.ReplaceSel(result.ToString());
+            sci.ReplaceSel(rb.ToString());
         }
 
         /// <summary>
@@ -3576,11 +3576,11 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleLineComment(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
-            string lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
-            int position = sci.CurrentPos;
+            var sci = CurrentDocument.SciControl;
+            var lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
+            var position = sci.CurrentPos;
             // try doing a block comment on the current line instead (xml, html...)
-            if (lineComment == "")
+            if (lineComment.Length == 0)
             {
                 ToggleBlockOnCurrentLine(sci);
                 return;
@@ -3832,12 +3832,12 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the incoming info output
         /// </summary>
-        void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.Info);
+        static void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.Info);
 
         /// <summary>
         /// Handles the incoming error output
         /// </summary> 
-        void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.ProcessError);
+        static void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.ProcessError);
 
         /// <summary>
         /// Handles the ending of a process
@@ -3993,5 +3993,4 @@ namespace FlashDevelop
     }
 
     #endregion
-
 }

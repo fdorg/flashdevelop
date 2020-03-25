@@ -91,16 +91,16 @@ namespace ASClassWizard.Wizards
 
         void ValidateClass()
         {
-            string errorMessage = "";
-            string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
-            if (GetName() == "")
+            var errorMessage = "";
+            var regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
+            if (GetName().Length == 0)
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyInterfaceName");
             else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidInterfaceName");
             else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseInterfaceName");
 
-            if (errorMessage != "")
+            if (errorMessage.Length != 0)
             {
                 okButton.Enabled = false;
                 errorIcon.Visible = true;

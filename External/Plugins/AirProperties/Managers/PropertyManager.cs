@@ -320,7 +320,7 @@ namespace AirProperties
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
-                if (field.Text != "") propertyNode.InnerText = field.Text;
+                if (field.Text.Length != 0) propertyNode.InnerText = field.Text;
                 else
                 {
                     // Remove the node, reverting to system default
@@ -330,7 +330,7 @@ namespace AirProperties
             else
             {
                 // Only add property if there is a value to add
-                if (field.Text != "")
+                if (field.Text.Length != 0)
                 {
                     var index = property.IndexOf('/');
                     var childName = property.Substring(index + 1, property.Length - (index + 1));
@@ -346,7 +346,7 @@ namespace AirProperties
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
-                if (field.Text != "")
+                if (field.Text.Length != 0)
                 {
                     var x = _descriptorFile.CreateCDataSection(field.Text);
                     propertyNode.RemoveAll();
@@ -361,7 +361,7 @@ namespace AirProperties
             else
             {
                 // Only add property if there is a value to add
-                if (field.Text != "")
+                if (field.Text.Length != 0)
                 {
                     var index = property.IndexOf('/');
                     var childName = property.Substring(index + 1, property.Length - (index + 1));
@@ -449,7 +449,7 @@ namespace AirProperties
             else
             {
                 // Only add property if there is a value to add
-                if (field.Text != "")
+                if (field.Text.Length != 0)
                 {
                     var index = property.IndexOf('/');
                     var childName = property.Substring(index + 1, property.Length - (index + 1));

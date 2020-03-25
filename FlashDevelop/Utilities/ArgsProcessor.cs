@@ -101,8 +101,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return PluginBase.MainForm.WorkingDirectory;
-            return Path.GetDirectoryName(GetCurFile());
+            return PluginBase.MainForm.CurrentDocument.IsEditable
+                ? Path.GetDirectoryName(GetCurFile())
+                : PluginBase.MainForm.WorkingDirectory;
         }
         
         /// <summary>
@@ -110,8 +111,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilename()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return string.Empty;
-            return Path.GetFileName(GetCurFile());
+            return PluginBase.MainForm.CurrentDocument.IsEditable
+                ? Path.GetFileName(GetCurFile())
+                : string.Empty;
         }
 
         /// <summary>
@@ -119,8 +121,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilenameNoExt()
         {
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return string.Empty;
-            return Path.GetFileNameWithoutExtension(GetCurFile());
+            return PluginBase.MainForm.CurrentDocument.IsEditable
+                ? Path.GetFileNameWithoutExtension(GetCurFile())
+                : string.Empty;
         }
 
         /// <summary>
@@ -407,8 +410,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ReplaceUserArgs(Match match)
         {
-            if (match.Groups.Count > 0) return userArgs[match.Groups[1].Value];
-            return match.Value;
+            return match.Groups.Count > 0
+                ? userArgs[match.Groups[1].Value]
+                : match.Value;
         }
 
         /// <summary>
@@ -416,8 +420,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ReplaceEnvArgs(Match match)
         {
-            if (match.Groups.Count > 0) return Environment.GetEnvironmentVariable(match.Groups[1].Value);
-            return match.Value;
+            return match.Groups.Count > 0
+                ? Environment.GetEnvironmentVariable(match.Groups[1].Value)
+                : match.Value;
         }
 
         /// <summary>

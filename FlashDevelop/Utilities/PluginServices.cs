@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using PluginCore;
 using PluginCore.Helpers;
@@ -54,14 +55,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static AvailablePlugin Find(string guid)
         {
-            foreach (AvailablePlugin plugin in AvailablePlugins)
-            {
-                if (plugin.Instance.Guid == guid)
-                {
-                    return plugin;
-                }
-            }
-            return null;
+            return AvailablePlugins.FirstOrDefault(plugin => plugin.Instance.Guid == guid);
         }
 
         /// <summary>

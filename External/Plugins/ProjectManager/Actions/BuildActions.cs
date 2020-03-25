@@ -283,8 +283,8 @@ namespace ProjectManager.Actions
             var parts = (";;" + preferredSDK).Split(';'); // name;version
             
             // match name
-            string name = parts[parts.Length - 3];
-            if (name != "")
+            var name = parts[parts.Length - 3];
+            if (name.Length != 0)
                 foreach (InstalledSDK sdk in sdks)
                     if (sdk.IsValid && ((name.StartsWithOrdinal("Haxe Shim ") && sdk.IsHaxeShim) || sdk.Name == name))
                     {
@@ -293,8 +293,8 @@ namespace ProjectManager.Actions
                     }
 
             // match version
-            string version = parts[parts.Length - 2];
-            if (version != "")
+            var version = parts[parts.Length - 2];
+            if (version.Length != 0)
             {
                 InstalledSDK bestMatch = null;
                 int bestScore = int.MaxValue;

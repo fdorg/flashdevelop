@@ -74,7 +74,5 @@ namespace FlashDevelop
                 return File.Exists(file);
             }
         }
-
     }
-    
 }

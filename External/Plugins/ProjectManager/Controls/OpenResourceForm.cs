@@ -502,8 +502,7 @@ namespace ProjectManager.Controls
             {
                 searchFile = Path.GetFileName(searchText);
                 searchDir = Path.GetDirectoryName(searchText);
-                if (searchDir is null) searchDir = "";
-                if (searchFile == "" && searchDir == "") return new List<string>();
+                if (searchFile == "" && string.IsNullOrEmpty(searchDir)) return new List<string>();
             }
             catch (ArgumentException)
             {
@@ -514,10 +513,8 @@ namespace ProjectManager.Controls
             bool fileCaseMatters = !string.Equals(searchFile.ToLowerInvariant(), searchFile);
             bool dirCaseMatters = !string.Equals(searchDir.ToLowerInvariant(), searchDir);
             double fileScoreWeight = FileScoreWeightFactor * searchFile.Length;
-            double dirScoreWeight = DirScoreWeightFactor * String.Join("", searchDir.Split(pathSeparator)).Length;
+            double dirScoreWeight = DirScoreWeightFactor * string.Join("", searchDir.Split(pathSeparator)).Length;
 
-            double score;
-            double dirScore;
             double maxScore = 0;
             double maxDirScore = 0;
 
@@ -526,6 +523,7 @@ namespace ProjectManager.Controls
                 var file = Path.GetFileName(item);
                 var dir = Path.GetDirectoryName(item);
 
+                double score;
                 if (fileScoreWeight != 0)
                 {
                     score = ScoreFileName(file, searchFile, fileCaseMatters);
@@ -537,6 +535,7 @@ namespace ProjectManager.Controls
                     score = 0;
                 }
 
+                double dirScore;
                 if (dirScoreWeight != 0)
                 {
                     dirScore = ScoreDirName(dir, searchDir, dirCaseMatters, pathSeparator);
@@ -629,7 +628,7 @@ namespace ProjectManager.Controls
 
                         if (str[index - 1] == pathSeparator)
                             charScore += 0.3; // Position at the beginning of path component
-                        else if ((!Char.IsLetter(str[index - 1]) && Char.IsLetter(queryChar)) || (Char.IsLower(str[index - 1]) && Char.IsUpper(str[index])))
+                        else if ((!char.IsLetter(str[index - 1]) && char.IsLetter(queryChar)) || (char.IsLower(str[index - 1]) && char.IsUpper(str[index])))
                             charScore += 0.3; // Position at the beginning of a word boundary (non-word to word or camelCase lower to upper case)
                         else if (index == i)
                             charScore += 0.2; // Consecutive position at the beginning of string
@@ -641,7 +640,7 @@ namespace ProjectManager.Controls
                         // Score a file. Prefer first character to match at the beginning of string, next characters at word boundaries.
                         if (index == 0)
                             charScore += 0.8; // Position at the beginning of string
-                        else if ((!Char.IsLetter(str[index - 1]) && Char.IsLetter(queryChar)) || (Char.IsLower(str[index - 1]) && Char.IsUpper(str[index])))
+                        else if ((!char.IsLetter(str[index - 1]) && char.IsLetter(queryChar)) || (char.IsLower(str[index - 1]) && char.IsUpper(str[index])))
                             charScore += 0.7; // Position at the beginning of a word boundary (non-word to word or camelCase lower to upper case)
                         else if (index == i)
                             charScore += 0.5; // Consecutive position at the beginning of string

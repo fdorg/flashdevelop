@@ -1567,7 +1567,7 @@ namespace AirProperties
         {
             if (AndroidAdvancedSettingsPanel.Visible)
             {
-                if (ValidationErrorProvider.GetError(AndroidManifestAdditionsField) != string.Empty)
+                if (ValidationErrorProvider.GetError(AndroidManifestAdditionsField).Length != 0)
                     return;
 
                 FillAndroidManifestFields();
@@ -1578,7 +1578,7 @@ namespace AirProperties
             }
             else
             {
-                if (ValidationErrorProvider.GetError(MinimumAndroidOsField) != string.Empty)
+                if (ValidationErrorProvider.GetError(MinimumAndroidOsField).Length != 0)
                     return;
 
                 AndroidManifestAdditionsField_Validating(AndroidManifestAdditionsField, null);
@@ -1605,7 +1605,7 @@ namespace AirProperties
         {
             if (IPhoneAdvancedSettingsPanel.Visible)
             {
-                if (ValidationErrorProvider.GetError(IPhoneInfoAdditionsField) != string.Empty || ValidationErrorProvider.GetError(IPhoneEntitlementsField) != string.Empty)
+                if (ValidationErrorProvider.GetError(IPhoneInfoAdditionsField).Length != 0 || ValidationErrorProvider.GetError(IPhoneEntitlementsField).Length != 0)
                     return;
 
                 FilliPhoneAdditionsFields();
