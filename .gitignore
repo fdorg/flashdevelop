@@ -1,4 +1,4 @@
-﻿Thumbs.db
+Thumbs.db
 *.config
 *.fda
 *.fdb
@@ -37,3 +37,6 @@
 **/System.Runtime.CompilerServices.Unsafe.*
 **/System.Diagnostics.DiagnosticSource.*
 .vs/
+**/System.Buffers.*
+**/System.Memory.*
+**/System.Numerics.Vectors.*
