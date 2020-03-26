@@ -30,7 +30,7 @@ namespace AS3Context
                     .SetName("null")
                     .Returns(new [] {"*"});
                 yield return new TestCaseData(new List<string> {string.Empty})
-                    .SetName("")
+                    .SetName("\"\"")
                     .Returns(new [] {"*"});
                 yield return new TestCaseData(new List<string> {"int"})
                     .SetName("int")

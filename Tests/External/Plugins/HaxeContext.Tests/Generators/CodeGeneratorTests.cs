@@ -2605,13 +2605,13 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateClassTest_issue1762_1", "$(Boundary)dynamicValue:Dynamic$(Boundary)")
                     .SetName("Issue1762. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1762");
-                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_1", string.Empty)
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_1", null)
                     .SetName("Issue2255. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
-                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_2", string.Empty)
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_2", null)
                     .SetName("Issue2255. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
-                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_3", string.Empty)
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_3", null)
                     .SetName("Issue2255. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
             }
@@ -2715,7 +2715,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateInterfaceIssue2477TestCases)),
             TestCaseSource(nameof(GenerateInterfaceIssue2870TestCases)),
         ]
-        public void GenerateNewType(string fileName, GeneratorJobType job, string classTemplate)
+        public void GenerateNewType(string fileName, GeneratorJobType job, string GenericTemplate)
         {
             var handler = Substitute.For<IEventHandler>();
             handler
@@ -2730,8 +2730,8 @@ namespace HaXeContext.Generators
                             e.Handled = true;
                             var de = (DataEvent)e;
                             var info = (Hashtable)de.Data;
-                            var actualArgs = (string)info[nameof(classTemplate)];
-                            Assert.AreEqual(classTemplate, actualArgs);
+                            var actualArgs = (string)info[nameof(GenericTemplate)];
+                            Assert.AreEqual(GenericTemplate, actualArgs);
                             break;
                     }
                 });
