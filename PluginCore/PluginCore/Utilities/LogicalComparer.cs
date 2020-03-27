@@ -4,17 +4,17 @@ namespace PluginCore.Utilities
 {
     public class LogicalComparer : IComparer // (c) Vasian Cepa 2005
     {
-        private readonly bool zeroesFirst;
+        readonly bool zeroesFirst;
 
-        public LogicalComparer() { }
+        public LogicalComparer() : this(false)
+        {
+        }
+
         public LogicalComparer(bool zeroesFirst)
         {
             this.zeroesFirst = zeroesFirst;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public int Compare(object x, object y)
         {
             if (x is null && y is null) return 0;
@@ -24,14 +24,8 @@ namespace PluginCore.Utilities
             return Comparer.Default.Compare(x, y);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static int Compare(string s1, string s2) => Compare(s1, s2, false);
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static int Compare(string s1, string s2, bool zeroesFirst)
         {
             //get rid of special cases
@@ -111,10 +105,7 @@ namespace PluginCore.Utilities
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static int CompareNum(string s1, ref int i1, string s2, ref int i2, bool zeroesFirst)
+        static int CompareNum(string s1, ref int i1, string s2, ref int i2, bool zeroesFirst)
         {
             int nzStart1 = i1, nzStart2 = i2; // nz = non zero
             int end1 = i1, end2 = i2;
@@ -146,10 +137,7 @@ namespace PluginCore.Utilities
             return 1;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static void ScanNumEnd(string s, int start, ref int end, ref int nzStart)
+        static void ScanNumEnd(string s, int start, ref int end, ref int nzStart)
         {
             nzStart = start;
             end = start;
@@ -165,7 +153,5 @@ namespace PluginCore.Utilities
                 if (end >= s.Length) break;
             }
         }
-
     }
-
 }

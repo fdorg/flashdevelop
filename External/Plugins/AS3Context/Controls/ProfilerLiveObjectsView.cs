@@ -29,21 +29,21 @@ namespace AS3Context.Controls
             comparer.Sorting = SortOrder.Descending;
 
             ListView.ListViewItemSorter = comparer;
-            ListView.ColumnClick += listView_ColumnClick;
+            ListView.ColumnClick += ListView_ColumnClick;
 
             // action
             viewObjectsItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewObjectsItem"));
-            viewObjectsItem.Click += onViewObjects;
+            viewObjectsItem.Click += OnViewObjects;
 
             ListView.ContextMenuStrip = new ContextMenuStrip();
             ListView.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             ListView.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             ListView.ContextMenuStrip.Items.Add(viewObjectsItem);
 
-            ListView.DoubleClick += onViewObjects;
+            ListView.DoubleClick += OnViewObjects;
         }
 
-        void listView_ColumnClick(object sender, ColumnClickEventArgs e)
+        void ListView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             if (comparer.SortColumn == e.Column)
             {
@@ -57,7 +57,7 @@ namespace AS3Context.Controls
             ListView.Sort();
         }
 
-        void onViewObjects(object sender, EventArgs e)
+        void OnViewObjects(object sender, EventArgs e)
         {
             if (ListView.SelectedItems.Count == 1)
             {
@@ -108,15 +108,17 @@ namespace AS3Context.Controls
 
     #region Model
 
-    class TypeItemComparer : IComparer
+    class TypeItemComparer : IComparer, IComparer<ListViewItem>
     {
         public int SortColumn;
         public SortOrder Sorting;
 
-        int IComparer.Compare(object x, object y)
+        public int Compare(object x, object y) => Compare((ListViewItem) x, (ListViewItem) y);
+
+        public int Compare(ListViewItem x, ListViewItem y)
         {
-            var a = (TypeItem)((ListViewItem)x).Tag;
-            var b = (TypeItem)((ListViewItem)y).Tag;
+            var a = (TypeItem)x.Tag;
+            var b = (TypeItem)y.Tag;
             var comp = SortColumn switch
             {
                 TypeItem.COL_PKG => a.Package.CompareTo(b.Package),
@@ -149,8 +151,7 @@ namespace AS3Context.Controls
         public TypeItem(string fullName)
         {
             QName = fullName;
-            int p = fullName.IndexOf(':');
-            if (p >= 0)
+            if (fullName.Contains(':', out var p))
             {
                 Name = fullName.Substring(p + 2);
                 Package = fullName.Substring(0, p);

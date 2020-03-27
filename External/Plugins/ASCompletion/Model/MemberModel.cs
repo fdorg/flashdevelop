@@ -499,7 +499,7 @@ namespace ASCompletion.Model
 
         public static int CompareImports(string import1, string import2)
         {
-            IComparer cmp = StringComparer.Ordinal;
+            IComparer<string> cmp = StringComparer.Ordinal;
             var d1 = GetPackageTypeSeparation(import1);
             var d2 = GetPackageTypeSeparation(import2);
             // one or both imports do not have a package
