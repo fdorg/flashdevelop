@@ -395,7 +395,7 @@ namespace ProjectManager.Controls.TreeView
         public string FormatBytes(long bytes)
         {
             const int scale = 1024;
-            string[] orders = new[] { "Gb", "Mb", "Kb", "b" };
+            string[] orders = { "Gb", "Mb", "Kb", "b" };
             long max = (long)Math.Pow(scale, orders.Length - 1);
 
             foreach (string order in orders)

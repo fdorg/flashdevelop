@@ -480,7 +480,7 @@ namespace FlashDebugger.Controls
                     }
                     else if (ch.Equals("flash.events::EventDispatcher"))
                     {
-                        Variable list = node.PlayerValue.getMemberNamed(flashInterface.Session, "listeners");
+                        var list = node.PlayerValue.getMemberNamed(flashInterface.Session, "listeners");
                         var omg = list.getName();
                         /*
                         double numChildren = ((java.lang.Double)node.Variable.getValue().getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
@@ -511,7 +511,7 @@ namespace FlashDebugger.Controls
                 _tree.BeginUpdate();
                 foreach (DataNode item in nodes)
                 {
-                    if (0 == tmpLimit--) break;
+                    if (tmpLimit-- == 0) break;
                     node.Nodes.Add(item);
                 }
                 if (tmpLimit == -1)

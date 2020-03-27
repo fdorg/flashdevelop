@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -12,7 +13,6 @@ using System.IO;
 using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Managers;
 using ASCompletion.Completion;
-using System.Collections;
 using PluginCore.Helpers;
 using PluginCore.Controls;
 
@@ -53,8 +53,6 @@ namespace ASCompletion
 
         class ExploreTreeNode : TreeNode
         {
-            public ExploreTreeNode()
-            { }
         }
 
         class PackageTreeNode : TreeNode
@@ -78,15 +76,15 @@ namespace ASCompletion
             public PathModel model;
         }
 
-        class NodesComparer : IComparer
+        class NodesComparer : IComparer, IComparer<TreeNode>
         {
-            public int Compare(object x, object y)
+            public int Compare(object x, object y) => Compare((TreeNode) x, (TreeNode) y);
+
+            public int Compare(TreeNode x, TreeNode y)
             {
-                TreeNode a = (TreeNode)x;
-                TreeNode b = (TreeNode)y;
-                if (a.ImageIndex == b.ImageIndex)
-                    return string.Compare(a.Text, b.Text);
-                return a.ImageIndex - b.ImageIndex;
+                return x.ImageIndex == y.ImageIndex
+                    ? string.Compare(x.Text, y.Text)
+                    : x.ImageIndex - y.ImageIndex;
             }
         }
 

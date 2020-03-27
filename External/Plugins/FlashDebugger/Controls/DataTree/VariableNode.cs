@@ -60,12 +60,9 @@ namespace FlashDebugger.Controls.DataTree
 
         public int CompareTo(VariableNode otherNode)
         {
-            string thisName = Text;
-            string otherName = otherNode.Text;
-            if (thisName == otherName)
-            {
-                return 0;
-            }
+            var thisName = Text;
+            var otherName = otherNode.Text;
+            if (thisName == otherName) return 0;
             if (thisName.Length > 0 && thisName[0] == '_')
             {
                 thisName = thisName.Substring(1);
@@ -74,11 +71,8 @@ namespace FlashDebugger.Controls.DataTree
             {
                 otherName = otherName.Substring(1);
             }
-            int result = LogicalComparer.Compare(thisName, otherName);
-            if (result != 0)
-            {
-                return result;
-            }
+            var result = LogicalComparer.Compare(thisName, otherName);
+            if (result != 0) return result;
             return variable.getName().length() > 0 && variable.getName().startsWith("_") ? 1 : -1;
         }
 

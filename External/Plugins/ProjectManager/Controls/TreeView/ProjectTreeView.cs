@@ -433,7 +433,7 @@ namespace ProjectManager.Controls.TreeView
                 base.OnItemDrag(e);
         }
 
-        protected override DataObject BeginDragNodes(List<TreeNode> nodes)
+        protected override DataObject BeginDragNodes(IList<TreeNode> nodes)
         {
             var data = base.BeginDragNodes(nodes);
 

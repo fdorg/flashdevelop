@@ -30,7 +30,7 @@ namespace System.Windows.Forms
         /// <summary>
         /// Constructs draggable DataObjects from a list of dragged nodes.
         /// </summary>
-        protected virtual DataObject BeginDragNodes(List<TreeNode> nodes)
+        protected virtual DataObject BeginDragNodes(IList<TreeNode> nodes)
         {
             var data = new DataObject();
             data.SetData(nodes);
@@ -58,7 +58,7 @@ namespace System.Windows.Forms
             else
                 return;
 
-            TreeNode node = GetNodeAt(PointToClient(new Point(e.X, e.Y)));
+            var node = GetNodeAt(PointToClient(new Point(e.X, e.Y)));
             node = ChangeDropTarget(node);
 
             if (node != null)

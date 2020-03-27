@@ -638,8 +638,8 @@ namespace System.Windows.Forms
 		#region Background brushes
 
 		private Blend GetBackgroundBlend(){
-			float[] relativeIntensities = new[]{0f, 0.7f, 1f};
-			float[] relativePositions = new[]{0f, 0.6f, 1f};
+			float[] relativeIntensities = {0f, 0.7f, 1f};
+			float[] relativePositions = {0f, 0.6f, 1f};
 
 			//	Glass look to top aligned tabs
 			if (this._TabControl.Alignment == TabAlignment.Top){

@@ -189,7 +189,7 @@ namespace ProjectManager.Projects.AS3
 
         #region Advanced options
 
-        string[] additional = new string[] { };
+        string[] additional = Array.Empty<string>();
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [DisplayName("Additional Compiler Options")]
         [LocalizedDescription("ProjectManager.Description.Additional")]
@@ -229,7 +229,7 @@ namespace ProjectManager.Projects.AS3
             set => inlineFunctions = value;
         }
 
-        string[] compilerConstants = new string[] { };
+        string[] compilerConstants = Array.Empty<string>();
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [DisplayName("Compiler Constants")]
         [LocalizedDescription("ProjectManager.Description.CompilerConstants")]
@@ -249,7 +249,7 @@ namespace ProjectManager.Projects.AS3
             set => minorVersion = value;
         }
 
-        string[] intrinsicPaths = new string[] { };
+        string[] intrinsicPaths = Array.Empty<string>();
         [DisplayName("Intrinsic Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.IntrinsicPaths")]
@@ -260,7 +260,7 @@ namespace ProjectManager.Projects.AS3
             set => intrinsicPaths = value;
         }
 
-        string[] externalLibraryPaths = new string[] { };
+        string[] externalLibraryPaths = Array.Empty<string>();
         [DisplayName("External Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.ExternalLibraryPaths")]
@@ -271,7 +271,7 @@ namespace ProjectManager.Projects.AS3
             set => externalLibraryPaths = value;
         }
 
-        string[] includeLibraries = new string[] { };
+        string[] includeLibraries = Array.Empty<string>();
         [DisplayName("SWC Include Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.IncludeLibraries")]
@@ -282,7 +282,7 @@ namespace ProjectManager.Projects.AS3
             set => includeLibraries = value;
         }
         
-        string[] libraryPaths = new string[] { };
+        string[] libraryPaths = Array.Empty<string>();
         [DisplayName("SWC Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.LibraryPaths")]
@@ -293,7 +293,7 @@ namespace ProjectManager.Projects.AS3
             set => libraryPaths = value;
         }
 
-        string[] rslPaths = new string[] { };
+        string[] rslPaths = Array.Empty<string>();
         [DisplayName("Runtime Shared Libraries")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.RSLPaths")]

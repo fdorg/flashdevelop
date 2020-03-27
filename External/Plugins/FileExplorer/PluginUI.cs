@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PluginCore;
@@ -261,7 +263,7 @@ namespace FileExplorer
             renameButton = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"), null, RenameItem);
             deleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Delete"), null, DeleteItems);
             menu.Items.Add(separator);
-            menu.Items.AddRange(new ToolStripMenuItem[6]{runButton, editButton, copyButton, pasteButton, renameButton, deleteButton});
+            menu.Items.AddRange(new ToolStripItem[]{runButton, editButton, copyButton, pasteButton, renameButton, deleteButton});
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
             fileView.ContextMenuStrip = menu;
@@ -323,18 +325,12 @@ namespace FileExplorer
         /// <summary>
         /// Browses to the selected path
         /// </summary>
-        public void BrowseTo(string path)
-        {
-            PopulateFileView(path);
-        }
+        public void BrowseTo(string path) => PopulateFileView(path);
 
         /// <summary>
         /// Gets the reference to the context menu
         /// </summary>
-        public ContextMenuStrip GetContextMenu()
-        {
-            return menu;
-        }
+        public ContextMenuStrip GetContextMenu() => menu;
 
         /// <summary>
         /// Add the path to the combo box
@@ -423,8 +419,7 @@ namespace FileExplorer
                 }
                 foreach (FileSystemInfo info in infos)
                 {
-                    DirectoryInfo subDir = info as DirectoryInfo;
-                    if (subDir != null && (subDir.Attributes & FileAttributes.Hidden) == 0)
+                    if (info is DirectoryInfo subDir && (subDir.Attributes & FileAttributes.Hidden) == 0)
                     {
                         item = new ListViewItem(subDir.Name, ExtractIconIfNecessary(subDir.FullName, false));
                         item.Tag = subDir.FullName;
@@ -436,8 +431,7 @@ namespace FileExplorer
                 }
                 foreach (FileSystemInfo info in infos)
                 {
-                    FileInfo file = info as FileInfo;
-                    if (file != null && (file.Attributes & FileAttributes.Hidden) == 0)
+                    if (info is FileInfo file && (file.Attributes & FileAttributes.Hidden) == 0)
                     {
                         string kbs = TextHelper.GetString("Info.Kilobytes");
                         item = new ListViewItem(file.Name, ExtractIconIfNecessary(file.FullName, true));
@@ -559,14 +553,7 @@ namespace FileExplorer
         /// <summary>
         /// Checks if the path list contains only files
         /// </summary> 
-        bool ContainsOnlyFiles(string[] files)
-        {
-            for (int i = 0; i < files.Length; i++)
-            {
-                if (Directory.Exists(files[i])) return false;
-            }
-            return true;
-        }
+        bool ContainsOnlyFiles(IEnumerable<string> files) => files.All(it => !Directory.Exists(it));
 
         /// <summary>
         /// Handles the event when the drag is over the control
@@ -604,15 +591,10 @@ namespace FileExplorer
         /// <summary>
         /// Checks whether the user is trying to drop something inside itself
         /// </summary>
-        bool IsValidDropTarget(string path, string[] paths)
+        static bool IsValidDropTarget(string path, IEnumerable<string> paths)
         {
-            string original = PathHelper.GetLongPathName(path);
-            for (int i = 0; i < paths.Length; i++)
-            {
-                string current = PathHelper.GetLongPathName(paths[i]);
-                if (original == current) return false;
-            }
-            return true;
+            var original = PathHelper.GetLongPathName(path);
+            return paths.All(it => PathHelper.GetLongPathName(it) != original);
         }
 
         /// <summary>
@@ -765,7 +747,6 @@ namespace FileExplorer
         /// </summary>
         void UpdateMenuItemVisibility()
         {
-            bool canPaste = false;
             bool notFirstItem = true;
             bool targetIsDirectory = false;
             bool onlyFiles = SelectedItemsAreOnlyFiles();
@@ -773,14 +754,13 @@ namespace FileExplorer
             if (selectedItems > 0) notFirstItem = !fileView.SelectedItems[0].Text.StartsWith('[');
             if (selectedItems == 1) targetIsDirectory = Directory.Exists(fileView.SelectedItems[0].Tag.ToString());
             if (!targetIsDirectory) targetIsDirectory = Directory.Exists(selectedPath.Text);
-            canPaste = (targetIsDirectory && notFirstItem && Clipboard.ContainsFileDropList());
+            var canPaste = (targetIsDirectory && notFirstItem && Clipboard.ContainsFileDropList());
             renameButton.Visible = (selectedItems == 1 && notFirstItem);
             runButton.Visible = (selectedItems == 1 && notFirstItem);
             deleteButton.Visible = (selectedItems > 0 && notFirstItem);
             copyButton.Visible = (selectedItems > 0 && notFirstItem);
             editButton.Visible = (selectedItems > 0 && notFirstItem && onlyFiles);
-            separator.Visible = (selectedItems > 0 && notFirstItem);
-            if (selectedItems == 0 && canPaste) separator.Visible = true;
+            separator.Visible = (selectedItems > 0 && notFirstItem) || (selectedItems == 0 && canPaste);
             pasteButton.Visible = canPaste;
         }
 
@@ -1039,10 +1019,7 @@ namespace FileExplorer
         /// <summary>
         /// Renames current file or directory
         /// </summary>
-        void RenameItem(object sender, EventArgs e)
-        {
-            fileView.SelectedItems[0].BeginEdit();
-        }
+        void RenameItem(object sender, EventArgs e) => fileView.SelectedItems[0].BeginEdit();
 
         /// <summary>
         /// Opens the current file or directory with associated program 
@@ -1102,10 +1079,7 @@ namespace FileExplorer
         /// <summary>
         /// The directory we're watching has changed - refresh!
         /// </summary>
-        void WatcherRenamed(object sender, RenamedEventArgs e)
-        {
-            WatcherChanged(sender, null);
-        }
+        void WatcherRenamed(object sender, RenamedEventArgs e) => WatcherChanged(sender, null);
 
         #endregion
 

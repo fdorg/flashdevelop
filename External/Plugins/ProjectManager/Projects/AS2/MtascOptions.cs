@@ -30,7 +30,7 @@ namespace ProjectManager.Projects.AS2
         TraceMode traceMode = TraceMode.FlashConnectExtended;
         string traceFunction = "";
         string libraryPrefix = "";
-        string[] includePackages = new string[] { };
+        string[] includePackages = Array.Empty<string>();
         string excludeFile = "";
 
         [DisplayName("Strict Mode")]

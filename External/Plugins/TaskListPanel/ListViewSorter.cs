@@ -1,16 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Windows.Forms;
 
 namespace TaskListPanel
 {
     public class ListViewSorter : IComparer
     {
-        readonly CaseInsensitiveComparer Comparer;
+        readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
 
         public ListViewSorter()
         {
             SortColumn = 0;
-            Comparer = new CaseInsensitiveComparer();
             Order = SortOrder.None;
         }
 
@@ -20,8 +20,8 @@ namespace TaskListPanel
         public int Compare(object x, object y)
         {
             int compareResult;
-            ListViewItem listviewX = (ListViewItem)x;
-            ListViewItem listviewY = (ListViewItem)y;
+            var listviewX = (ListViewItem)x;
+            var listviewY = (ListViewItem)y;
             if (SortColumn == 1)
             {
                 int xVal = int.Parse(listviewX.SubItems[1].Text);

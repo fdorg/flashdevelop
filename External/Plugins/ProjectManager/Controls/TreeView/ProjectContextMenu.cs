@@ -199,15 +199,15 @@ namespace ProjectManager.Controls.TreeView
         /// Configure ourself to be a menu relevant to the given Project with the
         /// given selected treeview nodes.
         /// </summary>
-        public void Configure(List<TreeNode> nodes, Project inProject)
+        public void Configure(IList<TreeNode> nodes, Project inProject)
         {
             base.Items.Clear();
             project = inProject;
 
-            MergableMenu menu = new MergableMenu();
+            var menu = new MergableMenu();
             foreach (GenericNode node in nodes)
             {
-                MergableMenu newMenu = new MergableMenu();
+                var newMenu = new MergableMenu();
                 AddItems(newMenu, node);
                 menu = (menu.Count > 0) ? menu.Combine(newMenu) : newMenu;
             }
@@ -239,10 +239,7 @@ namespace ProjectManager.Controls.TreeView
             base.OnOpening(e);
         }
 
-        public void AssignShortcuts()
-        {
-            Rename.ShortcutKeys = (Rename.Enabled) ? Keys.F2 : Keys.None;
-        }
+        public void AssignShortcuts() => Rename.ShortcutKeys = (Rename.Enabled) ? Keys.F2 : Keys.None;
 
         #endregion
 
