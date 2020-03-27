@@ -17,10 +17,10 @@ namespace PluginCore.Utilities
         /// </summary>
         public int Compare(object x, object y)
         {
-            if (null == x && null == y) return 0;
-            if (null == x) return -1;
-            if (null == y) return 1;
-            if (x is string && y is string) return Compare((string)x, (string)y, zeroesFirst);
+            if (x is null && y is null) return 0;
+            if (x is null) return -1;
+            if (y is null) return 1;
+            if (x is string sx && y is string sy) return Compare(sx, sy, zeroesFirst);
             return Comparer.Default.Compare(x, y);
         }
 

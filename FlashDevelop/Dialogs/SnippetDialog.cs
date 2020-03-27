@@ -528,7 +528,7 @@ namespace FlashDevelop.Dialogs
                     contents = contents.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME);
                     #pragma warning restore CS0162 // Unreachable code detected
                 }
-                var varLines = contents.Split(new char[]{'\n'}, StringSplitOptions.RemoveEmptyEntries);
+                var varLines = contents.Split(new[]{'\n'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in varLines)
                 {
                     insertComboBox.Items.Add(line.Trim());

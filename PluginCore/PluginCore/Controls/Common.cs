@@ -377,8 +377,7 @@ namespace System.Windows.Forms
                     if (Enabled) g.FillRectangle(back, dropRect);
                     g.DrawRectangle(pen, backRect);
                     Point middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
-                    Point[] shape = new[]
-                    {
+                    Point[] shape = {
                         new Point(middle.X - pad, middle.Y - 1),
                         new Point(middle.X + pad + 1, middle.Y - 1),
                         new Point(middle.X, middle.Y + pad)

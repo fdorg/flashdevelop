@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
@@ -7,9 +8,9 @@ using SourceControl.Managers;
 
 namespace SourceControl.Actions
 {
-    static class TreeContextMenuUpdate
+    internal static class TreeContextMenuUpdate
     {
-        private static ToolStripMenuItem scItem;
+        static ToolStripMenuItem scItem;
 
         internal static void SetMenu(ProjectTreeView tree, ProjectSelectionState state)
         {
@@ -65,7 +66,7 @@ namespace SourceControl.Actions
             scItem.DropDownItems.AddRange(items.ToArray());
         }
 
-        private static void AddSCMainItem(MultiSelectTreeView tree)
+        static void AddSCMainItem(MultiSelectTreeView tree)
         {
             if (scItem is null)
             {
@@ -80,18 +81,16 @@ namespace SourceControl.Actions
             else tree.ContextMenuStrip.Items.Add(scItem);
         }
 
-        private static int GetNthSeparatorIndex(ContextMenuStrip menu, int n)
+        static int GetNthSeparatorIndex(ToolStrip menu, int n)
         {
             int index = -1;
             foreach (ToolStripItem item in menu.Items)
             {
                 index++;
-                if (item is ToolStripSeparator)
-                    if (--n <= 0) return index;
+                if (item is ToolStripSeparator && --n <= 0)
+                    return index;
             }
             return -1;
         }
-
     }
-
 }

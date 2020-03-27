@@ -74,12 +74,12 @@ namespace System.Windows.Forms
         {
             foreach (string path in State.ExpandedPaths)
             {
-                TreeNode node = FindClosestPath(path);
+                var node = FindClosestPath(path);
                 node?.Expand();
             }
         }
 
-        void AddExpandedPaths(TreeNodeCollection nodes)
+        void AddExpandedPaths(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
@@ -146,13 +146,13 @@ namespace System.Windows.Forms
         public TreeNode FindClosestPath(string path)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Queue queue = new Queue(path.Split('\\'));
-            return FindClosestPath(Nodes,queue);
+            var queue = new Queue<string>(path.Split('\\'));
+            return FindClosestPath(Nodes, queue);
         }
 
-        static TreeNode FindClosestPath(IEnumerable nodes, Queue queue)
+        static TreeNode FindClosestPath(IEnumerable nodes, Queue<string> queue)
         {
-            var nextChunk = (string) queue.Dequeue();
+            var nextChunk = queue.Dequeue();
             foreach (TreeNode node in nodes)
             {
                 if (node.Text == nextChunk)
@@ -166,6 +166,5 @@ namespace System.Windows.Forms
         }
 
         #endregion
-
     }
 }

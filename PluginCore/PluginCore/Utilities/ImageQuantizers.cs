@@ -9,7 +9,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -86,32 +86,30 @@ namespace PluginCore.PluginCore.Utilities
         protected override ColorPalette GetPalette(ColorPalette original)
         {
             // First off convert the octree to _maxColors colors
-            ArrayList palette = _octree.Palletize(_maxColors - 1);
-
+            var palette = _octree.Palletize(_maxColors - 1);
             // Then convert the palette based on those colors
-            for (int index = 0; index < palette.Count; index++)
-                original.Entries[index] = (Color)palette[index];
+            for (var i = 0; i < palette.Count; i++)
+                original.Entries[i] = palette[i];
 
             // Add the transparent color
             original.Entries[_maxColors] = _transparentColor;
-
             return original;
         }
 
         /// <summary>
         /// Stores the tree
         /// </summary>
-        private readonly Octree _octree;
+        readonly Octree _octree;
 
         /// <summary>
         /// Maximum allowed color depth
         /// </summary>
-        private readonly int _maxColors;
+        readonly int _maxColors;
 
         /// <summary>
         /// Class which does the actual quantization
         /// </summary>
-        private class Octree
+        class Octree
         {
             /// <summary>
             /// Construct the octree
@@ -120,8 +118,8 @@ namespace PluginCore.PluginCore.Utilities
             public Octree(int maxColorBits)
             {
                 _maxColorBits = maxColorBits;
-                _leafCount = 0;
-                _reducibleNodes = new OctreeNode[9];
+                Leaves = 0;
+                ReducibleNodes = new OctreeNode[9];
                 _root = new OctreeNode(0, _maxColorBits, this);
                 _previousColor = 0;
                 _previousNode = null;
@@ -138,7 +136,7 @@ namespace PluginCore.PluginCore.Utilities
                 {
                     // If so, check if I have a previous node setup. This will only ocurr if the first color in the image
                     // happens to be black, with an alpha component of zero.
-                    if (null == _previousNode)
+                    if (_previousNode is null)
                     {
                         _previousColor = pixel->ARGB;
                         _root.AddColor(pixel, _maxColorBits, 0, this);
@@ -162,14 +160,14 @@ namespace PluginCore.PluginCore.Utilities
                 int index;
 
                 // Find the deepest level containing at least one reducible node
-                for (index = _maxColorBits - 1; (index > 0) && (null == _reducibleNodes[index]); index--) ;
+                for (index = _maxColorBits - 1; (index > 0) && (ReducibleNodes[index] is null); index--) ;
 
                 // Reduce the node most recently added to the list at level 'index'
-                OctreeNode node = _reducibleNodes[index];
-                _reducibleNodes[index] = node.NextReducible;
+                OctreeNode node = ReducibleNodes[index];
+                ReducibleNodes[index] = node.NextReducible;
 
                 // Decrement the leaf count after reducing the node
-                _leafCount -= node.Reduce();
+                Leaves -= node.Reduce();
 
                 // And just in case I've reduced the last color to be added, and the next color to
                 // be added is the same, invalidate the previousNode...
@@ -179,16 +177,12 @@ namespace PluginCore.PluginCore.Utilities
             /// <summary>
             /// Get/Set the number of leaves in the tree
             /// </summary>
-            public int Leaves
-            {
-                get => _leafCount;
-                set => _leafCount = value;
-            }
+            public int Leaves { get; set; }
 
             /// <summary>
             /// Return the array of reducible nodes
             /// </summary>
-            protected OctreeNode[] ReducibleNodes => _reducibleNodes;
+            protected OctreeNode[] ReducibleNodes { get; }
 
             /// <summary>
             /// Keep track of the previous node that was quantized
@@ -203,19 +197,19 @@ namespace PluginCore.PluginCore.Utilities
             /// Convert the nodes in the octree to a palette with a maximum of colorCount colors
             /// </summary>
             /// <param name="colorCount">The maximum number of colors</param>
-            /// <returns>An arraylist with the palettized colors</returns>
-            public ArrayList Palletize(int colorCount)
+            /// <returns>An read only list with the palettized colors</returns>
+            public IReadOnlyList<Color> Palletize(int colorCount)
             {
                 while (Leaves > colorCount)
                     Reduce();
 
                 // Now palettize the nodes
-                ArrayList palette = new ArrayList(Leaves);
-                int paletteIndex = 0;
-                _root.ConstructPalette(palette, ref paletteIndex);
+                var result = new List<Color>(Leaves);
+                var paletteIndex = 0;
+                _root.ConstructPalette(result, ref paletteIndex);
 
                 // And return the palette
-                return palette;
+                return result;
             }
 
             /// <summary>
@@ -223,45 +217,32 @@ namespace PluginCore.PluginCore.Utilities
             /// </summary>
             /// <param name="pixel"></param>
             /// <returns></returns>
-            public int GetPaletteIndex(Color32* pixel)
-            {
-                return _root.GetPaletteIndex(pixel, 0);
-            }
+            public int GetPaletteIndex(Color32* pixel) => _root.GetPaletteIndex(pixel, 0);
 
             /// <summary>
             /// Mask used when getting the appropriate pixels for a given node
             /// </summary>
-            private static readonly int[] mask = new int[8] { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+            static readonly int[] mask = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
             /// <summary>
             /// The root of the octree
             /// </summary>
-            private readonly OctreeNode _root;
-
-            /// <summary>
-            /// Number of leaves in the tree
-            /// </summary>
-            private int _leafCount;
-
-            /// <summary>
-            /// Array of reducible nodes
-            /// </summary>
-            private readonly OctreeNode[] _reducibleNodes;
+            readonly OctreeNode _root;
 
             /// <summary>
             /// Maximum number of significant bits in the image
             /// </summary>
-            private readonly int _maxColorBits;
+            readonly int _maxColorBits;
 
             /// <summary>
             /// Store the last node quantized
             /// </summary>
-            private OctreeNode _previousNode;
+            OctreeNode _previousNode;
 
             /// <summary>
             /// Cache the previous color quantized
             /// </summary>
-            private int _previousColor;
+            int _previousColor;
 
             /// <summary>
             /// Class which encapsulates each node in the tree
@@ -286,15 +267,15 @@ namespace PluginCore.PluginCore.Utilities
                     if (_leaf)
                     {
                         octree.Leaves++;
-                        _nextReducible = null;
-                        _children = null;
+                        NextReducible = null;
+                        Children = null;
                     }
                     else
                     {
                         // Otherwise add this to the reducible nodes
-                        _nextReducible = octree.ReducibleNodes[level];
+                        NextReducible = octree.ReducibleNodes[level];
                         octree.ReducibleNodes[level] = this;
-                        _children = new OctreeNode[8];
+                        Children = new OctreeNode[8];
                     }
                 }
 
@@ -322,34 +303,28 @@ namespace PluginCore.PluginCore.Utilities
                                     ((pixel->Green & mask[level]) >> (shift - 1)) |
                                     ((pixel->Blue & mask[level]) >> (shift));
 
-                        OctreeNode child = _children[index];
-
-                        if (null == child)
+                        var child = Children[index];
+                        if (child is null)
                         {
                             // Create a new child node & store in the array
                             child = new OctreeNode(level + 1, colorBits, octree);
-                            _children[index] = child;
+                            Children[index] = child;
                         }
 
                         // Add the color to the child node
                         child.AddColor(pixel, colorBits, level + 1, octree);
                     }
-
                 }
 
                 /// <summary>
                 /// Get/Set the next reducible node
                 /// </summary>
-                public OctreeNode NextReducible
-                {
-                    get => _nextReducible;
-                    set => _nextReducible = value;
-                }
+                public OctreeNode NextReducible { get; set; }
 
                 /// <summary>
                 /// Return the child nodes
                 /// </summary>
-                public OctreeNode[] Children => _children;
+                public OctreeNode[] Children { get; }
 
                 /// <summary>
                 /// Reduce this node by removing all of its children
@@ -363,14 +338,14 @@ namespace PluginCore.PluginCore.Utilities
                     // Loop through all children and add their information to this node
                     for (int index = 0; index < 8; index++)
                     {
-                        if (null != _children[index])
+                        if (null != Children[index])
                         {
-                            _red += _children[index]._red;
-                            _green += _children[index]._green;
-                            _blue += _children[index]._blue;
-                            _pixelCount += _children[index]._pixelCount;
+                            _red += Children[index]._red;
+                            _green += Children[index]._green;
+                            _blue += Children[index]._blue;
+                            _pixelCount += Children[index]._pixelCount;
                             ++children;
-                            _children[index] = null;
+                            Children[index] = null;
                         }
                     }
 
@@ -386,7 +361,7 @@ namespace PluginCore.PluginCore.Utilities
                 /// </summary>
                 /// <param name="palette">The palette</param>
                 /// <param name="paletteIndex">The current palette index</param>
-                public void ConstructPalette(ArrayList palette, ref int paletteIndex)
+                public void ConstructPalette(ICollection<Color> palette, ref int paletteIndex)
                 {
                     if (_leaf)
                     {
@@ -401,8 +376,8 @@ namespace PluginCore.PluginCore.Utilities
                         // Loop through children looking for leaves
                         for (int index = 0; index < 8; index++)
                         {
-                            if (null != _children[index])
-                                _children[index].ConstructPalette(palette, ref paletteIndex);
+                            if (null != Children[index])
+                                Children[index].ConstructPalette(palette, ref paletteIndex);
                         }
                     }
                 }
@@ -421,8 +396,8 @@ namespace PluginCore.PluginCore.Utilities
                                     ((pixel->Green & mask[level]) >> (shift - 1)) |
                                     ((pixel->Blue & mask[level]) >> (shift));
 
-                        if (null != _children[index])
-                            paletteIndex = _children[index].GetPaletteIndex(pixel, level + 1);
+                        if (null != Children[index])
+                            paletteIndex = Children[index].GetPaletteIndex(pixel, level + 1);
                         else
                             throw new Exception("Didn't expect this!");
                     }
@@ -444,43 +419,32 @@ namespace PluginCore.PluginCore.Utilities
                 /// <summary>
                 /// Flag indicating that this is a leaf node
                 /// </summary>
-                private bool _leaf;
+                bool _leaf;
 
                 /// <summary>
                 /// Number of pixels in this node
                 /// </summary>
-                private int _pixelCount;
+                int _pixelCount;
 
                 /// <summary>
                 /// Red component
                 /// </summary>
-                private int _red;
+                int _red;
 
                 /// <summary>
                 /// Green Component
                 /// </summary>
-                private int _green;
+                int _green;
 
                 /// <summary>
                 /// Blue component
                 /// </summary>
-                private int _blue;
-
-                /// <summary>
-                /// Pointers to any child nodes
-                /// </summary>
-                private readonly OctreeNode[] _children;
-
-                /// <summary>
-                /// Pointer to next reducible node
-                /// </summary>
-                private OctreeNode _nextReducible;
+                int _blue;
 
                 /// <summary>
                 /// The index of this node in the palette
                 /// </summary>
-                private int _paletteIndex;
-
+                int _paletteIndex;
             }
         }
     }
@@ -581,7 +545,7 @@ namespace PluginCore.PluginCore.Utilities
 
                 // Then set the color palette on the output bitmap. I'm passing in the current palette 
                 // as there's no way to construct a new, empty palette.
-                output.Palette = this.GetPalette(output.Palette);
+                output.Palette = GetPalette(output.Palette);
 
                 // Then call the second pass which actually does the conversion
                 SecondPass(sourceData, output, width, height, bounds);
@@ -607,13 +571,12 @@ namespace PluginCore.PluginCore.Utilities
             // Define the source data pointers. The source row is a byte to
             // keep addition of the stride value easier (as this is in bytes)
             byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
-            int* pSourcePixel;
 
             // Loop through each row
             for (int row = 0; row < height; row++)
             {
                 // Set the source pixel to the first pixel in this row
-                pSourcePixel = (int*)pSourceRow;
+                var pSourcePixel = (int*)pSourceRow;
 
                 // And loop through each column
                 for (int col = 0; col < width; col++, pSourcePixel++)
@@ -728,7 +691,7 @@ namespace PluginCore.PluginCore.Utilities
         /// <summary>
         /// Flag used to indicate whether a single pass or two passes are needed for quantization.
         /// </summary>
-        private readonly bool _singlePass;
+        readonly bool _singlePass;
 
         /// <summary>
         /// Struct that defines a 32 bpp colour

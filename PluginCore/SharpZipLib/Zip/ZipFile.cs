@@ -44,6 +44,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -1340,10 +1341,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 
             updateIndex_ = new Hashtable();
 
-            updates_ = new ArrayList(entries_.Length);
-            foreach(ZipEntry entry in entries_) {
-                int index = updates_.Add(new ZipUpdate(entry));
-                updateIndex_.Add(entry.Name, index);
+            updates_ = new List<ZipUpdate>(entries_.Length);
+            foreach(ZipEntry entry in entries_)
+            {
+                updates_.Add(new ZipUpdate(entry));
+                updateIndex_.Add(entry.Name, updates_.Count - 1);
             }
 
             // We must sort by offset before using offset's calculated sizes
@@ -1355,7 +1357,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if (idx == updates_.Count - 1)
                     break;
 
-                update.OffsetBasedSize = ((ZipUpdate)updates_[idx + 1]).Entry.Offset - update.Entry.Offset;
+                update.OffsetBasedSize = updates_[idx + 1].Entry.Offset - update.Entry.Offset;
                 idx++;
             }
             updateCount_ = updates_.Count;
@@ -1483,9 +1485,9 @@ namespace ICSharpCode.SharpZipLib.Zip
                 updates_[index] = update;
             }
             else {
-                index = updates_.Add(update);
+                updates_.Add(update);
                 updateCount_ += 1;
-                updateIndex_.Add(update.Entry.Name, index);
+                updateIndex_.Add(update.Entry.Name, updates_.Count - 1);
             }
         }
 
@@ -2558,7 +2560,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Class used to sort updates.
         /// </summary>
-        class UpdateComparer : IComparer
+        class UpdateComparer : IComparer<ZipUpdate>
         {
             /// <summary>
             /// Compares two objects and returns a value indicating whether one is 
@@ -2567,33 +2569,28 @@ namespace ICSharpCode.SharpZipLib.Zip
             /// <param name="x">First object to compare</param>
             /// <param name="y">Second object to compare.</param>
             /// <returns>Compare result.</returns>
-            public int Compare(
-                object x,
-                object y)
+            public int Compare(ZipUpdate x, ZipUpdate y)
             {
-                ZipUpdate zx = x as ZipUpdate;
-                ZipUpdate zy = y as ZipUpdate;
-
                 int result;
 
-                if (zx is null) {
-                    if (zy is null) { 
+                if (x is null) {
+                    if (y is null) { 
                         result = 0; 
                     }
                     else {
                         result = -1;
                     }
                 }
-                else if (zy is null) {
+                else if (y is null) {
                     result = 1;
                 }
                 else {
-                    int xCmdValue = ((zx.Command == UpdateCommand.Copy) || (zx.Command == UpdateCommand.Modify)) ? 0 : 1;
-                    int yCmdValue = ((zy.Command == UpdateCommand.Copy) || (zy.Command == UpdateCommand.Modify)) ? 0 : 1;
+                    int xCmdValue = ((x.Command == UpdateCommand.Copy) || (x.Command == UpdateCommand.Modify)) ? 0 : 1;
+                    int yCmdValue = ((y.Command == UpdateCommand.Copy) || (y.Command == UpdateCommand.Modify)) ? 0 : 1;
 
                     result = xCmdValue - yCmdValue;
                     if (result == 0) {
-                        long offsetDiff = zx.Entry.Offset - zy.Entry.Offset;
+                        long offsetDiff = x.Entry.Offset - y.Entry.Offset;
                         if (offsetDiff < 0) {
                             result = -1;
                         }
@@ -3306,7 +3303,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         UseZip64 useZip64_ = UseZip64.Dynamic ;
         
         #region Zip Update Instance Fields
-        ArrayList updates_;
+        List<ZipUpdate> updates_;
         long updateCount_; // Count is managed manually as updates_ can contain nulls!
         Hashtable updateIndex_;
         IArchiveStorage archiveStorage_;

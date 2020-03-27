@@ -205,12 +205,10 @@ namespace PluginCore.Controls
         /// <returns>IShellFolder for desktop folder</returns>
         IShellFolder GetDesktopFolder()
         {
-            IntPtr pUnkownDesktopFolder = IntPtr.Zero;
-
-            if (null == _oDesktopFolder)
+            if (_oDesktopFolder is null)
             {
                 // Get desktop IShellFolder
-                int nResult = SHGetDesktopFolder(out pUnkownDesktopFolder);
+                int nResult = SHGetDesktopFolder(out var pUnkownDesktopFolder);
                 if (S_OK != nResult)
                 {
                     throw new ShellContextMenuException("Failed to get the desktop shell folder");
@@ -230,42 +228,29 @@ namespace PluginCore.Controls
         /// <returns>IShellFolder for the folder (relative from the desktop)</returns>
         IShellFolder GetParentFolder(string folderName)
         {
-            if (null == _oParentFolder)
+            if (_oParentFolder is null)
             {
                 IShellFolder oDesktopFolder = GetDesktopFolder();
-                if (null == oDesktopFolder)
-                {
-                    return null;
-                }
+                if (oDesktopFolder is null) return null;
 
-                // Get the PIDL for the folder file is in
-                IntPtr pPIDL = IntPtr.Zero;
                 uint pchEaten = 0;
                 SFGAO pdwAttributes = 0;
-                int nResult = oDesktopFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, folderName, ref pchEaten, out pPIDL, ref pdwAttributes);
-                if (S_OK != nResult)
-                {
-                    return null;
-                }
+                int nResult = oDesktopFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, folderName, ref pchEaten, out var pPIDL, ref pdwAttributes);
+                if (S_OK != nResult) return null;
 
                 IntPtr pStrRet = Marshal.AllocCoTaskMem(MAX_PATH * 2 + 4);
                 Marshal.WriteInt32(pStrRet, 0, 0);
-                nResult = _oDesktopFolder.GetDisplayNameOf(pPIDL, SHGNO.FORPARSING, pStrRet);
+                _oDesktopFolder.GetDisplayNameOf(pPIDL, SHGNO.FORPARSING, pStrRet);
                 StringBuilder strFolder = new StringBuilder(MAX_PATH);
                 StrRetToBuf(pStrRet, pPIDL, strFolder, MAX_PATH);
                 Marshal.FreeCoTaskMem(pStrRet);
-                pStrRet = IntPtr.Zero;
                 _strParentFolder = strFolder.ToString();
 
                 // Get the IShellFolder for folder
-                IntPtr pUnknownParentFolder = IntPtr.Zero;
-                nResult = oDesktopFolder.BindToObject(pPIDL, IntPtr.Zero, ref IID_IShellFolder, out pUnknownParentFolder);
+                nResult = oDesktopFolder.BindToObject(pPIDL, IntPtr.Zero, ref IID_IShellFolder, out var pUnknownParentFolder);
                 // Free the PIDL first
                 Marshal.FreeCoTaskMem(pPIDL);
-                if (S_OK != nResult)
-                {
-                    return null;
-                }
+                if (S_OK != nResult) return null;
                 _oParentFolder = (IShellFolder)Marshal.GetTypedObjectForIUnknown(pUnknownParentFolder, typeof(IShellFolder));
             }
 
@@ -281,16 +266,10 @@ namespace PluginCore.Controls
         /// <returns>Array of PIDLs</returns>
         protected IntPtr[] GetPIDLs(FileInfo[] arrFI)
         {
-            if (null == arrFI || 0 == arrFI.Length)
-            {
-                return null;
-            }
+            if (arrFI is null || arrFI.Length == 0) return null;
 
-            IShellFolder oParentFolder = GetParentFolder(arrFI[0].DirectoryName);
-            if (null == oParentFolder)
-            {
-                return null;
-            }
+            var oParentFolder = GetParentFolder(arrFI[0].DirectoryName);
+            if (oParentFolder is null) return null;
 
             IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
             int n = 0;
@@ -320,16 +299,10 @@ namespace PluginCore.Controls
         /// <returns>Array of PIDLs</returns>
         protected IntPtr[] GetPIDLs(DirectoryInfo[] arrFI)
         {
-            if (null == arrFI || 0 == arrFI.Length)
-            {
-                return null;
-            }
+            if (arrFI is null || arrFI.Length == 0) return null;
 
-            IShellFolder oParentFolder = GetParentFolder(arrFI[0].Parent.FullName);
-            if (null == oParentFolder)
-            {
-                return null;
-            }
+            var oParentFolder = GetParentFolder(arrFI[0].Parent.FullName);
+            if (oParentFolder is null) return null;
 
             IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
             int n = 0;
@@ -381,19 +354,18 @@ namespace PluginCore.Controls
             // Release all resources first.
             ReleaseAll();
 
-            IntPtr pMenu = IntPtr.Zero,
-                iContextMenuPtr = IntPtr.Zero;
+            var pMenu = IntPtr.Zero;
 
             try
             {
                 _arrPIDLs = GetPIDLs(arrFI);
-                if (null == _arrPIDLs)
+                if (_arrPIDLs is null)
                 {
                     ReleaseAll();
                     return;
                 }
 
-                if (!GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out iContextMenuPtr))
+                if (!GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out _))
                 {
                     ReleaseAll();
                     return;
@@ -475,7 +447,7 @@ namespace PluginCore.Controls
 
             try
             {
-                if (null == _arrPIDLs)
+                if (_arrPIDLs is null)
                 {
                     ReleaseAll();
                     return;

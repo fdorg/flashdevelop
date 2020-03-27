@@ -229,7 +229,7 @@ namespace Mono.GetOptions
                             {
                                 goto Label_014D;
                             }
-                            char[] chArray1 = new[] { ':', '=' } ;
+                            char[] chArray1 = { ':', '=' } ;
                             int num1 = IndexOfAny(text1, chArray1);
                             if (num1 < 0)
                             {

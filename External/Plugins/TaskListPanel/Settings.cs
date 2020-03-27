@@ -15,9 +15,9 @@ namespace TaskListPanel
     public class Settings
     {
         ExploringMode exploringMode = ExploringMode.Light;
-        int[] images = new[] { 229, 197, 197 };
-        string[] extensions = new[] { ".txt" };
-        string[] groups = new[] { "TODO", "FIXME", "BUG" };
+        int[] images = { 229, 197, 197 };
+        string[] extensions = { ".txt" };
+        string[] groups = { "TODO", "FIXME", "BUG" };
         string[] excluded = Array.Empty<string>();
 
         /// <summary> 

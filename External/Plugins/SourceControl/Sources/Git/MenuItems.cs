@@ -11,10 +11,12 @@ namespace SourceControl.Sources.Git
     class MenuItems : IVCMenuItems
     {
         TreeNode[] currentNodes;
-        IVCManager currentManager;
 
         public TreeNode[] CurrentNodes { set => currentNodes = value; }
-        public IVCManager CurrentManager { set => currentManager = value; }
+        public IVCManager CurrentManager
+        {
+            set { }
+        }
 
         public ToolStripItem Update { get; }
 

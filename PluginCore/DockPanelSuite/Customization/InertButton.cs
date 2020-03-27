@@ -412,12 +412,9 @@ namespace WeifenLuo.WinFormsUI
 
         private void DrawImage(Graphics g)
         {
-            Image image = this.Enabled ? ImageEnabled : ImageDisabled ?? ImageEnabled;
+            var image = Enabled ? ImageEnabled : ImageDisabled ?? ImageEnabled;
+            if (image is null) return;
             ImageAttributes imageAttr = null;
-
-            if (null == image)
-                return;
-
             if (m_monochrom)
             {
                 imageAttr = new ImageAttributes();
@@ -435,15 +432,14 @@ namespace WeifenLuo.WinFormsUI
                 imageAttr.SetRemapTable(colorMap);
             }
 
-            Rectangle rect = new Rectangle(0, 0, image.Width, image.Height);
-
-            if ((!Enabled) && (null == ImageDisabled))
+            var rect = new Rectangle(0, 0, image.Width, image.Height);
+            if ((!Enabled) && (ImageDisabled is null))
             {
                 using var bitmapMono = new Bitmap(image, ClientRectangle.Size);
                 if (imageAttr != null)
                 {
                     using var gMono = Graphics.FromImage(bitmapMono);
-                    gMono.DrawImage(image, new Point[3] { new Point(0, 0), new Point(image.Width - 1, 0), new Point(0, image.Height - 1) }, rect, GraphicsUnit.Pixel, imageAttr);
+                    gMono.DrawImage(image, new[] { new Point(0, 0), new Point(image.Width - 1, 0), new Point(0, image.Height - 1) }, rect, GraphicsUnit.Pixel, imageAttr);
                 }
                 ControlPaint.DrawImageDisabled(g, bitmapMono, 0, 0, this.BackColor);
             }
