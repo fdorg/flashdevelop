@@ -1,6 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS2;
 
@@ -69,7 +73,7 @@ namespace ProjectManager.Projects
 
     #region AssetCollection
 
-    public class AssetCollection : CollectionBase
+    public class AssetCollection : Collection<LibraryAsset>
     {
         readonly Project project;
 
@@ -78,30 +82,18 @@ namespace ProjectManager.Projects
             this.project = project;
         }
 
-        public void Add(LibraryAsset asset) => List.Add(asset);
-
         public void Add(string path) => Add(new LibraryAsset(project, path));
 
         public bool Contains(string path) => this[path] != null;
 
-        public LibraryAsset this[string path]
-        {
-            get
-            {
-                foreach (LibraryAsset asset in List)
-                    if (asset.Path == path)
-                        return asset;
-                return null;
-            }
-        }
+        public LibraryAsset this[string path] => this.FirstOrDefault(asset => asset.Path == path);
 
         /// <summary>
         /// Removes any paths equal to or below the gives path.
         /// </summary>
         public void RemoveAtOrBelow(string path)
         {
-            if (List.Contains(path))
-                List.Remove(path);
+            Remove(path);
             RemoveBelow(path);
         }
 
@@ -110,25 +102,22 @@ namespace ProjectManager.Projects
         /// </summary>
         public void RemoveBelow(string path)
         {
-            for (int i = 0; i < List.Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                var asset = (LibraryAsset) List[i];
-                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal)
-                    || asset.Path == path)
+                var asset = this[i];
+                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) || asset.Path == path)
                 {
-                    List.RemoveAt(i--); // search this index again
+                    RemoveAt(i--); // search this index again
                 }
             }
         }
 
-        public void Remove(LibraryAsset asset) => List.Remove(asset);
-
         public void Remove(string path)
         {
-            foreach (LibraryAsset asset in List)
+            foreach (var asset in this)
                 if (asset.Path == path)
                 {
-                    List.Remove(asset);
+                    Remove(asset);
                     return;
                 }
         }
