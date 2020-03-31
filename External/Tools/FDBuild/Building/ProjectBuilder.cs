@@ -39,23 +39,13 @@ namespace ProjectManager.Building
             throw new Exception("FDBuild doesn't know how to build " + project.GetType().Name);
         }
 
-        protected string FDBuildDirectory
-        {
-            get
-            {
-                string url = Assembly.GetEntryAssembly().GetName().CodeBase;
-                Uri uri = new Uri(url);
-                return Path.GetDirectoryName(uri.LocalPath);
-            }
-        }
+        protected string FDBuildDirectory => ProjectPaths.ApplicationDirectory;
 
         public void Build(string[] extraClasspaths, bool debugMode, bool noPreBuild, bool noPostBuild)
         {
             Console.WriteLine("Building " + project.Name);
-
-            BuildEventRunner runner = new BuildEventRunner(project, CompilerPath);
-            bool attempedPostBuildEvent = false;
-
+            var runner = new BuildEventRunner(project, CompilerPath);
+            var attempedPostBuildEvent = false;
             try
             {
                 if (!noPreBuild && project.PreBuildEvent.Length > 0)

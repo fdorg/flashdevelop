@@ -157,7 +157,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Separates the imports to a container
         /// </summary>
-        Imports SeparateImports(List<MemberModel> imports, int privateSectionIndex)
+        Imports SeparateImports(IEnumerable<MemberModel> imports, int privateSectionIndex)
         {
             var separatedImports = new Imports();
             separatedImports.PackageImports = new List<MemberModel>();
@@ -202,7 +202,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Inserts the imports to the current document
         /// </summary>
-        int InsertImports(ScintillaControl sci, List<string> imports, int startLine, int indent)
+        int InsertImports(ScintillaControl sci, IEnumerable<string> imports, int startLine, int indent)
         {
             var offset = 0;
             var eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
@@ -287,5 +287,4 @@ namespace CodeRefactor.Commands
         public List<MemberModel> PackageImports;
         public List<MemberModel> PrivateImports;
     }
-
 }

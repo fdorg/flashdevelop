@@ -325,7 +325,7 @@ namespace FlashDevelop.Controls
         void UpdateFindText()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci != null && sci.SelText.Length > 0)
+            if (sci != null && sci.SelTextSize > 0)
             {
                 findTextBox.Text = sci.SelText;
             }

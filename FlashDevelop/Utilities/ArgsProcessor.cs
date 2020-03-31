@@ -68,7 +68,7 @@ namespace FlashDevelop.Utilities
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci is null) return string.Empty;
-            if (sci.SelText.Length > 0) return sci.SelText;
+            if (sci.SelTextSize > 0) return sci.SelText;
             if (PrevSelText.Length > 0) return PrevSelText;
             return string.Empty;
         }
@@ -134,35 +134,23 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the desktop path
         /// </summary>
-        public static string GetDesktopDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        }
-        
+        public static string GetDesktopDir() => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
         /// <summary>
         /// Gets the system path
         /// </summary>
-        public static string GetSystemDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.System);
-        }
-        
+        public static string GetSystemDir() => Environment.GetFolderPath(Environment.SpecialFolder.System);
+
         /// <summary>
         /// Gets the program files path
         /// </summary>
-        public static string GetProgramsDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-        }
-        
+        public static string GetProgramsDir() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
         /// <summary>
         /// Gets the users personal files path
         /// </summary>
-        public static string GetPersonalDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        }
-        
+        public static string GetPersonalDir() => Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
         /// <summary>
         /// Gets the working directory
         /// </summary>
@@ -176,8 +164,9 @@ namespace FlashDevelop.Utilities
             using var dialog = new OpenFileDialog();
             dialog.InitialDirectory = GetCurDir();
             dialog.Multiselect = false;
-            if (dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return dialog.FileName;
-            return string.Empty;
+            return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
+                ? dialog.FileName
+                : string.Empty;
         }
         
         /// <summary>
@@ -186,8 +175,9 @@ namespace FlashDevelop.Utilities
         public static string GetSaveFile()
         {
             using var dialog = new SaveFileDialog {InitialDirectory = GetCurDir()};
-            if (dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return dialog.FileName;
-            return string.Empty;
+            return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
+                ? dialog.FileName
+                : string.Empty;
         }
         
         /// <summary>
@@ -196,8 +186,9 @@ namespace FlashDevelop.Utilities
         public static string GetOpenDir()
         {
             using var dialog = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
-            if (dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK) return dialog.SelectedPath;
-            return string.Empty;
+            return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
+                ? dialog.SelectedPath
+                : string.Empty;
         }
         
         /// <summary>
@@ -205,22 +196,16 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetClipboard()
         {
-            var cbdata = Clipboard.GetDataObject();
-            if (cbdata.GetDataPresent("System.String", true)) 
-            {
-                return cbdata.GetData("System.String", true).ToString();
-            }
-            return string.Empty;
+            var data = Clipboard.GetDataObject();
+            return data.GetDataPresent("System.String", true)
+                ? data.GetData("System.String", true).ToString()
+                : string.Empty;
         }
 
         /// <summary>
         /// Gets the comment block indent
         /// </summary>
-        public static string GetCBI()
-        {
-            var cbs = PluginBase.Settings.CommentBlockStyle;
-            return cbs == CommentBlockStyle.Indented ? " " : "";
-        }
+        public static string GetCBI() => PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
 
         /// <summary>
         /// Gets the space or tab character based on settings
@@ -324,11 +309,8 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Match evaluator for tabs
         /// </summary>
-        public static string ReplaceTabs(Match match)
-        {
-            return new string(' ', match.Length * PluginBase.Settings.IndentSize);
-        }
-        
+        public static string ReplaceTabs(Match match) => new string(' ', match.Length * PluginBase.Settings.IndentSize);
+
         /// <summary>
         /// Match evaluator for vars
         /// </summary>
@@ -365,7 +347,7 @@ namespace FlashDevelop.Utilities
                 case "Locale": return GetLocale();
                 case "Dollar": return "$";
             }
-            foreach (Argument arg in ArgumentDialog.CustomArguments)
+            foreach (var arg in ArgumentDialog.CustomArguments)
             {
                 if (name == arg.Key) return arg.Value;
             }

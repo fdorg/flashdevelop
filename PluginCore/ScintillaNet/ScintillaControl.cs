@@ -4046,17 +4046,17 @@ namespace ScintillaNet
             }
         }
 
-        unsafe string MarshalStr(IntPtr p)
+        static unsafe string MarshalStr(IntPtr p)
         {
-            sbyte* b = (sbyte*)p;
-            int len = 0;
+            var b = (sbyte*)p;
+            var len = 0;
             while (b[len] != 0) ++len;
             return new string(b, 0, len);
         }
 
-        unsafe string MarshalStr(IntPtr p, int len)
+        static unsafe string MarshalStr(IntPtr p, int len)
         {
-            sbyte* b = (sbyte*)p;
+            var b = (sbyte*)p;
             return new string(b, 0, len);
         }
 
@@ -4069,7 +4069,7 @@ namespace ScintillaNet
         /// </summary>
         void OnUpdateUI(ScintillaControl sci)
         {
-            if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelText.Length)
+            if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelTextSize)
             {
                 SelectionChanged?.Invoke(sci);
                 switch (PluginBase.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
@@ -4091,7 +4091,7 @@ namespace ScintillaNet
             }
             lastSelectionStart = sci.SelectionStart;
             lastSelectionEnd = sci.SelectionEnd;
-            lastSelectionLength = sci.SelText.Length;
+            lastSelectionLength = sci.SelTextSize;
         }
 
         /// <summary>
@@ -4124,7 +4124,8 @@ namespace ScintillaNet
         /// </summary>
         void HighlightWordsMatchingSelected()
         {
-            if (TextLength == 0 || TextLength > 64 * 1024) return;
+            var textLength = TextLength;
+            if (textLength == 0 || textLength > 64 * 1024) return;
             var word = GetWordFromPosition(CurrentPos);
             if (string.IsNullOrEmpty(word)) return;
             if (PositionIsOnComment(CurrentPos))
@@ -4132,8 +4133,7 @@ namespace ScintillaNet
                 RemoveHighlights(1);
                 return;
             }
-            var pattern = word.Trim();
-            var search = new FRSearch(pattern)
+            var search = new FRSearch(word.Trim())
             {
                 WholeWord = true,
                 NoCase = !PluginBase.Settings.HighlightMatchingWordsCaseSensitive,
@@ -4152,7 +4152,7 @@ namespace ScintillaNet
         /// </summary>
         static void OnCancelHighlight(ScintillaControl sci)
         {
-            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0
+            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelTextSize == 0
                 && PluginBase.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
             {
                 sci.RemoveHighlights(1);
@@ -4179,7 +4179,7 @@ namespace ScintillaNet
         /// </summary>
         void OnBraceMatch(ScintillaControl sci)
         {
-            if (!isBraceMatching || sci.SelText.Length != 0) return;
+            if (!isBraceMatching || sci.SelTextSize != 0) return;
             var position = CurrentPos - 1;
             var character = (char)CharAt(position);
             if (character != '{' && character != '}' && character != '(' && character != ')' && character != '[' && character != ']')
@@ -4430,33 +4430,33 @@ namespace ScintillaNet
             RangeToFormat frPrint = GetRangeToFormat(hdc, charFrom, charTo);
             IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(frPrint));
             Marshal.StructureToPtr(frPrint, lParam, false);
-            int res = SPerform(2151, wParam, lParam);
+            int result = SPerform(2151, wParam, lParam);
             Marshal.FreeCoTaskMem(lParam);
             e.Graphics.ReleaseHdc(hdc);
-            return res;
+            return result;
         }
 
         /// <summary>
         /// Populates the RangeToFormat struct
         /// </summary>
-        RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
+        static RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
         {
-            RangeToFormat frPrint;
+            RangeToFormat result;
             var pageWidth = GetDeviceCaps(hdc, 110);
             var pageHeight = GetDeviceCaps(hdc, 111);
-            frPrint.hdcTarget = hdc;
-            frPrint.hdc = hdc;
-            frPrint.rcPage.Left = 0;
-            frPrint.rcPage.Top = 0;
-            frPrint.rcPage.Right = pageWidth;
-            frPrint.rcPage.Bottom = pageHeight;
-            frPrint.rc.Left = Convert.ToInt32(pageWidth * 0.02);
-            frPrint.rc.Top = Convert.ToInt32(pageHeight * 0.03);
-            frPrint.rc.Right = Convert.ToInt32(pageWidth * 0.975);
-            frPrint.rc.Bottom = Convert.ToInt32(pageHeight * 0.95);
-            frPrint.chrg.cpMin = charFrom;
-            frPrint.chrg.cpMax = charTo;
-            return frPrint;
+            result.hdcTarget = hdc;
+            result.hdc = hdc;
+            result.rcPage.Left = 0;
+            result.rcPage.Top = 0;
+            result.rcPage.Right = pageWidth;
+            result.rcPage.Bottom = pageHeight;
+            result.rc.Left = Convert.ToInt32(pageWidth * 0.02);
+            result.rc.Top = Convert.ToInt32(pageHeight * 0.03);
+            result.rc.Right = Convert.ToInt32(pageWidth * 0.975);
+            result.rc.Bottom = Convert.ToInt32(pageHeight * 0.95);
+            result.chrg.cpMin = charFrom;
+            result.chrg.cpMax = charTo;
+            return result;
         }
 
         /// <summary>
@@ -4575,7 +4575,8 @@ namespace ScintillaNet
                     break;
                 }
             }
-            for (var i = line; i < sci.LineCount; i++)
+            var lineCount = sci.LineCount;
+            for (var i = line; i < lineCount; i++)
             {
                 int pos = sci.PositionFromLine(i);
                 int ind = sci.GetLineIndentation(i);
@@ -4828,7 +4829,8 @@ namespace ScintillaNet
         /// </summary>
         public void ExpandAllFolds()
         {
-            for (int i = 0; i < LineCount; i++)
+            var lineCount = LineCount;
+            for (var i = 0; i < lineCount; i++)
             {
                 FoldExpanded(i, true);
                 ShowLines(i + 1, i + 1);
@@ -4840,9 +4842,10 @@ namespace ScintillaNet
         /// </summary>
         public void CollapseAllFolds()
         {
-            for (int i = 0; i < LineCount; i++)
+            var lineCount = LineCount;
+            for (var i = 0; i < lineCount; i++)
             {
-                int maxSubOrd = LastChild(i, -1);
+                var maxSubOrd = LastChild(i, -1);
                 FoldExpanded(i, false);
                 HideLines(i + 1, maxSubOrd);
             }
@@ -4853,12 +4856,11 @@ namespace ScintillaNet
         /// </summary>
         public void CollapseFunctions()
         {
-            int lineCount = LineCount;
-
-            for (int i = 0; i < lineCount; i++)
+            var lineCount = LineCount;
+            for (var i = 0; i < lineCount; i++)
             {
                 // Determine if function block
-                string line = GetLine(i);
+                var line = GetLine(i);
                 if (line.Contains("function"))
                 {
                     // Find the line with the closing ) of the function header
@@ -4894,14 +4896,15 @@ namespace ScintillaNet
         public void CollapseRegions()
         {
             // hide all lines inside some blocks, show lines outside
-            for (int i = 0; i < LineCount; i++)
+            var lineCount = LineCount;
+            for (var i = 0; i < lineCount; i++)
             {
                 // if region/function block
-                string line = GetLine(i);
+                var line = GetLine(i);
                 if (line.Contains("//{") || (line.Contains("function") && line.Contains("(") && line.Contains(")")))
                 {
                     // Get the function closing brace
-                    int maxSubOrd = LastChild(i, -1);
+                    var maxSubOrd = LastChild(i, -1);
                     // Get brace if on the next line
                     if (maxSubOrd == i)
                     {
@@ -4919,7 +4922,7 @@ namespace ScintillaNet
                 }
             }
             // collapse some block lines, expand all other type of lines
-            for (int i = 0; i < LineCount; i++)
+            for (int i = 0; i < lineCount; i++)
             {
                 // if region/function block
                 string line = GetLine(i);

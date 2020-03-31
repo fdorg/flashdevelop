@@ -2482,7 +2482,7 @@ namespace HaXeContext
         /// <inheritdoc cref="ASContext.OnBraceMatch"/>
         public override void OnBraceMatch(ScintillaControl sci)
         {
-            if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
+            if (!sci.IsBraceMatching || sci.SelTextSize != 0) return;
             var position = sci.CurrentPos - 1;
             var c = (char)sci.CharAt(position);
             if (c != '<' && c != '>')

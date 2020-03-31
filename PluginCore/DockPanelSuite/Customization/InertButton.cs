@@ -8,7 +8,7 @@ namespace WeifenLuo.WinFormsUI
 {
     internal class InertButton : Button
     {
-        private enum RepeatClickStatus
+        enum RepeatClickStatus
         {
             Disabled,
             Started,
@@ -16,29 +16,29 @@ namespace WeifenLuo.WinFormsUI
             Stopped
         }
 
-        private class RepeatClickEventArgs : EventArgs
+        class RepeatClickEventArgs : EventArgs
         {
             static RepeatClickEventArgs()
             {
                 Empty = new RepeatClickEventArgs();
             }
 
-            public new static RepeatClickEventArgs Empty { get; private set; }
+            public new static RepeatClickEventArgs Empty { get; }
         }
 
-        private readonly IContainer components = new Container();
-        private int m_borderWidth = 1;
-        private bool m_mouseOver = false;
-        private bool m_mouseCapture = false;
-        private bool m_isPopup = false;
-        private Image m_imageEnabled = null;
-        private Image m_imageDisabled = null;
-        private int m_imageIndexEnabled = -1;
-        private int m_imageIndexDisabled = -1;
-        private bool m_monochrom = true;
-        private ToolTip m_toolTip = null;
-        private string m_toolTipText = "";
-        private Color m_borderColor = Color.Empty;
+        readonly IContainer components = new Container();
+        int m_borderWidth = 1;
+        bool m_mouseOver;
+        bool m_mouseCapture;
+        bool m_isPopup;
+        Image m_imageEnabled;
+        Image m_imageDisabled;
+        int m_imageIndexEnabled = -1;
+        int m_imageIndexDisabled = -1;
+        bool m_monochrom = true;
+        ToolTip m_toolTip;
+        string m_toolTipText = "";
+        Color m_borderColor = Color.Empty;
 
         public InertButton()
         {
@@ -54,8 +54,8 @@ namespace WeifenLuo.WinFormsUI
         {
             InternalConstruct(imageEnabled, imageDisabled);
         }
-        
-        private void InternalConstruct(Image imageEnabled, Image imageDisabled)
+
+        void InternalConstruct(Image imageEnabled, Image imageDisabled)
         {
             // Remember parameters
             ImageEnabled = imageEnabled;
@@ -101,18 +101,14 @@ namespace WeifenLuo.WinFormsUI
             }
         }
 
-        private bool ShouldSerializeBorderColor()
-        {
-            return (m_borderColor != Color.Empty);
-        }
+        bool ShouldSerializeBorderColor() => (m_borderColor != Color.Empty);
 
         public int BorderWidth
         {
             get => m_borderWidth;
             set
             {
-                if (value < 1)
-                    value = 1;
+                if (value < 1) value = 1;
                 if (m_borderWidth != value)
                 {
                     m_borderWidth = value;
@@ -150,10 +146,7 @@ namespace WeifenLuo.WinFormsUI
             }
         }
 
-        private bool ShouldSerializeImageEnabled()
-        {
-            return (m_imageEnabled != null);
-        }
+        bool ShouldSerializeImageEnabled() => m_imageEnabled != null;
 
         public Image ImageDisabled
         {
@@ -242,8 +235,9 @@ namespace WeifenLuo.WinFormsUI
             set => ClickStatus = RepeatClickStatus.Stopped;
         }
 
-        private RepeatClickStatus m_clickStatus = RepeatClickStatus.Disabled;
-        private RepeatClickStatus ClickStatus
+        RepeatClickStatus m_clickStatus = RepeatClickStatus.Disabled;
+
+        RepeatClickStatus ClickStatus
         {
             get => m_clickStatus;
             set
@@ -266,7 +260,7 @@ namespace WeifenLuo.WinFormsUI
 
         public int RepeatClickDelay { get; set; } = 500;
         public int RepeatClickInterval { get; set; } = 100;
-        private Timer Timer { get; set; }
+        Timer Timer { get; set; }
 
         public string ToolTipText
         {
@@ -276,14 +270,14 @@ namespace WeifenLuo.WinFormsUI
                 if (m_toolTipText != value)
                 {
                     if (m_toolTip is null)
-                        m_toolTip = new ToolTip(this.components);
+                        m_toolTip = new ToolTip(components);
                     m_toolTipText = value;
                     m_toolTip.SetToolTip(this, value);
                 }
             }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        void Timer_Tick(object sender, EventArgs e)
         {
             if (m_mouseCapture && m_mouseOver)
                 OnClick(RepeatClickEventArgs.Empty);
@@ -351,7 +345,7 @@ namespace WeifenLuo.WinFormsUI
             base.OnMouseMove(e);
 
             // Is mouse point inside our client rectangle
-            bool over = this.ClientRectangle.Contains(new Point(e.X, e.Y));
+            bool over = ClientRectangle.Contains(new Point(e.X, e.Y));
 
             // If entering the button area or leaving the button area...
             if (over != m_mouseOver)
@@ -404,13 +398,13 @@ namespace WeifenLuo.WinFormsUI
             DrawBorder(e.Graphics);
         }
 
-        private void DrawBackground(Graphics g)
+        void DrawBackground(Graphics g)
         {
             using var brush = new SolidBrush(BackColor);
             g.FillRectangle(brush, ClientRectangle);
         }
 
-        private void DrawImage(Graphics g)
+        void DrawImage(Graphics g)
         {
             var image = Enabled ? ImageEnabled : ImageDisabled ?? ImageEnabled;
             if (image is null) return;
@@ -425,10 +419,10 @@ namespace WeifenLuo.WinFormsUI
                 ColorMap[] colorMap = new ColorMap[2];
                 colorMap[0] = new ColorMap();
                 colorMap[0].OldColor = Color.White;
-                colorMap[0].NewColor = this.BackColor;
+                colorMap[0].NewColor = BackColor;
                 colorMap[1] = new ColorMap();
                 colorMap[1].OldColor = Color.Black;
-                colorMap[1].NewColor = this.ForeColor;
+                colorMap[1].NewColor = ForeColor;
                 imageAttr.SetRemapTable(colorMap);
             }
 
@@ -441,7 +435,7 @@ namespace WeifenLuo.WinFormsUI
                     using var gMono = Graphics.FromImage(bitmapMono);
                     gMono.DrawImage(image, new[] { new Point(0, 0), new Point(image.Width - 1, 0), new Point(0, image.Height - 1) }, rect, GraphicsUnit.Pixel, imageAttr);
                 }
-                ControlPaint.DrawImageDisabled(g, bitmapMono, 0, 0, this.BackColor);
+                ControlPaint.DrawImageDisabled(g, bitmapMono, 0, 0, BackColor);
             }
             else
             {
@@ -460,9 +454,9 @@ namespace WeifenLuo.WinFormsUI
                 else
                     g.DrawImage(image, pts, rect, GraphicsUnit.Pixel, imageAttr);
             }
-        }   
+        }
 
-        private void DrawText(Graphics g)
+        void DrawText(Graphics g)
         {
             if (Text.Length == 0) return;
             var rect = ClientRectangle;
@@ -523,12 +517,12 @@ namespace WeifenLuo.WinFormsUI
             g.DrawString(Text, Font, brush, rect, stringFormat);
         }
 
-        private void DrawBorder(Graphics g)
+        void DrawBorder(Graphics g)
         {
             ButtonBorderStyle bs;
 
             // Decide on the type of border to draw around image
-            if (!this.Enabled)
+            if (!Enabled)
                 bs = IsPopup ? ButtonBorderStyle.Outset : ButtonBorderStyle.Solid;
             else if (m_mouseOver && m_mouseCapture)
                 bs = ButtonBorderStyle.Inset;
@@ -541,20 +535,20 @@ namespace WeifenLuo.WinFormsUI
             Color colorRightBottom;
             if (bs == ButtonBorderStyle.Solid)
             {
-                colorLeftTop = this.BackColor;
-                colorRightBottom = this.BackColor;
+                colorLeftTop = BackColor;
+                colorRightBottom = BackColor;
             }
             else if (bs == ButtonBorderStyle.Outset)
             {
-                colorLeftTop = m_borderColor.IsEmpty ? this.BackColor : m_borderColor;
-                colorRightBottom = this.BackColor;
+                colorLeftTop = m_borderColor.IsEmpty ? BackColor : m_borderColor;
+                colorRightBottom = BackColor;
             }
             else
             {
-                colorLeftTop = this.BackColor;
-                colorRightBottom = m_borderColor.IsEmpty ? this.BackColor : m_borderColor;
+                colorLeftTop = BackColor;
+                colorRightBottom = m_borderColor.IsEmpty ? BackColor : m_borderColor;
             }
-            ControlPaint.DrawBorder(g, this.ClientRectangle,
+            ControlPaint.DrawBorder(g, ClientRectangle,
                 colorLeftTop, m_borderWidth, bs,
                 colorLeftTop, m_borderWidth, bs,
                 colorRightBottom, m_borderWidth, bs,

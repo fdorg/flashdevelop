@@ -888,7 +888,8 @@ namespace ASCompletion
                     sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
                 }
 
-                for (var i = 0; i < sci.LineCount; ++i)
+                var lineCount = sci.LineCount;
+                for (var i = 0; i < lineCount; ++i)
                 {
                     var mask = sci.MarkerGet(i);
                     const int searchMask = (1 << MarkerDown) | (1 << MarkerUp);

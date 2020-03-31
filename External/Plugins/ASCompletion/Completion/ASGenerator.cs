@@ -69,7 +69,7 @@ namespace ASCompletion.Completion
 
         public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
-            if (!sci.SelText.IsNullOrEmpty()) return false;
+            if (sci.SelTextSize != 0) return false;
             if (ASContext.Context is ASContext ctx) ctx.UpdateCurrentFile(false);
 
             lookupPosition = -1;
