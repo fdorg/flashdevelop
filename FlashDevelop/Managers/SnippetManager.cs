@@ -58,16 +58,16 @@ namespace FlashDevelop.Managers
             EventManager.DispatchEvent(PluginBase.MainForm, de);
             if (de.Handled) return true;
             snippet = (string)data["snippet"];
-            if (!string.IsNullOrEmpty(sci.SelText))
+            if (sci.SelTextSize != 0)
             {
                 // Remember the previous selection
                 ArgsProcessor.PrevSelText = sci.SelText;
             }
             if (snippet != null)
             {
-                int endPos = sci.SelectionEnd;
-                int startPos = sci.SelectionStart;
-                string curWord = sci.GetWordFromPosition(endPos);
+                var endPos = sci.SelectionEnd;
+                var startPos = sci.SelectionStart;
+                var curWord = sci.GetWordFromPosition(endPos);
                 if (startPos == endPos)
                 {
                     endPos = sci.WordEndPosition(sci.CurrentPos, true);
@@ -94,12 +94,12 @@ namespace FlashDevelop.Managers
                     item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
                     items.Add(item);
                 }
-                string path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
+                var path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
                 if (Directory.Exists(path))
                 {
                     walker = new PathWalker(path, "*.fds", false);
                     files = walker.GetFiles();
-                    foreach (string file in files)
+                    foreach (var file in files)
                     {
                         item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
                         items.Add(item);
@@ -108,7 +108,7 @@ namespace FlashDevelop.Managers
                 if (items.Count > 0)
                 {
                     items.Sort();
-                    if (!string.IsNullOrEmpty(sci.SelText)) word = sci.SelText;
+                    if (sci.SelTextSize != 0) word = sci.SelText;
                     else
                     {
                         word = sci.GetWordFromPosition(sci.CurrentPos) ?? string.Empty;

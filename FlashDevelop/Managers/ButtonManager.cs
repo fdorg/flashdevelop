@@ -173,11 +173,11 @@ namespace FlashDevelop.Managers
                 }
                 if (action.Contains("!HasSelection"))
                 {
-                    if (sci.SelText.Length > 0) return false;
+                    if (sci.SelTextSize > 0) return false;
                 }
                 else if (action.Contains("HasSelection"))
                 {
-                    if (sci.SelText.Length == 0) return false;
+                    if (sci.SelTextSize == 0) return false;
                 }
                 if (action.Contains("!SaveBOM"))
                 {

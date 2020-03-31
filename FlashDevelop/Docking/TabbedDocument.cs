@@ -512,7 +512,8 @@ namespace FlashDevelop.Docking
         {
             bookmarks.Clear();
             var sci = SciControl;
-            for (var i = 0; i < sci.LineCount; i++) 
+            var lineCount = sci.LineCount;
+            for (var i = 0; i < lineCount; i++) 
             {
                 if (MarkerManager.HasMarker(sci, 0, i))
                     bookmarks.Add(i);

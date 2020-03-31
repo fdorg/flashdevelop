@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace PluginCore.BBCode
 {
-    public enum StateMode : int
+    public enum StateMode
     {
         ON = 1,
         OFF = 0,
@@ -134,7 +134,7 @@ namespace PluginCore.BBCode
             rootStyle.isUnderlined = tf.Font.Underline ? StateMode.ON : StateMode.OFF;
 
             PairTag rootPair = new PairTag(new BBCodeTagMatch(true, 0, "", "", "", 0, 0, false), new VoidCloserTagMatch(input.Length));
-            (rootPair.openerMatch as BBCodeTagMatch).bbCodeStyle = rootStyle;
+            ((BBCodeTagMatch) rootPair.openerMatch).bbCodeStyle = rootStyle;
 
             bbCodeTree = IndexTree.cloneTree(bbCodeTree);
             bbCodeTree.data = rootPair;
@@ -172,14 +172,15 @@ namespace PluginCore.BBCode
                 offsetA += offsetB;
             }
 
-            tf.Select(tf.Text.Length, tf.Text.Length);
+            var textLength = tf.TextLength;
+            tf.Select(textLength, textLength);
         }
 
 
-        private static BottomUpParser bbCodeParser = null;
-        private static RichTextBox tempRTB = null;
+        static BottomUpParser bbCodeParser;
+        static RichTextBox tempRTB;
 
-        private static void _init()
+        static void Init()
         {
             if (bbCodeParser is null)
             {
@@ -198,13 +199,13 @@ namespace PluginCore.BBCode
 
         public static string bbCodeToRtf(string bbCodeText)
         {
-            _init();
+            Init();
 
             return bbCodeToRtf(bbCodeText, tempRTB);
         }
         public static string bbCodeToRtf(string bbCodeText, RichTextBox texbox)
         {
-            _init();
+            Init();
 
             bbCodeParser.input = bbCodeText;
             applyStyleTreeToTextbox(texbox, bbCodeParser.input, bbCodeParser.parse());
@@ -214,14 +215,14 @@ namespace PluginCore.BBCode
 
         public static string rtfToText(string rtfText)
         {
-            _init();
+            Init();
 
             tempRTB.Rtf = rtfText;
             return tempRTB.Text;
         }
 
 
-        private static string _replaceEnclosures(string input)
+        static string _replaceEnclosures(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return input;

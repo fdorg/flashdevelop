@@ -40,7 +40,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static int GetMatchIndex(SearchMatch match, List<SearchMatch> matches)
         {
-            for (int i = 0; i < matches.Count; i++)
+            for (var i = 0; i < matches.Count; i++)
             {
                 if (match == matches[i]) return i + 1;
             }
@@ -98,25 +98,20 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static SearchMatch GetNextDocumentMatch(ScintillaControl sci, List<SearchMatch> matches, bool forward, bool fixedPosition)
         {
-            SearchMatch nearestMatch = matches[0];
-            int currentPosition = sci.MBSafeCharPosition(sci.CurrentPos);
+            var nearestMatch = matches[0];
+            var currentPosition = sci.MBSafeCharPosition(sci.CurrentPos);
             if (fixedPosition) currentPosition -= sci.MBSafeTextLength(sci.SelText);
             foreach (var match in matches)
             {
                 if (forward)
                 {
-                    if (currentPosition > matches[matches.Count - 1].Index)
-                    {
-                        return matches[0];
-                    }
-                    if (match.Index >= currentPosition)
-                    {
-                        return match;
-                    }
+                    if (currentPosition > matches[matches.Count - 1].Index) return matches[0];
+                    if (match.Index >= currentPosition) return match;
                 }
                 else
                 {
-                    if (sci.SelText.Length > 0 && currentPosition <= matches[0].Index + matches[0].Value.Length)
+                    var sciSelTextSize = sci.SelTextSize;
+                    if (sciSelTextSize > 0 && currentPosition <= matches[0].Index + matches[0].Value.Length)
                     {
                         return matches[matches.Count - 1];
                     }
@@ -124,7 +119,7 @@ namespace FlashDevelop.Utilities
                     {
                         return matches[matches.Count - 1];
                     }
-                    if (sci.SelText.Length == 0 && currentPosition == match.Index + match.Value.Length)
+                    if (sciSelTextSize == 0 && currentPosition == match.Index + match.Value.Length)
                     {
                         return match;
                     }

@@ -332,30 +332,23 @@ namespace PluginCore.Helpers
 
         static string GetAssemblyPath(Assembly assembly)
         {
-            string codeBase = assembly.CodeBase;
-
-            if (codeBase.ToLower().StartsWith(Uri.UriSchemeFile))
+            var codeBase = assembly.CodeBase;
+            if (!codeBase.ToLower().StartsWith(Uri.UriSchemeFile)) return assembly.Location;
+            // Skip over the file:// part
+            var start = Uri.UriSchemeFile.Length + Uri.SchemeDelimiter.Length;
+            if (codeBase[start] == '/') // third slash means a local path
             {
-                // Skip over the file:// part
-                int start = Uri.UriSchemeFile.Length + Uri.SchemeDelimiter.Length;
-
-                if (codeBase[start] == '/') // third slash means a local path
-                {
-                    // Handle Windows Drive specifications
-                    if (codeBase[start + 2] == ':')
-                        ++start;
-                    // else leave the last slash so path is absolute
-                }
-                else // It's either a Windows Drive spec or a share
-                {
-                    if (codeBase[start + 1] != ':')
-                        start -= 2; // Back up to include two slashes
-                }
-
-                return codeBase.Substring(start);
+                // Handle Windows Drive specifications
+                if (codeBase[start + 2] == ':')
+                    ++start;
+                // else leave the last slash so path is absolute
             }
-
-            return assembly.Location;
+            else // It's either a Windows Drive spec or a share
+            {
+                if (codeBase[start + 1] != ':')
+                    start -= 2; // Back up to include two slashes
+            }
+            return codeBase.Substring(start);
         }
 
         public class Ellipsis

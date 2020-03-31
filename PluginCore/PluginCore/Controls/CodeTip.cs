@@ -4,6 +4,7 @@ using ScintillaNet;
 using ScintillaNet.Configuration;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PluginCore.Controls
@@ -55,22 +56,9 @@ namespace PluginCore.Controls
 
             editor.SetProperty("lexer.cpp.track.preprocessor", "0");
 
-            Language language = GetLanguage(editor.ConfigurationLanguage);
-            if (language is null) return;
-
-            UseStyle defaultStyle = null;
-            foreach (var useStyle in language.usestyles)
-            {
-                if (useStyle.name == "default")
-                {
-                    defaultStyle = useStyle;
-                    break;
-                }
-            }
-
-            if (defaultStyle is null)
-                return;
-
+            var language = GetLanguage(editor.ConfigurationLanguage);
+            var defaultStyle = language?.usestyles.FirstOrDefault(useStyle => useStyle.name == "default");
+            if (defaultStyle is null) return;
             codeTip.BackColor = DataConverter.BGRToColor(defaultStyle.BackgroundColor);
         }
 
@@ -78,8 +66,9 @@ namespace PluginCore.Controls
         {
             editor.StripTrailingSpaces();
 
-            int minIndentation = int.MaxValue;
-            for (var index = 0; index < editor.LineCount; index++)
+            var minIndentation = int.MaxValue;
+            var lineCount = editor.LineCount;
+            for (var index = 0; index < lineCount; index++)
             {
                 var indentation = editor.GetLineIndentation(index);
                 if (indentation == 0) continue;
@@ -88,7 +77,7 @@ namespace PluginCore.Controls
 
             if (minIndentation < int.MaxValue)
             {
-                for (var index = 0; index < editor.LineCount; index++)
+                for (var index = 0; index < lineCount; index++)
                 {
                     var indentation = editor.GetLineIndentation(index);
                     if (indentation == 0) continue;
@@ -99,9 +88,10 @@ namespace PluginCore.Controls
 
         void SizeEditor()
         {
-            var targetHeight = editor.LineCount * rowHeight;
+            var lineCount = editor.LineCount;
+            var targetHeight = lineCount * rowHeight;
             int targetWidth = 0;
-            for (var index = 0; index < editor.LineCount; index++)
+            for (var index = 0; index < lineCount; index++)
                 targetWidth = Math.Max(targetWidth, editor.LineLength(index) * columnWidth);
 
             var editorHeight = Math.Min(ScaleHelper.Scale(500), targetHeight);
@@ -122,8 +112,8 @@ namespace PluginCore.Controls
 
         void PositionEditor(ScintillaControl sci, int position)
         {
-            Point p = new Point(sci.PointXFromPosition(position), sci.PointYFromPosition(position));
-            Form mainForm = ((Form)PluginBase.MainForm);
+            var p = new Point(sci.PointXFromPosition(position), sci.PointYFromPosition(position));
+            var mainForm = ((Form)PluginBase.MainForm);
             p = mainForm.PointToClient(sci.PointToScreen(p));
 
             if (p.Y > codeTip.Height)

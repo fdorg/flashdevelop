@@ -2398,9 +2398,8 @@ namespace FlashDevelop
                 saveFileDialog.InitialDirectory = PathHelper.SnippetDir;
                 if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                 {
-                    string contents = CurrentDocument.SciControl.SelText;
                     string file = saveFileDialog.FileName;
-                    FileHelper.WriteFile(file, contents, Encoding.UTF8);
+                    FileHelper.WriteFile(file, CurrentDocument.SciControl.SelText, Encoding.UTF8);
                 }
                 saveFileDialog.InitialDirectory = prevRootPath;
                 saveFileDialog.Filter = prevFilter;
@@ -2427,9 +2426,8 @@ namespace FlashDevelop
                 saveFileDialog.InitialDirectory = PathHelper.TemplateDir;
                 if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                 {
-                    string contents = CurrentDocument.SciControl.SelText;
                     string file = saveFileDialog.FileName;
-                    FileHelper.WriteFile(file, contents, Encoding.UTF8);
+                    FileHelper.WriteFile(file, CurrentDocument.SciControl.SelText, Encoding.UTF8);
                 }
                 saveFileDialog.InitialDirectory = prevRootPath;
                 saveFileDialog.Filter = prevFilter;
@@ -3169,24 +3167,25 @@ namespace FlashDevelop
                 bool hasPrefix = true;
                 bool isAsterisk = false;
                 var sci = CurrentDocument.SciControl;
-                if (sci.SelText.Length > 0)
+                if (sci.SelTextSize > 0)
                 {
-                    isAsterisk = sci.SelText.StartsWith('#');
-                    if (sci.SelText.StartsWithOrdinal("0x") && sci.SelText.Length == 8)
+                    var selText = sci.SelText;
+                    isAsterisk = selText.StartsWith('#');
+                    if (selText.StartsWithOrdinal("0x") && sci.SelTextSize == 8)
                     {
-                        int convertedColor = DataConverter.StringToColor(sci.SelText);
+                        int convertedColor = DataConverter.StringToColor(selText);
                         colorDialog.Color = ColorTranslator.FromWin32(convertedColor);
                     }
-                    else if (sci.SelText.StartsWith('#') && sci.SelText.Length == 7)
+                    else if (selText.StartsWith('#') && sci.SelTextSize == 7)
                     {
-                        string foundColor = sci.SelText.Replace("#", "0x");
+                        string foundColor = selText.Replace("#", "0x");
                         int convertedColor = DataConverter.StringToColor(foundColor);
                         colorDialog.Color = ColorTranslator.FromWin32(convertedColor);
                     }
-                    else if (sci.SelText.Length == 6)
+                    else if (sci.SelTextSize == 6)
                     {
                         hasPrefix = false;
-                        int convertedColor = DataConverter.StringToColor("0x" + sci.SelText);
+                        int convertedColor = DataConverter.StringToColor("0x" + selText);
                         colorDialog.Color = ColorTranslator.FromWin32(convertedColor);
                     }
                 }
@@ -3481,18 +3480,19 @@ namespace FlashDevelop
 
         bool? CommentSelection()
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
-            int selEnd = sci.SelectionEnd;
-            int selStart = sci.SelectionStart;
-            string commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
-            string commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
-            if (sci.SelText.StartsWithOrdinal(commentStart) && sci.SelText.EndsWithOrdinal(commentEnd))
+            var sci = CurrentDocument.SciControl;
+            var selEnd = sci.SelectionEnd;
+            var selStart = sci.SelectionStart;
+            var commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
+            var commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
+            var selText = sci.SelText;
+            if (selText.StartsWithOrdinal(commentStart) && selText.EndsWithOrdinal(commentEnd))
             {
                 sci.BeginUndoAction();
                 try
                 {
-                    int indexLength = sci.SelText.Length - commentStart.Length - commentEnd.Length;
-                    string withoutComment = sci.SelText.Substring(commentStart.Length, indexLength);
+                    var indexLength = sci.SelTextSize - commentStart.Length - commentEnd.Length;
+                    var withoutComment = selText.Substring(commentStart.Length, indexLength);
                     sci.ReplaceSel(withoutComment);
                 }
                 finally
@@ -3501,7 +3501,7 @@ namespace FlashDevelop
                 }
                 return false;
             }
-            if (sci.SelText.Length > 0)
+            if (sci.SelTextSize > 0)
             {
                 sci.BeginUndoAction();
                 try
@@ -3631,7 +3631,7 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleBlockComment(object sender, EventArgs e)
         {
-            if (CurrentDocument.SciControl.SelText.Length > 0) CommentSelection(null, null);
+            if (CurrentDocument.SciControl.SelTextSize > 0) CommentSelection(null, null);
             else UncommentBlock(null, null);
         }
 

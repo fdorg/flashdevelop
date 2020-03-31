@@ -243,6 +243,7 @@ namespace ASCompletion.Completion
         /// Handle shortcuts
         /// </summary>
         /// <param name="keys">Test keys</param>
+        /// <param name="sci">Scintilla Control</param>
         /// <returns></returns>
         public static bool OnShortcut(Keys keys, ScintillaControl sci)
         {
@@ -323,6 +324,8 @@ namespace ASCompletion.Completion
 
         /// <summary>
         /// Fire the completion automatically
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="position">Cursor position</param>
         /// </summary>
         static void AutoStartCompletion(ScintillaControl sci, int position)
         {
