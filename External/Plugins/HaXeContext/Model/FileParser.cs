@@ -333,7 +333,9 @@ namespace HaXeContext.Model
                             {
                                 c2 = src[i];
                                 if (c2 == '\\') { i++; continue; }
-                                if (c2 == '/')
+                                if (c2 == '/' 
+                                    // for example: *\/
+                                    && src[i - 1] != '\\')
                                 {
                                     end = true;
                                     break;
