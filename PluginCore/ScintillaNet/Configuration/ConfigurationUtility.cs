@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using PluginCore;
@@ -12,43 +12,38 @@ namespace ScintillaNet.Configuration
     {
         protected Assembly _assembly;
 
-        private const string coloringStart = "<!-- COLORING_START -->";
-        private const string coloringEnd = "<!-- COLORING_END -->";
+        const string coloringStart = "<!-- COLORING_START -->";
+        const string coloringEnd = "<!-- COLORING_END -->";
 
         protected virtual byte[] LoadFile(string filename, ConfigFile parent)
         {
             var res = OpenFile(filename, parent);
-            if (res != null)
-            {
-                var buf = new byte[res.Length];
-                res.Read(buf ,0 ,buf.Length);
-                return buf;
-            }
-            return null;
+            if (res is null) return null;
+            var result = new byte[res.Length];
+            res.Read(result, 0, result.Length);
+            return result;
         }
 
         protected virtual Stream OpenFile(string filename, ConfigFile parent)
         {
-            Stream res;
             filename = filename.Replace("$(AppDir)", PathHelper.AppDir);
             filename = filename.Replace("$(UserAppDir)", PathHelper.UserAppDir);
             filename = filename.Replace("$(BaseDir)", PathHelper.BaseDir);
-            if (File.Exists(filename)) res = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            else res = _assembly.GetManifestResourceStream($"{_assembly.GetName().Name}.{filename.Replace("\\", ".")}");
-            if (res is null && parent?.filename != null)
+            var result = File.Exists(filename) ? new FileStream(filename, FileMode.Open, FileAccess.Read) : _assembly.GetManifestResourceStream($"{_assembly.GetName().Name}.{filename.Replace("\\", ".")}");
+            if (result is null && parent?.filename != null)
             {
                 int p = parent.filename.LastIndexOf('\\');
                 if (p > 0) return OpenFile($"{parent.filename.Substring(0, p)}\\{filename}", null);
             }
-            return res;
+            return result;
         }
 
         protected object Deserialize(TextReader reader, Type aType)
         {
-            XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new[]{aType})[0];
-            object local = xmlSerializer.Deserialize(reader);
+            var xmlSerializer = XmlSerializer.FromTypes(new[]{aType})[0];
+            var result = xmlSerializer.Deserialize(reader);
             reader.Close();
-            return local;
+            return result;
         }
 
         public ConfigurationUtility(Assembly assembly)
@@ -56,20 +51,11 @@ namespace ScintillaNet.Configuration
             _assembly = assembly;
         }
 
-        public virtual object LoadConfiguration(ConfigFile parent)
-        {
-            return LoadConfiguration(typeof(Scintilla), "ScintillaNET.xml", parent);
-        }
+        public virtual object LoadConfiguration(ConfigFile parent) => LoadConfiguration(typeof(Scintilla), "ScintillaNET.xml", parent);
 
-        public virtual object LoadConfiguration(string filename, ConfigFile parent)
-        {
-            return LoadConfiguration(typeof(Scintilla), filename, parent);
-        }
+        public virtual object LoadConfiguration(string filename, ConfigFile parent) => LoadConfiguration(typeof(Scintilla), filename, parent);
 
-        public virtual object LoadConfiguration(Type configType, ConfigFile parent)
-        {
-            return LoadConfiguration(configType, "ScintillaNET.xml", parent);
-        }
+        public virtual object LoadConfiguration(Type configType, ConfigFile parent) => LoadConfiguration(configType, "ScintillaNET.xml", parent);
 
         public virtual object LoadConfiguration(Type configType, string filename, ConfigFile parent)
         {
@@ -106,41 +92,20 @@ namespace ScintillaNet.Configuration
             return configFile;
         }
 
-        public virtual object LoadConfiguration()
-        {
-            return LoadConfiguration(typeof(Scintilla), "ScintillaNET.xml", null);
-        }
+        public virtual object LoadConfiguration() => LoadConfiguration(typeof(Scintilla), "ScintillaNET.xml", null);
 
-        public virtual object LoadConfiguration(string filename)
-        {
-            return LoadConfiguration(typeof(Scintilla), filename, null);
-        }
+        public virtual object LoadConfiguration(string filename) => LoadConfiguration(typeof(Scintilla), filename, null);
 
-        public virtual object LoadConfiguration(Type configType)
-        {
-            return LoadConfiguration(configType, "ScintillaNET.xml", null);
-        }
+        public virtual object LoadConfiguration(Type configType) => LoadConfiguration(configType, "ScintillaNET.xml", null);
 
-        public virtual object LoadConfiguration(Type configType, string filename)
-        {
-            return LoadConfiguration(configType, filename, null);
-        }
+        public virtual object LoadConfiguration(Type configType, string filename) => LoadConfiguration(configType, filename, null);
 
         public virtual object LoadConfiguration(string[] files)
         {
-            Scintilla configFile = new Scintilla();
-            List<include> includes = new List<include>();
-            foreach (var file in files)
-            {
-                include inc = new include();
-                inc.file = file;
-                includes.Add(inc);
-            }
-            configFile.includes = includes.ToArray();
-            configFile.init(this, null);
-            return configFile;
+            var result = new Scintilla();
+            result.includes = files.Select(file => new include {file = file}).ToArray();
+            result.init(this, null);
+            return result;
         }
-        
     }
-
 }

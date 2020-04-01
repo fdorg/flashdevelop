@@ -2,10 +2,10 @@ using System;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class ConfigItem
     {
-        [NonSerialized()]
+        [NonSerialized]
         protected ConfigFile _parent;
 
         public virtual void init(ConfigurationUtility utility, ConfigFile theParent)
@@ -13,7 +13,5 @@ namespace ScintillaNet.Configuration
             if (theParent is null) _parent = (ConfigFile)this;
             else _parent = theParent;
         }
-        
     }
-
 }

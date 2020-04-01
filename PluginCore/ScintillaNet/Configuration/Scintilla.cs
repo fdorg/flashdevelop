@@ -6,10 +6,10 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class Scintilla : ConfigFile
     {
-        private Language[] _languages;
+        Language[] _languages;
         
         [XmlArrayItem("value")]
         [XmlArray("globals")]
@@ -35,10 +35,10 @@ namespace ScintillaNet.Configuration
 
         public bool IsKnownFile(string file)
         {
-            string filemask = Path.GetExtension(file).ToLower().Substring(1);
-            foreach (Language lang in this.AllLanguages)
+            var filemask = Path.GetExtension(file).ToLower().Substring(1);
+            foreach (var lang in AllLanguages)
             {
-                string extensions = "," + lang.fileextensions + ",";
+                var extensions = "," + lang.fileextensions + ",";
                 if (extensions.Contains("," + filemask + ","))
                 {
                     return true;
@@ -49,23 +49,17 @@ namespace ScintillaNet.Configuration
 
         public string GetLanguageFromFile(string file)
         {
-            string defaultLanguage = "text";
-            string filemask = Path.GetExtension(file);
-            if (filemask.Length == 0) return defaultLanguage;
+            var result = "text";
+            var filemask = Path.GetExtension(file);
+            if (filemask.Length == 0) return result;
             filemask = filemask.ToLower().Substring(1);
-            foreach (Language lang in this.AllLanguages)
+            foreach (var lang in AllLanguages)
             {
-                string extensions = ","+lang.fileextensions+",";
-                if (extensions.Contains(",*,"))
-                {
-                    defaultLanguage = lang.name;
-                }
-                if (extensions.Contains(","+filemask+","))
-                {
-                    return lang.name;
-                }
+                var extensions = "," + lang.fileextensions + ",";
+                if (extensions.Contains(",*,")) result = lang.name;
+                if (extensions.Contains(","+filemask+",")) return lang.name;
             }
-            return defaultLanguage;
+            return result;
         }
         
         public Language[] AllLanguages
@@ -74,14 +68,14 @@ namespace ScintillaNet.Configuration
             {
                 if (_languages is null)
                 {
-                    Hashtable result = new Hashtable();
+                    var result = new Hashtable();
                     if (MasterScintilla == this)
                     {
                         // Check the children first (from the end)
                         for (int i = includedFiles.Length-1; i>-1; i--)
                         {
-                            Scintilla child = (Scintilla)(includedFiles[i]);
-                            Language[] kids = child.AllLanguages;
+                            var child = (Scintilla)(includedFiles[i]);
+                            var kids = child.AllLanguages;
                             foreach (Language k in kids)
                             {
                                 if (!result.ContainsKey(k.name )) result.Add(k.name, k);
@@ -108,7 +102,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length-1; i>-1; i--)
                 {
-                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)(includedFiles[i]);
                     result = child.GetValue(keyName);
                     if (result != null) return result;
                 }
@@ -185,10 +179,7 @@ namespace ScintillaNet.Configuration
             return result;  
         }
 
-        public Language GetLanguage(string languageName)
-        {
-            return GetLanguages().Find(language => language.name == languageName);
-        }
+        public Language GetLanguage(string languageName) => GetLanguages().Find(language => language.name == languageName);
 
         public List<Language> GetLanguages()
         {
@@ -239,7 +230,5 @@ namespace ScintillaNet.Configuration
                 it.init(utility, _parent);
             }
         }
-        
     }
-
 }

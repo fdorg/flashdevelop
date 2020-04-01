@@ -4,17 +4,17 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class ConfigFile : ConfigItem
     {
-        [NonSerialized()]
+        [NonSerialized]
         protected ConfigFile[] includedFiles;
 
         [XmlArray("includes")]
         [XmlArrayItem("include")]
         public include[] includes;
 
-        [NonSerialized()]
+        [NonSerialized]
         public string filename;
 
         protected virtual Scintilla ChildScintilla => null;
@@ -37,7 +37,7 @@ namespace ScintillaNet.Configuration
             foreach (var include in includes) include.init(utility, _parent);
             foreach (var include in includes)
             {
-                var configFile = (ConfigFile)utility.LoadConfiguration(base.GetType(), include.file, _parent);
+                var configFile = (ConfigFile)utility.LoadConfiguration(GetType(), include.file, _parent);
                 addIncludedFile(configFile);
             }
             CollectScintillaNodes(null);
@@ -69,7 +69,5 @@ namespace ScintillaNet.Configuration
                 list.CopyTo(ChildScintilla.includedFiles);
             }
         }
-        
     }
-
 }

@@ -3,10 +3,10 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class UseKeyword : ConfigItem
     {
-        [XmlAttribute()]
+        [XmlAttribute]
         public int key;
 
         [XmlAttribute("name")]
@@ -14,7 +14,5 @@ namespace ScintillaNet.Configuration
 
         [XmlAttribute("class")]
         public string cls;
-        
     }
-    
 }

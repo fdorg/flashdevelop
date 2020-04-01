@@ -8,12 +8,12 @@ using PluginCore.Helpers;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class Language : ConfigItem
     {
         public Lexer lexer;
         
-        [XmlAttribute()]
+        [XmlAttribute]
         public string name;
         
         [XmlElement("line-comment")]
@@ -42,43 +42,23 @@ namespace ScintillaNet.Configuration
         [XmlArrayItem("style")]
         public UseStyle[] usestyles;
 
-        public UseStyle GetUseStyle(int style)
-        {
-            foreach (UseStyle us in this.usestyles)
-            {
-                if (us.key == style)
-                {
-                    return us;
-                }
-            }
-            return null;
-        }
-        
-        public UseKeyword GetUseKeyword(int key)
-        {
-            foreach (UseKeyword uk in this.usekeywords)
-            {
-                if (uk.key == key)
-                {
-                    return uk;
-                }
-            }
-            return null;
-        }
-        
+        public UseStyle GetUseStyle(int style) => usestyles.FirstOrDefault(us => us.key == style);
+
+        public UseKeyword GetUseKeyword(int key) => usekeywords.FirstOrDefault(uk => uk.key == key);
+
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
             if (usekeywords is null) usekeywords = Array.Empty<UseKeyword>();
             if (usestyles is null) usestyles = Array.Empty<UseStyle>();
-            for (int j = 0; j<usekeywords.Length; j++)
+            foreach (var it in usekeywords)
             {
-                usekeywords[j].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int i = 0; i<usestyles.Length; i++)
+            foreach (var it in usestyles)
             {
-                usestyles[i].language = this;
-                usestyles[i].init(utility, _parent);
+                it.language = this;
+                it.init(utility, _parent);
             }
 
             lexer?.init(utility, _parent);
@@ -89,13 +69,11 @@ namespace ScintillaNet.Configuration
 
         public void AddExtension(string extension)
         {
-            if (!HasExtension(extension))
-            {
-                if (string.IsNullOrEmpty(fileextensions))
-                    fileextensions = extension;
-                else
-                    fileextensions += "," + extension;
-            }
+            if (HasExtension(extension)) return;
+            if (string.IsNullOrEmpty(fileextensions))
+                fileextensions = extension;
+            else
+                fileextensions += "," + extension;
         }
 
         public bool RemoveExtension(string extension)
@@ -112,16 +90,12 @@ namespace ScintillaNet.Configuration
 
         public void SaveExtensions()
         {
-            string langPath = Path.Combine(PathHelper.SettingDir, "Languages");
-            string filePath = Path.Combine(langPath, name + ".xml");
+            var filePath = Path.Combine(PathHelper.SettingDir, "Languages", $"{name}.xml");
             var doc = new XmlDocument();
             doc.Load(filePath);
-            XmlNode node = doc.SelectSingleNode("/Scintilla/languages/language/file-extensions");
-            if (node != null)
-                node.InnerText = fileextensions;
+            var node = doc.SelectSingleNode("/Scintilla/languages/language/file-extensions");
+            if (node != null) node.InnerText = fileextensions;
             doc.Save(filePath);
         }
-
     }
-    
 }
