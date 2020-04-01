@@ -142,10 +142,16 @@ namespace PluginCore
         /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
         public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> value)
         {
-            if (value is null) return true;
-            if (value is IList<TSource> list) return list.Count == 0;
-            using var enumerator = value.GetEnumerator();
-            return !enumerator.MoveNext();
+            switch (value)
+            {
+                case null: return true;
+                case IList<TSource> list: return list.Count == 0;
+                default:
+                {
+                    using var enumerator = value.GetEnumerator();
+                    return !enumerator.MoveNext();
+                }
+            }
         }
 
         /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>

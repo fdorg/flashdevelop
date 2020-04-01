@@ -65,28 +65,17 @@ namespace PluginCore.Utilities
                         r = c1.CompareTo(c2);
                         if (r != 0) return r;
                     }
-                    else if (!letter1 && letter2)
-                    {
-                        return -1;
-                    }
-                    else if (letter1 && !letter2)
-                    {
-                        return 1;
-                    }
+                    else if (!letter1) return -1;
+                    else return 1;
                 }
                 else if (sp1 && sp2)
                 {
                     r = CompareNum(s1, ref i1, s2, ref i2, zeroesFirst);
                     if (r != 0) return r;
                 }
-                else if (sp1)
-                {
-                    return -1;
-                }
-                else if (sp2)
-                {
-                    return 1;
-                }
+                else if (sp1) return -1;
+                else return 1;
+
                 i1++;
                 i2++;
                 if ((i1 >= s1.Length) && (i2 >= s2.Length))
@@ -94,14 +83,8 @@ namespace PluginCore.Utilities
                     return 0;
                 }
 
-                if (i1 >= s1.Length)
-                {
-                    return -1;
-                }
-                if (i2 >= s2.Length)
-                {
-                    return 1;
-                }
+                if (i1 >= s1.Length) return -1;
+                if (i2 >= s2.Length) return 1;
             }
         }
 

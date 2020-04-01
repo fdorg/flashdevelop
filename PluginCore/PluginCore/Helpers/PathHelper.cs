@@ -51,9 +51,10 @@ namespace PluginCore.Helpers
         {
             get
             {
-                string custom = PluginBase.Settings.CustomSnippetDir;
-                if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                return Path.Combine(BaseDir, "Snippets");
+                var path = PluginBase.Settings.CustomSnippetDir;
+                return Directory.Exists(path)
+                    ? path
+                    : Path.Combine(BaseDir, "Snippets");
             }
         }
 
@@ -64,9 +65,10 @@ namespace PluginCore.Helpers
         {
             get
             {
-                string custom = PluginBase.Settings.CustomTemplateDir;
-                if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                return Path.Combine(BaseDir, "Templates");
+                var path = PluginBase.Settings.CustomTemplateDir;
+                return Directory.Exists(path)
+                    ? path
+                    : Path.Combine(BaseDir, "Templates");
             }
         }
 
@@ -77,9 +79,10 @@ namespace PluginCore.Helpers
         {
             get
             {
-                string custom = PluginBase.Settings.CustomProjectsDir;
-                if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                return Path.Combine(AppDir, "Projects");
+                var path = PluginBase.Settings.CustomProjectsDir;
+                return Directory.Exists(path)
+                    ? path
+                    : Path.Combine(AppDir, "Projects");
             }
         }
 
@@ -133,28 +136,28 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string ResolveMMConfig()
         {
-            string homePath = Environment.GetEnvironmentVariable("HOMEPATH");
-            string homeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
-            if (!string.IsNullOrEmpty(homeDrive) && homePath != null)
+            var homePath = Environment.GetEnvironmentVariable("HOMEPATH");
+            if (homePath != null)
             {
-                try
+                var homeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
+                if (!string.IsNullOrEmpty(homeDrive))
                 {
-                    string tempPath = homeDrive + homePath;
-                    DirectorySecurity security = Directory.GetAccessControl(tempPath);
-                    AuthorizationRuleCollection rules = security.GetAccessRules(true, true, typeof(SecurityIdentifier));
-                    WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
-                    foreach (FileSystemAccessRule rule in rules)
+                    try
                     {
-                        if (currentUser.User.Equals(rule.IdentityReference))
+                        var tempPath = homeDrive + homePath;
+                        var security = Directory.GetAccessControl(tempPath);
+                        var rules = security.GetAccessRules(true, true, typeof(SecurityIdentifier));
+                        var currentUser = WindowsIdentity.GetCurrent();
+                        foreach (FileSystemAccessRule rule in rules)
                         {
-                            if (rule.AccessControlType.Equals(AccessControlType.Allow))
+                            if (currentUser.User.Equals(rule.IdentityReference) && rule.AccessControlType.Equals(AccessControlType.Allow))
                             {
                                 return Path.Combine(tempPath, "mm.cfg");
                             }
                         }
                     }
+                    catch {} // Not working...
                 }
-                catch {} // Not working...
             }
             string userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
             return Path.Combine(userProfile, "mm.cfg");

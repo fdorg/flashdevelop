@@ -18,7 +18,7 @@ namespace PluginCore.Helpers
                 {
                     dlgt.EndInvoke(ar);
                 }
-                catch (Exception)
+                catch
                 {
                     // Something wrong, handling for possible leaks
                 }
@@ -37,7 +37,7 @@ namespace PluginCore.Helpers
                 {
                     dlgt.EndInvoke(ar);
                 }
-                catch (Exception)
+                catch
                 {
                     // Something wrong, handling for possible leaks
                 }
@@ -56,7 +56,7 @@ namespace PluginCore.Helpers
                     {
                         dlgt.EndInvoke(ar);
                     }
-                    catch (Exception)
+                    catch
                     {
                         // Something wrong, handling for possible leaks
                     }
@@ -67,13 +67,13 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a basic process
         /// </summary>
-        private static void Start(string path)
+        static void Start(string path)
         {
             try
             {
                 Process.Start(path);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TraceManager.AddAsync(ex.Message);
             }
@@ -82,7 +82,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with arguments
         /// </summary>
-        private static void Start(string path, string arguments)
+        static void Start(string path, string arguments)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with start info
         /// </summary>
-        private static void Start(ProcessStartInfo psi)
+        static void Start(ProcessStartInfo psi)
         {
             try
             {
@@ -112,10 +112,10 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Event delegates of the class
         /// </summary>
-        private delegate void StartDelegate1(string path);
-        private delegate void StartDelegate2(string path, string arguments);
-        private delegate void StartDelegate3(ProcessStartInfo psi);
+        delegate void StartDelegate1(string path);
 
+        delegate void StartDelegate2(string path, string arguments);
+
+        delegate void StartDelegate3(ProcessStartInfo psi);
     }
-
 }

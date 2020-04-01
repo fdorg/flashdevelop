@@ -285,14 +285,8 @@ namespace PluginCore
         /// <summary>
         /// 
         /// </summary>
-        public static void ScrollToLeft(Control ctrl)
-        {
-            SendMessage(ctrl.Handle, WM_HSCROLL, SB_LEFT, 0);
-        }
+        public static void ScrollToLeft(Control ctrl) => SendMessage(ctrl.Handle, WM_HSCROLL, SB_LEFT, 0);
 
         #endregion
-
     }
-
 }
-

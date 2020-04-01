@@ -1,3 +1,5 @@
+using System;
+
 namespace PluginCore.Utilities
 {
     public class LineEndDetector
@@ -18,22 +20,21 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Basic detection of text's EOL marker
         /// </summary>
-        public static int DetectNewLineMarker(string text, int defaultMarker)
-        {
-            int cr = text.IndexOf('\r');
-            int lf = text.IndexOf('\n');
-            if ((cr >= 0) && (lf >= 0))
-            {
-                if (cr < lf) return 0;
-                return 2;
-            }
+        [Obsolete("Please use LineEndDetector.DetectNewLineMarker(string text)")]
+        public static int DetectNewLineMarker(string text, int defaultMarker) => DetectNewLineMarker(text);
 
-            if ((cr < 0) && (lf < 0))
-            {
-                return (int)PluginBase.Settings.EOLMode;
-            }
-            if (lf < 0) return 1;
-            return 2;
+        /// <summary>
+        /// Basic detection of text's EOL marker
+        /// </summary>
+        public static int DetectNewLineMarker(string text)
+        {
+            var cr = text.IndexOf('\r');
+            var lf = text.IndexOf('\n');
+            if (cr >= 0 && lf >= 0) return cr >= lf ? 2 : 0;
+            if (cr < 0 && lf < 0) return (int) PluginBase.Settings.EOLMode;
+            return lf < 0
+                ? 1
+                : 2;
         }
     }
 }

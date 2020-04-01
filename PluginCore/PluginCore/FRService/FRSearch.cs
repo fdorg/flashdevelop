@@ -68,8 +68,7 @@ namespace PluginCore.FRService
         {
             var p = text.IndexOf('\\');
             if (p == -1) return text;
-
-            var result = new StringBuilder(text.Substring(0, p));
+            var sb = new StringBuilder(text.Substring(0, p));
             var n = text.Length;
             for (var i = p; i < n; i++)
             {
@@ -77,15 +76,15 @@ namespace PluginCore.FRService
                 {
                     i++;
                     var c = text[i];
-                    if (c == 'r') result.Append('\r');
-                    else if (c == 'n') result.Append('\n');
-                    else if (c == 't') result.Append('\t');
-                    else if (c == 'v') result.Append('\v');
-                    else result.Append(c);
+                    if (c == 'r') sb.Append('\r');
+                    else if (c == 'n') sb.Append('\n');
+                    else if (c == 't') sb.Append('\t');
+                    else if (c == 'v') sb.Append('\v');
+                    else sb.Append(c);
                 }
-                else result.Append(text[i]);
+                else sb.Append(text[i]);
             }
-            return result.ToString();
+            return sb.ToString();
         }
 
         /// <summary>
@@ -125,15 +124,15 @@ namespace PluginCore.FRService
 
         static int CountNewLines(string src)
         {
-            int lines = 0;
-            char c2 = ' ';
+            var result = 0;
+            var c2 = ' ';
             foreach (var c1 in src)
             {
-                if (c1 == '\r') lines++;
-                else if (c1 == '\n' && c2 != '\r') lines++;
+                if (c1 == '\r') result++;
+                else if (c1 == '\n' && c2 != '\r') result++;
                 c2 = c1;
             }
-            return lines;
+            return result;
         }
 
         public static void ExtractResultsLineText(List<SearchMatch> results, string src)
@@ -245,11 +244,10 @@ namespace PluginCore.FRService
         string ReplaceAllMatches(string src, string replacement, ICollection<SearchMatch> matches)
         {
             if (matches.IsNullOrEmpty()) return src;
-            StringBuilder sb = new StringBuilder();
-            string original = replacement;
-            int lastIndex = 0;
-
-            foreach (SearchMatch match in matches)
+            var sb = new StringBuilder();
+            var original = replacement;
+            var lastIndex = 0;
+            foreach (var match in matches)
             {
                 sb.Append(src.Substring(lastIndex, match.Index - lastIndex));
                 // replace text
@@ -442,15 +440,13 @@ namespace PluginCore.FRService
 
         List<SearchMatch> SearchSource(string src, int startIndex, int startLine)
         {
-            List<SearchMatch> results = new List<SearchMatch>();
+            var results = new List<SearchMatch>();
 
             // raw search results
             if (needParsePattern) BuildRegex(pattern);
-            if (operation is null)
-                return results;
-            MatchCollection matches = operation.Matches(src, startIndex);
-            if (matches.Count == 0) 
-                return results;
+            if (operation is null) return results;
+            var matches = operation.Matches(src, startIndex);
+            if (matches.Count == 0) return results;
 
             // index sources
             int len = src.Length;

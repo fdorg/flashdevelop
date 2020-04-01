@@ -10,15 +10,13 @@ namespace PluginCore.Utilities
     public class PathWalker
     {
         public delegate void PathWalkerCompleteHandler(PathWalker sender, List<string> foundFiles);
-
         public event PathWalkerCompleteHandler OnComplete;
-
-        private readonly string basePath;
-        private readonly string fileMask;
-        private readonly bool recursive;
-        private List<string> knownPathes;
-        private List<string> foundFiles;
-        private readonly Regex reUnsafeMask = new Regex("^\\*(\\.[a-z0-9]{3})$"); 
+        readonly string basePath;
+        readonly string fileMask;
+        readonly bool recursive;
+        List<string> knownPathes;
+        List<string> foundFiles;
+        readonly Regex reUnsafeMask = new Regex("^\\*(\\.[a-z0-9]{3})$"); 
 
         public PathWalker(string basePath, string fileMask, bool recursive)
         {
@@ -73,7 +71,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Explores the content of the folder
         /// </summary> 
-        private void ExploreFolder(string path)
+        void ExploreFolder(string path)
         {
             //Avoids performing the split if there are no semi-colons or if fileMask is null which would throw a null-object-reference exception
             //Not sure if the fileMask NULL case is handled outside, I'll leave that for you to decide whether or not to keep
@@ -93,7 +91,7 @@ namespace PluginCore.Utilities
         /// </summary>
         /// <param name="path">The root folder to explore.</param>
         /// <param name="masks">A collection of file masks to match against.</param>
-        private void ExploreFolderWithMasks(string path, string[] masks)
+        void ExploreFolderWithMasks(string path, string[] masks)
         {
             knownPathes.Add(path);
 
@@ -101,7 +99,7 @@ namespace PluginCore.Utilities
             foreach (var mask in masks)
             {
                 var files = Directory.GetFiles(path, mask);
-                var control = mask.Length == 5 ? getMaskControl(mask) : null;
+                var control = mask.Length == 5 ? GetMaskControl(mask) : null;
 
                 foreach (var file in files)
                 {
@@ -133,12 +131,10 @@ namespace PluginCore.Utilities
             }
         }
 
-        private string getMaskControl(string mask)
+        string GetMaskControl(string mask)
         {
             var m = reUnsafeMask.Match(mask);
             return m.Success ? m.Groups[1].Value : null;
         }
-
     }
-
 }

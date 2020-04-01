@@ -60,10 +60,7 @@ namespace PluginCore
             set => this.value = value;
         }
 
-        public override string ToString()
-        {
-            return string.IsNullOrEmpty(key) ? "New argument" : "$(" + key + ")";
-        }
+        public override string ToString() => string.IsNullOrEmpty(key) ? "New argument" : "$(" + key + ")";
     }
 
     #endregion
@@ -214,5 +211,4 @@ namespace PluginCore
     }
 
     #endregion
-
 }

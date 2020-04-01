@@ -11,9 +11,8 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Bitmap LoadBitmap(string filename)
         {
-            string prefix = "PluginCore.PluginCore.Resources.";
-            Assembly assebly = Assembly.GetExecutingAssembly();
-            return LoadBitmap(assebly, prefix + filename);
+            var assembly = Assembly.GetExecutingAssembly();
+            return LoadBitmap(assembly, $"PluginCore.PluginCore.Resources.{filename}");
         }
 
         /// <summary>
@@ -21,10 +20,8 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Bitmap LoadBitmap(Assembly assembly, string fullpath)
         {
-            Stream stream = assembly.GetManifestResourceStream(fullpath);
+            var stream = assembly.GetManifestResourceStream(fullpath);
             return new Bitmap(stream);
         }
-
     }
-
 }

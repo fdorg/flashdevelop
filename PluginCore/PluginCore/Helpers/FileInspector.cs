@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -13,14 +14,10 @@ namespace PluginCore.Helpers
 
         public static bool IsFLA(string ext) => ext == ".fla";
 
-        public static bool IsActionScript(ICollection paths)
-        {
-            foreach (string path in paths)
-            {
-                if (!IsActionScript(Path.GetExtension(path).ToLower())) return false;
-            }
-            return true;
-        }
+        [Obsolete("Please use FileInspector.IsActionScript(ICollection<string> paths)")]
+        public static bool IsActionScript(ICollection paths) => IsActionScript((ICollection<string>) paths);
+
+        public static bool IsActionScript(ICollection<string> paths) => paths.All(path => IsActionScript(Path.GetExtension(path).ToLower()));
 
         public static bool IsHaxeFile(string ext) => ext == ".hx" || ext == ".hxp";
 
@@ -44,14 +41,10 @@ namespace PluginCore.Helpers
 
         public static bool IsResource(string ext) => IsImage(ext) || IsSwf(ext) || IsFont(ext) || IsSound(ext);
 
-        public static bool IsResource(ICollection paths)
-        {
-            foreach (string path in paths)
-            {
-                if (!IsResource(Path.GetExtension(path).ToLower())) return false;
-            }
-            return true;
-        }
+        [Obsolete("Please use FileInspector.IsResource(ICollection<string> paths)")]
+        public static bool IsResource(ICollection paths) => IsResource((ICollection<string>) paths);
+
+        public static bool IsResource(ICollection<string> paths) => paths.All(path => IsResource(Path.GetExtension(path).ToLower()));
 
         public static bool ShouldUseShellExecute(string path)
         {

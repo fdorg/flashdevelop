@@ -77,20 +77,20 @@ namespace PluginCore.Utilities
                 if (IsRunning) TraceManager.AddAsync("Kill active process...", -3);
                 IsRunning = false;
                 // recursive kill (parent and children)
-                var KillerP = new Process();
-                KillerP.StartInfo.FileName = "taskkill.exe";
-                KillerP.StartInfo.Arguments = "/PID " + HostedProcess.Id + " /T /F";
-                KillerP.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                KillerP.Start();
-                KillerP.WaitForExit();
+                var process = new Process();
+                process.StartInfo.FileName = "taskkill.exe";
+                process.StartInfo.Arguments = "/PID " + HostedProcess.Id + " /T /F";
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.Start();
+                process.WaitForExit();
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
             }
         }
-        
-        private void ReadOutput()
+
+        void ReadOutput()
         {
             while (true)
             {
@@ -99,8 +99,8 @@ namespace PluginCore.Utilities
                 Output?.Invoke(this, line);
             }
         }
-        
-        private void ReadError()
+
+        void ReadError()
         {
             while (true)
             {
@@ -109,8 +109,8 @@ namespace PluginCore.Utilities
                 Error?.Invoke(this, line);
             }
         }
-        
-        private void TaskFinished(IAsyncResult result)
+
+        void TaskFinished(IAsyncResult result)
         {
             lock (this) 
             {
@@ -135,5 +135,6 @@ namespace PluginCore.Utilities
     public delegate void LineOutputHandler(object sender, string line);
     public delegate void ProcessEndedHandler(object sender, int exitCode);
     public delegate void ProcessOutputHandler(object sender, string line);
-    delegate void NextTask();
+
+    internal delegate void NextTask();
 }

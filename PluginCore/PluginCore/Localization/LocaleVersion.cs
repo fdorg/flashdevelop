@@ -44,5 +44,4 @@ namespace PluginCore.Localization
         [System.ComponentModel.Browsable(false)]
         Invalid = -1
     }
-
 }

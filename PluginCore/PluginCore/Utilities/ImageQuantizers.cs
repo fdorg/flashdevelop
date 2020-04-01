@@ -69,7 +69,7 @@ namespace PluginCore.PluginCore.Utilities
         /// <returns>The quantized value</returns>
         protected override byte QuantizePixel(Color32* pixel)
         {
-            byte paletteIndex = (byte)_maxColors;   // The color at [_maxColors] is set to transparent
+            var paletteIndex = (byte)_maxColors;   // The color at [_maxColors] is set to transparent
 
             // Get the palette index if this non-transparent
             if (pixel->Alpha > 0)
@@ -469,10 +469,7 @@ namespace PluginCore.PluginCore.Utilities
             _newColor = newColor;
         }
 
-        protected override byte QuantizePixel(Color32* pixel)
-        {
-            return pixel->Alpha;
-        }
+        protected override byte QuantizePixel(Color32* pixel) => pixel->Alpha;
 
         protected override ColorPalette GetPalette(ColorPalette original)
         {
@@ -570,7 +567,7 @@ namespace PluginCore.PluginCore.Utilities
         {
             // Define the source data pointers. The source row is a byte to
             // keep addition of the stride value easier (as this is in bytes)
-            byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
+            var pSourceRow = (byte*)sourceData.Scan0.ToPointer();
 
             // Loop through each row
             for (int row = 0; row < height; row++)

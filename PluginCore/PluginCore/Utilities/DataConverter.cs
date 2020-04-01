@@ -92,7 +92,8 @@ namespace PluginCore.Utilities
             }
             return 0;
         }
-        private static int TO_COLORREF(int c) => (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
+
+        static int TO_COLORREF(int c) => (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
 
         /// <summary>
         /// Converts a color to a string
@@ -105,10 +106,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Converts a integer (BGR order) to a color
         /// </summary>
-        public static Color BGRToColor(int bgr)
-        {
-            return Color.FromArgb((bgr >> 0) & 0xff, (bgr >> 8) & 0xff, (bgr >> 16) & 0xff);
-        }
+        public static Color BGRToColor(int bgr) => Color.FromArgb((bgr >> 0) & 0xff, (bgr >> 8) & 0xff, (bgr >> 16) & 0xff);
 
         /// <summary>
         /// Converts a color to an integer (BGR order)
@@ -120,5 +118,4 @@ namespace PluginCore.Utilities
         /// </summary>
         public static int ColorToInt32(Color color) => ColorToBGR(color);
     }
-
 }

@@ -10,12 +10,12 @@ namespace PluginCore.Utilities
         /// </summary>
         public static string Encode(byte[] bytes)
         {
-            string hex = "";
+            var result = string.Empty;
             foreach (var it in bytes)
             {
-                hex += it.ToString("x2");
+                result += it.ToString("x2");
             }
-            return hex;
+            return result;
         }
 
         /// <summary>
@@ -23,15 +23,14 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] Decode(string base16)
         {
-            byte[] bytes = new byte[base16.Length / 2];
+            var result = new byte[base16.Length / 2];
             for (int i = 0; i < base16.Length; i += 2)
             {
-                byte value = (byte)Convert.ToInt32(base16.Substring(i, 2), 16);
-                bytes.SetValue(value, i / 2);
+                var value = (byte)Convert.ToInt32(base16.Substring(i, 2), 16);
+                result.SetValue(value, i / 2);
             }
-            return bytes;
+            return result;
         }
-
     }
 
     public class Base64
@@ -66,7 +65,6 @@ namespace PluginCore.Utilities
             HMACMD5 hmac = new HMACMD5(key);
             return hmac.ComputeHash(bytes);
         }
-
     }
 
     public class SHA1
@@ -164,7 +162,5 @@ namespace PluginCore.Utilities
             HMACRIPEMD160 hmac = new HMACRIPEMD160(key);
             return hmac.ComputeHash(bytes);
         }
-
     }
-
 }
