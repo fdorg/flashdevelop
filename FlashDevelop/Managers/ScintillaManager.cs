@@ -155,8 +155,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                string file = sci.FileName;
-                File.SetAttributes(file, FileAttributes.Normal);
+                File.SetAttributes(sci.FileName, FileAttributes.Normal);
                 sci.IsReadOnly = false;
                 sci.Focus();
             }
@@ -171,11 +170,11 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static bool IsUnicode(int codepage)
         {
-            return (codepage == Encoding.UTF7.CodePage
-                || codepage == Encoding.UTF8.CodePage
-                || codepage == Encoding.UTF32.CodePage
-                || codepage == Encoding.BigEndianUnicode.CodePage
-                || codepage == Encoding.Unicode.CodePage);
+            return codepage == Encoding.UTF7.CodePage
+                   || codepage == Encoding.UTF8.CodePage
+                   || codepage == Encoding.UTF32.CodePage
+                   || codepage == Encoding.BigEndianUnicode.CodePage
+                   || codepage == Encoding.Unicode.CodePage;
         }
 
         /// <summary>
@@ -217,7 +216,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                ISettings settings = PluginBase.Settings;
+                var settings = PluginBase.Settings;
                 sci.CaretPeriod = settings.CaretPeriod;
                 sci.CaretWidth = settings.CaretWidth;
                 sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text, (int)settings.EOLMode);
@@ -344,7 +343,7 @@ namespace FlashDevelop.Managers
         public static ScintillaControl CreateControl(string file, string text, int codepage)
         {
             Initialize();
-            ScintillaControl sci = new ScintillaControl();
+            var sci = new ScintillaControl();
             sci.AutoCSeparator = 32;
             sci.AutoCTypeSeparator = 63;
             sci.IsAutoCGetAutoHide = true;
@@ -420,7 +419,7 @@ namespace FlashDevelop.Managers
             sci.UpdateUI += Globals.MainForm.OnScintillaControlUpdateControl;
             sci.URIDropped += Globals.MainForm.OnScintillaControlDropFiles;
             sci.ModifyAttemptRO += Globals.MainForm.OnScintillaControlModifyRO;
-            string untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
+            var untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
             if (!file.StartsWithOrdinal(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
             sci.SetFoldFlags((int)PluginBase.Settings.FoldFlags);
             sci.EmptyUndoBuffer(); ApplySciSettings(sci);

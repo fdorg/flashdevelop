@@ -36,7 +36,7 @@ namespace FlashDevelop.Managers
             try
             {
                 Session session = new Session();
-                session = (Session)ObjectSerializer.Deserialize(file, session);
+                session = ObjectSerializer.Deserialize(file, session);
                 if (session.Files is null) session.Files = new List<string>();
                 session.Type = type; // set the type here...
                 RestoreSession(file, session);
@@ -63,7 +63,7 @@ namespace FlashDevelop.Managers
                             if (File.Exists(fileToOpen)) PluginBase.MainForm.OpenEditableDocument(fileToOpen);
                         }
                         RestoreDocks(session);
-                        if (PluginBase.MainForm.Documents.Length == 0)
+                        if (((MainForm) PluginBase.MainForm).DocumentsLength() == 0)
                         {
                             var ne = new NotifyEvent(EventType.FileEmpty);
                             EventManager.DispatchEvent(PluginBase.MainForm, ne);
@@ -146,14 +146,14 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                DockContent content = (DockContent) document;
-                double prop = content.Pane.NestedDockingStatus.Proportion;
-                DockAlignment align = content.Pane.NestedDockingStatus.Alignment;
-                int paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);
-                int nestIndex = content.DockPanel.Panes.IndexOf(content.Pane.NestedDockingStatus.PreviousPane);
+                var content = (DockContent) document;
+                var nestIndex = content.DockPanel.Panes.IndexOf(content.Pane.NestedDockingStatus.PreviousPane);
                 if (nestIndex > -1)
                 {
-                    NestedDock dock = new NestedDock(document.FileName, nestIndex, paneIndex, align, prop);
+                    var paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);
+                    var align = content.Pane.NestedDockingStatus.Alignment;
+                    var prop = content.Pane.NestedDockingStatus.Proportion;
+                    var dock = new NestedDock(document.FileName, nestIndex, paneIndex, align, prop);
                     session.Nested.Add(dock);
                 }
             }
@@ -247,8 +247,5 @@ namespace FlashDevelop.Managers
             get => prop;
             set => prop = value;
         }
-
     }
-
 }
-

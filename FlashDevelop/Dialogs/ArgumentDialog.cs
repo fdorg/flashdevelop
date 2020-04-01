@@ -453,7 +453,7 @@ namespace FlashDevelop.Dialogs
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 List<Argument> args = new List<Argument>();
-                args = (List<Argument>)ObjectSerializer.Deserialize(dialog.FileName, args, false);
+                args = ObjectSerializer.Deserialize(dialog.FileName, args, false);
                 CustomArguments.AddRange(args); // Append imported
                 PopulateArgumentList(CustomArguments);
             }

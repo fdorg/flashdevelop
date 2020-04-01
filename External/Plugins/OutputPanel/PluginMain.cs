@@ -197,7 +197,7 @@ namespace OutputPanel
         {
             PluginSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else PluginSettings = (Settings) ObjectSerializer.Deserialize(settingFilename, PluginSettings);
+            else PluginSettings = ObjectSerializer.Deserialize(settingFilename, PluginSettings);
         }
 
         /// <summary>

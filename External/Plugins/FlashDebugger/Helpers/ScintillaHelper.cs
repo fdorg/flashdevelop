@@ -57,11 +57,9 @@ namespace FlashDebugger
 
         public static void Sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
         {
-            if (linesAdded != 0)
-            {
-                int modline = sender.LineFromPosition(position);
-                PluginMain.breakPointManager.UpdateBreakPoint(sender.FileName, modline, linesAdded);
-            }
+            if (linesAdded == 0) return;
+            var modline = sender.LineFromPosition(position);
+            PluginMain.breakPointManager.UpdateBreakPoint(sender.FileName, modline, linesAdded);
         }
 
         public static void SciControl_MarkerChanged(ScintillaControl sender, int line)

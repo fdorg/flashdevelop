@@ -8,10 +8,10 @@ using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
-    class CleanupManager
+    internal class CleanupManager
     {
-        private const string coloringStart = "<!-- COLORING_START -->";
-        private const string coloringEnd = "<!-- COLORING_END -->";
+        const string coloringStart = "<!-- COLORING_START -->";
+        const string coloringEnd = "<!-- COLORING_END -->";
 
         /// <summary>
         /// Reverts the language config files fully or keeping the coloring.
@@ -23,10 +23,10 @@ namespace FlashDevelop.Managers
             if (everything) FolderHelper.CopyFolder(appLanguageDir, userLanguageDir);
             else
             {
-                string[] userFiles = Directory.GetFiles(userLanguageDir);
+                var userFiles = Directory.GetFiles(userLanguageDir);
                 foreach (string userFile in userFiles)
                 {
-                    string appFile = Path.Combine(appLanguageDir, Path.GetFileName(userFile));
+                    var appFile = Path.Combine(appLanguageDir, Path.GetFileName(userFile));
                     if (File.Exists(appFile))
                     {
                         try

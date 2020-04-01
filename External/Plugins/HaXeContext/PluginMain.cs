@@ -231,7 +231,7 @@ namespace HaXeContext
         {
             settingObject = new HaXeSettings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else settingObject = (HaXeSettings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>

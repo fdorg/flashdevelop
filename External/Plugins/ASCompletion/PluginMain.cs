@@ -609,7 +609,7 @@ namespace ASCompletion
             }
             else
             {
-                settingObject = (GeneralSettings)ObjectSerializer.Deserialize(settingsFile, settingObject);
+                settingObject = ObjectSerializer.Deserialize(settingsFile, settingObject);
             }
         }
 

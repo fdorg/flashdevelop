@@ -240,9 +240,8 @@ namespace FlashDevelop.Dialogs
         void LoadCommandsFile()
         {
             commands = new Commands();
-            string filename = Path.Combine(PathHelper.AppDir, "FirstRun.fdb");
-            object obj = ObjectSerializer.Deserialize(filename, commands);
-            commands = (Commands)obj;
+            var filename = Path.Combine(PathHelper.AppDir, "FirstRun.fdb");
+            commands = ObjectSerializer.Deserialize(filename, commands);
         }
 
         /// <summary>
@@ -250,7 +249,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         string ProcessArguments(string text)
         {
-            string result = text;
+            var result = text;
             if (result is null) return string.Empty;
             result = result.Replace("$(AppDir)", PathHelper.AppDir);
             result = result.Replace("$(UserAppDir)", PathHelper.UserAppDir);
@@ -263,16 +262,11 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static bool ShouldProcessCommands()
         {
-            Commands commands = new Commands();
-            string filename = Path.Combine(PathHelper.AppDir, "FirstRun.fdb");
-            if (File.Exists(filename))
-            {
-                commands = (Commands)ObjectSerializer.Deserialize(filename, commands);
-                if (commands.LatestCommand > ((SettingObject)PluginBase.Settings).LatestCommand) return true;
-                return false;
-            }
-
-            return false;
+            var filename = Path.Combine(PathHelper.AppDir, "FirstRun.fdb");
+            if (!File.Exists(filename)) return false;
+            var commands = new Commands();
+            commands = ObjectSerializer.Deserialize(filename, commands);
+            return commands.LatestCommand > ((SettingObject)PluginBase.Settings).LatestCommand;
         }
 
         /// <summary>
@@ -280,8 +274,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static DialogResult Show()
         {
-            using FirstRunDialog firstRunDialog = new FirstRunDialog();
-            return firstRunDialog.ShowDialog();
+            using var dialog = new FirstRunDialog();
+            return dialog.ShowDialog();
         }
 
         #endregion

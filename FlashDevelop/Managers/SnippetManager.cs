@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using FlashDevelop.Utilities;
 using PluginCore;
@@ -82,28 +82,19 @@ namespace FlashDevelop.Managers
                 SnippetHelper.InsertSnippetText(sci, endPos, snippet);
                 return true;
             }
-
             if (canShowList)
             {
-                ICompletionListItem item;
-                List<ICompletionListItem> items = new List<ICompletionListItem>();
-                PathWalker walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
-                List<string> files = walker.GetFiles();
-                foreach (string file in files)
-                {
-                    item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
-                    items.Add(item);
-                }
+                var walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
+                var files = walker.GetFiles();
+                var items = files
+                    .Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file))
+                    .ToList<ICompletionListItem>();
                 var path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
                 if (Directory.Exists(path))
                 {
                     walker = new PathWalker(path, "*.fds", false);
                     files = walker.GetFiles();
-                    foreach (var file in files)
-                    {
-                        item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
-                        items.Add(item);
-                    }
+                    items.AddRange(files.Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file)));
                 }
                 if (items.Count > 0)
                 {
@@ -131,7 +122,6 @@ namespace FlashDevelop.Managers
             CompletionList.OnCancel -= HandleListInsert;
             ArgsProcessor.PrevSelText = string.Empty;
         }
-
     }
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
@@ -158,7 +148,6 @@ namespace FlashDevelop.Managers
         {
             get
             {
-                string desc = TextHelper.GetString("Info.SnippetItemDesc");
                 if (snippet is null)
                 {
                     snippet = FileHelper.ReadFile(fileName);
@@ -166,6 +155,7 @@ namespace FlashDevelop.Managers
                     snippet = snippet.Replace(SnippetHelper.ENTRYPOINT, "|");
                     snippet = snippet.Replace(SnippetHelper.EXITPOINT, "|");
                 }
+                var desc = TextHelper.GetString("Info.SnippetItemDesc");
                 if (snippet.Length > 40) return desc + ": " + snippet.Substring(0, 40) + "...";
                 return desc + ": " + snippet;
             }
@@ -198,18 +188,13 @@ namespace FlashDevelop.Managers
         int IComparable.CompareTo(object obj)
         {
             if (obj is ICompletionListItem item) return string.Compare(Label, item.Label, true);
-            string message = TextHelper.GetString("Info.CompareError");
+            var message = TextHelper.GetString("Info.CompareError");
             throw new Exception(message);
         }
 
         /// <summary>
         /// Compares the completion list items
         /// </summary> 
-        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
-        {
-            return string.Compare(Label, other.Label, true);
-        }
-
+        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other) => string.Compare(Label, other.Label, true);
     }
-
 }

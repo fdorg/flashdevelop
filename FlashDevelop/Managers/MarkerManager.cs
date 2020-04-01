@@ -53,7 +53,6 @@ namespace FlashDevelop.Managers
                     next = sci.MarkerNext(0, GetMarkerMask(marker));
                     if (next != -1)
                     {
-
                         sci.EnsureVisibleEnforcePolicy(next);
                         sci.GotoLineIndent(next);
                     }
@@ -124,7 +123,5 @@ namespace FlashDevelop.Managers
                 }
             }
         }
-
     }
-
 }

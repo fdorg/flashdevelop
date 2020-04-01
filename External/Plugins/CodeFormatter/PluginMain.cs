@@ -174,7 +174,7 @@ namespace CodeFormatter
                 settingObject.InitializeDefaultPreferences();
                 SaveSettings();
             }
-            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>

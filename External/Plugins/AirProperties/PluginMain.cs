@@ -201,7 +201,7 @@ namespace AirProperties
         {
             Settings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else Settings = (Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
+            else Settings = ObjectSerializer.Deserialize(settingFilename, Settings);
         }
 
         /// <summary>

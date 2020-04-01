@@ -154,7 +154,7 @@ namespace TaskListPanel
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>

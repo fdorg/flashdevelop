@@ -130,7 +130,7 @@ namespace FlashViewer
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
             string oldPath = settingObject.PlayerPath;
             // Recheck after installer update if auto config is not disabled
             if (!settingObject.DisableAutoConfig && PluginBase.MainForm.RefreshConfig)
