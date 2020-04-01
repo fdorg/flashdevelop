@@ -380,7 +380,7 @@ namespace AS3Context
         {
             Settings = new AS3Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else Settings = (AS3Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
+            else Settings = ObjectSerializer.Deserialize(settingFilename, Settings);
             if (Settings.AS3ClassPath is null) Settings.AS3ClassPath = @"Library\AS3\intrinsic";
         }
 

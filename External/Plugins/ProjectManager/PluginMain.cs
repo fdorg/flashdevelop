@@ -111,7 +111,7 @@ namespace ProjectManager
             }
             else
             {
-                Settings = (ProjectManagerSettings)ObjectSerializer.Deserialize(SettingsPath, Settings);
+                Settings = ObjectSerializer.Deserialize(SettingsPath, Settings);
                 PatchSettings();
             }
             // set manually to avoid dependency in FDBuild

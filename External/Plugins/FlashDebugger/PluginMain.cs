@@ -267,7 +267,7 @@ namespace FlashDebugger
             }
             else
             {
-                settingObject = (Settings)ObjectSerializer.Deserialize(settingFilename, settingObject);
+                settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
             }
         }
 

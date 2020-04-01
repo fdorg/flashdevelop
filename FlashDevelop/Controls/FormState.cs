@@ -11,9 +11,9 @@ namespace FlashDevelop.Controls
     /// </summary>
     public class FormState
     {
-        private Rectangle windowBounds;
-        private FormWindowState winState;
-        private FormBorderStyle borderStyle;
+        Rectangle windowBounds;
+        FormWindowState winState;
+        FormBorderStyle borderStyle;
 
         /// <summary>
         /// Maximizes the form to fullscreen
@@ -45,7 +45,5 @@ namespace FlashDevelop.Controls
             form.FormBorderStyle = borderStyle;
             form.Bounds = windowBounds;
         }
-
     }
-
 }

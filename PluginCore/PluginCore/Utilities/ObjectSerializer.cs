@@ -12,7 +12,7 @@ namespace PluginCore.Utilities
 {
     public class ObjectSerializer
     {
-        private static readonly BinaryFormatter formatter = new BinaryFormatter();
+        static readonly BinaryFormatter formatter = new BinaryFormatter();
 
         static ObjectSerializer()
         {
@@ -25,14 +25,14 @@ namespace PluginCore.Utilities
         /// </summary>
         static Assembly CurrentDomainAssemblyResolve(object sender, ResolveEventArgs args)
         {
-            AssemblyName assemblyName = new AssemblyName(args.Name);
-            string ffile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".exe");
-            string afile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".dll");
-            string dfile = Path.Combine(PathHelper.PluginDir, assemblyName.Name + ".dll");
-            string ufile = Path.Combine(PathHelper.UserPluginDir, assemblyName.Name + ".dll");
+            var assemblyName = new AssemblyName(args.Name);
+            var ffile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".exe");
             if (File.Exists(ffile)) return Assembly.LoadFrom(ffile);
+            var afile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".dll");
             if (File.Exists(afile)) return Assembly.LoadFrom(afile);
+            var dfile = Path.Combine(PathHelper.PluginDir, assemblyName.Name + ".dll");
             if (File.Exists(dfile)) return Assembly.LoadFrom(dfile);
+            var ufile = Path.Combine(PathHelper.UserPluginDir, assemblyName.Name + ".dll");
             if (File.Exists(ufile)) return Assembly.LoadFrom(ufile);
             return null;
         }
@@ -72,22 +72,22 @@ namespace PluginCore.Utilities
             try
             {
                 FileHelper.EnsureUpdatedFile(file);
-                object settings = InternalDeserialize(file, obj.GetType());
+                var result = InternalDeserialize(file, obj.GetType());
                 if (checkValidity)
                 {
-                    object defaults = Activator.CreateInstance(obj.GetType());
-                    PropertyInfo[] properties = settings.GetType().GetProperties();
-                    foreach (PropertyInfo property in properties)
+                    var defaults = Activator.CreateInstance(obj.GetType());
+                    var properties = result.GetType().GetProperties();
+                    foreach (var property in properties)
                     {
-                        object current = GetValue(settings, property.Name);
-                        if (current is null || (current is Color && (Color)current == Color.Empty))
+                        var current = GetValue(result, property.Name);
+                        if (current is null || (current is Color color && color == Color.Empty))
                         {
-                            object value = GetValue(defaults, property.Name);
-                            SetValue(settings, property.Name, value);
+                            var value = GetValue(defaults, property.Name);
+                            SetValue(result, property.Name, value);
                         }
                     }
                 }
-                return settings;
+                return result;
             }
             catch (Exception ex)
             {
@@ -95,30 +95,75 @@ namespace PluginCore.Utilities
                 return obj;
             }
         }
-        public static object Deserialize(string file, object obj)
-        {
-            return Deserialize(file, obj, true);
-        }
+
+        public static object Deserialize(string file, object obj) => Deserialize(file, obj, true);
 
         /// <summary>
         /// Fixes some common issues when serializing
         /// </summary>
-        private static object InternalDeserialize(string file, Type type)
+        static object InternalDeserialize(string file, Type type)
         {
-            FileInfo info = new FileInfo(file);
-            if (!info.Exists)
-            {
-                return Activator.CreateInstance(type);
-            }
-
+            var info = new FileInfo(file);
+            if (!info.Exists) return Activator.CreateInstance(type);
             if (info.Length == 0)
             {
                 info.Delete();
                 return Activator.CreateInstance(type);
             }
 
-            using FileStream stream = info.Open(FileMode.Open, FileAccess.Read);
+            using var stream = info.Open(FileMode.Open, FileAccess.Read);
             return formatter.Deserialize(stream);
+        }
+
+        public static T Deserialize<T>(string file, T obj) => Deserialize(file, obj, true);
+
+        /// <summary>
+        /// Deserializes the specified object from a binary file
+        /// </summary>
+        public static T Deserialize<T>(string file, T obj, bool checkValidity)
+        {
+            try
+            {
+                FileHelper.EnsureUpdatedFile(file);
+                var result = InternalDeserialize<T>(file);
+                if (checkValidity)
+                {
+                    var defaults = Activator.CreateInstance<T>();
+                    var properties = result.GetType().GetProperties();
+                    foreach (var property in properties)
+                    {
+                        var current = GetValue(result, property.Name);
+                        if (current is null || (current is Color color && color == Color.Empty))
+                        {
+                            var value = GetValue(defaults, property.Name);
+                            SetValue(result, property.Name, value);
+                        }
+                    }
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return obj;
+            }
+        }
+
+        /// <summary>
+        /// Fixes some common issues when serializing
+        /// </summary>
+        static T InternalDeserialize<T>(string file)
+        {
+            var info = new FileInfo(file);
+            if (!info.Exists) return Activator.CreateInstance<T>();
+            if (info.Length == 0)
+            {
+                info.Delete();
+                return Activator.CreateInstance<T>();
+            }
+
+            using var stream = info.Open(FileMode.Open, FileAccess.Read);
+            return (T)formatter.Deserialize(stream);
         }
 
         /// <summary>
@@ -128,8 +173,8 @@ namespace PluginCore.Utilities
         {
             try
             {
-                Type type = obj.GetType();
-                PropertyInfo info = type.GetProperty(name);
+                var type = obj.GetType();
+                var info = type.GetProperty(name);
                 if (info is null) return;
                 info.SetValue(obj, value, null);
             }
@@ -146,10 +191,9 @@ namespace PluginCore.Utilities
         {
             try
             {
-                Type type = obj.GetType();
-                PropertyInfo info = type.GetProperty(name);
-                if (info is null) return null;
-                return info.GetValue(obj, null);
+                var type = obj.GetType();
+                var info = type.GetProperty(name);
+                return info?.GetValue(obj, null);
             }
             catch (Exception ex)
             {
@@ -157,7 +201,5 @@ namespace PluginCore.Utilities
                 return null;
             }
         }
-
     }
-
 }

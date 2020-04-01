@@ -100,13 +100,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Does this document's pane have any other documents?
         /// </summary> 
-        public bool IsAloneInPane
-        {
-            get
-            {
-                return PluginBase.MainForm.Documents.Count(document => document.DockHandler.PanelPane == DockHandler.PanelPane) <= 1;
-            }
-        }
+        public bool IsAloneInPane => PluginBase.MainForm.Documents.Count(it => it.DockHandler.PanelPane == DockHandler.PanelPane) <= 1;
 
         /// <summary>
         /// Current ScintillaControl of the document
@@ -117,18 +111,19 @@ namespace FlashDevelop.Docking
             {
                 foreach (Control ctrl in Controls)
                 {
-                    if (ctrl is ScintillaControl control && !Disposing && !IsDisposed) return control;
-                    if (ctrl is SplitContainer casted && casted.Name == "fdSplitView" && !Disposing && !IsDisposed)
+                    switch (ctrl)
                     {
-                        var sci2 = (ScintillaControl) casted.Panel2.Controls[0];
-                        if (sci2.IsFocus) return sci2;
-                        var sci1 = (ScintillaControl) casted.Panel1.Controls[0];
-                        if (sci1.IsFocus) return sci1;
-                        if (lastEditor != null && lastEditor.Visible)
+                        case ScintillaControl control when !Disposing && !IsDisposed: return control;
+                        case SplitContainer container when container.Name == "fdSplitView" && !Disposing && !IsDisposed:
                         {
-                            return lastEditor;
+                            var sci2 = (ScintillaControl) container.Panel2.Controls[0];
+                            if (sci2.IsFocus) return sci2;
+                            var sci1 = (ScintillaControl) container.Panel1.Controls[0];
+                            if (sci1.IsFocus) return sci1;
+                            return lastEditor != null && lastEditor.Visible 
+                                ? lastEditor
+                                : sci1;
                         }
-                        return sci1;
                     }
                 }
                 return null;

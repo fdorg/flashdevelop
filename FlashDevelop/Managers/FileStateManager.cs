@@ -43,7 +43,7 @@ namespace FlashDevelop.Managers
                 var stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
                 if (!File.Exists(stateFile)) return;
                 var so = new StateObject();
-                so = (StateObject) ObjectSerializer.Deserialize(stateFile, so);
+                so = ObjectSerializer.Deserialize(stateFile, so);
                 ApplyStateObject(sci, so, restorePosition);
             }
             catch (Exception ex)

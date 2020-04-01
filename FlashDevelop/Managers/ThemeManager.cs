@@ -20,10 +20,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a value entry from the config.
         /// </summary>
-        public static string GetThemeValue(string id)
-        {
-            return valueMap.TryGetValue(id, out var result) ? result : null;
-        }
+        public static string GetThemeValue(string id) => valueMap.TryGetValue(id, out var result) ? result : null;
 
         /// <summary>
         /// Gets a color entry from the config.
@@ -105,7 +102,7 @@ namespace FlashDevelop.Managers
                         SetUseTheme(item, use);
                     }
                 }
-                PropertyInfo info = obj.GetType().GetProperty("UseTheme");
+                var info = obj.GetType().GetProperty("UseTheme");
                 if (info != null && info.CanWrite)
                 {
                     info.SetValue(obj, use, null);
@@ -214,7 +211,7 @@ namespace FlashDevelop.Managers
                 ApplyPropColor(obj, name + ".ActiveArrowColor");
                 ApplyPropColor(obj, name + ".ArrowColor");
                 // Set border style from border style key
-                PropertyInfo bstyle = type.GetProperty("BorderStyle");
+                PropertyInfo bstyle = type.GetProperty(nameof(BorderStyle));
                 bool force = GetThemeValue("ThemeManager.ForceBorderStyle") == "True";
                 if (bstyle != null && bstyle.CanWrite && (force || cast.BorderStyle != BorderStyle.None))
                 {
@@ -222,88 +219,87 @@ namespace FlashDevelop.Managers
                     string style = GetThemeValue(key);
                     switch (style)
                     {
-                        case "None":
+                        case nameof(BorderStyle.None):
                             bstyle.SetValue(obj, BorderStyle.None, null);
                             break;
-                        case "Fixed3D":
+                        case nameof(BorderStyle.Fixed3D):
                             bstyle.SetValue(obj, BorderStyle.Fixed3D, null);
                             break;
-                        case "FixedSingle":
+                        case nameof(BorderStyle.FixedSingle):
                             bstyle.SetValue(obj, BorderStyle.FixedSingle, null);
                             break;
                     }
                 }
                 // Set flat style from flat style key
-                PropertyInfo fstyle = type.GetProperty("FlatStyle");
+                var fstyle = type.GetProperty(nameof(FlatStyle));
                 if (fstyle != null && fstyle.CanWrite)
                 {
-                    string key = name + ".FlatStyle";
-                    string style = GetThemeValue(key);
+                    string style = GetThemeValue(name + ".FlatStyle");
                     switch (style)
                     {
-                        case "Flat":
+                        case nameof(FlatStyle.Flat):
                             fstyle.SetValue(obj, FlatStyle.Flat, null);
                             break;
-                        case "Popup":
+                        case nameof(FlatStyle.Popup):
                             fstyle.SetValue(obj, FlatStyle.Popup, null);
                             break;
-                        case "System":
+                        case nameof(FlatStyle.System):
                             fstyle.SetValue(obj, FlatStyle.System, null);
                             break;
-                        case "Standard":
+                        case nameof(FlatStyle.Standard):
                             fstyle.SetValue(obj, FlatStyle.Standard, null);
                             break;
                     }
                 }
-                // Control specific style assignments
-                if (obj is Button parent1)
+                switch (obj)
                 {
-                    Color color = Color.Empty;
-                    bool flat = GetThemeValue("Button.FlatStyle") == "Flat";
-                    if (flat)
+                    // Control specific style assignments
+                    case Button control:
                     {
-                        color = GetThemeColor("Button.BorderColor");
-                        if (color != Color.Empty) parent1.FlatAppearance.BorderColor = color;
-                        color = GetThemeColor("Button.CheckedBackColor");
-                        if (color != Color.Empty) parent1.FlatAppearance.CheckedBackColor = color;
-                        color = GetThemeColor("Button.MouseDownBackColor");
-                        if (color != Color.Empty) parent1.FlatAppearance.MouseDownBackColor = color;
-                        color = GetThemeColor("Button.MouseOverBackColor");
-                        if (color != Color.Empty) parent1.FlatAppearance.MouseOverBackColor = color;
+                        if (GetThemeValue("Button.FlatStyle") == "Flat")
+                        {
+                            var color = GetThemeColor("Button.BorderColor");
+                            if (color != Color.Empty) control.FlatAppearance.BorderColor = color;
+                            color = GetThemeColor("Button.CheckedBackColor");
+                            if (color != Color.Empty) control.FlatAppearance.CheckedBackColor = color;
+                            color = GetThemeColor("Button.MouseDownBackColor");
+                            if (color != Color.Empty) control.FlatAppearance.MouseDownBackColor = color;
+                            color = GetThemeColor("Button.MouseOverBackColor");
+                            if (color != Color.Empty) control.FlatAppearance.MouseOverBackColor = color;
+                        }
+                        break;
                     }
-                }
-                else if (obj is CheckBox parent)
-                {
-                    Color color = Color.Empty;
-                    bool flat = GetThemeValue("CheckBox.FlatStyle") == "Flat";
-                    if (flat)
+                    case CheckBox control:
                     {
-                        color = GetThemeColor("CheckBox.BorderColor");
-                        if (color != Color.Empty) parent.FlatAppearance.BorderColor = color;
-                        color = GetThemeColor("CheckBox.CheckedBackColor");
-                        if (color != Color.Empty) parent.FlatAppearance.CheckedBackColor = color;
-                        color = GetThemeColor("CheckBox.MouseDownBackColor");
-                        if (color != Color.Empty) parent.FlatAppearance.MouseDownBackColor = color;
-                        color = GetThemeColor("CheckBox.MouseOverBackColor");
-                        if (color != Color.Empty) parent.FlatAppearance.MouseOverBackColor = color;
+                        if (GetThemeValue("CheckBox.FlatStyle") == "Flat")
+                        {
+                            var color = GetThemeColor("CheckBox.BorderColor");
+                            if (color != Color.Empty) control.FlatAppearance.BorderColor = color;
+                            color = GetThemeColor("CheckBox.CheckedBackColor");
+                            if (color != Color.Empty) control.FlatAppearance.CheckedBackColor = color;
+                            color = GetThemeColor("CheckBox.MouseDownBackColor");
+                            if (color != Color.Empty) control.FlatAppearance.MouseDownBackColor = color;
+                            color = GetThemeColor("CheckBox.MouseOverBackColor");
+                            if (color != Color.Empty) control.FlatAppearance.MouseOverBackColor = color;
+                        }
+                        break;
                     }
-                }
-                else if (obj is PropertyGrid grid)
-                {
-                    ApplyPropColor(grid, "PropertyGrid.ViewBackColor");
-                    ApplyPropColor(grid, "PropertyGrid.ViewForeColor");
-                    ApplyPropColor(grid, "PropertyGrid.ViewBorderColor");
-                    ApplyPropColor(grid, "PropertyGrid.HelpBackColor");
-                    ApplyPropColor(grid, "PropertyGrid.HelpForeColor");
-                    ApplyPropColor(grid, "PropertyGrid.HelpBorderColor");
-                    ApplyPropColor(grid, "PropertyGrid.CategoryForeColor");
-                    ApplyPropColor(grid, "PropertyGrid.CategorySplitterColor");
-                    ApplyPropColor(grid, "PropertyGrid.CommandsBackColor");
-                    ApplyPropColor(grid, "PropertyGrid.CommandsActiveLinkColor");
-                    ApplyPropColor(grid, "PropertyGrid.CommandsDisabledLinkColor");
-                    ApplyPropColor(grid, "PropertyGrid.CommandsForeColor");
-                    ApplyPropColor(grid, "PropertyGrid.CommandsLinkColor");
-                    ApplyPropColor(grid, "PropertyGrid.LineColor");
+                    case PropertyGrid control:
+                        ApplyPropColor(control, "PropertyGrid.ViewBackColor");
+                        ApplyPropColor(control, "PropertyGrid.ViewForeColor");
+                        ApplyPropColor(control, "PropertyGrid.ViewBorderColor");
+                        ApplyPropColor(control, "PropertyGrid.HelpBackColor");
+                        ApplyPropColor(control, "PropertyGrid.HelpForeColor");
+                        ApplyPropColor(control, "PropertyGrid.HelpBorderColor");
+                        ApplyPropColor(control, "PropertyGrid.CategoryForeColor");
+                        ApplyPropColor(control, "PropertyGrid.CategorySplitterColor");
+                        ApplyPropColor(control, "PropertyGrid.CommandsBackColor");
+                        ApplyPropColor(control, "PropertyGrid.CommandsActiveLinkColor");
+                        ApplyPropColor(control, "PropertyGrid.CommandsDisabledLinkColor");
+                        ApplyPropColor(control, "PropertyGrid.CommandsForeColor");
+                        ApplyPropColor(control, "PropertyGrid.CommandsLinkColor");
+                        ApplyPropColor(control, "PropertyGrid.LineColor");
+                        break;
                 }
             }
             catch (Exception ex)
@@ -315,13 +311,13 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Apply property color if defined and property is available
         /// </summary>
-        static void ApplyPropColor(object targObj, string propId)
+        static void ApplyPropColor(object obj, string propId)
         {
-            Color color = GetThemeColor(propId);
-            PropertyInfo prop = targObj.GetType().GetProperty(propId.Split('.')[1]);
+            var color = GetThemeColor(propId);
+            var prop = obj.GetType().GetProperty(propId.Split('.')[1]);
             if (prop != null && prop.CanWrite && color != Color.Empty)
             {
-                prop.SetValue(targObj, color, null);
+                prop.SetValue(obj, color, null);
             }
         }
     }

@@ -315,7 +315,7 @@ namespace SourceControl
         {
             SCSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else SCSettings = (Settings) ObjectSerializer.Deserialize(settingFilename, SCSettings);
+            else SCSettings = ObjectSerializer.Deserialize(settingFilename, SCSettings);
 
             #region Detect Git
 

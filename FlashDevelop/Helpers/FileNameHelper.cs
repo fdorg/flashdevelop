@@ -76,11 +76,12 @@ namespace FlashDevelop.Helpers
         /// </summary>
         public static string GetSettingFile(string file)
         {
-            var standalone = PluginBase.MainForm.StandaloneMode;
-            var appDirSettingFile = Path.Combine(PathHelper.AppDir, "Settings", file);
-            var userDirSettingFile = Path.Combine(PathHelper.UserAppDir, "Settings", file);
-            if (!standalone && File.Exists(userDirSettingFile)) return userDirSettingFile;
-            return appDirSettingFile;
+            if (!PluginBase.MainForm.StandaloneMode)
+            {
+                var path = Path.Combine(PathHelper.UserAppDir, "Settings", file);
+                if (File.Exists(path)) return path;
+            }
+            return Path.Combine(PathHelper.AppDir, "Settings", file);
         }
 
     }

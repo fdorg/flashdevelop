@@ -264,7 +264,7 @@ namespace FlashConnect
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
             if (settingObject.Commands.Count != 0) return;
             settingObject.Commands.Add("Edit");
             settingObject.Commands.Add("Browse");

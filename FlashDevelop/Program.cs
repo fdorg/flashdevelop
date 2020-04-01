@@ -28,8 +28,7 @@ namespace FlashDevelop
                 Application.SetCompatibleTextRenderingDefault(false);
                 MainForm.IsFirst = true;
                 MainForm.Arguments = arguments;
-                MainForm mainForm = new MainForm();
-                Application.Run(mainForm);
+                Application.Run(new MainForm());
             }
         }
 
@@ -42,7 +41,7 @@ namespace FlashDevelop
             Application.SetCompatibleTextRenderingDefault(false);
             MainForm.IsFirst = isFirst;
             MainForm.Arguments = arguments;
-            MainForm mainForm = new MainForm();
+            var mainForm = new MainForm();
             SingleInstanceApp.NewInstanceMessage += delegate(object sender, object message)
             {
                 MainForm.Arguments = message as string[];
@@ -66,13 +65,6 @@ namespace FlashDevelop
         /// <summary>
         /// Checks if we should run in multi instance mode.
         /// </summary>
-        public static bool MultiInstanceMode
-        {
-            get 
-            {
-                string file = Path.Combine(PathHelper.AppDir, ".multi");
-                return File.Exists(file);
-            }
-        }
+        public static bool MultiInstanceMode => File.Exists(Path.Combine(PathHelper.AppDir, ".multi"));
     }
 }

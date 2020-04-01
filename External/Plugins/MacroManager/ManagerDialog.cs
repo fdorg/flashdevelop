@@ -365,7 +365,7 @@ namespace MacroManager
             if (dialog.ShowDialog() != DialogResult.OK) return;
             this.SaveUserMacros();
             var macros = new List<Macro>();
-            macros = (List<Macro>)ObjectSerializer.Deserialize(dialog.FileName, macros, false);
+            macros = ObjectSerializer.Deserialize(dialog.FileName, macros, false);
             this.pluginMain.AppSettings.UserMacros.AddRange(macros);
             this.PopulateMacroList(this.pluginMain.AppSettings.UserMacros);
         }

@@ -271,7 +271,7 @@ namespace FileExplorer
         {
             Settings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else Settings = (Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
+            else Settings = ObjectSerializer.Deserialize(settingFilename, Settings);
             if (!File.Exists(configFilename))
             {
                 File.WriteAllText(configFilename, "[actions]\r\n#explorer=" + explorerAction + "\r\n#cmd=" + PluginBase.MainForm.CommandPromptExecutable + "\r\n");

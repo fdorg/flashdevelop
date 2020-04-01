@@ -95,7 +95,7 @@ namespace MacroManager
             {
                 var macros = new List<Macro>();
                 var macrosObject = ObjectSerializer.Deserialize(autoImport, macros, false);
-                macros = (List<Macro>)macrosObject;
+                macros = macrosObject;
                 AppSettings.UserMacros.AddRange(macros);
                 try { File.Delete(autoImport); }
                 catch (Exception ex)
@@ -222,7 +222,7 @@ namespace MacroManager
         {
             AppSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else AppSettings = (Settings) ObjectSerializer.Deserialize(settingFilename, AppSettings);
+            else AppSettings = ObjectSerializer.Deserialize(settingFilename, AppSettings);
             if (AppSettings.UserMacros.Count == 0)
             {
                 Macro execScript = new Macro("&Execute Script", new[] { "ExecuteScript|Development;$(OpenFile)" }, string.Empty, Keys.None);
@@ -272,27 +272,32 @@ namespace MacroManager
         {
             try
             {
-                foreach (string entry in ((Macro)((ToolStripItem) sender).Tag).Entries)
+                var entries = ((Macro)((ToolStripItem) sender).Tag).Entries;
+                if (!entries.IsNullOrEmpty())
                 {
-                    string data = entry;
-                    if (data.StartsWith('#')) // Hardcore mode :)
+                    foreach (var entry in entries)
                     {
-                        data = PluginBase.MainForm.ProcessArgString(entry.Substring(1));
-                        if (data == "|") return; // Invalid, don't execute..
+                        var data = entry;
+                        if (data.StartsWith('#')) // Hardcore mode :)
+                        {
+                            data = PluginBase.MainForm.ProcessArgString(entry.Substring(1));
+                            if (data == "|") return; // Invalid, don't execute..
+                        }
+                        if (data.Contains('|'))
+                        {
+                            var parts = data.Split('|');
+                            PluginBase.MainForm.CallCommand(parts[0], parts[1]);
+                        }
+                        else PluginBase.MainForm.CallCommand(data, "");
                     }
-                    if (data.Contains('|'))
-                    {
-                        string[] parts = data.Split('|');
-                        PluginBase.MainForm.CallCommand(parts[0], parts[1]);
-                    }
-                    else PluginBase.MainForm.CallCommand(data, "");
+                    return;
                 }
             }
-            catch (Exception)
+            catch
             {
-                string message = TextHelper.GetString("Info.CouldNotRunMacro");
-                ErrorManager.ShowWarning(message, null);
             }
+            var message = TextHelper.GetString("Info.CouldNotRunMacro");
+            ErrorManager.ShowWarning(message, null);
         }
 
         /// <summary>

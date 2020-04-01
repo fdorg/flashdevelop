@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -159,13 +160,14 @@ namespace DataEncoder
         {
             try
             {
-                object settings = new object();
-                MemoryStream stream = new MemoryStream();
+                var settings = new object();
+                var stream = new MemoryStream();
                 settings = ObjectSerializer.Deserialize(file, settings, false);
-                XmlSerializer xs = XmlSerializer.FromTypes(new[]{settings.GetType()})[0];
+                var xs = XmlSerializer.FromTypes(new[]{settings.GetType()})[0];
                 xs.Serialize(stream, settings); // Obj -> XML
-                XmlTextWriter xw = new XmlTextWriter(stream, Encoding.UTF8);
-                xw.Formatting = Formatting.Indented; stream.Close();
+                var xw = new XmlTextWriter(stream, Encoding.UTF8);
+                xw.Formatting = Formatting.Indented;
+                stream.Close();
                 objectTypes.Add(new TypeData(file, settings.GetType()));
                 return Encoding.UTF8.GetString(stream.ToArray());
             }
@@ -226,26 +228,12 @@ namespace DataEncoder
         /// Checks if a file is open already
         /// </summary>
         /// <returns></returns>
-        bool IsFileOpen(string file)
-        {
-            foreach (var objType in objectTypes)
-            {
-                if (file == objType.File) return true;
-            }
-            return false;
-        }
+        bool IsFileOpen(string file) => objectTypes.Any(it => it.File == file);
 
         /// <summary>
         /// Gets the file type for file
         /// </summary>
-        public TypeData GetFileObjectType(string file)
-        {
-            foreach (var objType in objectTypes)
-            {
-                if (file == objType.File) return objType;
-            }
-            return null;
-        }
+        public TypeData GetFileObjectType(string file) => objectTypes.FirstOrDefault(it => it.File == file);
 
         #endregion
 
@@ -266,5 +254,4 @@ namespace DataEncoder
     }
 
     #endregion
-
 }

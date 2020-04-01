@@ -206,7 +206,7 @@ namespace FlashDevelop.Managers
                 }
                 if (action.Contains("DistroIs?"))
                 {
-                    string[] chunks = action.Split('?');
+                    var chunks = action.Split('?');
                     if (chunks.Length == 2)
                     {
                         if (chunks[chunks.Length - 1] != DistroConfig.DISTRIBUTION_NAME) return false;
@@ -278,28 +278,27 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                var reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
-                reopenMenu.DropDownItems.Clear();
-                for (int i = 0; i < PluginBase.Settings.PreviousDocuments.Count; i++)
+                var menu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
+                menu.DropDownItems.Clear();
+                var documents = PluginBase.Settings.PreviousDocuments;
+                for (var i = 0; i < documents.Count; i++)
                 {
-                    var file = PluginBase.Settings.PreviousDocuments[i];
-                    var item = new ToolStripMenuItem();
-                    item.Tag = file;
-                    item.Text = PathHelper.GetCompactPath(file);
+                    var file = documents[i];
+                    var item = new ToolStripMenuItem {Tag = file, Text = PathHelper.GetCompactPath(file)};
                     item.Click += Globals.MainForm.Reopen;
-                    if (i < ((SettingObject)PluginBase.Settings).MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
-                    else PluginBase.Settings.PreviousDocuments.Remove(file);
+                    if (i < ((SettingObject)PluginBase.Settings).MaxRecentFiles) menu.DropDownItems.Add(item);
+                    else documents.Remove(file);
                 }
                 if (PluginBase.Settings.PreviousDocuments.Count > 0)
                 {
                     string cleanLabel = TextHelper.GetString("Label.CleanReopenList");
                     string clearLabel = TextHelper.GetString("Label.ClearReopenList");
-                    reopenMenu.DropDownItems.Add(new ToolStripSeparator());
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, Globals.MainForm.CleanReopenList));
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, Globals.MainForm.ClearReopenList));
-                    reopenMenu.Enabled = true;
+                    menu.DropDownItems.Add(new ToolStripSeparator());
+                    menu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, Globals.MainForm.CleanReopenList));
+                    menu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, Globals.MainForm.ClearReopenList));
+                    menu.Enabled = true;
                 }
-                else reopenMenu.Enabled = false;
+                else menu.Enabled = false;
             }
             catch (Exception ex)
             {

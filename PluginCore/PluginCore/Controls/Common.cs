@@ -594,7 +594,7 @@ namespace System.Windows.Forms
                     if (UseTheme)
                     {
                         Rectangle rec = new Rectangle(0, 0, Width, Height);
-                        double scaleFactor = (((double)Value - (double)Minimum) / ((double)Maximum - (double)Minimum));
+                        double scaleFactor = ((Value - (double)Minimum) / (Maximum - (double)Minimum));
                         rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
                         using (Graphics g = CreateGraphics())
                         {

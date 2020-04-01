@@ -121,7 +121,7 @@ namespace AS2Context
             if (!File.Exists(settingFilename)) SaveSettings();
             else
             {
-                settingObject = (AS2Settings)ObjectSerializer.Deserialize(settingFilename, settingObject);
+                settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
                 if (settingObject.InstalledSDKs != null)
                     foreach (var sdk in settingObject.InstalledSDKs)
                         sdk.Owner = this;

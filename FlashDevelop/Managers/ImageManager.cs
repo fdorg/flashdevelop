@@ -16,18 +16,15 @@ namespace FlashDevelop.Managers
         static readonly int Size;
         static readonly int Padding;
         static readonly Bitmap Source;
-        static readonly Dictionary<string, ImagePair> Cache;
-        static readonly List<ImagePair> AutoAdjusted;
+        static readonly Dictionary<string, ImagePair> Cache = new Dictionary<string, ImagePair>();
+        static readonly List<ImagePair> AutoAdjusted = new List<ImagePair>();
 
         /// <summary>
         /// Static constructor 
         /// </summary>
         static ImageManager()
         {
-            double scale = ScaleHelper.GetScale();
-            Cache = new Dictionary<string, ImagePair>();
-            AutoAdjusted = new List<ImagePair>();
-
+            var scale = ScaleHelper.GetScale();
             if (scale >= 1.5)
             {
                 Size = Size32;
@@ -48,8 +45,7 @@ namespace FlashDevelop.Managers
         public static Image GetComposedBitmap(string data, bool autoAdjusted)
         {
             var c = Components.Parse(data);
-            string key = c.Key;
-
+            var key = c.Key;
             if (!Cache.ContainsKey(key))
             {
                 var original = new Bitmap(Size, Size);
@@ -122,11 +118,9 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static Image SetImageAdjustment(Image original)
         {
-            if (GetImageAdjustments(out var saturation, out var brightness))
-            {
-                return ImageKonverter.ImageAdjust(original, saturation, brightness);
-            }
-            return new Bitmap(original);
+            return GetImageAdjustments(out var saturation, out var brightness)
+                ? ImageKonverter.ImageAdjust(original, saturation, brightness)
+                : new Bitmap(original);
         }
 
         /// <summary>
@@ -236,7 +230,7 @@ namespace FlashDevelop.Managers
                 x = y = 0;
                 if (string.IsNullOrEmpty(data)) return;
 
-                string[] args = data.Split('|');
+                var args = data.Split('|');
                 if (args.Length == 0 || !int.TryParse(args[0], out icon)) return;
                 if (args.Length == 1 || !int.TryParse(args[1], out bullet)) return;
                 if (bullet < 0 || args.Length < 4) return;
@@ -286,5 +280,4 @@ namespace FlashDevelop.Managers
             }
         }
     }
-
 }

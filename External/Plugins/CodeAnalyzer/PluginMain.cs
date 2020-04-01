@@ -170,7 +170,7 @@ namespace CodeAnalyzer
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
             if (string.IsNullOrEmpty(settingObject.PMDRuleset))
             {
                 settingObject.PMDRuleset = Path.Combine(PathHelper.ToolDir, "flexpmd", "default-ruleset.xml");

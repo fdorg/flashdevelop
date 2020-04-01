@@ -29,10 +29,7 @@ namespace FlashDevelop.Managers
         /// <exception cref="NotSupportedException"/>
         internal static void Initialize(MainForm window)
         {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
+            if (window is null) throw new ArgumentNullException(nameof(window));
 
             if (History != null)
             {
@@ -59,11 +56,8 @@ namespace FlashDevelop.Managers
             History = new FixedSizeQueue<ClipboardTextData>(PluginBase.Settings.ClipboardHistorySize);
             try
             {
-                var dataObject = Clipboard.GetDataObject();
-                if (ClipboardTextData.IsTextFormat(dataObject))
-                {
-                    History.Enqueue(new ClipboardTextData(dataObject));
-                }
+                var data = Clipboard.GetDataObject();
+                if (ClipboardTextData.IsTextFormat(data)) History.Enqueue(new ClipboardTextData(data));
             }
             catch (ExternalException) { }
             catch (ThreadStateException) { }
@@ -129,10 +123,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         internal static void ApplySettings()
         {
-            if (History != null)
-            {
-                History.Capacity = PluginBase.Settings.ClipboardHistorySize;
-            }
+            if (History != null) History.Capacity = PluginBase.Settings.ClipboardHistorySize;
         }
 
         static class UnsafeNativeMethods
@@ -170,17 +161,13 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Creates a new instance of <see cref="ClipboardTextData"/> with the specified <see cref="IDataObject"/>.
         /// </summary>
-        /// <param name="dataObject">An <see cref="IDataObject"/> containing clipboard text data.</param>
+        /// <param name="data">An <see cref="IDataObject"/> containing clipboard text data.</param>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="ArgumentException"/>
-        public ClipboardTextData(IDataObject dataObject)
+        public ClipboardTextData(IDataObject data)
         {
-            if (dataObject is null)
-            {
-                throw new ArgumentNullException(nameof(dataObject));
-            }
-
-            Initialize(dataObject);
+            if (data is null) throw new ArgumentNullException(nameof(data));
+            Initialize(data);
         }
 
         /// <summary>
@@ -201,10 +188,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Determines whether data stored in the <see cref="IDataObject"/> is associated with a text format.
         /// </summary>
-        public static bool IsTextFormat(IDataObject dataObject)
+        public static bool IsTextFormat(IDataObject data)
         {
-            if (dataObject is null) return false;
-            return dataObject.GetDataPresent(DataFormats.Text)/*
+            if (data is null) return false;
+            return data.GetDataPresent(DataFormats.Text)/*
                 || dataObject.GetDataPresent(DataFormats.UnicodeText)
                 || dataObject.GetDataPresent(DataFormats.OemText)
                 || dataObject.GetDataPresent(DataFormats.Locale)
@@ -214,19 +201,19 @@ namespace FlashDevelop.Managers
                 || dataObject.GetDataPresent(DataFormats.StringFormat)*/;
         }
 
-        void Initialize(IDataObject dataObject)
+        void Initialize(IDataObject data)
         {
-            if (dataObject.GetDataPresent(DataFormats.Rtf))
+            if (data.GetDataPresent(DataFormats.Rtf))
             {
                 Format = DataFormats.Rtf;
-                Rtf = (string) dataObject.GetData(DataFormats.Rtf);
-                Text = (string) dataObject.GetData(DataFormats.Text);
+                Rtf = (string) data.GetData(DataFormats.Rtf);
+                Text = (string) data.GetData(DataFormats.Text);
             }
-            else if (dataObject.GetDataPresent(DataFormats.Text))
+            else if (data.GetDataPresent(DataFormats.Text))
             {
                 Format = DataFormats.Text;
                 Rtf = null;
-                Text = (string) dataObject.GetData(DataFormats.Text);
+                Text = (string) data.GetData(DataFormats.Text);
             }
             else
             {

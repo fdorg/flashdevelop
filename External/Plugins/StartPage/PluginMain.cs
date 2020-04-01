@@ -169,7 +169,7 @@ namespace StartPage
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
-            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
@@ -182,11 +182,11 @@ namespace StartPage
         /// </summary>
         public void CreateMenuItem()
         {
-            string title = TextHelper.GetString("Label.ViewMenuItem");
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(title, pluginImage, ViewMenuClick);
-            PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowStartPage", viewItem);
-            viewMenu.DropDownItems.Add(viewItem);
+            var title = TextHelper.GetString("Label.ViewMenuItem");
+            var menu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var item = new ToolStripMenuItem(title, pluginImage, ViewMenuClick);
+            PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowStartPage", item);
+            menu.DropDownItems.Add(item);
         }
 
         /// <summary>
@@ -237,6 +237,5 @@ namespace StartPage
         void PluginPanelDisposed(object sender, EventArgs e) => startPage = null;
 
         #endregion
-
     }
 }

@@ -237,6 +237,23 @@ namespace FlashDevelop
             }
         }
 
+        public int DocumentsLength()
+        {
+            var result = 0;
+            foreach (var pane in DockPanel.Panes)
+            {
+                if (pane.DockState != DockState.Document) continue;
+                foreach (var content in pane.Contents)
+                {
+                    if (content is TabbedDocument document)
+                    {
+                        result++;
+                    }
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// Does FlashDevelop hold modified documents?
         /// </summary> 
@@ -337,14 +354,9 @@ namespace FlashDevelop
         /// Gets the command prompt executable (custom or cmd.exe by default).
         /// </summary>
         public string CommandPromptExecutable
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(Settings.CustomCommandPrompt) && File.Exists(Settings.CustomCommandPrompt))
-                    return Settings.CustomCommandPrompt;
-                return "cmd.exe";
-            }
-        }
+            => File.Exists(Settings.CustomCommandPrompt)
+                ? Settings.CustomCommandPrompt
+                : "cmd.exe";
 
         /// <summary>
         /// Gets the version of the operating system
@@ -450,12 +462,12 @@ namespace FlashDevelop
         /// </summary>
         public DockContent OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
         {
-            string file = PathHelper.GetPhysicalPathName(org);
-            TextEvent te = new TextEvent(EventType.FileOpening, file);
+            var file = PathHelper.GetPhysicalPathName(org);
+            var te = new TextEvent(EventType.FileOpening, file);
             EventManager.DispatchEvent(this, te);
             if (te.Handled)
             {
-                if (Documents.Length == 0) SmartNew(null, null);
+                if (DocumentsLength() == 0) SmartNew(null, null);
                 return null;
             }
             if (file.EndsWithOrdinal(".delete.fdz"))
@@ -513,7 +525,7 @@ namespace FlashDevelop
             }
             try
             {
-                if (CurrentDocument is { } doc && doc.IsUntitled && !doc.IsModified && Documents.Length == 1)
+                if (CurrentDocument is { } doc && doc.IsUntitled && !doc.IsModified && DocumentsLength() == 1)
                 {
                     closingForOpenFile = true;
                     doc.Close();
@@ -549,11 +561,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the graphics
         /// </summary>
-        void InitializeGraphics()
-        {
-            var icon = new Icon(ResourceHelper.GetStream("FlashDevelopIcon.ico"));
-            Icon = printPreviewDialog.Icon = icon;
-        }
+        void InitializeGraphics() => Icon = printPreviewDialog.Icon = new Icon(ResourceHelper.GetStream("FlashDevelopIcon.ico"));
 
         /// <summary>
         /// Initializes the theme and config detection
@@ -642,13 +650,9 @@ namespace FlashDevelop
         /// Initializes the First Run dialog
         /// </summary>
         DialogResult InitializeFirstRun()
-        {
-            if (!StandaloneMode && IsFirst && FirstRunDialog.ShouldProcessCommands())
-            {
-                return FirstRunDialog.Show();
-            }
-            return DialogResult.None;
-        }
+            => !StandaloneMode && IsFirst && FirstRunDialog.ShouldProcessCommands()
+                ? FirstRunDialog.Show()
+                : DialogResult.None;
 
         /// <summary>
         /// Initializes the UI rendering
@@ -675,7 +679,7 @@ namespace FlashDevelop
             AppSettings = SettingObject.GetDefaultSettings();
             if (File.Exists(FileNameHelper.SettingData))
             {
-                AppSettings = (SettingObject)ObjectSerializer.Deserialize(FileNameHelper.SettingData, AppSettings, false);
+                AppSettings = ObjectSerializer.Deserialize(FileNameHelper.SettingData, AppSettings, false);
             }
             SettingObject.EnsureValidity(AppSettings);
             FileStateManager.RemoveOldStateFiles();
@@ -717,28 +721,24 @@ namespace FlashDevelop
         {
             try
             {
-                DateTime last = new DateTime(AppSettings.LastUpdateCheck);
-                TimeSpan elapsed = DateTime.UtcNow.Subtract(last);
+                var last = new DateTime(AppSettings.LastUpdateCheck);
+                var elapsed = DateTime.UtcNow.Subtract(last);
                 switch (AppSettings.CheckForUpdates)
                 {
                     case UpdateInterval.Weekly:
-                    {
                         if (elapsed.TotalDays >= 7)
                         {
                             AppSettings.LastUpdateCheck = DateTime.UtcNow.Ticks;
                             UpdateDialog.Show(true);
                         }
                         break;
-                    }
                     case UpdateInterval.Monthly:
-                    {
                         if (elapsed.TotalDays >= 30)
                         {
                             AppSettings.LastUpdateCheck = DateTime.UtcNow.Ticks;
                             UpdateDialog.Show(true);
                         }
                         break;
-                    }
                 }
             }
             catch { /* NO ERRORS PLEASE */ }
@@ -938,8 +938,9 @@ namespace FlashDevelop
         /// </summary>
         void OnMainFormActivate(object sender, EventArgs e)
         {
-            if (CurrentDocument is null) return;
-            CurrentDocument.Activate(); // Activate the current document
+            var document = CurrentDocument;
+            if (document is null) return;
+            document.Activate(); // Activate the current document
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1021,7 +1022,7 @@ namespace FlashDevelop
                 string file = FileNameHelper.SessionData;
                 SessionManager.RestoreSession(file, SessionType.Startup);
             }
-            if (Documents.Length == 0)
+            if (DocumentsLength() == 0)
             {
                 NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
                 EventManager.DispatchEvent(this, ne);
@@ -1074,9 +1075,9 @@ namespace FlashDevelop
             }
             if (!e.Cancel && PluginBase.Settings.ConfirmOnExit)
             {
-                string title = TextHelper.GetString("Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.AreYouSureToExit");
-                DialogResult result = MessageBox.Show(this, message, " " + title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                var title = TextHelper.GetString("Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.AreYouSureToExit");
+                var result = MessageBox.Show(this, message, " " + title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.No) e.Cancel = true;
             }
             if (!e.Cancel) CloseAllDocuments(false);
@@ -1090,9 +1091,9 @@ namespace FlashDevelop
             {
                 ToggleFullScreen(null, null);
             }
-            if (!e.Cancel && Documents.Length == 0)
+            if (!e.Cancel && DocumentsLength() == 0)
             {
-                NotifyEvent fe = new NotifyEvent(EventType.FileEmpty);
+                var fe = new NotifyEvent(EventType.FileEmpty);
                 EventManager.DispatchEvent(this, fe);
                 if (!fe.Handled) SmartNew(null, null);
             }
@@ -1257,11 +1258,12 @@ namespace FlashDevelop
                     RecoveryManager.RemoveTemporaryFile(document.FileName);
                 }
             }
-            if (Documents.Length == 1 && document.IsUntitled && !document.IsModified && document.SciControl.Length == 0 && !e.Cancel && !closingForOpenFile && !RestoringContents)
+            var documentsLength = DocumentsLength();
+            if (documentsLength == 1 && document.IsUntitled && !document.IsModified && document.SciControl.Length == 0 && !e.Cancel && !closingForOpenFile && !RestoringContents)
             {
                 e.Cancel = true;
             }
-            if (Documents.Length == 1 && !e.Cancel && !closingForOpenFile && !ClosingEntirely && !RestoringContents)
+            if (documentsLength == 1 && !e.Cancel && !closingForOpenFile && !ClosingEntirely && !RestoringContents)
             {
                 NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
                 EventManager.DispatchEvent(this, ne);
@@ -2087,19 +2089,19 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string[] args = ProcessArgString(((ItemData)button.Tag).Tag).Split(';');
-                Encoding encoding = Encoding.GetEncoding((int)AppSettings.DefaultCodePage);
-                string fileName = DocumentManager.GetNewDocumentName(args[0]);
-                string contents = FileHelper.ReadFile(args[1], encoding);
-                string lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
+                var button = (ToolStripItem)sender;
+                var args = ProcessArgString(((ItemData)button.Tag).Tag).Split(';');
+                var encoding = Encoding.GetEncoding((int)AppSettings.DefaultCodePage);
+                var fileName = DocumentManager.GetNewDocumentName(args[0]);
+                var contents = FileHelper.ReadFile(args[1], encoding);
+                var lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
                 contents = Regex.Replace(contents, @"\r\n?|\n", lineEndChar);
-                string processed = ProcessArgString(contents);
+                var processed = ProcessArgString(contents);
                 var actionPoint = SnippetHelper.ProcessActionPoint(processed);
-                if (Documents.Length == 1 && Documents[0].IsUntitled)
+                if (DocumentsLength() == 1 && Documents[0] is { } doc && doc.IsUntitled)
                 {
                     closingForOpenFile = true;
-                    Documents[0].Close();
+                    doc.Close();
                     closingForOpenFile = false;
                 }
                 var te = new TextEvent(EventType.FileTemplate, fileName);
