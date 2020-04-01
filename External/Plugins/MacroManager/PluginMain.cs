@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
@@ -177,11 +178,8 @@ namespace MacroManager
         /// </summary>
         public void RefreshMacroToolBarItems()
         {
-            ToolStrip toolStrip = PluginBase.MainForm.ToolStrip;
-            if (!toolStrip.Items.Contains(toolbarSeparator))
-            {
-                toolStrip.Items.Add(toolbarSeparator);
-            }
+            var toolStrip = PluginBase.MainForm.ToolStrip;
+            if (!toolStrip.Items.Contains(toolbarSeparator)) toolStrip.Items.Add(toolbarSeparator);
             foreach (ToolStripItem item in toolbarItems)
             {
                 toolStrip.Items.Remove(item);
@@ -223,21 +221,19 @@ namespace MacroManager
             AppSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
             else AppSettings = ObjectSerializer.Deserialize(settingFilename, AppSettings);
-            if (AppSettings.UserMacros.Count == 0)
-            {
-                Macro execScript = new Macro("&Execute Script", new[] { "ExecuteScript|Development;$(OpenFile)" }, string.Empty, Keys.None);
-                Macro execCommand = new Macro("E&xecute Command", new[] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }, string.Empty, Keys.None);
-                Macro execfCommand = new Macro("Execu&te Current File", new[] { "RunProcess|$(CurFile)" }, string.Empty, Keys.None);
-                Macro runSelected = new Macro("Execute &Selected Text", new[] { "RunProcess|$(SelText)" }, string.Empty, Keys.None);
-                Macro browseSelected = new Macro("&Browse Current File", new[] { "Browse|$(CurFile)" }, string.Empty, Keys.None);
-                Macro copyTextAsRtf = new Macro("&Copy Text As RTF", new[] { "ScintillaCommand|CopyRTF" }, string.Empty, Keys.None);
-                AppSettings.UserMacros.Add(execScript);
-                AppSettings.UserMacros.Add(execCommand);
-                AppSettings.UserMacros.Add(execfCommand);
-                AppSettings.UserMacros.Add(runSelected);
-                AppSettings.UserMacros.Add(browseSelected);
-                AppSettings.UserMacros.Add(copyTextAsRtf);
-            }
+            AppSettings.UserMacros.RemoveAll(it => it.Label.IsNullOrEmpty() && it.Entries.IsNullOrEmpty());
+            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "ExecuteScript|Development;$(OpenFile)"))
+                AppSettings.UserMacros.Add(new Macro("&Execute Script", new[] {"ExecuteScript|Development;$(OpenFile)"}));
+            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)"))
+                AppSettings.UserMacros.Add(new Macro("E&xecute Command", new[] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }));
+            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "RunProcess|$(CurFile)"))
+                AppSettings.UserMacros.Add(new Macro("Execu&te Current File", new[] { "RunProcess|$(CurFile)" }));
+            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "RunProcess|$(SelText)"))
+                AppSettings.UserMacros.Add(new Macro("Execute &Selected Text", new[] { "RunProcess|$(SelText)" }));
+            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "Browse|$(CurFile)"))
+                AppSettings.UserMacros.Add(new Macro("&Browse Current File", new[] { "Browse|$(CurFile)" }));
+            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "ScintillaCommand|CopyRTF"))
+                AppSettings.UserMacros.Add(new Macro("&Copy Text As RTF", new[] { "ScintillaCommand|CopyRTF" }));
         }
 
         /// <summary>
@@ -247,15 +243,13 @@ namespace MacroManager
         {
             try
             {
-                foreach (Macro macro in AppSettings.UserMacros)
+                foreach (var macro in AppSettings.UserMacros)
                 {
-                    if (macro.AutoRun)
+                    if (!macro.AutoRun) continue;
+                    foreach (var entry in macro.Entries)
                     {
-                        foreach (string entry in macro.Entries)
-                        {
-                            string[] parts = entry.Split('|');
-                            PluginBase.MainForm.CallCommand(parts[0], parts[1]);
-                        }
+                        var parts = entry.Split('|');
+                        PluginBase.MainForm.CallCommand(parts[0], parts[1]);
                     }
                 }
             }
@@ -320,6 +314,10 @@ namespace MacroManager
     public class Macro
     {
         public Macro(){}
+
+        public Macro(string label, string[] entries) : this(label, entries, string.Empty, Keys.None, false, false)
+        {
+        }
 
         public Macro(string label, string[] entries, string image, Keys shortcut) : this(label, entries, image, shortcut, false, false)
         {
