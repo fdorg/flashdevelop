@@ -32,9 +32,7 @@ namespace PluginCore.Localization
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
         public static string GetStringWithoutMnemonics(string key)
-        {
-            return RemoveMnemonics(GetStringInternal(key, Assembly.GetCallingAssembly()));
-        }
+            => RemoveMnemonics(GetStringInternal(key, Assembly.GetCallingAssembly()));
 
         /// <summary>
         /// Gets the specified localized string with trailing triple dots (...) removed.
@@ -44,9 +42,7 @@ namespace PluginCore.Localization
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
         public static string GetStringWithoutEllipsis(string key)
-        {
-            return RemoveEllipsis(GetStringInternal(key, Assembly.GetCallingAssembly()));
-        }
+            => RemoveEllipsis(GetStringInternal(key, Assembly.GetCallingAssembly()));
 
         /// <summary>
         /// Gets the specified localized string with mnemonics and ellipsis removed.
@@ -56,9 +52,7 @@ namespace PluginCore.Localization
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
         public static string GetStringWithoutMnemonicsOrEllipsis(string key)
-        {
-            return RemoveMnemonicsAndEllipsis(GetStringInternal(key, Assembly.GetCallingAssembly()));
-        }
+            => RemoveMnemonicsAndEllipsis(GetStringInternal(key, Assembly.GetCallingAssembly()));
 
         /// <summary>
         /// Removes mnemonics from the specified string.
@@ -108,10 +102,10 @@ namespace PluginCore.Localization
         static string GetStringInternal(string key, Assembly assembly)
         {
             if (!ValidateStoredLocale()) return key ?? string.Empty;
-            string prefix = assembly.GetName().Name;
+            var prefix = assembly.GetName().Name;
             // On different distro we need to use FlashDevelop prefix
             if (prefix == DistroConfig.DISTRIBUTION_NAME) prefix = "FlashDevelop";
-            string result = resourceManager.GetString(prefix + "." + key);
+            var result = resourceManager.GetString(prefix + "." + key);
             if (result is null)
             {
                 result = resourceManager.GetString(key);

@@ -10,31 +10,29 @@ using PluginCore.Managers;
 
 namespace FlashDevelop.Utilities 
 {
-    class PluginServices
+    internal class PluginServices
     {
-        public static List<string> KnownDLLs;
-        public static List<AvailablePlugin> AvailablePlugins;
+        public static List<string> KnownDLLs = new List<string>();
+        public static List<AvailablePlugin> AvailablePlugins = new List<AvailablePlugin>();
         public static int REQUIRED_API_LEVEL = 1;
         
         static PluginServices()
         {
-            KnownDLLs = new List<string>();
-            AvailablePlugins = new List<AvailablePlugin>();
         }
 
         /// <summary>
         /// Finds plugins from the specified folder
         /// </summary>
-        public static void FindPlugins(string path)
+        public static void FindPlugins(string directory)
         {
-            EnsureUpdatedPlugins(path);
-            foreach (string fileOn in Directory.GetFiles(path, "*.dll"))
+            EnsureUpdatedPlugins(directory);
+            foreach (var fileName in Directory.GetFiles(directory, "*.dll"))
             {
-                string name = Path.GetFileNameWithoutExtension(fileOn);
+                var name = Path.GetFileNameWithoutExtension(fileName);
                 if (name != nameof(PluginCore) && !KnownDLLs.Contains(name))
                 {
                     KnownDLLs.Add(name);
-                    AddPlugin(fileOn);
+                    AddPlugin(fileName);
                 }
             }
         }
@@ -53,10 +51,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Finds a plugin from the plugin collection
         /// </summary>
-        public static AvailablePlugin Find(string guid)
-        {
-            return AvailablePlugins.FirstOrDefault(plugin => plugin.Instance.Guid == guid);
-        }
+        public static AvailablePlugin Find(string guid) => AvailablePlugins.FirstOrDefault(plugin => plugin.Instance.Guid == guid);
 
         /// <summary>
         /// Disposes all available plugins that are active
@@ -83,7 +78,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Adds a plugin to the plugin collection
         /// </summary>
-        private static void AddPlugin(string fileName)
+        static void AddPlugin(string fileName)
         {
             try
             {
@@ -91,7 +86,7 @@ namespace FlashDevelop.Utilities
                 foreach (Type pluginType in pluginAssembly.GetTypes())
                 {
                     if (!pluginType.IsPublic || pluginType.IsAbstract) continue;
-                    Type typeInterface = pluginType.GetInterface("PluginCore.IPlugin", true);
+                    var typeInterface = pluginType.GetInterface("PluginCore.IPlugin", true);
                     if (typeInterface is null) continue;
                     AvailablePlugin newPlugin = new AvailablePlugin(fileName);
                     newPlugin.Instance = (IPlugin)Activator.CreateInstance(pluginAssembly.GetType(pluginType.ToString()));
