@@ -9,30 +9,21 @@ namespace PluginCore.Managers
     /// </summary>
     public static class EventManager
     {
-        static readonly List<EventObject> highObjects;
-        static readonly List<EventObject> normalObjects;
-        static readonly List<EventObject> lowObjects;
-        static EventObject[] eventObjectsSnapshot;
+        static readonly List<EventObject> highObjects = new List<EventObject>();
+        static readonly List<EventObject> normalObjects = new List<EventObject>();
+        static readonly List<EventObject> lowObjects = new List<EventObject>();
+        static EventObject[] eventObjectsSnapshot = Array.Empty<EventObject>();
         static bool snapshotInvalid;
-
         static readonly object eventLock = new object();
 
         static EventManager()
         {
-            highObjects = new List<EventObject>();
-            normalObjects = new List<EventObject>();
-            lowObjects = new List<EventObject>();
-            eventObjectsSnapshot = Array.Empty<EventObject>();
-            snapshotInvalid = false;
         }
 
         /// <summary>
         /// Adds an event handler with <see cref="HandlingPriority.Normal"/>.
         /// </summary>
-        public static void AddEventHandler(IEventHandler handler, EventType mask)
-        {
-            AddEventHandler(handler, mask, HandlingPriority.Normal);
-        }
+        public static void AddEventHandler(IEventHandler handler, EventType mask) => AddEventHandler(handler, mask, HandlingPriority.Normal);
 
         /// <summary>
         /// Adds an event handler with the specific <see cref="HandlingPriority"/> value.

@@ -6,7 +6,7 @@ using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class EditorStyle : ConfigItem
     {
         [XmlAttribute("caret-fore")]
@@ -62,10 +62,7 @@ namespace ScintillaNet.Configuration
 
         public int ResolveColor(string colorString)
         {
-            if (string.IsNullOrEmpty(colorString))
-            {
-                return 0x000000;
-            }
+            if (string.IsNullOrEmpty(colorString)) return 0x000000;
             var value = _parent.MasterScintilla.GetValue(colorString);
             while (value != null)
             {
@@ -86,215 +83,40 @@ namespace ScintillaNet.Configuration
         /// <summary>
         /// Converts ARGB color value to Scintilla's Colour format (BGR)
         /// </summary>
-        private int TO_COLORREF(int color)
-        {
-            return ((color & 0xFF0000) >> 16) + (color & 0x00FF00) + ((color & 0x0000FF) << 16);
-        }
-        
-        public int CaretForegroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(caretfore))
-                {
-                    return ResolveColor(caretfore);
-                }
-                return ResolveColor("0x000000");
-            }
-        }
-        
-        public int CaretLineBackgroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(caretlineback))
-                {
-                    return ResolveColor(caretlineback);
-                }
-                return ResolveColor("0xececec");
-            }
-        }
-        
-        public int SelectionForegroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(selectionfore))
-                {
-                    return ResolveColor(selectionfore);
-                }
-                return ResolveColor("0xffffff");
-            }
-        }
-        
-        public int SelectionBackgroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(selectionback))
-                {
-                    return ResolveColor(selectionback);
-                }
-                return ResolveColor("0x000000");
-            }
-        }
+        int TO_COLORREF(int color) => ((color & 0xFF0000) >> 16) + (color & 0x00FF00) + ((color & 0x0000FF) << 16);
 
-        public int MarkerBackgroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(markerback))
-                {
-                    return ResolveColor(markerback);
-                }
-                return ResolveColor("0x808080");
-            }
-        }
+        public int CaretForegroundColor => ResolveColor(string.IsNullOrEmpty(caretfore) ? "0x000000" : caretfore);
 
-        public int MarkerForegroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(markerfore))
-                {
-                    return ResolveColor(markerfore);
-                }
-                return ResolveColor("0xffffff");
-            }
-        }
+        public int CaretLineBackgroundColor => ResolveColor(string.IsNullOrEmpty(caretlineback) ? "0xececec" : caretlineback);
 
-        public int MarginForegroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(marginfore))
-                {
-                    return ResolveColor(marginfore);
-                }
-                return ResolveColor("0xf5f5f5");
-            }
-        }
+        public int SelectionForegroundColor => ResolveColor(string.IsNullOrEmpty(selectionfore) ? "0xffffff" : selectionfore);
 
-        public int MarginBackgroundColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(marginback))
-                {
-                    return ResolveColor(marginback);
-                }
-                return ResolveColor("0xfaf0e6");
-            }
-        }
+        public int SelectionBackgroundColor => ResolveColor(string.IsNullOrEmpty(selectionback) ? "0x000000" : selectionback);
 
-        public int PrintMarginColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(printmargin))
-                {
-                    return ResolveColor(printmargin);
-                }
-                return ResolveColor("0xCCCCCC");
-            }
-        }
+        public int MarkerBackgroundColor => ResolveColor(string.IsNullOrEmpty(markerback) ? "0x808080" : markerback);
 
-        public int BookmarkLineColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(bookmarkline))
-                {
-                    return ResolveColor(bookmarkline);
-                }
-                return ResolveColor("0xffff00");
-            }
-        }
-        
-        public int ModifiedLineColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(modifiedline))
-                {
-                    return ResolveColor(modifiedline);
-                }
-                return ResolveColor("0xffff00");
-            }
-        }
+        public int MarkerForegroundColor => ResolveColor(string.IsNullOrEmpty(markerfore) ? "0xffffff" : markerfore);
 
-        public int HighlightBackColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(highlightback))
-                {
-                    return ResolveColor(highlightback);
-                }
-                return ResolveColor("0x808000");
-            }
-        }
+        public int MarginForegroundColor => ResolveColor(string.IsNullOrEmpty(marginfore) ? "0xf5f5f5" : marginfore);
 
-        public int HighlightWordBackColor
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(highlightwordback))
-                {
-                    return ResolveColor(highlightwordback);
-                }
-                return ResolveColor("0x0088ff");
-            }
-        }
+        public int MarginBackgroundColor => ResolveColor(string.IsNullOrEmpty(marginback) ? "0xfaf0e6" : marginback);
 
-        public int ErrorLineBack
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(errorlineback))
-                {
-                    return ResolveColor(errorlineback);
-                }
-                return ResolveColor("0xff0000");
-            }
-        }
+        public int PrintMarginColor => ResolveColor(string.IsNullOrEmpty(printmargin) ? "0xCCCCCC" : printmargin);
 
-        public int DebugLineBack
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(debuglineback))
-                {
-                    return ResolveColor(debuglineback);
-                }
-                return ResolveColor("0xffa500");
-            }
-        }
+        public int BookmarkLineColor => ResolveColor(string.IsNullOrEmpty(bookmarkline) ? "0xffff00" : bookmarkline);
 
-        public int DisabledLineBack
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(disabledlineback))
-                {
-                    return ResolveColor(disabledlineback);
-                }
-                return ResolveColor("0xcccccc");
-            }
-        }
+        public int ModifiedLineColor => ResolveColor(string.IsNullOrEmpty(modifiedline) ? "0xffff00" : modifiedline);
 
-        public bool ColorizeMarkerBack
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(colorizemarkerback))
-                {
-                    return colorizemarkerback.ToLower() == "true";
-                }
-                return false;
-            }
-        }
+        public int HighlightBackColor => ResolveColor(string.IsNullOrEmpty(highlightback) ? "0x808000" : highlightback);
 
+        public int HighlightWordBackColor => ResolveColor(string.IsNullOrEmpty(highlightwordback) ? "0x0088ff" : highlightwordback);
+
+        public int ErrorLineBack => ResolveColor(string.IsNullOrEmpty(errorlineback) ? "0xff0000" : errorlineback);
+
+        public int DebugLineBack => ResolveColor(string.IsNullOrEmpty(debuglineback) ? "0xffa500" : debuglineback);
+
+        public int DisabledLineBack => ResolveColor(string.IsNullOrEmpty(disabledlineback) ? "0xcccccc" : disabledlineback);
+
+        public bool ColorizeMarkerBack => colorizemarkerback?.ToLower() == "true";
     }
-    
 }

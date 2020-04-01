@@ -3,15 +3,13 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class Value : ConfigItem
     {
-        [XmlAttribute()]
+        [XmlAttribute]
         public string name;
 
-        [XmlText()]
+        [XmlText]
         public string val;
-        
     }
-    
 }

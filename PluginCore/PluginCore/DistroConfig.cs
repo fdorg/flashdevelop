@@ -13,5 +13,4 @@
         public const string DISTRIBUTION_RSS = "http://www.flashdevelop.org/community/rss.php?f=15";
         public const string DISTRIBUTION_EXT = "as";
     }
-
 }

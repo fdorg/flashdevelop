@@ -36,9 +36,8 @@ namespace PluginCore.Helpers
         {
             try
             {
-                string dir = Path.GetFullPath(path);
-                char separator = Path.DirectorySeparatorChar;
-                string[] chunks = dir.Split(separator);
+                var dir = Path.GetFullPath(path);
+                var chunks = dir.Split(Path.DirectorySeparatorChar);
                 return chunks[chunks.Length - 1];
             }
             catch (Exception ex)
@@ -80,9 +79,9 @@ namespace PluginCore.Helpers
         {
             try
             {
-                string[] files = Directory.GetFileSystemEntries(source);
                 if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
-                foreach (string file in files)
+                var files = Directory.GetFileSystemEntries(source);
+                foreach (var file in files)
                 {
                     if (Directory.Exists(file)) CopyFolder(file, Path.Combine(destination, Path.GetFileName(file)));
                     else File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), true);

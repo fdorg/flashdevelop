@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Utilities;
@@ -133,7 +134,10 @@ namespace PluginCore.Controls
 
         #region Keys handling
 
-        public void OnChar(ScintillaControl sci, int value)
+        [Obsolete("Please use MethodCallTip.OnChar(ScintillaControl sci)")]
+        public void OnChar(ScintillaControl sci, int value) => OnChar(sci);
+
+        public void OnChar(ScintillaControl sci)
         {
             currentPos++;
             UpdateTip(sci);
@@ -177,10 +181,7 @@ namespace PluginCore.Controls
                         sci.CharRight();
                         currentPos = sci.CurrentPos;
                         if (sci.CurrentLine != currentLine) Hide();
-                        else
-                        {
-                            OnUpdateCallTip?.Invoke(sci, currentPos);
-                        }
+                        else OnUpdateCallTip?.Invoke(sci, currentPos);
                     }
                     return true;
 
@@ -190,26 +191,15 @@ namespace PluginCore.Controls
                         sci.CharLeft();
                         currentPos = sci.CurrentPos;
                         if (currentPos < startPos) Hide();
-                        else
-                        {
-                            if (sci.CurrentLine != currentLine) Hide();
-                            else
-                            {
-                                OnUpdateCallTip?.Invoke(sci, currentPos);
-                            }
-                        }
+                        else if (sci.CurrentLine != currentLine) Hide();
+                        else OnUpdateCallTip?.Invoke(sci, currentPos);
                     }
                     return true;
 
                 case Keys.Back:
                     currentPos = sci.CurrentPos - 1;
-                    if (currentPos + deltaPos <= startPos)
-                        Hide();
-                    else
-                    {
-                        OnUpdateCallTip?.Invoke(sci, currentPos);
-                    }
-
+                    if (currentPos + deltaPos <= startPos) Hide();
+                    else OnUpdateCallTip?.Invoke(sci, currentPos);
                     return false;
 
                 case Keys.Tab:

@@ -54,7 +54,5 @@ namespace PluginCore.Helpers
                 return null;
             }
         }
-        
     }
-    
 }

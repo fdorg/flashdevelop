@@ -88,7 +88,5 @@ namespace PluginCore.Managers
             }
             catch {}
         }
-
     }
-
 }

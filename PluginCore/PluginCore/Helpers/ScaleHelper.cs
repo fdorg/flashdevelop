@@ -10,8 +10,9 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Private properties
         /// </summary>
-        private static double curScale = double.MinValue;
-        private static readonly HashSet<Control> adjustedItems = new HashSet<Control>();
+        static double curScale = double.MinValue;
+
+        static readonly HashSet<Control> adjustedItems = new HashSet<Control>();
 
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.
@@ -55,10 +56,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static SizeF Scale(SizeF value)
-        {
-            return new SizeF(Scale(value.Width), Scale(value.Height));
-        }
+        public static SizeF Scale(SizeF value) => new SizeF(Scale(value.Width), Scale(value.Height));
 
         /// <summary>
         /// Resizes the image based on the display scale. Uses high quality settings.
@@ -96,15 +94,12 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Keep track and adjust forms only once
         /// </summary>
-        private static bool IsAdjusted(Control control)
+        static bool IsAdjusted(Control control)
         {
             if (!(control is Form)) return false;
             if (adjustedItems.Contains(control)) return true;
             adjustedItems.Add(control);
             return false;
-
         }
-
     }
-
 }

@@ -4,8 +4,7 @@ using System.IO;
 
 namespace PluginCore.Helpers
 {
-    public class SimpleIni 
-        : Dictionary<string, Dictionary<string, string>>
+    public class SimpleIni : Dictionary<string, Dictionary<string, string>>
     {
         public Dictionary<string, string> Flatten()
         {
@@ -36,9 +35,9 @@ namespace PluginCore.Helpers
             if (File.Exists(configPath))
             {
                 var lines = File.ReadAllLines(configPath);
-                foreach (string rawLine in lines)
+                foreach (var rawLine in lines)
                 {
-                    string line = rawLine.Trim();
+                    var line = rawLine.Trim();
                     if (line.Length < 2 || line.StartsWith("#", StringComparison.Ordinal) || line.StartsWith(";", StringComparison.Ordinal)) continue;
                     if (line.StartsWith("[", StringComparison.Ordinal))
                     {
@@ -48,7 +47,7 @@ namespace PluginCore.Helpers
                     }
                     else
                     {
-                        string[] entry = line.Split(new[] { '=' }, 2);
+                        var entry = line.Split(new[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         config[entry[0].Trim()] = entry[1].Trim();
                     }

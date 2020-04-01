@@ -120,7 +120,7 @@ namespace PluginCore.FRService
             if (cacheDocuments)
             {
                 if (openDocuments is null) CacheOpenDocuments();
-                if (openDocuments.ContainsKey(file)) return openDocuments[file].SciControl.Text;
+                if (openDocuments.TryGetValue(file, out var doc)) return doc.SciControl.Text;
             }
             return FileHelper.ReadFile(file);
         }

@@ -445,10 +445,7 @@ namespace PluginCore.Helpers
     /// </summary>
     class UTF7EncodingFixed : UTF7Encoding
     {
-        public override byte[] GetPreamble()
-        {
-            return new byte[] { 0x2B, 0x2F, 0x76, 0x38, 0x2D };
-        }
+        public override byte[] GetPreamble() => new byte[] { 0x2B, 0x2F, 0x76, 0x38, 0x2D };
     }
 
     /// <summary>
@@ -460,6 +457,6 @@ namespace PluginCore.Helpers
         public string Charset = string.Empty;
         public string Contents = string.Empty;
         public bool ContainsBOM;
-        public int BomLength = 0;
+        public int BomLength;
     }
 }
