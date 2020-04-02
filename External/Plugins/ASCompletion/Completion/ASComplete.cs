@@ -2460,7 +2460,7 @@ namespace ASCompletion.Completion
             {
                 var tail = string.Empty;
                 // for example: var v:Type = new $(EntryPoint)
-                if (GetOperatorLeft(sci, ref pos) == "=" && GetExpression(sci, pos) is { } e && e.Value is {} v)
+                if (GetOperatorLeft(sci, ref pos) == "=" && GetExpression(sci, pos)?.Value is { } v)
                     tail = v;
                 return HandleNewCompletion(sci, tail, autoHide, word);
             }
