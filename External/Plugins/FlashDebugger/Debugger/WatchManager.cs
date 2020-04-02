@@ -9,9 +9,9 @@ namespace FlashDebugger.Debugger
 {
     public class WatchManager
     {
-        private IProject m_Project;
-        private string m_SaveFileFullPath;
-        private List<string> m_WatchList = new List<string>();
+        IProject m_Project;
+        string m_SaveFileFullPath;
+        List<string> m_WatchList = new List<string>();
 
         public event EventHandler<WatchExpressionArgs> ExpressionAdded;
         public event EventHandler<WatchExpressionArgs> ExpressionRemoved;
@@ -35,11 +35,11 @@ namespace FlashDebugger.Debugger
             }
         }
 
-        private string GetWatchFile(string path)
+        static string GetWatchFile(string path)
         {
-            string cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Watch");
+            var cacheDir = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger), "Watch");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-            string hashFileName = HashCalculator.CalculateSHA1(path);
+            var hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");
         }
 
@@ -65,14 +65,11 @@ namespace FlashDebugger.Debugger
 
         public bool Remove(string expr)
         {
-            int index = m_WatchList.IndexOf(expr);
-            if (index > -1)
-            {
-                m_WatchList.RemoveAt(index);
-                OnExpressionRemoved(expr, index);
-                return true;
-            }
-            return false;
+            var index = m_WatchList.IndexOf(expr);
+            if (index == -1) return false;
+            m_WatchList.RemoveAt(index);
+            OnExpressionRemoved(expr, index);
+            return true;
         }
 
         public bool RemoveAt(int index)
@@ -113,14 +110,9 @@ namespace FlashDebugger.Debugger
 
         public void Load(string filePath)
         {
-            if (File.Exists(filePath))
-            {
-                m_WatchList = Util.SerializeXML<List<string>>.LoadFile(filePath);
-            }
-            else
-            {
-                m_WatchList = new List<string>();
-            }
+            m_WatchList = File.Exists(filePath)
+                ? Util.SerializeXML<List<string>>.LoadFile(filePath)
+                : new List<string>();
             OnExpressionsLoaded(EventArgs.Empty);
         }
 

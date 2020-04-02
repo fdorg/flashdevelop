@@ -83,7 +83,7 @@ namespace FlashDebugger.Helpers
                     {
 
                         // check if encountered before
-                        bool isNew = childId == "" || !visited.Contains(childId);
+                        var isNew = childId == "" || !visited.Contains(childId);
                         if (!isNew)
                         {
                             // error
@@ -119,7 +119,6 @@ namespace FlashDebugger.Helpers
                 {
                     sb.AppendLine();
                 }
-
             }
         }
 
@@ -127,7 +126,6 @@ namespace FlashDebugger.Helpers
         {
             try
             {
-
                 // if is an empty array []
                 // then skip it from opening and closing { } the output
                 if (parent.Nodes.Count == 1 || parent.Nodes.Count == 2)

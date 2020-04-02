@@ -94,12 +94,11 @@ namespace FlashDebugger
                 }
             }
             var fullClassName = findClassName(s);
-            if (null != fullClassName)
+            if (fullClassName != null)
             {
                 return (Object)session.getGlobal(new String(fullClassName));
             }
             throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
-            //Value_.UNDEFINED;
         }
 
         public string findClassName(String className)
@@ -156,9 +155,6 @@ namespace FlashDebugger
                 }
                 return new String(name + " = " + val.getValueAsString());
             }
-
-            //NoSuchVariableException
-
             throw new NotImplementedException();
         }
 

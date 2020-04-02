@@ -232,17 +232,24 @@ namespace FlashDebugger
             //
             StopButton.Enabled = StopMenu.Enabled = (state != DebuggerState.Initializing && state != DebuggerState.Stopped);
             PauseButton.Enabled = PauseMenu.Enabled = (state == DebuggerState.Running);
-            //
-            if (state == DebuggerState.Initializing || state == DebuggerState.Stopped)
+            switch (state)
             {
-                if (PluginMain.settingObject.StartDebuggerOnTestMovie) StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
-                else StartContinueButton.Enabled = StartContinueMenu.Enabled = true;
+                case DebuggerState.Initializing:
+                case DebuggerState.Stopped:
+                {
+                    if (PluginMain.settingObject.StartDebuggerOnTestMovie) StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
+                    else StartContinueButton.Enabled = StartContinueMenu.Enabled = true;
+                    break;
+                }
+                case DebuggerState.BreakHalt:
+                case DebuggerState.ExceptionHalt:
+                case DebuggerState.PauseHalt:
+                    StartContinueButton.Enabled = StartContinueMenu.Enabled = true;
+                    break;
+                default:
+                    StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
+                    break;
             }
-            else if (state == DebuggerState.BreakHalt || state == DebuggerState.ExceptionHalt || state == DebuggerState.PauseHalt)
-            {
-                StartContinueButton.Enabled = StartContinueMenu.Enabled = true;
-            }
-            else StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
             //
             bool enabled = (state == DebuggerState.BreakHalt || state == DebuggerState.PauseHalt);
             CurrentButton.Enabled = CurrentMenu.Enabled = RunToCursorButton.Enabled = enabled;

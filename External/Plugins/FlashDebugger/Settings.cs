@@ -13,7 +13,7 @@ namespace FlashDebugger
     [DefaultProperty("Path")]
     public class Folder
     {
-        private string path;
+        string path;
 
         public Folder() : this(string.Empty)
         {
@@ -37,19 +37,19 @@ namespace FlashDebugger
     [Serializable]
     public class Settings
     {
-        private Folder[] m_SourcePaths = Array.Empty<Folder>();
-        private bool m_SaveBreakPoints = true;
-        private bool m_DisablePanelsAutoshow;
-        private bool m_VerboseOutput;
-        private bool m_StartDebuggerOnTestMovie = true;
-        private bool m_BreakOnThrow;
-        private string  m_SwitchToLayout;
-        private bool m_CombineInherited;
-        private bool m_HideStaticMembers;
-        private bool m_HideFullClassPaths;
-        private bool m_HideClassIds;
-        private int m_CopyTreeMaxRecursion = 10;
-        private int m_CopyTreeMaxChars = 1000000;
+        Folder[] m_SourcePaths = Array.Empty<Folder>();
+        bool m_SaveBreakPoints = true;
+        bool m_DisablePanelsAutoshow;
+        bool m_VerboseOutput;
+        bool m_StartDebuggerOnTestMovie = true;
+        bool m_BreakOnThrow;
+        string  m_SwitchToLayout;
+        bool m_CombineInherited;
+        bool m_HideStaticMembers;
+        bool m_HideFullClassPaths;
+        bool m_HideClassIds;
+        int m_CopyTreeMaxRecursion = 10;
+        int m_CopyTreeMaxChars = 1000000;
 
         [field: NonSerialized]
         public event EventHandler BreakOnThrowChanged;
@@ -127,9 +127,7 @@ namespace FlashDebugger
             get => m_BreakOnThrow;
             set
             {
-                if (m_BreakOnThrow == value)
-                    return;
-
+                if (value == m_BreakOnThrow) return;
                 m_BreakOnThrow = value;
                 BreakOnThrowChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -157,9 +155,7 @@ namespace FlashDebugger
             get => m_CombineInherited;
             set
             {
-                if (m_CombineInherited == value)
-                    return;
-
+                if (value == m_CombineInherited) return;
                 m_CombineInherited = value;
                 DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -174,9 +170,7 @@ namespace FlashDebugger
             get => m_HideStaticMembers;
             set
             {
-                if (m_HideStaticMembers == value)
-                    return;
-
+                if (value == m_HideStaticMembers) return;
                 m_HideStaticMembers = value;
                 DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -191,9 +185,7 @@ namespace FlashDebugger
             get => m_HideFullClassPaths;
             set
             {
-                if (m_HideFullClassPaths == value)
-                    return;
-
+                if (value == m_HideFullClassPaths) return;
                 m_HideFullClassPaths = value;
                 DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -208,9 +200,7 @@ namespace FlashDebugger
             get => m_HideClassIds;
             set
             {
-                if (m_HideClassIds == value)
-                    return;
-
+                if (value == m_HideClassIds) return;
                 m_HideClassIds = value;
                 DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -245,7 +235,7 @@ namespace FlashDebugger
         }
 
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        void OnDeserialized(StreamingContext context)
         {
             if (m_CopyTreeMaxChars == 0)
                 m_CopyTreeMaxChars = 1000000;
@@ -253,7 +243,5 @@ namespace FlashDebugger
             if (m_CopyTreeMaxRecursion == 0)
                 m_CopyTreeMaxRecursion = 10;
         }
-
     }
-
 }
