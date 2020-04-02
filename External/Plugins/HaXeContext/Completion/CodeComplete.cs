@@ -662,6 +662,8 @@ namespace HaXeContext.Completion
             }
             var currentModel = ctx.CurrentModel;
             var rvalueStart = sci.PositionFromLine(member.LineFrom) + m.Index + m.Length;
+            // for example: for(v in v.$(EntryPoint)
+            if (rvalueStart == local.PositionExpression) return;
             var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
             var parCount = 0;
             var braCount = 0;
