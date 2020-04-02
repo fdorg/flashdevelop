@@ -333,7 +333,7 @@ namespace PluginCore.Controls
                 return;
             }
             
-            if (callTip.CallTipActive) callTip.OnChar(sci, value);
+            if (callTip.CallTipActive) callTip.OnChar(sci);
             if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
         }

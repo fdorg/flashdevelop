@@ -219,7 +219,7 @@ namespace FlashDevelop.Managers
                 var settings = PluginBase.Settings;
                 sci.CaretPeriod = settings.CaretPeriod;
                 sci.CaretWidth = settings.CaretWidth;
-                sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text, (int)settings.EOLMode);
+                sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text);
                 sci.IsBraceMatching = settings.BraceMatchingEnabled;
                 sci.UseHighlightGuides = !settings.HighlightGuide;
                 sci.Indent = settings.IndentSize;

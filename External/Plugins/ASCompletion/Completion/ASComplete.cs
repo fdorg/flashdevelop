@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -2196,40 +2196,6 @@ namespace ASCompletion.Completion
 
         #region types_completion
 
-        static string SelectTypedNewMember(ScintillaControl sci)
-        {
-            try
-            {
-                var expr = GetExpression(sci, sci.CurrentPos);
-                if (expr.Value is null) return null;
-                var ctx = ASContext.Context;
-                // try local var
-                expr.LocalVars = ParseLocalVars(expr);
-                foreach (var localVar in expr.LocalVars)
-                {
-                    if (localVar.LineTo == ctx.CurrentLine)
-                    {
-                        return localVar.Type;
-                    }
-                }
-                // try member
-                var currentLine = sci.GetLine(sci.CurrentLine);
-                var m = Regex.Match(currentLine, "\\s*(?<name>[a-z_$][a-z._$0-9]*)(?<decl>[: ]*)(?<type>[a-z.0-9<>]*)\\s*=\\s*new\\s", RegexOptions.IgnoreCase);
-                if (m.Success)
-                {
-                    var name = m.Groups["name"].Value;
-                    var result = EvalExpression(name, expr, ctx.CurrentModel, ctx.CurrentClass, true, false);
-                    if (result?.Member?.Type != null) // Might be missing or wrongly typed member
-                    {
-                        return result.Member.Type;
-                    }
-                }
-            }
-            catch {} // Do not throw exception with incorrect types
-
-            return null;
-        }
-
         protected static bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword)
         {
             List<ICompletionListItem> list;
@@ -2258,18 +2224,17 @@ namespace ASCompletion.Completion
             //       a. Generic type -> Show it with our index type.
             //       b. Not generic type -> Show existing one
             //    2. Type doesn't exist -> Show it with a warning symbol.
-            string newItemType;
-            if (keyword == "new" && (newItemType = SelectTypedNewMember(sci)) != null)
+            if (keyword == "new" && !tail.IsNullOrEmpty())
             {
-                var aClass = ResolveType(newItemType, ASContext.Context.CurrentModel);
+                var newItemType = tail;
                 ICompletionListItem newItem = null;
+                var aClass = ResolveType(newItemType, ASContext.Context.CurrentModel);
                 if (!aClass.IsVoid())
                 {
                     // AS2 special srictly typed Arrays supports
                     if (newItemType.Contains('@', out var p)) newItemType = newItemType.Substring(0, p);
                     else if (!string.IsNullOrEmpty(aClass.IndexType))
                     {
-                        newItemType = aClass.QualifiedName;
                         newItem = new MemberItem(new MemberModel(newItemType, aClass.Type, aClass.Flags, aClass.Access));
                     }
                 }
@@ -2285,7 +2250,7 @@ namespace ASCompletion.Completion
                     else itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
                     list.Insert(itemIndex, newItem);
                 }
-                CompletionList.Show(list, autoHide, tail);
+                CompletionList.Show(list, autoHide);
                 CompletionList.SelectItem(newItemType);
             }
             else CompletionList.Show(list, autoHide, tail);
@@ -2491,7 +2456,14 @@ namespace ASCompletion.Completion
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
             if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
-            if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, string.Empty, autoHide, word);
+            if (features.HasTypePreKey(word))
+            {
+                // получить оператор слева, если это =, получить экспрешен до =, педать его в tail
+                var tail = string.Empty;
+                if (GetOperatorLeft(sci, ref pos) == "=" && GetExpression(sci, pos) is { } e && e.Value is {} v)
+                    tail = v;
+                return HandleNewCompletion(sci, tail, autoHide, word);
+            }
             var beforeBody = true;
             var expr = CurrentResolvedContext?.Result?.Context;
             if (expr != null) beforeBody = expr.ContextFunction is null || expr.BeforeBody;
@@ -4790,7 +4762,7 @@ namespace ASCompletion.Completion
                 return MemberTooltipText(result.Member, ClassModel.VoidClass);
             }
 
-            var eolMode = LineEndDetector.DetectNewLineMarker(file, (int)PluginBase.Settings.EOLMode);
+            var eolMode = LineEndDetector.DetectNewLineMarker(file);
             var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
             var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
             var code = new StringBuilder();
