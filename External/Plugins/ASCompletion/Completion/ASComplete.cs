@@ -2458,8 +2458,8 @@ namespace ASCompletion.Completion
             // new/extends/instanceof/...
             if (features.HasTypePreKey(word))
             {
-                // получить оператор слева, если это =, получить экспрешен до =, педать его в tail
                 var tail = string.Empty;
+                // for example: var v:Type = new $(EntryPoint)
                 if (GetOperatorLeft(sci, ref pos) == "=" && GetExpression(sci, pos) is { } e && e.Value is {} v)
                     tail = v;
                 return HandleNewCompletion(sci, tail, autoHide, word);
