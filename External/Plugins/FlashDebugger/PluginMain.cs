@@ -13,11 +13,11 @@ namespace FlashDebugger
 {
     public class PluginMain : IPlugin
     {
-        private PanelsHelper panelsHelpers;
-        private MenusHelper menusHelper;
-        private string settingFilename;
-        private Image pluginImage;
-        private bool firstRun;
+        PanelsHelper panelsHelpers;
+        MenusHelper menusHelper;
+        string settingFilename;
+        Image pluginImage;
+        bool firstRun;
 
         internal static Settings settingObject;
         internal static LiveDataTip liveDataTip;
@@ -137,7 +137,7 @@ namespace FlashDebugger
                         }
                         return;
                     }
-                    if (!de.Action.StartsWithOrdinal("ProjectManager"))  return;
+                    if (!de.Action.StartsWithOrdinal(nameof(ProjectManager)))  return;
                     if (de.Action == ProjectManagerEvents.Project)
                     {
                         var project = PluginBase.CurrentProject;
@@ -171,32 +171,32 @@ namespace FlashDebugger
                         }
                     }
                     else if (disableDebugger) return;
-                    if (de.Action == ProjectManagerCommands.HotBuild || de.Action == ProjectManagerCommands.BuildProject)
+                    switch (de.Action)
                     {
-                        if (debugManager.FlashInterface.isDebuggerStarted)
+                        case ProjectManagerCommands.HotBuild:
+                        case ProjectManagerCommands.BuildProject:
                         {
-                            if (debugManager.FlashInterface.isDebuggerSuspended)
+                            if (debugManager.FlashInterface.isDebuggerStarted)
                             {
-                                debugManager.Continue_Click(null, null);
+                                if (debugManager.FlashInterface.isDebuggerSuspended)
+                                {
+                                    debugManager.Continue_Click(null, null);
+                                }
+                                debugManager.Stop_Click(null, null);
                             }
-                            debugManager.Stop_Click(null, null);
+                            break;
                         }
-                    }
-                    if (de.Action == ProjectManagerEvents.TestProject)
-                    {
-                        if (debugManager.FlashInterface.isDebuggerStarted)
+                        case ProjectManagerEvents.TestProject:
                         {
-                            if (debugManager.FlashInterface.isDebuggerSuspended)
+                            if (debugManager.FlashInterface.isDebuggerStarted && debugManager.FlashInterface.isDebuggerSuspended)
                             {
                                 debugManager.Continue_Click(null, null);
                                 e.Handled = true;
                                 return;
                             }
+                            menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
+                            break;
                         }
-                    }
-                    if (de.Action == ProjectManagerEvents.TestProject)
-                    {
-                        menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
                     }
                     break;
             }
@@ -209,7 +209,7 @@ namespace FlashDebugger
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        private void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -224,12 +224,12 @@ namespace FlashDebugger
         /// <summary>
         /// Creates the required menu items
         /// </summary>
-        private void CreateMenuItems() => menusHelper = new MenusHelper(pluginImage, debugManager);
+        void CreateMenuItems() => menusHelper = new MenusHelper(pluginImage, debugManager);
 
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        private void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             panelsHelpers = new PanelsHelper(this, pluginImage);
             if (firstRun) panelsHelpers.DockTogether();
@@ -238,12 +238,12 @@ namespace FlashDebugger
         /// <summary>
         /// Initializes the localization of the plugin
         /// </summary>
-        private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
+        void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        private void AddEventHandlers()
+        void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.FileOpen | EventType.UIClosing | EventType.FileSwitch | EventType.ApplySettings);
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
@@ -265,10 +265,7 @@ namespace FlashDebugger
                 SaveSettings();
                 firstRun = true;
             }
-            else
-            {
-                settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
-            }
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace FlashDebugger
             public static void SaveFile(string filename, T obj)
             {
                 var serializer = XmlSerializer.FromTypes(new[]{typeof(T)})[0];
-                var stream = new FileStream(filename, FileMode.Create);
+                using var stream = new FileStream(filename, FileMode.Create);
                 serializer.Serialize(stream, obj);
                 stream.Close();
             }
@@ -18,21 +18,20 @@ namespace FlashDebugger
             public static T LoadFile(string filename)
             {
                 var serializer = XmlSerializer.FromTypes(new[]{typeof(T)})[0];
-                var stream = new FileStream(filename, FileMode.Open);
-                var loadClasses = (T)serializer.Deserialize(stream);
+                using var stream = new FileStream(filename, FileMode.Open);
+                var reader = (T)serializer.Deserialize(stream);
                 stream.Close();
-                return loadClasses;
+                return reader;
             }
 
             public static T LoadString(string s)
             {
                 var serializer = XmlSerializer.FromTypes(new[]{typeof(T)})[0];
-                var reader = new StringReader(s);
-                var loadClasses = (T)serializer.Deserialize(reader);
+                using var reader = new StringReader(s);
+                var result = (T)serializer.Deserialize(reader);
                 reader.Close();
-                return loadClasses;
+                return result;
             }
         }
     }
-
 }

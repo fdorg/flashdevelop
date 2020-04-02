@@ -36,19 +36,16 @@ namespace FlashDebugger
             sci.ModEventMask |= (int)ModificationFlags.ChangeMarker;
             sci.MarkerChanged += SciControl_MarkerChanged;
             sci.MarginSensitiveN(BreakpointMargin, true);
-            int mask = sci.GetMarginMaskN(BreakpointMargin);
+            var mask = sci.GetMarginMaskN(BreakpointMargin);
             mask |= GetMarkerMask(markerBPEnabled);
             mask |= GetMarkerMask(markerBPDisabled);
             mask |= GetMarkerMask(markerBPNotAvailable);
             mask |= GetMarkerMask(markerCurrentLine);
             sci.SetMarginMaskN(BreakpointMargin, mask);
-            var enabledImage = ScaleHelper.Scale(Resource.Enabled);
-            var disabledImage = ScaleHelper.Scale(Resource.Disabled);
-            var curlineImage = ScaleHelper.Scale(Resource.CurLine);
-            sci.MarkerDefineRGBAImage(markerBPEnabled, enabledImage);
-            sci.MarkerDefineRGBAImage(markerBPDisabled, disabledImage);
-            sci.MarkerDefineRGBAImage(markerCurrentLine, curlineImage);
-            Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
+            sci.MarkerDefineRGBAImage(markerBPEnabled, ScaleHelper.Scale(Resource.Enabled));
+            sci.MarkerDefineRGBAImage(markerBPDisabled, ScaleHelper.Scale(Resource.Disabled));
+            sci.MarkerDefineRGBAImage(markerCurrentLine, ScaleHelper.Scale(Resource.CurLine));
+            var lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
             sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
             sci.MarginClick += SciControl_MarginClick;
@@ -242,12 +239,12 @@ namespace FlashDebugger
 
         #region Document Management
 
-        public static ScintillaControl GetScintillaControl(string name)
+        public static ScintillaControl GetScintillaControl(string fileName)
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
                 var sci = document.SciControl;
-                if (sci != null && sci.FileName == name) return sci;
+                if (sci != null && sci.FileName == fileName) return sci;
             }
             return null;
         }
@@ -255,31 +252,31 @@ namespace FlashDebugger
         public static int GetScintillaControlIndex(ScintillaControl sci)
         {
             var documents = PluginBase.MainForm.Documents;
-            for (int i = 0; i < documents.Length; i++)
+            for (var i = 0; i < documents.Length; i++)
             {
                 if (documents[i].SciControl == sci) return i;
             }
             return -1;
         }
 
-        public static ITabbedDocument GetDocument(string filefullpath)
+        public static ITabbedDocument GetDocument(string fileName)
         {
             var documents = PluginBase.MainForm.Documents;
             foreach (var document in documents)
             {
                 var sci = document.SciControl;
-                if (sci != null && sci.FileName == filefullpath) return document;
+                if (sci != null && sci.FileName == fileName) return document;
             }
             return null;
         }
 
-        public static void ActivateDocument(string filefullpath) => ActivateDocument(filefullpath, -1, false);
+        public static void ActivateDocument(string fileName) => ActivateDocument(fileName, -1, false);
 
-        public static ScintillaControl ActivateDocument(string filefullpath, int line, bool bSelectLine)
+        public static ScintillaControl ActivateDocument(string fileName, int line, bool bSelectLine)
         {
-            var doc = PluginBase.MainForm.OpenEditableDocument(filefullpath, false) as ITabbedDocument;
+            var doc = PluginBase.MainForm.OpenEditableDocument(fileName, false) as ITabbedDocument;
             var sci = doc?.SciControl;
-            if (sci is null || sci.FileName != filefullpath) return null;
+            if (sci is null || sci.FileName != fileName) return null;
             if (line >= 0)
             {
                 sci.EnsureVisible(line);
@@ -344,11 +341,12 @@ namespace FlashDebugger
         {
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                var list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPEnabled);
-                foreach (int line in list)
+                var sci = doc.SciControl;
+                var list = PluginMain.breakPointManager.GetMarkers(sci, markerBPEnabled);
+                foreach (var line in list)
                 {
-                    doc.SciControl.MarkerDelete(line, markerBPEnabled);
-                    doc.SciControl.MarkerAdd(line, markerBPDisabled);
+                    sci.MarkerDelete(line, markerBPEnabled);
+                    sci.MarkerAdd(line, markerBPDisabled);
                 }
             }
         }
@@ -357,11 +355,12 @@ namespace FlashDebugger
         {
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                var list = PluginMain.breakPointManager.GetMarkers(doc.SciControl, markerBPDisabled);
-                foreach (int line in list)
+                var sci = doc.SciControl;
+                var list = PluginMain.breakPointManager.GetMarkers(sci, markerBPDisabled);
+                foreach (var line in list)
                 {
-                    doc.SciControl.MarkerDelete(line, markerBPDisabled);
-                    doc.SciControl.MarkerAdd(line, markerBPEnabled);
+                    sci.MarkerDelete(line, markerBPDisabled);
+                    sci.MarkerAdd(line, markerBPEnabled);
                 }
             }
         }

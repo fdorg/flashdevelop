@@ -12,17 +12,17 @@ using ScintillaNet;
 
 namespace FlashDebugger
 {
-    class LiveDataTip
+    internal class LiveDataTip
     {
-        private DataTipForm m_ToolTip;
-        private MouseMessageFilter m_MouseMessageFilter;
+        DataTipForm m_ToolTip;
+        MouseMessageFilter m_MouseMessageFilter;
 
         public LiveDataTip()
         {
             UITools.Manager.OnMouseHover += Manager_OnMouseHover;
         }
 
-        private void Initialize()
+        void Initialize()
         {
             m_ToolTip = new DataTipForm();
             m_ToolTip.Dock = DockStyle.Fill;
@@ -50,7 +50,7 @@ namespace FlashDebugger
                 m_ToolTip.Visible = false;
         }
 
-        private void MouseMessageFilter_MouseDownEvent(MouseButtons button, Point e)
+        void MouseMessageFilter_MouseDownEvent(MouseButtons button, Point e)
         {
             if (m_ToolTip.Visible &&
                 !m_ToolTip.DataTree.Tree.ContextMenuStrip.Visible &&
@@ -60,7 +60,7 @@ namespace FlashDebugger
             }
         }
 
-        private void MouseMessageFilter_KeyDownEvent(object sender, EventArgs e)
+        void MouseMessageFilter_KeyDownEvent(object sender, EventArgs e)
         {
             if (m_ToolTip.Visible &&
                 !m_ToolTip.DataTree.Tree.ContextMenuStrip.Visible &&
@@ -70,47 +70,42 @@ namespace FlashDebugger
             }
         }
 
-        private void Manager_OnMouseHover(ScintillaControl sci, int position)
+        void Manager_OnMouseHover(ScintillaControl sci, int position)
         {
             if (m_ToolTip is null)
                 Initialize();
 
-            DebuggerManager debugManager = PluginMain.debugManager;
-            FlashInterface flashInterface = debugManager.FlashInterface;
-            if (!PluginBase.MainForm.EditorMenu.Visible && flashInterface != null && flashInterface.isDebuggerStarted && flashInterface.isDebuggerSuspended)
+            var debugManager = PluginMain.debugManager;
+            var flashInterface = debugManager.FlashInterface;
+            if (PluginBase.MainForm.EditorMenu.Visible
+                || flashInterface is null
+                || !flashInterface.isDebuggerStarted
+                || !flashInterface.isDebuggerSuspended) return;
+            var sourceFile = debugManager.CurrentLocation?.getFile();
+            if (sourceFile != null)
             {
-                if (debugManager.CurrentLocation?.getFile() != null)
-                {
-                    string localPath = debugManager.GetLocalPath(debugManager.CurrentLocation.getFile());
-                    if (localPath is null || localPath != PluginBase.MainForm.CurrentDocument.FileName)
-                    {
-                        return;
-                    }
-                }
-                else return;
-                Point dataTipPoint = Control.MousePosition;
-                Rectangle rect = new Rectangle(m_ToolTip.Location, m_ToolTip.Size);
-                if (m_ToolTip.Visible && rect.Contains(dataTipPoint))
+                var localPath = debugManager.GetLocalPath(sourceFile);
+                if (localPath is null || localPath != PluginBase.MainForm.CurrentDocument.FileName)
                 {
                     return;
                 }
-                position = sci.WordEndPosition(position, true);
-                var leftword = GetWordAtPosition(sci, position);
-                if (leftword.Length != 0)
+            }
+            else return;
+            var dataTipPoint = Control.MousePosition;
+            if (m_ToolTip.Visible && new Rectangle(m_ToolTip.Location, m_ToolTip.Size).Contains(dataTipPoint)) return;
+            position = sci.WordEndPosition(position, true);
+            var leftword = GetWordAtPosition(sci, position);
+            if (leftword.Length != 0)
+            {
+                try
                 {
-                    try
-                    {
-                        IASTBuilder b = new ASTBuilder(false);
-                        var exp = b.parse(new StringReader(leftword));
-                        var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[debugManager.CurrentFrame]);
-                        var obj = exp.evaluate(ctx);
-                        if (obj is Variable variable)
-                        {
-                            Show(dataTipPoint, variable, leftword);
-                        }
-                    }
-                    catch (Exception){}
+                    IASTBuilder b = new ASTBuilder(false);
+                    var exp = b.parse(new StringReader(leftword));
+                    var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[debugManager.CurrentFrame]);
+                    var obj = exp.evaluate(ctx);
+                    if (obj is Variable variable) Show(dataTipPoint, variable, leftword);
                 }
+                catch {}
             }
         }
 
@@ -140,16 +135,14 @@ namespace FlashDebugger
     }
 
     public delegate void MouseDownEventHandler(MouseButtons button, Point e);
+
     public class MouseMessageFilter : IMessageFilter
     {
-        public event MouseDownEventHandler MouseDownEvent = null;
-        public event EventHandler KeyDownEvent = null;
-        private Control[] m_ControlList;
+        public event MouseDownEventHandler MouseDownEvent;
+        public event EventHandler KeyDownEvent;
+        Control[] m_ControlList;
 
-        public void AddControls(Control[] controls)
-        {
-            m_ControlList = controls;
-        }
+        public void AddControls(Control[] controls) => m_ControlList = controls;
 
         public bool PreFilterMessage(ref Message m)
         {
@@ -167,12 +160,9 @@ namespace FlashDebugger
                         return false;
                     }
                 }
-
                 MouseDownEvent?.Invoke(MouseButtons.Left, new Point(m.LParam.ToInt32()));
             }
             return false;
         }
-
     }
-
 }
