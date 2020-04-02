@@ -4960,7 +4960,7 @@ namespace ASCompletion.Completion
                 position += offset;
                 sci.SetSel(position, position);
             }
-            catch (Exception) // event type name already present in imports
+            catch // event type name already present in imports
             {
             }
         }
@@ -4989,18 +4989,6 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateOverride(sci, context.InClass, context.Member, position);
                     return false;
                 }
-                /*else if (context.Member != null && cMember is null && !context.inClass.IsVoid())
-                {
-                    string ins = features.overrideKey + " ";
-                    string w = sci.GetWordFromPosition(position);
-                    sci.SetSel(position, position);
-                    sci.ReplaceSel(ins);
-                    position = position + ins.Length;
-                    sci.CurrentPos = position;
-                    sci.SetSel(position, position);
-                    ASGenerator.GenerateOverride(sci, context.inClass, context.Member, position);
-                    return false;
-                }*/
                 if (!context.IsNull() && expr.WordBefore == features.importKey)
                 {
                     ASContext.Context.RefreshContextCache(expr.Value);
