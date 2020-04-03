@@ -19,7 +19,7 @@ namespace ProjectManager
     {
         public event SettingChangeHandler Changed;
 
-        private bool searchExternalClassPath = true;
+        bool searchExternalClassPath = true;
         List<ProjectPreferences> projectPrefList = new List<ProjectPreferences>();
         readonly List<string> recentProjects = new List<string>();
         bool showProjectClasspaths = true;
@@ -266,7 +266,7 @@ namespace ProjectManager
         /// </summary>
         public ProjectPreferences GetPrefs(Project project)
         {
-            foreach (ProjectPreferences prefs in projectPrefList)
+            foreach (var prefs in projectPrefList)
                 if (prefs.ProjectPath == project.ProjectPath)
                     return prefs;
 
@@ -274,24 +274,24 @@ namespace ProjectManager
             // to clean out any prefs for projects that don't exist anymore
             CleanOldPrefs();
 
-            ProjectPreferences newPrefs = new ProjectPreferences(project.ProjectPath);
+            var newPrefs = new ProjectPreferences(project.ProjectPath);
             newPrefs.DebugMode = project.EnableInteractiveDebugger
                 && project.OutputType != OutputType.OtherIDE && project.OutputPath != "";
             projectPrefList.Add(newPrefs);
             return newPrefs;
         }
 
-        private void CleanOldPrefs()
+        void CleanOldPrefs()
         {
             for (int i = 0; i < projectPrefList.Count; i++)
                 if (!File.Exists(projectPrefList[i].ProjectPath))
                     projectPrefList.RemoveAt(i--); // search this index again
         }
 
-        private void FireChanged(string setting) => Changed?.Invoke(setting);
+        void FireChanged(string setting) => Changed?.Invoke(setting);
 
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        void OnDeserialized(StreamingContext context)
         {
             string[] extraFilteredDirectoryNames = { "github", "gitlab", "haxelib", "library" };
             var filteredDirectoryNames = new List<string>(this.filteredDirectoryNames);

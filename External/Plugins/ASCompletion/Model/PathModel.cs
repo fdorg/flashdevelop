@@ -64,8 +64,8 @@ namespace ASCompletion.Model
         {
             if (context?.Settings is null) return null;
 
-            string modelName = context.Settings.LanguageId + "|" + path.ToUpper();
             PathModel result;
+            var modelName = context.Settings.LanguageId + "|" + path.ToUpper();
             if (pathes.ContainsKey(modelName))
             {
                 result = pathes[modelName];
@@ -225,7 +225,7 @@ namespace ASCompletion.Model
 
         #region Watcher events
 
-        bool maskMatch(string fileName)
+        bool MaskMatch(string fileName)
         {
             foreach (string mask in masks)
             {
@@ -244,7 +244,7 @@ namespace ASCompletion.Model
             if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
             // folder renamed: flag directory to be removed from models
-            if (!maskMatch(e.FullPath))
+            if (!MaskMatch(e.FullPath))
             {
                 if (Directory.Exists(e.FullPath))
                 {
@@ -283,7 +283,7 @@ namespace ASCompletion.Model
             if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
             // directory change: schedule for exploration
-            if (!maskMatch(e.FullPath))
+            if (!MaskMatch(e.FullPath))
             {
                 lock (lockObject)
                 {
@@ -323,7 +323,7 @@ namespace ASCompletion.Model
             if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
             // (possibly) folder deleted
-            if (!maskMatch(e.FullPath))
+            if (!MaskMatch(e.FullPath))
             {
                 lock (lockObject)
                 {
