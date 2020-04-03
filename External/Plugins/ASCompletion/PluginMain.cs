@@ -902,8 +902,7 @@ namespace ASCompletion
                         sci.MarkerDelete(i, MarkerUp);
                         sci.MarkerDelete(i, MarkerDown);
                         sci.MarkerDelete(i, MarkerUp); //this needs to be done twice,
-                        sci.MarkerDelete(i,
-                            MarkerDown); //because a member could for example implement and override at the same time
+                        sci.MarkerDelete(i, MarkerDown); //because a member could for example implement and override at the same time
                         sci.MarkerAdd(i, MarkerUpDown);
                     }
                 }
@@ -1100,16 +1099,13 @@ namespace ASCompletion
             {
                 var declaration = ASContext.Context.GetDeclarationAtLine(line); //this could be problematic if there are multiple declarations in one line
                 var cached = astCache.GetCachedModel(declaration.InClass);
-
                 if (cached is null) return;
-
-                
                 if (declaration.InClass.LineFrom == line)
                 {
                     ReferenceList.Show(
-                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToList(),
+                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToArray(),
                         new List<Reference>(0), 
-                        ReferenceList.ConvertClassCache(cached.ChildClassModels).ToList(),
+                        ReferenceList.ConvertClassCache(cached.ChildClassModels).ToArray(),
                         new List<Reference>(0)
                     );
                     return;
@@ -1123,10 +1119,10 @@ namespace ASCompletion
                 cached.Overriding.TryGetValue(declaration.Member, out var overridden);
 
                 ReferenceList.Show(
-                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()).ToList(),
-                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()).ToList(),
-                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()).ToList(),
-                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>()).ToList()
+                    ReferenceList.ConvertCache(declaration.Member, implementors) ?? Array.Empty<Reference>(),
+                    ReferenceList.ConvertCache(declaration.Member, implementing) ?? Array.Empty<Reference>(),
+                    ReferenceList.ConvertCache(declaration.Member, overriders) ?? Array.Empty<Reference>(),
+                    ReferenceList.ConvertCache(declaration.Member, overridden) ?? Array.Empty<Reference>()
                 );
             }
         }
