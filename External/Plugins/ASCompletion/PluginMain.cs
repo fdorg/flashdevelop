@@ -856,8 +856,9 @@ namespace ASCompletion
 
             var fileModel = context.GetCachedFileModel(sci.FileName);
 
-            foreach (var @class in fileModel.Classes)
+            for (var index = 0; index < fileModel.Classes.Count; index++)
             {
+                var @class = fileModel.Classes[index];
                 var model = astCache.GetCachedModel(@class);
                 if (model is null) return;
 
@@ -872,16 +873,19 @@ namespace ASCompletion
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
                 }
+
                 foreach (var implementor in model.Implementors)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
                 }
+
                 foreach (var overriders in model.Overriders)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
                 }
+
                 foreach (var overrides in model.Overriding)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
@@ -897,9 +901,9 @@ namespace ASCompletion
                     {
                         sci.MarkerDelete(i, MarkerUp);
                         sci.MarkerDelete(i, MarkerDown);
-                        sci.MarkerDelete(i, MarkerUp);      //this needs to be done twice,
-                        sci.MarkerDelete(i, MarkerDown);    //because a member could for example implement and override at the same time
-
+                        sci.MarkerDelete(i, MarkerUp); //this needs to be done twice,
+                        sci.MarkerDelete(i,
+                            MarkerDown); //because a member could for example implement and override at the same time
                         sci.MarkerAdd(i, MarkerUpDown);
                     }
                 }
