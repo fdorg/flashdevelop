@@ -5,6 +5,7 @@ using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using HaXeContext;
 using NSubstitute;
 using PluginCore;
 using PluginCore.Helpers;
@@ -94,6 +95,11 @@ namespace ASCompletion.TestUtils
             {
                 var member = it.ArgAt<MemberModel>(0) ?? ClassModel.VoidClass;
                 return context.IsImported(member, it.ArgAt<int>(1));
+            });
+            mock.OnCompletionInsert(Arg.Any<ScintillaControl>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<char>()).ReturnsForAnyArgs(it =>
+            {
+                var result = context.OnCompletionInsert(it.ArgAt<ScintillaControl>(0), it.ArgAt<int>(1), it.ArgAt<string>(2), it.ArgAt<char>(3));
+                return result;
             });
             mock.ResolveImports(null).ReturnsForAnyArgs(it => context.ResolveImports(it.ArgAt<FileModel>(0)));
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
