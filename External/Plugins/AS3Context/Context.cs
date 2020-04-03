@@ -831,11 +831,13 @@ namespace AS3Context
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
+            var package = member.InFile?.Package;
+            if (string.IsNullOrEmpty(package)) package = null;
+            package ??= member.Type.Length > member.Name.Length
+                ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
+                : string.Empty;
+            if (package == "globalClassifier") return true;
             // same package is auto-imported
-            var package = member.InFile?.Package
-                          ?? (member.Type.Length > member.Name.Length
-                              ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
-                              : string.Empty);
             return package == Context.CurrentModel.Package || base.IsImported(member, atLine);
         }
 
