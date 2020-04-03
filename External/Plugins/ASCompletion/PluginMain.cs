@@ -1103,9 +1103,9 @@ namespace ASCompletion
                 if (declaration.InClass.LineFrom == line)
                 {
                     ReferenceList.Show(
-                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToArray(),
+                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels),
                         new List<Reference>(0), 
-                        ReferenceList.ConvertClassCache(cached.ChildClassModels).ToArray(),
+                        ReferenceList.ConvertClassCache(cached.ChildClassModels),
                         new List<Reference>(0)
                     );
                     return;
@@ -1119,10 +1119,10 @@ namespace ASCompletion
                 cached.Overriding.TryGetValue(declaration.Member, out var overridden);
 
                 ReferenceList.Show(
-                    ReferenceList.ConvertCache(declaration.Member, implementors) ?? Array.Empty<Reference>(),
-                    ReferenceList.ConvertCache(declaration.Member, implementing) ?? Array.Empty<Reference>(),
-                    ReferenceList.ConvertCache(declaration.Member, overriders) ?? Array.Empty<Reference>(),
-                    ReferenceList.ConvertCache(declaration.Member, overridden) ?? Array.Empty<Reference>()
+                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()),
+                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()),
+                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()),
+                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>())
                 );
             }
         }
