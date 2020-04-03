@@ -300,13 +300,12 @@ namespace ASCompletion.Completion
                         // Flash IDE
                         if (PluginBase.CurrentProject is null)
                         {
-                            string idePath = ASContext.CommonSettings.PathToFlashIDE;
-                            if (idePath != null && File.Exists(Path.Combine(idePath, "Flash.exe")))
+                            var idePath = ASContext.CommonSettings.PathToFlashIDE;
+                            if (File.Exists(Path.Combine(idePath, "Flash.exe")))
                             {
-                                string cmd = Path.Combine("Tools", "flashide", "testmovie.jsfl");
+                                var cmd = Path.Combine("Tools", "flashide", "testmovie.jsfl");
                                 cmd = PathHelper.ResolvePath(cmd);
-                                if (cmd != null && File.Exists(cmd))
-                                    CallFlashIDE.Run(idePath, cmd);
+                                if (File.Exists(cmd)) CallFlashIDE.Run(idePath, cmd);
                             }
                         }
                     }
@@ -665,8 +664,7 @@ namespace ASCompletion.Completion
 
             if (model != ASContext.Context.CurrentModel)
             {
-                if (model.FileName.Length > 0 && File.Exists(model.FileName))
-                    PluginBase.MainForm.OpenEditableDocument(model.FileName, false);
+                if (File.Exists(model.FileName)) PluginBase.MainForm.OpenEditableDocument(model.FileName, false);
                 else
                 {
                     OpenVirtualFile(model);
@@ -4776,7 +4774,7 @@ namespace ASCompletion.Completion
 
         static string GetFileContents(FileModel model)
         {
-            if (string.IsNullOrEmpty(model?.FileName) || !File.Exists(model.FileName)) return null;
+            if (!File.Exists(model?.FileName)) return null;
             foreach (var doc in PluginBase.MainForm.Documents)
             {
                 if (doc.SciControl is { } sci && string.Equals(sci.FileName, model.FileName, StringComparison.CurrentCultureIgnoreCase))
@@ -5077,9 +5075,8 @@ namespace ASCompletion.Completion
 
         public static bool HasSnippet(string word)
         {
-            var global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
-            var specific = Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId, word + ".fds");
-            return File.Exists(specific) || File.Exists(global);
+            return File.Exists(Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId, word + ".fds"))
+                   || File.Exists(Path.Combine(PathHelper.SnippetDir, word + ".fds"));
         }
 
         /// <summary>

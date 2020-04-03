@@ -118,8 +118,7 @@ namespace AS3Context.Compiler
             if (flexPath != null && Directory.Exists(Path.Combine(flexPath, "lib")))
                 ascPath = Path.Combine(flexPath, "lib\\asc.jar");
             // included asc.jar
-            if (ascPath is null || !File.Exists(ascPath)) 
-                ascPath = PathHelper.ResolvePath(Path.Combine(PathHelper.ToolDir, "flexlibs/lib/asc.jar"));
+            if (!File.Exists(ascPath)) ascPath = PathHelper.ResolvePath(Path.Combine(PathHelper.ToolDir, "flexlibs/lib/asc.jar"));
 
             if (ascPath is null)
             {
@@ -186,11 +185,8 @@ namespace AS3Context.Compiler
                 basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             flexPath = PathHelper.ResolvePath(flexPath, basePath);
 
-            if (flexPath != null && Directory.Exists(flexPath))
-            {
-                mxmlcPath = Path.Combine(flexPath, "lib", "mxmlc.jar");
-            }
-            if (mxmlcPath is null || !File.Exists(mxmlcPath)) 
+            if (Directory.Exists(flexPath)) mxmlcPath = Path.Combine(flexPath, "lib", "mxmlc.jar");
+            if (!File.Exists(mxmlcPath)) 
             {
                 var result = MessageBox.Show(TextHelper.GetString("Info.OpenCompilerSettings"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OKCancel);
                 if (result == DialogResult.OK)
@@ -566,7 +562,7 @@ namespace AS3Context.Compiler
 
         void RunAfterBuild()
         {
-            if (builtSWF is null || !File.Exists(builtSWF))
+            if (!File.Exists(builtSWF))
             {
                 debugMode = false;
                 return;

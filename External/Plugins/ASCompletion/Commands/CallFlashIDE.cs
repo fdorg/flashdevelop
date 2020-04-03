@@ -73,17 +73,17 @@ namespace ASCompletion.Commands
             if (BridgeManager.Active) pathToIDE = "Flash";
             else
             {
-                if (pathToIDE != null && Directory.Exists(pathToIDE))
+                if (Directory.Exists(pathToIDE))
                 {
                     var exe = Path.Combine(pathToIDE, "Animate.exe");
                     if (!File.Exists(exe)) exe = Path.Combine(pathToIDE, "Flash.exe");
                     pathToIDE = exe;
                 }
-                if (pathToIDE is null || !File.Exists(pathToIDE))
+                if (!File.Exists(pathToIDE))
                 {
-                    string msg = TextHelper.GetString("Info.ConfigureFlashPath");
-                    string title = TextHelper.GetString("Info.ConfigurationRequired");
-                    DialogResult result = MessageBox.Show(msg, title, MessageBoxButtons.OKCancel);
+                    var msg = TextHelper.GetString("Info.ConfigureFlashPath");
+                    var title = TextHelper.GetString("Info.ConfigurationRequired");
+                    var result = MessageBox.Show(msg, title, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK)
                     {
                         PluginBase.MainForm.ShowSettingsDialog("ASCompletion", "Flash");

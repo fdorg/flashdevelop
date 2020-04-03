@@ -56,8 +56,8 @@ namespace SourceControl.Sources.Git
 
         private static string GetTortoiseProc()
         {
-            string cmd = PluginMain.SCSettings.TortoiseGITProcPath;
-            if (cmd != null && File.Exists(cmd)) return cmd;
+            var cmd = PluginMain.SCSettings.TortoiseGITProcPath;
+            if (File.Exists(cmd)) return cmd;
             if (string.IsNullOrEmpty(cmd)) cmd = "TortoiseGitProc.exe";
             return ResolveTortoiseProcPath(cmd);
         }

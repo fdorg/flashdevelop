@@ -185,7 +185,7 @@ namespace CodeRefactor.Provider
             // open the file
             if (model != ASContext.Context.CurrentModel)
             {
-                if (model.FileName.Length > 0 && File.Exists(model.FileName))
+                if (File.Exists(model.FileName))
                 {
                     if (!associatedDocumentHelper.FilesOpenedDocumentReferences.ContainsKey(model.FileName)) associatedDocumentHelper.LoadDocument(model.FileName);
                     sci = associatedDocumentHelper.FilesOpenedDocumentReferences[model.FileName].SciControl;

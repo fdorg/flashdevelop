@@ -82,8 +82,8 @@ namespace ProjectManager.Projects.AS3
                 int target = 4;
                 try
                 {
-                    string mainFile = ResolvePath(mainApp, project.Directory);
-                    if (mainFile != null && File.Exists(mainFile))
+                    var mainFile = ResolvePath(mainApp, project.Directory);
+                    if (File.Exists(mainFile))
                         if (File.ReadAllText(mainFile).IndexOfOrdinal("http://www.adobe.com/2006/mxml") > 0)
                         {
                             target = 3;

@@ -118,7 +118,7 @@ namespace ProjectManager.Actions
                     return false;
                 }
 
-                if (compiler is null || (!Directory.Exists(compiler) && !File.Exists(compiler)))
+                if (!Directory.Exists(compiler) && !File.Exists(compiler))
                 {
                     string info = TextHelper.GetString("Info.CheckSDKSettings");
                     MessageBox.Show(info, TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OK);
@@ -149,7 +149,7 @@ namespace ProjectManager.Actions
 
             cmd = Path.Combine("Tools", "flashide", cmd);
             cmd = PathHelper.ResolvePath(cmd, null);
-            if (cmd is null || !File.Exists(cmd))
+            if (!File.Exists(cmd))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.JsflNotFound"));
                 return false;

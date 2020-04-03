@@ -84,7 +84,7 @@ namespace ProjectManager.Controls.TreeView
 
         private bool AppendPath(FileSystemEventArgs e)
         {
-            lock (this.changedPaths)
+            lock (changedPaths)
             {
                 try
                 {
@@ -101,18 +101,18 @@ namespace ProjectManager.Controls.TreeView
 
         private bool AppendToChangedPaths(string fullPath, string path, WatcherChangeTypes changeType)
         {
-            if (this.excludedDirs != null) // filter ignored paths
+            if (excludedDirs != null) // filter ignored paths
             {
                 char separator = Path.DirectorySeparatorChar;
-                foreach (string excludedDir in this.excludedDirs)
+                foreach (string excludedDir in excludedDirs)
                 {
                     if (path.IndexOfOrdinal(separator + excludedDir + separator) > 0) return false;
                 }
             }
-            if (this.excludedFiles != null && File.Exists(fullPath)) // filter ignored filetypes
+            if (excludedFiles != null && File.Exists(fullPath)) // filter ignored filetypes
             {
                 string extension = Path.GetExtension(fullPath);
-                foreach (string excludedFile in this.excludedFiles)
+                foreach (string excludedFile in excludedFiles)
                 {
                     if (extension == excludedFile) return false;
                 }
@@ -120,12 +120,12 @@ namespace ProjectManager.Controls.TreeView
             if (changeType != WatcherChangeTypes.Created && changeType != WatcherChangeTypes.Renamed
                 && Directory.Exists(fullPath))
             {
-                if (!this.changedPaths.Contains(fullPath))
-                    this.changedPaths.Add(fullPath);
+                if (!changedPaths.Contains(fullPath))
+                    changedPaths.Add(fullPath);
             }
-            else if (!this.changedPaths.Contains(path) && Directory.Exists(path))
+            else if (!changedPaths.Contains(path) && Directory.Exists(path))
             {
-                this.changedPaths.Add(path);
+                changedPaths.Add(path);
             }
             return true;
         }
@@ -167,8 +167,8 @@ namespace ProjectManager.Controls.TreeView
             try
             {
                 Tree.BeginUpdate();
-                string[] paths = this.changedPaths.ToArray();
-                this.changedPaths.Clear();
+                string[] paths = changedPaths.ToArray();
+                changedPaths.Clear();
                 Tree.RefreshTree(paths);
             }
             catch {}

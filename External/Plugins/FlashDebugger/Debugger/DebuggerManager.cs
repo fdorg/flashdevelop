@@ -112,7 +112,7 @@ namespace FlashDebugger
                     else
                     {
                         var flexSDKPath = currentProject?.CurrentSDK ?? PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)"));
-                        if (flexSDKPath != null && Directory.Exists(flexSDKPath))
+                        if (Directory.Exists(flexSDKPath))
                         {
                             var jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
                             var javaHome = JvmConfigHelper.GetJavaHome(jvmConfig, flexSDKPath);

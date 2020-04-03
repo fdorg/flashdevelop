@@ -396,10 +396,9 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    if (resolve.InClass?.InFile != null
-                        && resolve.Member != null
+                    if (resolve.Member != null
                         && (resolve.Member.Flags & FlagType.Function) > 0
-                        && File.Exists(resolve.InClass.InFile.FileName)
+                        && File.Exists(resolve.InClass?.InFile.FileName)
                         && !resolve.InClass.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
                         var text = sci.GetLine(line);
@@ -411,9 +410,8 @@ namespace ASCompletion.Completion
                             ShowChangeMethodDeclList(found, options);
                         }
                     }
-                    else if (resolve.Type?.InFile != null
-                        && resolve.RelClass != null
-                        && File.Exists(resolve.Type.InFile.FileName)
+                    else if (resolve.RelClass != null
+                        && File.Exists(resolve.Type?.InFile.FileName)
                         && !resolve.Type.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
                         var text = sci.GetLine(line);
@@ -872,7 +870,7 @@ namespace ASCompletion.Completion
             var generateClass = true;
             if (exprLeft != null)
             {
-                if (exprLeft.Type.InFile != null && !File.Exists(exprLeft.Type.InFile.FileName)) return;
+                if (!File.Exists(exprLeft.Type.InFile?.FileName)) return;
                 generateClass = false;
                 var curClass = ASContext.Context.CurrentClass;
                 if (!IsHaxe)

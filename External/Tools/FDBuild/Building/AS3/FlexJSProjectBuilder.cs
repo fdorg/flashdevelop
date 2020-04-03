@@ -56,7 +56,8 @@ namespace FDBuild.Building.AS3
                 config.WriteConfig(project, sdkVersion, extraClassPaths, !noTrace, false);
 
                 //compare tmp to current
-                var configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) || !FileComparer.IsEqual(configFileTmp, configFile);
+                var configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) ||
+                                    !FileComparer.IsEqual(configFileTmp, configFile);
 
                 //copy temp file to config if there is a change
                 if (configChanged)
@@ -81,7 +82,10 @@ namespace FDBuild.Building.AS3
                 if (!Directory.Exists(outputDir)) Directory.CreateDirectory(outputDir);
                 File.Copy(tempFile, output, true);
             }
-            finally { if (tempFile != null && File.Exists(tempFile)) File.Delete(tempFile); }
+            finally
+            {
+                if (File.Exists(tempFile)) File.Delete(tempFile);
+            }
         }
 
         void CompileWithMxmlc(string mxmlcArgs)

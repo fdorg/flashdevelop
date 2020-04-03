@@ -93,8 +93,7 @@ namespace SourceControl.Managers
         {
             try
             {
-                if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
-                    return;
+                if (!Directory.Exists(path)) return;
 
                 foreach (FileSystemWatcher watcher in watchers.Keys)
                     if (path.StartsWith(watcher.Path, StringComparison.OrdinalIgnoreCase))
