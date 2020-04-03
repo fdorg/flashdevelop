@@ -4967,13 +4967,12 @@ namespace ASCompletion.Completion
         {
             var features = ASContext.Context.Features;
             var cFile = ASContext.Context.CurrentModel;
-            FileModel inFile;
             MemberModel import;
 
             // if completed a package-level member
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package.Length != 0)
             {
-                inFile = context.Member.InFile;
+                var inFile = context.Member.InFile;
                 import = (MemberModel) context.Member.Clone();
                 import.Type = inFile.Package + "." + import.Name;
             }
@@ -4996,10 +4995,8 @@ namespace ASCompletion.Completion
             // test inserted type
             else
             {
-                inFile = context.InFile;
                 import = context.Type;
             }
-            if (inFile is null || import is null) return false;
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
