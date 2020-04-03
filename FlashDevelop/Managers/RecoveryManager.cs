@@ -35,12 +35,12 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                string name = ConvertToFileName(file) + ".bak";
-                string recoveryDir = FileNameHelper.RecoveryDir;
+                var name = ConvertToFileName(file) + ".bak";
+                var recoveryDir = FileNameHelper.RecoveryDir;
                 if (!Directory.Exists(recoveryDir)) Directory.CreateDirectory(recoveryDir);
-                string path = Path.Combine(recoveryDir, name); // Create full file path
-                int lineEndMode = LineEndDetector.DetectNewLineMarker(text, (int)PluginBase.Settings.EOLMode);
-                string lineEndMarker = LineEndDetector.GetNewLineMarker(lineEndMode);
+                var path = Path.Combine(recoveryDir, name); // Create full file path
+                var lineEndMode = LineEndDetector.DetectNewLineMarker(text);
+                var lineEndMarker = LineEndDetector.GetNewLineMarker(lineEndMode);
                 text = file + lineEndMarker + lineEndMarker + text;
                 FileHelper.WriteFile(path, text, encoding);
             }

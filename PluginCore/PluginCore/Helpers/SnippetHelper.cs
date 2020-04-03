@@ -110,7 +110,7 @@ namespace PluginCore.Helpers
                 int indent = sci.GetLineIndentation(line);
                 sci.ReplaceSel("");
                 
-                int lineMarker = LineEndDetector.DetectNewLineMarker(text, sci.EOLMode);
+                int lineMarker = LineEndDetector.DetectNewLineMarker(text);
                 string newline = LineEndDetector.GetNewLineMarker(lineMarker);
                 if (newline != "\n") text = text.Replace(newline, "\n");
                 newline = LineEndDetector.GetNewLineMarker((int)PluginBase.Settings.EOLMode);

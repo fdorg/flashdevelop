@@ -1029,11 +1029,27 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2980TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2980_1", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2980_1"))
+                        .SetName("var v:Vector.<Sprite> = new <complete>. Issue 2980. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2980");
+                    yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2980_2", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2980_2"))
+                        .SetName("var v:Vector.<flash.display.Sprite> = new <complete>. Issue 2980. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2980");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2076TestCases)),
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2282TestCases)),
+                TestCaseSource(nameof(OnCharAndReplaceTextIssue2980TestCases)),
             ]
             public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide) => OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
 

@@ -419,11 +419,11 @@ namespace FlashDevelop.Dialogs
         {
             if (snippetListView.SelectedItems.Count == 0) return;
             if (saveButton.Enabled) PromptToSaveSnippet();
-            string name = snippetListView.SelectedItems[0].Text;
+            var name = snippetListView.SelectedItems[0].Text;
             var path = Path.Combine(PathHelper.SnippetDir, currentSyntax, name + ".fds");
-            string content = File.ReadAllText(path);
+            var content = File.ReadAllText(path);
             // Convert eols to windows and save current eol mode
-            eolMode = LineEndDetector.DetectNewLineMarker(content, 0);
+            eolMode = LineEndDetector.DetectNewLineMarker(content);
             content = content.Replace(LineEndDetector.GetNewLineMarker(eolMode), "\r\n");
             snippetNameTextBox.Text = name;
             contentsTextBox.Text = content;
