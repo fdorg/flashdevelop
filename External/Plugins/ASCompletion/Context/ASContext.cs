@@ -621,7 +621,7 @@ namespace ASCompletion.Context
                 }
                 temporaryPath = null;
             }
-            if (path is null || !Directory.Exists(path)) return false;
+            if (!Directory.Exists(path)) return false;
             // avoid duplicated pathes
             path = NormalizePath(path);
             foreach (var apath in classPath)
@@ -729,8 +729,7 @@ namespace ASCompletion.Context
         /// <returns>File model</returns>
         public virtual FileModel GetCachedFileModel(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName)) 
-                return new FileModel(fileName);
+            if (!File.Exists(fileName)) return new FileModel(fileName);
 
             FileModel result;
             fileName = PathHelper.GetLongPathName(fileName);
@@ -823,8 +822,7 @@ namespace ASCompletion.Context
         /// <returns>File model</returns>
         public virtual FileModel CreateFileModel(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
-                return new FileModel(fileName ?? string.Empty);
+            if (!File.Exists(fileName)) return new FileModel(fileName ?? string.Empty);
             var result = new FileModel(PathHelper.GetLongPathName(fileName));
             result.Context = this;
             return result;
@@ -862,7 +860,7 @@ namespace ASCompletion.Context
         public virtual FileModel GetCodeModel(FileModel result)
         {
             var fileName = result.FileName;
-            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) GetCodeModel(result, FileHelper.ReadFile(fileName));
+            if (File.Exists(fileName)) GetCodeModel(result, FileHelper.ReadFile(fileName));
             return result;
         }
 

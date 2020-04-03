@@ -560,7 +560,7 @@ namespace AS3Context
 
             try
             {
-                if (path is null || !Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
                     return false;
@@ -573,9 +573,7 @@ namespace AS3Context
             }
 
             var descriptor = Path.Combine(path, "flex-sdk-description.xml");
-            if (!File.Exists(descriptor)) 
-                descriptor = Path.Combine(path, "air-sdk-description.xml");
-
+            if (!File.Exists(descriptor)) descriptor = Path.Combine(path, "air-sdk-description.xml");
             if (File.Exists(descriptor))
             {
                 var raw = File.ReadAllText(descriptor);

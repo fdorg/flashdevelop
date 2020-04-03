@@ -189,10 +189,12 @@ namespace ProjectManager.Building.AS3
                 config.WriteConfig(project, sdkVersion, extraClasspaths, noTrace == false, asc2Mode);
 
                 //compare tmp to current
-                bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) || !FileComparer.IsEqual(configFileTmp, configFile);
+                bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) ||
+                                     !FileComparer.IsEqual(configFileTmp, configFile);
 
                 //copy temp file to config if there is a change
-                if (configChanged){
+                if (configChanged)
+                {
                     File.Copy(configFileTmp, configFile, true);
                 }
 
@@ -222,7 +224,10 @@ namespace ProjectManager.Building.AS3
                 if (!Directory.Exists(outputDir)) Directory.CreateDirectory(outputDir);
                 File.Copy(tempFile, output, true);
             }
-            finally { if (tempFile != null && File.Exists(tempFile)) File.Delete(tempFile); }
+            finally
+            {
+                if (File.Exists(tempFile)) File.Delete(tempFile);
+            }
         }
 
         private string AddBaseConfig(string args)

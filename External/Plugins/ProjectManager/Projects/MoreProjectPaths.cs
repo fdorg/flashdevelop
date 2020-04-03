@@ -17,18 +17,16 @@ namespace ProjectManager.Projects
         /// </summary>
         public static List<string> GetAllProjectDirs()
         {
-            List<string> allDirs = new List<string>();
+            var result = new List<string>();
             if (Directory.Exists(ProjectTemplatesDirectory))
             {
-                allDirs.AddRange(Directory.GetDirectories(ProjectTemplatesDirectory));
+                result.AddRange(Directory.GetDirectories(ProjectTemplatesDirectory));
             }
             if (!PluginBase.MainForm.StandaloneMode && Directory.Exists(PathHelper.UserProjectsDir))
             {
-                allDirs.AddRange(Directory.GetDirectories(PathHelper.UserProjectsDir));
+                result.AddRange(Directory.GetDirectories(PathHelper.UserProjectsDir));
             }
-            return allDirs;
+            return result;
         }
-
     }
-
 }

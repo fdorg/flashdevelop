@@ -216,7 +216,7 @@ namespace AS3Context
                 sdkLibs = PathHelper.ResolvePath(PathHelper.ToolDir + S + "flexlibs" + S + "frameworks" + S + "libs" + S + "player");
             }
 
-            if (majorVersion > 0 && !string.IsNullOrEmpty(sdkLibs) && Directory.Exists(sdkLibs))
+            if (majorVersion > 0 && Directory.Exists(sdkLibs))
             {
                 // core API SWC
                 if (!hasCustomAPI)
@@ -520,9 +520,7 @@ namespace AS3Context
         /// <returns>File model</returns>
         public override FileModel CreateFileModel(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
-                return new FileModel(fileName);
-
+            if (!File.Exists(fileName)) return new FileModel(fileName);
             fileName = PathHelper.GetLongPathName(fileName);
             if (mxmlEnabled && fileName.EndsWith(".mxml", StringComparison.OrdinalIgnoreCase))
             {

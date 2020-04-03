@@ -217,12 +217,11 @@ namespace AS3Context.Controls
             defaultToolStripMenuItem.Click += ChangeProfiler_Click;
 
             profilerSWF = null; // default
-            string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
+            var active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
             if (File.Exists(active))
             {
-                string src = File.ReadAllText(active).Trim();
-                if (src.Length > 0 && File.Exists(src))
-                    profilerSWF = src;
+                var src = File.ReadAllText(active).Trim();
+                if (File.Exists(src)) profilerSWF = src;
             }
         }
 

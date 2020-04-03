@@ -5,10 +5,10 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
-    static class TortoiseProc
+    internal static class TortoiseProc
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static string resolvedCmd;
+        static string qualifiedCmd;
 
         public static void Execute(string command, string path)
         {
@@ -42,15 +42,15 @@ namespace SourceControl.Sources.Mercurial
             proc.Start();
         }
 
-        private static string GetTortoiseProc()
+        static string GetTortoiseProc()
         {
-            string cmd = PluginMain.SCSettings.TortoiseHGProcPath;
-            if (cmd != null && File.Exists(cmd)) return cmd;
+            var cmd = PluginMain.SCSettings.TortoiseHGProcPath;
+            if (File.Exists(cmd)) return cmd;
             if (string.IsNullOrEmpty(cmd)) cmd = "thgw.exe";
             return ResolveTortoiseProcPath(cmd);
         }
 
-        private static string ResolveTortoiseProcPath(string cmd)
+        static string ResolveTortoiseProcPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

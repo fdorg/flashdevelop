@@ -255,10 +255,10 @@ namespace ProjectManager.Projects
         /// </summary>
         public string GetObjDirectory()
         {
-            string objPath = Path.Combine(Directory, "obj");
-            if (!System.IO.Directory.Exists(objPath))
-                System.IO.Directory.CreateDirectory(objPath);
-            return objPath;
+            var result = Path.Combine(Directory, "obj");
+            if (!System.IO.Directory.Exists(result))
+                System.IO.Directory.CreateDirectory(result);
+            return result;
         }
 
         /// <summary>
