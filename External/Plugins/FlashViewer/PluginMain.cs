@@ -196,10 +196,11 @@ namespace FlashViewer
                 else if (File.Exists(playerPath10)) settingObject.PlayerPath = playerPath10;
             }
             // After detection, if the path is incorrect, keep old valid path or clear it
-            if (settingObject.PlayerPath is null || !File.Exists(settingObject.PlayerPath))
+            if (!File.Exists(settingObject.PlayerPath))
             {
-                if (!string.IsNullOrEmpty(oldPath) && File.Exists(oldPath)) settingObject.PlayerPath = oldPath;
-                else settingObject.PlayerPath = string.Empty;
+                settingObject.PlayerPath = File.Exists(oldPath)
+                    ? oldPath
+                    : string.Empty;
             }
         }
 

@@ -808,10 +808,7 @@ namespace FileExplorer
             {
                 path = Path.GetDirectoryName(sci.FileName);
             }
-            if (path != null && Directory.Exists(path))
-            {
-                PopulateFileView(path);
-            }
+            if (Directory.Exists(path)) PopulateFileView(path);
         }
 
         /// <summary>

@@ -1391,12 +1391,8 @@ namespace ProjectManager.Controls
         void browseButton_Click(object sender, EventArgs e)
         {
             using var folder = new VistaFolderBrowserDialog();
-            if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
-                folder.SelectedPath = customTextBox.Text;
-            if (folder.ShowDialog() == DialogResult.OK)
-            {
-                customTextBox.Text = folder.SelectedPath;
-            }
+            if (Directory.Exists(customTextBox.Text)) folder.SelectedPath = customTextBox.Text;
+            if (folder.ShowDialog() == DialogResult.OK) customTextBox.Text = folder.SelectedPath;
         }
 
         void sdkCombo_SelectedIndexChanged(object sender, EventArgs e)

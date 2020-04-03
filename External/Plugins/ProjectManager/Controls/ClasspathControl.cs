@@ -241,8 +241,7 @@ namespace ProjectManager.Controls
             dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
 
             if (project != null) dialog.SelectedPath = project.Directory;
-            if (lastBrowserPath != null && Directory.Exists(lastBrowserPath)) dialog.SelectedPath = lastBrowserPath;
-
+            if (Directory.Exists(lastBrowserPath)) dialog.SelectedPath = lastBrowserPath;
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 string path = dialog.SelectedPath;

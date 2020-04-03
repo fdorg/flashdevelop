@@ -91,10 +91,7 @@ namespace HaXeContext
         public void Dispose()
         {
             SaveSettings();
-            if (Context.TemporaryOutputFile != null && File.Exists(Context.TemporaryOutputFile))
-            {
-                File.Delete(Context.TemporaryOutputFile);
-            }
+            if (File.Exists(Context.TemporaryOutputFile)) File.Delete(Context.TemporaryOutputFile);
         }
 
         /// <summary>
@@ -243,7 +240,7 @@ namespace HaXeContext
             {
                 var sdks = new List<InstalledSDK>();
                 var externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");
-                if (!string.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
+                if (Directory.Exists(PathHelper.ResolvePath(externalSDK)))
                 {
                     InstalledSDKContext.Current = this;
                     sdks.Add(new InstalledSDK(this) {Path = externalSDK});
@@ -355,7 +352,7 @@ namespace HaXeContext
 
             try
             {
-                if (path is null || !Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     //ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
                     return "";

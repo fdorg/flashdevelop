@@ -5,10 +5,10 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Subversion
 {
-    static class TortoiseProc
+    internal static class TortoiseProc
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static string resolvedCmd;
+        static string qualifiedCmd;
 
         public static void Execute(string command, string path)
         {
@@ -40,15 +40,15 @@ namespace SourceControl.Sources.Subversion
             proc.Start();
         }
 
-        private static string GetTortoiseProc()
+        static string GetTortoiseProc()
         {
-            string cmd = PluginMain.SCSettings.TortoiseSVNProcPath;
-            if (cmd != null && File.Exists(cmd)) return cmd;
+            var cmd = PluginMain.SCSettings.TortoiseSVNProcPath;
+            if (File.Exists(cmd)) return cmd;
             if (string.IsNullOrEmpty(cmd)) cmd = "TortoiseProc.exe";
             return ResolveTortoiseProcPath(cmd);
         }
 
-        private static string ResolveTortoiseProcPath(string cmd)
+        static string ResolveTortoiseProcPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

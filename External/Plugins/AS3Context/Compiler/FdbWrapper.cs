@@ -21,17 +21,18 @@ namespace AS3Context.Compiler
         public void Run(string projectPath, string flexSDKPath)
         {
             flexSDKPath = PathHelper.ResolvePath(flexSDKPath, projectPath);
-            if (flexSDKPath != null && Directory.Exists(flexSDKPath))
+            if (Directory.Exists(flexSDKPath))
             {
                 if (flexSDKPath.EndsWith("bin", StringComparison.OrdinalIgnoreCase))
                     flexSDKPath = Path.GetDirectoryName(flexSDKPath);
             }
             else return;
 
-            Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
-
             if (process is null || process.HasExited)
+            {
+                var jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
                 Initialize(flexSDKPath, jvmConfig, projectPath);
+            }
         }
 
         public void PushCommand(string cmd)
@@ -64,7 +65,7 @@ namespace AS3Context.Compiler
         {
             cmdQueue = new Queue<string>();
 
-            string fdbPath = Path.Combine(flexSDKPath, "lib\\fdb.jar");
+            var fdbPath = Path.Combine(flexSDKPath, "lib\\fdb.jar");
             if (!File.Exists(fdbPath)) fdbPath = Path.Combine(flexSDKPath, "lib\\legacy\\fdb.jar");
             if (!File.Exists(fdbPath))
             {

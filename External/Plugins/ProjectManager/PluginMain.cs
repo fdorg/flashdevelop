@@ -750,10 +750,7 @@ namespace ProjectManager
         {
             // try to open the last opened project
             var lastProject = Settings.LastProject;
-            if (!string.IsNullOrEmpty(lastProject) && File.Exists(lastProject))
-            {
-                SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
-            }
+            if (File.Exists(lastProject)) SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
         }
 
         void OpenGlobalClasspaths()

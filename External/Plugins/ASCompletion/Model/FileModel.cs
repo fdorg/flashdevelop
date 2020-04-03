@@ -194,7 +194,7 @@ namespace ASCompletion.Model
         {
             if (this == Ignore || !OutOfDate) return;
             OutOfDate = false;
-            if (FileName == "" || !File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
+            if (!File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
             try
             {
                 if (Context != null) Context.GetCodeModel(this);

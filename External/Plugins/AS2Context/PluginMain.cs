@@ -196,7 +196,7 @@ namespace AS2Context
             
             try
             {
-                if (path is null || (!Directory.Exists(path) && !File.Exists(path)))
+                if (!Directory.Exists(path) && !File.Exists(path))
                 {
                     ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
                     return false;
