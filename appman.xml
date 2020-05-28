@@ -35,7 +35,7 @@
   <Entry>
 		<Id>haxe4setup</Id>
 		<Name>Haxe + Neko (x86)</Name>
-		<Version>4.1.0</Version>
+		<Version>4.1.1</Version>
 		<Build>1</Build>
 		<Desc>Haxe 4 and Neko virtual machine 32-bit installer</Desc>
 		<Group>Compilers</Group>
@@ -45,13 +45,13 @@
 		<Type>Executable</Type>
 		<Info>https://www.haxe.org</Info>
 		<Urls>
-			<Url>https://haxe.org/download/file/4.1.0/haxe-4.1.0-win.exe/</Url>
+			<Url>https://haxe.org/download/file/4.1.1/haxe-4.1.1-win.exe/</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>haxe4setup64</Id>
 		<Name>Haxe + Neko (x64)</Name>
-		<Version>4.1.0</Version>
+		<Version>4.1.1</Version>
 		<Build>1</Build>
 		<Desc>Haxe 4 and Neko virtual machine 64-bit installer</Desc>
 		<Group>Compilers</Group>
@@ -61,7 +61,7 @@
 		<Type>Executable</Type>
 		<Info>https://www.haxe.org</Info>
 		<Urls>
-			<Url>https://haxe.org/download/file/4.1.0/haxe-4.1.0-win64.exe/</Url>
+			<Url>https://haxe.org/download/file/4.1.1/haxe-4.1.1-win64.exe/</Url>
 		</Urls>
 	</Entry>
 	<Entry>
