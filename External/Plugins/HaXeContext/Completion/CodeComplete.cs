@@ -789,6 +789,24 @@ namespace HaXeContext.Completion
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
             if (local.PositionExpression <= rvalueStart && rvalueStart <= local.Position) return;
+            var word = sci.GetWordRight(rvalueStart, true);
+            if (word.IsNullOrEmpty())
+            {
+                // for example: var v = "v<complete> or var v = 'v<complete>
+                var c = (char)sci.CharAt(rvalueStart);
+                if (c == '"' || c == '\'')
+                {
+                    var style = sci.BaseStyleAt(rvalueStart + 1);
+                    if (!IsStringStyle(style) && !IsCharStyle(style))
+                    {
+                        if (style != 12) return;
+                        // for example: var v = 'path\v<complete>
+                        var.Type = ResolveType("String", null).Type;
+                        var.Flags |= FlagType.Inferred;
+                        return;
+                    }
+                }
+            }
             var features = ASContext.Context.Features;
             if (!string.IsNullOrEmpty(local.Separator))
             {
@@ -810,17 +828,6 @@ namespace HaXeContext.Completion
                     var.Type = type;
                     var.Flags |= FlagType.Inferred;
                     return;
-                }
-            }
-            var word = sci.GetWordRight(rvalueStart, true); 
-            if (word.IsNullOrEmpty())
-            {
-                // for example: var v = "v<complete> or var v = 'v<complete>
-                var c = (char) sci.CharAt(rvalueStart);
-                if (c == '"' || c == '\'')
-                {
-                    var style = sci.BaseStyleAt(rvalueStart + 1);
-                    if (!IsStringStyle(style) && !IsCharStyle(style) && style != 12) return;
                 }
             }
             if (word == "new")

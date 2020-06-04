@@ -1930,6 +1930,17 @@ namespace HaXeContext.Completion.Haxe3
             }
         }
 
+        static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue3027TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(CodeCompleteTests.ReadAllText("GetExpressionType_Type_issue3027_1"))
+                    .Returns(null)
+                    .SetName("var v = 'v/v<complete> Issue 3027. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3027");
+            }
+        }
+
         static IEnumerable<TestCaseData> GetExpressionType_ArrayAccess_issue2471_TypeTestCases
         {
             get
@@ -2105,6 +2116,7 @@ namespace HaXeContext.Completion.Haxe3
             TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2796TestCases)),
             TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2993TestCases)),
             TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2963TestCases)),
+            TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue3027TestCases)),
             TestCaseSource(nameof(GetExpressionType_ArrayAccess_issue2471_TypeTestCases)),
             TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2203_TypeTestCases)),
             TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2487_TypeTestCases)),
