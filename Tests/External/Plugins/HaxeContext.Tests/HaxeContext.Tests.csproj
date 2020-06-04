@@ -1978,6 +1978,7 @@
     <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue2963_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_10_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2955_10_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue3027_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
