@@ -2500,9 +2500,9 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("test(); //")
                     .Returns("test()".Length);
                 yield return new TestCaseData("test[1]; //")
-                    .Returns("test[1]".Length);
+                    .Returns("test".Length);
                 yield return new TestCaseData("test['1']; //")
-                    .Returns("test['1']".Length);
+                    .Returns("test".Length);
                 yield return new TestCaseData("x:10, y:10}; //")
                     .Returns("x".Length);
                 yield return new TestCaseData("test()); //")
@@ -2512,7 +2512,7 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("test()}; //")
                     .Returns("test()".Length);
                 yield return new TestCaseData("test[1]); //")
-                    .Returns("test[1]".Length);
+                    .Returns("test".Length);
                 yield return new TestCaseData("test(), 1, 2); //")
                     .Returns("test()".Length);
                 yield return new TestCaseData("test().test().test().test; //")
@@ -2551,6 +2551,8 @@ namespace HaXeContext.Completion.Haxe3
                     .Returns("[(v:{v:Int})]".Length);
                 yield return new TestCaseData("[function() {return 1;}]; //")
                     .Returns("[function() {return 1;}]".Length);
+                yield return new TestCaseData("[function() {return ]};]")
+                    .Returns("[function() {return ]".Length);
                 yield return new TestCaseData("'12345'; //")
                     .Returns("'12345'".Length);
                 yield return new TestCaseData("'${1$(EntryPoint)2345}'; //")
@@ -2576,7 +2578,7 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("abstract AFoo$(EntryPoint)(Int) //")
                     .Returns("abstract AFoo".Length);
                 yield return new TestCaseData("'${$(EntryPoint)array[index]}'; //")
-                    .Returns("'${array[index]".Length);
+                    .Returns("'${array".Length);
                 yield return new TestCaseData("'$$(EntryPoint)array[index]'; //")
                     .Returns("'$array".Length);
                 yield return new TestCaseData("'$$(EntryPoint)array.length'; //")

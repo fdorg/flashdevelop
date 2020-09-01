@@ -827,6 +827,8 @@ namespace ASCompletion.Completion
                         .Returns("[123]".Length);
                     yield return new TestCaseData("split()[123]")
                         .Returns("split()".Length);
+                    yield return new TestCaseData("array[0]is String")
+                        .Returns("array".Length);
                 }
             }
 
