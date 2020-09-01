@@ -32,12 +32,11 @@ namespace ProjectManager.Projects
         /// </summary>
         public void RemoveBelow(string path)
         {
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                string p = this[i];
-
-                if (p.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
-                    p == path)
+                var p = this[i];
+                if (p.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                    || p == path)
                 {
                     RemoveAt(i--); // search this index again
                 }
@@ -47,10 +46,15 @@ namespace ProjectManager.Projects
         /// <summary>
         /// Returns the closest parent path in this collection to the given path.
         /// </summary>
-        public string GetClosestParent(string path)
+        public string GetClosestParent(string path) => GetClosestParent(path, this);
+
+        /// <summary>
+        /// Returns the closest parent path in this collection to the given path.
+        /// </summary>
+        public static string GetClosestParent(string path, IEnumerable<string> paths)
         {
-            string closest = "";
-            foreach (string classpath in this)
+            var closest = string.Empty;
+            foreach (var classpath in paths)
                 if ((path.StartsWith(classpath, StringComparison.Ordinal) || classpath == ".") && classpath.Length > closest.Length)
                     closest = classpath;
             return (closest.Length > 0) ? closest : null;

@@ -41,7 +41,13 @@ namespace ASClassWizard
 
         public static bool ProcessWizard(IWizard dialog, string inDirectory, string name, Project project, out string path, out string newFilePath)
         {
-            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
+            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory);
+            if (classpath is null)
+            {
+                if (project.AdditionalPaths is { } paths) classpath = PathCollection.GetClosestParent(inDirectory, paths);
+                classpath ??= inDirectory;
+            }
+
             var package = GetPackage(project, ref classpath, inDirectory);
             dialog.Project = project;
             dialog.Directory = inDirectory;
