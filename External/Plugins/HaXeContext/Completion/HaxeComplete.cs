@@ -212,7 +212,7 @@ namespace HaXeContext
                     {
                         return ProcessResponse(JsonMapper.ToObject(lines));
                     }
-                    catch (Exception)
+                    catch
                     {
                         Errors = lines;
                         return HaxeCompleteStatus.ERROR;
