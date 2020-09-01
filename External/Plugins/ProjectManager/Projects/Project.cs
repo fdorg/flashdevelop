@@ -95,11 +95,7 @@ namespace ProjectManager.Projects
 
         public virtual void PropertiesChanged() => OnClasspathChanged();
 
-        public virtual PropertiesDialog CreatePropertiesDialog()
-        {
-            if (IsFolderProject()) return null;
-            return new PropertiesDialog();
-        }
+        public virtual PropertiesDialog CreatePropertiesDialog() => IsFolderProject() ? null : new PropertiesDialog();
 
         public void OnClasspathChanged()
         {

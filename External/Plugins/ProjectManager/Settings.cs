@@ -241,10 +241,8 @@ namespace ProjectManager
 
         public void SetGlobalClasspaths(string lang, List<string> classpaths)
         {
-            Hashtable info = new Hashtable();
-            info["language"] = lang;
-            info["cp"] = classpaths;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.SetUserClasspath", info);
+            var info = new Hashtable {["language"] = lang, ["cp"] = classpaths};
+            var de = new DataEvent(EventType.Command, "ASCompletion.SetUserClasspath", info);
             EventManager.DispatchEvent(this, de);
             FireChanged("GlobalClasspath");
         }
@@ -252,9 +250,8 @@ namespace ProjectManager
         public List<string> GetGlobalClasspaths(string lang)
         {
             List<string> cp = null;
-            Hashtable info = new Hashtable();
-            info["language"] = lang;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
+            var info = new Hashtable {["language"] = lang};
+            var de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
             EventManager.DispatchEvent(this, de);
             if (de.Handled && info.ContainsKey("cp")) cp = info["cp"] as List<string>;
             return cp ?? new List<string>();

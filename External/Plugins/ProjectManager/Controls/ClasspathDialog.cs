@@ -11,16 +11,16 @@ namespace ProjectManager.Controls
     {
         #region Form Designer
 
-        private ClasspathControl classpathControl;
-        private Button btnCancel;
-        private Button btnOK;
-        private Label label2;
-        private GroupBox groupBox1;
+        ClasspathControl classpathControl;
+        Button btnCancel;
+        Button btnOK;
+        Label label2;
+        GroupBox groupBox1;
 
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private readonly System.ComponentModel.IContainer components = null;
+        readonly System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -143,8 +143,8 @@ namespace ProjectManager.Controls
             this.settings = settings;
             InitializeComponent();
             InitializeLocalization();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.FormGuid = "695815f3-0c88-418e-aa88-c86a5dfec7ef";
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "695815f3-0c88-418e-aa88-c86a5dfec7ef";
         }
 
         public string Language
@@ -161,11 +161,11 @@ namespace ProjectManager.Controls
 
         public void InitializeLocalization()
         {
-            this.btnOK.Text = TextHelper.GetString("Label.OK");
-            this.btnCancel.Text = TextHelper.GetString("Label.Cancel");
-            this.label2.Text = TextHelper.GetString("Info.ClasspathsAreSaved");
-            this.groupBox1.Text = TextHelper.GetString("Title.GlobalClasspaths");
-            this.Text = " " + TextHelper.GetString("Title.GlobalClasspaths");
+            btnOK.Text = TextHelper.GetString("Label.OK");
+            btnCancel.Text = TextHelper.GetString("Label.Cancel");
+            label2.Text = TextHelper.GetString("Info.ClasspathsAreSaved");
+            groupBox1.Text = TextHelper.GetString("Title.GlobalClasspaths");
+            Text = " " + TextHelper.GetString("Title.GlobalClasspaths");
         }
 
         public string[] Classpaths
@@ -174,41 +174,41 @@ namespace ProjectManager.Controls
             set => classpathControl.Classpaths = value;
         }
 
-        private void classpathControl_Changed(object sender, EventArgs e)
+        void classpathControl_Changed(object sender, EventArgs e)
         {
             pathChanged = true;
         }
 
-        private void classpathControl_IndexChanged(object sender, EventArgs e)
+        void classpathControl_IndexChanged(object sender, EventArgs e)
         {
             SaveClasspath();
             int index = classpathControl.LanguageBox.SelectedIndex;
-            this.Language = classpathControl.LanguageBox.Items[index].ToString().ToLower();
-            this.Classpaths = this.settings.GetGlobalClasspaths(this.Language).ToArray();
+            Language = classpathControl.LanguageBox.Items[index].ToString().ToLower();
+            Classpaths = settings.GetGlobalClasspaths(Language).ToArray();
         }
 
-        private void SaveClasspath()
+        void SaveClasspath()
         {
             if (pathChanged)
             {
                 pathChanged = false;
-                List<string> cps = new List<string>();
-                cps.AddRange(this.Classpaths);
-                this.settings.SetGlobalClasspaths(this.Language, cps);
+                var cps = new List<string>();
+                cps.AddRange(Classpaths);
+                settings.SetGlobalClasspaths(Language, cps);
             }
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        void btnOK_Click(object sender, EventArgs e)
         {
             SaveClasspath();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

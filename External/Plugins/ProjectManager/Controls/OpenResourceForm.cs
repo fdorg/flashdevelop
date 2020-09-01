@@ -8,6 +8,7 @@ using PluginCore.Helpers;
 using PluginCore.Controls;
 using PluginCore;
 using System.Linq;
+using ProjectManager.Projects;
 
 namespace ProjectManager.Controls
 {
@@ -140,7 +141,7 @@ namespace ProjectManager.Controls
 
         void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
+            var imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0", false));
@@ -193,33 +194,30 @@ namespace ProjectManager.Controls
 
         void ListBoxDrawItem(object sender, DrawItemEventArgs e)
         {
-            bool selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
-            if (e.Index >= 0)
+            if (e.Index < 0) return;
+            var fullName = (string)listBox.Items[e.Index];
+            if (fullName == ITEM_SPACER)
             {
-                var fullName = (string)listBox.Items[e.Index];
-                if (fullName == ITEM_SPACER)
-                {
-                    e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
-                    int y = (e.Bounds.Top + e.Bounds.Bottom)/2;
-                    e.Graphics.DrawLine(Pens.Gray, e.Bounds.Left, y, e.Bounds.Right, y);
-                }
-                else if (!selected)
-                {
-                    e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
-                    int slashIndex = fullName.LastIndexOf(Path.DirectorySeparatorChar);
-                    string path = fullName.Substring(0, slashIndex + 1);
-                    string name = fullName.Substring(slashIndex + 1);
-                    int pathSize = DrawHelper.MeasureDisplayStringWidth(e.Graphics, path, e.Font) - 2;
-                    if (pathSize < 0) pathSize = 0; // No negative padding...
-                    e.Graphics.DrawString(path, e.Font, Brushes.Gray, e.Bounds.Left, e.Bounds.Top, StringFormat.GenericDefault);
-                    e.Graphics.DrawString(name, e.Font, Brushes.Black, e.Bounds.Left + pathSize, e.Bounds.Top, StringFormat.GenericDefault);
-                    e.DrawFocusRectangle();
-                }
-                else
-                {
-                    e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-                    e.Graphics.DrawString(fullName, e.Font, Brushes.White, e.Bounds.Left, e.Bounds.Top, StringFormat.GenericDefault);
-                }
+                e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
+                int y = (e.Bounds.Top + e.Bounds.Bottom)/2;
+                e.Graphics.DrawLine(Pens.Gray, e.Bounds.Left, y, e.Bounds.Right, y);
+            }
+            else if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
+                var slashIndex = fullName.LastIndexOf(Path.DirectorySeparatorChar);
+                var path = fullName.Substring(0, slashIndex + 1);
+                var name = fullName.Substring(slashIndex + 1);
+                var pathSize = DrawHelper.MeasureDisplayStringWidth(e.Graphics, path, e.Font) - 2;
+                if (pathSize < 0) pathSize = 0; // No negative padding...
+                e.Graphics.DrawString(path, e.Font, Brushes.Gray, e.Bounds.Left, e.Bounds.Top, StringFormat.GenericDefault);
+                e.Graphics.DrawString(name, e.Font, Brushes.Black, e.Bounds.Left + pathSize, e.Bounds.Top, StringFormat.GenericDefault);
+                e.DrawFocusRectangle();
+            }
+            else
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                e.Graphics.DrawString(fullName, e.Font, Brushes.White, e.Bounds.Left, e.Bounds.Top, StringFormat.GenericDefault);
             }
         }
 
@@ -228,10 +226,7 @@ namespace ProjectManager.Controls
             listBox.BeginUpdate();
             listBox.Items.Clear();
             FillListBox();
-            if (listBox.Items.Count > 0)
-            {
-                listBox.SelectedIndex = 0;
-            }
+            if (listBox.Items.Count > 0) listBox.SelectedIndex = 0;
             listBox.EndUpdate();
         }
 
@@ -240,13 +235,13 @@ namespace ProjectManager.Controls
             List<string> matchedFiles;
             if (textBox.Text.Length > 0)
             {
-                string searchText = textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                var searchText = textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                 matchedFiles = SearchUtil.getMatchedItems(openedFiles, searchText, Path.DirectorySeparatorChar, 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
                 matchedFiles.AddRange(SearchUtil.getMatchedItems(projectFiles, searchText, Path.DirectorySeparatorChar, MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
-            foreach (string file in matchedFiles)
+            foreach (var file in matchedFiles)
             {
                listBox.Items.Add(file);
             }
@@ -257,9 +252,9 @@ namespace ProjectManager.Controls
         /// </summary>
         void UpdateOpenFiles()
         {
-            List<string> open = GetOpenFiles();
-            List<string> folders = GetProjectFolders();
-            List<string> prevOpen = openedFiles;
+            var open = GetOpenFiles();
+            var folders = GetProjectFolders();
+            var prevOpen = openedFiles;
             openedFiles = new List<string>();
             foreach (string file in open)
             {
@@ -288,7 +283,7 @@ namespace ProjectManager.Controls
             openedFiles = new List<string>();
             projectFiles = new List<string>();
             var allFiles = GetProjectFiles();
-            foreach (string file in allFiles)
+            foreach (var file in allFiles)
             {
                 if (open.Contains(file)) openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
                 else projectFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
@@ -321,46 +316,44 @@ namespace ProjectManager.Controls
         /// </summary>
         public List<string> GetProjectFiles()
         {
-            List<string> files = new List<string>();
-            List<string> folders = GetProjectFolders();
-            foreach (string folder in folders)
+            var result = new List<string>();
+            var folders = GetProjectFolders();
+            foreach (var folder in folders)
             {
-                AddFilesInFolder(files, folder);
+                AddFilesInFolder(result, folder);
             }
-            return files;
+            return result;
         }
 
         /// <summary>
         /// Gather files in depth avoiding hidden directories
         /// </summary>
-        void AddFilesInFolder(List<string> files, string folder)
+        void AddFilesInFolder(ICollection<string> files, string folder)
         {
-            if (Directory.Exists(folder) && !isFolderHidden(folder))
+            if (!Directory.Exists(folder) || IsFolderHidden(folder)) return;
+            try
             {
-                try
+                var searchFilters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
+                var temp = Directory.GetFiles(folder, "*.*");
+                foreach (var file in temp)
                 {
-                    var searchFilters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
-                    var temp = Directory.GetFiles(folder, "*.*");
-                    foreach (var file in temp)
-                    {
-                        var extension = Path.GetExtension(file);
-                        var ignored = PluginMain.Settings.ExcludedFileTypes.Contains(extension);
-                        if (ignored || (checkBox.Checked && !searchFilters.Contains("*" + extension))) continue;
-                        files.Add(file);
-                    }
-                    foreach (var sub in Directory.GetDirectories(folder))
-                    {
-                        AddFilesInFolder(files, sub);
-                    }
+                    var extension = Path.GetExtension(file);
+                    var ignored = PluginMain.Settings.ExcludedFileTypes.Contains(extension);
+                    if (ignored || (checkBox.Checked && !searchFilters.Contains("*" + extension))) continue;
+                    files.Add(file);
                 }
-                catch (UnauthorizedAccessException)
+                foreach (var sub in Directory.GetDirectories(folder))
                 {
-                    // Sometimes after a directory is deleted it still "exists" for some time, but any operation on it results in "Access denied".
+                    AddFilesInFolder(files, sub);
                 }
-                catch (PathTooLongException)
-                {
-                    // Catch this error to avoid crashing the IDE.  There isn't really a graceful way to handle this.
-                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Sometimes after a directory is deleted it still "exists" for some time, but any operation on it results in "Access denied".
+            }
+            catch (PathTooLongException)
+            {
+                // Catch this error to avoid crashing the IDE.  There isn't really a graceful way to handle this.
             }
         }
 
@@ -369,46 +362,56 @@ namespace ProjectManager.Controls
         /// </summary>
         public List<string> GetProjectFolders()
         {
-            string projectFolder = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-            List<string> folders = new List<string>();
-            if (!cbInClasspathsOnly.Checked) folders.Add(projectFolder);
-            if (!PluginMain.Settings.SearchExternalClassPath) return folders;
-            foreach (string path in PluginBase.CurrentProject.SourcePaths)
+            var result = new List<string>();
+            var project = PluginBase.CurrentProject;
+            var projectFolder = Path.GetDirectoryName(project.ProjectPath);
+            var inClassPathsOnly = cbInClasspathsOnly.Checked;
+            if (!inClassPathsOnly) result.Add(projectFolder);
+            if (!PluginMain.Settings.SearchExternalClassPath) return result;
+            var sourcePaths = project.SourcePaths.ToList();
+            if ((project as Project)?.AdditionalPaths is { } paths) sourcePaths.AddRange(paths);
+            sourcePaths.AddRange(PluginMain.Settings.GlobalClasspaths);
+            result = GetProjectFolders(projectFolder, sourcePaths.Distinct(), inClassPathsOnly, result);
+            return result;
+            // Utils
+            static List<string> GetProjectFolders(string projectDirectory, IEnumerable<string> sourcePaths, bool inClassPathsOnly, List<string> result)
             {
-                if (Path.IsPathRooted(path)) folders.Add(path);
-                else
+                if (sourcePaths is null) return result;
+                foreach (var path in sourcePaths)
                 {
-                    string folder = Path.GetFullPath(Path.Combine(projectFolder, path));
-                    if (cbInClasspathsOnly.Checked || !folder.StartsWithOrdinal(projectFolder)) folders.Add(folder);
+                    if (Path.IsPathRooted(path)) result.Add(path);
+                    else
+                    {
+                        var folder = Path.GetFullPath(Path.Combine(projectDirectory, path));
+                        if (inClassPathsOnly || !folder.StartsWithOrdinal(projectDirectory)) result.Add(folder);
+                    }
                 }
+                return result;
             }
-            return folders;
         }
 
         /// <summary>
         /// Filter out hidden/VCS directories
         /// </summary>
-        bool isFolderHidden(string folder)
+        static bool IsFolderHidden(string folder)
         {
-            string name = Path.GetFileName(folder);
+            var name = Path.GetFileName(folder);
             if (name.Length == 0 || !char.IsLetterOrDigit(name[0])) return true;
-            foreach (string dir in PluginMain.Settings.ExcludedDirectories)
+            foreach (var dir in PluginMain.Settings.ExcludedDirectories)
                 if (dir == name) return true;
-            FileInfo info = new FileInfo(folder);
+            var info = new FileInfo(folder);
             return (info.Attributes & FileAttributes.Hidden) > 0;
         }
 
         void Navigate()
         {
-            if (listBox.SelectedItem != null)
+            if (listBox.SelectedItem == null) return;
+            var file = PluginBase.CurrentProject.GetAbsolutePath((string)listBox.SelectedItem);
+            ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
             {
-                string file = PluginBase.CurrentProject.GetAbsolutePath((string)listBox.SelectedItem);
-                ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
-                {
-                    plugin.OpenFile(file);
-                });
-                Close();
-            }
+                plugin.OpenFile(file);
+            });
+            Close();
         }
 
         void OpenResourceKeyDown(object sender, KeyEventArgs e)
@@ -451,20 +454,11 @@ namespace ProjectManager.Controls
             }
         }
 
-        void TextBoxTextChanged(object sender, EventArgs e)
-        {
-            RefreshListBox();
-        }
+        void TextBoxTextChanged(object sender, EventArgs e) => RefreshListBox();
 
-        void ListBoxDoubleClick(object sender, EventArgs e)
-        {
-            Navigate();
-        }
+        void ListBoxDoubleClick(object sender, EventArgs e) => Navigate();
 
-        void ListBoxResize(object sender, EventArgs e)
-        {
-            listBox.Refresh();
-        }
+        void ListBoxResize(object sender, EventArgs e) => listBox.Refresh();
 
         protected override void OnClosed(EventArgs e)
         {
@@ -488,9 +482,9 @@ namespace ProjectManager.Controls
     public class SearchUtil
     {
         // Note: These values may need more tuning to get best results.
-        private const double FileScoreWeightFactor = 1.0;
+        const double FileScoreWeightFactor = 1.0;
         // Put more weight on directory scores, since file scores tend to have more variation due to their dependency on file name length.
-        private const double DirScoreWeightFactor = 4.0;
+        const double DirScoreWeightFactor = 4.0;
 
         public static List<string> getMatchedItems(List<string> source, string searchText, char pathSeparator, int limit)
         {
@@ -668,5 +662,4 @@ namespace ProjectManager.Controls
     }
 
     #endregion
-
 }
