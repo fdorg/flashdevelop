@@ -4294,6 +4294,8 @@ namespace ASCompletion.Completion
             return result;
         }
 
+        public static char GetCharLeft(ScintillaControl sci, int position) => GetCharLeft(sci, true, ref position);
+
         public static char GetCharLeft(ScintillaControl sci, ref int position) => GetCharLeft(sci, true, ref position);
 
         public static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
@@ -4627,7 +4629,7 @@ namespace ASCompletion.Completion
                 statementEnd++;
                 if (c == '(')
                 {
-                    if (arrCount == 0)
+                    if (arrCount == 0 && brCount == 0)
                     {
                         parCount++;
                         exprStarted = true;
@@ -4635,7 +4637,7 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ')')
                 {
-                    if (arrCount == 0)
+                    if (arrCount == 0 && brCount == 0)
                     {
                         parCount--;
                         if (parCount == 0) result = statementEnd;
@@ -4662,15 +4664,22 @@ namespace ASCompletion.Completion
                 }
                 else if (c == '[')
                 {
-                    if (parCount == 0)
+                    if (parCount == 0 && brCount == 0)
                     {
+                        // for example: ''.sp<position>lit()[]
+                        if (GetCharLeft(sci, statementEnd - 2) == ')')
+                        {
+                            result = statementEnd - 1;
+                            break;
+                        }
+                        if (stop) break;
                         arrCount++;
                         exprStarted = true;
                     }
                 }
                 else if (c == ']')
                 {
-                    if (parCount == 0)
+                    if (parCount == 0 && brCount == 0)
                     {
                         arrCount--;
                         if (arrCount == 0) result = statementEnd;
