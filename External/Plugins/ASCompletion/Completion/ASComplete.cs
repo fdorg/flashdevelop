@@ -4294,6 +4294,8 @@ namespace ASCompletion.Completion
             return result;
         }
 
+        public static char GetCharLeft(ScintillaControl sci, int position) => GetCharLeft(sci, true, ref position);
+
         public static char GetCharLeft(ScintillaControl sci, ref int position) => GetCharLeft(sci, true, ref position);
 
         public static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
@@ -4664,6 +4666,12 @@ namespace ASCompletion.Completion
                 {
                     if (parCount == 0)
                     {
+                        // for example: ''.sp<position>lit()[]
+                        if (GetCharLeft(sci, statementEnd - 2) == ')')
+                        {
+                            result = statementEnd - 1;
+                            break;
+                        }
                         arrCount++;
                         exprStarted = true;
                     }
