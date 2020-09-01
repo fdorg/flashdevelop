@@ -142,7 +142,6 @@ namespace HaXeContext
                             e.Handled = OpenVirtualFileModel((string) de.Data);
                     }
                     break;
-
                 case EventType.UIStarted:
                     ValidateSettings();
                     customSDK = new KeyValuePair<string, InstalledSDK>();
@@ -152,6 +151,8 @@ namespace HaXeContext
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
                     break;
                 case EventType.Trace:
+                {
+                    if (!(PluginBase.CurrentProject is HaxeProject project)) return;
                     if (settingObject.DisableLibInstallation) return;
                     var count = TraceManager.TraceLog.Count;
                     if (count <= logCount)
@@ -177,7 +178,7 @@ namespace HaXeContext
                         }
                     }
                     if (nameToVersion.Count == 0) return;
-                    var compilerOptions = ((HaxeProject)PluginBase.CurrentProject).CompilerOptions.Additional;
+                    var compilerOptions = project.CompilerOptions.Additional;
                     foreach (var lib in nameToVersion.Keys.ToArray())
                     {
                         var pattern = "-lib " + lib;
@@ -194,6 +195,7 @@ namespace HaXeContext
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK) contextInstance.InstallLibrary(nameToVersion);
                     break;
+                }
             }
         }
 
