@@ -756,7 +756,7 @@ namespace ASCompletion.Completion
                 result.InClass = ASComplete.FindMember(line, model.Classes);
                 if (result.InClass != null) result.Member = ASComplete.FindMember(line, result.InClass.Members.Items);
             }
-            if (result.InClass is null) result.InClass = ClassModel.VoidClass;
+            result.InClass ??= ClassModel.VoidClass;
             return result;
         }
 
@@ -764,24 +764,19 @@ namespace ASCompletion.Completion
         {
             if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
             var allClasses = ASContext.Context.GetAllProjectClasses();
-            if (allClasses != null)
-            {
-                var names = new HashSet<string>();
-                var matches = new List<MemberModel>();
-                var dotToken = "." + contextToken;
-                foreach (MemberModel member in allClasses)
-                    if (!names.Contains(member.Name) && member.Name.EndsWithOrdinal(dotToken))
-                    {
-                        matches.Add(member);
-                        names.Add(member.Name);
-                    }
-                if (matches.Count > 0)
+            if (allClasses is null) return false;
+            var names = new HashSet<string>();
+            var matches = new List<MemberModel>();
+            var dotToken = "." + contextToken;
+            foreach (var member in allClasses)
+                if (!names.Contains(member.Name) && member.Name.EndsWithOrdinal(dotToken))
                 {
-                    ShowImportClass(matches, options);
-                    return true;
+                    matches.Add(member);
+                    names.Add(member.Name);
                 }
-            }
-            return false;
+            if (matches.Count == 0) return false;
+            ShowImportClass(matches, options);
+            return true;
         }
 
         /// <summary>
@@ -1049,7 +1044,7 @@ namespace ASCompletion.Completion
                     }
                     type = type.Extends;
                 }
-                if (choices is null) choices = new[] { labelContext };
+                choices ??= new[] {labelContext};
             }
             else if (HasDataEvent())
             {
@@ -1066,20 +1061,17 @@ namespace ASCompletion.Completion
             }
         }
 
-        static bool HasDataEvent()
-        {
-            return !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
-        }
+        static bool HasDataEvent() => !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
 
         static void ShowGetSetList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            string name = GetPropertyNameFor(found.Member);
-            ASResult result = new ASResult();
-            ClassModel curClass = ASContext.Context.CurrentClass;
+            var name = GetPropertyNameFor(found.Member);
+            var result = new ASResult();
+            var curClass = ASContext.Context.CurrentClass;
             ASComplete.FindMember(name, curClass, result, FlagType.Getter, 0);
-            bool hasGetter = !result.IsNull();
+            var hasGetter = !result.IsNull();
             ASComplete.FindMember(name, curClass, result, FlagType.Setter, 0);
-            bool hasSetter = !result.IsNull();
+            var hasSetter = !result.IsNull();
             if (hasGetter && hasSetter) return;
             if (!hasGetter && !hasSetter)
             {
