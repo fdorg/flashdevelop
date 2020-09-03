@@ -405,7 +405,7 @@ namespace ProjectManager.Controls
 
         void Navigate()
         {
-            if (listBox.SelectedItem == null) return;
+            if (listBox.SelectedItem is null) return;
             var file = PluginBase.CurrentProject.GetAbsolutePath((string)listBox.SelectedItem);
             ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
             {

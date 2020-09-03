@@ -10,6 +10,7 @@ namespace AS3Context.Completion
 {
     class CodeComplete : ASComplete
     {
+        /// <inheritdoc />
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             if (!string.IsNullOrEmpty(expression))
@@ -125,6 +126,7 @@ namespace AS3Context.Completion
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
 
+        /// <inheritdoc />
         protected override bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword, List<ICompletionListItem> list)
         {
             if (keyword == "new")
@@ -136,6 +138,46 @@ namespace AS3Context.Completion
                     .ToList();
             }
             return base.HandleNewCompletion(sci, tail, autoHide, keyword, list);
+        }
+
+        /// <inheritdoc />
+        protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
+        {
+            return base.IsAvailableForToolTip(sci, position)
+                   || (sci.GetWordFromPosition(position) is { } word
+                       && (word == "as" || word == "is" || word == "instanceof" || word == "typeof" || word == "delete"));
+        }
+
+        /// <inheritdoc />
+        protected override string GetToolTipTextEx(ASResult expr)
+        {
+            if (expr.Member is null && expr.Context?.Value is {} s)
+            {
+                switch (s)
+                {
+                    // for example: variable as$(EntryPoint) Type
+                    case "as":
+                        expr.Member = Context.StubAsExpression;
+                        break;
+                    // for example: variable is$(EntryPoint) Type
+                    case "is":
+                        expr.Member = Context.StubIsExpression;
+                        break;
+                    // for example: variable instanceof$(EntryPoint) function
+                    case "instanceof":
+                        expr.Member = Context.StubInstanceOfExpression;
+                        break;
+                    // for example: typeof(EntryPoint) expression
+                    case "typeof":
+                        expr.Member = Context.StubTypeOfExpression;
+                        break;
+                    // for example: delete$(EntryPoint) reference
+                    case "delete":
+                        expr.Member = Context.StubDeleteExpression;
+                        break;
+                }
+            }
+            return base.GetToolTipTextEx(expr);
         }
     }
 }

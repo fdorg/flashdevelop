@@ -33,6 +33,105 @@ namespace AS3Context
         protected static readonly Regex re_customAPI =
             new Regex("[/\\\\](playerglobal|airglobal|builtin)\\.swc", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        internal static readonly MemberModel StubAsExpression = new MemberModel("as operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * expression as datatype" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Evaluates whether an expression specified by the first operand is a member of the data type specified by the second operand." +
+                       "\r\t * If the first operand is a member of the data type, the result is the first operand. Otherwise, the result is the value <i>null</i>." +
+                       "\r\t * " +
+                       "\r\t * The expression used for the second operand must evaluate to a data type." +
+                       "\r\t * " +
+                       "\r\t * <b>Operands</b>" +
+                       "\r\t * <b>expression</b>:* — The value to check against the data type specified." +
+                       "\r\t * <b>datatype</b>:Class — The data type used to evaluate the expression operand. The special * type, which means untyped, cannot be used." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>Object</b> — The result is expression if expression is a member of the data type specified in datatype. Otherwise, the result is the value null."
+        };
+
+        internal static readonly MemberModel StubIsExpression = new MemberModel("is operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * expression is datatype" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Evaluates whether an object is compatible with a specific data type, class, or interface. Use the <i>is</i> operator instead of the <i>instanceof</i> operator for type comparisons. You can also use the is operator to check whether an object implements an interface." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>Boolean</b> — A value of true if expression1 is compatible with the data type, class, or interface specified in expression2, and false otherwise."
+        };
+
+        internal static readonly MemberModel StubInstanceOfExpression = new MemberModel("instaceof operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * expression instanceof function" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Evaluates whether an expression's prototype chain includes the prototype object for function. The <i>instanceof</i> operator is included for backward compatibility with ECMAScript edition 3, and may be useful for advanced programmers who choose to use prototype-based inheritance with constructor functions instead of classes." +
+                       "\r\t * " +
+                       "\r\t * To check whether an object is a member of a specific data type, use the <i>is</i> operator." +
+                       "\r\t * " +
+                       "\r\t * When used with classes, the <i>instanceof</i> operator is similar to the is operator because a class's prototype chain includes all of its superclasses. Interfaces, however, are not included on prototype chains, so the instanceof operator always results in false when used with interfaces, whereas the is operator results in true if an object belongs to a class that implements the specified interface." +
+                       "\r\t * " +
+                       "\r\t * <b>Note:</b> The ActionScript is operator is the equivalent of the Java <i>instanceof</i> operator." +
+                       "\r\t * " +
+                       "\r\t * <b>Operands</b>" +
+                       "\r\t * <b>expression</b>:Object — The object that contains the prototype chain to evaluate." +
+                       "\r\t * <b>function</b>:Object — A function object (or class)." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>Boolean</b> — Returns <i>true</i> if the prototype chain of expression includes the prototype object for <i>function</i>, and <i>false</i> otherwise."
+        };
+
+        internal static readonly MemberModel StubTypeOfExpression = new MemberModel("typeof operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * typeof expression" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Evaluates expression and returns a string specifying the expression's data type. The result is limited to six possible string values: <i>boolean</i>, <i>function</i>, <i>number</i>, <i>object</i>, <i>string</i>, and <i>xml</i>. If you apply this operator to an instance of a user-defined class, the result is the <i>string object</i>. The <i>typeof</i> operator is included for backward compatibility. Use the is operator to check type compatibility." +
+                       "\r\t * " +
+                       "\r\t * <b>Operands</b>" +
+                       "\r\t * <b>expression</b>:Object — An object to evaluate." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>String</b> — A string representation of the type of <i>expression</i>. The following table shows the results of the <i>typeof</i> operator on each type of expression."
+        };
+
+        internal static readonly MemberModel StubDeleteExpression = new MemberModel("delete operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * delete reference" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Destroys the object property specified by reference; the result is true if the property does not exist after the operation completes, and <i>false</i> otherwise. The delete operator returns <i>true</i> if it is called on a nonexistent property or a dynamic property not defined in a class." +
+                       "\r\t * " +
+                       "\r\t * The <i>delete</i> operator can fail and return <i>false</i> if the reference parameter cannot be deleted. You cannot delete fixed properties or variables that are declared with the <i>var</i> statement. A fixed property is a variable or method defined in a class definition." +
+                       "\r\t * " +
+                       "\r\t * The <i>delete</i> operator cannot be used to destroy a property of a class, unless that class is a dynamic class added at runtime. Properties of sealed classes cannot be destroyed using <i>delete</i>. Set the property to <i>null</i> instead." +
+                       "\r\t * " +
+                       "\r\t * <b>Note:</b> You cannot delete an object, but you can make an object eligible for garbage collection by removing all references to the object. The most common reference to an object is a variable that points to it. You can remove such a reference by setting the variable to <i>null</i>. The garbage collector removes any object that has no references." +
+                       "\r\t * " +
+                       "\r\t * <b>Operands</b>" +
+                       "\r\t * <b>reference</b>:* — The name of the property to eliminate." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>Boolean</b> — The value <i>true</i> if the deletion succeeded and <i>false</i> if it failed."
+        };
+
         #region initialization
 
         readonly AS3Settings as3settings;
