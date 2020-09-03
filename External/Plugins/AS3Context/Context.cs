@@ -92,6 +92,23 @@ namespace AS3Context
                        "\r\t * <b>Boolean</b> — Returns <i>true</i> if the prototype chain of expression includes the prototype object for <i>function</i>, and <i>false</i> otherwise."
         };
 
+        internal static readonly MemberModel StubTypeOfExpression = new MemberModel("typeof operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * typeof expression" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Evaluates expression and returns a string specifying the expression's data type. The result is limited to six possible string values: <i>boolean</i>, <i>function</i>, <i>number</i>, <i>object</i>, <i>string</i>, and <i>xml</i>. If you apply this operator to an instance of a user-defined class, the result is the <i>string object</i>. The <i>typeof</i> operator is included for backward compatibility. Use the is operator to check type compatibility." +
+                       "\r\t * " +
+                       "\r\t * <b>Operands</b>" +
+                       "\r\t * <b>expression</b>:Object — An object to evaluate." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>String</b> — A string representation of the type of <i>expression</i>. The following table shows the results of the <i>typeof</i> operator on each type of expression."
+        };
+
         internal static readonly MemberModel StubDeleteExpression = new MemberModel("delete operator", null, FlagType.Declaration, 0)
         {
             Comments = "\r\t * <b>Usage</b>" +

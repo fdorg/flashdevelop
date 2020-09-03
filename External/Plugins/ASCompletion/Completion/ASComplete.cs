@@ -4918,41 +4918,40 @@ namespace ASCompletion.Completion
             }
 
             // default handling
-            if (ASContext.Context.Settings != null)
+            if (ASContext.Context.Settings is null) return;
+            var textEndPosition = position + text.Length;
+            // was a fully qualified type inserted?
+            var expr = GetExpression(sci, textEndPosition);
+            if (expr.Value is null) return;
+            var type = GetExpressionType(sci, textEndPosition);
+            if (type.IsPackage) return;
+            var features = ASContext.Context.Features;
+
+            // add ; for imports
+            if (" \n\t".Contains(trigger)
+                && expr.WordBefore != null
+                && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
             {
-                int textEndPosition = position + text.Length;
-                // was a fully qualified type inserted?
-                var expr = GetExpression(sci, textEndPosition);
-                if (expr.Value is null) return;
-                var type = GetExpressionType(sci, textEndPosition);
-                if (type.IsPackage) return;
-                var features = ASContext.Context.Features;
-
-                // add ; for imports
-                if (" \n\t".Contains(trigger) && expr.WordBefore != null
-                    && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
-                {
-                    if (!sci.GetLine(sci.CurrentLine).Contains(';')) sci.InsertText(sci.CurrentPos, ";");
-                    return;
-                }
-
-                // look for a snippet
-                if (trigger == '\t' && !expr.Value.Contains(features.dot))
-                {
-                    foreach(string key in features.codeKeywords)
-                        if (key == expr.Value)
-                        {
-                            InsertSnippet(key);
-                            return;
-                        }
-                }
-
-                // resolve context & do smart insertion
-                expr.LocalVars = ParseLocalVars(expr);
-                var context = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
-                if (SmartInsertion(sci, position, expr, context))
-                    DispatchInsertedElement(context, trigger);
+                if (!sci.GetLine(sci.CurrentLine).Contains(';')) sci.InsertText(sci.CurrentPos, ";");
+                return;
             }
+
+            // look for a snippet
+            if (trigger == '\t' && !expr.Value.Contains(features.dot))
+            {
+                foreach(string key in features.codeKeywords)
+                    if (key == expr.Value)
+                    {
+                        InsertSnippet(key);
+                        return;
+                    }
+            }
+
+            // resolve context & do smart insertion
+            expr.LocalVars = ParseLocalVars(expr);
+            var context = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
+            if (SmartInsertion(sci, position, expr, context))
+                DispatchInsertedElement(context, trigger);
         }
 
         static void SmartEventInsertion(ScintillaControl sci, int position, ICompletionListItem item)
