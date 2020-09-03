@@ -145,7 +145,7 @@ namespace AS3Context.Completion
         {
             return base.IsAvailableForToolTip(sci, position)
                    || (sci.GetWordFromPosition(position) is { } word
-                       && (word == "as" || word == "is" || word == "instanceof"));
+                       && (word == "as" || word == "is" || word == "instanceof" || word == "delete"));
         }
 
         /// <inheritdoc />
@@ -168,6 +168,10 @@ namespace AS3Context.Completion
                         // for example: variable instanceof(EntryPoint) function
                         case "instanceof":
                             expr.Member = Context.StubInstanceOfExpression;
+                            break;
+                        // for example: delete(EntryPoint) reference
+                        case "delete":
+                            expr.Member = Context.StubDeleteExpression;
                             break;
                     }
                 }

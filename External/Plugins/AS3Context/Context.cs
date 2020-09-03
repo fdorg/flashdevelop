@@ -92,6 +92,29 @@ namespace AS3Context
                        "\r\t * <b>Boolean</b> — Returns <i>true</i> if the prototype chain of expression includes the prototype object for <i>function</i>, and <i>false</i> otherwise."
         };
 
+        internal static readonly MemberModel StubDeleteExpression = new MemberModel("delete operator", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * <b>Usage</b>" +
+                       "\r\t * delete reference" +
+                       "\r\t * " +
+                       "\r\t * <b>Language Version:</b> ActionScript 3.0" +
+                       "\r\t * <b>Runtime Versions:</b> Flash Player 9" +
+                       "\r\t * " +
+                       "\r\t * Destroys the object property specified by reference; the result is true if the property does not exist after the operation completes, and <i>false</i> otherwise. The delete operator returns <i>true</i> if it is called on a nonexistent property or a dynamic property not defined in a class." +
+                       "\r\t * " +
+                       "\r\t * The <i>delete</i> operator can fail and return <i>false</i> if the reference parameter cannot be deleted. You cannot delete fixed properties or variables that are declared with the <i>var</i> statement. A fixed property is a variable or method defined in a class definition." +
+                       "\r\t * " +
+                       "\r\t * The <i>delete</i> operator cannot be used to destroy a property of a class, unless that class is a dynamic class added at runtime. Properties of sealed classes cannot be destroyed using <i>delete</i>. Set the property to <i>null</i> instead." +
+                       "\r\t * " +
+                       "\r\t * <b>Note:</b> You cannot delete an object, but you can make an object eligible for garbage collection by removing all references to the object. The most common reference to an object is a variable that points to it. You can remove such a reference by setting the variable to <i>null</i>. The garbage collector removes any object that has no references." +
+                       "\r\t * " +
+                       "\r\t * <b>Operands</b>" +
+                       "\r\t * <b>reference</b>:* — The name of the property to eliminate." +
+                       "\r\t * " +
+                       "\r\t * <b>Result</b>" +
+                       "\r\t * <b>Boolean</b> — The value <i>true</i> if the deletion succeeded and <i>false</i> if it failed."
+        };
+
         #region initialization
 
         readonly AS3Settings as3settings;
