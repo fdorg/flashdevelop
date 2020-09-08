@@ -4975,7 +4975,7 @@ namespace ASCompletion.Completion
         {
             var features = ASContext.Context.Features;
             var cFile = ASContext.Context.CurrentModel;
-            MemberModel import;
+            MemberModel import = context.Type;
 
             // if completed a package-level member
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package.Length != 0)
@@ -4995,15 +4995,10 @@ namespace ASCompletion.Completion
                     return false;
                 }
                 if (!context.IsNull() && expr.WordBefore == features.importKey)
-                {
                     ASContext.Context.RefreshContextCache(expr.Value);
-                }
-                return true;
-            }
-            // test inserted type
-            else
-            {
-                import = context.Type;
+                // for example: var foo : foo.Foo$(EntryPoint)
+                if (context.Member is { } || context.Type is null || context.RelClass is null)
+                    return true;
             }
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
