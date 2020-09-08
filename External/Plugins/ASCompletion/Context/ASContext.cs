@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using ASCompletion.Commands;
@@ -160,7 +161,7 @@ namespace ASCompletion.Context
         {
             get
             {
-                if (cFile is null) cFile = FileModel.Ignore;
+                cFile ??= FileModel.Ignore;
                 return cFile.FileName;
             }
             set
@@ -209,11 +210,7 @@ namespace ASCompletion.Context
                     return false;
                 if (cFile.InlinedRanges is null || !(PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)) return true;
                 var position = sci.CurrentPos;
-                foreach (var range in cFile.InlinedRanges)
-                {
-                    if (position > range.Start && position < range.End) return true;
-                }
-                return false;
+                return cFile.InlinedRanges.Any(range => position > range.Start && position < range.End);
             }
         }
 
