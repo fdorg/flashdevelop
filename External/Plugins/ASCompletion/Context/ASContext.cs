@@ -127,7 +127,7 @@ namespace ASCompletion.Context
             set
             {
                 if (cFile is null) return;
-                if (cLine != value)
+                if (value != cLine)
                 {
                     cLine = value;
                     if (cFile.OutOfDate) UpdateCurrentFile(true);
@@ -358,8 +358,13 @@ namespace ASCompletion.Context
 
         internal static void SetCurrentLine(int line)
         {
+            if (validContexts.Count == 0)
+            {
+                HasContext = false;
+                return;
+            }
             var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
-            if (validContexts.Count == 0 || sci is null)
+            if (sci is null)
             {
                 HasContext = false;
                 return;
@@ -440,7 +445,7 @@ namespace ASCompletion.Context
 
             if (started && classPath != null)
             {
-                foreach (PathModel aPath in classPath) aPath.InUse = false;
+                foreach (var aPath in classPath) aPath.InUse = false;
             }
         }
 
@@ -451,7 +456,7 @@ namespace ASCompletion.Context
         {
             if (classPath != null)
             {
-                foreach (PathModel aPath in classPath) aPath.InUse = true;
+                foreach (var aPath in classPath) aPath.InUse = true;
             }
             PathModel.Compact();
             PathExplorer.EndUpdate();
@@ -502,7 +507,7 @@ namespace ASCompletion.Context
             
             // avoid duplicated pathes
             string upath = path.ToUpper().TrimEnd('\\', '/');
-            foreach(PathModel apath in classPath)
+            foreach(var apath in classPath)
             {
                 if (apath.Path.ToUpper() == upath)
                     return apath;
@@ -710,7 +715,7 @@ namespace ASCompletion.Context
         }
         /// <summary>
         /// Flag the model as up to date
-        /// <returns>Model state before reseting the flag</returns>
+        /// <returns>Model state before resetting the flag</returns>
         /// </summary>
         public virtual bool UnsetOutOfDate()
         {
@@ -820,8 +825,7 @@ namespace ASCompletion.Context
         public virtual FileModel CreateFileModel(string fileName)
         {
             if (!File.Exists(fileName)) return new FileModel(fileName ?? string.Empty);
-            var result = new FileModel(PathHelper.GetLongPathName(fileName));
-            result.Context = this;
+            var result = new FileModel(PathHelper.GetLongPathName(fileName)) {Context = this};
             return result;
         }
 
@@ -918,7 +922,7 @@ namespace ASCompletion.Context
 
         /// <summary>
         /// Update the class/member context for the given line number.
-        /// Be carefull to restore the context after calling it with a custom line number
+        /// Be careful to restore the context after calling it with a custom line number
         /// </summary>
         /// <param name="line"></param>
         public virtual void UpdateContext(int line)
@@ -1168,22 +1172,18 @@ namespace ASCompletion.Context
             if (node.Tag as string == "import")
             {
                 aClass = ResolveType(node.Text, CurrentModel);
-                if (!aClass.IsVoid() && File.Exists(aClass.InFile.FileName))
-                {
-                    PluginBase.MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
-                    string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
-                    ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
-                }
+                if (aClass.IsVoid() || !File.Exists(aClass.InFile.FileName)) return;
+                PluginBase.MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
+                var name = aClass.InFile.Version < 3 ? aClass.QualifiedName : aClass.Name;
+                ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
             }
             // classes
             else if (node.Tag as string == "class")
             {
                 aClass = Context.CurrentModel.GetClassByName(node.Text);
-                if (!aClass.IsVoid())
-                {
-                    string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
-                    ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
-                }
+                if (aClass.IsVoid()) return;
+                var name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
+                ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
             }
             else if (node.Tag is string tag)
             {
@@ -1261,11 +1261,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Retrieve the context's default compiler path
         /// </summary>
-        public virtual string GetCompilerPath()
-        {
-            // to be implemented
-            return null;
-        }
+        public virtual string GetCompilerPath() => null;
 
         /// <summary>
         /// Check current file's syntax
@@ -1287,11 +1283,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Calls compiler with default/automatic parameters (ie. quick build)
         /// </summary>
-        public virtual bool BuildCMD(bool failSilently)
-        {
-            // to be implemented
-            return false;
-        }
+        public virtual bool BuildCMD(bool failSilently) => false;
 
         /// <summary>
         /// End of the CMD execution - if a SWF has been built, play it
@@ -1348,7 +1340,7 @@ namespace ASCompletion.Context
         }
 
         /// <summary>
-        /// Generate an instrinsic class
+        /// Generate an intrinsic class
         /// </summary>
         /// <param name="files">Semicolon-separated source & destination files</param>
         public void MakeIntrinsic(string files)
@@ -1357,7 +1349,7 @@ namespace ASCompletion.Context
             string dest = null;
             if (!string.IsNullOrEmpty(files))
             {
-                string[] list = files.Split(';');
+                var list = files.Split(';');
                 if (list.Length == 1) dest = list[0];
                 else {
                     src = list[0];
@@ -1367,7 +1359,7 @@ namespace ASCompletion.Context
             var aFile = src is null ? cFile : GetCodeModel(src);
             if (aFile.Version == 0) return;
             //
-            string code = aFile.GenerateIntrinsic(false);
+            var code = aFile.GenerateIntrinsic(false);
 
             // no destination, replace text
             if (dest is null)
@@ -1426,9 +1418,9 @@ namespace ASCompletion.Context
         }
         public static string GetLastStringToken(string str, string sep)
         {
-            if (str is null) return "";
+            if (str is null) return string.Empty;
             if (sep is null) return str;
-            int p = str.LastIndexOfOrdinal(sep);
+            var p = str.LastIndexOfOrdinal(sep);
             return (p >= 0) ? str.Substring(p + 1) : str;
         }
 
@@ -1436,7 +1428,7 @@ namespace ASCompletion.Context
         {
             //if (version == "0.0") return;
             if (string.IsNullOrEmpty(version)) return;
-            string[] parts = version.Split('.');
+            var parts = version.Split('.');
             int.TryParse(parts[0], out majorVersion);
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);
         }
