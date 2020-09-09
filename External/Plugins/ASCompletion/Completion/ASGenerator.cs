@@ -1141,8 +1141,7 @@ namespace ASCompletion.Completion
                     {
                         if (ASContext.CommonSettings.MethodsGenerationLocations == MethodsGenerationLocations.AfterSimilarAccessorMethod)
                             latest = GetLatestMemberForFunction(inClass, GetDefaultVisibility(inClass), member);
-                        if (latest is null)
-                            latest = member;
+                        latest ??= member;
                     }
 
                     position = sci.PositionFromLine(latest.LineTo + 1) - (sci.EOLMode == 0 ? 2 : 1);
@@ -1433,7 +1432,7 @@ namespace ASCompletion.Completion
                 {
                     if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter)
                         latest = ASComplete.FindMember(name ?? member.Name, inClass);
-                    if (latest is null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                    latest ??= FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
                 }
                 else latest = member;
             }
@@ -1570,7 +1569,7 @@ namespace ASCompletion.Completion
             }
             if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)"))) word = null;
             if (type == ctx.Features.voidKey) type = null;
-            if (varname is null) varname = GuessVarName(word, type);
+            varname ??= GuessVarName(word, type);
             if (varname != null && varname == word) varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
             ((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, pos, varname, type);
         }
@@ -1906,7 +1905,7 @@ namespace ASCompletion.Completion
             var end = mStart.Index + posStart + mStart.Length;
             sci.SetSel(start, end);
             var memberCopy = (MemberModel) member.Clone();
-            if (memberCopy.Parameters is null) memberCopy.Parameters = new List<MemberModel>();
+            memberCopy.Parameters ??= new List<MemberModel>();
             if ((contextMember.Flags & FlagType.Function) != 0 && contextMember.Parameters != null)
             {
                 var parameter = (MemberModel) contextMember.Clone();
@@ -1959,7 +1958,7 @@ namespace ASCompletion.Completion
                         ? ctx.CodeComplete.ToFunctionDeclarationString(parameter)
                         : parameter.Type;
                 }
-                if (type is null) type = member.Type;
+                type ??= member.Type;
                 if (type == ctx.Features.voidKey) type = ctx.Features.dynamicKey;
             }
             else type = member.Type ?? ctx.Features.voidKey;

@@ -2053,7 +2053,7 @@ namespace ASCompletion.Completion
             }
 
             // show
-            if (list is null) list = new List<ICompletionListItem>();
+            list ??= new List<ICompletionListItem>();
             foreach (var member in mix)
             {
                 if ((member.Flags & FlagType.Template) > 0) list.Add(new TemplateItem(member));
@@ -2814,7 +2814,7 @@ namespace ASCompletion.Completion
                                 vars.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
                                 var = vars.FirstOrDefault(it => it.LineTo < local.LineTo);
                             }
-                            if (var is null) var = vars.FirstOrDefault();
+                            var ??= vars.FirstOrDefault();
                             if (var != null)
                             {
                                 result.Member = var;
@@ -2900,7 +2900,7 @@ namespace ASCompletion.Completion
                                 break;
                             }
                     }
-                    if (friendClass is null) friendClass = ResolveType(aDecl.Type, inFile);
+                    friendClass ??= ResolveType(aDecl.Type, inFile);
                     if (!friendClass.IsVoid())
                     {
                         result.Type = friendClass;
@@ -3032,9 +3032,7 @@ namespace ASCompletion.Completion
         /// <param name="mask">Flags mask</param>
         /// <param name="access">Visibility mask</param>
         public static void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
-        {
-            ASContext.Context.CodeComplete.FindMemberEx(token, inFile, result, mask, access);
-        }
+            => ASContext.Context.CodeComplete.FindMemberEx(token, inFile, result, mask, access);
 
         protected virtual void FindMemberEx(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
         {
@@ -3133,9 +3131,7 @@ namespace ASCompletion.Completion
         /// <param name="mask">Flags mask</param>
         /// <param name="access">Visibility mask</param>
         public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
-        {
-            ASContext.Context.CodeComplete.FindMemberEx(token, inClass, result, mask, access);
-        }
+            => ASContext.Context.CodeComplete.FindMemberEx(token, inClass, result, mask, access);
 
         protected virtual void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
@@ -3272,7 +3268,7 @@ namespace ASCompletion.Completion
             {
                 result.InClass = tmpClass;
                 result.InFile = tmpClass.InFile;
-                if (result.Type is null) result.Type = ResolveType(found.Type, tmpClass.InFile);
+                result.Type ??= ResolveType(found.Type, tmpClass.InFile);
                 return;
             }
             // try subpackages
@@ -3296,9 +3292,7 @@ namespace ASCompletion.Completion
         }
 
         public static T FindMember<T>(int line, IEnumerable<T> list) where T : MemberModel
-        {
-            return list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
-        }
+            => list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
 
         #endregion
 
@@ -3322,9 +3316,7 @@ namespace ASCompletion.Completion
         /// <param name="ignoreWhiteSpace">Skip whitespace at position</param>
         /// <returns></returns>
         protected static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
-        {
-            return ASContext.Context.CodeComplete.GetExpressionEx(sci, position, ignoreWhiteSpace);
-        }
+            => ASContext.Context.CodeComplete.GetExpressionEx(sci, position, ignoreWhiteSpace);
 
         /// <summary>
         /// Find expression at cursor position
@@ -3348,7 +3340,7 @@ namespace ASCompletion.Completion
                 var model = ctx.GetFileModel(sci.FileName);
                 if (FindMember(currentLine, model.Classes) is { } contextClass)
                     contextMember = FindMember(currentLine, contextClass.Members);
-                if (contextMember is null) contextMember = FindMember(currentLine, model.Members);
+                contextMember ??= FindMember(currentLine, model.Members);
             }
             else contextMember = FindMember(currentLine, ctx.CurrentClass.Members);
             if (contextMember != null)
@@ -4358,7 +4350,7 @@ namespace ASCompletion.Completion
         static MemberList GetTypeParameters(MemberModel model)
         {
             MemberList result = null;
-            string template = model.Template;
+            var template = model.Template;
             if (template != null && template.StartsWith('<'))
             {
                 var sb = new StringBuilder();
@@ -4377,7 +4369,7 @@ namespace ASCompletion.Completion
                             genType.Type = sb.ToString();
                             genType.Flags = FlagType.TypeDef;
                             inConstraint = c == ':';
-                            if (result is null) result = new MemberList();
+                            result ??= new MemberList();
                             result.Add(genType);
                             sb.Length = 0;
 
@@ -4406,7 +4398,7 @@ namespace ASCompletion.Completion
                 }
                 if (sb.Length > 0)
                 {
-                    if (result is null) result = new MemberList();
+                    result ??= new MemberList();
                     if (!inConstraint)
                     {
                         var name = sb.ToString();
@@ -4415,7 +4407,6 @@ namespace ASCompletion.Completion
                     else genType.Type += ":" + sb;
                 }
             }
-
             return result;
         }
 
@@ -4515,10 +4506,8 @@ namespace ASCompletion.Completion
             if (member != null && (member.Flags & FlagType.Function) > 0)
             {
                 var @params = GetTypeParameters(member);
-                if (result != null && @params != null)
-                    result.Add(@params);
-                else if (result is null)
-                    result = @params;
+                if (result != null && @params != null) result.Add(@params);
+                else if (result is null) result = @params;
             }
             return result;
         }
@@ -4975,7 +4964,7 @@ namespace ASCompletion.Completion
         {
             var features = ASContext.Context.Features;
             var cFile = ASContext.Context.CurrentModel;
-            MemberModel import;
+            MemberModel import = context.Type;
 
             // if completed a package-level member
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package.Length != 0)
@@ -4995,15 +4984,10 @@ namespace ASCompletion.Completion
                     return false;
                 }
                 if (!context.IsNull() && expr.WordBefore == features.importKey)
-                {
                     ASContext.Context.RefreshContextCache(expr.Value);
-                }
-                return true;
-            }
-            // test inserted type
-            else
-            {
-                import = context.Type;
+                // for example: var foo : foo.Foo$(EntryPoint)
+                if (context.Member != null || context.Type is null || context.RelClass is null)
+                    return true;
             }
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
@@ -5291,7 +5275,7 @@ namespace ASCompletion.Completion
             get 
             {
                 if (!ASContext.CommonSettings.SmartTipsEnabled) return TextHelper.GetString("Info.EventConstant");
-                if (cb is null) cb = ASDocumentation.ParseComment(comments ?? Label);
+                cb ??= ASDocumentation.ParseComment(comments ?? Label);
                 var tip = UITools.Manager.ShowDetails
                     ? ASDocumentation.GetTipFullDetails(cb, null)
                     : ASDocumentation.GetTipShortDetails(cb, null);

@@ -799,7 +799,7 @@ namespace HaXeContext
                                                     member.Value = (value + 1).ToString();
                                                 break;
                                             }
-                                            if (member.Value is null) member.Value = "0";
+                                            member.Value ??= "0";
                                             extends = ClassModel.VoidClass;
                                             break;
                                     }

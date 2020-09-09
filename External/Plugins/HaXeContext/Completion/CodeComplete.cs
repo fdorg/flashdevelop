@@ -435,7 +435,7 @@ namespace HaXeContext.Completion
                             ? $"new {type.Constructor}()"
                             : $"new {type.Constructor}<{type.IndexType}>()";
                         orders.Add(label, 2);
-                        if (list is null) list = new List<ICompletionListItem>();
+                        list ??= new List<ICompletionListItem>();
                         list.Add(new ObjectInitializerGeneratorItem(label, $"Creates a new {type.Constructor}", () => GenerateObjectInitializer(sci , $"{label}$(EntryPoint)")));
                     }
                 }
@@ -1548,7 +1548,7 @@ namespace HaXeContext.Completion
                         {
                             if (i == length) i++;
                             var expr = GetExpressionType(PluginBase.MainForm.CurrentDocument?.SciControl, subExpressionPosition + i, false, true);
-                            if (expr.Type is null) expr.Type = ClassModel.VoidClass;
+                            expr.Type ??= ClassModel.VoidClass;
                             expressions.Add(expr);
                         }
                     }
