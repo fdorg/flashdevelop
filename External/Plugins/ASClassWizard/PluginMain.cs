@@ -118,12 +118,13 @@ namespace ASClassWizard
                     {
                         WizardContext.processOnSwitch = null;
                         if (WizardContext.lastFileOptions?.interfaces is null) return;
-                        foreach (var cname in WizardContext.lastFileOptions.interfaces)
+                        foreach (var it in WizardContext.lastFileOptions.interfaces)
                         {
                             ASContext.Context.CurrentModel.Check();
                             var inClass = ASContext.Context.CurrentModel.GetPublicClass();
-                            ASGenerator.SetJobContext(null, cname, null, null);
+                            ASGenerator.SetJobContext(null, it, null, null);
                             ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, inClass, null, null);
+                            ASContext.Context.UpdateCurrentFile(false);
                         }
                         WizardContext.lastFileOptions = null;
                     }
