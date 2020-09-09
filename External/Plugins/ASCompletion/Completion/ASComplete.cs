@@ -2963,10 +2963,8 @@ namespace ASCompletion.Completion
                     if (aDecl.Name == cname || (isQualified && aDecl.Type == cname))
                     {
                         if (aDecl.InFile is null) return ctx.ResolveType(aDecl.Type, inFile);
-                        foreach (var aClass in aDecl.InFile.Classes)
-                            if (aClass.Name == aDecl.Name)
-                                return aClass;
-                        return ctx.GetModel(aDecl.InFile.Package, cname, inFile?.Package);
+                        return aDecl.InFile.Classes.FirstOrDefault(it => it.Name == aDecl.Name)
+                            ?? ctx.GetModel(aDecl.InFile.Package, cname, inFile?.Package);
                     }
                 }
             }

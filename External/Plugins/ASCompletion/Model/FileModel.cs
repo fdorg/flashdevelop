@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -163,7 +164,7 @@ namespace ASCompletion.Model
             Package = "";
             Module = "";
             FileName = fileName ?? "";
-            haXe = (FileName.Length > 3) && FileInspector.IsHaxeFile(Path.GetExtension(FileName));
+            haXe = FileName.Length > 3 && FileInspector.IsHaxeFile(Path.GetExtension(FileName));
             //
             Namespaces = new Dictionary<string, Visibility>();
             //
@@ -177,16 +178,15 @@ namespace ASCompletion.Model
         {
             if (FileName.Length == 0) return null;
             
-            string path = Path.GetDirectoryName(FileName);
+            var path = Path.GetDirectoryName(FileName);
             if (string.IsNullOrEmpty(Package)) return path;
 
             // get up the packages path
-            string packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);
+            var packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);
             if (path.ToUpper().EndsWithOrdinal(packPath.ToUpper()))
             {
                 return path.Substring(0, path.Length - packPath.Length);
             }
-
             return null;
         }
 
@@ -216,15 +216,15 @@ namespace ASCompletion.Model
         {
             if (Classes != null)
             {
-                if (Version > 3) // haXe
+                if (Version > 3) // HaXe
                 {
                     var module = Module == "" ? Path.GetFileNameWithoutExtension(FileName) : Module;
-                    foreach (ClassModel model in Classes)
+                    foreach (var model in Classes)
                         if ((model.Flags & (FlagType.Class | FlagType.Interface)) > 0 && model.Name == module) return model;
                 }
                 else
                 {
-                    foreach (ClassModel model in Classes)
+                    foreach (var model in Classes)
                         if ((model.Access & (Visibility.Public | Visibility.Internal)) > 0) return model;
                 }
             }
@@ -233,17 +233,14 @@ namespace ASCompletion.Model
 
         public ClassModel GetClassByName(string name)
         {
-            int p = name.IndexOf('<'); 
+            var p = name.IndexOf('<'); 
             if (p > 0)
             {
                 // remove parameters, ie. Array<T>
                 if (p > 2 && name[p - 1] == '.') p--;
                 name = name.Substring(0, p);
             }
-
-            foreach (ClassModel aClass in Classes)
-                if (aClass.Name == name) return aClass;
-            return ClassModel.VoidClass;
+            return Classes.FirstOrDefault(it => it.Name == name) ?? ClassModel.VoidClass;
         }
 
         /// <summary>

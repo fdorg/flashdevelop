@@ -222,7 +222,7 @@ namespace HaXeContext
             {
                 return (GetCurrentSDK()?.IsHaxeShim ?? false) ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
             }
-            catch (Exception)
+            catch
             {
                 return null;
             }
@@ -323,24 +323,24 @@ namespace HaXeContext
 
         Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
-            string hxPath = currentSDK;
-            if (hxPath != null && Path.IsPathRooted(hxPath))
+            var path = currentSDK;
+            if (path != null && Path.IsPathRooted(path))
             {
-                if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
-                fileName = Path.Combine(hxPath, fileName);
+                if (path != currentEnv) SetHaxeEnvironment(path);
+                fileName = Path.Combine(path, fileName);
                 if (File.Exists(fileName + ".exe")) fileName += ".exe";
             }
-
-            var pi = new ProcessStartInfo();
-            pi.FileName = fileName;
-            pi.Arguments = arguments;
-            pi.WorkingDirectory = workingDirectory;
-            pi.RedirectStandardOutput = true;
-            pi.RedirectStandardError = true;
-            pi.UseShellExecute = false;
-            pi.CreateNoWindow = true;
-            pi.WindowStyle = ProcessWindowStyle.Hidden;
-
+            var pi = new ProcessStartInfo
+            {
+                FileName = fileName,
+                Arguments = arguments,
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             return Process.Start(pi);
         }
 
