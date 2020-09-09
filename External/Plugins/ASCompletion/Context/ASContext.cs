@@ -832,7 +832,7 @@ namespace ASCompletion.Context
         /// <param name="cname"></param>
         /// <param name="inPackage">Package reference for resolution</param>
         /// <returns></returns>
-        public virtual ClassModel GetModel(string package, string cname, string inPackage)
+        public virtual ClassModel GetModel(string package, string cname, string? inPackage)
         {
             // to be implemented
             return ClassModel.VoidClass;

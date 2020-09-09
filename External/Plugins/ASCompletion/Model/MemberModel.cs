@@ -376,7 +376,7 @@ namespace ASCompletion.Model
         {
             if (list is null) return;
             var index = 0;
-            foreach (MemberModel item in list)
+            foreach (var item in list)
             {
                 var added = false;
                 while (index < items.Count)
@@ -400,8 +400,8 @@ namespace ASCompletion.Model
         public void Merge(MemberList list, FlagType mask, Visibility access)
         {
             if (list is null) return;
-            int index = 0;
-            foreach (MemberModel m in list)
+            var index = 0;
+            foreach (var m in list)
                 if ((m.Flags & mask) == mask && (m.Access & access) > 0)
                 {
                     var added = false;

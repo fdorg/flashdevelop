@@ -134,20 +134,19 @@ namespace AS2Context
         
         #region classpath management
         /// <summary>
-        /// Classpathes & classes cache initialisation
+        /// Classpathes & classes cache initialization
         /// </summary>
         public override void BuildClassPath()
         {
             ReleaseClasspath();
             started = true;
             if (as2settings is null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup is null)
+            contextSetup ??= new ContextSetupInfos
             {
-                contextSetup = new ContextSetupInfos();
-                contextSetup.Lang = settings.LanguageId;
-                contextSetup.Platform = "Flash Player";
-                contextSetup.Version = as2settings.DefaultFlashVersion + ".0";
-            }
+                Lang = settings.LanguageId,
+                Platform = "Flash Player",
+                Version = as2settings.DefaultFlashVersion + ".0"
+            };
 
             // external version definition
             platform = contextSetup.Platform;
@@ -213,11 +212,11 @@ namespace AS2Context
             }
 
             // add external pathes
-            List<PathModel> initCP = classPath;
+            var initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
             {
-                foreach (string cpath in contextSetup.Classpath) 
+                foreach (var cpath in contextSetup.Classpath) 
                     AddPath(cpath.Trim());
             }
 
@@ -226,10 +225,10 @@ namespace AS2Context
             // add user pathes from settings
             if (!settings.UserClasspath.IsNullOrEmpty())
             {
-                foreach(string cpath in settings.UserClasspath) AddPath(cpath.Trim());
+                foreach(var cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
             // add initial pathes
-            foreach(PathModel mpath in initCP) AddPath(mpath);
+            foreach(var mpath in initCP) AddPath(mpath);
 
             // parse top-level elements
             InitTopLevelElements();
@@ -375,10 +374,7 @@ namespace AS2Context
             // special _levelN
             if (hasLevels && token.StartsWith('_') && re_level.IsMatch(token))
             {
-                result.Member = new MemberModel();
-                result.Member.Name = token;
-                result.Member.Flags = FlagType.Variable;
-                result.Member.Type = "MovieClip";
+                result.Member = new MemberModel {Name = token, Flags = FlagType.Variable, Type = "MovieClip"};
                 result.Type = ResolveType("MovieClip", null);
                 result.InFile = topLevel;
             }
@@ -596,14 +592,13 @@ namespace AS2Context
             if (indexClass.IsVoid()) return originalClass;
             indexType = indexClass.QualifiedName;
 
-            FileModel aFile = originalClass.InFile;
+            var aFile = originalClass.InFile;
             // is the type already cloned?
-            foreach (ClassModel otherClass in aFile.Classes)
+            foreach (var otherClass in aFile.Classes)
                 if (otherClass.IndexType == indexType) return otherClass;
 
             // clone the type
-            ClassModel aClass = originalClass.Clone() as ClassModel;
-
+            var aClass = (ClassModel) originalClass.Clone();
             aClass.Name = baseType + "@" + indexType;
             aClass.IndexType = indexType;
 
@@ -622,8 +617,7 @@ namespace AS2Context
                     {
                         foreach (var param in member.Parameters)
                         {
-                            if (param.Name == "value" 
-                                && (param.Type == features.objectKey || param.Type == "*"))
+                            if (param.Name == "value" && (param.Type == features.objectKey || param.Type == "*"))
                                 param.Type = indexType;
                         }
                     }
@@ -635,16 +629,19 @@ namespace AS2Context
 
         protected ClassModel MakeCustomObjectClass(ClassModel objectClass, string indexType)
         {
-            foreach (ClassModel c in objectClass.InFile.Classes)
-                if (c.IndexType == indexType) return c;
+            foreach (var c in objectClass.InFile.Classes)
+                if (c.IndexType == indexType)
+                    return c;
 
-            ClassModel aClass = new ClassModel();
-            aClass.Flags = objectClass.Flags;
-            aClass.Access = objectClass.Access;
-            aClass.ExtendsType = "";
-            aClass.Name = objectClass.QualifiedName + "@" + indexType;
-            aClass.IndexType = indexType;
-            aClass.InFile = objectClass.InFile;
+            var aClass = new ClassModel
+            {
+                Flags = objectClass.Flags,
+                Access = objectClass.Access,
+                ExtendsType = "",
+                Name = objectClass.QualifiedName + "@" + indexType,
+                IndexType = indexType,
+                InFile = objectClass.InFile
+            };
 
             const FlagType flags = FlagType.Dynamic | FlagType.Variable | FlagType.AutomaticVar;
             foreach (var prop in indexType.Split(','))
@@ -663,13 +660,13 @@ namespace AS2Context
         /// <param name="cname">Class name</param>
         /// <param name="inPackage">Package reference for resolution</param>
         /// <returns></returns>
-        public override ClassModel GetModel(string package, string cname, string inPackage)
+        public override ClassModel GetModel(string package, string cname, string? inPackage)
         {
             if (!settings.LazyClasspathExploration)
             {
                 bool testSamePackage = package.Length == 0 && features.hasPackages;
                 bool testModule = package.Length > 0 && features.hasModules;
-                foreach (PathModel aPath in classPath) 
+                foreach (var aPath in classPath) 
                     if (aPath.IsValid && !aPath.Updating)
                     {
                         var found = LookupClass(package, cname, inPackage, testSamePackage, testModule, aPath);
@@ -699,70 +696,65 @@ namespace AS2Context
 
                 foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
                 {
-                    ClassModel model = LocateClassFile(aPath, fileName);
+                    var model = LocateClassFile(aPath, fileName);
                     if (model != null) return model;
                 }
             }
             return ClassModel.VoidClass;
         }
 
-        ClassModel LookupClass(string package, string cname, string inPackage, bool testSamePackage, bool testModule, PathModel aPath)
+        ClassModel LookupClass(string package, string cname, string? inPackage, bool testSamePackage, bool testModule, PathModel aPath)
         {
-            bool matchParentPackage = testSamePackage && features.hasFriendlyParentPackages;
-
-            ClassModel found = null;
-            int pLen = inPackage.Length;
-
-            aPath.ForeachFile((aFile) =>
+            ClassModel result = null;
+            inPackage ??= string.Empty;
+            var matchParentPackage = testSamePackage && features.hasFriendlyParentPackages;
+            var pLen = inPackage.Length;
+            aPath.ForeachFile(aFile =>
             {
-                string pkg = aFile.Package;
+                var count = aFile.Classes.Count;
+                if (count == 0) return true;
+                var pkg = aFile.Package;
                 // qualified path
-                if (pkg == package && aFile.Classes.Count > 0)
+                if (pkg == package)
                 {
-                    var count = aFile.Classes.Count;
                     for (var i = 0; i < count; i++)
                     {
                         var aClass = aFile.Classes[i];
                         if (aClass.Name == cname && (pkg == "" || aFile.Module == "" || aFile.Module == aClass.Name))
                         {
-                            found = aClass;
+                            result = aClass;
                             return false;
                         }
                     }
                 }
-                else if (testModule && aFile.FullPackage == package && aFile.Classes.Count > 0)
+                else if (testModule && aFile.FullPackage == package)
                 {
-                    var count = aFile.Classes.Count;
                     for (var i = 0; i < count; i++)
                     {
                         var aClass = aFile.Classes[i];
                         if (aClass.Name == cname)
                         {
-                            found = aClass;
+                            result = aClass;
                             return false;
                         }
                     }
                 }
                 // in the same (or parent) package
-                else if (testSamePackage)
+                else if (testSamePackage && (pkg == inPackage || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWithOrdinal(pkg + "."))))
                 {
-                    if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWithOrdinal(pkg + ".")))
+                    for (var i = 0; i < count; i++)
                     {
-                        var count = aFile.Classes.Count;
-                        for (var i = 0; i < count; i++)
+                        var aClass = aFile.Classes[i];
+                        if (aClass.Name == cname)
                         {
-                            var aClass = aFile.Classes[i];
-                            if (aClass.Name == cname /*&& (aFile.Module == "" || aFile.Module == aClass.Name)*/)
-                            {
-                                found = aClass;
-                                return false;
-                            }
+                            result = aClass;
+                            return false;
                         }
                     }
                 }
                 return true;
             });
-            return found;
+            return result;
         }
 
         ClassModel LocateClassFile(PathModel aPath, string fileName)
@@ -949,7 +941,7 @@ namespace AS2Context
             topLevel = new FileModel(filename);
 
             // search top-level declaration
-            foreach(PathModel aPath in classPath)
+            foreach (var aPath in classPath)
             {
                 var path = Path.Combine(aPath.Path, filename);
                 if (File.Exists(path))
@@ -984,7 +976,7 @@ namespace AS2Context
             if (!topLevel.Members.Contains(features.voidKey, 0, 0))
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Class | FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
-            foreach (MemberModel member in topLevel.Members)
+            foreach (var member in topLevel.Members)
                 member.Flags |= FlagType.Intrinsic;
         }
 
@@ -998,19 +990,15 @@ namespace AS2Context
         {
             if (name is null) name = "";
             else if (!re_package.IsMatch(name)) return null;
-
-            FileModel pModel = new FileModel();
-            pModel.Package = name;
-            pModel.OutOfDate = false;
-
-            string packagePath = name.Replace('.', dirSeparatorChar);
+            var pModel = new FileModel {Package = name, OutOfDate = false};
+            var packagePath = name.Replace('.', dirSeparatorChar);
             foreach (PathModel aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     // explore file system
                     if (lazyMode || settings.LazyClasspathExploration || aPath.IsTemporaryPath)
                     {
-                        string path = Path.Combine(aPath.Path, packagePath);
+                        var path = Path.Combine(aPath.Path, packagePath);
                         if (Directory.Exists(path))
                         {
                             try
@@ -1074,7 +1062,6 @@ namespace AS2Context
                 pModel.Imports.Sort();
                 return pModel;
             }
-
             return null;
         }
 
@@ -1087,7 +1074,7 @@ namespace AS2Context
             }
             catch { }
             if (fileEntries is null) return;
-            FlagType flag = FlagType.Class | ((package is null) ? FlagType.Intrinsic : 0);
+            var flag = FlagType.Class | (package is null ? FlagType.Intrinsic : 0);
             foreach (string entry in fileEntries)
             {
                 var mname = GetLastStringToken(entry, dirSeparator);
@@ -1101,7 +1088,7 @@ namespace AS2Context
             }
         }
 
-        void PopulatePackageEntries(string package, string path, MemberList memberList)
+        static void PopulatePackageEntries(string package, string path, MemberList memberList)
         {
             string[] dirEntries = null;
             try
@@ -1141,85 +1128,77 @@ namespace AS2Context
         public override MemberList GetVisibleExternalElements()
         {
             if (!IsFileValid) return new MemberList();
-
-            if (completionCache.IsDirty)
+            if (!completionCache.IsDirty) return completionCache.Elements;
+            var elements = new MemberList();
+            // root types & packages
+            var baseElements = ResolvePackage(null, false);
+            if (baseElements != null)
             {
-                MemberList elements = new MemberList();
-                // root types & packages
-                var baseElements = ResolvePackage(null, false);
-                if (baseElements != null)
-                {
-                    elements.Add(baseElements.Imports);
-                    elements.Add(baseElements.Members);
-                }
-                elements.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
+                elements.Add(baseElements.Imports);
+                elements.Add(baseElements.Members);
+            }
+            elements.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
 
-                //bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
-                
-                // other classes in same package
-                if (features.hasPackages && cFile.Package != "")
+            // other classes in same package
+            if (features.hasPackages && cFile.Package != "")
+            {
+                var packageElements = ResolvePackage(cFile.Package, false);
+                if (packageElements != null)
                 {
-                    var packageElements = ResolvePackage(cFile.Package, false);
-                    if (packageElements != null)
+                    foreach (var member in packageElements.Imports)
                     {
-                        foreach (MemberModel member in packageElements.Imports)
+                        if (member.Flags != FlagType.Package)
                         {
-                            if (member.Flags != FlagType.Package)
-                            {
-                                //if (qualify) member.Name = member.Type;
-                                elements.Add(member);
-                            }
-                        }
-                        foreach (MemberModel member in packageElements.Members)
-                        {
-                            string pkg = member.InFile.Package;
-                            //if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
-                            member.Type = pkg != "" ? pkg + "." + member.Name : member.Name;
                             elements.Add(member);
                         }
                     }
-                }
-                // other classes in same file
-                if (cFile.PrivateSectionIndex > 0)
-                {
-                    if (inPrivateSection && cFile.Classes.Count > 1)
+                    foreach (var member in packageElements.Members)
                     {
-                        var mainClass = cFile.GetPublicClass();
-                        if (!mainClass.IsVoid())
-                        {
-                            var toRemove = elements.Search(mainClass.Name, 0, 0);
-                            if (toRemove != null && toRemove.Type == mainClass.QualifiedName)
-                                elements.Remove(toRemove);
-                        }
+                        var pkg = member.InFile.Package;
+                        member.Type = pkg != "" ? pkg + "." + member.Name : member.Name;
+                        elements.Add(member);
                     }
-
-                    foreach (ClassModel aClass in cFile.Classes)
+                }
+            }
+            // other classes in same file
+            if (cFile.PrivateSectionIndex > 0)
+            {
+                if (inPrivateSection && cFile.Classes.Count > 1)
+                {
+                    var mainClass = cFile.GetPublicClass();
+                    if (!mainClass.IsVoid())
                     {
-                        if (features.hasMultipleDefs || aClass.Access == Visibility.Private)
-                        {
-                            var member = aClass.ToMemberModel();
-                            elements.Add(member);
-                        }
+                        var toRemove = elements.Search(mainClass.Name, 0, 0);
+                        if (toRemove != null && toRemove.Type == mainClass.QualifiedName)
+                            elements.Remove(toRemove);
                     }
                 }
 
-                // imports
-                elements.Add(ResolveImports(CurrentModel));
-
-                // in cache
-                elements.Sort();
-                completionCache = new CompletionCache(this, elements);
-
-                // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+                foreach (var aClass in cFile.Classes)
                 {
-                    try
+                    if (features.hasMultipleDefs || aClass.Access == Visibility.Private)
                     {
-                        sci.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
-                        sci.Colourise(0, -1); // re-colorize the editor
-                    } 
-                    catch (AccessViolationException){} // catch memory errors
+                        elements.Add(aClass.ToMemberModel());
+                    }
                 }
+            }
+
+            // imports
+            elements.Add(ResolveImports(CurrentModel));
+
+            // in cache
+            elements.Sort();
+            completionCache = new CompletionCache(this, elements);
+
+            // known classes colorization
+            if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+            {
+                try
+                {
+                    sci.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
+                    sci.Colourise(0, -1); // re-colorize the editor
+                } 
+                catch (AccessViolationException){} // catch memory errors
             }
             return completionCache.Elements;
         }
@@ -1234,32 +1213,32 @@ namespace AS2Context
             if (!completionCache.IsDirty && completionCache.AllTypes != null)
                 return completionCache.AllTypes;
 
-            MemberList fullList = new MemberList();
+            var result = new MemberList();
             ClassModel aClass;
             MemberModel item;
             // public classes
             foreach (var aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
-                    aPath.ForeachFile((aFile) =>
+                    aPath.ForeachFile(aFile =>
                     {
                         aClass = aFile.GetPublicClass();
                         if (!aClass.IsVoid() && aClass.IndexType is null && aClass.Access == Visibility.Public)
                         {
                             item = aClass.ToMemberModel();
                             item.Name = item.Type;
-                            fullList.Add(item);
+                            result.Add(item);
                         }
                         return true;
                     });
                 }
             // void
-            fullList.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
+            result.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
 
             // in cache
-            fullList.Sort();
-            completionCache.AllTypes = fullList;
-            return fullList;
+            result.Sort();
+            completionCache.AllTypes = result;
+            return result;
         }
 
         public override string GetDefaultValue(string type) => "undefined";
@@ -1291,7 +1270,7 @@ namespace AS2Context
         /// <summary>
         /// Run MTASC compiler in the current class's base folder with current classpath
         /// </summary>
-        /// <param name="append">Additional comiler switches</param>
+        /// <param name="append">Additional compiler switches</param>
         public override void RunCMD(string append)
         {
             if (as2settings is null)

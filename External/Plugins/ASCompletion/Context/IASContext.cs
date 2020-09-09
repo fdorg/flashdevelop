@@ -23,7 +23,7 @@ namespace ASCompletion.Context
 
         /// <summary>
         /// Update the class/member context for the given line number.
-        /// Be carefull to restore the context after calling it with a custom line number
+        /// Be careful to restore the context after calling it with a custom line number
         /// </summary>
         /// <param name="line"></param>
         void UpdateContext(int line);
@@ -151,7 +151,7 @@ namespace ASCompletion.Context
         /// <param name="cname"></param>
         /// <param name="inPackage">Package reference for resolution</param>
         /// <returns></returns>
-        ClassModel GetModel(string package, string cname, string inPackage);
+        ClassModel GetModel(string package, string cname, string? inPackage);
 
         /// <summary>
         /// Confirms that the FileModel should be added to the PathModel
