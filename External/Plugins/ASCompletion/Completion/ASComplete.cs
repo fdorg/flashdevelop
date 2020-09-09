@@ -2180,9 +2180,8 @@ namespace ASCompletion.Completion
             var testActive = !CompletionList.Active && expr.Position != position;
             foreach (var member in items)
             {
-                if (testActive && member.Name == word)
-                    return;
-                list.Add(new MemberItem(member));
+                if (testActive && member.Name == word) return;
+                list.Add(CompletionList.Get(member.Name) ?? new MemberItem(member));
             }
             EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
             CompletionList.Show(list, autoHide, word);
@@ -2258,7 +2257,6 @@ namespace ASCompletion.Completion
         static bool HandleImportCompletion(ScintillaControl sci, string tail, bool autoHide)
         {
             if (!ASContext.Context.Features.hasImports) return false;
-
             if (!ASContext.Context.Settings.LazyClasspathExploration
                 && ASContext.Context.Settings.CompletionListAllTypes)
             {
@@ -2514,9 +2512,7 @@ namespace ASCompletion.Completion
         /// <param name="asFunction"></param>
         /// <returns>Class/member struct</returns>
         static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
-        {
-            return ASContext.Context.CodeComplete.EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
-        }
+            => ASContext.Context.CodeComplete.EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
 
         /// <summary>
         /// Find expression type in function context
@@ -2601,14 +2597,7 @@ namespace ASCompletion.Completion
             if ((result is null || result.IsNull()) && tokens.Length > 1) 
             {
                 var qualif = ResolveType(expression, null);
-                if (!qualif.IsVoid())
-                {
-                    result = new ASResult();
-                    result.Context = context;
-                    result.IsStatic = true;
-                    result.InFile = qualif.InFile;
-                    result.Type = qualif;
-                }
+                if (!qualif.IsVoid()) return new ASResult {Context = context, IsStatic = true, InFile = qualif.InFile, Type = qualif};
             }
             return result ?? notFound;
             // Utils
@@ -2674,9 +2663,11 @@ namespace ASCompletion.Completion
                     if (features.hasE4X && IsXmlType(step.Type) && i < n - 1)
                     {
                         inE4X = true;
-                        step = new ASResult();
-                        step.Member = new MemberModel(token, "XMLList", FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public);
-                        step.Type = ResolveType(features.objectKey, null);
+                        step = new ASResult
+                        {
+                            Member = new MemberModel(token, "XMLList", FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public),
+                            Type = ResolveType(features.objectKey, null)
+                        };
                         acc = Visibility.Public;
                     }
                     else return null;
@@ -2703,13 +2694,10 @@ namespace ASCompletion.Completion
                     if (curClass == step.Type)
                     {
                         // full visibility for this evaluation only
-                        Visibility selfVisibility = acc | Visibility.Private | Visibility.Protected | Visibility.Internal;
+                        var selfVisibility = acc | Visibility.Private | Visibility.Protected | Visibility.Internal;
                         FindMember(token, resultClass, step, mask, selfVisibility);
                     }
-                    else
-                    {
-                        FindMember(token, resultClass, step, mask, filterVisibility ? acc : 0);
-                    }
+                    else FindMember(token, resultClass, step, mask, filterVisibility ? acc : 0);
 
                     // Haxe modules
                     if (step.Type is null && features.hasModules)
@@ -4751,11 +4739,7 @@ namespace ASCompletion.Completion
             if (result.Member is null) return result.Type?.ToString();
 
             var file = GetFileContents(result.InFile);
-            if (string.IsNullOrEmpty(file))
-            {
-                return MemberTooltipText(result.Member, ClassModel.VoidClass);
-            }
-
+            if (string.IsNullOrEmpty(file)) return MemberTooltipText(result.Member, ClassModel.VoidClass);
             var eolMode = LineEndDetector.DetectNewLineMarker(file);
             var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
             var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
