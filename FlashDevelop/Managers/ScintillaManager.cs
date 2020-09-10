@@ -422,7 +422,8 @@ namespace FlashDevelop.Managers
             var untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
             if (!file.StartsWithOrdinal(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
             sci.SetFoldFlags((int)PluginBase.Settings.FoldFlags);
-            sci.EmptyUndoBuffer(); ApplySciSettings(sci);
+            sci.EmptyUndoBuffer();
+            ApplySciSettings(sci);
             UITools.Manager.ListenTo(sci);
             return sci;
         }

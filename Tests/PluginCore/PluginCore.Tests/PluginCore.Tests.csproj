@@ -215,6 +215,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ScintillaNet\ScintillaControlTests.cs" />
+    <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\FlashDevelop\FlashDevelop.csproj">
@@ -234,6 +235,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Test Files\haxe\folding\BeforeIssue3054_1.hx" />
+    <EmbeddedResource Include="Test Files\haxe\folding\BeforeIssue3054_2.hx" />
+    <EmbeddedResource Include="Test Files\haxe\folding\BeforeIssue3054_3.hx" />
+    <EmbeddedResource Include="Test Files\haxe\folding\BeforeIssue3054_4.hx" />
+    <EmbeddedResource Include="Test Files\haxe\folding\BeforeIssue3054_5.hx" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

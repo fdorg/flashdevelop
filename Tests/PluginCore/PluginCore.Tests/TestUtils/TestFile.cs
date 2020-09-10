@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.IO;
 
-namespace HaXeContext.TestUtils
+namespace PluginCore.TestUtils
 {
     internal class TestFile : IDisposable
     {
