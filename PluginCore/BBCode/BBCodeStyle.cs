@@ -74,8 +74,8 @@ namespace PluginCore.BBCode
 
             BBCodeStyle t = parentToChildHierarchy[0].clone();
 
-            if (t.foreColor is null) t.foreColor = new Color(0x000000, Mode.NORMAL);
-            if (t.backColor is null) t.backColor = new Color(0xCC99CC, Mode.NORMAL);
+            t.foreColor ??= new Color(0x000000, Mode.NORMAL);
+            t.backColor ??= new Color(0xCC99CC, Mode.NORMAL);
 
             if (t.isBold == StateMode.DEFAULT) t.isBold = StateMode.OFF;
             if (t.isItalic == StateMode.DEFAULT) t.isItalic = StateMode.OFF;

@@ -314,7 +314,7 @@ namespace FlashDebugger
                 }
                 else
                 {
-                    if (BreakPoints is null) BreakPoints = new List<BreakPointInfo>();
+                    BreakPoints ??= new List<BreakPointInfo>();
                     BreakPoints.Add(info);
                 }
 

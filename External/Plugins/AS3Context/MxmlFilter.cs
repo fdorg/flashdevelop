@@ -396,7 +396,7 @@ namespace AS3Context
             model.InlinedIn = "xml";
             model.InlinedRanges = ctx.as3ranges;
 
-            if (model.MetaDatas is null) model.MetaDatas = new List<ASMetaData>();
+            model.MetaDatas ??= new List<ASMetaData>();
             foreach (string key in ctx.namespaces.Keys)
             {
                 ASMetaData meta = new ASMetaData("Namespace");

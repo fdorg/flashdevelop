@@ -122,12 +122,10 @@ namespace PluginCore.BBCode
         }
         protected BBCodeTagMatch _searchMatch(Regex regex, bool isOpener, uint startAt)
         {
-            if (regex is null)
-                return null;
+            if (regex is null) return null;
 
             int idx = (int)startAt - 16;
-            if (idx < 0)
-                idx = 0;
+            if (idx < 0) idx = 0;
 
             BBCodeTagMatch tm;
 
@@ -151,8 +149,7 @@ namespace PluginCore.BBCode
 
         protected BBCodeTagMatch _toTagMatch(bool isOpener, Match m)
         {
-            if (m is null)
-                return null;
+            if (m is null) return null;
 
             Group mi = m.Groups["slashA"];
             int numSlashA = (mi != null && mi.Success) ? mi.Length : 0;

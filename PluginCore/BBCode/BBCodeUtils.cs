@@ -15,8 +15,7 @@ namespace PluginCore.BBCode
     {
         public static string assembleOutput(string input, IndexTree tree)
         {
-            if (string.IsNullOrEmpty(input) || tree is null)
-                return null;
+            if (string.IsNullOrEmpty(input) || tree is null) return null;
 
             string outStr = "";
             List<IndexTree> flat = IndexTree.flattenTree(tree);
@@ -46,8 +45,7 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle getCascadedNodeStyle(IndexTree tree)
         {
-            if (tree is null)
-                return null;
+            if (tree is null) return null;
 
             List<BBCodeStyle> styleHierarchy = new List<BBCodeStyle>();
             IndexTree currTree = tree;
@@ -63,8 +61,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleToTextbox(BBCodeStyle style, RichTextBox tf, int selStart, int selEnd)
         {
-            if (style is null || tf is null || selEnd <= selStart || selEnd < 0)
-                return;
+            if (style is null || tf is null || selEnd <= selStart || selEnd < 0) return;
 
             tf.Select(selStart, selEnd);
 
@@ -116,8 +113,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleTreeToTextbox(RichTextBox tf, string input, IndexTree bbCodeTree)
         {
-            if (tf is null || bbCodeTree is null || string.IsNullOrEmpty(input))
-                return;
+            if (tf is null || bbCodeTree is null || string.IsNullOrEmpty(input)) return;
 
             tf.Text = "";
 
@@ -182,19 +178,12 @@ namespace PluginCore.BBCode
 
         static void Init()
         {
-            if (bbCodeParser is null)
+            bbCodeParser ??= new BottomUpParser
             {
-                bbCodeParser = new BottomUpParser();
-                bbCodeParser.pairTagHandler = new BBCodeTagHandler();
-                bbCodeParser.pairTagMatcher = new BBCodeTagMatcher();
-            }
-            if (tempRTB is null)
-            {
-                tempRTB = new RichTextBox();
-                tempRTB.Text = "";
-                tempRTB.WordWrap = false;
-                tempRTB.ScrollBars = RichTextBoxScrollBars.None;
-            }
+                pairTagHandler = new BBCodeTagHandler(),
+                pairTagMatcher = new BBCodeTagMatcher()
+            };
+            tempRTB ??= new RichTextBox {Text = "", WordWrap = false, ScrollBars = RichTextBoxScrollBars.None};
         }
 
         public static string bbCodeToRtf(string bbCodeText)

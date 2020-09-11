@@ -24,8 +24,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private void InternalConstruct(DockPanel dockPanel, DockPane pane, bool boundsSpecified, Rectangle bounds)
         {
-            if (dockPanel is null)
-                throw(new ArgumentNullException(Strings.FloatWindow_Constructor_NullDockPanel));
+            if (dockPanel is null) throw(new ArgumentNullException(Strings.FloatWindow_Constructor_NullDockPanel));
 
             m_nestedPanes = new NestedPaneCollection(this);
 

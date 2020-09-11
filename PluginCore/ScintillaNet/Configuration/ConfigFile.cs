@@ -33,7 +33,7 @@ namespace ScintillaNet.Configuration
         {
             includedFiles = Array.Empty<ConfigFile>();
             base.init(utility, theParent);
-            if (includes is null) includes = Array.Empty<include>();
+            includes ??= Array.Empty<include>();
             foreach (var include in includes) include.init(utility, _parent);
             foreach (var include in includes)
             {

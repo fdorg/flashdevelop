@@ -111,7 +111,7 @@ namespace CssCompletion
                     {
                         var ext = Path.GetExtension(sci.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
-                        if (completion is null) completion = new Completion(config, settingObject);
+                        completion ??= new Completion(config, settingObject);
                         completion.OnFileChanged(features);
                         if (features?.Syntax != null)
                         {

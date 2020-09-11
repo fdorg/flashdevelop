@@ -56,7 +56,7 @@ namespace XMLCompletion
                 if (ext.Length == 0) return;
                 ext = ext.Substring(1);
                 if (lang == "html") ext = "html";
-                if (languageTags is null) languageTags = new Dictionary<string, LanguageDef>();
+                languageTags ??= new Dictionary<string, LanguageDef>();
                 if (!languageTags.ContainsKey(ext)) TryLoadDeclaration(ext);
                 if (languageTags[ext] != null)
                 {

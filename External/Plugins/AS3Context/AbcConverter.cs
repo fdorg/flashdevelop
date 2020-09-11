@@ -507,7 +507,7 @@ namespace AS3Context
                     }
                     meta.RawParams = rawParams.ToString();
 
-                    if (metadatas is null) metadatas = new List<ASMetaData>(info.metadata.Count);
+                    metadatas ??= new List<ASMetaData>(info.metadata.Count);
                     metadatas.Add(meta);
                 }
                 member.MetaDatas = metadatas;
@@ -678,8 +678,7 @@ namespace AS3Context
             if (IsEmptyElement)
                 return;
 
-            if (ExcludedASDocs is null)
-                ExcludedASDocs = new List<string>();
+            ExcludedASDocs ??= new List<string>();
 
             ASDocItem doc = new ASDocItem();
             doc.DeclType = declType;
@@ -711,8 +710,7 @@ namespace AS3Context
                 if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('"'))
                     doc.Value = "\"" + doc.Value + "\"";
 
-                if (doc.LongDesc is null)
-                    doc.LongDesc = "";
+                doc.LongDesc ??= "";
 
                 if (doc.ShortDesc is null)
                     doc.ShortDesc = doc.LongDesc;
@@ -1053,7 +1051,7 @@ namespace AS3Context
 
             meta.RawParams = $"\"{defValue}\"";
 
-            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
+            doc.Meta ??= new List<ASMetaData>();
             doc.Meta.Add(meta);
         }
 
@@ -1216,15 +1214,12 @@ namespace AS3Context
         {
             if (!HasAttributes) return;
 
-            ASMetaData meta = new ASMetaData("Style");
-            meta.Kind = ASMetaKind.Exclude;
+            ASMetaData meta = new ASMetaData("Style") {Kind = ASMetaKind.Exclude};
             string sKind = GetAttribute("kind");
             string sName = GetAttribute("name");
 
-            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
-            meta.Params = new Dictionary<string, string>();
-            meta.Params["kind"] = sKind;
-            meta.Params["name"] = sName;
+            doc.Meta ??= new List<ASMetaData>();
+            meta.Params = new Dictionary<string, string> {["kind"] = sKind, ["name"] = sName};
             meta.RawParams = $"kind=\"{sKind}\", name=\"{sName}\"";
             doc.Meta.Add(meta);
         }
@@ -1257,11 +1252,9 @@ namespace AS3Context
                 Read();
             }
 
-            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
+            doc.Meta ??= new List<ASMetaData>();
             if (sDefault != null) meta.Comments = meta.Comments.Trim() + "\n@default\t" + sDefault;
-            meta.Params = new Dictionary<string, string>();
-            meta.Params["name"] = sName;
-            meta.Params["type"] = sType;
+            meta.Params = new Dictionary<string, string> {["name"] = sName, ["type"] = sType};
             meta.RawParams = $"name=\"{sName}\", type=\"{sType}\"";
             if (sInherit != null)
             {
@@ -1303,10 +1296,8 @@ namespace AS3Context
                 Read();
             }
 
-            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
-            meta.Params = new Dictionary<string, string>();
-            meta.Params["name"] = eName;
-            meta.Params["type"] = eType;
+            doc.Meta ??= new List<ASMetaData>();
+            meta.Params = new Dictionary<string, string> {["name"] = eName, ["type"] = eType};
             if (eFullType != null)
                 meta.Comments = meta.Comments.Trim() + "\n@eventType\t" + eFullType.Replace(':', '.');
             meta.RawParams = $"name=\"{eName}\", type=\"{eType}\"";

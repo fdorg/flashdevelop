@@ -244,9 +244,9 @@ namespace FlashDebugger.Controls
 
         void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
+            var box = (NodeTextBox) sender;
             if (box.Parent.CurrentNode is null) return;
-            VariableNode node = box.Parent.CurrentNode.Tag as VariableNode;
+            var node = (VariableNode) box.Parent.CurrentNode.Tag;
             node.IsEditing = false;
             try
             {
@@ -281,7 +281,7 @@ namespace FlashDebugger.Controls
 
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
-            VariableNode node = e.Node.Tag as VariableNode;
+            var node = e.Node.Tag as VariableNode;
             if (node?.Variable is null)
             {
                 e.Value = false;
@@ -346,11 +346,7 @@ namespace FlashDebugger.Controls
         }
         private void ViewerItemClick(object sender, EventArgs e)
         {
-            if (viewerForm is null)
-            {
-                viewerForm = new ViewerForm();
-                viewerForm.StartPosition = FormStartPosition.Manual;
-            }
+            viewerForm ??= new ViewerForm {StartPosition = FormStartPosition.Manual};
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             viewerForm.Exp = node.Text;
             if (node is ValueNode)
@@ -543,7 +539,7 @@ namespace FlashDebugger.Controls
 
         public void SaveState()
         {
-            if (state is null) state = new DataTreeState();
+            state ??= new DataTreeState();
             state.Selected = _tree.SelectedNode is null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
             if (!Nodes.IsNullOrEmpty()) SaveExpanded(Nodes);

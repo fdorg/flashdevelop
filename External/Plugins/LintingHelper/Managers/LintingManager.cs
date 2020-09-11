@@ -154,11 +154,8 @@ namespace LintingHelper.Managers
         /// </summary>
         static void ApplyLint(List<LintingResult> results)
         {
-            if (results is null)
-                return;
-
+            if (results is null) return;
             Cache.AddResults(results);
-
             UpdateLinterPanel();
         }
 

@@ -179,10 +179,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (foundMember is null)
-            {
-                result.AddRange(members);
-            }
+            if (foundMember is null) result.AddRange(members);
             else if (foundMember == "class" || foundMember == "interface")
             {
                 if (hasExtends) result.Add("extends");

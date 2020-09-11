@@ -289,7 +289,7 @@ namespace FlashDevelop.Docking
         public bool CheckFileChange()
         {
             var fileName = FileName;
-            if (fileInfo is null) fileInfo = new FileInfo(fileName);
+            fileInfo ??= new FileInfo(fileName);
             if (!PluginBase.MainForm.ClosingEntirely && File.Exists(fileName))
             {
                 FileInfo fi = new FileInfo(fileName);

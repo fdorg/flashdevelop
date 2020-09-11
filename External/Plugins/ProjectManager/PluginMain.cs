@@ -1603,7 +1603,7 @@ namespace ProjectManager
         void OpenResource()
         {
             if (PluginBase.CurrentProject is null) return;
-            if (projectResources is null) projectResources = new OpenResourceForm(this);
+            projectResources ??= new OpenResourceForm(this);
             projectResources.ShowDialog(pluginUI);
         }
 

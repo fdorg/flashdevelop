@@ -95,13 +95,7 @@ namespace PHPContext
             ReleaseClasspath();
             started = true;
             if (langSettings is null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup is null)
-            {
-                contextSetup = new ContextSetupInfos();
-                contextSetup.Lang = settings.LanguageId;
-                contextSetup.Platform = "PHP";
-                contextSetup.Version = "5.0";
-            }
+            contextSetup ??= new ContextSetupInfos {Lang = settings.LanguageId, Platform = "PHP", Version = "5.0"};
 
             //
             // Class pathes

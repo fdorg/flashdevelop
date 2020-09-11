@@ -626,7 +626,7 @@ namespace HaXeContext
             foreach(string cp in contextSetup.Classpath) 
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
                     return;
-            if (contextSetup.AdditionalPaths is null) contextSetup.AdditionalPaths = new List<string>();
+            contextSetup.AdditionalPaths ??= new List<string>();
             foreach (string cp in contextSetup.AdditionalPaths)
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
                     return;

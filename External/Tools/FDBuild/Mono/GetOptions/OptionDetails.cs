@@ -106,10 +106,7 @@ namespace Mono.GetOptions
 
         private void DoIt(string parameterValue)
         {
-            if (parameterValue is null)
-            {
-                parameterValue = "";
-            }
+            parameterValue ??= "";
             char[] chArray1 = { ',' } ;
             string[] textArray1 = parameterValue.Split(chArray1);
             Occurred(textArray1.Length);

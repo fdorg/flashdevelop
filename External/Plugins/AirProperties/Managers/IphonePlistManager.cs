@@ -169,26 +169,29 @@ namespace AirProperties
         XmlNode SerializeValue(object value)
         {
             XmlNode retVal;
-            if (value is null || value is string)
+            switch (value)
             {
-                retVal = backDoc.CreateElement("string");
-                if (value != null) retVal.InnerText = value as string;
-            }
-            else if (value is bool)
-            {
-                retVal = backDoc.CreateElement(value.ToString().ToLower());
-            }
-            else if (value is IEnumerable)
-            {
-                retVal = backDoc.CreateElement("array");
-                foreach (object subVal in (IEnumerable)value)
+                case null:
+                case string _:
                 {
-                    retVal.AppendChild(SerializeValue(subVal));
+                    retVal = backDoc.CreateElement("string");
+                    if (value != null) retVal.InnerText = (string) value;
+                    break;
                 }
-            }
-            else
-            {
-                throw new Exception("Unsupported value type");
+                case bool _:
+                    retVal = backDoc.CreateElement(value.ToString().ToLower());
+                    break;
+                case IEnumerable enumerable:
+                {
+                    retVal = backDoc.CreateElement("array");
+                    foreach (var subVal in enumerable)
+                    {
+                        retVal.AppendChild(SerializeValue(subVal));
+                    }
+                    break;
+                }
+                default:
+                    throw new Exception("Unsupported value type");
             }
 
             return retVal;

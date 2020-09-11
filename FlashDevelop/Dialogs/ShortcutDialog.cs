@@ -490,7 +490,7 @@ namespace FlashDevelop.Dialogs
             foreach (var item in shortcutListItems)
             {
                 if (item.Custom != keys || item == target) continue;
-                if (conflicts is null) conflicts = new List<ShortcutListItem> { target };
+                conflicts ??= new List<ShortcutListItem> {target};
                 conflicts.Add(item);
                 item.Conflicts = conflicts;
             }

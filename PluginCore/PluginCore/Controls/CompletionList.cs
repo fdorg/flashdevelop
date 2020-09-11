@@ -401,7 +401,7 @@ namespace PluginCore.Controls
         /// </summary> 
         public static void FindWordStartingWith(string word)
         {
-            if (word is null) word = "";
+            word ??= "";
             int len = word.Length;
             int maxLen = 0;
             int lastScore = 0;

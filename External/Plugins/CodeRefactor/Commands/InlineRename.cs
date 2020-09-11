@@ -119,10 +119,7 @@ namespace CodeRefactor.Commands
         /// <param name="previewTarget">An <see cref="ASResult"/> object specifying the target. This parameter must not be <code>null</code> if <code>previewChanges</code> is not <code>null</code>.</param>
         public InlineRename(ScintillaControl control, string original, int position, bool? includeComments, bool? includeStrings, bool? previewChanges, ASResult previewTarget)
         {
-            if (previewChanges.HasValue && previewTarget is null)
-            {
-                throw new ArgumentNullException(nameof(previewTarget));
-            }
+            if (previewChanges.HasValue && previewTarget is null) throw new ArgumentNullException(nameof(previewTarget));
 
             CancelCurrent();
 

@@ -264,13 +264,10 @@ namespace AS3Context
             ReleaseClasspath();
             started = true;
             if (as3settings is null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup is null)
+            contextSetup ??= new ContextSetupInfos
             {
-                contextSetup = new ContextSetupInfos();
-                contextSetup.Lang = settings.LanguageId;
-                contextSetup.Platform = "Flash Player";
-                contextSetup.Version = as3settings.DefaultFlashVersion;
-            }
+                Lang = settings.LanguageId, Platform = "Flash Player", Version = as3settings.DefaultFlashVersion
+            };
 
             // external version definition
             platform = contextSetup.Platform;
@@ -300,8 +297,7 @@ namespace AS3Context
                 : as3settings.GetDefaultSDK().Path;
 
             char S = Path.DirectorySeparatorChar;
-            if (compiler is null) 
-                compiler = Path.Combine(PathHelper.ToolDir, "flexlibs");
+            compiler ??= Path.Combine(PathHelper.ToolDir, "flexlibs");
             string frameworks = compiler + S + "frameworks";
             string sdkLibs = frameworks + S + "libs";
             string sdkLocales = frameworks + S + "locale" + S + PluginBase.Settings.LocaleVersion;
@@ -331,8 +327,8 @@ namespace AS3Context
                         string playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, sdkLibs);
                         if (playerglobal != null) swcPresent = true;
                         else playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, fallbackLibs);
-                        if (playerglobal is null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs);
-                        if (playerglobal is null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, sdkLibs);
+                        playerglobal ??= MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs)
+                                      ?? MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, sdkLibs);
                         if (playerglobal != null)
                         {
                             // add missing SWC in new SDKs

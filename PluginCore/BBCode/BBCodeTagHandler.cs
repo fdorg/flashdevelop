@@ -58,10 +58,7 @@ namespace PluginCore.BBCode
                 return false;
 
             _tmName = _tmName.ToUpper();
-            if (!_handlers.ContainsKey(_tmName) || _handlers[_tmName] is null)
-                return false;
-
-            return true;
+            return _handlers.ContainsKey(_tmName) && _handlers[_tmName] != null;
         }
 
 
@@ -118,14 +115,10 @@ namespace PluginCore.BBCode
 
         protected bool _hadleTag_Font(BBCodeTagMatch tm)
         {
-            if (tm.tagParam is null || tm.tagParam.Length < 2)
-                return false;
-
+            if (tm.tagParam is null || tm.tagParam.Length < 2) return false;
             string fontName = tm.tagParam;
             string tmpSymbol = fontName.Substring(0, 1);
-            if (tmpSymbol == "\"" || tmpSymbol == "'")
-                fontName = fontName.Substring(1);
-
+            if (tmpSymbol == "\"" || tmpSymbol == "'") fontName = fontName.Substring(1);
             tmpSymbol = fontName.Substring(fontName.Length - 1, 1);
             if (tmpSymbol == "\"" || tmpSymbol == "'")
                 fontName = fontName.Substring(0, fontName.Length - 1);
@@ -156,9 +149,7 @@ namespace PluginCore.BBCode
         protected bool _hadleTag_Color(BBCodeTagMatch tm)
         {
             BBCodeStyle.Color c = _extractTagColor(tm.tagParam);
-            if (c is null)
-                return false;
-
+            if (c is null) return false;
             tm.bbCodeStyle.foreColor = c;
             return true;
         }
@@ -166,9 +157,7 @@ namespace PluginCore.BBCode
         protected bool _hadleTag_BgColor(BBCodeTagMatch tm)
         {
             BBCodeStyle.Color c = _extractTagColor(tm.tagParam);
-            if (c is null)
-                return false;
-
+            if (c is null) return false;
             tm.bbCodeStyle.backColor = c;
             return true;
         }
