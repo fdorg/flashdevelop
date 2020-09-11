@@ -116,7 +116,7 @@ namespace PHPContext
             settingObject = new ContextSettings();
             if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
-            if (settingObject.LanguageDefinitions is null) settingObject.LanguageDefinitions = @"Library\PHP\intrinsic";
+            settingObject.LanguageDefinitions ??= @"Library\PHP\intrinsic";
             settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
         }
 

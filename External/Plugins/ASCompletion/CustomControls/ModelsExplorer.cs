@@ -109,10 +109,10 @@ namespace ASCompletion
             instance = this;
             InitializeComponent();
             InitializeLocalization();
-            this.toolStrip.Font = PluginBase.Settings.DefaultFont;
-            this.toolStrip.Renderer = new DockPanelStripRenderer();
-            this.outlineContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
-            this.outlineContextMenuStrip.Renderer = new DockPanelStripRenderer();
+            toolStrip.Font = PluginBase.Settings.DefaultFont;
+            toolStrip.Renderer = new DockPanelStripRenderer();
+            outlineContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
+            outlineContextMenuStrip.Renderer = new DockPanelStripRenderer();
             searchButton.Image = PluginBase.MainForm.FindImage("251");
             refreshButton.Image = PluginBase.MainForm.FindImage("24");
             rebuildButton.Image = PluginBase.MainForm.FindImage("153");
@@ -122,7 +122,7 @@ namespace ASCompletion
 
         void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
-            TreeNode node = outlineTreeView.GetNodeAt(outlineTreeView.PointToClient(Control.MousePosition));
+            var node = outlineTreeView.GetNodeAt(outlineTreeView.PointToClient(MousePosition));
             if (node is null) e.Cancel = true;
             else
             {
@@ -145,14 +145,14 @@ namespace ASCompletion
 
         void InitializeLocalization()
         {
-            this.filterLabel.Text = TextHelper.GetString("Info.FindType");
-            this.searchButton.ToolTipText = TextHelper.GetString("ToolTip.Search");
-            this.refreshButton.ToolTipText = TextHelper.GetString("ToolTip.Refresh");
-            this.rebuildButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.RebuildClasspathCache");
-            this.editToolStripMenuItem.Text = TextHelper.GetString("Label.ModelEdit");
-            this.exploreToolStripMenuItem.Text = TextHelper.GetString("Label.ModelExplore");
-            this.convertToolStripMenuItem.Text = TextHelper.GetString("Label.ModelConvert");
-            this.Text = TextHelper.GetString("Title.ModelExplorer");
+            filterLabel.Text = TextHelper.GetString("Info.FindType");
+            searchButton.ToolTipText = TextHelper.GetString("ToolTip.Search");
+            refreshButton.ToolTipText = TextHelper.GetString("ToolTip.Refresh");
+            rebuildButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.RebuildClasspathCache");
+            editToolStripMenuItem.Text = TextHelper.GetString("Label.ModelEdit");
+            exploreToolStripMenuItem.Text = TextHelper.GetString("Label.ModelExplore");
+            convertToolStripMenuItem.Text = TextHelper.GetString("Label.ModelConvert");
+            Text = TextHelper.GetString("Title.ModelExplorer");
         }
 
         #endregion
@@ -247,8 +247,6 @@ namespace ASCompletion
                     allTypes.Add(node);
                     nodes.Add(node);
                 }
-
-            
         }
 
         /// <summary>
@@ -568,15 +566,13 @@ namespace ASCompletion
             ResolvedPath resolved = ResolvePath(node);
             string package = resolved.package;
             PathModel thePath = resolved.model;
-            if (thePath is null) 
-                return;
+            if (thePath is null) return;
 
             if (node is TypeTreeNode)
             {
                 string filename = (node.Tag as string).Split('@')[0];
                 FileModel theModel = thePath.GetFile(filename);
-                if (theModel is null)
-                    return;
+                if (theModel is null) return;
 
                 saveFileDialog.Title = TextHelper.GetString("Title.SaveIntrinsicAs");
                 saveFileDialog.FileName = Path.GetFileName(filename);

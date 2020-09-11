@@ -210,10 +210,7 @@ namespace ASCompletion.Completion
 
             static string FromRegex(Regex value)
             {
-                if (value is null)
-                {
-                    return string.Empty;
-                }
+                if (value is null) return string.Empty;
                 string str = value.ToString();
                 return Unescape(str.Substring(1, str.Length - 2));
             }
@@ -230,25 +227,18 @@ namespace ASCompletion.Completion
 
             static bool RegexCheck(Regex regex, char c, bool exclude)
             {
-                if (regex is null)
-                {
-                    return exclude;
-                }
-                return regex.IsMatch(c.ToString()) ^ exclude;
+                return regex?.IsMatch(c.ToString()) ^ exclude ?? exclude;
             }
 
             static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
-                if (array is null)
-                {
-                    return exclude;
-                }
+                if (array is null) return exclude;
                 return Array.IndexOf(array, (Style) s) >= 0 ^ exclude;
             }
 
             public Rule Clone()
             {
-                return new Rule()
+                return new Rule
                 {
                     notAfterChars = notAfterChars,
                     afterChars = afterChars,

@@ -231,12 +231,7 @@ namespace PluginCore.Controls
         
         public void LabelMouseEnter(object sender, System.EventArgs e)
         {
-            if (tip is null)
-            {
-                tip = new ToolTip();
-                tip.ShowAlways = true;
-                tip.AutoPopDelay = 10000;
-            }
+            tip ??= new ToolTip {ShowAlways = true, AutoPopDelay = 10000};
             tip.SetToolTip(label, currentMessage);
         }
         

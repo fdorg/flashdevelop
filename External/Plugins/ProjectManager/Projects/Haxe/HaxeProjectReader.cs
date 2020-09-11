@@ -158,10 +158,9 @@ namespace ProjectManager.Projects.Haxe
                 string path = OSPath(GetAttribute("path"));
                 string mode = GetAttribute("mode");
 
-                if (path is null)
-                    throw new Exception("All library assets must have a 'path' attribute.");
+                if (path is null) throw new Exception("All library assets must have a 'path' attribute.");
 
-                LibraryAsset asset = new LibraryAsset(project, path);
+                var asset = new LibraryAsset(project, path);
                 project.LibraryAssets.Add(asset);
 
                 asset.ManualID = GetAttribute("id"); // could be null

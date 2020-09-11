@@ -29,12 +29,8 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value is null)
-                {
-                    return string.Empty;
-                }
+                if (m_Value is null) return string.Empty;
                 int type = m_Value.getType();
-                string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
                     string typeStr = m_Value.getTypeName().ToString();
@@ -102,11 +98,8 @@ namespace FlashDebugger.Controls.DataTree
                 {
                     return "Function @" + m_Value;
                 }
-                temp = m_Value.ToString();
-                if (!m_bEditing)
-                {
-                    temp = Escape(temp);
-                }
+                var temp = m_Value.ToString();
+                if (!m_bEditing) temp = Escape(temp);
                 return temp;
             }
             set => throw new NotSupportedException();
@@ -119,11 +112,7 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-
-                if (m_Value is null)
-                {
-                    return null;
-                }
+                if (m_Value is null) return null;
                 int type = m_Value.getType();
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
@@ -193,10 +182,7 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value is null)
-                {
-                    return false;
-                }
+                if (m_Value is null) return false;
                 int type = m_Value.getType();
                 return type == VariableType_.NUMBER || type == VariableType_.BOOLEAN ||
                        type == VariableType_.STRING || type == VariableType_.NULL;
@@ -219,10 +205,7 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value is null)
-                {
-                    return (this.Nodes.Count == 0);
-                }
+                if (m_Value is null) return Nodes.Count == 0;
                 return m_Value.getType() != VariableType_.MOVIECLIP && m_Value.getType() != VariableType_.OBJECT;
             }
         }

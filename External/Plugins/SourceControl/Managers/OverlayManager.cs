@@ -99,8 +99,7 @@ namespace SourceControl.Managers
 
         bool UpdateNodeStatus(GenericNode node)
         {
-            if (node.Meta is null)
-                node.Meta = new Dictionary<string, object>();
+            node.Meta ??= new Dictionary<string, object>();
 
             if (!node.Meta.ContainsKey(META_VC))
                 LocateVC(node);

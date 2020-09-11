@@ -684,8 +684,7 @@ namespace ASCompletion
             finally
             {
                 // outline state will be restored/saved from the model data
-                if (aFile.OutlineState is null)
-                    aFile.OutlineState = new TreeState();
+                aFile.OutlineState ??= new TreeState();
                 // restore collapsing state
                 OutlineTree.EndStatefulUpdate(aFile.OutlineState);
                 // restore highlighted item
@@ -989,7 +988,7 @@ namespace ASCompletion
         public void SetLastLookupPosition(string file, int line, int column)
         {
             // store location
-            if (lookupLocations is null) lookupLocations = new Stack<LookupLocation>();
+            lookupLocations ??= new Stack<LookupLocation>();
             lookupLocations.Push(new LookupLocation(file, line, column));
             if (lookupLocations.Count > 100) lookupLocations.TrimExcess();
             // menu item

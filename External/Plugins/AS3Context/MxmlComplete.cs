@@ -563,7 +563,7 @@ namespace AS3Context
 
                         if (!validFunction) continue;
 
-                        if (result is null) result = new List<ICompletionListItem>();
+                        result ??= new List<ICompletionListItem>();
                         result.Add(new MxmlEventHandlerItem(member));
                     }
 
@@ -605,7 +605,7 @@ namespace AS3Context
                     foreach (MemberModel member in tmpClass.Members)
                         if ((member.Flags & FlagType.Function) > 0 && (member.Access & access) > 0)
                         {
-                            if (result is null) result = new List<ICompletionListItem>();
+                            result ??= new List<ICompletionListItem>();
                             result.Add(new MemberItem(member));
                         }
 
@@ -621,7 +621,7 @@ namespace AS3Context
             return null;
         }
 
-        static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
+        static void ExploreMetadatas(ClassModel model, ICollection<ICompletionListItem> mix, ICollection<string> excludes, string ns, bool isCurrentModel)
         {
             if (model?.MetaDatas is null) return;
             string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;

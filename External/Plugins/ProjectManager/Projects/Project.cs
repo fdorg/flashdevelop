@@ -87,8 +87,7 @@ namespace ProjectManager.Projects
             if (IsFolderProject()) return false;
             if (ReadOnly && fileName == ProjectPath) return false;
             var onBeforeSave = BeforeSave;
-            return onBeforeSave is null
-                || onBeforeSave(this, fileName);
+            return onBeforeSave is null || onBeforeSave(this, fileName);
         }
 
         public bool IsFolderProject() => ProjectPath.EndsWith("Project.folder");

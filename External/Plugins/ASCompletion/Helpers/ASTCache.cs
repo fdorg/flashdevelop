@@ -157,8 +157,7 @@ namespace ASCompletion.Helpers
                     var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
                     if (context?.Classpath is null || PathExplorer.IsWorking)
                     {
-                        if (FinishedUpdate != null)
-                            PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                        if (FinishedUpdate != null) PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
                         return;
                     }
 

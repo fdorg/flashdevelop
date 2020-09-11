@@ -70,16 +70,13 @@ namespace FlashDebugger
         public void SetThreads(Dictionary<int, FlashInterface.IsolateInfo> isolates)
         {
             lv.Items.Clear();
-            if (PluginMain.debugManager.FlashInterface.Session is null)
-            {
-                return;
-            }
+            if (PluginMain.debugManager.FlashInterface.Session is null) return;
             // add primary -- flash specific
             string title = "Main thread";
             int image = PluginMain.debugManager.FlashInterface.Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
             lv.Items.Add(new ListViewItem(new[] { "", title }, image));
             lv.Items[lv.Items.Count - 1].Tag = 1;
-            foreach (KeyValuePair<int, FlashInterface.IsolateInfo> ii_pair in isolates)
+            foreach (var ii_pair in isolates)
             {
                 int i_id = ii_pair.Key;
                 FlashInterface.IsolateInfo ii = ii_pair.Value;

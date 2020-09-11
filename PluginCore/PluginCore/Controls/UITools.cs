@@ -29,10 +29,8 @@ namespace PluginCore.Controls
 
         public static MethodCallTip CallTip => manager.callTip;
 
-        public static void Init()
-        {
-            if (manager is null) manager = new UITools();
-        }
+        public static void Init() => manager ??= new UITools();
+
         #endregion
 
         #region Initialization

@@ -33,13 +33,7 @@ namespace LitJson
 
 
         public Type ElementType {
-            get {
-                if (element_type is null)
-                    return typeof (JsonData);
-
-                return element_type;
-            }
-
+            get => element_type ?? typeof (JsonData);
             set => element_type = value;
         }
 
@@ -64,13 +58,7 @@ namespace LitJson
 
 
         public Type ElementType {
-            get {
-                if (element_type is null)
-                    return typeof (JsonData);
-
-                return element_type;
-            }
-
+            get => element_type ?? typeof (JsonData);
             set => element_type = value;
         }
 

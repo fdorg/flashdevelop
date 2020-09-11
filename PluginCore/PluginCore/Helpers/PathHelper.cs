@@ -406,15 +406,13 @@ namespace PluginCore.Helpers
             /// <returns>This function returns text trimmed to the specified witdh.</returns>
             public static string Compact(string text, Font font, int proposedWidth, EllipsisFormat options)
             {
-                if (string.IsNullOrEmpty(text))
-                    return text;
+                if (string.IsNullOrEmpty(text)) return text;
 
                 // no alignment information
                 if (((EllipsisFormat.Path | EllipsisFormat.Start | EllipsisFormat.End | EllipsisFormat.Middle) & options) == 0)
                     return text;
 
-                if (font is null)
-                    throw new ArgumentNullException(nameof(font));
+                if (font is null) throw new ArgumentNullException(nameof(font));
 
                 Size s = TextRenderer.MeasureText(text, font);
 

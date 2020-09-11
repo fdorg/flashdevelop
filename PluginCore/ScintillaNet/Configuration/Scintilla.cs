@@ -204,10 +204,10 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (languages is null) languages = Array.Empty<Language>();
-            if (styleclasses is null) styleclasses = Array.Empty<StyleClass>();
-            if (keywordclass is null) keywordclass = Array.Empty<KeywordClass>();
-            if (globals is null) globals = Array.Empty<Value>();
+            languages ??= Array.Empty<Language>();
+            styleclasses ??= Array.Empty<StyleClass>();
+            keywordclass ??= Array.Empty<KeywordClass>();
+            globals ??= Array.Empty<Value>();
             foreach (var it in languages)
             {
                 it.init(utility, _parent);
@@ -224,7 +224,7 @@ namespace ScintillaNet.Configuration
             {
                 it.init(utility, _parent);
             }
-            if (characterclasses is null) characterclasses = Array.Empty<CharacterClass>();
+            characterclasses ??= Array.Empty<CharacterClass>();
             foreach (var it in characterclasses)
             {
                 it.init(utility, _parent);

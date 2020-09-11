@@ -30,12 +30,7 @@ namespace FlashDevelop.Managers
         internal static void Initialize(MainForm window)
         {
             if (window is null) throw new ArgumentNullException(nameof(window));
-
-            if (History != null)
-            {
-                throw new InvalidOperationException(nameof(ClipboardManager) + " is already initialized.");
-            }
-
+            if (History != null) throw new InvalidOperationException(nameof(ClipboardManager) + " is already initialized.");
             if (Win32.ShouldUseWin32())
             {
                 try
@@ -70,10 +65,8 @@ namespace FlashDevelop.Managers
         /// <exception cref="NotSupportedException"/>
         internal static void Dispose()
         {
-            if (History is null)
-            {
-                throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
-            }
+            if (History is null) throw new InvalidOperationException(nameof(ClipboardManager) +
+                                                                     " is either not initialized or already disposed.");
 
             if (hwnd != IntPtr.Zero)
             {
@@ -190,8 +183,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static bool IsTextFormat(IDataObject data)
         {
-            if (data is null) return false;
-            return data.GetDataPresent(DataFormats.Text)/*
+            return data != null && data.GetDataPresent(DataFormats.Text)/*
                 || dataObject.GetDataPresent(DataFormats.UnicodeText)
                 || dataObject.GetDataPresent(DataFormats.OemText)
                 || dataObject.GetDataPresent(DataFormats.Locale)
