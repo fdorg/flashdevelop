@@ -70,10 +70,8 @@ namespace ScintillaNet.Configuration
         public void AddExtension(string extension)
         {
             if (HasExtension(extension)) return;
-            if (string.IsNullOrEmpty(fileextensions))
-                fileextensions = extension;
-            else
-                fileextensions += "," + extension;
+            if (string.IsNullOrEmpty(fileextensions)) fileextensions = extension;
+            else fileextensions += "," + extension;
         }
 
         public bool RemoveExtension(string extension)

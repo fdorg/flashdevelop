@@ -706,10 +706,7 @@ namespace AirProperties
         {
             // Get fileTypes node
             var extensionsNode = _rootNode.SelectSingleNode("air:extensions", _namespaceManager);
-            if (extensionsNode is null)
-            {
-                extensionsNode = _descriptorFile.CreateNode(XmlNodeType.Element, "extensions", _namespaceManager.LookupNamespace("air"));
-            }
+            if (extensionsNode is null) extensionsNode = _descriptorFile.CreateNode(XmlNodeType.Element, "extensions", _namespaceManager.LookupNamespace("air"));
             else _rootNode.RemoveChild(extensionsNode);
             if (extensions.Count == 0) return;
             // Clear contents

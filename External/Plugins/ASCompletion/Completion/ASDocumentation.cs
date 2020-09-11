@@ -213,7 +213,7 @@ namespace ASCompletion.Completion
         public static string GetTipShortDetails(MemberModel member, string highlightParam)
         {
             if (member?.Comments is null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
-            CommentBlock cb = ParseComment(member.Comments);
+            var cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
         }
@@ -289,7 +289,7 @@ namespace ASCompletion.Completion
         public static string GetTipFullDetails(MemberModel member, string highlightParam)
         {
             if (member?.Comments is null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
-            CommentBlock cb = ParseComment(member.Comments);
+            var cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return GetTipFullDetails(cb, highlightParam);
         }

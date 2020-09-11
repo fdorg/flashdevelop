@@ -251,19 +251,15 @@ namespace AS3Context
                 }
 
                 // packages
-                if (abc.scripts is null)
-                    continue;
-                foreach (Traits trait in abc.scripts)
+                if (abc.scripts is null) continue;
+                foreach (var trait in abc.scripts)
                 {
                     FileModel model = null;
-                    foreach (MemberInfo info in trait.members)
+                    foreach (var info in trait.members)
                     {
-                        if (info.kind == TraitMember.Class)
-                            continue;
-
-                        MemberModel member = GetMember(info, 0);
+                        if (info.kind == TraitMember.Class) continue;
+                        var member = GetMember(info, 0);
                         if (member is null) continue;
-
                         if (model is null || model.Package != info.name.uri)
                         {
                             AddImports(model, imports);
@@ -349,18 +345,14 @@ namespace AS3Context
 
         static void applyTypeComment(ASDocItem doc, MemberModel model)
         {
-            if (doc is null || model  is null)
-                return;
-
+            if (doc is null || model  is null) return;
             ASFileParserUtils.ParseTypeDefinitionInto(doc.ApiType, model, true, true);
         }
 
         static void applyTypeCommentToParams(ASDocItem doc, MemberModel model)
         {
-            if (doc is null || model?.Parameters is null)
-                return;
-
-            foreach (MemberModel param in model.Parameters)
+            if (doc is null || model?.Parameters is null) return;
+            foreach (var param in model.Parameters)
                 if (doc.ParamTypes != null && doc.ParamTypes.ContainsKey(param.Name))
                     ASFileParserUtils.ParseTypeDefinitionInto(doc.ParamTypes[param.Name], param, true, true);
         }
@@ -419,7 +411,7 @@ namespace AS3Context
                 : null;
         }
 
-        static MemberList GetMembers(List<MemberInfo> abcMembers, FlagType baseFlags, QName instName)
+        static MemberList GetMembers(IEnumerable<MemberInfo> abcMembers, FlagType baseFlags, QName instName)
         {
             MemberList list = new MemberList();
             string package = instName.uri;
@@ -433,11 +425,7 @@ namespace AS3Context
                 string uri = info.name.uri ?? "";
                 if (uri.Length > 0)
                 {
-                    if (uri == "private" || package == "private")
-                    {
-                        continue;
-                    }
-
+                    if (uri == "private" || package == "private") continue;
                     if (uri == protect)
                     {
                         member.Access = Visibility.Protected;
@@ -483,12 +471,13 @@ namespace AS3Context
 
         static MemberModel GetMember(MemberInfo info, FlagType baseFlags)
         {
-            MemberModel member = new MemberModel();
-            member.Name = info.name.localName;
-            member.Flags = baseFlags;
-            member.Access = Visibility.Public;
-            member.Namespace = "public";
-
+            var member = new MemberModel
+            {
+                Name = info.name.localName,
+                Flags = baseFlags,
+                Access = Visibility.Public,
+                Namespace = "public"
+            };
             if (!info.metadata.IsNullOrEmpty())
             {
                 var metadatas = member.MetaDatas;
@@ -557,11 +546,7 @@ namespace AS3Context
                     member.Parameters.Add(param);
                 }
             }
-            else
-            {
-                member = null;
-            }
-
+            else member = null;
             return member;
         }
 
@@ -578,10 +563,7 @@ namespace AS3Context
             if (thisDocs.ContainsKey(dPath)) applyASDoc(thisDocs[dPath], member);
         }
 
-        static string ImportType(QName type)
-        {
-            return type is null ? "*" : ImportType(type.ToTypeString());
-        }
+        static string ImportType(QName type) => type is null ? "*" : ImportType(type.ToTypeString());
 
         static string ImportType(string qname)
         {
@@ -675,16 +657,10 @@ namespace AS3Context
 
         void ReadDeclaration(string declType)
         {
-            if (IsEmptyElement)
-                return;
-
+            if (IsEmptyElement) return;
             ExcludedASDocs ??= new List<string>();
-
-            ASDocItem doc = new ASDocItem();
-            doc.DeclType = declType;
-
-            string id = GetAttribute("id");
-
+            var doc = new ASDocItem {DeclType = declType};
+            var id = GetAttribute("id");
             if (id != null)
             {
                 // type doubled in doc: "flash.utils:IDataOutput:flash.utils:IDataOutput:writeDouble"
@@ -712,10 +688,8 @@ namespace AS3Context
 
                 doc.LongDesc ??= "";
 
-                if (doc.ShortDesc is null)
-                    doc.ShortDesc = doc.LongDesc;
-                else
-                    doc.LongDesc = doc.LongDesc.Trim();
+                if (doc.ShortDesc is null) doc.ShortDesc = doc.LongDesc;
+                else doc.LongDesc = doc.LongDesc.Trim();
 
                 if (doc.LongDesc.Length == 0 && doc.ShortDesc.Length > 0)
                     doc.LongDesc = doc.ShortDesc;
@@ -741,14 +715,11 @@ namespace AS3Context
 
         void ProcessDeclarationNodes(ASDocItem doc)
         {
-            if (NodeType != XmlNodeType.Element)
-                return;
-
+            if (NodeType != XmlNodeType.Element) return;
             switch (Name)
             {
                 case "apiName": break; // TODO validate event name
                 case "apiInheritDoc": break; // TODO link inherited doc?
-
                 case "apiDetail":
                 case "related-links": SkipContents(); break;
 

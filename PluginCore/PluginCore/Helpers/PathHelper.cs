@@ -209,7 +209,7 @@ namespace PluginCore.Helpers
                 if (Win32.ShouldUseWin32())
                 {
                     const int max = 64;
-                    StringBuilder sb = new StringBuilder(max);
+                    var sb = new StringBuilder(max);
                     Win32.PathCompactPathEx(sb, path, max, 0);
                     return sb.ToString();
                 }
@@ -417,15 +417,11 @@ namespace PluginCore.Helpers
                 Size s = TextRenderer.MeasureText(text, font);
 
                 // control is large enough to display the whole text
-                if (s.Width <= proposedWidth)
-                    return text;
-
+                if (s.Width <= proposedWidth) return text;
                 string pre = "";
                 string mid = text;
                 string post = "";
-
                 bool isPath = (EllipsisFormat.Path & options) != 0;
-
                 // split path string into <drive><directory><filename>
                 if (isPath)
                 {
@@ -478,10 +474,7 @@ namespace PluginCore.Helpers
                     string tst = mid.Substring(0, left) + EllipsisChars + mid.Substring(right);
 
                     // restore path with <drive> and <filename>
-                    if (isPath)
-                    {
-                        tst = Path.Combine(pre, tst, post);
-                    }
+                    if (isPath) tst = Path.Combine(pre, tst, post);
                     s = TextRenderer.MeasureText(tst, font);
 
                     // candidate string fits into control boundaries, try a longer string
@@ -496,15 +489,13 @@ namespace PluginCore.Helpers
                 if (len == 0) // string can't fit into control
                 {
                     // "path" mode is off, just return ellipsis characters
-                    if (!isPath)
-                        return EllipsisChars;
+                    if (!isPath) return EllipsisChars;
 
                     // <directory> is empty
                     if (mid.Length == 0)
                     {
                         // <drive> is empty, return compacted <filename>
-                        if (pre.Length == 0)
-                            return Compact(text, font, proposedWidth, options & ~EllipsisFormat.Path);
+                        if (pre.Length == 0) return Compact(text, font, proposedWidth, options & ~EllipsisFormat.Path);
 
                         // we compare ellipsis and <drive> to get the shorter
                         string testEllipsis = Path.Combine(EllipsisChars, ".");
@@ -518,12 +509,9 @@ namespace PluginCore.Helpers
                         if (pre.Length > 0)
                         {
                             fit = Path.Combine(pre, EllipsisChars, post);
-
                             s = TextRenderer.MeasureText(fit, font);
-
                             if (s.Width <= proposedWidth) return fit;
                         }
-
                         pre = EllipsisChars;
                     }
 

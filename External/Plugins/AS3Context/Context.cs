@@ -323,8 +323,8 @@ namespace AS3Context
                     }
                     else 
                     {
-                        bool swcPresent = false;
-                        string playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, sdkLibs);
+                        var swcPresent = false;
+                        var playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, sdkLibs);
                         if (playerglobal != null) swcPresent = true;
                         else playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, fallbackLibs);
                         playerglobal ??= MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs)
@@ -771,7 +771,7 @@ namespace AS3Context
         /// <summary>
         /// Convert multibyte column to byte length
         /// </summary>
-        int MBSafeColumn(ScintillaControl sci, int line, int length)
+        static int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
             var text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
@@ -796,21 +796,21 @@ namespace AS3Context
                 return Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
             
             // same package
-            Visibility acc = Visibility.Public;
-            if (inClass.InFile.Package == withClass.InFile.Package) acc |= Visibility.Internal;
+            var result = Visibility.Public;
+            if (inClass.InFile.Package == withClass.InFile.Package) result |= Visibility.Internal;
 
             // inheritance affinity
-            ClassModel tmp = inClass;
+            var tmp = inClass;
             while (!tmp.IsVoid())
             {
                 if (tmp.Type == withClass.Type)
                 {
-                    acc |= Visibility.Protected;
+                    result |= Visibility.Protected;
                     break;
                 }
                 tmp = tmp.Extends;
             }
-            return acc;
+            return result;
         }
 
         /// <summary>
@@ -1170,7 +1170,6 @@ namespace AS3Context
         {
             if (!IsFileValid || cFile.InlinedIn != null) return;
             PluginBase.MainForm.CallCommand("Save", null);
-
             var sdk = PluginBase.CurrentProject != null
                 ? PluginBase.CurrentProject.CurrentSDK
                 : PathHelper.ResolvePath(as3settings.GetDefaultSDK().Path);
@@ -1188,8 +1187,7 @@ namespace AS3Context
                 MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidClass"));
                 return;
             }
-
-            string command = (append ?? "") + " -- " + CurrentFile;
+            var command = (append ?? "") + " -- " + CurrentFile;
             FlexShells.Instance.RunMxmlc(command, as3settings.GetDefaultSDK().Path);
         }
 
@@ -1205,9 +1203,7 @@ namespace AS3Context
                 MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidClass"));
                 return false;
             }
-            
             PluginBase.MainForm.CallCommand("SaveAllModified", null);
-
             var sdk = PluginBase.CurrentProject != null 
                     ? PluginBase.CurrentProject.CurrentSDK
                     : as3settings.GetDefaultSDK().Path;

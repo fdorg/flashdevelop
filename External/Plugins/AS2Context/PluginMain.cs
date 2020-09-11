@@ -126,13 +126,10 @@ namespace AS2Context
                     foreach (var sdk in settingObject.InstalledSDKs)
                         sdk.Owner = this;
             }
-            if (settingObject.MMClassPath is null) settingObject.MMClassPath = FindMMClassPath();
-            if (settingObject.UserClasspath is null)
-            {
-                settingObject.UserClasspath = settingObject.MMClassPath != null
-                                            ? new[] { settingObject.MMClassPath }
-                                            : Array.Empty<string>();
-            }
+            settingObject.MMClassPath ??= FindMMClassPath();
+            settingObject.UserClasspath ??= settingObject.MMClassPath != null
+                ? new[] {settingObject.MMClassPath}
+                : Array.Empty<string>();
         }
 
         /// <summary>

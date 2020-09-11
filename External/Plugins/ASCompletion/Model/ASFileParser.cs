@@ -1323,7 +1323,6 @@ namespace ASCompletion.Model
                                 if (valueMember != null && curMember is null)
                                 {
                                     valueLength = 0;
-                                    //valueMember.Flags -= FlagType.Variable; ???
                                     valueMember.Flags = FlagType.Function;
                                     curMethod = curMember = valueMember;
                                     valueMember = null;

@@ -18,11 +18,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             {   
                 if (!m_initialized)
                 {
-                    string key = base.Description;
-                    DescriptionValue = ResourceHelper.GetString(key) ?? string.Empty;
+                    DescriptionValue = ResourceHelper.GetString(base.Description) ?? string.Empty;
                     m_initialized = true;
                 }
-
                 return DescriptionValue;
             }
         }
@@ -35,9 +33,6 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
         }
 
-        protected override string GetLocalizedString(string key)
-        {
-            return ResourceHelper.GetString(key);
-        }
+        protected override string GetLocalizedString(string key) => ResourceHelper.GetString(key);
     }
 }

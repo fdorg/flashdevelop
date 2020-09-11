@@ -41,18 +41,14 @@ namespace AS3Context.Controls
 
         public static void HandleFlashConnect(object sender, object data)
         {
-            Socket client = sender as Socket;
-
+            var client = (Socket) sender;
             if (instance is null || data is null || !instance.running)
             {
                 if (client.Connected) client.Send(RESULT_IGNORED);
                 return;
             }
-
             instance.OnProfileData((string)data);
-
             if (client.Connected) client.Send(RESULT_OK);
-
             if (gcWanted)
             {
                 if (client.Connected) client.Send(RESULT_GC);
@@ -326,10 +322,9 @@ namespace AS3Context.Controls
         {
             try
             {
-                string mmCfg = PathHelper.ResolveMMConfig();
+                var mmCfg = PathHelper.ResolveMMConfig();
                 if (!File.Exists(mmCfg)) CreateDefaultCfg(mmCfg);
-
-                string src = File.ReadAllText(mmCfg).Trim();
+                var src = File.ReadAllText(mmCfg).Trim();
                 src = Regex.Replace(src, "PreloadSwf=.*", "").Trim();
                 if (active)
                 {

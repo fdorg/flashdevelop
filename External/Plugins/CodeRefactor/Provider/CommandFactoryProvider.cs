@@ -65,10 +65,7 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactory(ASResult target) => GetFactory(target.InFile ?? target.Type.InFile);
 
-        public static ICommandFactory GetFactory(FileModel file)
-        {
-            return GetFactory(PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName));
-        }
+        public static ICommandFactory GetFactory(FileModel file) => GetFactory(PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName));
 
         public static ICommandFactory GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
 

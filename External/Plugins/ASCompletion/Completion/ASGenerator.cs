@@ -1146,7 +1146,7 @@ namespace ASCompletion.Completion
 
                     position = sci.PositionFromLine(latest.LineTo + 1) - (sci.EOLMode == 0 ? 2 : 1);
                     sci.SetSel(position, position);
-                    string type = contextParam;
+                    var type = contextParam;
                     if (job == GeneratorJobType.BasicEvent)
                         type = itemLabel.Contains("DataEvent") ? "DataEvent" : "Event";
                     GenerateEventHandler(contextToken, type, member, position, inClass);
@@ -3649,10 +3649,7 @@ namespace ASCompletion.Completion
                 latest = FindLatest(FlagType.Function | FlagType.Static, access, inClass)
                          ?? FindLatest(FlagType.Function | FlagType.Static, 0, inClass, true, false);
             }
-            else
-            {
-                latest = FindLatest(FlagType.Function, access, inClass);
-            }
+            else latest = FindLatest(FlagType.Function, access, inClass);
             return latest 
                    ?? FindLatest(FlagType.Function, 0, inClass, true, false)
                    ?? FindLatest(FlagType.Function, 0, inClass, false, false);
@@ -3722,8 +3719,7 @@ namespace ASCompletion.Completion
                 }
 
             }
-            if (isFlagMatchStrict || isVisibilityMatchStrict)
-                fallback = null;
+            if (isFlagMatchStrict || isVisibilityMatchStrict) fallback = null;
             return latest ?? fallback;
         }
 

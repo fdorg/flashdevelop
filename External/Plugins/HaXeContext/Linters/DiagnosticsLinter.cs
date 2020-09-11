@@ -100,62 +100,56 @@ namespace HaXeContext.Linters
             ConfigurationLanguage = "haxe"
         };
 
-        void AddDiagnosticsResults(ICollection<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
+        static void AddDiagnosticsResults(ICollection<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
         {
-            if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
+            switch (status)
             {
-                foreach (var res in results)
-                {
-                    var range = res.Range ?? res.Args.Range;
-
-                    var result = new LintingResult
+                case HaxeCompleteStatus.DIAGNOSTICS when results != null:
+                    foreach (var res in results)
                     {
-                        File = range.Path,
-                        FirstChar = range.CharacterStart,
-                        Length = range.CharacterEnd - range.CharacterStart,
-                        Line = range.LineStart + 1,
-                    };
+                        var range = res.Range ?? res.Args.Range;
+                        var result = new LintingResult
+                        {
+                            File = range.Path,
+                            FirstChar = range.CharacterStart,
+                            Length = range.CharacterEnd - range.CharacterStart,
+                            Line = range.LineStart + 1,
+                        };
 
-                    switch (res.Severity)
-                    {
-                        case HaxeDiagnosticsSeverity.INFO:
-                            result.Severity = LintingSeverity.Info;
-                            break;
-                        case HaxeDiagnosticsSeverity.ERROR:
-                            result.Severity = LintingSeverity.Error;
-                            break;
-                        case HaxeDiagnosticsSeverity.WARNING:
-                            result.Severity = LintingSeverity.Warning;
-                            break;
-                        default:
-                            continue;
+                        switch (res.Severity)
+                        {
+                            case HaxeDiagnosticsSeverity.INFO:
+                                result.Severity = LintingSeverity.Info;
+                                break;
+                            case HaxeDiagnosticsSeverity.ERROR:
+                                result.Severity = LintingSeverity.Error;
+                                break;
+                            case HaxeDiagnosticsSeverity.WARNING:
+                                result.Severity = LintingSeverity.Warning;
+                                break;
+                            default: continue;
+                        }
+                        switch (res.Kind)
+                        {
+                            case HaxeDiagnosticsKind.UnusedImport:
+                                result.Description = TextHelper.GetString("Info.UnusedImport");
+                                break;
+                            case HaxeDiagnosticsKind.UnresolvedIdentifier:
+                                result.Description = TextHelper.GetString("Info.UnresolvedIdentifier");
+                                break;
+                            case HaxeDiagnosticsKind.CompilerError:
+                            case HaxeDiagnosticsKind.RemovableCode:
+                                result.Description = res.Args.Description;
+                                break;
+                            default: //in case new kinds are added in new compiler versions
+                                continue;
+                        }
+                        list.Add(result);
                     }
-
-                    switch (res.Kind)
-                    {
-                        case HaxeDiagnosticsKind.UnusedImport:
-                            result.Description = TextHelper.GetString("Info.UnusedImport");
-                            break;
-                        case HaxeDiagnosticsKind.UnresolvedIdentifier:
-                            result.Description = TextHelper.GetString("Info.UnresolvedIdentifier");
-                            break;
-                        case HaxeDiagnosticsKind.CompilerError:
-                        case HaxeDiagnosticsKind.RemovableCode:
-                            result.Description = res.Args.Description;
-                            break;
-                        default: //in case new kinds are added in new compiler versions
-                            continue;
-                    }
-                    
-                    list.Add(result);
-                }
-            }
-            else if (status == HaxeCompleteStatus.ERROR)
-            {
-                PluginBase.RunAsync(() =>
-                {
-                    TraceManager.Add(hc.Errors, (int)TraceType.Error);
-                });
+                    break;
+                case HaxeCompleteStatus.ERROR:
+                    PluginBase.RunAsync(() => TraceManager.Add(hc.Errors, (int)TraceType.Error));
+                    break;
             }
         }
     }
@@ -201,9 +195,7 @@ namespace HaXeContext.Linters
         {
             Task task = null;
             task = Task.Factory.StartNew(() => action(() => TaskFinished(task)));
-
             return task;
         }
-
     }
 }

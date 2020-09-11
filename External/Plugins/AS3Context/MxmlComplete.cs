@@ -26,7 +26,7 @@ namespace AS3Context
         #region shortcuts
         public static bool GotoDeclaration()
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci is null) return false;
             if (sci.ConfigurationLanguage != "xml") return false;
 
@@ -38,13 +38,11 @@ namespace AS3Context
                 if (c <= 32 || c == '/' || c == '>') break;
                 pos ++;
             }
-            XMLContextTag ctag = XMLComplete.GetXMLContextTag(sci, pos);
+            var ctag = XMLComplete.GetXMLContextTag(sci, pos);
             if (ctag.Name is null) return true;
             string word = sci.GetWordFromPosition(sci.CurrentPos);
-
             string type = ResolveType(mxmlContext, ctag.Name);
-            ClassModel model = context.ResolveType(type, mxmlContext.model);
-
+            var model = context.ResolveType(type, mxmlContext.model);
             if (model.IsVoid()) // try resolving tag as member of parent tag
             {
                 parentTag = XMLComplete.GetParentTag(sci, ctag);
@@ -60,14 +58,12 @@ namespace AS3Context
 
             if (word != null && !ctag.Name.EndsWithOrdinal(word))
             {
-                ASResult found = ResolveAttribute(model, word);
+                var found = ResolveAttribute(model, word);
                 ASComplete.OpenDocumentToDeclaration(sci, found);
             }
             else
             {
-                ASResult found = new ASResult();
-                found.InFile = model.InFile;
-                found.Type = model;
+                var found = new ASResult {InFile = model.InFile, Type = model};
                 ASComplete.OpenDocumentToDeclaration(sci, found);
             }
             return true;
@@ -163,30 +159,24 @@ namespace AS3Context
 
         public static bool HandleNamespace(object data)
         {
-            if (!GetContext(data) || string.IsNullOrEmpty(tagContext.Name)) 
-                return false;
-
-            int p = tagContext.Name.IndexOf(':');
+            if (!GetContext(data) || string.IsNullOrEmpty(tagContext.Name)) return false;
+            var p = tagContext.Name.IndexOf(':');
             if (p < 0) return false;
-            string ns = tagContext.Name.Substring(0, p);
-            if (!mxmlContext.namespaces.ContainsKey(ns)) 
-                return true;
-
-            string uri = mxmlContext.namespaces[ns];
-            List<ICompletionListItem> mix = new List<ICompletionListItem>();
-            List<string> excludes = new List<string>();
-
-            bool isContainer = AddParentAttributes(mix, excludes); // current tag attributes
-
+            var ns = tagContext.Name.Substring(0, p);
+            if (!mxmlContext.namespaces.ContainsKey(ns)) return true;
+            var uri = mxmlContext.namespaces[ns];
+            var mix = new List<ICompletionListItem>();
+            var excludes = new List<string>();
+            var isContainer = AddParentAttributes(mix, excludes); // current tag attributes
             if (isContainer && allTags.ContainsKey(ns)) // container children tags
                 foreach (string tag in allTags[ns])
                     mix.Add(new HtmlTagItem(tag, ns + ":" + tag, uri));
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());
-            List<ICompletionListItem> items = new List<ICompletionListItem>();
+            var items = new List<ICompletionListItem>();
             string previous = null;
-            foreach (ICompletionListItem item in mix)
+            foreach (var item in mix)
             {
                 if (previous == item.Label) continue;
                 previous = item.Label;
@@ -203,12 +193,9 @@ namespace AS3Context
         public static bool HandleElementClose(object data)
         {
             if (!GetContext(data)) return false;
-
             if (tagContext.Closing) return false;
-
-            string type = ResolveType(mxmlContext, tagContext.Name);
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-
+            var type = ResolveType(mxmlContext, tagContext.Name);
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (type.StartsWithOrdinal("mx.builtin.") || type.StartsWithOrdinal("fx.builtin.")) // special tags
             {
                 if (type.EndsWithOrdinal(".Script"))
@@ -237,28 +224,25 @@ namespace AS3Context
         public static bool HandleAttribute(object data)
         {
             if (!GetContext(data)) return false;
-
-            string type = ResolveType(mxmlContext, tagContext.Name);
-            ClassModel tagClass = context.ResolveType(type, mxmlContext.model);
+            var type = ResolveType(mxmlContext, tagContext.Name);
+            var tagClass = context.ResolveType(type, mxmlContext.model);
             if (tagClass.IsVoid()) return true;
             tagClass.ResolveExtends();
-
-            List<ICompletionListItem> mix = new List<ICompletionListItem>();
-            List<string> excludes = new List<string>();
+            var mix = new List<ICompletionListItem>();
+            var excludes = new List<string>();
             GetTagAttributes(tagClass, mix, excludes, null);
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());
-            List<ICompletionListItem> items = new List<ICompletionListItem>();
+            var items = new List<ICompletionListItem>();
             string previous = null;
-            foreach (ICompletionListItem item in mix)
+            foreach (var item in mix)
             {
                 if (previous == item.Label) continue;
                 previous = item.Label;
                 if (excludes.Contains(previous)) continue;
                 items.Add(item);
             }
-
             if (items.Count == 0) return true;
             if (!string.IsNullOrEmpty(tokenContext)) CompletionList.Show(items, false, tokenContext);
             else CompletionList.Show(items, true);
@@ -269,13 +253,11 @@ namespace AS3Context
         public static bool HandleAttributeValue(object data)
         {
             if (!GetContext(data)) return false;
-
-            string type = ResolveType(mxmlContext, tagContext.Name);
-            ClassModel tagClass = context.ResolveType(type, mxmlContext.model);
+            var type = ResolveType(mxmlContext, tagContext.Name);
+            var tagClass = context.ResolveType(type, mxmlContext.model);
             if (tagClass.IsVoid()) return true;
             tagClass.ResolveExtends();
-
-            StringBuilder caBuilder = new StringBuilder();
+            var caBuilder = new StringBuilder();
             bool possibleStartFound = false, startFound = false;
             for (int i = tagContext.Tag.Length - 1; i >= 0; i--)
             {
@@ -305,9 +287,9 @@ namespace AS3Context
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());
-            List<ICompletionListItem> items = new List<ICompletionListItem>();
+            var items = new List<ICompletionListItem>();
             string previous = null;
-            foreach (ICompletionListItem item in mix)
+            foreach (var item in mix)
             {
                 if (previous == item.Label) continue;
                 previous = item.Label;
@@ -323,11 +305,11 @@ namespace AS3Context
 
         static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
         {
-            ClassModel curClass = mxmlContext.model.GetPublicClass();
-            ClassModel tmpClass = tagClass;
-            FlagType mask = FlagType.Variable | FlagType.Setter;
-            Visibility acc = context.TypesAffinity(curClass, tmpClass);
-            bool isContainer = false;
+            var curClass = mxmlContext.model.GetPublicClass();
+            var tmpClass = tagClass;
+            var mask = FlagType.Variable | FlagType.Setter;
+            var acc = context.TypesAffinity(curClass, tmpClass);
+            var isContainer = false;
 
             if (tmpClass.InFile.Package != "mx.builtin" && tmpClass.InFile.Package != "fx.builtin")
                 mix.Add(new HtmlAttributeItem("id", "String", null, ns));

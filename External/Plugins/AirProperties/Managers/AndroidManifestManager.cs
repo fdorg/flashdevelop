@@ -102,7 +102,6 @@ namespace AirProperties
             {
                 backDoc.FirstChild.RemoveChild(usesSdkNode);
                 usesSdkNode = null;
-
                 return;
             }
 

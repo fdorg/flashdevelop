@@ -5,7 +5,7 @@ using PluginCore.Localization;
 
 namespace ProjectManager.Controls.AS2
 {
-    public class LibraryAssetDialog : System.Windows.Forms.Form
+    public class LibraryAssetDialog : Form
     {
         readonly bool isAS3;
         readonly bool isSWC;
@@ -14,31 +14,31 @@ namespace ProjectManager.Controls.AS2
 
         #region Windows Form Designer
 
-        System.Windows.Forms.TabControl tabControl;
-        System.Windows.Forms.TabPage swfTabPage;
-        System.Windows.Forms.RadioButton addPreloaderButton;
-        System.Windows.Forms.LinkLabel explainLink;
-        System.Windows.Forms.RadioButton sharedLibraryButton;
-        System.Windows.Forms.RadioButton addLibraryButton;
-        System.Windows.Forms.TabPage fontTabPage;
-        System.Windows.Forms.TextBox charactersTextBox;
-        System.Windows.Forms.RadioButton embedTheseButton;
-        System.Windows.Forms.RadioButton embedAllButton;
-        System.Windows.Forms.CheckBox autoIDBox;
-        System.Windows.Forms.TextBox idTextBox;
-        System.Windows.Forms.CheckBox keepUpdatedBox;
-        System.Windows.Forms.TextBox updatedTextBox;
-        System.Windows.Forms.Button cancelButton;
-        System.Windows.Forms.Button okButton;
-        System.Windows.Forms.Button browseButton;
-        System.Windows.Forms.CheckBox specifySharepointBox;
-        System.Windows.Forms.TextBox sharepointTextBox;
-        System.Windows.Forms.TabPage swcTabPage;
-        System.Windows.Forms.RadioButton swcIncOption;
-        System.Windows.Forms.RadioButton swcExtOption;
-        System.Windows.Forms.RadioButton swcLibOption;
-        System.Windows.Forms.CheckBox bitmapLinkageBox;
-        System.Windows.Forms.TabPage advancedTabPage;
+        TabControl tabControl;
+        TabPage swfTabPage;
+        RadioButton addPreloaderButton;
+        LinkLabel explainLink;
+        RadioButton sharedLibraryButton;
+        RadioButton addLibraryButton;
+        TabPage fontTabPage;
+        TextBox charactersTextBox;
+        RadioButton embedTheseButton;
+        RadioButton embedAllButton;
+        CheckBox autoIDBox;
+        TextBox idTextBox;
+        CheckBox keepUpdatedBox;
+        TextBox updatedTextBox;
+        Button cancelButton;
+        Button okButton;
+        Button browseButton;
+        CheckBox specifySharepointBox;
+        TextBox sharepointTextBox;
+        TabPage swcTabPage;
+        RadioButton swcIncOption;
+        RadioButton swcExtOption;
+        RadioButton swcLibOption;
+        CheckBox bitmapLinkageBox;
+        TabPage advancedTabPage;
         
         /// <summary>
         /// Required method for Designer support - do not modify
@@ -46,347 +46,347 @@ namespace ProjectManager.Controls.AS2
         /// </summary>
         void InitializeComponent()
         {
-            this.cancelButton = new System.Windows.Forms.ButtonEx();
-            this.okButton = new System.Windows.Forms.ButtonEx();
-            this.autoIDBox = new System.Windows.Forms.CheckBoxEx();
-            this.idTextBox = new System.Windows.Forms.TextBoxEx();
-            this.tabControl = new System.Windows.Forms.TabControl();
-            this.swfTabPage = new System.Windows.Forms.TabPage();
-            this.specifySharepointBox = new System.Windows.Forms.CheckBoxEx();
-            this.addPreloaderButton = new System.Windows.Forms.RadioButton();
-            this.explainLink = new System.Windows.Forms.LinkLabel();
-            this.sharepointTextBox = new System.Windows.Forms.TextBoxEx();
-            this.sharedLibraryButton = new System.Windows.Forms.RadioButton();
-            this.addLibraryButton = new System.Windows.Forms.RadioButton();
-            this.swcTabPage = new System.Windows.Forms.TabPage();
-            this.swcIncOption = new System.Windows.Forms.RadioButton();
-            this.swcExtOption = new System.Windows.Forms.RadioButton();
-            this.swcLibOption = new System.Windows.Forms.RadioButton();
-            this.fontTabPage = new System.Windows.Forms.TabPage();
-            this.charactersTextBox = new System.Windows.Forms.TextBoxEx();
-            this.embedTheseButton = new System.Windows.Forms.RadioButton();
-            this.embedAllButton = new System.Windows.Forms.RadioButton();
-            this.advancedTabPage = new System.Windows.Forms.TabPage();
-            this.browseButton = new System.Windows.Forms.ButtonEx();
-            this.updatedTextBox = new System.Windows.Forms.TextBoxEx();
-            this.keepUpdatedBox = new System.Windows.Forms.CheckBoxEx();
-            this.bitmapLinkageBox = new System.Windows.Forms.CheckBoxEx();
-            this.tabControl.SuspendLayout();
-            this.swfTabPage.SuspendLayout();
-            this.swcTabPage.SuspendLayout();
-            this.fontTabPage.SuspendLayout();
-            this.advancedTabPage.SuspendLayout();
-            this.SuspendLayout();
+            cancelButton = new ButtonEx();
+            okButton = new ButtonEx();
+            autoIDBox = new CheckBoxEx();
+            idTextBox = new TextBoxEx();
+            tabControl = new TabControl();
+            swfTabPage = new TabPage();
+            specifySharepointBox = new CheckBoxEx();
+            addPreloaderButton = new RadioButton();
+            explainLink = new LinkLabel();
+            sharepointTextBox = new TextBoxEx();
+            sharedLibraryButton = new RadioButton();
+            addLibraryButton = new RadioButton();
+            swcTabPage = new TabPage();
+            swcIncOption = new RadioButton();
+            swcExtOption = new RadioButton();
+            swcLibOption = new RadioButton();
+            fontTabPage = new TabPage();
+            charactersTextBox = new TextBoxEx();
+            embedTheseButton = new RadioButton();
+            embedAllButton = new RadioButton();
+            advancedTabPage = new TabPage();
+            browseButton = new ButtonEx();
+            updatedTextBox = new TextBoxEx();
+            keepUpdatedBox = new CheckBoxEx();
+            bitmapLinkageBox = new CheckBoxEx();
+            tabControl.SuspendLayout();
+            swfTabPage.SuspendLayout();
+            swcTabPage.SuspendLayout();
+            fontTabPage.SuspendLayout();
+            advancedTabPage.SuspendLayout();
+            SuspendLayout();
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelButton.Location = new System.Drawing.Point(239, 202);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 21);
-            this.cancelButton.TabIndex = 2;
-            this.cancelButton.Text = "&Cancel";
-            this.cancelButton.Click += this.cancelButton_Click;
+            cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            cancelButton.DialogResult = DialogResult.Cancel;
+            cancelButton.FlatStyle = FlatStyle.System;
+            cancelButton.Location = new System.Drawing.Point(239, 202);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 21);
+            cancelButton.TabIndex = 2;
+            cancelButton.Text = "&Cancel";
+            cancelButton.Click += cancelButton_Click;
             // 
             // okButton
             // 
-            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okButton.Location = new System.Drawing.Point(156, 202);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 21);
-            this.okButton.TabIndex = 1;
-            this.okButton.Text = "&OK";
-            this.okButton.Click += this.okButton_Click;
+            okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            okButton.FlatStyle = FlatStyle.System;
+            okButton.Location = new System.Drawing.Point(156, 202);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(75, 21);
+            okButton.TabIndex = 1;
+            okButton.Text = "&OK";
+            okButton.Click += okButton_Click;
             // 
             // autoIDBox
             // 
-            this.autoIDBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.autoIDBox.Checked = true;
-            this.autoIDBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.autoIDBox.Location = new System.Drawing.Point(16, 73);
-            this.autoIDBox.Name = "autoIDBox";
-            this.autoIDBox.Size = new System.Drawing.Size(266, 18);
-            this.autoIDBox.TabIndex = 0;
-            this.autoIDBox.Text = "Auto-generate &ID for attachMovie():";
-            this.autoIDBox.CheckedChanged += this.autoIDBox_CheckedChanged;
+            autoIDBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            autoIDBox.Checked = true;
+            autoIDBox.CheckState = CheckState.Checked;
+            autoIDBox.Location = new System.Drawing.Point(16, 73);
+            autoIDBox.Name = "autoIDBox";
+            autoIDBox.Size = new System.Drawing.Size(266, 18);
+            autoIDBox.TabIndex = 0;
+            autoIDBox.Text = "Auto-generate &ID for attachMovie():";
+            autoIDBox.CheckedChanged += autoIDBox_CheckedChanged;
             // 
             // idTextBox
             // 
-            this.idTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.idTextBox.Enabled = false;
-            this.idTextBox.Location = new System.Drawing.Point(34, 94);
-            this.idTextBox.Name = "idTextBox";
-            this.idTextBox.Size = new System.Drawing.Size(248, 20);
-            this.idTextBox.TabIndex = 1;
-            this.idTextBox.Text = "Library.WorkerGuy.png";
-            this.idTextBox.TextChanged += this.idTextBox_TextChanged;
+            idTextBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            idTextBox.Enabled = false;
+            idTextBox.Location = new System.Drawing.Point(34, 94);
+            idTextBox.Name = "idTextBox";
+            idTextBox.Size = new System.Drawing.Size(248, 20);
+            idTextBox.TabIndex = 1;
+            idTextBox.Text = "Library.WorkerGuy.png";
+            idTextBox.TextChanged += idTextBox_TextChanged;
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.tabControl.Controls.Add(this.swfTabPage);
-            this.tabControl.Controls.Add(this.swcTabPage);
-            this.tabControl.Controls.Add(this.fontTabPage);
-            this.tabControl.Controls.Add(this.advancedTabPage);
-            this.tabControl.Location = new System.Drawing.Point(10, 11);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(306, 185);
-            this.tabControl.TabIndex = 0;
+            tabControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
+            tabControl.Controls.Add(swfTabPage);
+            tabControl.Controls.Add(swcTabPage);
+            tabControl.Controls.Add(fontTabPage);
+            tabControl.Controls.Add(advancedTabPage);
+            tabControl.Location = new System.Drawing.Point(10, 11);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new System.Drawing.Size(306, 185);
+            tabControl.TabIndex = 0;
             // 
             // swfTabPage
             // 
-            this.swfTabPage.Controls.Add(this.specifySharepointBox);
-            this.swfTabPage.Controls.Add(this.addPreloaderButton);
-            this.swfTabPage.Controls.Add(this.explainLink);
-            this.swfTabPage.Controls.Add(this.sharepointTextBox);
-            this.swfTabPage.Controls.Add(this.sharedLibraryButton);
-            this.swfTabPage.Controls.Add(this.addLibraryButton);
-            this.swfTabPage.Location = new System.Drawing.Point(4, 22);
-            this.swfTabPage.Name = "swfTabPage";
-            this.swfTabPage.Size = new System.Drawing.Size(298, 159);
-            this.swfTabPage.TabIndex = 2;
-            this.swfTabPage.Text = "SWF File";
-            this.swfTabPage.UseVisualStyleBackColor = true;
+            swfTabPage.Controls.Add(specifySharepointBox);
+            swfTabPage.Controls.Add(addPreloaderButton);
+            swfTabPage.Controls.Add(explainLink);
+            swfTabPage.Controls.Add(sharepointTextBox);
+            swfTabPage.Controls.Add(sharedLibraryButton);
+            swfTabPage.Controls.Add(addLibraryButton);
+            swfTabPage.Location = new System.Drawing.Point(4, 22);
+            swfTabPage.Name = "swfTabPage";
+            swfTabPage.Size = new System.Drawing.Size(298, 159);
+            swfTabPage.TabIndex = 2;
+            swfTabPage.Text = "SWF File";
+            swfTabPage.UseVisualStyleBackColor = true;
             // 
             // specifySharepointBox
             // 
-            this.specifySharepointBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.specifySharepointBox.BackColor = System.Drawing.Color.Transparent;
-            this.specifySharepointBox.Location = new System.Drawing.Point(35, 81);
-            this.specifySharepointBox.Name = "specifySharepointBox";
-            this.specifySharepointBox.Size = new System.Drawing.Size(197, 18);
-            this.specifySharepointBox.TabIndex = 3;
-            this.specifySharepointBox.Text = "&Specify sharepoint ID:";
-            this.specifySharepointBox.UseVisualStyleBackColor = false;
-            this.specifySharepointBox.CheckedChanged += this.specifySharepointBox_CheckedChanged;
+            specifySharepointBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            specifySharepointBox.BackColor = System.Drawing.Color.Transparent;
+            specifySharepointBox.Location = new System.Drawing.Point(35, 81);
+            specifySharepointBox.Name = "specifySharepointBox";
+            specifySharepointBox.Size = new System.Drawing.Size(197, 18);
+            specifySharepointBox.TabIndex = 3;
+            specifySharepointBox.Text = "&Specify sharepoint ID:";
+            specifySharepointBox.UseVisualStyleBackColor = false;
+            specifySharepointBox.CheckedChanged += specifySharepointBox_CheckedChanged;
             // 
             // addPreloaderButton
             // 
-            this.addPreloaderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.addPreloaderButton.Location = new System.Drawing.Point(16, 36);
-            this.addPreloaderButton.Name = "addPreloaderButton";
-            this.addPreloaderButton.Size = new System.Drawing.Size(184, 16);
-            this.addPreloaderButton.TabIndex = 1;
-            this.addPreloaderButton.Text = " Add as &preloader";
-            this.addPreloaderButton.CheckedChanged += this.addPreloaderButton_CheckedChanged;
+            addPreloaderButton.FlatStyle = FlatStyle.System;
+            addPreloaderButton.Location = new System.Drawing.Point(16, 36);
+            addPreloaderButton.Name = "addPreloaderButton";
+            addPreloaderButton.Size = new System.Drawing.Size(184, 16);
+            addPreloaderButton.TabIndex = 1;
+            addPreloaderButton.Text = " Add as &preloader";
+            addPreloaderButton.CheckedChanged += addPreloaderButton_CheckedChanged;
             // 
             // explainLink
             // 
-            this.explainLink.Location = new System.Drawing.Point(155, 8);
-            this.explainLink.Name = "explainLink";
-            this.explainLink.Size = new System.Drawing.Size(136, 16);
-            this.explainLink.TabIndex = 5;
-            this.explainLink.TabStop = true;
-            this.explainLink.Text = "Explain these options";
-            this.explainLink.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.explainLink.LinkClicked += this.explainLink_LinkClicked;
+            explainLink.Location = new System.Drawing.Point(155, 8);
+            explainLink.Name = "explainLink";
+            explainLink.Size = new System.Drawing.Size(136, 16);
+            explainLink.TabIndex = 5;
+            explainLink.TabStop = true;
+            explainLink.Text = "Explain these options";
+            explainLink.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            explainLink.LinkClicked += explainLink_LinkClicked;
             // 
             // sharepointTextBox
             // 
-            this.sharepointTextBox.Enabled = false;
-            this.sharepointTextBox.Location = new System.Drawing.Point(35, 102);
-            this.sharepointTextBox.Name = "sharepointTextBox";
-            this.sharepointTextBox.Size = new System.Drawing.Size(197, 20);
-            this.sharepointTextBox.TabIndex = 4;
-            this.sharepointTextBox.TextChanged += this.sharepointTextBox_TextChanged;
+            sharepointTextBox.Enabled = false;
+            sharepointTextBox.Location = new System.Drawing.Point(35, 102);
+            sharepointTextBox.Name = "sharepointTextBox";
+            sharepointTextBox.Size = new System.Drawing.Size(197, 20);
+            sharepointTextBox.TabIndex = 4;
+            sharepointTextBox.TextChanged += sharepointTextBox_TextChanged;
             // 
             // sharedLibraryButton
             // 
-            this.sharedLibraryButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.sharedLibraryButton.Location = new System.Drawing.Point(16, 57);
-            this.sharedLibraryButton.Name = "sharedLibraryButton";
-            this.sharedLibraryButton.Size = new System.Drawing.Size(224, 16);
-            this.sharedLibraryButton.TabIndex = 2;
-            this.sharedLibraryButton.Text = " Load at &runtime (shared library)";
-            this.sharedLibraryButton.CheckedChanged += this.sharedLibraryButton_CheckedChanged;
+            sharedLibraryButton.FlatStyle = FlatStyle.System;
+            sharedLibraryButton.Location = new System.Drawing.Point(16, 57);
+            sharedLibraryButton.Name = "sharedLibraryButton";
+            sharedLibraryButton.Size = new System.Drawing.Size(224, 16);
+            sharedLibraryButton.TabIndex = 2;
+            sharedLibraryButton.Text = " Load at &runtime (shared library)";
+            sharedLibraryButton.CheckedChanged += sharedLibraryButton_CheckedChanged;
             // 
             // addLibraryButton
             // 
-            this.addLibraryButton.Checked = true;
-            this.addLibraryButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.addLibraryButton.Location = new System.Drawing.Point(16, 16);
-            this.addLibraryButton.Name = "addLibraryButton";
-            this.addLibraryButton.Size = new System.Drawing.Size(112, 16);
-            this.addLibraryButton.TabIndex = 0;
-            this.addLibraryButton.TabStop = true;
-            this.addLibraryButton.Text = " Add to &library";
-            this.addLibraryButton.CheckedChanged += this.addLibraryButton_CheckedChanged;
+            addLibraryButton.Checked = true;
+            addLibraryButton.FlatStyle = FlatStyle.System;
+            addLibraryButton.Location = new System.Drawing.Point(16, 16);
+            addLibraryButton.Name = "addLibraryButton";
+            addLibraryButton.Size = new System.Drawing.Size(112, 16);
+            addLibraryButton.TabIndex = 0;
+            addLibraryButton.TabStop = true;
+            addLibraryButton.Text = " Add to &library";
+            addLibraryButton.CheckedChanged += addLibraryButton_CheckedChanged;
             // 
             // swcTabPage
             // 
-            this.swcTabPage.Controls.Add(this.swcIncOption);
-            this.swcTabPage.Controls.Add(this.swcExtOption);
-            this.swcTabPage.Controls.Add(this.swcLibOption);
-            this.swcTabPage.Location = new System.Drawing.Point(4, 22);
-            this.swcTabPage.Name = "swcTabPage";
-            this.swcTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.swcTabPage.Size = new System.Drawing.Size(298, 159);
-            this.swcTabPage.TabIndex = 3;
-            this.swcTabPage.Text = "SWC File";
-            this.swcTabPage.UseVisualStyleBackColor = true;
+            swcTabPage.Controls.Add(swcIncOption);
+            swcTabPage.Controls.Add(swcExtOption);
+            swcTabPage.Controls.Add(swcLibOption);
+            swcTabPage.Location = new System.Drawing.Point(4, 22);
+            swcTabPage.Name = "swcTabPage";
+            swcTabPage.Padding = new Padding(3);
+            swcTabPage.Size = new System.Drawing.Size(298, 159);
+            swcTabPage.TabIndex = 3;
+            swcTabPage.Text = "SWC File";
+            swcTabPage.UseVisualStyleBackColor = true;
             // 
             // swcIncOption
             // 
-            this.swcIncOption.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.swcIncOption.Location = new System.Drawing.Point(16, 36);
-            this.swcIncOption.Name = "swcIncOption";
-            this.swcIncOption.Size = new System.Drawing.Size(250, 16);
-            this.swcIncOption.TabIndex = 4;
-            this.swcIncOption.Text = "&Included library (include completely)";
-            this.swcIncOption.CheckedChanged += this.swcLibOption_CheckedChanged;
+            swcIncOption.FlatStyle = FlatStyle.System;
+            swcIncOption.Location = new System.Drawing.Point(16, 36);
+            swcIncOption.Name = "swcIncOption";
+            swcIncOption.Size = new System.Drawing.Size(250, 16);
+            swcIncOption.TabIndex = 4;
+            swcIncOption.Text = "&Included library (include completely)";
+            swcIncOption.CheckedChanged += swcLibOption_CheckedChanged;
             // 
             // swcExtOption
             // 
-            this.swcExtOption.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.swcExtOption.Location = new System.Drawing.Point(16, 57);
-            this.swcExtOption.Name = "swcExtOption";
-            this.swcExtOption.Size = new System.Drawing.Size(250, 16);
-            this.swcExtOption.TabIndex = 5;
-            this.swcExtOption.Text = "&External library (not included)";
-            this.swcExtOption.CheckedChanged += this.swcLibOption_CheckedChanged;
+            swcExtOption.FlatStyle = FlatStyle.System;
+            swcExtOption.Location = new System.Drawing.Point(16, 57);
+            swcExtOption.Name = "swcExtOption";
+            swcExtOption.Size = new System.Drawing.Size(250, 16);
+            swcExtOption.TabIndex = 5;
+            swcExtOption.Text = "&External library (not included)";
+            swcExtOption.CheckedChanged += swcLibOption_CheckedChanged;
             // 
             // swcLibOption
             // 
-            this.swcLibOption.Checked = true;
-            this.swcLibOption.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.swcLibOption.Location = new System.Drawing.Point(16, 16);
-            this.swcLibOption.Name = "swcLibOption";
-            this.swcLibOption.Size = new System.Drawing.Size(250, 16);
-            this.swcLibOption.TabIndex = 3;
-            this.swcLibOption.TabStop = true;
-            this.swcLibOption.Text = "&Library (include referenced classes)";
-            this.swcLibOption.CheckedChanged += this.swcLibOption_CheckedChanged;
+            swcLibOption.Checked = true;
+            swcLibOption.FlatStyle = FlatStyle.System;
+            swcLibOption.Location = new System.Drawing.Point(16, 16);
+            swcLibOption.Name = "swcLibOption";
+            swcLibOption.Size = new System.Drawing.Size(250, 16);
+            swcLibOption.TabIndex = 3;
+            swcLibOption.TabStop = true;
+            swcLibOption.Text = "&Library (include referenced classes)";
+            swcLibOption.CheckedChanged += swcLibOption_CheckedChanged;
             // 
             // fontTabPage
             // 
-            this.fontTabPage.Controls.Add(this.charactersTextBox);
-            this.fontTabPage.Controls.Add(this.embedTheseButton);
-            this.fontTabPage.Controls.Add(this.embedAllButton);
-            this.fontTabPage.Location = new System.Drawing.Point(4, 22);
-            this.fontTabPage.Name = "fontTabPage";
-            this.fontTabPage.Size = new System.Drawing.Size(298, 159);
-            this.fontTabPage.TabIndex = 1;
-            this.fontTabPage.Text = "Font";
-            this.fontTabPage.UseVisualStyleBackColor = true;
+            fontTabPage.Controls.Add(charactersTextBox);
+            fontTabPage.Controls.Add(embedTheseButton);
+            fontTabPage.Controls.Add(embedAllButton);
+            fontTabPage.Location = new System.Drawing.Point(4, 22);
+            fontTabPage.Name = "fontTabPage";
+            fontTabPage.Size = new System.Drawing.Size(298, 159);
+            fontTabPage.TabIndex = 1;
+            fontTabPage.Text = "Font";
+            fontTabPage.UseVisualStyleBackColor = true;
             // 
             // charactersTextBox
             // 
-            this.charactersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.charactersTextBox.Location = new System.Drawing.Point(35, 64);
-            this.charactersTextBox.Multiline = true;
-            this.charactersTextBox.Name = "charactersTextBox";
-            this.charactersTextBox.Size = new System.Drawing.Size(247, 79);
-            this.charactersTextBox.TabIndex = 2;
-            this.charactersTextBox.TextChanged += this.charactersTextBox_TextChanged;
+            charactersTextBox.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
+            charactersTextBox.Location = new System.Drawing.Point(35, 64);
+            charactersTextBox.Multiline = true;
+            charactersTextBox.Name = "charactersTextBox";
+            charactersTextBox.Size = new System.Drawing.Size(247, 79);
+            charactersTextBox.TabIndex = 2;
+            charactersTextBox.TextChanged += charactersTextBox_TextChanged;
             // 
             // embedTheseButton
             // 
-            this.embedTheseButton.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.embedTheseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.embedTheseButton.Location = new System.Drawing.Point(16, 36);
-            this.embedTheseButton.Name = "embedTheseButton";
-            this.embedTheseButton.Size = new System.Drawing.Size(266, 16);
-            this.embedTheseButton.TabIndex = 1;
-            this.embedTheseButton.Text = " Embed &these characters:";
-            this.embedTheseButton.CheckedChanged += this.embedTheseButton_CheckedChanged;
+            embedTheseButton.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            embedTheseButton.FlatStyle = FlatStyle.System;
+            embedTheseButton.Location = new System.Drawing.Point(16, 36);
+            embedTheseButton.Name = "embedTheseButton";
+            embedTheseButton.Size = new System.Drawing.Size(266, 16);
+            embedTheseButton.TabIndex = 1;
+            embedTheseButton.Text = " Embed &these characters:";
+            embedTheseButton.CheckedChanged += embedTheseButton_CheckedChanged;
             // 
             // embedAllButton
             // 
-            this.embedAllButton.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.embedAllButton.Checked = true;
-            this.embedAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.embedAllButton.Location = new System.Drawing.Point(16, 16);
-            this.embedAllButton.Name = "embedAllButton";
-            this.embedAllButton.Size = new System.Drawing.Size(258, 16);
-            this.embedAllButton.TabIndex = 0;
-            this.embedAllButton.TabStop = true;
-            this.embedAllButton.Text = " Embed &all characters";
-            this.embedAllButton.CheckedChanged += this.embedAllButton_CheckedChanged;
+            embedAllButton.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            embedAllButton.Checked = true;
+            embedAllButton.FlatStyle = FlatStyle.System;
+            embedAllButton.Location = new System.Drawing.Point(16, 16);
+            embedAllButton.Name = "embedAllButton";
+            embedAllButton.Size = new System.Drawing.Size(258, 16);
+            embedAllButton.TabIndex = 0;
+            embedAllButton.TabStop = true;
+            embedAllButton.Text = " Embed &all characters";
+            embedAllButton.CheckedChanged += embedAllButton_CheckedChanged;
             // 
             // advancedTabPage
             // 
-            this.advancedTabPage.Controls.Add(this.bitmapLinkageBox);
-            this.advancedTabPage.Controls.Add(this.browseButton);
-            this.advancedTabPage.Controls.Add(this.updatedTextBox);
-            this.advancedTabPage.Controls.Add(this.keepUpdatedBox);
-            this.advancedTabPage.Controls.Add(this.autoIDBox);
-            this.advancedTabPage.Controls.Add(this.idTextBox);
-            this.advancedTabPage.Location = new System.Drawing.Point(4, 22);
-            this.advancedTabPage.Name = "advancedTabPage";
-            this.advancedTabPage.Size = new System.Drawing.Size(298, 159);
-            this.advancedTabPage.TabIndex = 0;
-            this.advancedTabPage.Text = "Advanced";
-            this.advancedTabPage.UseVisualStyleBackColor = true;
+            advancedTabPage.Controls.Add(bitmapLinkageBox);
+            advancedTabPage.Controls.Add(browseButton);
+            advancedTabPage.Controls.Add(updatedTextBox);
+            advancedTabPage.Controls.Add(keepUpdatedBox);
+            advancedTabPage.Controls.Add(autoIDBox);
+            advancedTabPage.Controls.Add(idTextBox);
+            advancedTabPage.Location = new System.Drawing.Point(4, 22);
+            advancedTabPage.Name = "advancedTabPage";
+            advancedTabPage.Size = new System.Drawing.Size(298, 159);
+            advancedTabPage.TabIndex = 0;
+            advancedTabPage.Text = "Advanced";
+            advancedTabPage.UseVisualStyleBackColor = true;
             // 
             // browseButton
             // 
-            this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.browseButton.Location = new System.Drawing.Point(210, 35);
-            this.browseButton.Name = "browseButton";
-            this.browseButton.Size = new System.Drawing.Size(72, 21);
-            this.browseButton.TabIndex = 4;
-            this.browseButton.Text = "&Browse...";
-            this.browseButton.Click += this.browseButton_Click;
+            browseButton.FlatStyle = FlatStyle.System;
+            browseButton.Location = new System.Drawing.Point(210, 35);
+            browseButton.Name = "browseButton";
+            browseButton.Size = new System.Drawing.Size(72, 21);
+            browseButton.TabIndex = 4;
+            browseButton.Text = "&Browse...";
+            browseButton.Click += browseButton_Click;
             // 
             // updatedTextBox
             // 
-            this.updatedTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.updatedTextBox.Enabled = false;
-            this.updatedTextBox.Location = new System.Drawing.Point(34, 37);
-            this.updatedTextBox.Name = "updatedTextBox";
-            this.updatedTextBox.Size = new System.Drawing.Size(170, 20);
-            this.updatedTextBox.TabIndex = 3;
-            this.updatedTextBox.TextChanged += this.updatedTextBox_TextChanged;
+            updatedTextBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            updatedTextBox.Enabled = false;
+            updatedTextBox.Location = new System.Drawing.Point(34, 37);
+            updatedTextBox.Name = "updatedTextBox";
+            updatedTextBox.Size = new System.Drawing.Size(170, 20);
+            updatedTextBox.TabIndex = 3;
+            updatedTextBox.TextChanged += updatedTextBox_TextChanged;
             // 
             // keepUpdatedBox
             // 
-            this.keepUpdatedBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.keepUpdatedBox.Location = new System.Drawing.Point(16, 16);
-            this.keepUpdatedBox.Name = "keepUpdatedBox";
-            this.keepUpdatedBox.Size = new System.Drawing.Size(266, 18);
-            this.keepUpdatedBox.TabIndex = 2;
-            this.keepUpdatedBox.Text = "&Keep updated by copying source file:";
-            this.keepUpdatedBox.CheckedChanged += this.keepUpdatedBox_CheckedChanged;
+            keepUpdatedBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            keepUpdatedBox.Location = new System.Drawing.Point(16, 16);
+            keepUpdatedBox.Name = "keepUpdatedBox";
+            keepUpdatedBox.Size = new System.Drawing.Size(266, 18);
+            keepUpdatedBox.TabIndex = 2;
+            keepUpdatedBox.Text = "&Keep updated by copying source file:";
+            keepUpdatedBox.CheckedChanged += keepUpdatedBox_CheckedChanged;
             // 
             // bitmapLinkageBox
             // 
-            this.bitmapLinkageBox.AutoSize = true;
-            this.bitmapLinkageBox.Location = new System.Drawing.Point(16, 125);
-            this.bitmapLinkageBox.Name = "bitmapLinkageBox";
-            this.bitmapLinkageBox.Size = new System.Drawing.Size(174, 17);
-            this.bitmapLinkageBox.TabIndex = 5;
-            this.bitmapLinkageBox.Text = "Embed as Bitmap instead of Clip";
-            this.bitmapLinkageBox.UseVisualStyleBackColor = true;
+            bitmapLinkageBox.AutoSize = true;
+            bitmapLinkageBox.Location = new System.Drawing.Point(16, 125);
+            bitmapLinkageBox.Name = "bitmapLinkageBox";
+            bitmapLinkageBox.Size = new System.Drawing.Size(174, 17);
+            bitmapLinkageBox.TabIndex = 5;
+            bitmapLinkageBox.Text = "Embed as Bitmap instead of Clip";
+            bitmapLinkageBox.UseVisualStyleBackColor = true;
             // 
             // LibraryAssetDialog
             // 
-            this.AcceptButton = this.okButton;
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(324, 235);
-            this.Controls.Add(this.tabControl);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.okButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "LibraryAssetDialog";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Library Asset Properties";
-            this.tabControl.ResumeLayout(false);
-            this.swfTabPage.ResumeLayout(false);
-            this.swfTabPage.PerformLayout();
-            this.swcTabPage.ResumeLayout(false);
-            this.fontTabPage.ResumeLayout(false);
-            this.fontTabPage.PerformLayout();
-            this.advancedTabPage.ResumeLayout(false);
-            this.advancedTabPage.PerformLayout();
-            this.ResumeLayout(false);
+            AcceptButton = okButton;
+            AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            CancelButton = cancelButton;
+            ClientSize = new System.Drawing.Size(324, 235);
+            Controls.Add(tabControl);
+            Controls.Add(cancelButton);
+            Controls.Add(okButton);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "LibraryAssetDialog";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Library Asset Properties";
+            tabControl.ResumeLayout(false);
+            swfTabPage.ResumeLayout(false);
+            swfTabPage.PerformLayout();
+            swcTabPage.ResumeLayout(false);
+            fontTabPage.ResumeLayout(false);
+            fontTabPage.PerformLayout();
+            advancedTabPage.ResumeLayout(false);
+            advancedTabPage.PerformLayout();
+            ResumeLayout(false);
 
         }
         #endregion
@@ -394,7 +394,7 @@ namespace ProjectManager.Controls.AS2
         public LibraryAssetDialog(LibraryAsset asset, Project project)
         {
             this.asset = asset;
-            this.Text = "\"" + System.IO.Path.GetFileName(asset.Path) + "\"";
+            Text = "\"" + System.IO.Path.GetFileName(asset.Path) + "\"";
             InitializeComponent();
             isAS3 = (project.Language == "as3");
             isSWC = asset.IsSwc 
@@ -455,31 +455,31 @@ namespace ProjectManager.Controls.AS2
 
             EnableDisable();
             InitializeLocalization();
-            this.Font = PluginCore.PluginBase.Settings.DefaultFont;
+            Font = PluginCore.PluginBase.Settings.DefaultFont;
         }
 
         void InitializeLocalization()
         {
-            this.okButton.Text = TextHelper.GetString("Label.OK");
-            this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            this.fontTabPage.Text = TextHelper.GetString("Label.Font");
-            this.swfTabPage.Text = TextHelper.GetString("Label.SwfFile");
-            this.browseButton.Text = TextHelper.GetString("Label.Browse");
-            this.advancedTabPage.Text = TextHelper.GetString("Label.Advanced");
-            this.autoIDBox.Text = TextHelper.GetString("Label.AutoGenerateID");
-            this.addPreloaderButton.Text = TextHelper.GetString("Label.AddAsPreloader");
-            this.explainLink.Text = TextHelper.GetString("Label.ExplainTheseOptions");
-            this.addLibraryButton.Text = TextHelper.GetString("Info.AddToLibrary");
-            this.specifySharepointBox.Text = TextHelper.GetString("Label.SpecifySharePointID");
-            this.sharedLibraryButton.Text = TextHelper.GetString("Label.LoadAtRuntime");
-            this.embedTheseButton.Text = TextHelper.GetString("Label.EmbedTheseChars");
-            this.embedAllButton.Text = TextHelper.GetString("Label.EmbedAllChars");
-            this.keepUpdatedBox.Text = TextHelper.GetString("Label.KeepUpdatedBySourceFile");
-            this.bitmapLinkageBox.Text = TextHelper.GetString("Label.EmbedAsBitmap");
-            this.swcLibOption.Text = TextHelper.GetString("Label.SwcLibraryOption");
-            this.swcIncOption.Text = TextHelper.GetString("Label.SwcIncludedLibraryOption");
-            this.swcExtOption.Text = TextHelper.GetString("Label.SwcExternalLibraryOption");
-            this.Text = " " + TextHelper.GetString("Title.LibraryAssetProperties");
+            okButton.Text = TextHelper.GetString("Label.OK");
+            cancelButton.Text = TextHelper.GetString("Label.Cancel");
+            fontTabPage.Text = TextHelper.GetString("Label.Font");
+            swfTabPage.Text = TextHelper.GetString("Label.SwfFile");
+            browseButton.Text = TextHelper.GetString("Label.Browse");
+            advancedTabPage.Text = TextHelper.GetString("Label.Advanced");
+            autoIDBox.Text = TextHelper.GetString("Label.AutoGenerateID");
+            addPreloaderButton.Text = TextHelper.GetString("Label.AddAsPreloader");
+            explainLink.Text = TextHelper.GetString("Label.ExplainTheseOptions");
+            addLibraryButton.Text = TextHelper.GetString("Info.AddToLibrary");
+            specifySharepointBox.Text = TextHelper.GetString("Label.SpecifySharePointID");
+            sharedLibraryButton.Text = TextHelper.GetString("Label.LoadAtRuntime");
+            embedTheseButton.Text = TextHelper.GetString("Label.EmbedTheseChars");
+            embedAllButton.Text = TextHelper.GetString("Label.EmbedAllChars");
+            keepUpdatedBox.Text = TextHelper.GetString("Label.KeepUpdatedBySourceFile");
+            bitmapLinkageBox.Text = TextHelper.GetString("Label.EmbedAsBitmap");
+            swcLibOption.Text = TextHelper.GetString("Label.SwcLibraryOption");
+            swcIncOption.Text = TextHelper.GetString("Label.SwcIncludedLibraryOption");
+            swcExtOption.Text = TextHelper.GetString("Label.SwcExternalLibraryOption");
+            Text = " " + TextHelper.GetString("Title.LibraryAssetProperties");
         }
 
         void EnableDisable()
@@ -524,58 +524,56 @@ namespace ProjectManager.Controls.AS2
             EnableDisable();
         }
 
-        void okButton_Click(object sender, System.EventArgs e)
+        void okButton_Click(object sender, EventArgs e)
         {
             if (modified && !isSWC) Apply();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        void cancelButton_Click(object sender, System.EventArgs e)
+        void cancelButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
-        void explainLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+        void explainLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
 
         }
 
         #region Various Change Events
 
-        void addLibraryButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        void addPreloaderButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        void sharedLibraryButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        void sharepointTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
-        void embedAllButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        void embedTheseButton_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
-        void charactersTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
-        void idTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
-        void updatedTextBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        void addLibraryButton_CheckedChanged(object sender, EventArgs e) { Modified(); }
+        void addPreloaderButton_CheckedChanged(object sender, EventArgs e) { Modified(); }
+        void sharedLibraryButton_CheckedChanged(object sender, EventArgs e) { Modified(); }
+        void sharepointTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        void embedAllButton_CheckedChanged(object sender, EventArgs e) { Modified(); }
+        void embedTheseButton_CheckedChanged(object sender, EventArgs e) { Modified(); }
+        void charactersTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        void idTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        void updatedTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
         #endregion
 
-        void specifySharepointBox_CheckedChanged(object sender, System.EventArgs e)
+        void specifySharepointBox_CheckedChanged(object sender, EventArgs e)
         {
             Modified();
             if (specifySharepointBox.Checked)
                 sharepointTextBox.Focus();
         }
 
-        void keepUpdatedBox_CheckedChanged(object sender, System.EventArgs e)
+        void keepUpdatedBox_CheckedChanged(object sender, EventArgs e)
         {
             Modified();
             if (keepUpdatedBox.Checked)
                 browseButton.Focus();
         }
 
-        void autoIDBox_CheckedChanged(object sender, System.EventArgs e)
+        void autoIDBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (autoIDBox.Checked)
-                idTextBox.Text = asset.GetAutoID();
-            else
-                idTextBox.Text = asset.ManualID ?? asset.GetAutoID();
+            if (autoIDBox.Checked) idTextBox.Text = asset.GetAutoID();
+            else idTextBox.Text = asset.ManualID ?? asset.GetAutoID();
 
             Modified();
 
@@ -583,7 +581,7 @@ namespace ProjectManager.Controls.AS2
                 idTextBox.Focus();
         }
 
-        void browseButton_Click(object sender, System.EventArgs e)
+        void browseButton_Click(object sender, EventArgs e)
         {
             using var dialog = new OpenFileDialog();
             dialog.Filter = TextHelper.GetString("Info.FileFilter");

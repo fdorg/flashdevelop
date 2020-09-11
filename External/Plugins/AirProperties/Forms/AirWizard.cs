@@ -1336,7 +1336,8 @@ namespace AirProperties
         void FillAndroidManifestFields()
         {
             MinimumAndroidOsField.Text = androidManifest.UsesSdk is null || androidManifest.UsesSdk.MinSdkVersion <= 0
-                                             ? string.Empty : androidManifest.UsesSdk.MinSdkVersion.ToString();
+                ? string.Empty
+                : androidManifest.UsesSdk.MinSdkVersion.ToString();
 
             for (int i = 0, count = AndroidUserPermissionsList.Items.Count; i < count; i++)
             {
@@ -1346,22 +1347,18 @@ namespace AirProperties
             }
         }
 
-        static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
+        static byte[] UnzipFile(ZipFile file, ZipEntry entry)
         {
-            Stream stream = zfile.GetInputStream(entry);
-            byte[] data = new byte[entry.Size];
-            int length = stream.Read(data, 0, (int)entry.Size);
-            if (length != entry.Size)
-                throw new Exception("Corrupted archive");
+            var stream = file.GetInputStream(entry);
+            var data = new byte[entry.Size];
+            var length = stream.Read(data, 0, (int)entry.Size);
+            if (length != entry.Size) throw new Exception("Corrupted archive");
             return data;
         }
 
         #region Event Handlers
 
-        void CancelButton_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+        void CancelButton_Click(object sender, EventArgs e) => Close();
 
         void OKButton_Click(object sender, EventArgs e)
         {
@@ -1382,18 +1379,15 @@ namespace AirProperties
             System.Diagnostics.Process.Start("http://help.adobe.com/en_US/air/build/WS5b3ccc516d4fbf351e63e3d118666ade46-7ff1.html");
         }
 
-        void SystemChromeField_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ValidateSystemChrome();
-        }
+        void SystemChromeField_SelectedIndexChanged(object sender, EventArgs e) => ValidateSystemChrome();
 
         void AppIconButtonClick(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
-            string size = btn.Name.Replace("AppIconButton", "");
+            var btn = (Button)sender;
+            var size = btn.Name.Replace("AppIconButton", "");
             if (CheckUniformFileNamePrefix(true) && OpenIconFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Control[] controls = AppIconsPanel.Controls.Find("AppIconField" + size, true);
+                var controls = AppIconsPanel.Controls.Find("AppIconField" + size, true);
                 if (controls.Length > 0)
                 {
                     TextBox filePath = (TextBox)controls[0];
@@ -1509,12 +1503,10 @@ namespace AirProperties
 
         void RemoveFileTypeButton_Click(object sender, EventArgs e)
         {
-            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-            if (selectedFileType != null)
-            {
-                _fileTypes.Remove(selectedFileType);
-                FileTypesListView.Items.RemoveAt(FileTypesListView.SelectedIndices[0]);
-            }
+            var selectedFileType = GetSelectedFileType();
+            if (selectedFileType is null) return;
+            _fileTypes.Remove(selectedFileType);
+            FileTypesListView.Items.RemoveAt(FileTypesListView.SelectedIndices[0]);
         }
 
         void ExtensionsListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -1528,11 +1520,11 @@ namespace AirProperties
         void ExtensionAddButton_Click(object sender, EventArgs e)
         {
             //create new file type and call validate extensions to set validation flags
-            PropertyManager.AirExtension extension = new PropertyManager.AirExtension();
+            var extension = new PropertyManager.AirExtension();
             _extensions.Add(extension);
             ValidateExtensions();
             //add the item to the list view and select it
-            ListViewItem extensionListItem = new ListViewItem(extension.ExtensionId);
+            var extensionListItem = new ListViewItem(extension.ExtensionId);
             ExtensionsListView.Items.Add(extensionListItem);
             ExtensionsListView.SelectedIndices.Clear();
             ExtensionsListView.Items[ExtensionsListView.Items.Count - 1].Selected = true;
@@ -1541,20 +1533,18 @@ namespace AirProperties
 
         void ExtensionRemoveButton_Click(object sender, EventArgs e)
         {
-            PropertyManager.AirExtension selectedExtension = GetSelectedExtension();
-            if (selectedExtension != null)
-            {
-                _extensions.Remove(selectedExtension);
-                ExtensionsListView.Items.RemoveAt(ExtensionsListView.SelectedIndices[0]);
+            var selectedExtension = GetSelectedExtension();
+            if (selectedExtension is null) return;
+            _extensions.Remove(selectedExtension);
+            ExtensionsListView.Items.RemoveAt(ExtensionsListView.SelectedIndices[0]);
 
-                if (!string.IsNullOrEmpty(selectedExtension.Path) && !_removedExtensions.Contains(selectedExtension.Path))
-                    _removedExtensions.Add(selectedExtension.Path);
-            }
+            if (!string.IsNullOrEmpty(selectedExtension.Path) && !_removedExtensions.Contains(selectedExtension.Path))
+                _removedExtensions.Add(selectedExtension.Path);
         }
 
         void SupportedLanguagesButton_Click(object sender, EventArgs e)
         {
-            List<string> locales = new List<string>();
+            var locales = new List<string>();
             locales.AddRange(SupportedLanguagesField.Text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
             using var frmLocaleMan = new LocaleManager(locales);
             if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
@@ -1591,14 +1581,9 @@ namespace AirProperties
 
         void AndroidUserPermissionsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AndroidUserPermissionsList.SelectedItems.Count > 0)
-            {
-                AndroidPermissionsLabel.Text = _androidPermissions[AndroidUserPermissionsList.SelectedIndex].Description;
-            }
-            else
-            {
-                AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
-            }
+            AndroidPermissionsLabel.Text = AndroidUserPermissionsList.SelectedItems.Count > 0
+                ? _androidPermissions[AndroidUserPermissionsList.SelectedIndex].Description
+                : TextHelper.GetString("Label.SelectPermForInfo");
         }
 
         void IPhoneInfoAdditionsButton_Click(object sender, EventArgs e)
@@ -1637,8 +1622,8 @@ namespace AirProperties
 
         void IPhoneResolutionExcludeButton_Click(object sender, EventArgs e)
         {
-            string devicesData = (string)(IPhoneResolutionExcludeButton.Tag ?? string.Empty);
-            string[] devices = devicesData.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var devicesData = (string)(IPhoneResolutionExcludeButton.Tag ?? string.Empty);
+            var devices = devicesData.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             using var iOSDevicesForm = new IOSDeviceManager(devices);
             if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
                 IPhoneResolutionExcludeButton.Tag = iOSDevicesForm.SelectedDevices;
@@ -1741,7 +1726,7 @@ namespace AirProperties
                 }
                 if (extension is null)
                 {
-                    extension = new PropertyManager.AirExtension() { ExtensionId = extensionId, IsValid = true };
+                    extension = new PropertyManager.AirExtension { ExtensionId = extensionId, IsValid = true };
                     _extensions.Add(extension);
                     //I don't validation and selection is needed in this case
                     var extensionListItem = new ListViewItem(extension.ExtensionId);
@@ -1754,7 +1739,6 @@ namespace AirProperties
         void RenderModeField_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (DepthStencilField.Parent is null) return;
-
             DepthStencilField.Enabled = ((ListItem)RenderModeField.SelectedItem).Value == "direct";
         }
 
@@ -1785,13 +1769,8 @@ namespace AirProperties
                                 }
                                 var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
 
-                                if (entry is null)
-                                {
-                                    continue;
-                                }
-
+                                if (entry is null) continue;
                                 byte[] buffer = UnzipFile(zFile, entry);
-
                                 string extensionId = null;
                                 using var stream = new MemoryStream(buffer);
                                 using var reader = XmlReader.Create(stream);
@@ -1842,28 +1821,22 @@ namespace AirProperties
         }
 
         // validates that the supplied image URI is a PNG file
-        bool ValidateImageExtension(string imageURI)
-        {
-            return imageURI.ToLower().EndsWithOrdinal(".png");
-        }
+        static bool ValidateImageExtension(string imageURI) => imageURI.ToLower().EndsWithOrdinal(".png");
 
         // loops through each loaded file type and sets initial validity flags
         // does represent a little bit of code duplication, but shit happens.
         // we need to do this is in case there are file types with invalid property values when the file is opened, or when a new file type is added
         void ValidateFileTypes()
         {
-            foreach (PropertyManager.AirFileType fileType in _fileTypes)
+            foreach (var fileType in _fileTypes)
             {
                 // always true;
                 fileType.DescriptionIsValid = true;
                 // set validity based on validation requirements
-                if (fileType.Name.Length == 0) fileType.NameIsValid = false;
-                else fileType.NameIsValid = true;
-                if (!Regex.IsMatch(fileType.Extension, _FileNameRegexPattern)) fileType.ExtensionIsValid = false;
-                else fileType.ExtensionIsValid = true;
-                if (fileType.ContentType.Length == 0) fileType.ContentTypeIsValid = false;
-                else fileType.ContentTypeIsValid = true;
-                foreach (PropertyManager.AirFileType.AirFileTypeIcon icon in fileType.Icons)
+                fileType.NameIsValid = fileType.Name.Length != 0;
+                fileType.ExtensionIsValid = Regex.IsMatch(fileType.Extension, _FileNameRegexPattern);
+                fileType.ContentTypeIsValid = fileType.ContentType.Length != 0;
+                foreach (var icon in fileType.Icons)
                 {
                     if (icon.MinVersion <= PropertyManager.MajorVersion)
                     {
@@ -1882,10 +1855,9 @@ namespace AirProperties
         // we need to do this is in case there are extensions with invalid property values when the file is opened, or when a new extension is added
         void ValidateExtensions()
         {
-            foreach (PropertyManager.AirExtension extension in _extensions)
+            foreach (var extension in _extensions)
             {
-                if (extension.ExtensionId.Length > 0 && !Regex.IsMatch(extension.ExtensionId, _ExtensionRegexPattern)) extension.IsValid = false;
-                else extension.IsValid = true;
+                extension.IsValid = extension.ExtensionId.Length <= 0 || Regex.IsMatch(extension.ExtensionId, _ExtensionRegexPattern);
             }
         }
 
@@ -1904,26 +1876,24 @@ namespace AirProperties
 
         void ValidateFileTypeIconField(object sender, CancelEventArgs e)
         {
-            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-            TextBox field = (TextBox)sender;
-            string size = field.Name.Replace("FileTypeIconField", "");
-            if (selectedFileType != null)
+            var selectedFileType = GetSelectedFileType();
+            if (selectedFileType is null) return;
+            var field = (TextBox)sender;
+            var size = field.Name.Replace("FileTypeIconField", "");
+            field.Text = field.Text.Trim();
+            selectedFileType.SetIconPath(Convert.ToInt16(size), field.Text);
+            if (field.Text.Length > 0 && (!Regex.IsMatch(field.Text, _AnyUriRegexPattern) || !ValidateImageExtension(field.Text)))
             {
-                field.Text = field.Text.Trim();
-                selectedFileType.SetIconPath(Convert.ToInt16(size), field.Text);
-                if (field.Text.Length > 0 && (!Regex.IsMatch(field.Text, _AnyUriRegexPattern) || !ValidateImageExtension(field.Text)))
-                {
-                    selectedFileType.SetIconIsValid(Convert.ToInt16(size), false);
-                    ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
-                    e.Cancel = true;
-                }
-                else
-                {
-                    selectedFileType.SetIconIsValid(Convert.ToInt16(size), true);
-                    ValidationErrorProvider.SetError(field, string.Empty);
-                }
-                RefreshSelectedFileType();
+                selectedFileType.SetIconIsValid(Convert.ToInt16(size), false);
+                ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
+                e.Cancel = true;
             }
+            else
+            {
+                selectedFileType.SetIconIsValid(Convert.ToInt16(size), true);
+                ValidationErrorProvider.SetError(field, string.Empty);
+            }
+            RefreshSelectedFileType();
         }
 
         void IDField_Validating(object sender, CancelEventArgs e)
@@ -1978,7 +1948,6 @@ namespace AirProperties
             }
             else ValidationErrorProvider.SetError(ProgramMenuFolderField, "");
         }
-
 
         void ContentField_Validating(object sender, CancelEventArgs e)
         {
@@ -2133,85 +2102,77 @@ namespace AirProperties
 
         void FileTypeNameField_Validating(object sender, CancelEventArgs e)
         {
-            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-            if (selectedFileType != null)
+            var selectedFileType = GetSelectedFileType();
+            if (selectedFileType is null) return;
+            FileTypeNameField.Text = FileTypeNameField.Text.Trim();
+            selectedFileType.Name = FileTypeNameField.Text;
+            if (FileTypeNameField.Text.Length == 0)
             {
-                FileTypeNameField.Text = FileTypeNameField.Text.Trim();
-                selectedFileType.Name = FileTypeNameField.Text;
-                if (FileTypeNameField.Text.Length == 0)
-                {
-                    selectedFileType.NameIsValid = false;
-                    ValidationErrorProvider.SetError(FileTypeNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
-                    e.Cancel = true;
-                }
-                else
-                {
-                    selectedFileType.NameIsValid = true;
-                    ValidationErrorProvider.SetError(FileTypeNameField, "");
-                }
-                RefreshSelectedFileType();
+                selectedFileType.NameIsValid = false;
+                ValidationErrorProvider.SetError(FileTypeNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
+                e.Cancel = true;
             }
+            else
+            {
+                selectedFileType.NameIsValid = true;
+                ValidationErrorProvider.SetError(FileTypeNameField, "");
+            }
+            RefreshSelectedFileType();
         }
 
         void FileTypeExtensionField_Validating(object sender, CancelEventArgs e)
         {
-            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-            if (selectedFileType != null)
+            var selectedFileType = GetSelectedFileType();
+            if (selectedFileType is null) return;
+            FileTypeExtensionField.Text = FileTypeExtensionField.Text.Trim();
+            FileTypeExtensionField.Text = FileTypeExtensionField.Text.Trim('.');
+            selectedFileType.Extension = FileTypeExtensionField.Text;
+            if (!Regex.IsMatch(FileTypeExtensionField.Text, _FileNameRegexPattern))
             {
-                FileTypeExtensionField.Text = FileTypeExtensionField.Text.Trim();
-                FileTypeExtensionField.Text = FileTypeExtensionField.Text.Trim('.');
-                selectedFileType.Extension = FileTypeExtensionField.Text;
-                if (!Regex.IsMatch(FileTypeExtensionField.Text, _FileNameRegexPattern))
-                {
-                    selectedFileType.ExtensionIsValid = false;
-                    ValidationErrorProvider.SetError(FileTypeExtensionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTExtensionLabel.Text));
-                    e.Cancel = true;
-                }
-                else
-                {
-                    selectedFileType.ExtensionIsValid = true;
-                    ValidationErrorProvider.SetError(FileTypeExtensionField, "");
-                }
-                RefreshSelectedFileType();
+                selectedFileType.ExtensionIsValid = false;
+                ValidationErrorProvider.SetError(FileTypeExtensionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTExtensionLabel.Text));
+                e.Cancel = true;
             }
+            else
+            {
+                selectedFileType.ExtensionIsValid = true;
+                ValidationErrorProvider.SetError(FileTypeExtensionField, "");
+            }
+            RefreshSelectedFileType();
         }
 
         void FileTypeDescriptionField_Validating(object sender, CancelEventArgs e)
         {
-            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-            if (selectedFileType != null)
-            {
-                FileTypeDescriptionField.Text = FileTypeDescriptionField.Text.Trim();
-                selectedFileType.Description = FileTypeDescriptionField.Text;
-            }
+            var selectedFileType = GetSelectedFileType();
+            if (selectedFileType is null) return;
+            FileTypeDescriptionField.Text = FileTypeDescriptionField.Text.Trim();
+            selectedFileType.Description = FileTypeDescriptionField.Text;
         }
 
         void FileTypeContentTypeField_Validating(object sender, CancelEventArgs e)
         {
-            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-            if (selectedFileType != null)
+            var selectedFileType = GetSelectedFileType();
+            if (selectedFileType is null) return;
+            FileTypeContentTypeField.Text = FileTypeContentTypeField.Text.Trim();
+            selectedFileType.ContentType = FileTypeContentTypeField.Text;
+            // validate as required field for AIR 1.5+
+            if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
             {
-                FileTypeContentTypeField.Text = FileTypeContentTypeField.Text.Trim();
-                selectedFileType.ContentType = FileTypeContentTypeField.Text;
-                // validate as required field for AIR 1.5+
-                if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
-                {
-                    selectedFileType.ContentTypeIsValid = false;
-                    ValidationErrorProvider.SetError(FileTypeContentTypeField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
-                    e.Cancel = true;
-                }
-                else
-                {
-                    selectedFileType.ContentTypeIsValid = true;
-                    ValidationErrorProvider.SetError(FileTypeContentTypeField, "");
-                }
-                RefreshSelectedFileType();
+                selectedFileType.ContentTypeIsValid = false;
+                ValidationErrorProvider.SetError(FileTypeContentTypeField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
+                e.Cancel = true;
             }
+            else
+            {
+                selectedFileType.ContentTypeIsValid = true;
+                ValidationErrorProvider.SetError(FileTypeContentTypeField, "");
+            }
+            RefreshSelectedFileType();
         }
 
         void FileTypesListView_Validating(object sender, CancelEventArgs e)
         {
-            foreach (PropertyManager.AirFileType fileType in _fileTypes)
+            foreach (var fileType in _fileTypes)
             {
                 if (!fileType.IsValid)
                 {
@@ -2245,30 +2206,27 @@ namespace AirProperties
 
         void ExtensionIdField_Validating(object sender, CancelEventArgs e)
         {
-            PropertyManager.AirExtension selectedExtension = GetSelectedExtension();
-            if (selectedExtension != null)
+            var selectedExtension = GetSelectedExtension();
+            if (selectedExtension is null) return;
+            ExtensionIdField.Text = ExtensionIdField.Text.Trim();
+            selectedExtension.ExtensionId = ExtensionIdField.Text;
+            if (ExtensionIdField.Text.Length > 0 && !Regex.IsMatch(ExtensionIdField.Text, _ExtensionRegexPattern))
             {
-                ExtensionIdField.Text = ExtensionIdField.Text.Trim();
-                selectedExtension.ExtensionId = ExtensionIdField.Text;
-                if (ExtensionIdField.Text.Length > 0 && !Regex.IsMatch(ExtensionIdField.Text, _ExtensionRegexPattern))
-                {
-                    selectedExtension.IsValid = false;
-                    ValidationErrorProvider.SetError(ExtensionIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ExtensionIdLabel.Text));
-                    e.Cancel = true;
-                }
-                else
-                {
-                    selectedExtension.IsValid = true;
-                    ValidationErrorProvider.SetError(ExtensionIdField, "");
-                }
-
-                RefreshSelectedExtension();
+                selectedExtension.IsValid = false;
+                ValidationErrorProvider.SetError(ExtensionIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ExtensionIdLabel.Text));
+                e.Cancel = true;
             }
+            else
+            {
+                selectedExtension.IsValid = true;
+                ValidationErrorProvider.SetError(ExtensionIdField, "");
+            }
+            RefreshSelectedExtension();
         }
 
         void ExtensionsListView_Validating(object sender, CancelEventArgs e)
         {
-            foreach (PropertyManager.AirExtension extension in _extensions)
+            foreach (var extension in _extensions)
             {
                 if (!extension.IsValid)
                 {
@@ -2471,8 +2429,5 @@ namespace AirProperties
         }
 
         #endregion
-
     }
-
 }
-
