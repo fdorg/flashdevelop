@@ -90,10 +90,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public void Execute()
         {
-            if (IsValid())
-            {
-                ExecutionImplementation();
-            }
+            if (IsValid()) ExecutionImplementation();
         }
 
         #endregion
@@ -103,10 +100,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Allows for the concrete refactoring command implementations to fire off the OnRefactorComplete event.
         /// </summary>
-        protected void FireOnRefactorComplete()
-        {
-            OnRefactorComplete?.Invoke(this, new RefactorCompleteEventArgs<TRefactorResultType>(results));
-        }
+        protected void FireOnRefactorComplete() => OnRefactorComplete?.Invoke(this, new RefactorCompleteEventArgs<TRefactorResultType>(results));
 
         #endregion
 
@@ -124,6 +118,5 @@ namespace CodeRefactor.Commands
         public abstract bool IsValid();
 
         #endregion
-
     }
 }

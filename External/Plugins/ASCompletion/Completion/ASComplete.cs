@@ -744,9 +744,7 @@ namespace ASCompletion.Completion
         }
 
         public static void LocateMember(string keyword, string name, int line)
-        {
-            LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
-        }
+            => LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
 
         public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
         {
@@ -755,9 +753,7 @@ namespace ASCompletion.Completion
         }
 
         protected virtual void LocateMember(ScintillaControl sci, int line, string keyword, string name)
-        {
-            LocateMember(sci, line, $"{keyword ?? ""}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
-        }
+            => LocateMember(sci, line, $"{keyword ?? ""}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
 
         protected void LocateMember(ScintillaControl sci, int line, string pattern)
         {
@@ -877,7 +873,7 @@ namespace ASCompletion.Completion
                 }
                 else if (result.Type != null || result.Member != null)
                 {
-                    var oClass = result.InClass ?? result.Type;
+                    var oClass = result.InClass ?? result.Type ?? ClassModel.VoidClass;
                     if (oClass.IsVoid() && (result.Member is null || (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
                     {
                         NotifyContextChanged();
@@ -987,7 +983,6 @@ namespace ASCompletion.Completion
         public static Hashtable ResolveElement(ScintillaControl sci, string eventAction)
         {
             if (CurrentResolvedContext is null) ResolveContext(sci);
-
             if (eventAction != null && !CurrentResolvedContext.Result.IsNull())
             {
                 // other plugins may handle the request
@@ -998,7 +993,7 @@ namespace ASCompletion.Completion
                 // help
                 if (eventAction == "ShowDocumentation")
                 {
-                    string cmd = ASContext.Context.Settings.DocumentationCommandLine;
+                    var cmd = ASContext.Context.Settings.DocumentationCommandLine;
                     if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
                     if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && !cmd.Contains("$(Itm"))
@@ -1431,11 +1426,9 @@ namespace ASCompletion.Completion
         static int FindNearSymbolInFunctDef(string defBody, char symbol, int startAt)
         {
             string featEnd = null;
-
             for (int i = startAt, count = defBody.Length; i < count; i++)
             {
                 char c = defBody[i];
-
                 if (featEnd is null)
                 {
                     switch (c)
@@ -1504,7 +1497,6 @@ namespace ASCompletion.Completion
                     featEnd = null;
                 }
             }
-
             return -1;
         }
 
@@ -1612,8 +1604,7 @@ namespace ASCompletion.Completion
             {
                 FindMember(method.Name, expr.InClass.Extends, expr, 0, 0);
                 method = expr.Member;
-                if (method is null)
-                    return false;
+                if (method is null) return false;
             }
             if ((method.Comments is null || method.Comments.Trim().Length == 0) && expr.InClass?.Implements != null)
             {
@@ -1678,11 +1669,9 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         static ClassModel ResolveParameterType(int paramIndex, bool indexTypeOnly)
         {
-            if (calltipMember?.Parameters is null || paramIndex >= calltipMember.Parameters.Count)
-                return ClassModel.VoidClass;
+            if (calltipMember?.Parameters is null || paramIndex >= calltipMember.Parameters.Count) return ClassModel.VoidClass;
             var type = calltipMember.Parameters[paramIndex].Type;
-            if (indexTypeOnly && (string.IsNullOrEmpty(type) || !type.Contains('@')))
-                return ClassModel.VoidClass;
+            if (indexTypeOnly && (string.IsNullOrEmpty(type) || !type.Contains('@'))) return ClassModel.VoidClass;
             if (ASContext.Context.Features.objectKey == "Dynamic" && type.StartsWithOrdinal("Dynamic@"))
                 type = type.Replace("Dynamic@", "Dynamic<") + ">";
             return ResolveType(type, ASContext.Context.CurrentModel);
@@ -5084,14 +5073,10 @@ namespace ASCompletion.Completion
             var cFile = context.CurrentModel;
             var cClass = context.CurrentClass;
             var resolved = EvalExpression(expr.Value, expr, cFile, cClass, true, false);
-            if (resolved.IsNull() || !resolved.IsPackage || resolved.InFile is null)
-                return false;
-
+            if (resolved.IsNull() || !resolved.IsPackage || resolved.InFile is null) return false;
             var package = resolved.InFile.Package;
             var check = Regex.Replace(expr.Value, "\\s", "").TrimEnd('.');
-            if (check != package)
-                return false;
-
+            if (check != package) return false;
             sci.BeginUndoAction();
             try
             {
@@ -5355,7 +5340,7 @@ namespace ASCompletion.Completion
         public ASExpr Context;
         public string Path;
 
-        public bool IsNull() => (Type is null && Member is null && !IsPackage);
+        public bool IsNull() => Type is null && Member is null && !IsPackage;
     }
 
     public sealed class ResolvedContext

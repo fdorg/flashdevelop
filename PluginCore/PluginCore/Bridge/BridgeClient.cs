@@ -25,11 +25,11 @@ namespace PluginCore.Bridge
             try
             {
                 string issue = "Unable to find a gateway";
-                foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
+                foreach (var f in NetworkInterface.GetAllNetworkInterfaces())
                 {
                     issue += "\n" + f.Name + ", " + f.Description;
                     if (f.OperationalStatus == OperationalStatus.Up)
-                        foreach (GatewayIPAddressInformation d in f.GetIPProperties().GatewayAddresses)
+                        foreach (var d in f.GetIPProperties().GatewayAddresses)
                         {
                             return d.Address.ToString();
                         }

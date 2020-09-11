@@ -199,14 +199,12 @@ namespace AS3Context.Compiler
 
         void ReadUntilToken(string token)
         {
-            StringBuilder output = new StringBuilder();
-            Queue<char> queue = new Queue<char>();
-
-            bool keepProcessing = true;
+            var output = new StringBuilder();
+            var queue = new Queue<char>();
+            var keepProcessing = true;
             while (keepProcessing && keepAlive)
             {
-                if (process is null || process.HasExited)
-                    keepProcessing = false;
+                if (process is null || process.HasExited) keepProcessing = false;
                 else
                 {
                     char c = (char)process.StandardOutput.Read();

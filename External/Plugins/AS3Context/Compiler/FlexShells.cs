@@ -73,10 +73,7 @@ namespace AS3Context.Compiler
             return fullPath;
         }
 
-        public static FlexShells Instance 
-        {
-            get { return instance ??= new FlexShells(); }
-        }
+        public static FlexShells Instance => instance ??= new FlexShells();
 
         static FlexShells instance;
 
@@ -90,10 +87,7 @@ namespace AS3Context.Compiler
         bool debugMode;
         Dictionary<string, string> jvmConfig;
 
-        public void CheckAS3(string filename, string flexPath)
-        {
-            CheckAS3(filename, flexPath, null);
-        }
+        public void CheckAS3(string filename, string flexPath) => CheckAS3(filename, flexPath, null);
 
         public void CheckAS3(string filename, string flexPath, string src)
         {
@@ -111,28 +105,27 @@ namespace AS3Context.Compiler
                 return;
 
             string basePath = null;
-            if (PluginBase.CurrentProject != null)
-                basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            if (PluginBase.CurrentProject != null) basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             flexPath = PathHelper.ResolvePath(flexPath, basePath);
             // asc.jar in FlexSDK
             if (flexPath != null && Directory.Exists(Path.Combine(flexPath, "lib")))
                 ascPath = Path.Combine(flexPath, "lib\\asc.jar");
             // included asc.jar
             if (!File.Exists(ascPath)) ascPath = PathHelper.ResolvePath(Path.Combine(PathHelper.ToolDir, "flexlibs/lib/asc.jar"));
-
             if (ascPath is null)
             {
                 if (src != null) return; // silent checking
                 var result = MessageBox.Show(TextHelper.GetString("Info.SetFlex2OrCS3Path"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.YesNoCancel);
-                if (result == DialogResult.Yes)
+                switch (result)
                 {
-                    var context = ASContext.GetLanguageContext("as3");
-                    if (context is null) return;
-                    PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
-                }
-                else if (result == DialogResult.No)
-                {
-                    PluginBase.MainForm.ShowSettingsDialog("ASCompletion", "Flash");
+                    case DialogResult.Yes:
+                        var context = ASContext.GetLanguageContext("as3");
+                        if (context is null) return;
+                        PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
+                        break;
+                    case DialogResult.No:
+                        PluginBase.MainForm.ShowSettingsDialog("ASCompletion", "Flash");
+                        break;
                 }
                 return;
             }
@@ -151,9 +144,7 @@ namespace AS3Context.Compiler
             {
                 running = true;
                 if (src is null) EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-                if (ascRunner is null || !ascRunner.IsRunning || currentSDK != flexPath)
-                    StartAscRunner(flexPath);
-
+                if (ascRunner is null || !ascRunner.IsRunning || currentSDK != flexPath) StartAscRunner(flexPath);
                 notificationSent = false;
                 if (src is null)
                 {
@@ -181,20 +172,17 @@ namespace AS3Context.Compiler
         {
             if (running) return;
             string basePath = null;
-            if (PluginBase.CurrentProject != null)
-                basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            if (PluginBase.CurrentProject != null) basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             flexPath = PathHelper.ResolvePath(flexPath, basePath);
 
             if (Directory.Exists(flexPath)) mxmlcPath = Path.Combine(flexPath, "lib", "mxmlc.jar");
             if (!File.Exists(mxmlcPath)) 
             {
                 var result = MessageBox.Show(TextHelper.GetString("Info.OpenCompilerSettings"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OKCancel);
-                if (result == DialogResult.OK)
-                {
-                    var context = ASContext.GetLanguageContext("as3");
-                    if (context is null) return;
-                    PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
-                }
+                if (result != DialogResult.OK) return;
+                var context = ASContext.GetLanguageContext("as3");
+                if (context is null) return;
+                PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
                 return;
             }
 

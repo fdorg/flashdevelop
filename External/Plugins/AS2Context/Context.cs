@@ -251,12 +251,11 @@ namespace AS2Context
         {
             if (as2settings is null) return;
 
-            ClassModel pClass = cFile.GetPublicClass();
-            if (as2settings.MMClassPath is null || pClass.IsVoid())
-                return;
-            string package = (cFile.Package.Length > 0) ? cFile.Package + "." : "";
-            string packagePath = dirSeparator + package.Replace('.', dirSeparatorChar);
-            string file = Path.Combine(as2settings.MMClassPath, "aso") + packagePath + package + pClass.Name + ".aso";
+            var pClass = cFile.GetPublicClass();
+            if (as2settings.MMClassPath is null || pClass.IsVoid()) return;
+            var package = (cFile.Package.Length > 0) ? cFile.Package + "." : "";
+            var packagePath = dirSeparator + package.Replace('.', dirSeparatorChar);
+            var file = Path.Combine(as2settings.MMClassPath, "aso") + packagePath + package + pClass.Name + ".aso";
             try
             {
                 if (File.Exists(file)) File.Delete(file);
@@ -271,10 +270,7 @@ namespace AS2Context
         {
             get 
             {
-                if (cFile == FileModel.Ignore)
-                {
-                    return ClassModel.VoidClass;
-                }
+                if (cFile == FileModel.Ignore) return ClassModel.VoidClass;
                 if (cClass is null)
                 {
                     cClass = ClassModel.VoidClass;
@@ -283,10 +279,7 @@ namespace AS2Context
                 // update class
                 if (cFile.OutOfDate)
                 {
-                    if (cFile.FileName.Length > 0)
-                    {
-                        UpdateCurrentFile(true);
-                    }
+                    if (cFile.FileName.Length > 0) UpdateCurrentFile(true);
                     // update "this" and "super" special vars
                     UpdateTopLevelElements();
                 }
@@ -308,8 +301,7 @@ namespace AS2Context
             var type = inClass;
             while (!type.IsVoid())
             {
-                if (type.Type == withClass.Type)
-                    return Visibility.Public | Visibility.Private;
+                if (type.Type == withClass.Type) return Visibility.Public | Visibility.Private;
                 type = type.Extends;
             }
             // public only
@@ -387,10 +379,8 @@ namespace AS2Context
         /// <param name="inFile">Current file</param>
         public override MemberList ResolveImports(FileModel inFile)
         {
-            if (inFile == cFile && completionCache.Imports != null)
-                return completionCache.Imports;
-
-            MemberList imports = new MemberList();
+            if (inFile == cFile && completionCache.Imports != null) return completionCache.Imports;
+            var imports = new MemberList();
             if (inFile is null) return imports;
             bool filterImports = (inFile == cFile) && inFile.Classes.Count > 1;
             int lineMin = (filterImports && inPrivateSection) ? inFile.PrivateSectionIndex : 0;
@@ -1279,8 +1269,7 @@ namespace AS2Context
                 return;
             }
 
-            if (!IsFileValid || !File.Exists(CurrentFile))
-                return;
+            if (!IsFileValid || !File.Exists(CurrentFile)) return;
             if (CurrentModel.Version != 2)
             {
                 MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidClass"));
@@ -1302,28 +1291,25 @@ namespace AS2Context
             try 
             {
                 // save modified files if needed
-                if (outputFile != null) PluginBase.MainForm.CallCommand("SaveAllModified", null);
-                else PluginBase.MainForm.CallCommand("SaveAllModified", ".as");
-                
+                PluginBase.MainForm.CallCommand("SaveAllModified", outputFile != null ? null : ".as");
+
                 // prepare command
                 string command = mtascPath;
                 if (Path.GetExtension(command) == "") command = Path.Combine(command, "mtasc.exe");
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-                if (append is null || !append.Contains("-swf-version"))
-                    command += " -version "+majorVersion;
+                if (append is null || !append.Contains("-swf-version")) command += " -version "+majorVersion;
                 // classpathes
-                foreach(PathModel aPath in classPath)
+                foreach(var aPath in classPath)
                     if (aPath.Path != temporaryPath
                         && !aPath.Path.StartsWith(mtascPath, StringComparison.OrdinalIgnoreCase))
                         command += " -cp \"" + aPath.Path.TrimEnd('\\') + "\"";
                 
                 // run
-                string filePath = NormalizePath(cFile.BasePath);
-                if (PluginBase.CurrentProject != null)
-                    filePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath); 
-                string workDir = PluginBase.MainForm.WorkingDirectory;
+                var filePath = NormalizePath(cFile.BasePath);
+                if (PluginBase.CurrentProject != null) filePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath); 
+                var workDir = PluginBase.MainForm.WorkingDirectory;
                 PluginBase.MainForm.WorkingDirectory = filePath;
                 PluginBase.MainForm.CallCommand("RunProcessCaptured", command+" "+append);
                 PluginBase.MainForm.WorkingDirectory = workDir;
@@ -1345,20 +1331,16 @@ namespace AS2Context
                 return false;
             }
 
-            if (!File.Exists(CurrentFile)) 
-                return false;
+            if (!File.Exists(CurrentFile)) return false;
             // check if @mtasc is defined
             Match mCmd = null;
-            ClassModel cClass = cFile.GetPublicClass();
+            var cClass = cFile.GetPublicClass();
             if (IsFileValid && cClass.Comments != null)
                 mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             
             if (CurrentModel.Version != 2 || mCmd is null || !mCmd.Success) 
             {
-                if (!failSilently)
-                {
-                    MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidForQuickBuild"));
-                }
+                if (!failSilently) MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidForQuickBuild"));
                 return false;
             }
             
@@ -1370,8 +1352,7 @@ namespace AS2Context
                 command = " " + PluginBase.MainForm.ProcessArgString(command) + " ";
                 if (string.IsNullOrEmpty(command))
                 {
-                    if (!failSilently)
-                        throw new Exception(TextHelper.GetString("Info.InvalidQuickBuildCommand"));
+                    if (!failSilently) throw new Exception(TextHelper.GetString("Info.InvalidQuickBuildCommand"));
                     return false;
                 }
                 outputFile = null;

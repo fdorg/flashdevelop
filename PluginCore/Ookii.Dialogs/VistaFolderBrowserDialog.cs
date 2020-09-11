@@ -20,12 +20,12 @@ namespace Ookii.Dialogs
     [DefaultEvent("HelpRequest"), Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"), DefaultProperty("SelectedPath"), Description("Prompts the user to select a folder.")]
     public sealed class VistaFolderBrowserDialog : CommonDialog
     {
-        private readonly FolderBrowserDialog _downlevelDialog;
-        private string _description;
-        private bool _useDescriptionForTitle;
-        private string[] _selectedPaths;
-        private System.Environment.SpecialFolder _rootFolder;
-        private bool _multiselect;
+        readonly FolderBrowserDialog _downlevelDialog;
+        string _description;
+        bool _useDescriptionForTitle;
+        string[] _selectedPaths;
+        Environment.SpecialFolder _rootFolder;
+        bool _multiselect;
 
         /// <summary>
         /// Occurs when the user clicks the Help button on the dialog box.
@@ -92,8 +92,8 @@ namespace Ookii.Dialogs
         /// One of the <see cref="System.Environment.SpecialFolder" /> values. The default is Desktop.
         /// </value>
         /// <exception cref="System.ComponentModel.InvalidEnumArgumentException">The value assigned is not one of the <see cref="System.Environment.SpecialFolder" /> values.</exception>
-        [Localizable(false), Description("The root folder where the browsing starts from. This property has no effect if the Vista style dialog is used."), Category("Folder Browsing"), Browsable(true), DefaultValue(typeof(System.Environment.SpecialFolder), "Desktop")]
-        public System.Environment.SpecialFolder RootFolder
+        [Localizable(false), Description("The root folder where the browsing starts from. This property has no effect if the Vista style dialog is used."), Category("Folder Browsing"), Browsable(true), DefaultValue(typeof(Environment.SpecialFolder), "Desktop")]
+        public Environment.SpecialFolder RootFolder
         {
             get
             {
@@ -134,24 +134,11 @@ namespace Ookii.Dialogs
             }
         }
 
-        public string[] SelectedPaths
-        {
-            get
-            {
-                if (_downlevelDialog != null)
-                    return new[] {_downlevelDialog.SelectedPath };
-                return SelectedPathsInternal;
-            }
-        }
+        public string[] SelectedPaths => _downlevelDialog != null ? new[] {_downlevelDialog.SelectedPath } : SelectedPathsInternal;
 
         public bool Multiselect
         {
-            get
-            {
-                if (_downlevelDialog != null)
-                    return false;
-                return _multiselect;
-            }
+            get => _downlevelDialog == null && _multiselect;
             set
             {
                 if (_downlevelDialog is null)
@@ -159,7 +146,7 @@ namespace Ookii.Dialogs
             }
         }
 
-        private bool _showNewFolderButton;
+        bool _showNewFolderButton;
 
         /// <summary>
         /// Gets or sets a value indicating whether the New Folder button appears in the folder browser dialog box. This
@@ -171,18 +158,11 @@ namespace Ookii.Dialogs
         [Browsable(true), Localizable(false), Description("A value indicating whether the New Folder button appears in the folder browser dialog box. This property has no effect if the Vista style dialog is used; in that case, the New Folder button is always shown."), DefaultValue(true), Category("Folder Browsing")]
         public bool ShowNewFolderButton
         {
-            get
-            {
-                if( _downlevelDialog != null )
-                    return _downlevelDialog.ShowNewFolderButton;
-                return _showNewFolderButton;
-            }
+            get => _downlevelDialog?.ShowNewFolderButton ?? _showNewFolderButton;
             set
             {
-                if( _downlevelDialog != null )
-                    _downlevelDialog.ShowNewFolderButton = value;
-                else
-                    _showNewFolderButton = value;
+                if( _downlevelDialog != null ) _downlevelDialog.ShowNewFolderButton = value;
+                else _showNewFolderButton = value;
             }
         }
     
@@ -208,16 +188,10 @@ namespace Ookii.Dialogs
         {
             private get
             {
-                if (_selectedPaths is null)
-                {
-                    return Array.Empty<string>();
-                }
+                if (_selectedPaths is null) return Array.Empty<string>();
                 return (string[])_selectedPaths.Clone();
             }
-            set
-            {
-                _selectedPaths = value;
-            }
+            set => _selectedPaths = value;
         }
 
         #endregion
@@ -251,10 +225,10 @@ namespace Ookii.Dialogs
             if( _downlevelDialog != null )
                 return _downlevelDialog.ShowDialog(hwndOwner == IntPtr.Zero ? null : new WindowHandleWrapper(hwndOwner)) == DialogResult.OK;
 
-            Ookii.Dialogs.Interop.IFileDialog dialog = null;
+            IFileDialog dialog = null;
             try
             {
-                dialog = new Ookii.Dialogs.Interop.NativeFileOpenDialog();
+                dialog = new NativeFileOpenDialog();
                 SetDialogProperties(dialog);
                 int result = dialog.Show(hwndOwner);
                 if( result < 0 )
@@ -295,7 +269,7 @@ namespace Ookii.Dialogs
 
         #region Private Methods
 
-        private void SetDialogProperties(Ookii.Dialogs.Interop.IFileDialog dialog)
+        void SetDialogProperties(IFileDialog dialog)
         {
             // Description
             if( !string.IsNullOrEmpty(_description) )
@@ -306,14 +280,13 @@ namespace Ookii.Dialogs
                 }
                 else
                 {
-                    Ookii.Dialogs.Interop.IFileDialogCustomize customize = (Ookii.Dialogs.Interop.IFileDialogCustomize)dialog;
+                    var customize = (IFileDialogCustomize)dialog;
                     customize.AddText(0, _description);
                 }
             }
 
-            NativeMethods.FOS options = NativeMethods.FOS.FOS_PICKFOLDERS | NativeMethods.FOS.FOS_FORCEFILESYSTEM | NativeMethods.FOS.FOS_FILEMUSTEXIST;
-            if (Multiselect)
-                options |= NativeMethods.FOS.FOS_ALLOWMULTISELECT;
+            var options = NativeMethods.FOS.FOS_PICKFOLDERS | NativeMethods.FOS.FOS_FORCEFILESYSTEM | NativeMethods.FOS.FOS_FILEMUSTEXIST;
+            if (Multiselect) options |= NativeMethods.FOS.FOS_ALLOWMULTISELECT;
             dialog.SetOptions(options);
 
             if( !string.IsNullOrEmpty(_selectedPaths[0]) )
@@ -332,21 +305,17 @@ namespace Ookii.Dialogs
             }
         }
 
-        private void GetResult(Ookii.Dialogs.Interop.IFileDialog dialog)
+        void GetResult(IFileDialog dialog)
         {
             if (Multiselect)
             {
-                Ookii.Dialogs.Interop.IShellItemArray results;
-                ((Ookii.Dialogs.Interop.IFileOpenDialog)dialog).GetResults(out results);
-                uint count;
-                results.GetCount(out count);
-                string[] selectedPaths = new string[count];
+                ((IFileOpenDialog)dialog).GetResults(out var results);
+                results.GetCount(out var count);
+                var selectedPaths = new string[count];
                 for (uint x = 0; x < count; ++x)
                 {
-                    Ookii.Dialogs.Interop.IShellItem item;
-                    results.GetItemAt(x, out item);
-                    string name;
-                    item.GetDisplayName(NativeMethods.SIGDN.SIGDN_FILESYSPATH, out name);
+                    results.GetItemAt(x, out var item);
+                    item.GetDisplayName(NativeMethods.SIGDN.SIGDN_FILESYSPATH, out var name);
                     selectedPaths[x] = name;
                 }
                 _selectedPaths = selectedPaths;
@@ -354,8 +323,7 @@ namespace Ookii.Dialogs
             }
             else
             {
-                Ookii.Dialogs.Interop.IShellItem item;
-                dialog.GetResult(out item);
+                dialog.GetResult(out var item);
                 item.GetDisplayName(NativeMethods.SIGDN.SIGDN_FILESYSPATH, out _selectedPaths[0]);
             }
         }
