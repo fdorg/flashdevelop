@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using FlashDevelop.Helpers;
-using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;

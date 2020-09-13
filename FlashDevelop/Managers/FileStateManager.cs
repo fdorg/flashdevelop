@@ -128,11 +128,13 @@ namespace FlashDevelop.Managers
         /// </summary>
         static StateObject GetStateObject(ScintillaControl sci)
         {
-            var so = new StateObject();
-            so.LineCount = sci.LineCount;
-            so.Position = sci.CurrentPos;
-            so.FileName = sci.FileName;
-            so.LineScroll = sci.FirstVisibleLine;
+            var so = new StateObject
+            {
+                LineCount = sci.LineCount,
+                Position = sci.CurrentPos,
+                FileName = sci.FileName,
+                LineScroll = sci.FirstVisibleLine
+            };
             for (var line = 0;; line++)
             {
                 var lineNext = sci.ContractedFoldNext(line);

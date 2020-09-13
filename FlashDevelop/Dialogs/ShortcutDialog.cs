@@ -301,20 +301,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         bool UpdateAllShortcutsConflicts()
         {
-            bool conflicts = false;
+            var result = false;
             foreach (var item in shortcutListItems)
             {
-                if (item.HasConflicts)
-                {
-                    conflicts = true;
-                }
+                if (item.HasConflicts) result = true;
                 else
                 {
                     GetConflictItems(item);
-                    conflicts = conflicts || item.HasConflicts;
+                    result = result || item.HasConflicts;
                 }
             }
-            return conflicts;
+            return result;
         }
 
         /// <summary>
@@ -441,24 +438,22 @@ namespace FlashDevelop.Dialogs
             item.Selected = true;
             GetConflictItems(item);
             listView.EndUpdate();
-            if (item.HasConflicts)
+            if (!item.HasConflicts) return;
+            var text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
+            var caption = TextHelper.GetString("Title.WarningDialog");
+            switch (MessageBox.Show(PluginBase.MainForm, text, " " + caption, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning))
             {
-                string text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
-                string caption = TextHelper.GetString("Title.WarningDialog");
-                switch (MessageBox.Show(PluginBase.MainForm, text, " " + caption, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning))
-                {
-                    case DialogResult.Abort:
-                        listView.BeginUpdate();
-                        item.Custom = oldShortcut;
-                        GetConflictItems(item);
-                        listView.EndUpdate();
-                        break;
-                    case DialogResult.Retry:
-                        filterTextBox.Text = ViewConflictsKey + item.KeysString;
-                        filterTextBox.SelectAll();
-                        filterTextBox.Focus(); // Set focus to filter...
-                        break;
-                }
+                case DialogResult.Abort:
+                    listView.BeginUpdate();
+                    item.Custom = oldShortcut;
+                    GetConflictItems(item);
+                    listView.EndUpdate();
+                    break;
+                case DialogResult.Retry:
+                    filterTextBox.Text = ViewConflictsKey + item.KeysString;
+                    filterTextBox.SelectAll();
+                    filterTextBox.Focus(); // Set focus to filter...
+                    break;
             }
         }
 
@@ -519,10 +514,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Revert the selected items shortcut to default.
         /// </summary>
-        void RevertToDefault(ShortcutListItem item)
-        {
-            AssignNewShortcut(item, item.Default);
-        }
+        void RevertToDefault(ShortcutListItem item) => AssignNewShortcut(item, item.Default);
 
         /// <summary>
         /// Removes the shortcut by setting it to <see cref="Keys.None"/>.
@@ -549,9 +541,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void SetupUpdateTimer()
         {
-            updateTimer = new Timer();
-            updateTimer.Enabled = false;
-            updateTimer.Interval = 100;
+            updateTimer = new Timer {Enabled = false, Interval = 100};
             updateTimer.Tick += UpdateTimer_Tick;
         }
 
@@ -705,7 +695,7 @@ namespace FlashDevelop.Dialogs
                 get => conflicts;
                 set
                 {
-                    if (conflicts == value) return;
+                    if (value == conflicts) return;
                     conflicts = value;
                     UpdateItemHighlightFont(this);
                 }
@@ -729,7 +719,7 @@ namespace FlashDevelop.Dialogs
                 get => custom;
                 set
                 {
-                    if (custom == value) return;
+                    if (value == custom) return;
                     custom = value;
                     KeysString = DataConverter.KeysToString(custom);
                     SubItems[1].Text = KeysString;

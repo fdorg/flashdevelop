@@ -93,11 +93,9 @@ namespace WeifenLuo.WinFormsUI
             get => m_borderColor;
             set
             {
-                if (m_borderColor != value)
-                {
-                    m_borderColor = value;
-                    Invalidate();
-                }
+                if (value == m_borderColor) return;
+                m_borderColor = value;
+                Invalidate();
             }
         }
 
@@ -109,11 +107,9 @@ namespace WeifenLuo.WinFormsUI
             set
             {
                 if (value < 1) value = 1;
-                if (m_borderWidth != value)
-                {
-                    m_borderWidth = value;
-                    Invalidate();
-                }
+                if (value == m_borderWidth) return;
+                m_borderWidth = value;
+                Invalidate();
             }
         }
 
@@ -121,13 +117,10 @@ namespace WeifenLuo.WinFormsUI
         {
             get
             { 
-                if (m_imageEnabled != null)
-                    return m_imageEnabled;
-
+                if (m_imageEnabled != null) return m_imageEnabled;
                 try
                 {
-                    if (ImageList is null || ImageIndexEnabled == -1)
-                        return null;
+                    if (ImageList is null || ImageIndexEnabled == -1) return null;
                     return ImageList.Images[m_imageIndexEnabled];
                 }
                 catch
@@ -135,14 +128,11 @@ namespace WeifenLuo.WinFormsUI
                     return null;
                 }
             }
-
             set
             {
-                if (m_imageEnabled != value)
-                {
-                    m_imageEnabled = value;
-                    Invalidate();
-                }
+                if (value == m_imageEnabled) return;
+                m_imageEnabled = value;
+                Invalidate();
             }
         }
 
@@ -242,9 +232,7 @@ namespace WeifenLuo.WinFormsUI
             get => m_clickStatus;
             set
             {
-                if (m_clickStatus == value)
-                    return;
-
+                if (value == m_clickStatus) return;
                 m_clickStatus = value;
                 if (ClickStatus == RepeatClickStatus.Started)
                 {
@@ -253,8 +241,7 @@ namespace WeifenLuo.WinFormsUI
                 }
                 else if (ClickStatus == RepeatClickStatus.Repeating)
                     Timer.Interval = RepeatClickInterval;
-                else
-                    Timer.Enabled = false;
+                else Timer.Enabled = false;
             }
         }
 
@@ -267,22 +254,17 @@ namespace WeifenLuo.WinFormsUI
             get => m_toolTipText;
             set
             {
-                if (m_toolTipText != value)
-                {
-                    if (m_toolTip is null)
-                        m_toolTip = new ToolTip(components);
-                    m_toolTipText = value;
-                    m_toolTip.SetToolTip(this, value);
-                }
+                if (value == m_toolTipText) return;
+                m_toolTip ??= new ToolTip(components);
+                m_toolTipText = value;
+                m_toolTip.SetToolTip(this, value);
             }
         }
 
         void Timer_Tick(object sender, EventArgs e)
         {
-            if (m_mouseCapture && m_mouseOver)
-                OnClick(RepeatClickEventArgs.Empty);
-            if (ClickStatus == RepeatClickStatus.Started)
-                ClickStatus = RepeatClickStatus.Repeating;
+            if (m_mouseCapture && m_mouseOver) OnClick(RepeatClickEventArgs.Empty);
+            if (ClickStatus == RepeatClickStatus.Started) ClickStatus = RepeatClickStatus.Repeating;
         }
 
         /// <exclude/>
@@ -290,9 +272,7 @@ namespace WeifenLuo.WinFormsUI
         {
             base.OnMouseDown(e);
 
-            if (e.Button != MouseButtons.Left)
-                return;
-
+            if (e.Button != MouseButtons.Left) return;
             if (!m_mouseCapture || !m_mouseOver)
             {
                 m_mouseCapture = true;
@@ -312,10 +292,8 @@ namespace WeifenLuo.WinFormsUI
         /// <exclude/>
         protected override void OnClick(EventArgs e)
         {
-            if (RepeatClick && !(e is RepeatClickEventArgs))
-                return;
-
-            base.OnClick (e);
+            if (RepeatClick && !(e is RepeatClickEventArgs)) return;
+            base.OnClick(e);
         }
 
         /// <exclude/>
@@ -335,8 +313,7 @@ namespace WeifenLuo.WinFormsUI
                 Invalidate();
             }
 
-            if (RepeatClick)
-                ClickStatus = RepeatClickStatus.Stopped;
+            if (RepeatClick) ClickStatus = RepeatClickStatus.Stopped;
         }
 
         /// <exclude/>
@@ -345,7 +322,7 @@ namespace WeifenLuo.WinFormsUI
             base.OnMouseMove(e);
 
             // Is mouse point inside our client rectangle
-            bool over = ClientRectangle.Contains(new Point(e.X, e.Y));
+            var over = ClientRectangle.Contains(new Point(e.X, e.Y));
 
             // If entering the button area or leaving the button area...
             if (over != m_mouseOver)
@@ -416,18 +393,14 @@ namespace WeifenLuo.WinFormsUI
                 // transform the monochrom image
                 // white -> BackColor
                 // black -> ForeColor
-                ColorMap[] colorMap = new ColorMap[2];
-                colorMap[0] = new ColorMap();
-                colorMap[0].OldColor = Color.White;
-                colorMap[0].NewColor = BackColor;
-                colorMap[1] = new ColorMap();
-                colorMap[1].OldColor = Color.Black;
-                colorMap[1].NewColor = ForeColor;
+                var colorMap = new ColorMap[2];
+                colorMap[0] = new ColorMap {OldColor = Color.White, NewColor = BackColor};
+                colorMap[1] = new ColorMap {OldColor = Color.Black, NewColor = ForeColor};
                 imageAttr.SetRemapTable(colorMap);
             }
 
             var rect = new Rectangle(0, 0, image.Width, image.Height);
-            if ((!Enabled) && (ImageDisabled is null))
+            if (!Enabled && ImageDisabled is null)
             {
                 using var bitmapMono = new Bitmap(image, ClientRectangle.Size);
                 if (imageAttr != null)
@@ -441,18 +414,16 @@ namespace WeifenLuo.WinFormsUI
             {
                 // Three points provided are upper-left, upper-right and 
                 // lower-left of the destination parallelogram. 
-                Point[] pts = new Point[3];
-                pts[0].X = (Enabled && m_mouseOver && m_mouseCapture) ? 1 : 0;
-                pts[0].Y = (Enabled && m_mouseOver && m_mouseCapture) ? 1 : 0;
+                var pts = new Point[3];
+                pts[0].X = Enabled && m_mouseOver && m_mouseCapture ? 1 : 0;
+                pts[0].Y = Enabled && m_mouseOver && m_mouseCapture ? 1 : 0;
                 pts[1].X = pts[0].X + ClientRectangle.Width;
                 pts[1].Y = pts[0].Y;
                 pts[2].X = pts[0].X;
                 pts[2].Y = pts[1].Y + ClientRectangle.Height;
 
-                if (imageAttr is null)
-                    g.DrawImage(image, pts, rect, GraphicsUnit.Pixel);
-                else
-                    g.DrawImage(image, pts, rect, GraphicsUnit.Pixel, imageAttr);
+                if (imageAttr is null) g.DrawImage(image, pts, rect, GraphicsUnit.Pixel);
+                else g.DrawImage(image, pts, rect, GraphicsUnit.Pixel, imageAttr);
             }
         }
 
@@ -465,8 +436,7 @@ namespace WeifenLuo.WinFormsUI
             rect.Width -= 2 * BorderWidth;
             rect.Height -= 2 * BorderWidth;
 
-            StringFormat stringFormat = new StringFormat();
-
+            var stringFormat = new StringFormat();
             if (TextAlign == ContentAlignment.TopLeft)
             {
                 stringFormat.Alignment = StringAlignment.Near;
@@ -522,14 +492,10 @@ namespace WeifenLuo.WinFormsUI
             ButtonBorderStyle bs;
 
             // Decide on the type of border to draw around image
-            if (!Enabled)
-                bs = IsPopup ? ButtonBorderStyle.Outset : ButtonBorderStyle.Solid;
-            else if (m_mouseOver && m_mouseCapture)
-                bs = ButtonBorderStyle.Inset;
-            else if (IsPopup || m_mouseOver)
-                bs = ButtonBorderStyle.Outset;
-            else
-                bs = ButtonBorderStyle.Solid;
+            if (!Enabled) bs = IsPopup ? ButtonBorderStyle.Outset : ButtonBorderStyle.Solid;
+            else if (m_mouseOver && m_mouseCapture) bs = ButtonBorderStyle.Inset;
+            else if (IsPopup || m_mouseOver) bs = ButtonBorderStyle.Outset;
+            else bs = ButtonBorderStyle.Solid;
 
             Color colorLeftTop;
             Color colorRightBottom;

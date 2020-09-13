@@ -494,7 +494,7 @@ namespace FlashDevelop.Dialogs
         public void UpdateSettings()
         {
             FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
-            bool useGroups = PluginBase.Settings.UseListViewGrouping;
+            var useGroups = PluginBase.Settings.UseListViewGrouping;
             resultsView.ShowGroups = useGroups;
             resultsView.GridLines = !useGroups;
         }
@@ -504,9 +504,11 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            var imageList = new ImageList
+            {
+                ColorDepth = ColorDepth.Depth32Bit,
+                ImageSize = ScaleHelper.Scale(new Size(16, 16))
+            };
             imageList.Images.Add(PluginBase.MainForm.FindImage("203", false));
             browseButton.ImageList = imageList;
             browseButton.ImageIndex = 0;
@@ -673,16 +675,8 @@ namespace FlashDevelop.Dialogs
         {
             SetupResultsView(true);
             resultsView.Items.Clear();
-            if (results is null)
-            {
-                string message = TextHelper.GetString("Info.FindLookupCanceled");
-                infoLabel.Text = message;
-            }
-            else if (results.Count == 0)
-            {
-                string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
-            }
+            if (results is null) infoLabel.Text = TextHelper.GetString("Info.FindLookupCanceled");
+            else if (results.Count == 0) infoLabel.Text = TextHelper.GetString("Info.NoMatchesFound");
             else
             {
                 if (!redirectCheckBox.Checked)
@@ -696,8 +690,7 @@ namespace FlashDevelop.Dialogs
                         foreach (var match in entry.Value)
                         {
                             matchCount++;
-                            var item = new ListViewItem();
-                            item.Text = match.Line.ToString();
+                            var item = new ListViewItem {Text = match.Line.ToString()};
                             item.SubItems.Add(match.LineText.Trim());
                             item.SubItems.Add(Path.GetFileName(entry.Key));
                             item.SubItems.Add(Path.GetDirectoryName(entry.Key));
@@ -737,16 +730,8 @@ namespace FlashDevelop.Dialogs
         {
             SetupResultsView(false);
             resultsView.Items.Clear();
-            if (results is null)
-            {
-                string message = TextHelper.GetString("Info.ReplaceLookupCanceled");
-                infoLabel.Text = message;
-            }
-            else if (results.Count == 0)
-            {
-                string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
-            }
+            if (results is null) infoLabel.Text = TextHelper.GetString("Info.ReplaceLookupCanceled");
+            else if (results.Count == 0) infoLabel.Text = TextHelper.GetString("Info.NoMatchesFound");
             else
             {
                 if (!redirectCheckBox.Checked)
@@ -760,9 +745,11 @@ namespace FlashDevelop.Dialogs
                         var replaceCount = entry.Value.Count;
                         if (replaceCount == 0) continue;
                         matchCount += replaceCount;
-                        var item = new ListViewItem();
-                        item.Tag = new KeyValuePair<string, SearchMatch>(entry.Key, null);
-                        item.Text = replaceCount.ToString();
+                        var item = new ListViewItem
+                        {
+                            Tag = new KeyValuePair<string, SearchMatch>(entry.Key, null),
+                            Text = replaceCount.ToString()
+                        };
                         item.SubItems.Add(Path.GetFileName(entry.Key));
                         item.SubItems.Add(Path.GetDirectoryName(entry.Key));
                         resultsView.Items.Add(item);
@@ -805,12 +792,13 @@ namespace FlashDevelop.Dialogs
                     return;
                 }
             }
-
-            var gp = new ListViewGroup();
-            gp.Tag = path;
-            gp.Header = File.Exists(path)
-                ? Path.GetFileName(path)
-                : TextHelper.GetString("Group.Other");
+            var gp = new ListViewGroup
+            {
+                Tag = path,
+                Header = File.Exists(path)
+                    ? Path.GetFileName(path)
+                    : TextHelper.GetString("Group.Other")
+            };
             resultsView.Groups.Add(gp);
             gp.Items.Add(item);
         }
@@ -871,17 +859,15 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void VisibleChange(object sender, EventArgs e)
         {
-            if (Visible)
-            {
-                findComboBox.Select();
-                findComboBox.SelectAll();
-            }
+            if (!Visible) return;
+            findComboBox.Select();
+            findComboBox.SelectAll();
         }
 
         /// <summary>
         /// Checks if the file mask is somewhat valid
         /// </summary>
-        bool IsValidFileMask(string mask)
+        static bool IsValidFileMask(string mask)
         {
             return !string.IsNullOrEmpty(mask) && mask.Trim().StartsWithOrdinal("*.") && !mask.Contains("..")
                    && !mask.Contains('/') && !mask.Contains('\\') && !mask.Contains(':') && Path.GetInvalidPathChars().All(it => !mask.Contains(it));
@@ -896,7 +882,7 @@ namespace FlashDevelop.Dialogs
             var doRefresh = lastProject != null && lastProject != project;
             if (project != null)
             {
-                string path = Path.GetDirectoryName(project.ProjectPath);
+                var path = Path.GetDirectoryName(project.ProjectPath);
                 if (string.IsNullOrEmpty(folderComboBox.Text) || doRefresh)
                 {
                     folderComboBox.Text = path;
@@ -912,16 +898,11 @@ namespace FlashDevelop.Dialogs
             redirectCheckBox.CheckedChanged += RedirectCheckBoxCheckChanged;
             if (!IsValidFileMask(extensionComboBox.Text) || doRefresh)
             {
-                if (project != null)
+                extensionComboBox.Text = project switch
                 {
-                    string filter = project.DefaultSearchFilter;
-                    extensionComboBox.Text = filter;
-                }
-                else
-                {
-                    string def = PluginBase.Settings.DefaultFileExtension;
-                    extensionComboBox.Text = "*." + def;
-                }
+                    null => "*." + PluginBase.Settings.DefaultFileExtension,
+                    _ => project.DefaultSearchFilter
+                };
             }
             UpdateFindText();
             if (project != null) lastProject = project;
@@ -978,12 +959,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Check if file is hidden in project
         /// </summary>
-        bool IsFileHidden(string file, IProject project)
+        static bool IsFileHidden(string file, IProject project)
         {
-            string[] hiddenPaths = project.GetHiddenPaths();
-            foreach (string hiddenPath in hiddenPaths)
+            var hiddenPaths = project.GetHiddenPaths();
+            foreach (var hiddenPath in hiddenPaths)
             {
-                string absHiddenPath = project.GetAbsolutePath(hiddenPath);
+                var absHiddenPath = project.GetAbsolutePath(hiddenPath);
                 if (Directory.Exists(absHiddenPath) && file.StartsWithOrdinal(absHiddenPath)) return true;
             }
             return false;
@@ -994,7 +975,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         bool IsValidPattern()
         {
-            string pattern = findComboBox.Text;
+            var pattern = findComboBox.Text;
             if (pattern.Length == 0) return false;
             if (regexCheckBox.Checked)
             {
@@ -1035,21 +1016,16 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         FRSearch GetFRSearch()
         {
-            string pattern = findComboBox.Text;
-            FRSearch search = new FRSearch(pattern);
-            search.IsRegex = regexCheckBox.Checked;
-            search.IsEscaped = escapedCheckBox.Checked;
-            search.WholeWord = wholeWordCheckBox.Checked;
-            search.NoCase = !matchCaseCheckBox.Checked;
-            search.Filter = SearchFilter.None;
-            if (!commentsCheckBox.Checked)
+            var search = new FRSearch(findComboBox.Text)
             {
-                search.Filter |= SearchFilter.OutsideCodeComments;
-            }
-            if (!stringsCheckBox.Checked)
-            {
-                search.Filter |= SearchFilter.OutsideStringLiterals;
-            }
+                IsRegex = regexCheckBox.Checked,
+                IsEscaped = escapedCheckBox.Checked,
+                WholeWord = wholeWordCheckBox.Checked,
+                NoCase = !matchCaseCheckBox.Checked,
+                Filter = SearchFilter.None
+            };
+            if (!commentsCheckBox.Checked) search.Filter |= SearchFilter.OutsideCodeComments;
+            if (!stringsCheckBox.Checked) search.Filter |= SearchFilter.OutsideStringLiterals;
             return search;
         }
 

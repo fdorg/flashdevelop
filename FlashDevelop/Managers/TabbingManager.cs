@@ -13,8 +13,7 @@ namespace FlashDevelop.Managers
 
         static TabbingManager()
         {
-            TabTimer = new Timer();
-            TabTimer.Interval = 100;
+            TabTimer = new Timer {Interval = 100};
             TabTimer.Tick += OnTabTimer;
             TabHistory = new List<ITabbedDocument>();
             SequentialIndex = 0;
@@ -25,12 +24,10 @@ namespace FlashDevelop.Managers
         /// </summary>
         static void OnTabTimer(object sender, EventArgs e)
         {
-            if ((Control.ModifierKeys & Keys.Control) == 0)
-            {
-                TabTimer.Enabled = false;
-                TabHistory.Remove(PluginBase.MainForm.CurrentDocument);
-                TabHistory.Insert(0, PluginBase.MainForm.CurrentDocument);
-            }
+            if ((Control.ModifierKeys & Keys.Control) != 0) return;
+            TabTimer.Enabled = false;
+            TabHistory.Remove(PluginBase.MainForm.CurrentDocument);
+            TabHistory.Insert(0, PluginBase.MainForm.CurrentDocument);
         }
 
         /// <summary>

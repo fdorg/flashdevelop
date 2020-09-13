@@ -139,11 +139,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void VisibleChange(object sender, EventArgs e)
         {
-            if (Visible)
-            {
-                SelectLineTextBox();
-                CenterToParent();
-            }
+            if (!Visible) return;
+            SelectLineTextBox();
+            CenterToParent();
         }
         
         /// <summary>
@@ -172,8 +170,7 @@ namespace FlashDevelop.Dialogs
             }
             catch
             {
-                string message = TextHelper.GetString("Info.GiveProperInt32Value");
-                ErrorManager.ShowInfo(message);
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.GiveProperInt32Value"));
             }
         }
 
@@ -194,8 +191,7 @@ namespace FlashDevelop.Dialogs
             }
             catch
             {
-                string message = TextHelper.GetString("Info.GiveProperInt32Value");
-                ErrorManager.ShowInfo(message);
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.GiveProperInt32Value"));
             }
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using PluginCore;
@@ -21,12 +22,9 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ToolStripItem FindMenuItem(string name)
         {
-            foreach (var item in Items)
-            {
-                if (item.Name == name) return item;
-            }
-            return ShortcutManager.GetRegisteredItem(name)?.Item
-                   ?? ShortcutManager.GetSecondaryItem(name);
+            return Items.FirstOrDefault(it => it.Name == name)
+                ?? ShortcutManager.GetRegisteredItem(name)?.Item
+                ?? ShortcutManager.GetSecondaryItem(name);
         }
 
         /// <summary>
@@ -34,16 +32,16 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static List<ToolStripItem> FindMenuItems(string name)
         {
-            var found = new List<ToolStripItem>();
+            var result = new List<ToolStripItem>();
             foreach (var item in Items)
             {
-                if (item.Name == name) found.Add(item);
+                if (item.Name == name) result.Add(item);
             }
-            ShortcutItem item2 = ShortcutManager.GetRegisteredItem(name);
-            if (item2 != null) found.Add(item2.Item);
-            ToolStripItem item3 = ShortcutManager.GetSecondaryItem(name);
-            if (item3 != null) found.Add(item3);
-            return found;
+            var item2 = ShortcutManager.GetRegisteredItem(name);
+            if (item2 != null) result.Add(item2.Item);
+            var item3 = ShortcutManager.GetSecondaryItem(name);
+            if (item3 != null) result.Add(item3);
+            return result;
         }
 
         /// <summary>

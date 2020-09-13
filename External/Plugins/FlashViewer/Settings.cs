@@ -9,9 +9,9 @@ namespace FlashViewer
     [Serializable]
     public class Settings
     {
-        private string playerPath = string.Empty;
-        private ViewStyle displayStyle = ViewStyle.External;
-        private bool disableAutoConfig = false;
+        string playerPath = string.Empty;
+        ViewStyle displayStyle = ViewStyle.External;
+        bool disableAutoConfig = false;
 
         /// <summary> 
         /// Get and sets the playerPath

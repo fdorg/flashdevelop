@@ -1262,7 +1262,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public int BufferSize
         {
-            get { return bufferSize_; }
+            get => bufferSize_;
             set {
                 if ( value < 1024 ) {
 #if NETCF_1_0                   
@@ -1272,10 +1272,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 #endif                  
                 }
 
-                if ( bufferSize_ != value ) {
-                    bufferSize_ = value;
-                    copyBuffer_ = null;
-                }
+                if (value == bufferSize_) return;
+                bufferSize_ = value;
+                copyBuffer_ = null;
             }
         }
 

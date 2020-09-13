@@ -19,10 +19,7 @@ namespace FlashDebugger
         {
         }
 
-        public Folder(string value)
-        {
-            path = value;
-        }
+        public Folder(string value) => path = value;
 
         public override string ToString() => path;
 

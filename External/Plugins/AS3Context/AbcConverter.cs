@@ -270,12 +270,14 @@ namespace AS3Context
                             if (models.ContainsKey(filename)) model = models[filename];
                             else
                             {
-                                model = new FileModel("");
-                                model.Context = context;
-                                model.Package = package;
-                                model.HasPackage = true;
-                                model.FileName = filename;
-                                model.Version = 3;
+                                model = new FileModel("")
+                                {
+                                    Context = context,
+                                    Package = package,
+                                    HasPackage = true,
+                                    FileName = filename,
+                                    Version = 3
+                                };
                                 models[filename] = model;
                             }
                         }

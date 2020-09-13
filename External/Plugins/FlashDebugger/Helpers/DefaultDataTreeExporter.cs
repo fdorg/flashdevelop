@@ -20,13 +20,10 @@ namespace FlashDebugger.Helpers
         public string GetTreeAsText(ValueNode dataNode, string levelSep, DataTreeControl control, int levelLimit)
         {
             var sb = new StringBuilder();
-
             // ensure expanded
             control.ListChildItems(dataNode);
-
             // add children nodes
             GetTreeItemsAsText(new List<Node> { dataNode }, new HashSet<string>(), levelSep, 0, sb, control, levelLimit);
-
             return sb.ToString();
         }
 
@@ -36,19 +33,13 @@ namespace FlashDebugger.Helpers
             int len = dataNodes.Count;
             for (int c = 0; c < len; c++)
             {
-                ValueNode child = (ValueNode)dataNodes[c];
+                var child = (ValueNode)dataNodes[c];
 
                 // skip if unwanted item
-                if (!IsWantedChild(child))
-                {
-                    continue;
-                }
+                if (!IsWantedChild(child)) continue;
 
                 // ensure expanded
-                if (!child.IsLeaf)
-                {
-                    control.ListChildItems(child);
-                }
+                if (!child.IsLeaf) control.ListChildItems(child);
 
                 // add node
                 AppendTimes(sb, levelSep, level);

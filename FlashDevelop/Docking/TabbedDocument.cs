@@ -31,8 +31,7 @@ namespace FlashDevelop.Docking
 
         public TabbedDocument()
         {
-            focusTimer = new Timer();
-            focusTimer.Interval = 100;
+            focusTimer = new Timer {Interval = 100};
             bookmarks = new List<int>();
             focusTimer.Tick += OnFocusTimer;
             ControlAdded += DocumentControlAdded;
@@ -83,12 +82,10 @@ namespace FlashDevelop.Docking
             get => IsEditable && !SplitContainer.Panel2Collapsed;
             set
             {
-                if (IsEditable)
-                {
-                    SplitContainer.Panel2Collapsed = !value;
-                    if (value) SplitContainer.Panel2.Show();
-                    else SplitContainer.Panel2.Hide();
-                }
+                if (!IsEditable) return;
+                SplitContainer.Panel2Collapsed = !value;
+                if (value) SplitContainer.Panel2.Show();
+                else SplitContainer.Panel2.Hide();
             }
         }
 
@@ -161,12 +158,10 @@ namespace FlashDevelop.Docking
             set 
             {
                 if (!IsEditable) return;
-                if (isModified != value)
-                {
-                    isModified = value;
-                    ButtonManager.UpdateFlaggedButtons();
-                    RefreshTexts();
-                }
+                if (value == isModified) return;
+                isModified = value;
+                ButtonManager.UpdateFlaggedButtons();
+                RefreshTexts();
             }
         }
 
@@ -234,11 +229,8 @@ namespace FlashDevelop.Docking
             SplitContainer.Dock = DockStyle.Fill;
             SplitContainer.Panel2Collapsed = true;
             SplitSci2.DocPointer = SplitSci1.DocPointer;
-            SplitSci1.SavePointLeft += delegate
-            {
-                Globals.MainForm.OnDocumentModify(this);
-            };
-            SplitSci1.SavePointReached += delegate
+            SplitSci1.SavePointLeft += sender => Globals.MainForm.OnDocumentModify(this);
+            SplitSci1.SavePointReached += sender =>
             {
                 SplitSci1.MarkerDeleteAll(2);
                 IsModified = false;
@@ -275,12 +267,10 @@ namespace FlashDevelop.Docking
         /// </summary>
         void EditorFocusChanged(ScintillaControl sender)
         {
-            if (sender.IsFocus)
-            {
-                lastEditor = sender;
-                SplitSci1.DisableAllSciEvents = (sender == SplitSci2);
-                SplitSci2.DisableAllSciEvents = (sender == SplitSci1);
-            }
+            if (!sender.IsFocus) return;
+            lastEditor = sender;
+            SplitSci1.DisableAllSciEvents = (sender == SplitSci2);
+            SplitSci2.DisableAllSciEvents = (sender == SplitSci1);
         }
 
         /// <summary>
@@ -292,7 +282,7 @@ namespace FlashDevelop.Docking
             fileInfo ??= new FileInfo(fileName);
             if (!PluginBase.MainForm.ClosingEntirely && File.Exists(fileName))
             {
-                FileInfo fi = new FileInfo(fileName);
+                var fi = new FileInfo(fileName);
                 if (fileInfo.IsReadOnly != fi.IsReadOnly) return true;
                 if (fileInfo.LastWriteTime != fi.LastWriteTime) return true;
             }
@@ -388,8 +378,8 @@ namespace FlashDevelop.Docking
             if (!IsEditable) return;
             if (showQuestion)
             {
-                string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.AreYouSureToReload");
+                var dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.AreYouSureToReload");
                 if (MessageBox.Show(PluginBase.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             Globals.MainForm.ReloadingDocument = true;

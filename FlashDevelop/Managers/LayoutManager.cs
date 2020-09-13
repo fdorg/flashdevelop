@@ -32,19 +32,17 @@ namespace FlashDevelop.Managers
             try
             {
                 FileHelper.EnsureUpdatedFile(file);
-                if (File.Exists(file))
-                {
-                    var dockPanel = Globals.MainForm.DockPanel;
-                    var documents = dockPanel.GetDocuments();
-                    savedPersistStrings.Clear();
-                    CloseDocumentContents(documents);
-                    ClosePluginPanelContents();
-                    CloseDynamicContentTemplates();
-                    dockPanel.LoadFromXml(file, contentDeserializer);
-                    RestoreDynamicContentTemplates();
-                    RestoreUnrestoredPlugins(dockPanel);
-                    ShowDocumentContents(documents, dockPanel);
-                }
+                if (!File.Exists(file)) return;
+                var dockPanel = Globals.MainForm.DockPanel;
+                var documents = dockPanel.GetDocuments();
+                savedPersistStrings.Clear();
+                CloseDocumentContents(documents);
+                ClosePluginPanelContents();
+                CloseDynamicContentTemplates();
+                dockPanel.LoadFromXml(file, contentDeserializer);
+                RestoreDynamicContentTemplates();
+                RestoreUnrestoredPlugins(dockPanel);
+                ShowDocumentContents(documents, dockPanel);
             }
             catch (Exception ex)
             {

@@ -14,7 +14,6 @@ using StringReader = java.io.StringReader;
 
 namespace FlashDebugger
 {
-    public delegate void ConditionErrorEventHandler(object sender, BreakPointArgs e);
     public delegate void ChangeBreakPointEventHandler(object sender, BreakPointArgs e);
     public delegate void UpdateBreakPointEventHandler(object sender, UpdateBreakPointArgs e);
 
@@ -33,52 +32,28 @@ namespace FlashDebugger
         public IProject Project
         {
             get => m_Project;
-            set 
+            set
             {
-                if (value != null)
-                {
-                    m_Project = value;
-                    ClearAll();
-                    m_SaveFileFullPath = GetBreakpointsFile(m_Project.ProjectPath);
-                }
+                if (value is null) return;
+                m_Project = value;
+                ClearAll();
+                m_SaveFileFullPath = GetBreakpointsFile(m_Project.ProjectPath);
             }
         }
 
         static string GetBreakpointsFile(string path)
         {
-            string cacheDir = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger), "Breakpoints");
+            var cacheDir = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger), "Breakpoints");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-            string hashFileName = HashCalculator.CalculateSHA1(path);
+            var hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");
-        }
-
-        public void InitBreakPoints()
-        {
-            foreach (var doc in PluginBase.MainForm.Documents)
-            {
-                var sci = doc.SciControl;
-                if (Path.GetExtension(sci.FileName) != ".as" &&
-                    Path.GetExtension(sci.FileName) != ".mxml") continue;
-                var lines = GetMarkers(sci, ScintillaHelper.markerBPEnabled);
-                var cbinfo = BreakPoints.Find(info => info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase));
-                var exp = string.Empty;
-                if (cbinfo != null)
-                {
-                    exp = cbinfo.Exp;
-                    BreakPoints.Remove(cbinfo);
-                }
-                foreach (int i in lines)
-                {
-                    BreakPoints.Add(new BreakPointInfo(sci.FileName, i, exp, false, true));
-                }
-            }
         }
 
         public void ClearAll() => BreakPoints.Clear();
 
         public void ResetAll()
         {
-            for (int i = BreakPoints.Count - 1; i >= 0; i--)
+            for (var i = BreakPoints.Count - 1; i >= 0; i--)
             {
                 if (BreakPoints[i].IsDeleted) BreakPoints.RemoveAt(i);
             }
@@ -100,10 +75,7 @@ namespace FlashDebugger
 
         static int GetMarkerMask(int marker) => 1 << marker;
 
-        public int GetBreakPointIndex(string fileName, int line)
-            => BreakPoints.FindIndex(info => info.FileFullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase) && info.Line == line);
-
-        public bool ShouldBreak(SourceFile file, int line) => ShouldBreak(file, line, null);
+        public int GetBreakPointIndex(string fileName, int line) => BreakPoints.FindIndex(info => info.FileFullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase) && info.Line == line);
 
         public bool ShouldBreak(SourceFile file, int line, Frame frame)
         {
@@ -120,17 +92,13 @@ namespace FlashDebugger
                     return true;
                 }
             }
-            int index = GetBreakPointIndex(localPath, line - 1);
+            var index = GetBreakPointIndex(localPath, line - 1);
             if (index < 0) return true;
-            BreakPointInfo bpInfo = BreakPoints[index];
+            var bpInfo = BreakPoints[index];
             if (bpInfo.ParsedExpression is null) return true;
             try
             {
-                if (frame is null)
-                {
-                    // take currently active worker and frame
-                    frame = PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame];
-                }
+                frame ??= PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame];// take currently active worker and frame
                 var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, frame);
                 var val = bpInfo.ParsedExpression.evaluate(ctx);
                 return val switch
@@ -152,19 +120,18 @@ namespace FlashDebugger
         public void SetBreakPointsToEditor(ITabbedDocument[] documents)
         {
             m_bAccessable = false;
-            foreach (ITabbedDocument document in documents)
+            foreach (var document in documents)
             {
                 var sci = document.SciControl;
                 if (sci is null) continue;
-                if (Path.GetExtension(sci.FileName) == ".as" || Path.GetExtension(sci.FileName) == ".mxml")
+                var ext = Path.GetExtension(sci.FileName);
+                if (ext != ".as" && ext != ".mxml") continue;
+                foreach (var info in BreakPoints)
                 {
-                    foreach (BreakPointInfo info in BreakPoints)
+                    if (info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase) && !info.IsDeleted)
                     {
-                        if (info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase) && !info.IsDeleted)
-                        {
-                            if (info.Line < 0 || info.Line + 1 > sci.LineCount) continue;
-                            sci.MarkerAdd(info.Line, info.IsEnabled ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled);
-                        }
+                        if (info.Line < 0 || info.Line + 1 > sci.LineCount) continue;
+                        sci.MarkerAdd(info.Line, info.IsEnabled ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled);
                     }
                 }
             }
@@ -178,18 +145,16 @@ namespace FlashDebugger
             {
                 var sci = document.SciControl;
                 if (sci is null) continue;
-                if (sci.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                if (!sci.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)) continue;
+                foreach (var info in BreakPoints)
                 {
-                    foreach (var info in BreakPoints)
+                    if (info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase) && !info.IsDeleted)
                     {
-                        if (info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase) && !info.IsDeleted)
-                        {
-                            if (info.Line < 0 || info.Line + 1 > sci.LineCount) continue;
-                            sci.MarkerAdd(info.Line, info.IsEnabled ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled);
-                        }
+                        if (info.Line < 0 || info.Line + 1 > sci.LineCount) continue;
+                        sci.MarkerAdd(info.Line, info.IsEnabled ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled);
                     }
-                    break;
                 }
+                break;
             }
             m_bAccessable = true;
         }
@@ -260,18 +225,13 @@ namespace FlashDebugger
         {
             if (m_Project is null) return;
             var bpSaveList = new List<BreakPointInfo>();
-            foreach (BreakPointInfo info in BreakPoints)
+            foreach (var info in BreakPoints)
             {
                 if (!info.IsDeleted)
                 {
-                    BreakPointInfo infoCopy;
-
-                    if (!Path.IsPathRooted(info.FileFullPath))
-                        infoCopy = info;
-                    else
-                        infoCopy = new BreakPointInfo(m_Project.GetRelativePath(info.FileFullPath),
-                            info.Line, info.Exp, info.IsDeleted, info.IsEnabled);
-                        
+                    var infoCopy = !Path.IsPathRooted(info.FileFullPath)
+                        ? info
+                        : new BreakPointInfo(m_Project.GetRelativePath(info.FileFullPath), info.Line, info.Exp, info.IsDeleted, info.IsEnabled);
                     bpSaveList.Add(infoCopy);
                 }
             }
@@ -403,10 +363,6 @@ namespace FlashDebugger
             }
         }
 
-        public BreakPointInfo() : this(string.Empty, 0, string.Empty, false, false)
-        {
-        }
-
         public BreakPointInfo(string fileFullPath, int line, string exp, bool bDeleted, bool bEnabled)
         {
             FileFullPath = fileFullPath;
@@ -416,8 +372,6 @@ namespace FlashDebugger
             m_ParsedExpression = null;
             Exp = exp;
         }
-
     }
-
     #endregion
 }

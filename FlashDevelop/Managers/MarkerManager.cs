@@ -28,11 +28,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Whether a certain line has a certain marker.
         /// </summary>
-        public static bool HasMarker(ScintillaControl sci, int marker, int line)
-        {
-            int lineMask = sci.MarkerGet(line);
-            return (lineMask & GetMarkerMask(marker)) > 0;
-        }
+        public static bool HasMarker(ScintillaControl sci, int marker, int line) => (sci.MarkerGet(line) & GetMarkerMask(marker)) > 0;
 
         /// <summary>
         /// Moves the cursor to the next marker

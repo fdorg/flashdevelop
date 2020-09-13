@@ -51,12 +51,9 @@ namespace ScintillaNet.Configuration
                 }
                 // Get the parent class. It should be either language's own default or global default
                 // Caution: It is not programmatically guaranteed that there is a default.
-                if (!name.Equals("default"))
-                {
-                    StyleClass defaultCls = language?.usestyles[0]; // First should be default...
-                    return defaultCls ?? _parent.MasterScintilla.GetStyleClass("default");
-                }
-                return null;
+                if (name.Equals("default")) return null;
+                StyleClass defaultCls = language?.usestyles[0]; // First should be default...
+                return defaultCls ?? _parent.MasterScintilla.GetStyleClass("default");
             }
         }
 

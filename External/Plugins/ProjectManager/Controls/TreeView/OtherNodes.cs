@@ -44,7 +44,7 @@ namespace ProjectManager.Controls.TreeView
             Expand();
         }
 
-        private void NotifyProjectRefresh()
+        void NotifyProjectRefresh()
         {
             base.NotifyRefresh();
         }
@@ -54,7 +54,7 @@ namespace ProjectManager.Controls.TreeView
             // do nothing yet, we are not finished
         }
 
-        private void RefreshReferences(bool recursive)
+        void RefreshReferences(bool recursive)
         {
             if (References != null && References.Parent is null)
             {
@@ -63,7 +63,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void RemoveReferences()
+        void RemoveReferences()
         {
             if (References != null && References.Parent == this)
                 Nodes.Remove(References);
@@ -87,9 +87,9 @@ namespace ProjectManager.Controls.TreeView
             get => isActive;
             set 
             {
-                if (isActive == value) return;
+                if (value == isActive) return;
                 isActive = value;
-                FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
+                var style = isActive ? FontStyle.Bold : FontStyle.Regular;
                 NodeFont = new Font(PluginBase.Settings.DefaultFont, style);
                 Text = Text; // Reset text to update the font
             }
@@ -100,7 +100,7 @@ namespace ProjectManager.Controls.TreeView
     {
         public string classpath;
 
-        public ClasspathNode(Project project, string classpath, string text) : base(classpath)
+        public ClasspathNode(string classpath, string text) : base(classpath)
         {
             isDraggable = false;
             isRenamable = false;
@@ -108,13 +108,12 @@ namespace ProjectManager.Controls.TreeView
             this.classpath = classpath;
 
             // shorten text
-            string[] excludes = PluginMain.Settings.FilteredDirectoryNames;
-            char sep = Path.DirectorySeparatorChar;
-            string[] parts = text.Split(sep);
-            List<string> label = new List<string>();
-            Regex reVersion = new Regex("^[0-9]+[.,-][0-9]+");
-            Regex reSHAHash = new Regex("^[0-9a-f]+$");
-
+            var excludes = PluginMain.Settings.FilteredDirectoryNames;
+            var sep = Path.DirectorySeparatorChar;
+            var parts = text.Split(sep);
+            var label = new List<string>();
+            var reVersion = new Regex("^[0-9]+[.,-][0-9]+");
+            var reSHAHash = new Regex("^[0-9a-f]+$");
             if (parts.Length > 0)
             {
                 for (var i = parts.Length - 1; i > 0; --i)
@@ -141,53 +140,22 @@ namespace ProjectManager.Controls.TreeView
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
-
-            base.isInvalid = !Directory.Exists(BackingPath);
-
-            if (!isInvalid)
-            {
-                ImageIndex = Icons.Classpath.Index;
-            }
-            else
-            {
-                ImageIndex = Icons.ClasspathError.Index;
-            }
-
+            isInvalid = !Directory.Exists(BackingPath);
+            ImageIndex = isInvalid ? Icons.ClasspathError.Index : Icons.Classpath.Index;
             SelectedImageIndex = ImageIndex;
-
             NotifyRefresh();
         }
     }
 
     public class ProjectClasspathNode : ClasspathNode
     {
-        public ProjectClasspathNode(Project project, string classpath, string text) : base(project, classpath, text)
-        {
-            if (text != Text)
-            {
-                ToolTipText = text;
-            }
-            else
-            {
-                ToolTipText = "";
-            }
-        }
+        public ProjectClasspathNode(string classpath, string text) : base(classpath, text) => ToolTipText = text != Text ? text : "";
 
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
-
-            if (!IsInvalid)
-            {
-                ImageIndex = Icons.ProjectClasspath.Index;
-            }
-            else
-            {
-                ImageIndex = Icons.ProjectClasspathError.Index;
-            }
-
+            ImageIndex = IsInvalid ? Icons.ProjectClasspathError.Index : Icons.ProjectClasspath.Index;
             SelectedImageIndex = ImageIndex;
-
             NotifyRefresh();
         }
     }
@@ -213,7 +181,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 foreach (var it in project.ExternalLibraries)
                 {
-                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, it, it);
+                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(it, it);
                     Nodes.Add(node);
                     node.Refresh(recursive);
                 }
@@ -228,15 +196,14 @@ namespace ProjectManager.Controls.TreeView
                 // create references nodes
                 foreach (string projectClasspath in projectClasspaths)
                 {
-                    string absolute = projectClasspath;
-                    if (!Path.IsPathRooted(absolute))
-                        absolute = project.GetAbsolutePath(projectClasspath);
+                    var absolute = projectClasspath;
+                    if (!Path.IsPathRooted(absolute)) absolute = project.GetAbsolutePath(projectClasspath);
                     if ((absolute + "\\").StartsWithOrdinal(project.Directory + "\\"))
                         continue;
                     if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
                         continue;
 
-                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, absolute, projectClasspath);
+                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(absolute, projectClasspath);
                     Nodes.Add(cpNode);
                     cpNode.Refresh(recursive);
                 }
@@ -249,12 +216,11 @@ namespace ProjectManager.Controls.TreeView
                 foreach (string globalClasspath in globalClasspaths)
                 {
                     string absolute = globalClasspath;
-                    if (!Path.IsPathRooted(absolute))
-                        absolute = project.GetAbsolutePath(globalClasspath);
+                    if (!Path.IsPathRooted(absolute)) absolute = project.GetAbsolutePath(globalClasspath);
                     if (absolute.StartsWithOrdinal(project.Directory + Path.DirectorySeparatorChar))
                         continue;
 
-                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(project, absolute, globalClasspath);
+                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(absolute, globalClasspath);
                     Nodes.Add(cpNode);
                     cpNode.Refresh(recursive);
                 }
@@ -302,7 +268,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
+        GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
         {
             foreach (GenericNode node in nodesToDie)
                 if (node.BackingPath == absolute)

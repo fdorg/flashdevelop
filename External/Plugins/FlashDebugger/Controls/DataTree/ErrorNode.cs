@@ -4,8 +4,7 @@ namespace FlashDebugger.Controls.DataTree
 {
     public class ErrorNode : DataNode
     {
-
-        private readonly string _value;
+        readonly string _value;
         public override string Value
         {
             get => _value;
@@ -14,11 +13,6 @@ namespace FlashDebugger.Controls.DataTree
 
         public override bool IsLeaf => true;
 
-        public ErrorNode(string text, Exception ex)
-            : base(text)
-        {
-            _value = ex.Message;
-        }
-
+        public ErrorNode(string text, Exception ex) : base(text) => _value = ex.Message;
     }
 }

@@ -567,10 +567,7 @@ namespace PluginCore.Controls
             set
             {
                 // no change, return
-                if (curPos == value)
-                {
-                    return;
-                }
+                if (value == curPos) return;
                 curPos = value;
                 Invalidate();
             }
@@ -588,10 +585,7 @@ namespace PluginCore.Controls
             set
             {
                 // no change, return
-                if (maxCurPos == value)
-                {
-                    return;
-                }
+                if (value == maxCurPos) return;
                 maxCurPos = value;
                 Invalidate();
             }
@@ -640,27 +634,15 @@ namespace PluginCore.Controls
             set
             {
                 // no change or value invalid - return
-                if (minimum == value || value < 0 || value >= maximum)
-                {
-                    return;
-                }
+                if (value == minimum || value < 0 || value >= maximum) return;
                 minimum = value;
                 // current value less than new minimum value - adjust
-                if (this.value < value)
-                {
-                    this.value = value;
-                }
+                if (this.value < value) this.value = value;
                 // is current large change value invalid - adjust
-                if (largeChange > maximum - minimum)
-                {
-                    largeChange = maximum - minimum;
-                }
+                if (largeChange > maximum - minimum) largeChange = maximum - minimum;
                 SetUpScrollBar();
                 // current value less than new minimum value - adjust
-                if (this.value < value)
-                {
-                    Value = value;
-                }
+                if (this.value < value) Value = value;
                 else
                 {
                     // current value is valid - adjust thumb position (already done by SetUpScrollBar())
@@ -791,10 +773,7 @@ namespace PluginCore.Controls
             set
             {
                 // no change or invalid value - return
-                if (this.value == value || value < minimum || value > maximum)
-                {
-                    return;
-                }
+                if (value == this.value || value < minimum || value > maximum) return;
                 this.value = value;
                 // adjust thumb position
                 ChangeThumbPosition(GetThumbPosition());
@@ -1659,15 +1638,12 @@ namespace PluginCore.Controls
             {
                 OnScroll(new ScrollEventArgs(type, scrollOldValue, value, scrollOrientation));
                 Refresh();
-                if (enableTimer)
-                    EnableTimer();
+                if (enableTimer) EnableTimer();
             }
             else
             {
-                if (topArrowClicked)
-                    type = ScrollEventType.SmallDecrement;
-                else if (bottomArrowClicked)
-                    type = ScrollEventType.SmallIncrement;
+                if (topArrowClicked) type = ScrollEventType.SmallDecrement;
+                else if (bottomArrowClicked) type = ScrollEventType.SmallIncrement;
                 OnScroll(new ScrollEventArgs(type, value));
             }
         }

@@ -11,8 +11,8 @@ namespace FlashDebugger.Controls
 {
     public class WatchUI : DockPanelControl
     {
-        private readonly DataTreeControl treeControl;
-        private readonly WatchManager watchManager;
+        readonly DataTreeControl treeControl;
+        readonly WatchManager watchManager;
 
         public WatchUI(WatchManager watchManager)
         {
@@ -34,64 +34,37 @@ namespace FlashDebugger.Controls
             this.watchManager.ExpressionsLoaded += WatchManager_ExpressionsLoaded;
         }
 
-        private void TreeControlResize(object sender, EventArgs e)
+        void TreeControlResize(object sender, EventArgs e)
         {
             int w = treeControl.Width / 2;
             treeControl.Tree.Columns[0].Width = w;
             treeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        private void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)
+        void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)
         {
             treeControl.Nodes.Insert(e.Position, GetExpressionNode(e.Expression));
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionRemoved(object sender, WatchExpressionArgs e)
-        {
-            UpdateElements();
-        }
+        void WatchManager_ExpressionRemoved(object sender, WatchExpressionArgs e) => UpdateElements();
 
-        private void WatchManager_ExpressionReplaced(object sender, WatchExpressionReplaceArgs e)
-        {
-            treeControl.Nodes[e.Position] = GetExpressionNode(e.NewExpression);
-        }
+        void WatchManager_ExpressionReplaced(object sender, WatchExpressionReplaceArgs e) => treeControl.Nodes[e.Position] = GetExpressionNode(e.NewExpression);
 
-        private void WatchManager_ExpressionsCleared(object sender, EventArgs e)
-        {
-            treeControl.Nodes.Clear();
-        }
+        void WatchManager_ExpressionsCleared(object sender, EventArgs e) => treeControl.Nodes.Clear();
 
-        private void WatchManager_ExpressionsLoaded(object sender, EventArgs e)
-        {
-            UpdateElements();
-        }
+        void WatchManager_ExpressionsLoaded(object sender, EventArgs e) => UpdateElements();
 
-        public bool AddElement(string item)
-        {
-            return watchManager.Add(item);
-        }
-        
-        public void RemoveElement(string item)
-        {
-            watchManager.Remove(item);
-        }
+        public bool AddElement(string item) => watchManager.Add(item);
 
-        public void RemoveElement(int itemN)
-        {
-            watchManager.RemoveAt(itemN);
-        }
+        public void RemoveElement(string item) => watchManager.Remove(item);
 
-        public bool ReplaceElement(string oldItem, string newItem)
-        {
-            return watchManager.Replace(oldItem, newItem);
-        }
+        public void RemoveElement(int itemN) => watchManager.RemoveAt(itemN);
 
-        public void Clear()
-        {
-            watchManager.ClearAll();
-        }
-        
+        public bool ReplaceElement(string oldItem, string newItem) => watchManager.Replace(oldItem, newItem);
+
+        public void Clear() => watchManager.ClearAll();
+
         public void UpdateElements()
         {
             treeControl.Tree.BeginUpdate();
@@ -108,7 +81,7 @@ namespace FlashDebugger.Controls
             treeControl.Enabled = true;
         }
 
-        private DataNode GetExpressionNode(string item)
+        static DataNode GetExpressionNode(string item)
         {
             DataNode node;
             try
@@ -119,26 +92,23 @@ namespace FlashDebugger.Controls
                 }
 
                 IASTBuilder builder = new ASTBuilder(false);
-                ValueExp exp = builder.parse(new java.io.StringReader(item));
+                var exp = builder.parse(new java.io.StringReader(item));
                 var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                 var obj = exp.evaluate(ctx);
-                if (obj is Variable)
+                node = obj switch
                 {
-                    node = new VariableNode((Variable)obj)
+                    Variable variable => new VariableNode(variable)
                     {
                         HideClassId = PluginMain.settingObject.HideClassIds,
                         HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
-                    };
-                }
-                else if (obj is Value)
-                {
-                    node = new ValueNode(item, (Value)obj)
+                    },
+                    Value value => new ValueNode(item, value)
                     {
                         HideClassId = PluginMain.settingObject.HideClassIds,
                         HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
-                    };
-                }
-                else node = new ScalarNode(item, obj.toString());
+                    },
+                    _ => new ScalarNode(item, obj.toString())
+                };
                 node.Tag = item;
             }
             catch (Exception ex)
@@ -148,7 +118,5 @@ namespace FlashDebugger.Controls
             node.Text = item;
             return node;
         }
-
     }
-
 }

@@ -321,10 +321,8 @@ namespace PluginCore.FRService
             get => sourceFile;
             set
             {
-                if (sourceFile == value) return;
-                
+                if (value == sourceFile) return;
                 sourceFile = value;
-
                 if (sourceFile is null)
                 {
                     hasRegexLiterals = false;
@@ -332,15 +330,16 @@ namespace PluginCore.FRService
                     return;
                 }
 
-                string ext = Path.GetExtension(SourceFile).ToLowerInvariant();
+                var ext = Path.GetExtension(SourceFile).ToLowerInvariant();
 
                 isHaxeFile = FileInspector.IsHaxeFile(ext);
 
                 // Haxe, ActionScript, JavaScript and LoomScript support Regex literals
-                hasRegexLiterals = isHaxeFile || FileInspector.IsActionScript(ext) ||
-                                   FileInspector.IsMxml(ext) ||
-                                   FileInspector.IsHtml(ext) || ext == ".js" || ext == ".ls" ||
-                                   ext == ".ts";
+                hasRegexLiterals = isHaxeFile 
+                                   || FileInspector.IsActionScript(ext)
+                                   || FileInspector.IsMxml(ext)
+                                   || FileInspector.IsHtml(ext)
+                                   || ext == ".js" || ext == ".ls" || ext == ".ts";
             }
         }
 
@@ -349,13 +348,10 @@ namespace PluginCore.FRService
         #region Public Search Methods
 
         /// <summary>
-        /// Create a seach engine
+        /// Create a search engine
         /// </summary>
         /// <param name="pattern">Search pattern</param>
-        public FRSearch(string pattern)
-        {
-            this.pattern = pattern;
-        }
+        public FRSearch(string pattern) => this.pattern = pattern;
 
         /// <summary>
         /// Find a match
@@ -551,17 +547,11 @@ namespace PluginCore.FRService
                     match = matches[matchIndex];
                     nextPos = match.Index;
                 }
-                if (match is null) 
-                    break;
-                if (pos < nextPos) 
-                    continue;
+                if (match is null) break;
+                if (pos < nextPos) continue;
 
                 // store match data
-                SearchMatch sm = new SearchMatch();
-                sm.Index = match.Index;
-                sm.Value = match.Value;
-                sm.Length = match.Length;
-                sm.Line = line;
+                var sm = new SearchMatch {Index = match.Index, Value = match.Value, Length = match.Length, Line = line};
                 sm.LineStart = sm.LineEnd = lineStart[line - 1];
                 sm.Column = match.Index - sm.LineStart;
 
@@ -573,8 +563,7 @@ namespace PluginCore.FRService
                     sm.Groups[i] = new SearchGroup(group.Index, group.Length, group.Value);
                 }
                 results.Add(sm);
-                if (!returnAllMatches)
-                    break;
+                if (!returnAllMatches) break;
             }
             // last line end
             while (pos < len && c != '\r' && c != '\n') 
@@ -650,6 +639,5 @@ namespace PluginCore.FRService
             }
             return result;
         }
-
     }
 }

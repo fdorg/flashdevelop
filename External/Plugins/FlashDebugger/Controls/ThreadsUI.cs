@@ -5,26 +5,20 @@ using PluginCore.Controls;
 
 namespace FlashDebugger
 {
-    class ThreadsUI : DockPanelControl
+    internal class ThreadsUI : DockPanelControl
     {
-        private readonly ListViewEx lv;
-        private readonly ColumnHeader imageColumnHeader;
-        private readonly ColumnHeader frameColumnHeader;
-        private PluginMain pluginMain;
-        private readonly int runningImageIndex;
-        private readonly int suspendedImageIndex;
+        readonly ListViewEx lv;
+        readonly ColumnHeader imageColumnHeader;
+        readonly ColumnHeader frameColumnHeader;
+        readonly int runningImageIndex;
+        readonly int suspendedImageIndex;
 
-        public ThreadsUI(PluginMain pluginMain, ImageList imageList)
+        public ThreadsUI(ImageList imageList)
         {
             AutoKeyHandling = true;
-            this.pluginMain = pluginMain;
-            lv = new ListViewEx();
-            lv.ShowItemToolTips = true;
-            imageColumnHeader = new ColumnHeader();
-            imageColumnHeader.Text = string.Empty;
-            imageColumnHeader.Width = 20;
-            frameColumnHeader = new ColumnHeader();
-            frameColumnHeader.Text = string.Empty;
+            lv = new ListViewEx {ShowItemToolTips = true};
+            imageColumnHeader = new ColumnHeader {Text = string.Empty, Width = 20};
+            frameColumnHeader = new ColumnHeader {Text = string.Empty};
             lv.Columns.AddRange(new[] {
             imageColumnHeader,
             frameColumnHeader});
@@ -42,15 +36,9 @@ namespace FlashDebugger
             ScrollBarEx.Attach(lv);
         }
 
-        void lv_SizeChanged(object sender, EventArgs e)
-        {
-            frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
-        }
+        void lv_SizeChanged(object sender, EventArgs e) => frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
 
-        public void ClearItem()
-        {
-            lv.Items.Clear();
-        }
+        public void ClearItem() => lv.Items.Clear();
 
         public void ActiveItem()
         {
@@ -90,13 +78,10 @@ namespace FlashDebugger
 
         void lv_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Return)
+            if (e.KeyCode == Keys.Return && lv.SelectedIndices.Count > 0)
             {
-                if (lv.SelectedIndices.Count > 0)
-                {
-                    PluginMain.debugManager.FlashInterface.ActiveSession = (int)lv.SelectedItems[0].Tag;
-                    ActiveItem();
-                }
+                PluginMain.debugManager.FlashInterface.ActiveSession = (int)lv.SelectedItems[0].Tag;
+                ActiveItem();
             }
         }
 
@@ -108,7 +93,5 @@ namespace FlashDebugger
                 ActiveItem();
             }
         }
-
     }
-
 }

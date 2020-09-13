@@ -4,8 +4,7 @@ namespace FlashDebugger.Controls.DataTree
 {
     public class ScalarNode : DataNode
     {
-
-        private readonly string m_Value;
+        readonly string m_Value;
         public override string Value
         {
             get => m_Value;
@@ -14,11 +13,6 @@ namespace FlashDebugger.Controls.DataTree
 
         public override bool IsLeaf => true;
 
-        public ScalarNode(string text, string value)
-            : base(text)
-        {
-            m_Value = value;
-        }
-
+        public ScalarNode(string text, string value) : base(text) => m_Value = value;
     }
 }

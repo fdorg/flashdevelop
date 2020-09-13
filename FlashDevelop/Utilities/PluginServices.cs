@@ -58,14 +58,11 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void DisposePlugins()
         {
-            foreach (AvailablePlugin pluginOn in AvailablePlugins)
+            foreach (var pluginOn in AvailablePlugins)
             {
                 try
                 {
-                    if (pluginOn.IsActive)
-                    {
-                        pluginOn.Instance.Dispose();
-                    }
+                    if (pluginOn.IsActive) pluginOn.Instance.Dispose();
                 } 
                 catch (Exception ex)
                 {
@@ -88,8 +85,10 @@ namespace FlashDevelop.Utilities
                     if (!pluginType.IsPublic || pluginType.IsAbstract) continue;
                     var typeInterface = pluginType.GetInterface("PluginCore.IPlugin", true);
                     if (typeInterface is null) continue;
-                    AvailablePlugin newPlugin = new AvailablePlugin(fileName);
-                    newPlugin.Instance = (IPlugin)Activator.CreateInstance(pluginAssembly.GetType(pluginType.ToString()));
+                    var newPlugin = new AvailablePlugin(fileName)
+                    {
+                        Instance = (IPlugin) Activator.CreateInstance(pluginAssembly.GetType(pluginType.ToString()))
+                    };
                     if (newPlugin.Instance.Api != REQUIRED_API_LEVEL)
                     {
                         // Invalid plugin, ignore...
@@ -100,15 +99,12 @@ namespace FlashDevelop.Utilities
                         newPlugin.Instance.Initialize();
                         newPlugin.IsActive = true;
                     }
-                    if (!AvailablePlugins.Contains(newPlugin))
-                    {
-                        AvailablePlugins.Add(newPlugin);
-                    }
+                    if (!AvailablePlugins.Contains(newPlugin)) AvailablePlugins.Add(newPlugin);
                 }
             }
             catch (Exception ex)
             {
-                string message = TextHelper.GetString("Info.UnableToLoadPlugin");
+                var message = TextHelper.GetString("Info.UnableToLoadPlugin");
                 ErrorManager.ShowWarning(message + " \n" + fileName, ex);
             }
         }
@@ -120,9 +116,6 @@ namespace FlashDevelop.Utilities
         public string Assembly;
         public IPlugin Instance;
 
-        public AvailablePlugin(string assembly)
-        {
-            Assembly = assembly;
-        }
+        public AvailablePlugin(string assembly) => Assembly = assembly;
     }
 }

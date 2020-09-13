@@ -980,7 +980,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the path to the language directory
         /// </summary>
-        string LangDir => Path.Combine(PathHelper.SettingDir, "Languages");
+        static string LangDir => Path.Combine(PathHelper.SettingDir, "Languages");
 
         /// <summary>
         /// Constant xml file style paths
@@ -1045,8 +1045,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            var imageList = new ImageList {ColorDepth = ColorDepth.Depth32Bit};
             imageList.Images.Add(PluginBase.MainForm.FindImage("129", false)); // snippet;
             imageList.Images.Add(PluginBase.MainForm.FindImage("328", false)); // palette;
             imageList.Images.Add(PluginBase.MainForm.FindImage("55|24|3|3", false)); // revert
@@ -1070,10 +1069,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Apply styling after theme manager
         /// </summary>
-        public void AfterTheming()
-        {
-            UpdateSampleText();
-        }
+        public void AfterTheming() => UpdateSampleText();
 
         /// <summary>
         /// Initializes all ui components
@@ -1124,25 +1120,19 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void LoadLanguage(string newLanguage, bool promptToSave)
         {
-            if (!isLanguageSaved && promptToSave)
-            {
-                PromptToSaveLanguage();
-            }
+            if (!isLanguageSaved && promptToSave) PromptToSaveLanguage();
             languageDoc = new XmlDocument();
             languageFile = Path.Combine(LangDir, newLanguage + ".xml");
             languageDoc.Load(languageFile);
             LoadEditorStyles();
             defaultStyleNode = languageDoc.SelectSingleNode(defaultStylePath) as XmlElement;
-            XmlNodeList styles = languageDoc.SelectNodes(stylePath);
+            var styles = languageDoc.SelectNodes(stylePath);
             itemListView.Items.Clear();
             foreach (XmlNode style in styles)
             {
                 itemListView.Items.Add(style.Attributes["name"].Value, 0);
             }
-            if (itemListView.Items.Count > 0)
-            {
-                itemListView.Items[0].Selected = true;
-            }
+            if (itemListView.Items.Count > 0) itemListView.Items[0].Selected = true;
             applyButton.Enabled = false;
             isLanguageSaved = true;
         }
@@ -1433,11 +1423,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ItemsSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (itemListView.SelectedIndices.Count > 0)
-            {
-                string style = itemListView.SelectedItems[0].Text;
-                LoadLanguageItem(style);
-            }
+            if (itemListView.SelectedIndices.Count == 0) return;
+            LoadLanguageItem(itemListView.SelectedItems[0].Text);
         }
 
         /// <summary>
@@ -1714,22 +1701,22 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void RevertLanguagesClick(object sender, EventArgs e)
         {
-            string caption = TextHelper.GetString("Title.ConfirmDialog");
-            string message = TextHelper.GetString("Info.RevertSettingsFiles");
-            DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
-            if (result == DialogResult.Yes)
+            var caption = TextHelper.GetString("Title.ConfirmDialog");
+            var message = TextHelper.GetString("Info.RevertSettingsFiles");
+            switch (MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information))
             {
-                Enabled = false;
-                CleanupManager.RevertConfiguration(true);
-                RefreshConfiguration();
-                Enabled = true;
-            }
-            else if (result == DialogResult.No)
-            {
-                Enabled = false;
-                CleanupManager.RevertConfiguration(false);
-                RefreshConfiguration();
-                Enabled = true;
+                case DialogResult.Yes:
+                    Enabled = false;
+                    CleanupManager.RevertConfiguration(true);
+                    RefreshConfiguration();
+                    Enabled = true;
+                    break;
+                case DialogResult.No:
+                    Enabled = false;
+                    CleanupManager.RevertConfiguration(false);
+                    RefreshConfiguration();
+                    Enabled = true;
+                    break;
             }
         }
 
@@ -1741,8 +1728,7 @@ namespace FlashDevelop.Dialogs
             LoadLanguage(languageDropDown.Text, true);
             if (itemListView.SelectedIndices.Count > 0)
             {
-                string language = itemListView.SelectedItems[0].Text;
-                LoadLanguageItem(language);
+                LoadLanguageItem(itemListView.SelectedItems[0].Text);
             }
             PluginBase.MainForm.RefreshSciConfig();
         }
@@ -1835,19 +1821,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ExportLanguagesClick(object sender, EventArgs e)
         {
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+            var langFiles = Directory.GetFiles(LangDir);
+            var zipFile = ZipFile.Create(saveFileDialog.FileName);
+            zipFile.BeginUpdate();
+            foreach (string langFile in langFiles)
             {
-                string[] langFiles = Directory.GetFiles(LangDir);
-                ZipFile zipFile = ZipFile.Create(saveFileDialog.FileName);
-                zipFile.BeginUpdate();
-                foreach (string langFile in langFiles)
-                {
-                    var xmlFile = Path.GetFileName(langFile);
-                    zipFile.Add(langFile, "$(BaseDir)\\Settings\\Languages\\" + xmlFile);
-                }
-                zipFile.CommitUpdate();
-                zipFile.Close();
+                var xmlFile = Path.GetFileName(langFile);
+                zipFile.Add(langFile, "$(BaseDir)\\Settings\\Languages\\" + xmlFile);
             }
+            zipFile.CommitUpdate();
+            zipFile.Close();
         }
 
         /// <summary>

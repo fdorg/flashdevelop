@@ -46,10 +46,7 @@ namespace ScintillaNet.Configuration
             return result;
         }
 
-        public ConfigurationUtility(Assembly assembly)
-        {
-            _assembly = assembly;
-        }
+        public ConfigurationUtility(Assembly assembly) => _assembly = assembly;
 
         public virtual object LoadConfiguration(ConfigFile parent) => LoadConfiguration(typeof(Scintilla), "ScintillaNET.xml", parent);
 
@@ -102,8 +99,7 @@ namespace ScintillaNet.Configuration
 
         public virtual object LoadConfiguration(string[] files)
         {
-            var result = new Scintilla();
-            result.includes = files.Select(file => new include {file = file}).ToArray();
+            var result = new Scintilla {includes = files.Select(file => new include {file = file}).ToArray()};
             result.init(this, null);
             return result;
         }

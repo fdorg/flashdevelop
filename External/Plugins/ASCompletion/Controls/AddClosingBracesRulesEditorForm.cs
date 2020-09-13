@@ -12,37 +12,37 @@ using PluginCore.Helpers;
 
 namespace ASCompletion.Controls
 {
-    public partial class AddClosingBracesRulesEditorForm : Form, IServiceProvider, ITypeDescriptorContext, IWindowsFormsEditorService
+    public class AddClosingBracesRulesEditorForm : Form, ITypeDescriptorContext, IWindowsFormsEditorService
     {
-        private ListBox listBox;
-        private TextBox txtName;
-        private TextBox txtOpenChar;
-        private TextBox txtCloseChar;
-        private CheckBox cbxAddSpace;
-        private CheckBox cbxIgnoreWhitespace;
-        private DataGridView rulesGridView;
-        private DataGridViewCheckBoxColumn not1;
-        private DataGridViewRegexColumn afterChars;
-        private DataGridViewButtonColumn logic1;
-        private DataGridViewCheckBoxColumn not2;
-        private DataGridViewStylesColumn afterStyles;
-        private DataGridViewButtonColumn logic2;
-        private DataGridViewCheckBoxColumn not3;
-        private DataGridViewRegexColumn beforeChars;
-        private DataGridViewButtonColumn logic3;
-        private DataGridViewCheckBoxColumn not4;
-        private DataGridViewStylesColumn beforeStyles;
-        private DataGridViewImageColumn colDelete;
-        private Button btnUp;
-        private Button btnDown;
-        private Button btnAdd;
-        private Button btnRemove;
-        private Button btnAddRule;
-        private Button btnOk;
-        private Button btnCancel;
+        ListBox listBox;
+        TextBox txtName;
+        TextBox txtOpenChar;
+        TextBox txtCloseChar;
+        CheckBox cbxAddSpace;
+        CheckBox cbxIgnoreWhitespace;
+        DataGridView rulesGridView;
+        DataGridViewCheckBoxColumn not1;
+        DataGridViewRegexColumn afterChars;
+        DataGridViewButtonColumn logic1;
+        DataGridViewCheckBoxColumn not2;
+        DataGridViewStylesColumn afterStyles;
+        DataGridViewButtonColumn logic2;
+        DataGridViewCheckBoxColumn not3;
+        DataGridViewRegexColumn beforeChars;
+        DataGridViewButtonColumn logic3;
+        DataGridViewCheckBoxColumn not4;
+        DataGridViewStylesColumn beforeStyles;
+        DataGridViewImageColumn colDelete;
+        Button btnUp;
+        Button btnDown;
+        Button btnAdd;
+        Button btnRemove;
+        Button btnAddRule;
+        Button btnOk;
+        Button btnCancel;
 
-        private Brace[] braces;
-        private BraceInEdit inEdit;
+        Brace[] braces;
+        BraceInEdit inEdit;
 
         public AddClosingBracesRulesEditorForm(Brace[] value)
         {
@@ -424,7 +424,7 @@ namespace ASCompletion.Controls
             btnAddRule.Image = PluginBase.MainForm.FindImage16("550", false);
         }
 
-        private void InitializeFonts()
+        void InitializeFonts()
         {
             Font = PluginBase.Settings.DefaultFont;
 
@@ -434,7 +434,7 @@ namespace ASCompletion.Controls
             txtCloseChar.Font = PluginBase.Settings.ConsoleFont;
         }
 
-        private void InitializeGridView()
+        void InitializeGridView()
         {
             rulesGridView.GetType().GetProperty(nameof(DoubleBuffered), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(rulesGridView, true, null);
             rulesGridView.RowTemplate = new DataGridViewRow()
@@ -463,7 +463,7 @@ namespace ASCompletion.Controls
             beforeStyles.ValueType = typeof(Style[]);
         }
 
-        private void InitializeListBox(Brace[] value)
+        void InitializeListBox(Brace[] value)
         {
             listBox.GetType().GetProperty(nameof(DoubleBuffered), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(listBox, true, null);
             listBox.BeginUpdate();
@@ -474,10 +474,7 @@ namespace ASCompletion.Controls
             listBox.EndUpdate();
         }
 
-        private void ValidateControlStates()
-        {
-            listBox.SelectedIndex = 0;
-        }
+        void ValidateControlStates() => listBox.SelectedIndex = 0;
 
         #endregion
 
@@ -485,7 +482,7 @@ namespace ASCompletion.Controls
 
         public Brace[] Value => braces;
 
-        private void ShowBraceProperties()
+        void ShowBraceProperties()
         {
             txtName.TextChanged -= TxtName_TextChanged;
             txtOpenChar.TextChanged -= TxtOpenChar_TextChanged;
@@ -527,7 +524,7 @@ namespace ASCompletion.Controls
             cbxIgnoreWhitespace.CheckedChanged += CbxIgnoreWhitespace_CheckedChanged;
         }
 
-        private object[] CreateRow(Brace.Rule rule)
+        static object[] CreateRow(Brace.Rule rule)
         {
             return new object[]
             {
@@ -538,12 +535,9 @@ namespace ASCompletion.Controls
             };
         }
 
-        private Style[] EditStyles(Style[] value)
-        {
-            return (Style[]) new ArrayEditor(typeof(Style[])).EditValue(this, this, value);
-        }
+        Style[] EditStyles(Style[] value) => (Style[]) new ArrayEditor(typeof(Style[])).EditValue(this, this, value);
 
-        private void InvalidateListBox()
+        void InvalidateListBox()
         {
             listBox.DisplayMember = "Invalidate";
             listBox.DisplayMember = "";
@@ -553,7 +547,7 @@ namespace ASCompletion.Controls
 
         #region Event Handlers
 
-        private void ListBox_SelectedValueChanged(object sender, EventArgs e)
+        void ListBox_SelectedValueChanged(object sender, EventArgs e)
         {
             if (listBox.SelectedIndex == -1)
             {
@@ -586,13 +580,13 @@ namespace ASCompletion.Controls
             ShowBraceProperties();
         }
 
-        private void TxtName_TextChanged(object sender, EventArgs e)
+        void TxtName_TextChanged(object sender, EventArgs e)
         {
             inEdit.Name = txtName.Text;
             InvalidateListBox();
         }
 
-        private void TxtOpenChar_TextChanged(object sender, EventArgs e)
+        void TxtOpenChar_TextChanged(object sender, EventArgs e)
         {
             if (txtOpenChar.TextLength == 1 && !char.IsWhiteSpace(txtOpenChar.Text[0]))
             {
@@ -605,7 +599,7 @@ namespace ASCompletion.Controls
             InvalidateListBox();
         }
 
-        private void TxtCloseChar_TextChanged(object sender, EventArgs e)
+        void TxtCloseChar_TextChanged(object sender, EventArgs e)
         {
             if (txtCloseChar.TextLength == 1 && !char.IsWhiteSpace(txtCloseChar.Text[0]))
             {
@@ -618,17 +612,11 @@ namespace ASCompletion.Controls
             InvalidateListBox();
         }
 
-        private void CbxAddSpace_CheckedChanged(object sender, EventArgs e)
-        {
-            inEdit.AddSpace = cbxAddSpace.Checked;
-        }
+        void CbxAddSpace_CheckedChanged(object sender, EventArgs e) => inEdit.AddSpace = cbxAddSpace.Checked;
 
-        private void CbxIgnoreWhitespace_CheckedChanged(object sender, EventArgs e)
-        {
-            inEdit.IgnoreWhitespace = cbxIgnoreWhitespace.Checked;
-        }
+        void CbxIgnoreWhitespace_CheckedChanged(object sender, EventArgs e) => inEdit.IgnoreWhitespace = cbxIgnoreWhitespace.Checked;
 
-        private void BtnUp_Click(object sender, EventArgs e)
+        void BtnUp_Click(object sender, EventArgs e)
         {
             int index = listBox.SelectedIndex - 1;
             object itemAbove = listBox.Items[index];
@@ -639,7 +627,7 @@ namespace ASCompletion.Controls
             txtName.Select();
         }
 
-        private void BtnDown_Click(object sender, EventArgs e)
+        void BtnDown_Click(object sender, EventArgs e)
         {
             int index = listBox.SelectedIndex + 1;
             object itemBelow = listBox.Items[index];
@@ -650,7 +638,7 @@ namespace ASCompletion.Controls
             txtName.Select();
         }
 
-        private void BtnAdd_Click(object sender, EventArgs e)
+        void BtnAdd_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox.SelectedIndex;
             listBox.Items.Insert(selectedIndex + 1, new BraceInEdit());
@@ -658,7 +646,7 @@ namespace ASCompletion.Controls
             listBox.Select();
         }
 
-        private void BtnRemove_Click(object sender, EventArgs e)
+        void BtnRemove_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox.SelectedIndex;
             listBox.SelectedIndex = selectedIndex == 0 && listBox.Items.Count > 1 ? 1 : selectedIndex - 1;
@@ -666,7 +654,7 @@ namespace ASCompletion.Controls
             listBox.Select();
         }
 
-        private void BtnAddRule_Click(object sender, EventArgs e)
+        void BtnAddRule_Click(object sender, EventArgs e)
         {
             var newRule = new Brace.Rule();
             inEdit.Rules.Add(newRule);
@@ -676,7 +664,7 @@ namespace ASCompletion.Controls
             rulesGridView.Select();
         }
 
-        private void BtnOk_Click(object sender, EventArgs e)
+        void BtnOk_Click(object sender, EventArgs e)
         {
             int count = 0;
             braces = new Brace[listBox.Items.Count];
@@ -692,17 +680,14 @@ namespace ASCompletion.Controls
             Array.Resize(ref braces, count);
         }
 
-        private void BtnCancel_Click(object sender, EventArgs e)
+        void BtnCancel_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void RulesGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        void RulesGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex == -1)
-            {
-                return;
-            }
+            if (e.RowIndex == -1) return;
             if (e.ColumnIndex == logic1.Index || e.ColumnIndex == logic2.Index || e.ColumnIndex == logic3.Index)
             {
                 inEdit.Rules[e.RowIndex].Logic ^= Brace.Logic.And;
@@ -729,12 +714,9 @@ namespace ASCompletion.Controls
             rulesGridView.ClearSelection();
         }
 
-        private void RulesGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        void RulesGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex == -1)
-            {
-                return;
-            }
+            if (e.RowIndex == -1) return;
             try
             {
                 if (e.ColumnIndex == afterChars.Index)
@@ -754,12 +736,9 @@ namespace ASCompletion.Controls
             rulesGridView.ClearSelection();
         }
 
-        private void RulesGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        void RulesGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex == -1)
-            {
-                return;
-            }
+            if (e.RowIndex == -1) return;
             if (e.ColumnIndex == not1.Index)
             {
                 inEdit.Rules[e.RowIndex].NotAfterChars = (bool) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
@@ -800,31 +779,22 @@ namespace ASCompletion.Controls
 
         }
 
-        object IServiceProvider.GetService(Type serviceType)
-        {
-            return serviceType == typeof(IWindowsFormsEditorService) ? this : null;
-        }
+        object IServiceProvider.GetService(Type serviceType) => serviceType == typeof(IWindowsFormsEditorService) ? this : null;
 
         void ITypeDescriptorContext.OnComponentChanged()
         {
 
         }
 
-        bool ITypeDescriptorContext.OnComponentChanging()
-        {
-            return true;
-        }
+        bool ITypeDescriptorContext.OnComponentChanging() => true;
 
-        DialogResult IWindowsFormsEditorService.ShowDialog(Form dialog)
-        {
-            return dialog.ShowDialog(this);
-        }
+        DialogResult IWindowsFormsEditorService.ShowDialog(Form dialog) => dialog.ShowDialog(this);
 
         #endregion
 
         #region BraceInEdit class
 
-        private sealed class BraceInEdit
+        sealed class BraceInEdit
         {
             public string Name;
             public char Open;
@@ -857,22 +827,16 @@ namespace ASCompletion.Controls
                 }
             }
 
-            public Brace ToBrace()
-            {
-                return new Brace(Name, Open, Close, AddSpace, IgnoreWhitespace, Rules.ToArray());
-            }
+            public Brace ToBrace() => new Brace(Name, Open, Close, AddSpace, IgnoreWhitespace, Rules.ToArray());
 
-            public override string ToString()
-            {
-                return Open == '\0' || Close == '\0' ? "New" : Open + " " + Name + " " + Close;
-            }
+            public override string ToString() => Open == '\0' || Close == '\0' ? "New" : Open + " " + Name + " " + Close;
         }
 
         #endregion
 
         #region Custom Columns
 
-        private sealed class DataGridViewRegexColumn : DataGridViewColumn
+        sealed class DataGridViewRegexColumn : DataGridViewColumn
         {
             public DataGridViewRegexColumn() : base(new DataGridViewRegexCell())
             {
@@ -880,7 +844,7 @@ namespace ASCompletion.Controls
             }
         }
 
-        private sealed class DataGridViewStylesColumn : DataGridViewColumn
+        sealed class DataGridViewStylesColumn : DataGridViewColumn
         {
             public DataGridViewStylesColumn() : base(new DataGridViewStylesCell())
             {
@@ -892,7 +856,7 @@ namespace ASCompletion.Controls
 
         #region Custom Cells
 
-        private sealed class DataGridViewRegexCell : DataGridViewTextBoxCell
+        sealed class DataGridViewRegexCell : DataGridViewTextBoxCell
         {
             protected override object GetFormattedValue(object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
             {
@@ -906,7 +870,7 @@ namespace ASCompletion.Controls
             }
         }
 
-        private sealed class DataGridViewStylesCell : DataGridViewButtonCell
+        sealed class DataGridViewStylesCell : DataGridViewButtonCell
         {
             protected override object GetFormattedValue(object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
             {

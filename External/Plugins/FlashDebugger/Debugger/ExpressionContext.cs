@@ -18,11 +18,9 @@ namespace FlashDebugger
         readonly Frame frame;
         readonly Value contextVal;
 
-        public ExpressionContext(Session session, Frame frame, Value contextVal)
-            : this(session, frame)
-        {
-            this.contextVal = contextVal;
-        }
+        public ExpressionContext(Session session, Frame frame, Value contextVal) : this(session, frame)
+            => this.contextVal = contextVal;
+
         public ExpressionContext(Session session, Frame frame)
         {
             this.session = session;
@@ -36,11 +34,9 @@ namespace FlashDebugger
                 int type = variable.getValue().getType();
                 if (type == VariableType_.BOOLEAN || type == VariableType_.NUMBER || type == VariableType_.STRING)
                     variable.setValue(session, par1.getType(), par1.getValueAsString());
-                else
-                    throw new NotSupportedException(TextHelper.GetString("Error.NoScalar"));
+                else throw new NotSupportedException(TextHelper.GetString("Error.NoScalar"));
             } 
-            else
-                throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+            else throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
         }
 
         public Context createContext(Object par0)
@@ -130,17 +126,16 @@ namespace FlashDebugger
             String name = "?";
             Value val = null;
 
-            if (par0 is Value value)
+            switch (par0)
             {
-                val = value;
+                case Value value:
+                    val = value;
+                    break;
+                case Variable var0:
+                    name = var0.getName();
+                    val = var0.getValue();
+                    break;
             }
-            
-            if (par0 is Variable var0)
-            {
-                name = var0.getName();
-                val = var0.getValue();
-            }
-
             if (val != null)
             {
                 int type = val.getType();
@@ -161,7 +156,7 @@ namespace FlashDebugger
         public String FormatValue(Value val)
         {
             if (val is null) return "null";
-            int type = val.getType();
+            var type = val.getType();
             if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
             {
                 return val.getTypeName();

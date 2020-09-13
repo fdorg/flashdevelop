@@ -16,10 +16,10 @@ namespace FlashViewer
 {
     public class PluginMain : IPlugin
     {
-        private readonly List<Form> popups = new List<Form>();
-        private string settingFilename;
-        private Settings settingObject;
-        private Icon playerIcon;
+        readonly List<Form> popups = new List<Form>();
+        string settingFilename;
+        Settings settingObject;
+        Icon playerIcon;
 
         #region Required Properties
 
@@ -353,7 +353,7 @@ namespace FlashViewer
         /// <summary>
         /// Removes the popup from the tracking
         /// </summary>
-        private void PopupFormClosing(object sender, FormClosingEventArgs e) => popups.Remove(sender as Form);
+        void PopupFormClosing(object sender, FormClosingEventArgs e) => popups.Remove(sender as Form);
 
         /// <summary>
         /// Displays the flash movie in a document
@@ -392,7 +392,8 @@ namespace FlashViewer
             flashView.MoviePath = file;
             flashDoc.Disposed += delegate { NotifyDisposed(file); };
         }
-        private void NotifyDisposed(string file)
+
+        void NotifyDisposed(string file)
         {
             var de = new DataEvent(EventType.Command, "FlashViewer.Closed", file);
             EventManager.DispatchEvent(this, de);
@@ -401,7 +402,7 @@ namespace FlashViewer
         /// <summary>
         /// Creates a flash view control and if it fails gives an error message
         /// </summary>
-        private FlashView CreateFlashView(string file)
+        FlashView CreateFlashView(string file)
         {
             try
             {

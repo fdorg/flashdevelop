@@ -245,7 +245,7 @@ namespace FlashDevelop
                 if (pane.DockState != DockState.Document) continue;
                 foreach (var content in pane.Contents)
                 {
-                    if (content is TabbedDocument document)
+                    if (content is TabbedDocument)
                     {
                         result++;
                     }
@@ -266,10 +266,7 @@ namespace FlashDevelop
         {
             get
             {
-                if (!Directory.Exists(workingDirectory))
-                {
-                    workingDirectory = GetWorkingDirectory();
-                }
+                if (!Directory.Exists(workingDirectory)) workingDirectory = GetWorkingDirectory();
                 return workingDirectory;
             }
             set => workingDirectory = value;
@@ -443,9 +440,7 @@ namespace FlashDevelop
         {
             try
             {
-                var result = new DockablePanel(ctrl, guid + ":" + id);
-                result.Image = image;
-                result.DockState = defaultDockState;
+                var result = new DockablePanel(ctrl, guid + ":" + id) {Image = image, DockState = defaultDockState};
                 LayoutManager.SetContentLayout(result, result.GetPersistString());
                 LayoutManager.PluginPanels.Add(result);
                 return result;
@@ -478,16 +473,12 @@ namespace FlashDevelop
             if (file.EndsWithOrdinal(".fdz"))
             {
                 CallCommand("ExtractZip", file);
-                if (file.IndexOf("theme", StringComparison.OrdinalIgnoreCase) != -1)
-                {
-                    string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme))
-                    {
-                        ThemeManager.LoadTheme(currentTheme);
-                        ThemeManager.WalkControls(this);
-                        RefreshSciConfig();
-                    }
-                }
+                if (file.IndexOf("theme", StringComparison.OrdinalIgnoreCase) == -1) return null;
+                var path = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                if (!File.Exists(path)) return null;
+                ThemeManager.LoadTheme(path);
+                ThemeManager.WalkControls(this);
+                RefreshSciConfig();
                 return null;
             }
             try
@@ -1572,10 +1563,7 @@ namespace FlashDevelop
         /// </summary>
         protected override void WndProc(ref Message m)
         {
-            if (ClipboardManager.HandleWndProc(ref m))
-            {
-                ClipboardHistoryDialog.UpdateHistory();
-            }
+            if (ClipboardManager.HandleWndProc(ref m)) ClipboardHistoryDialog.UpdateHistory();
             base.WndProc(ref m);
         }
 
@@ -1969,7 +1957,7 @@ namespace FlashDevelop
                 }
                 if (!File.Exists(FileNameHelper.SettingData))
                 {
-                    string folder = Path.GetDirectoryName(FileNameHelper.SettingData);
+                    var folder = Path.GetDirectoryName(FileNameHelper.SettingData);
                     if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 }
                 ObjectSerializer.Serialize(FileNameHelper.SettingData, AppSettings);
@@ -2014,7 +2002,7 @@ namespace FlashDevelop
         /// </summary>
         public int GetInstanceCount()
         {
-            Process current = Process.GetCurrentProcess();
+            var current = Process.GetCurrentProcess();
             return Process.GetProcessesByName(current.ProcessName).Length;
         }
 
@@ -2065,13 +2053,13 @@ namespace FlashDevelop
         /// </summary>
         public void SmartNew(object sender, EventArgs e)
         {
-            string ext = "";
+            var ext = string.Empty;
             if (PluginBase.CurrentProject != null)
             {
                 try
                 {
-                    string filter = PluginBase.CurrentProject.DefaultSearchFilter;
-                    string tempExt = filter.Split(';')[0].Replace("*.", "");
+                    var filter = PluginBase.CurrentProject.DefaultSearchFilter;
+                    var tempExt = filter.Split(';')[0].Replace("*.", "");
                     if (Regex.Match(tempExt, "^[A-Za-z0-9]+$").Success) ext = tempExt;
                 }
                 catch { /* NO ERRORS */ }
@@ -2260,10 +2248,7 @@ namespace FlashDevelop
         /// </summary>
         public void ClipboardHistory(object sender, EventArgs e)
         {
-            if (ClipboardHistoryDialog.Show(out var data))
-            {
-                CurrentDocument.SciControl.ReplaceSel(data.Text);
-            }
+            if (ClipboardHistoryDialog.Show(out var data)) CurrentDocument.SciControl.ReplaceSel(data.Text);
         }
 
         /// <summary>
@@ -2699,10 +2684,7 @@ namespace FlashDevelop
         /// <summary>
         /// Opens the settings dialog
         /// </summary>
-        public void ShowSettings(object sender, EventArgs e)
-        {
-            SettingDialog.Show(DistroConfig.DISTRIBUTION_NAME, "");
-        }
+        public void ShowSettings(object sender, EventArgs e) => SettingDialog.Show(DistroConfig.DISTRIBUTION_NAME, "");
 
         /// <summary>
         /// Shows the application in fullscreen or normal mode
@@ -2755,8 +2737,8 @@ namespace FlashDevelop
                 string zipFile = string.Empty;
                 bool requiresRestart = false;
                 bool silentInstall = Silent;
-                ToolStripItem button = (ToolStripItem)sender;
-                string[] chunks = (((ItemData)button.Tag).Tag).Split(';');
+                var button = (ToolStripItem)sender;
+                var chunks = ((ItemData)button.Tag).Tag.Split(';');
                 if (chunks.Length > 1)
                 {
                     zipFile = chunks[0];
@@ -2770,7 +2752,7 @@ namespace FlashDevelop
                 {
                     ZipEntry entry;
                     zipLog += "FDZ: " + zipFile + "\r\n";
-                    ZipInputStream zis = new ZipInputStream(new FileStream(zipFile, FileMode.Open, FileAccess.Read));
+                    var zis = new ZipInputStream(new FileStream(zipFile, FileMode.Open, FileAccess.Read));
                     while ((entry = zis.GetNextEntry()) != null)
                     {
                         byte[] data = new byte[2048];
@@ -2836,9 +2818,9 @@ namespace FlashDevelop
                 string zipFile = string.Empty;
                 bool requiresRestart = false;
                 bool silentRemove = Silent;
-                List<string> removeDirs = new List<string>();
-                ToolStripItem button = (ToolStripItem)sender;
-                string[] chunks = (((ItemData)button.Tag).Tag).Split(';');
+                var removeDirs = new List<string>();
+                var button = (ToolStripItem)sender;
+                var chunks = ((ItemData)button.Tag).Tag.Split(';');
                 if (chunks.Length > 1)
                 {
                     zipFile = chunks[0];
@@ -2987,26 +2969,17 @@ namespace FlashDevelop
         /// <summary>
         /// Adds or removes a bookmark
         /// </summary>
-        public void ToggleBookmark(object sender, EventArgs e)
-        {
-            MarkerManager.ToggleMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
-        }
+        public void ToggleBookmark(object sender, EventArgs e) => MarkerManager.ToggleMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
 
         /// <summary>
         /// Moves the cursor to the next bookmark
         /// </summary>
-        public void NextBookmark(object sender, EventArgs e)
-        {
-            MarkerManager.NextMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
-        }
+        public void NextBookmark(object sender, EventArgs e) => MarkerManager.NextMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
 
         /// <summary>
         /// Moves the cursor to the previous bookmark
         /// </summary>
-        public void PrevBookmark(object sender, EventArgs e)
-        {
-            MarkerManager.PreviousMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
-        }
+        public void PrevBookmark(object sender, EventArgs e) => MarkerManager.PreviousMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
 
         /// <summary>
         /// Removes all bookmarks
@@ -3315,15 +3288,15 @@ namespace FlashDevelop
                 lines.Add(sci.GetLine(line));
             }
             lines.Sort(CompareLines);
-            var rb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string s in lines)
             {
-                rb.Append(s);
+                sb.Append(s);
             }
             int selStart = sci.PositionFromLine(curLine);
             int selEnd = sci.PositionFromLine(endLine) + sci.MBSafeTextLength(sci.GetLine(endLine));
             sci.SetSel(selStart, selEnd);
-            sci.ReplaceSel(rb.ToString());
+            sci.ReplaceSel(sb.ToString());
         }
 
         /// <summary>
@@ -3331,11 +3304,11 @@ namespace FlashDevelop
         /// </summary>
         public void SortLineGroups(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
-            int curLine = sci.LineFromPosition(sci.SelectionStart);
-            int endLine = sci.LineFromPosition(sci.SelectionEnd);
-            List<List<string>> lineLists = new List<List<string>>();
-            List<string> curList = new List<string>();
+            var sci = CurrentDocument.SciControl;
+            var curLine = sci.LineFromPosition(sci.SelectionStart);
+            var endLine = sci.LineFromPosition(sci.SelectionEnd);
+            var lineLists = new List<List<string>>();
+            var curList = new List<string>();
             lineLists.Add(curList);
             for (int line = curLine; line < endLine + 1; ++line)
             {
@@ -3351,18 +3324,18 @@ namespace FlashDevelop
                 curList.Add(lineText);
             }
             curList.Sort(CompareLines);
-            StringBuilder result = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (var l in lineLists)
             {
                 foreach (var s in l)
                 {
-                    result.Append(s);
+                    sb.Append(s);
                 }
             }
             int selStart = sci.PositionFromLine(curLine);
             int selEnd = sci.PositionFromLine(endLine) + sci.MBSafeTextLength(sci.GetLine(endLine));
             sci.SetSel(selStart, selEnd);
-            sci.ReplaceSel(result.ToString());
+            sci.ReplaceSel(sb.ToString());
         }
 
         static int CompareLines(string a, string b)
@@ -3378,8 +3351,8 @@ namespace FlashDevelop
         /// </summary>
         public void CommentLine(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
-            string lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
+            var sci = CurrentDocument.SciControl;
+            var lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             if (lineComment.Length == 0) return;
             int position = sci.CurrentPos;
             int curLine = sci.LineFromPosition(position);
@@ -3427,8 +3400,8 @@ namespace FlashDevelop
         /// </summary>
         public void UncommentLine(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
-            string lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
+            var sci = CurrentDocument.SciControl;
+            var lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             if (lineComment.Length == 0) return;
             int position = sci.CurrentPos;
             int curLine = sci.LineFromPosition(position);
@@ -3503,21 +3476,18 @@ namespace FlashDevelop
                 }
                 return false;
             }
-            if (sci.SelTextSize > 0)
+            if (sci.SelTextSize == 0) return null;
+            sci.BeginUndoAction();
+            try
             {
-                sci.BeginUndoAction();
-                try
-                {
-                    sci.InsertText(selStart, commentStart);
-                    sci.InsertText(selEnd + commentStart.Length, commentEnd);
-                }
-                finally
-                {
-                    sci.EndUndoAction();
-                }
-                return true;
+                sci.InsertText(selStart, commentStart);
+                sci.InsertText(selEnd + commentStart.Length, commentEnd);
             }
-            return null;
+            finally
+            {
+                sci.EndUndoAction();
+            }
+            return true;
         }
 
         /// <summary>
@@ -3525,7 +3495,7 @@ namespace FlashDevelop
         /// </summary>
         public void UncommentBlock(object sender, EventArgs e)
         {
-            ScintillaControl sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument.SciControl;
             sci.Colourise(0, -1); // update coloring
             int selEnd = sci.SelectionEnd;
             int selStart = sci.SelectionStart;
@@ -3617,11 +3587,11 @@ namespace FlashDevelop
             bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
             sci.SelectionStart = indentPos;
             sci.SelectionEnd = lineEndPos;
-            bool? added = CommentSelection();
+            var added = CommentSelection();
             if (added is null) return;
-            int factor = (bool)added ? 1 : -1;
-            string commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
-            string commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
+            var factor = (bool)added ? 1 : -1;
+            var commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
+            var commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
             // preserve cursor pos
             if (afterBlockStart) selStart += commentStart.Length * factor;
             if (afterBlockEnd) selStart += commentEnd.Length * factor;
@@ -3642,26 +3612,26 @@ namespace FlashDevelop
         /// </summary>
         public void SelectTheme(object sender, EventArgs e)
         {
-            using var dialog = new OpenFileDialog();
-            dialog.InitialDirectory = PathHelper.ThemesDir;
-            dialog.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
-            dialog.Filter = TextHelper.GetString("Info.ThemesFilter");
-            if (dialog.ShowDialog(this) == DialogResult.OK)
+            using var dialog = new OpenFileDialog
             {
-                string ext = Path.GetExtension(dialog.FileName).ToLower();
-                if (ext == ".fdi")
-                {
-                    ThemeManager.LoadTheme(dialog.FileName);
-                    ThemeManager.WalkControls(this);
-                }
-                else
-                {
-                    CallCommand("ExtractZip", dialog.FileName + ";true");
-                    string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
-                    ThemeManager.WalkControls(this);
-                    RefreshSciConfig();
-                }
+                InitialDirectory = PathHelper.ThemesDir,
+                Title = " " + TextHelper.GetString("Title.OpenFileDialog"),
+                Filter = TextHelper.GetString("Info.ThemesFilter")
+            };
+            if (dialog.ShowDialog(this) != DialogResult.OK) return;
+            var ext = Path.GetExtension(dialog.FileName).ToLower();
+            if (ext == ".fdi")
+            {
+                ThemeManager.LoadTheme(dialog.FileName);
+                ThemeManager.WalkControls(this);
+            }
+            else
+            {
+                CallCommand("ExtractZip", dialog.FileName + ";true");
+                string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                ThemeManager.WalkControls(this);
+                RefreshSciConfig();
             }
         }
 
@@ -3670,8 +3640,8 @@ namespace FlashDevelop
         /// </summary>
         public void LoadThemeFile(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string file = ProcessArgString(((ItemData)button.Tag).Tag);
+            var button = (ToolStripItem)sender;
+            var file = ProcessArgString(((ItemData)button.Tag).Tag);
             ThemeManager.LoadTheme(file);
         }
 
@@ -3682,9 +3652,9 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string registeredItem = ((ItemData)button.Tag).Tag;
-                ShortcutItem item = ShortcutManager.GetRegisteredItem(registeredItem);
+                var button = (ToolStripItem)sender;
+                var registeredItem = ((ItemData)button.Tag).Tag;
+                var item = ShortcutManager.GetRegisteredItem(registeredItem);
                 item.Item?.PerformClick();
             }
             catch (Exception ex)
@@ -3769,12 +3739,14 @@ namespace FlashDevelop
                 EventManager.DispatchEvent(this, ne);
                 if (position > -1)
                 {
-                    string message = TextHelper.GetString("Info.RunningProcess");
+                    var message = TextHelper.GetString("Info.RunningProcess");
                     TraceManager.Add(message + " " + args.Substring(0, position) + " " + args.Substring(position + 1), (int)TraceType.ProcessStart);
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.WorkingDirectory = WorkingDirectory;
-                    psi.Arguments = args.Substring(position + 1);
-                    psi.FileName = args.Substring(0, position);
+                    var psi = new ProcessStartInfo
+                    {
+                        WorkingDirectory = WorkingDirectory,
+                        Arguments = args.Substring(position + 1),
+                        FileName = args.Substring(0, position)
+                    };
                     ProcessHelper.StartAsync(psi);
                 }
                 else
@@ -3783,9 +3755,7 @@ namespace FlashDevelop
                     TraceManager.Add(message + " " + args, (int)TraceType.ProcessStart);
                     if (args.ToLower().EndsWithOrdinal(".bat"))
                     {
-                        Process bp = new Process();
-                        bp.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                        bp.StartInfo.FileName = @args;
+                        var bp = new Process {StartInfo = {WindowStyle = ProcessWindowStyle.Hidden, FileName = args}};
                         bp.Start();
                     }
                     else
@@ -3877,10 +3847,12 @@ namespace FlashDevelop
         {
             try
             {
-                using var dialog = new SaveFileDialog();
-                dialog.AddExtension = true;
-                dialog.DefaultExt = "fdz";
-                dialog.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                using var dialog = new SaveFileDialog
+                {
+                    AddExtension = true,
+                    DefaultExt = "fdz",
+                    Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter")
+                };
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
                 var settingFiles = new List<string>();
                 settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
@@ -3911,20 +3883,29 @@ namespace FlashDevelop
         /// </summary>
         public void ExecuteScript(object sender, EventArgs e)
         {
-            ToolStripItem button = (ToolStripItem)sender;
-            string file = ProcessArgString(((ItemData)button.Tag).Tag);
+            var button = (ToolStripItem)sender;
+            var file = ProcessArgString(((ItemData)button.Tag).Tag);
             try
             {
-                Host host = new Host();
-                string[] args = file.Split(';');
+                var host = new Host();
+                var args = file.Split(';');
                 if (args.Length == 1 || string.IsNullOrEmpty(args[1])) return; // no file selected / the open file dialog was cancelled
-                if (args[0] == "Internal") host.ExecuteScriptInternal(args[1], false);
-                else if (args[0] == "Development") host.ExecuteScriptInternal(args[1], true);
-                else host.ExecuteScriptExternal(file);
+                switch (args[0])
+                {
+                    case "Internal":
+                        host.ExecuteScriptInternal(args[1], false);
+                        break;
+                    case "Development":
+                        host.ExecuteScriptInternal(args[1], true);
+                        break;
+                    default:
+                        host.ExecuteScriptExternal(file);
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                string message = TextHelper.GetString("Info.CouldNotExecuteScript");
+                var message = TextHelper.GetString("Info.CouldNotExecuteScript");
                 ErrorManager.ShowWarning(message + "\r\n" + ex.Message, null);
             }
         }
@@ -3954,11 +3935,9 @@ namespace FlashDevelop
         /// </summary>
         public void Restart(object sender, EventArgs e)
         {
-            if (GetInstanceCount() == 1)
-            {
-                RestartRequested = true;
-                Close();
-            }
+            if (GetInstanceCount() != 1) return;
+            RestartRequested = true;
+            Close();
         }
 
         #endregion
@@ -3970,7 +3949,7 @@ namespace FlashDevelop
     public class Host : MarshalByRefObject
     {
         /// <summary>
-        /// Executes the script in a seperate appdomain and then unloads it
+        /// Executes the script in a separate appdomain and then unloads it
         /// NOTE: This is more suitable for one pass processes
         /// </summary>
         public void ExecuteScriptExternal(string script)

@@ -30,8 +30,7 @@ namespace FlashDebugger.Controls.DataTree
             get => variable;
             set
             {
-                if (variable == value) return;
-
+                if (value == variable) return;
                 variable = value;
                 if (variable != null)
                 {
@@ -46,13 +45,11 @@ namespace FlashDebugger.Controls.DataTree
             }
         }
 
-        public VariableNode(string text)
-            : base(text)
+        public VariableNode(string text) : base(text)
         {
         }
 
-        public VariableNode(Variable variable)
-            : base(variable.getName())
+        public VariableNode(Variable variable) : base(variable.getName())
         {
             this.variable = variable;
             m_Value = variable.getValue();
@@ -100,6 +97,5 @@ namespace FlashDebugger.Controls.DataTree
             }
             return result;
         }
-
     }
 }
