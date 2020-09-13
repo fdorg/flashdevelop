@@ -20,7 +20,6 @@ namespace FlashDebugger
         ListViewEx lv;
         ColumnHeader imageColumnHeader;
         ColumnHeader frameColumnHeader;
-        PluginMain pluginMain;
         int currentImageIndex;
         ToolStripLabel toolStripLabelFilter;
         ToolStripSpringTextBox toolStripTextBoxFilter;
@@ -39,10 +38,9 @@ namespace FlashDebugger
         int lastSelected;
         bool justMyCode;
 
-        public StackframeUI(PluginMain pluginMain, ImageList imageList)
+        public StackframeUI(ImageList imageList)
         {
             AutoKeyHandling = true;
-            this.pluginMain = pluginMain;
             wholeFrameStack = new List<ListViewItem>();
             InitializeComponents(imageList);
             InitializeContextMenu();
@@ -271,11 +269,12 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    var listItem = new ListViewItem(new[] { string.Empty, title }, -1)
+
+                    var listItem = new ListViewItem(new[] {string.Empty, title}, -1)
                     {
-                        Tag = new ListItemData { Frame = item, Index = i++ }
+                        Tag = new ListItemData {Frame = item, Index = i++},
+                        UseItemStyleForSubItems = false
                     };
-                    listItem.UseItemStyleForSubItems = false;
                     // Apply proper theming colour
                     if (!ownFile)
                     {
@@ -314,10 +313,7 @@ namespace FlashDebugger
             if (lv.SelectedIndices.Count > 0) SetCurrentFrameClick(sender, e);
         }
 
-        void Lv_SizeChanged(object sender, EventArgs e)
-        {
-            frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
-        }
+        void Lv_SizeChanged(object sender, EventArgs e) => frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
 
         /// <summary>
         /// Clears the filter control text
@@ -348,10 +344,7 @@ namespace FlashDebugger
             copyAllContextMenuItem.Enabled = lv.Items.Count > 0;
         }
 
-        void CopyTextClick(object sender, EventArgs e)
-        {
-            Clipboard.SetText(lv.SelectedItems[0].SubItems[1].Text);
-        }
+        void CopyTextClick(object sender, EventArgs e) => Clipboard.SetText(lv.SelectedItems[0].SubItems[1].Text);
 
         void CopyAllTextClick(object sender, EventArgs e)
         {
@@ -413,7 +406,7 @@ namespace FlashDebugger
                 {
                     regex = new Regex(filterText, toolStripItemMatchCase.Checked ? RegexOptions.None : RegexOptions.IgnoreCase);
                 }
-                catch (Exception)
+                catch
                 {
                     lv.EndUpdate();
                     return;
@@ -483,7 +476,5 @@ namespace FlashDebugger
             public Frame Frame;
             public int Index;
         }
-
     }
-
 }

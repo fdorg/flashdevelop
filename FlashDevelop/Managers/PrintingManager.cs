@@ -23,10 +23,9 @@ namespace FlashDevelop.Managers
         {
             PrintPageNumber = 0;
             PrintPageLastChar = 0;
-            PrintDocument printDocument = new PrintDocument();
-            printDocument.DocumentName = PluginBase.MainForm.CurrentDocument.Text;
-            printDocument.PrintPage += OnPrintDocumentPrintPage;
-            return printDocument;
+            var result = new PrintDocument {DocumentName = PluginBase.MainForm.CurrentDocument.Text};
+            result.PrintPage += OnPrintDocumentPrintPage;
+            return result;
         }
 
         /// <summary>

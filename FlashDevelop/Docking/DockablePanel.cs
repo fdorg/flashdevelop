@@ -18,7 +18,8 @@ namespace FlashDevelop.Docking
             ctrl.Dock = DockStyle.Fill;
             DockPanel = PluginBase.MainForm.DockPanel;
             if (ctrl.Tag != null) TabText = ctrl.Tag.ToString();
-            DockAreas = DockAreas.DockBottom | DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.Float;
+            DockAreas = DockAreas.DockBottom | DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop |
+                        DockAreas.Float;
             // Restrict docking on Wine/CrossOver as you can't dock panels back if undocked...
             DockPanel.AllowEndUserFloatChange = !PlatformHelper.isRunningOnWine();
             DockPanel.AllowEndUserDocking = !PlatformHelper.isRunningOnWine();
@@ -59,10 +60,7 @@ namespace FlashDevelop.Docking
         {
             readonly string persistString;
 
-            internal Template(string persistString)
-            {
-                this.persistString = persistString;
-            }
+            internal Template(string persistString) => this.persistString = persistString;
 
             public override string GetPersistString() => persistString;
         }

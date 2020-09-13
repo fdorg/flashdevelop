@@ -82,35 +82,27 @@ namespace FlashDevelop.Managers
                 SnippetHelper.InsertSnippetText(sci, endPos, snippet);
                 return true;
             }
-            if (canShowList)
+            if (!canShowList) return false;
+            var walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
+            var files = walker.GetFiles();
+            var items = files
+                .Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file))
+                .ToList<ICompletionListItem>();
+            var path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
+            if (Directory.Exists(path))
             {
-                var walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
-                var files = walker.GetFiles();
-                var items = files
-                    .Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file))
-                    .ToList<ICompletionListItem>();
-                var path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
-                if (Directory.Exists(path))
-                {
-                    walker = new PathWalker(path, "*.fds", false);
-                    files = walker.GetFiles();
-                    items.AddRange(files.Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file)));
-                }
-                if (items.Count > 0)
-                {
-                    items.Sort();
-                    if (sci.SelTextSize != 0) word = sci.SelText;
-                    else
-                    {
-                        word = sci.GetWordFromPosition(sci.CurrentPos) ?? string.Empty;
-                    }
-                    CompletionList.OnInsert += HandleListInsert;
-                    CompletionList.OnCancel += HandleListInsert;
-                    CompletionList.Show(items, false, word);
-                    return true;
-                }
+                walker = new PathWalker(path, "*.fds", false);
+                files = walker.GetFiles();
+                items.AddRange(files.Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file)));
             }
-            return false;
+            if (items.Count == 0) return false;
+            items.Sort();
+            if (sci.SelTextSize != 0) word = sci.SelText;
+            else word = sci.GetWordFromPosition(sci.CurrentPos) ?? string.Empty;
+            CompletionList.OnInsert += HandleListInsert;
+            CompletionList.OnCancel += HandleListInsert;
+            CompletionList.Show(items, false, word);
+            return true;
         }
 
         /// <summary>

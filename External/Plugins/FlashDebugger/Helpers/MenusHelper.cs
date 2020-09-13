@@ -45,8 +45,7 @@ namespace FlashDebugger
         /// </summary>
         public MenusHelper(Image pluginImage, DebuggerManager debugManager)
         {
-            imageList = new ImageListManager();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList = new ImageListManager {ColorDepth = ColorDepth.Depth32Bit};
             imageList.Populate += ImageList_Populate;
             imageList.Initialize();
 
@@ -220,7 +219,7 @@ namespace FlashDebugger
                 ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => UpdateMenuState(sender, state)));
                 return;
             }
-            bool hasChanged = CurrentState != state;
+            var hasChanged = CurrentState != state;
             CurrentState = state; // Set current now...
             if (state == DebuggerState.Initializing || state == DebuggerState.Stopped)
             {

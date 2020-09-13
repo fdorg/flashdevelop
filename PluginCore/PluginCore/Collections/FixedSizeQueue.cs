@@ -77,16 +77,8 @@ namespace PluginCore.Collections
             get => _capacity;
             set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value));
-                }
-
-                if (_capacity == value)
-                {
-                    return;
-                }
-
+                if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
+                if (value == _capacity) return;
                 var newArray = new T[value];
                 int head;
                 int size;
@@ -119,7 +111,7 @@ namespace PluginCore.Collections
                 _array = newArray;
                 _capacity = value;
                 _head = 0;
-                _tail = size == value ? 0 : size;
+                _tail = value == size ? 0 : size;
                 Count = size;
 
                 _version++;

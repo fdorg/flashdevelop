@@ -12,7 +12,6 @@ using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using ScintillaNet.Configuration;
 using ScintillaNet;
 using PluginCore;
 
@@ -442,12 +441,10 @@ namespace FlashDevelop.Controls
             {
                 if (findTextBox.Text.Length == 0) return;
                 var matches = GetResults(sci, findTextBox.Text);
-                if (matches.Count != 0)
-                {
-                    sci.RemoveHighlights();
-                    if (highlightTimer.Enabled) highlightTimer.Stop();
-                    if (highlightCheckBox.Checked) AddHighlights(sci, matches);
-                }
+                if (matches.Count == 0) return;
+                sci.RemoveHighlights();
+                if (highlightTimer.Enabled) highlightTimer.Stop();
+                if (highlightCheckBox.Checked) AddHighlights(sci, matches);
             }
             else sci.RemoveHighlights();
         }
@@ -463,20 +460,18 @@ namespace FlashDevelop.Controls
             var matches = GetResults(sci, text);
             if (matches.Count != 0)
             {
-                SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, true);
+                var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, true);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
                 if (refreshHighlights) RefreshHighlights(sci, matches);
-                string message = TextHelper.GetString("Info.ShowingResult");
-                int index = FRDialogGenerics.GetMatchIndex(match, matches);
-                string formatted = string.Format(message, index, matches.Count);
-                infoLabel.Text = formatted;
+                var message = TextHelper.GetString("Info.ShowingResult");
+                var index = FRDialogGenerics.GetMatchIndex(match, matches);
+                infoLabel.Text = string.Format(message, index, matches.Count);
             }
             else
             {
                 findTextBox.BackColor = PluginBase.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
-                string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
+                infoLabel.Text = TextHelper.GetString("Info.NoMatchesFound");
             }
         }
 
@@ -491,20 +486,18 @@ namespace FlashDevelop.Controls
             var matches = GetResults(sci, text);
             if (matches.Count != 0)
             {
-                SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, false);
+                var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, false);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
                 if (refreshHighlights) RefreshHighlights(sci, matches);
-                string message = TextHelper.GetString("Info.ShowingResult");
-                int index = FRDialogGenerics.GetMatchIndex(match, matches);
-                string formatted = string.Format(message, index, matches.Count);
-                infoLabel.Text = formatted;
+                var message = TextHelper.GetString("Info.ShowingResult");
+                var index = FRDialogGenerics.GetMatchIndex(match, matches);
+                infoLabel.Text = string.Format(message, index, matches.Count);
             }
             else
             {
                 findTextBox.BackColor = PluginBase.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
-                string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
+                infoLabel.Text = TextHelper.GetString("Info.NoMatchesFound");
             }
         }
 
@@ -524,15 +517,13 @@ namespace FlashDevelop.Controls
                 if (refreshHighlights) RefreshHighlights(sci, matches);
                 var message = TextHelper.GetString("Info.ShowingResult");
                 var index = FRDialogGenerics.GetMatchIndex(match, matches);
-                var formatted = string.Format(message, index, matches.Count);
-                infoLabel.Text = formatted;
+                infoLabel.Text = string.Format(message, index, matches.Count);
             }
             else
             {
                 findTextBox.BackColor = PluginBase.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
-                string message = TextHelper.GetString("Info.NoMatchesFound");
-                infoLabel.Text = message;
+                infoLabel.Text = TextHelper.GetString("Info.NoMatchesFound");
             }
         }
 
@@ -543,13 +534,11 @@ namespace FlashDevelop.Controls
         {
             foreach (TabbedDocument document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable)
-                {
-                    Rectangle find = RectangleToScreen(ClientRectangle);
-                    Rectangle doc = document.RectangleToScreen(document.ClientRectangle);
-                    if (Visible && doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, Height - 1);
-                    else document.Padding = new Padding(0);
-                }
+                if (!document.IsEditable) continue;
+                var find = RectangleToScreen(ClientRectangle);
+                var doc = document.RectangleToScreen(document.ClientRectangle);
+                if (Visible && doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, Height - 1);
+                else document.Padding = new Padding(0);
             }
         }
 
@@ -574,36 +563,36 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Adds highlights to the correct sci control
         /// </summary>
-        void AddHighlights(ScintillaControl sci, List<SearchMatch> matches)
+        static void AddHighlights(ScintillaControl sci, List<SearchMatch> matches)
         {
-            Language language = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
+            var language = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
             sci.AddHighlights(matches, language.editorstyle.HighlightBackColor);
         }
 
         /// <summary>
         /// Refreshes the highlights
         /// </summary>
-        void RefreshHighlights(ScintillaControl sci, List<SearchMatch> matches)
+        void RefreshHighlights(ScintillaControl sci, IReadOnlyCollection<SearchMatch> matches)
         {
             sci.RemoveHighlights();
             if (highlightTimer.Enabled) highlightTimer.Stop();
-            Hashtable table = new Hashtable();
-            table["sci"] = sci;
-            table["matches"] = matches;
+            var table = new Hashtable {["sci"] = sci, ["matches"] = matches};
             highlightTimer.Tag = table;
             highlightTimer.Start();
         }
 
+        /// <summary>
         /// Gets search results for a sci control
         /// </summary>
         List<SearchMatch> GetResults(ScintillaControl sci, string text)
         {
-            string pattern = text;
-            FRSearch search = new FRSearch(pattern);
-            search.Filter = SearchFilter.None;
-            search.NoCase = !matchCaseCheckBox.Checked;
-            search.WholeWord = wholeWordCheckBox.Checked;
-            search.SourceFile = sci.FileName;
+            var search = new FRSearch(text)
+            {
+                Filter = SearchFilter.None,
+                NoCase = !matchCaseCheckBox.Checked,
+                WholeWord = wholeWordCheckBox.Checked,
+                SourceFile = sci.FileName
+            };
             return search.Matches(sci.Text);
         }
 
@@ -618,9 +607,11 @@ namespace FlashDevelop.Controls
 
             public QuickFindRenderer()
             {
-                UiRenderMode renderMode = PluginBase.Settings.RenderMode;
-                if (renderMode == UiRenderMode.System) renderer = new ToolStripSystemRenderer();
-                else renderer = new DockPanelStripRenderer();
+                renderer = PluginBase.Settings.RenderMode switch
+                {
+                    UiRenderMode.System => new ToolStripSystemRenderer(),
+                    _ => new DockPanelStripRenderer()
+                };
             }
 
             protected override void Initialize(ToolStrip toolStrip)
@@ -634,55 +625,58 @@ namespace FlashDevelop.Controls
             protected override void InitializeItem(ToolStripItem item)
             {
                 base.InitializeItem(item);
-                if (item is ToolStripButton)
+                switch (item)
                 {
-                    double scale = ScaleHelper.GetScale();
-                    if (scale >= 1.5)
-                    {
-                        item.Padding = new Padding(4, 2, 4, 2);
-                    }
-                    else if (scale >= 1.2)
-                    {
-                        item.Padding = new Padding(2, 1, 2, 1);
-                    }
-                    else if (renderer is ToolStripSystemRenderer && PlatformHelper.IsRunningOnWindows())
-                    {
-                        item.Padding = new Padding(2, 2, 2, 2);
-                    }
-                }
-                else if (item is ToolStripTextBox)
-                {
-                    var textBox = item as ToolStripTextBox;
-                    Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
-                    if (border != Color.Empty) // Are we theming?
-                    {
-                        textBox.Margin = new Padding(2, 1, 2, 1);
-                        textBox.BorderStyle = BorderStyle.None;
-                    }
+                    case ToolStripButton _:
+                        var scale = ScaleHelper.GetScale();
+                        if (scale >= 1.5)
+                        {
+                            item.Padding = new Padding(4, 2, 4, 2);
+                        }
+                        else if (scale >= 1.2)
+                        {
+                            item.Padding = new Padding(2, 1, 2, 1);
+                        }
+                        else if (renderer is ToolStripSystemRenderer && PlatformHelper.IsRunningOnWindows())
+                        {
+                            item.Padding = new Padding(2, 2, 2, 2);
+                        }
+                        break;
+                    case ToolStripTextBox textBox:
+                        var border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+                        if (border != Color.Empty) // Are we theming?
+                        {
+                            textBox.Margin = new Padding(2, 1, 2, 1);
+                            textBox.BorderStyle = BorderStyle.None;
+                        }
+                        break;
                 }
             }
 
             void OnToolStripPaint(object sender, PaintEventArgs e)
             {
-                Color tborder = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+                var tborder = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
                 foreach (ToolStripItem item in toolStrip.Items)
                 {
-                    if (item is ToolStripTextBox && tborder != Color.Empty)
+                    switch (item)
                     {
-                        var textBox = item as ToolStripTextBox;
-                        var size = textBox.TextBox.Size;
-                        var location = textBox.TextBox.Location;
-                        e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
-                        e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                        case ToolStripTextBox box when tborder != Color.Empty:
+                        {
+                            var size = box.TextBox.Size;
+                            var location = box.TextBox.Location;
+                            e.Graphics.FillRectangle(new SolidBrush(box.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                            e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                            break;
+                        }
                     }
                 }
             }
 
             protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
             {
-                Rectangle r = e.AffectedBounds;
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
+                var r = e.AffectedBounds;
+                var back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
+                var fore = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
                 e.Graphics.DrawLine(fore == Color.Empty ? SystemPens.ControlLightLight : new Pen(fore), r.Left, r.Top + 1, r.Right, r.Top + 1);
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), r.Left, r.Bottom - 1, r.Right, r.Bottom - 1);
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), r.Right - 1, r.Top, r.Right - 1, r.Bottom);
@@ -694,18 +688,16 @@ namespace FlashDevelop.Controls
             {
                 if (renderer is ToolStripProfessionalRenderer)
                 {
-                    bool isOver = false;
-                    Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
-                    Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
-                    Color active = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
-                    if (e.Item is ToolStripButton)
+                    var isOver = false;
+                    if (e.Item is ToolStripButton button)
                     {
-                        ToolStripButton button = e.Item as ToolStripButton;
-                        Rectangle bBounds = button.Owner.RectangleToScreen(button.Bounds);
+                        var bBounds = button.Owner.RectangleToScreen(button.Bounds);
                         isOver = bBounds.Contains(MousePosition);
                     }
+                    var back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
                     if (e.Item.Selected || ((ToolStripButton)e.Item).Checked || (isOver && e.Item.Enabled))
                     {
+                        var border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
                         Rectangle rect = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
                         Rectangle rect2 = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
                         LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
@@ -717,6 +709,7 @@ namespace FlashDevelop.Controls
                     }
                     if (e.Item.Pressed)
                     {
+                        var active = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
                         Rectangle rect = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
                         LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                         e.Graphics.FillRectangle(b, rect);
@@ -729,95 +722,41 @@ namespace FlashDevelop.Controls
 
             #region Reuse Some Renderer Stuff
 
-            protected override void OnRenderGrip(ToolStripGripRenderEventArgs e)
-            {
-                renderer.DrawGrip(e);
-            }
+            protected override void OnRenderGrip(ToolStripGripRenderEventArgs e) => renderer.DrawGrip(e);
 
-            protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
-            {
-                renderer.DrawSeparator(e);
-            }
+            protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e) => renderer.DrawSeparator(e);
 
-            protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
-            {
-                renderer.DrawToolStripBackground(e);
-            }
+            protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e) => renderer.DrawToolStripBackground(e);
 
-            protected override void OnRenderDropDownButtonBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawDropDownButtonBackground(e);
-            }
+            protected override void OnRenderDropDownButtonBackground(ToolStripItemRenderEventArgs e) => renderer.DrawDropDownButtonBackground(e);
 
-            protected override void OnRenderItemBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawItemBackground(e);
-            }
+            protected override void OnRenderItemBackground(ToolStripItemRenderEventArgs e) => renderer.DrawItemBackground(e);
 
-            protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
-            {
-                renderer.DrawItemCheck(e);
-            }
+            protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e) => renderer.DrawItemCheck(e);
 
-            protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-            {
-                renderer.DrawItemText(e);
-            }
+            protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e) => renderer.DrawItemText(e);
 
-            protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
-            {
-                renderer.DrawItemImage(e);
-            }
+            protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e) => renderer.DrawItemImage(e);
 
-            protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
-            {
-                renderer.DrawArrow(e);
-            }
+            protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e) => renderer.DrawArrow(e);
 
-            protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
-            {
-                renderer.DrawImageMargin(e);
-            }
+            protected override void OnRenderImageMargin(ToolStripRenderEventArgs e) => renderer.DrawImageMargin(e);
 
-            protected override void OnRenderLabelBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawLabelBackground(e);
-            }
+            protected override void OnRenderLabelBackground(ToolStripItemRenderEventArgs e) => renderer.DrawLabelBackground(e);
 
-            protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawMenuItemBackground(e);
-            }
+            protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e) => renderer.DrawMenuItemBackground(e);
 
-            protected override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawOverflowButtonBackground(e);
-            }
+            protected override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e) => renderer.DrawOverflowButtonBackground(e);
 
-            protected override void OnRenderSplitButtonBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawSplitButton(e);
-            }
+            protected override void OnRenderSplitButtonBackground(ToolStripItemRenderEventArgs e) => renderer.DrawSplitButton(e);
 
-            protected override void OnRenderStatusStripSizingGrip(ToolStripRenderEventArgs e)
-            {
-                renderer.DrawStatusStripSizingGrip(e);
-            }
+            protected override void OnRenderStatusStripSizingGrip(ToolStripRenderEventArgs e) => renderer.DrawStatusStripSizingGrip(e);
 
-            protected override void OnRenderToolStripContentPanelBackground(ToolStripContentPanelRenderEventArgs e)
-            {
-                renderer.DrawToolStripContentPanelBackground(e);
-            }
+            protected override void OnRenderToolStripContentPanelBackground(ToolStripContentPanelRenderEventArgs e) => renderer.DrawToolStripContentPanelBackground(e);
 
-            protected override void OnRenderToolStripPanelBackground(ToolStripPanelRenderEventArgs e)
-            {
-                renderer.DrawToolStripPanelBackground(e);
-            }
+            protected override void OnRenderToolStripPanelBackground(ToolStripPanelRenderEventArgs e) => renderer.DrawToolStripPanelBackground(e);
 
-            protected override void OnRenderToolStripStatusLabelBackground(ToolStripItemRenderEventArgs e)
-            {
-                renderer.DrawToolStripStatusLabelBackground(e);
-            }
+            protected override void OnRenderToolStripStatusLabelBackground(ToolStripItemRenderEventArgs e) => renderer.DrawToolStripStatusLabelBackground(e);
 
             #endregion
 
@@ -833,10 +772,7 @@ namespace FlashDevelop.Controls
         {
             public event KeyEscapeEvent OnKeyEscape;
 
-            public EscapeTextBox()
-            {
-                Control.PreviewKeyDown += OnPreviewKeyDown;
-            }
+            public EscapeTextBox() => Control.PreviewKeyDown += OnPreviewKeyDown;
 
             protected override bool ProcessCmdKey(ref Message m, Keys keyData)
             {
@@ -844,9 +780,9 @@ namespace FlashDevelop.Controls
                 return false;
             }
 
-            void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+            static void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
             {
-                Keys ctrlAlt = Keys.Control | Keys.Alt;
+                const Keys ctrlAlt = Keys.Control | Keys.Alt;
                 if ((e.KeyData & ctrlAlt) == ctrlAlt) e.IsInputKey = true;
             }
 
@@ -854,6 +790,5 @@ namespace FlashDevelop.Controls
         }
 
         #endregion
-
     }
 }

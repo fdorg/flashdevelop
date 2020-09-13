@@ -55,8 +55,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ShortcutItem GetRegisteredItem(Keys keys)
         {
-            return keys != Keys.None ?
-                RegisteredItems.Values.FirstOrDefault(item => item.Custom == keys)
+            return keys != Keys.None
+                ? RegisteredItems.Values.FirstOrDefault(item => item.Custom == keys)
                 : null;
         }
 
@@ -68,11 +68,9 @@ namespace FlashDevelop.Managers
             foreach (var item in SecondaryItems)
             {
                 var ids = ((ItemData) item.Tag).Id.Split(';');
-                if (ids.Length == 2)
-                {
-                    var temp = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
-                    if (temp == id) return item;
-                }
+                if (ids.Length != 2) continue;
+                var temp = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+                if (temp == id) return item;
             }
             return null;
         }

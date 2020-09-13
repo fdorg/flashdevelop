@@ -28,11 +28,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void UpdateComboBoxItems(ComboBox comboBox)
         {
-            if (!comboBox.Items.Contains(comboBox.Text))
-            {
-                comboBox.Items.Insert(0, comboBox.Text);
-                comboBox.SelectedIndex = 0;
-            }
+            if (comboBox.Items.Contains(comboBox.Text)) return;
+            comboBox.Items.Insert(0, comboBox.Text);
+            comboBox.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -89,9 +87,7 @@ namespace FlashDevelop.Utilities
         /// Filters the matches based on the start and end positions
         /// </summary>
         public static List<SearchMatch> FilterMatches(List<SearchMatch> matches, int start, int end)
-        {
-            return matches.Where(match => match.Index >= start && (match.Index + match.Length) <= end).ToList();
-        }
+            => matches.Where(match => match.Index >= start && (match.Index + match.Length) <= end).ToList();
 
         /// <summary>
         /// Gets the next valid match but fixes position with selected text's length

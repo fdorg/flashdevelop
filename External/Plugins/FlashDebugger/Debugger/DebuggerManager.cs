@@ -42,8 +42,7 @@ namespace FlashDebugger
 
         public DebuggerManager()
         {
-            FlashInterface = new FlashInterface();
-            FlashInterface.m_BreakPointManager = PluginMain.breakPointManager;
+            FlashInterface = new FlashInterface {m_BreakPointManager = PluginMain.breakPointManager};
             FlashInterface.StartedEvent += flashInterface_StartedEvent;
             FlashInterface.DisconnectedEvent += flashInterface_DisconnectedEvent;
             FlashInterface.BreakpointEvent += flashInterface_BreakpointEvent;
@@ -179,11 +178,9 @@ namespace FlashDebugger
             get => m_CurrentFrame;
             set
             {
-                if (m_CurrentFrame != value)
-                {
-                    m_CurrentFrame = value;
-                    UpdateLocalsUI();
-                }
+                if (value == m_CurrentFrame) return;
+                m_CurrentFrame = value;
+                UpdateLocalsUI();
             }
         }
 
@@ -192,18 +189,10 @@ namespace FlashDebugger
             get => m_CurrentLocation;
             set
             {
-                if (m_CurrentLocation != value)
-                {
-                    if (m_CurrentLocation != null)
-                    {
-                        ResetCurrentLocation();
-                    }
-                    m_CurrentLocation = value;
-                    if (m_CurrentLocation != null)
-                    {
-                        GotoCurrentLocation(true);
-                    }
-                }
+                if (value == m_CurrentLocation) return;
+                if (m_CurrentLocation != null) ResetCurrentLocation();
+                m_CurrentLocation = value;
+                if (m_CurrentLocation != null) GotoCurrentLocation(true);
             }
         }
 
@@ -233,10 +222,7 @@ namespace FlashDebugger
         {
             if (file is null) return null;
             string fileFullPath = file.getFullPath();
-            if (m_PathMap.ContainsKey(fileFullPath))
-            {
-                return m_PathMap[fileFullPath];
-            }
+            if (m_PathMap.ContainsKey(fileFullPath)) return m_PathMap[fileFullPath];
             if (File.Exists(fileFullPath))
             {
                 m_PathMap[fileFullPath] = fileFullPath;
@@ -245,15 +231,15 @@ namespace FlashDebugger
             var pathSeparator = Path.DirectorySeparatorChar;
             var pathFromPackage = file.getPackageName().ToString().Replace('/', pathSeparator);
             var fileName = file.getName();
-            foreach (Folder folder in PluginMain.settingObject.SourcePaths)
+            foreach (var folder in PluginMain.settingObject.SourcePaths)
             {
-                StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                localPathBuilder.Append(folder.Path);
-                localPathBuilder.Append(pathSeparator);
-                localPathBuilder.Append(pathFromPackage);
-                localPathBuilder.Append(pathSeparator);
-                localPathBuilder.Append(fileName);
-                string localPath = localPathBuilder.ToString();
+                var sb = new StringBuilder(260/*Windows max path length*/);
+                sb.Append(folder.Path);
+                sb.Append(pathSeparator);
+                sb.Append(pathFromPackage);
+                sb.Append(pathSeparator);
+                sb.Append(fileName);
+                string localPath = sb.ToString();
                 if (File.Exists(localPath))
                 {
                     m_PathMap[fileFullPath] = localPath;
@@ -269,13 +255,13 @@ namespace FlashDebugger
                                     Select(project.GetAbsolutePath).Distinct();
                 foreach (string cp in lookupPaths)
                 {
-                    StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                    localPathBuilder.Append(cp);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(pathFromPackage);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(fileName);
-                    string localPath = localPathBuilder.ToString();
+                    var sb = new StringBuilder(260/*Windows max path length*/);
+                    sb.Append(cp);
+                    sb.Append(pathSeparator);
+                    sb.Append(pathFromPackage);
+                    sb.Append(pathSeparator);
+                    sb.Append(fileName);
+                    string localPath = sb.ToString();
                     if (File.Exists(localPath))
                     {
                         m_PathMap[fileFullPath] = localPath;
@@ -352,10 +338,7 @@ namespace FlashDebugger
             }
             CurrentLocation = null;
             UpdateMenuState(DebuggerState.Stopped);
-            if (PluginMain.settingObject.SwitchToLayout != null)
-            {
-                RestoreOldLayout();
-            }
+            if (PluginMain.settingObject.SwitchToLayout != null) RestoreOldLayout();
             else if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
                 PanelsHelper.watchPanel.Hide();

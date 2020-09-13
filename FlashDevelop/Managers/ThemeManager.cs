@@ -38,21 +38,19 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (File.Exists(file))
+                if (!File.Exists(file)) return;
+                valueMap.Clear();
+                var lines = File.ReadAllLines(file);
+                foreach (string rawLine in lines)
                 {
-                    valueMap.Clear();
-                    string[] lines = File.ReadAllLines(file);
-                    foreach (string rawLine in lines)
-                    {
-                        string line = rawLine.Trim();
-                        if (line.Length < 2 || line.StartsWith('#')) continue;
-                        string[] entry = line.Split(new[] { '=' }, 2);
-                        if (entry.Length < 2) continue;
-                        valueMap[entry[0]] = entry[1];
-                    }
-                    string currentFile = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (file != currentFile) File.Copy(file, currentFile, true);
+                    string line = rawLine.Trim();
+                    if (line.Length < 2 || line.StartsWith('#')) continue;
+                    string[] entry = line.Split(new[] { '=' }, 2);
+                    if (entry.Length < 2) continue;
+                    valueMap[entry[0]] = entry[1];
                 }
+                string currentFile = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                if (file != currentFile) File.Copy(file, currentFile, true);
             }
             catch (Exception ex)
             {

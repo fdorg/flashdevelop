@@ -287,8 +287,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            var imageList = new ImageList {ColorDepth = ColorDepth.Depth32Bit};
             imageList.Images.Add(PluginBase.MainForm.FindImage("341", false));
             imageList.Images.Add(PluginBase.MainForm.FindImage("342|24|3|3", false)); // revert
             imageList.Images.Add(PluginBase.MainForm.FindImage("342|9|3|3", false)); // export
@@ -305,7 +304,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ApplyLocalizedTexts()
         {
-            ToolTip tooltip = new ToolTip();
+            var tooltip = new ToolTip();
             contentsTextBox.Font = PluginBase.Settings.ConsoleFont;
             insertComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             languageDropDown.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
@@ -321,10 +320,7 @@ namespace FlashDevelop.Dialogs
             closeButton.Text = TextHelper.GetString("Label.Close");
             saveButton.Text = TextHelper.GetString("Label.Save");
             addButton.Text = TextHelper.GetString("Label.Add");
-            if (PluginBase.MainForm.StandaloneMode)
-            {
-                revertButton.Enabled = false;
-            }
+            if (PluginBase.MainForm.StandaloneMode) revertButton.Enabled = false;
         }
 
         /// <summary>
@@ -592,17 +588,15 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void RevertButtonClick(object sender, EventArgs e)
         {
-            string caption = TextHelper.GetString("Title.ConfirmDialog");
-            string message = TextHelper.GetString("Info.RevertSnippetFiles");
-            string appSnippetDir = Path.Combine(PathHelper.AppDir, "Snippets");
-            DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
-                Enabled = false;
-                FolderHelper.CopyFolder(appSnippetDir, PathHelper.SnippetDir);
-                PopulateControls();
-                Enabled = true;
-            }
+            var caption = TextHelper.GetString("Title.ConfirmDialog");
+            var message = TextHelper.GetString("Info.RevertSnippetFiles");
+            var appSnippetDir = Path.Combine(PathHelper.AppDir, "Snippets");
+            var result = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes) return;
+            Enabled = false;
+            FolderHelper.CopyFolder(appSnippetDir, PathHelper.SnippetDir);
+            PopulateControls();
+            Enabled = true;
         }
 
         /// <summary>

@@ -25,10 +25,7 @@ namespace PluginCore
     {
         public string Value { get; set; }
 
-        public TextEvent(EventType type, string value) : base(type)
-        {
-            Value = value;
-        }
+        public TextEvent(EventType type, string value) : base(type) => Value = value;
     }
 
     /// <summary>
@@ -38,10 +35,7 @@ namespace PluginCore
     {
         public int Value { get; set; }
 
-        public NumberEvent(EventType type, int value) : base(type)
-        {
-            Value = value;
-        }
+        public NumberEvent(EventType type, int value) : base(type) => Value = value;
     }
 
     /// <summary>
@@ -53,10 +47,7 @@ namespace PluginCore
 
         public bool ProcessKey { get; set; }
 
-        public KeyEvent(EventType type, Keys value) : base(type)
-        {
-            Value = value;
-        }
+        public KeyEvent(EventType type, Keys value) : base(type) => Value = value;
     }
 
     /// <summary>
@@ -79,9 +70,6 @@ namespace PluginCore
     {
         public object Data { get; }
 
-        public TextDataEvent(EventType type, string text, object data) : base(type, text)
-        {
-            Data = data;
-        }
+        public TextDataEvent(EventType type, string text, object data) : base(type, text) => Data = data;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using PluginCore;
+﻿using PluginCore;
 
 namespace FlashDebugger
 {

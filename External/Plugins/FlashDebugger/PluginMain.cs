@@ -113,10 +113,7 @@ namespace FlashDebugger
                     break;
                 
                 case EventType.UIClosing:
-                    if (debugManager.FlashInterface.isDebuggerStarted)
-                    {
-                        debugManager.FlashInterface.Detach();
-                    }
+                    if (debugManager.FlashInterface.isDebuggerStarted) debugManager.FlashInterface.Detach();
                     break;
 
                 case EventType.ApplySettings:
@@ -131,10 +128,8 @@ namespace FlashDebugger
                     var de = (DataEvent)e;
                     if (de.Action == "AS3Context.StartDebugger")
                     {
-                        if (settingObject.StartDebuggerOnTestMovie)
-                        {
-                            if (debugManager.Start(de.Data != null)) de.Handled = true;
-                        }
+                        if (settingObject.StartDebuggerOnTestMovie && debugManager.Start(de.Data != null))
+                            de.Handled = true;
                         return;
                     }
                     if (!de.Action.StartsWithOrdinal(nameof(ProjectManager)))  return;
@@ -175,7 +170,6 @@ namespace FlashDebugger
                     {
                         case ProjectManagerCommands.HotBuild:
                         case ProjectManagerCommands.BuildProject:
-                        {
                             if (debugManager.FlashInterface.isDebuggerStarted)
                             {
                                 if (debugManager.FlashInterface.isDebuggerSuspended)
@@ -185,9 +179,7 @@ namespace FlashDebugger
                                 debugManager.Stop_Click(null, null);
                             }
                             break;
-                        }
                         case ProjectManagerEvents.TestProject:
-                        {
                             if (debugManager.FlashInterface.isDebuggerStarted && debugManager.FlashInterface.isDebuggerSuspended)
                             {
                                 debugManager.Continue_Click(null, null);
@@ -196,7 +188,6 @@ namespace FlashDebugger
                             }
                             menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
                             break;
-                        }
                     }
                     break;
             }
@@ -231,7 +222,7 @@ namespace FlashDebugger
         /// </summary>
         void CreatePluginPanel()
         {
-            panelsHelpers = new PanelsHelper(this, pluginImage);
+            panelsHelpers = new PanelsHelper(pluginImage);
             if (firstRun) panelsHelpers.DockTogether();
         }
 

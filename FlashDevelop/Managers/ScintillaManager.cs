@@ -32,25 +32,20 @@ namespace FlashDevelop.Managers
         internal const int BookmarksMargin = 0;
         internal const int FoldingMargin = 3;
 
-        static ScintillaManager()
-        {
-            Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
-        }
+        static ScintillaManager() => Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
 
         /// <summary>
         /// Initializes the config loading
         /// </summary>
         static void Initialize()
         {
-            if (!initialized)
+            if (initialized) return;
+            lock (initializationLock)
             {
-                lock (initializationLock)
+                if (!initialized)
                 {
-                    if (!initialized)
-                    {
-                        LoadConfiguration();
-                        initialized = true;
-                    }
+                    LoadConfiguration();
+                    initialized = true;
                 }
             }
         }
@@ -85,8 +80,8 @@ namespace FlashDevelop.Managers
         public static void LoadConfiguration()
         {
             sciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
-            string[] configFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
-            sciConfig = (Scintilla)sciConfigUtil.LoadConfiguration(configFiles);
+            var files = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
+            sciConfig = (Scintilla)sciConfigUtil.LoadConfiguration(files);
             ScintillaControl.Configuration = sciConfig;
             ConfigurationLoaded?.Invoke();
         }

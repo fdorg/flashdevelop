@@ -35,7 +35,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                Session session = new Session();
+                var session = new Session();
                 session = ObjectSerializer.Deserialize(file, session);
                 session.Files ??= new List<string>();
                 session.Type = type; // set the type here...

@@ -24,19 +24,16 @@ namespace System.Windows.Forms
         public static BorderPanel Attach(Control ctrl)
         {
             if (!UseCustomBorder) return null;
-            if (ctrl.Parent is TableLayoutPanel) return null;
-            return Attach(ctrl, true);
+            return ctrl.Parent is TableLayoutPanel ? null : Attach(ctrl, true);
         }
         public static BorderPanel Attach(Control ctrl, bool visible)
         {
             BorderPanel panel;
             if (!UseCustomBorder) return null;
-            if (ctrl.Tag is BorderPanel) panel = (BorderPanel) ctrl.Tag;
+            if (ctrl.Tag is BorderPanel tag) panel = tag;
             else
             {
-                panel = new BorderPanel();
-                panel.Parent = ctrl.Parent;
-                panel.Tag = ctrl;
+                panel = new BorderPanel {Parent = ctrl.Parent, Tag = ctrl};
                 ctrl.Tag = panel;
             }
             var b = BorderWidth * 2;
@@ -57,21 +54,16 @@ namespace System.Windows.Forms
         {
             if (Tag is Control)
             {
-                string name = ThemeHelper.GetFilteredTypeName(Tag.GetType());
+                var name = ThemeHelper.GetFilteredTypeName(Tag.GetType());
                 return PluginBase.MainForm.GetThemeColor(name + ".BorderColor", SystemColors.ControlDark);
             }
-
             return SystemColors.ControlDark;
         }
 
         /// <summary>
         /// Paint only background for the border
         /// </summary>
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            e.Graphics.FillRectangle(new SolidBrush(GetBorderColor()), ClientRectangle);
-        }
-
+        protected override void OnPaint(PaintEventArgs e) => e.Graphics.FillRectangle(new SolidBrush(GetBorderColor()), ClientRectangle);
     }
 
     public class DataGridViewEx : DataGridView, IThemeHandler
@@ -80,10 +72,7 @@ namespace System.Windows.Forms
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
-        public DataGridViewEx()
-        {
-            CellPainting += OnDataGridViewCellPainting;
-        }
+        public DataGridViewEx() => CellPainting += OnDataGridViewCellPainting;
 
         public void AfterTheming()
         {
@@ -95,23 +84,21 @@ namespace System.Windows.Forms
         void OnDataGridViewCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (DesignMode) return;
-            if (e.RowIndex == -1)
+            if (e.RowIndex != -1) return;
+            var back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
+            var text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
+            var border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            if (back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
-                Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
-                Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
-                if (back != Color.Empty && border != Color.Empty && text != Color.Empty)
-                {
-                    EnableHeadersVisualStyles = false;
-                    ColumnHeadersDefaultCellStyle.ForeColor = text;
-                    e.Graphics.FillRectangle(new SolidBrush(back), e.CellBounds);
-                    e.Graphics.DrawLine(new Pen(border), e.CellBounds.X, e.CellBounds.Height - 1, e.CellBounds.X + e.CellBounds.Width, e.CellBounds.Height - 1);
-                    e.Graphics.DrawLine(new Pen(border), e.CellBounds.X + e.CellBounds.Width - 1, 3, e.CellBounds.X + e.CellBounds.Width - 1, e.CellBounds.Height - 6);
-                    e.PaintContent(e.ClipBounds);
-                    e.Handled = true;
-                }
-                else EnableHeadersVisualStyles = true;
+                EnableHeadersVisualStyles = false;
+                ColumnHeadersDefaultCellStyle.ForeColor = text;
+                e.Graphics.FillRectangle(new SolidBrush(back), e.CellBounds);
+                e.Graphics.DrawLine(new Pen(border), e.CellBounds.X, e.CellBounds.Height - 1, e.CellBounds.X + e.CellBounds.Width, e.CellBounds.Height - 1);
+                e.Graphics.DrawLine(new Pen(border), e.CellBounds.X + e.CellBounds.Width - 1, 3, e.CellBounds.X + e.CellBounds.Width - 1, e.CellBounds.Height - 6);
+                e.PaintContent(e.ClipBounds);
+                e.Handled = true;
             }
+            else EnableHeadersVisualStyles = true;
         }
 
         protected override void WndProc(ref Message message)
@@ -126,10 +113,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -139,11 +123,11 @@ namespace System.Windows.Forms
     public class ListViewEx : ListView
     {
         readonly Timer expandDelay;
-        bool themeBorder = false;
+        bool themeBorder;
         public bool UseTheme { get; set; } = true;
         public Color GridLineColor { get; set; } = SystemColors.Control;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
-        bool themeGridLines = false;
+        bool themeGridLines;
 
         public ListViewEx()
         {
@@ -163,21 +147,17 @@ namespace System.Windows.Forms
         void OnDrawItem(object sender, DrawListViewItemEventArgs e)
         {
             e.DrawDefault = true;
-            if (themeGridLines && Items.Count > 0)
-            {
-                Pen pen = new Pen(GridLineColor);
-                e.Graphics.DrawLine(pen, new Point(e.Bounds.Left, e.Bounds.Top - 1), new Point(e.Bounds.Right, e.Bounds.Top - 1));
-            }
+            if (!themeGridLines || Items.Count == 0) return;
+            var pen = new Pen(GridLineColor);
+            e.Graphics.DrawLine(pen, new Point(e.Bounds.Left, e.Bounds.Top - 1), new Point(e.Bounds.Right, e.Bounds.Top - 1));
         }
 
         void OnDrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
             e.DrawDefault = true;
-            if (themeGridLines && Items.Count > 0)
-            {
-                Pen pen = new Pen(GridLineColor);
-                e.Graphics.DrawLine(pen, new Point(e.Bounds.Left - 1, e.Bounds.Top), new Point(e.Bounds.Left - 1, e.Bounds.Bottom));
-            }
+            if (!themeGridLines || Items.Count == 0) return;
+            var pen = new Pen(GridLineColor);
+            e.Graphics.DrawLine(pen, new Point(e.Bounds.Left - 1, e.Bounds.Top), new Point(e.Bounds.Left - 1, e.Bounds.Bottom));
         }
 
         protected virtual void OnDrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -239,10 +219,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -250,7 +227,7 @@ namespace System.Windows.Forms
 
     public class TreeViewEx : TreeView
     {
-        bool themeBorder = false;
+        bool themeBorder;
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
@@ -280,10 +257,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -334,7 +308,7 @@ namespace System.Windows.Forms
         public bool UseTheme { get; set; } = true;
         ComboBoxStyle prevStyle = ComboBoxStyle.DropDown;
         Color borderColor { get; set; } = SystemColors.ControlDark;
-        bool updatingStyle = false;
+        bool updatingStyle;
 
         public void AfterTheming()
         {
@@ -384,8 +358,6 @@ namespace System.Windows.Forms
                     };
                     if (Enabled) g.FillPolygon(arrow, shape);
                     else g.FillPolygon(SystemBrushes.ControlDark, shape);
-                    break;
-                default:
                     break;
             }
         }
@@ -448,7 +420,7 @@ namespace System.Windows.Forms
 
     public class ListBoxEx : ListBox
     {
-        bool themeBorder = false;
+        bool themeBorder;
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
@@ -469,10 +441,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -480,7 +449,7 @@ namespace System.Windows.Forms
 
     public class CheckedListBoxEx : CheckedListBox
     {
-        bool themeBorder = false;
+        bool themeBorder;
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
@@ -501,10 +470,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -512,7 +478,7 @@ namespace System.Windows.Forms
 
     public class TextBoxEx : TextBox
     {
-        bool themeBorder = false;
+        bool themeBorder;
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
@@ -530,8 +496,8 @@ namespace System.Windows.Forms
                     }
                     if (UseTheme && themeBorder)
                     {
-                        Graphics g = CreateGraphics();
-                        Rectangle r = new Rectangle(0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
+                        var g = CreateGraphics();
+                        var r = new Rectangle(0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
                         if (Multiline)
                         {
                             g.DrawRectangle(new Pen(BackColor), r);
@@ -548,12 +514,9 @@ namespace System.Windows.Forms
     {
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
-        bool themeBorder = false;
+        bool themeBorder;
 
-        public void Recreate()
-        {
-            RecreateHandle(); // TODO: Crashes FD sometimes on start...
-        }
+        public void Recreate() => RecreateHandle(); // TODO: Crashes FD sometimes on start...
 
         protected override void WndProc(ref Message message)
         {
@@ -567,10 +530,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -581,10 +541,6 @@ namespace System.Windows.Forms
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
-        public ProgressBarEx()
-        {
-        }
-
         protected override void WndProc(ref Message message)
         {
             base.WndProc(ref message);
@@ -593,15 +549,13 @@ namespace System.Windows.Forms
                 case Win32.WM_PAINT:
                     if (UseTheme)
                     {
-                        Rectangle rec = new Rectangle(0, 0, Width, Height);
-                        double scaleFactor = ((Value - (double)Minimum) / (Maximum - (double)Minimum));
+                        var rec = new Rectangle(0, 0, Width, Height);
+                        var scaleFactor = ((Value - (double)Minimum) / (Maximum - (double)Minimum));
                         rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
-                        using (Graphics g = CreateGraphics())
-                        {
-                            g.FillRectangle(new SolidBrush(BackColor), new Rectangle(0, 0, Width - 1, Height - 1));
-                            g.FillRectangle(new SolidBrush(ForeColor), 1, 1, rec.Width, rec.Height);
-                            g.DrawRectangle(new Pen(BorderColor), new Rectangle(0, 0, Width - 1, Height - 1));
-                        }
+                        using var g = CreateGraphics();
+                        g.FillRectangle(new SolidBrush(BackColor), new Rectangle(0, 0, Width - 1, Height - 1));
+                        g.FillRectangle(new SolidBrush(ForeColor), 1, 1, rec.Width, rec.Height);
+                        g.DrawRectangle(new Pen(BorderColor), new Rectangle(0, 0, Width - 1, Height - 1));
                     }
                     break;
             }
@@ -637,10 +591,7 @@ namespace System.Windows.Forms
     {
         public bool UseTheme { get; set; } = true;
 
-        public PropertyGridEx()
-        {
-            SelectedObjectsChanged += OnSelectedObjectsChanged;
-        }
+        public PropertyGridEx() => SelectedObjectsChanged += OnSelectedObjectsChanged;
 
         public ScrollBar GetScrollBar()
         {
@@ -656,14 +607,11 @@ namespace System.Windows.Forms
             return null;
         }
 
-        void OnValueChanged(object sender, EventArgs e)
-        {
-            OnPaint(new PaintEventArgs(Graphics.FromHwnd(Handle), Bounds));
-        }
+        void OnValueChanged(object sender, EventArgs e) => OnPaint(new PaintEventArgs(Graphics.FromHwnd(Handle), Bounds));
 
         void OnSelectedObjectsChanged(object sender, EventArgs e)
         {
-            ScrollBar scrollBar = GetScrollBar();
+            var scrollBar = GetScrollBar();
             if (scrollBar != null) scrollBar.ValueChanged += OnValueChanged;
         }
 
@@ -683,7 +631,7 @@ namespace System.Windows.Forms
     {
         public bool UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
-        bool themeBorder = false;
+        bool themeBorder;
 
         protected override void WndProc(ref Message message)
         {
@@ -696,10 +644,7 @@ namespace System.Windows.Forms
                         themeBorder = true;
                         BorderStyle = BorderStyle.None;
                     }
-                    if (UseTheme && themeBorder)
-                    {
-                        BorderPanel.Attach(this);
-                    }
+                    if (UseTheme && themeBorder) BorderPanel.Attach(this);
                     break;
             }
         }
@@ -714,17 +659,13 @@ namespace System.Windows.Forms
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (UseTheme && !Enabled)
-            {
-                e.Graphics.FillRectangle(new SolidBrush(DisabledBackColor), Rectangle.Inflate(ClientRectangle, -2, -2));
-                TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle, DisabledTextColor);
-                if (Image != null)
-                {
-                    var x = (Width / 2) - (Image.Width / 2);
-                    var y = (Height / 2) - (Image.Height / 2);
-                    ControlPaint.DrawImageDisabled(e.Graphics, Image, x, y, Color.Transparent);
-                }
-            }
+            if (!UseTheme || Enabled) return;
+            e.Graphics.FillRectangle(new SolidBrush(DisabledBackColor), Rectangle.Inflate(ClientRectangle, -2, -2));
+            TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle, DisabledTextColor);
+            if (Image is null) return;
+            var x = (Width / 2) - (Image.Width / 2);
+            var y = (Height / 2) - (Image.Height / 2);
+            ControlPaint.DrawImageDisabled(e.Graphics, Image, x, y, Color.Transparent);
         }
     }
 
@@ -752,11 +693,14 @@ namespace System.Windows.Forms
                     checkRect.Offset(offset, 0);
                 }
                 else textRect.Offset(checkRect.Width + 3, 0);
-                Color back = FlatAppearance.CheckedBackColor;
+                var back = FlatAppearance.CheckedBackColor;
                 if (ClientRectangle.Contains(PointToClient(MousePosition)))
                 {
-                    if (MouseButtons == MouseButtons.Left) back = FlatAppearance.MouseDownBackColor;
-                    else back = FlatAppearance.MouseOverBackColor;
+                    back = MouseButtons switch
+                    {
+                        MouseButtons.Left => FlatAppearance.MouseDownBackColor,
+                        _ => FlatAppearance.MouseOverBackColor
+                    };
                 }
                 ButtonRenderer.DrawParentBackground(e.Graphics, ClientRectangle, this);
                 e.Graphics.FillRectangle(new SolidBrush(BackColor), ClientRectangle);
@@ -781,44 +725,36 @@ namespace System.Windows.Forms
     {
         public virtual bool UseTheme { get; set; } = true;
 
-        public FormEx()
-        {
-            ResizeRedraw = true;
-        }
+        public FormEx() => ResizeRedraw = true;
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            if (!UseTheme)
-            {
-                base.OnPaintBackground(e);
-            }
+            if (!UseTheme) base.OnPaintBackground(e);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (UseTheme)
+            if (!UseTheme) return;
+            var color = PluginBase.MainForm.GetThemeColor("Form.BackColor", SystemColors.Control);
+            e.Graphics.FillRectangle(new SolidBrush(color), ClientRectangle);
+            if (WindowState != FormWindowState.Maximized && (FormBorderStyle == FormBorderStyle.Sizable || FormBorderStyle == FormBorderStyle.SizableToolWindow))
             {
-                Color color = PluginBase.MainForm.GetThemeColor("Form.BackColor", SystemColors.Control);
-                e.Graphics.FillRectangle(new SolidBrush(color), ClientRectangle);
-                if (WindowState != FormWindowState.Maximized && (FormBorderStyle == FormBorderStyle.Sizable || FormBorderStyle == FormBorderStyle.SizableToolWindow))
+                SizeGripStyle = SizeGripStyle.Hide;
+                Color dark = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlDark);
+                Color light = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlLight);
+                using SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light);
+                int y = ClientRectangle.Bottom - 3 * 2 + 1;
+                for (int i = 3; i >= 1; i--)
                 {
-                    SizeGripStyle = SizeGripStyle.Hide;
-                    Color dark = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlDark);
-                    Color light = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlLight);
-                    using SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light);
-                    int y = ClientRectangle.Bottom - 3 * 2 + 1;
-                    for (int i = 3; i >= 1; i--)
+                    int x = (ClientRectangle.Right - 3 * 2 + 1);
+                    for (int j = 0; j < i; j++)
                     {
-                        int x = (ClientRectangle.Right - 3 * 2 + 1);
-                        for (int j = 0; j < i; j++)
-                        {
-                            e.Graphics.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
-                            e.Graphics.FillRectangle(darkBrush, x, y, 2, 2);
-                            x -= 4;
-                        }
-                        y -= 4;
+                        e.Graphics.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
+                        e.Graphics.FillRectangle(darkBrush, x, y, 2, 2);
+                        x -= 4;
                     }
+                    y -= 4;
                 }
             }
         }
@@ -833,7 +769,7 @@ namespace System.Windows.Forms
             if (UseTheme) DisplayStyle = TabStyle.Flat;
         }
 
-        void MatchBackColor(Control parent)
+        static void MatchBackColor(Control parent)
         {
             foreach (Control ctrl in parent.Controls)
             {
@@ -845,10 +781,7 @@ namespace System.Windows.Forms
             }
         }
 
-        public void AfterTheming()
-        {
-            MatchBackColor(this);
-        }
+        public void AfterTheming() => MatchBackColor(this);
     }
 
     public class StatusBarEx : StatusBar
@@ -922,33 +855,19 @@ namespace System.Windows.Forms
 
         protected override Size DefaultSize => new Size(100, 12);
 
-        protected override Padding DefaultMargin
-        {
-            get
-            {
-                if (Owner is StatusStrip)
-                {
-                    return defaultStatusStripMargin;
-                }
-
-                return defaultMargin;
-            }
-        }
+        protected override Padding DefaultMargin => Owner is StatusStrip ? defaultStatusStripMargin : defaultMargin;
     }
 
     public class ToolStripSpringComboBox : ToolStripComboBoxEx
     {
-        public ToolStripSpringComboBox()
-        {
-            Control.PreviewKeyDown += OnPreviewKeyDown;
-        }
+        public ToolStripSpringComboBox() => Control.PreviewKeyDown += OnPreviewKeyDown;
 
         /// <summary>
         /// Fixes the Control+Alt (AltGr) key combination handling
         /// </summary>
-        void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        public void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            Keys ctrlAlt = Keys.Control | Keys.Alt;
+            const Keys ctrlAlt = Keys.Control | Keys.Alt;
             if ((e.KeyData & ctrlAlt) == ctrlAlt) e.IsInputKey = true;
         }
 
@@ -959,19 +878,13 @@ namespace System.Windows.Forms
         {
             // Use the default size if the text box is on the overflow menu
             // or is on a vertical ToolStrip.
-            if (IsOnOverflow || Owner.Orientation == Orientation.Vertical)
-            {
-                return DefaultSize;
-            }
+            if (IsOnOverflow || Owner.Orientation == Orientation.Vertical) return DefaultSize;
             // Declare a variable to store the total available width as 
             // it is calculated, starting with the display width of the 
             // owning ToolStrip.
             int width = Owner.DisplayRectangle.Width;
             // Subtract the width of the overflow button if it is displayed. 
-            if (Owner.OverflowButton.Visible)
-            {
-                width = width - Owner.OverflowButton.Width - Owner.OverflowButton.Margin.Horizontal;
-            }
+            if (Owner.OverflowButton.Visible) width = width - Owner.OverflowButton.Width - Owner.OverflowButton.Margin.Horizontal;
             // Declare a variable to maintain a count of ToolStripSpringComboBox 
             // items currently displayed in the owning ToolStrip. 
             int springBoxCount = 0;
@@ -1010,17 +923,14 @@ namespace System.Windows.Forms
 
     public class ToolStripSpringTextBox : ToolStripTextBox
     {
-        public ToolStripSpringTextBox()
-        {
-            Control.PreviewKeyDown += OnPreviewKeyDown;
-        }
+        public ToolStripSpringTextBox() => Control.PreviewKeyDown += OnPreviewKeyDown;
 
         /// <summary>
         /// Fixes the Control+Alt (AltGr) key combination handling
         /// </summary>
-        void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        static void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            Keys ctrlAlt = Keys.Control | Keys.Alt;
+            const Keys ctrlAlt = Keys.Control | Keys.Alt;
             if ((e.KeyData & ctrlAlt) == ctrlAlt) e.IsInputKey = true;
         }
 
@@ -1031,19 +941,13 @@ namespace System.Windows.Forms
         {
             // Use the default size if the text box is on the overflow menu
             // or is on a vertical ToolStrip.
-            if (IsOnOverflow || Owner.Orientation == Orientation.Vertical)
-            {
-                return DefaultSize;
-            }
+            if (IsOnOverflow || Owner.Orientation == Orientation.Vertical) return DefaultSize;
             // Declare a variable to store the total available width as 
             // it is calculated, starting with the display width of the 
             // owning ToolStrip.
             int width = Owner.DisplayRectangle.Width;
             // Subtract the width of the overflow button if it is displayed. 
-            if (Owner.OverflowButton.Visible)
-            {
-                width = width - Owner.OverflowButton.Width - Owner.OverflowButton.Margin.Horizontal;
-            }
+            if (Owner.OverflowButton.Visible) width = width - Owner.OverflowButton.Width - Owner.OverflowButton.Margin.Horizontal;
             // Declare a variable to maintain a count of ToolStripSpringTextBox 
             // items currently displayed in the owning ToolStrip. 
             int springBoxCount = 0;
@@ -1086,24 +990,18 @@ namespace System.Windows.Forms
         
         protected override CollectionForm CreateCollectionForm()
         {
-            CollectionForm form = base.CreateCollectionForm();
-            form.Shown += delegate
-            {
-                ShowDescription(form);
-            };
+            var form = base.CreateCollectionForm();
+            form.Shown += (sender, args) => ShowDescription(form);
             return form;
         }
 
         static void ShowDescription(Control control)
         {
-            PropertyGrid grid = control as PropertyGrid;
-            if (grid != null) grid.HelpVisible = true;
+            if (control is PropertyGrid grid) grid.HelpVisible = true;
             foreach (Control child in control.Controls)
             {
                 ShowDescription(child);
             }
         }
-
     }
-
 }

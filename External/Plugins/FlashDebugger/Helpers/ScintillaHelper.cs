@@ -99,8 +99,7 @@ namespace FlashDebugger
                 RemoveHighlight(sender, line, indicatorDebugDisabledBreakpoint);
                 RemoveHighlight(sender, line, indicatorDebugEnabledBreakpoint);
             }
-            if (notify)
-                PluginMain.breakPointManager.SetBreakPointInfo(sender.FileName, line, !(bBpActive || bBpDisabled), bBpActive);
+            if (notify) PluginMain.breakPointManager.SetBreakPointInfo(sender.FileName, line, !(bBpActive || bBpDisabled), bBpActive);
         }
 
         public static void SciControl_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)

@@ -1002,29 +1002,24 @@ namespace FlashDevelop.Settings
         [Browsable(false)]
         public UiRenderMode RenderMode
         {
-            get
+            get => PluginBase.MainForm.GetThemeValue("Global.UiRenderMode", "Professional") switch
             {
-                var value = PluginBase.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
-                if (value == "System") return UiRenderMode.System;
-                return UiRenderMode.Professional;
-            }
+                "System" => UiRenderMode.System,
+                _ => UiRenderMode.Professional
+            };
             set {}
         }
 
         [Browsable(false)]
         public FlatStyle ComboBoxFlatStyle
         {
-            get
+            get => PluginBase.MainForm.GetThemeValue("ComboBox.FlatStyle", "Standard") switch
             {
-                string value = PluginBase.MainForm.GetThemeValue("ComboBox.FlatStyle", "Standard");
-                return value switch
-                {
-                    "Flat" => FlatStyle.Flat,
-                    "Standard" => FlatStyle.Standard,
-                    "System" => FlatStyle.System,
-                    _ => FlatStyle.Popup,
-                };
-            }
+                "Flat" => FlatStyle.Flat,
+                "Standard" => FlatStyle.Standard,
+                "System" => FlatStyle.System,
+                _ => FlatStyle.Popup,
+            };
             set {}
         }
 

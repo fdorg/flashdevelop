@@ -238,17 +238,15 @@ namespace ICSharpCode.SharpZipLib.Zip
         public char Replacement
         {
             get => _replacementChar;
-            set { 
-                for ( int i = 0; i < InvalidEntryChars.Length; ++i ) {
-                    if ( InvalidEntryChars[i] == value ) {
-                        throw new ArgumentException("invalid path character");
-                    }
+            set
+            { 
+                foreach (var it in InvalidEntryChars)
+                {
+                    if (it == value) throw new ArgumentException("invalid path character");
                 }
 
-                if ((value == '\\') || (value == '/')) {
+                if ((value == '\\') || (value == '/'))
                     throw new ArgumentException("invalid replacement character");
-                }
-                
                 _replacementChar = value;
             }
         }

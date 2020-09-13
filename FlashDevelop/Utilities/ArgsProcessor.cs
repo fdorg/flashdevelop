@@ -161,9 +161,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenFile()
         {
-            using var dialog = new OpenFileDialog();
-            dialog.InitialDirectory = GetCurDir();
-            dialog.Multiselect = false;
+            using var dialog = new OpenFileDialog {InitialDirectory = GetCurDir(), Multiselect = false};
             return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
                 ? dialog.FileName
                 : string.Empty;
@@ -420,7 +418,7 @@ namespace FlashDevelop.Utilities
                     {
                         string dateFormat = "";
                         if (match.Groups.Count == 3) dateFormat = match.Groups[2].Value;
-                        return (DateTime.Now.ToString(dateFormat));
+                        return DateTime.Now.ToString(dateFormat);
                     }
                 }
             }

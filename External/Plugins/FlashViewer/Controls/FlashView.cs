@@ -9,8 +9,8 @@ namespace FlashViewer.Controls
 {
     public class FlashView : UserControl
     {
-        private string moviePath;
-        private AxShockwaveFlash flashMovie;
+        string moviePath;
+        AxShockwaveFlash flashMovie;
 
         public FlashView(string file)
         {
@@ -24,7 +24,7 @@ namespace FlashViewer.Controls
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FlashView));
             this.flashMovie = new AxShockwaveFlashObjects.AxShockwaveFlash();
@@ -79,7 +79,7 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Initializes the control
         /// </summary>
-        private void FlashViewLoad(object sender, EventArgs e)
+        void FlashViewLoad(object sender, EventArgs e)
         {
             this.flashMovie.FSCommand += this.FlashMovieFSCommand;
             this.flashMovie.FlashCall += this.FlashMovieFlashCall;
@@ -92,7 +92,7 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Handles the FSCommand event
         /// </summary>
-        private void FlashMovieFSCommand(object sender, _IShockwaveFlashEvents_FSCommandEvent e)
+        void FlashMovieFSCommand(object sender, _IShockwaveFlashEvents_FSCommandEvent e)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Handles the FlashCall event
         /// </summary>
-        private void FlashMovieFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        void FlashMovieFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
         {
             try
             {

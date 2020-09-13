@@ -1744,63 +1744,60 @@ namespace AirProperties
 
         void AppPropertiesTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AppPropertiesTabControl.SelectedTab == ExtensionsTabPage && _isPropertiesLoaded)
+            if (!_isPropertiesLoaded || AppPropertiesTabControl.SelectedTab != ExtensionsTabPage) return;
+            bool reloadSelected = false;
+            foreach (var extension in _extensions)
             {
-                bool reloadSelected = false;
-                foreach (PropertyManager.AirExtension extension in _extensions)
+                if (extension.IsValid && string.IsNullOrEmpty(extension.Path))
                 {
-                    if (extension.IsValid && string.IsNullOrEmpty(extension.Path))
+                    var project = PluginBase.CurrentProject as Project;
+                    foreach (var externalPath in (project.CompilerOptions as MxmlcOptions).ExternalLibraryPaths)
                     {
-                        var project = PluginBase.CurrentProject as Project;
-                        foreach (var externalPath in (project.CompilerOptions as MxmlcOptions).ExternalLibraryPaths)
+                        if (Path.GetExtension(externalPath).ToUpperInvariant() == ".ANE")
                         {
-                            if (Path.GetExtension(externalPath).ToUpperInvariant() == ".ANE")
+
+                            string absolutePath = project.GetAbsolutePath(externalPath);
+                            ZipFile zFile;
+                            try
                             {
+                                zFile = new ZipFile(absolutePath);
+                            }
+                            catch (Exception)
+                            {
+                                continue;
+                            }
+                            var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
 
-                                string absolutePath = project.GetAbsolutePath(externalPath);
-                                ZipFile zFile;
-                                try
+                            if (entry is null) continue;
+                            byte[] buffer = UnzipFile(zFile, entry);
+                            string extensionId = null;
+                            using var stream = new MemoryStream(buffer);
+                            using var reader = XmlReader.Create(stream);
+                            reader.MoveToContent();
+
+                            while (reader.Read())
+                            {
+                                if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                if (reader.Name == "id")
                                 {
-                                    zFile = new ZipFile(absolutePath);
+                                    extensionId = reader.ReadInnerXml();
+                                    break;
                                 }
-                                catch (Exception)
-                                {
-                                    continue;
-                                }
-                                var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
+                            }
 
-                                if (entry is null) continue;
-                                byte[] buffer = UnzipFile(zFile, entry);
-                                string extensionId = null;
-                                using var stream = new MemoryStream(buffer);
-                                using var reader = XmlReader.Create(stream);
-                                reader.MoveToContent();
-
-                                while (reader.Read())
-                                {
-                                    if (reader.NodeType != XmlNodeType.Element) continue;
-
-                                    if (reader.Name == "id")
-                                    {
-                                        extensionId = reader.ReadInnerXml();
-                                        break;
-                                    }
-                                }
-
-                                if (extensionId == extension.ExtensionId)
-                                {
-                                    reloadSelected = true;
-                                    extension.Path = absolutePath;
-                                }
+                            if (extensionId == extension.ExtensionId)
+                            {
+                                reloadSelected = true;
+                                extension.Path = absolutePath;
                             }
                         }
                     }
                 }
-
-                if (reloadSelected) // In this case, does selecting the first item by default really improve UX in any significant way?
-                    LoadSelectedExtension();
-
             }
+
+            if (reloadSelected) // In this case, does selecting the first item by default really improve UX in any significant way?
+                LoadSelectedExtension();
         }
 
         #endregion

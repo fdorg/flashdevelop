@@ -241,8 +241,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            var imageList = new ImageList {ColorDepth = ColorDepth.Depth32Bit};
             imageList.Images.Add(PluginBase.MainForm.FindImage("242", false));
             infoPictureBox.Image = PluginBase.MainForm.FindImage("229", false);
             argsListView.SmallImageList = imageList;
@@ -255,7 +254,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeContextMenu()
         {
-            ContextMenuStrip contextMenu = new ContextMenuStrip();
+            var contextMenu = new ContextMenuStrip();
             contextMenu.Font = PluginBase.Settings.DefaultFont;
             contextMenu.Renderer = new DockPanelStripRenderer(false, false);
             contextMenu.Opening += ContextMenuOpening;
@@ -268,11 +267,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Hides the export item if there are no items selected
         /// </summary>
-        void ContextMenuOpening(object sender, CancelEventArgs e)
-        {
-            if (argsListView.SelectedItems.Count == 0) exportItem.Visible = false;
-            else exportItem.Visible = true;
-        }
+        void ContextMenuOpening(object sender, CancelEventArgs e) => exportItem.Visible = argsListView.SelectedItems.Count != 0;
 
         /// <summary>
         /// Applies the localized texts to the form
@@ -294,33 +289,30 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeItemGroups()
         {
-            string argumentHeader = TextHelper.GetString("Group.Arguments");
-            argumentGroup = new ListViewGroup(argumentHeader, HorizontalAlignment.Left);
+            var header = TextHelper.GetString("Group.Arguments");
+            argumentGroup = new ListViewGroup(header, HorizontalAlignment.Left);
             argsListView.Groups.Add(argumentGroup);
         }
 
         /// <summary>
         /// Populates the argument list
         /// </summary>
-        void PopulateArgumentList(List<Argument> arguments)
+        void PopulateArgumentList(IEnumerable<Argument> arguments)
         {
             argsListView.BeginUpdate();
             argsListView.Items.Clear();
             string message = TextHelper.GetString("Info.Argument");
             foreach (Argument argument in arguments)
             {
-                ListViewItem item = new ListViewItem();
-                item.ImageIndex = 0; item.Tag = argument;
+                var item = new ListViewItem();
+                item.ImageIndex = 0;
+                item.Tag = argument;
                 item.Text = message + " $(" + argument.Key + ")";
                 argsListView.Items.Add(item);
                 argumentGroup.Items.Add(item);
             }
             argsListView.EndUpdate();
-            if (argsListView.Items.Count > 0)
-            {
-                ListViewItem item = argsListView.Items[0];
-                item.Selected = true;
-            }
+            if (argsListView.Items.Count > 0) argsListView.Items[0].Selected = true;
         }
 
         /// <summary>
@@ -328,10 +320,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void AddButtonClick(object sender, EventArgs e)
         {
-            Argument argument = new Argument();
-            ListViewItem item = new ListViewItem();
-            string message = TextHelper.GetString("Info.Argument");
-            string undefined = TextHelper.GetString("Info.Undefined");
+            var argument = new Argument();
+            var item = new ListViewItem();
+            var message = TextHelper.GetString("Info.Argument");
+            var undefined = TextHelper.GetString("Info.Undefined");
             item.ImageIndex = 0; argument.Key = undefined;
             item.Text = message + " $(" + undefined + ")";
             argsListView.Items.Add(item);
@@ -359,13 +351,15 @@ namespace FlashDevelop.Dialogs
             foreach (ListViewItem item in argsListView.SelectedItems)
             {
                 argsListView.Items.Remove(item);
-                Argument argument = item.Tag as Argument;
-                CustomArguments.Remove(argument);
+                CustomArguments.Remove(item.Tag as Argument);
             }
             argsListView.EndUpdate();
             if (argsListView.Items.Count > 0)
             {
-                try { argsListView.Items[selectedIndex].Selected = true; }
+                try
+                {
+                    argsListView.Items[selectedIndex].Selected = true;
+                }
                 catch
                 {
                     int last = argsListView.Items.Count - 1;
@@ -389,12 +383,11 @@ namespace FlashDevelop.Dialogs
             {
                 keyTextBox.Enabled = true;
                 valueTextBox.Enabled = true;
-                ListViewItem item = argsListView.SelectedItems[0];
-                Argument argument = item.Tag as Argument;
+                var item = argsListView.SelectedItems[0];
+                var argument = (Argument) item.Tag;
                 valueTextBox.Text = argument.Value;
                 keyTextBox.Text = argument.Key;
-                if (argument.Key == "DefaultUser") keyTextBox.ReadOnly = true;
-                else keyTextBox.ReadOnly = false;
+                keyTextBox.ReadOnly = argument.Key == "DefaultUser";
             }
             else
             {
@@ -412,15 +405,12 @@ namespace FlashDevelop.Dialogs
         void TextBoxTextChange(object sender, EventArgs e)
         {
             if (keyTextBox.Text.Length == 0) return;
-            string message = TextHelper.GetString("Info.Argument");
-            if (argsListView.SelectedItems.Count == 1)
-            {
-                ListViewItem item = argsListView.SelectedItems[0];
-                Argument argument = item.Tag as Argument;
-                argument.Value = valueTextBox.Text;
-                argument.Key = keyTextBox.Text;
-                item.Text = message + " $(" + argument.Key + ")";
-            }
+            if (argsListView.SelectedItems.Count != 1) return;
+            var item = argsListView.SelectedItems[0];
+            var argument = (Argument) item.Tag;
+            argument.Value = valueTextBox.Text;
+            argument.Key = keyTextBox.Text;
+            item.Text = TextHelper.GetString("Info.Argument") + " $(" + argument.Key + ")";
         }
 
         /// <summary>
@@ -428,18 +418,18 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ExportArguments(object sender, EventArgs e)
         {
-            using var dialog = new SaveFileDialog();
-            dialog.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            dialog.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using var dialog = new SaveFileDialog
             {
-                List<Argument> args = new List<Argument>();
-                foreach (ListViewItem item in argsListView.SelectedItems)
-                {
-                    args.Add((Argument)item.Tag);
-                }
-                ObjectSerializer.Serialize(dialog.FileName, args);
+                Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
+                InitialDirectory = PluginBase.MainForm.WorkingDirectory
+            };
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            var args = new List<Argument>();
+            foreach (ListViewItem item in argsListView.SelectedItems)
+            {
+                args.Add((Argument)item.Tag);
             }
+            ObjectSerializer.Serialize(dialog.FileName, args);
         }
 
         /// <summary>
@@ -447,16 +437,16 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ImportArguments(object sender, EventArgs e)
         {
-            using var dialog = new OpenFileDialog();
-            dialog.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            dialog.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using var dialog = new OpenFileDialog
             {
-                List<Argument> args = new List<Argument>();
-                args = ObjectSerializer.Deserialize(dialog.FileName, args, false);
-                CustomArguments.AddRange(args); // Append imported
-                PopulateArgumentList(CustomArguments);
-            }
+                Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
+                InitialDirectory = PluginBase.MainForm.WorkingDirectory
+            };
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            var args = new List<Argument>();
+            args = ObjectSerializer.Deserialize(dialog.FileName, args, false);
+            CustomArguments.AddRange(args); // Append imported
+            PopulateArgumentList(CustomArguments);
         }
 
         /// <summary>
@@ -482,7 +472,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void LoadCustomArguments()
         {
-            string file = FileNameHelper.UserArgData;
+            var file = FileNameHelper.UserArgData;
             if (File.Exists(file))
             {
                 object data = ObjectSerializer.Deserialize(file, CustomArguments, false);
@@ -497,13 +487,8 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the argument list to file
         /// </summary>
-        public static void SaveCustomArguments()
-        {
-            string file = FileNameHelper.UserArgData;
-            ObjectSerializer.Serialize(file, CustomArguments);
-        }
+        public static void SaveCustomArguments() => ObjectSerializer.Serialize(FileNameHelper.UserArgData, CustomArguments);
 
         #endregion
-
     }
 }

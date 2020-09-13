@@ -26,12 +26,10 @@ namespace FlashDebugger.Debugger
             get => m_Project;
             set
             {
-                if (value != null)
-                {
-                    m_Project = value;
-                    ClearAll();
-                    m_SaveFileFullPath = GetWatchFile(m_Project.ProjectPath);
-                }
+                if (value is null) return;
+                m_Project = value;
+                ClearAll();
+                m_SaveFileFullPath = GetWatchFile(m_Project.ProjectPath);
             }
         }
 
@@ -116,20 +114,11 @@ namespace FlashDebugger.Debugger
             OnExpressionsLoaded(EventArgs.Empty);
         }
 
-        protected void OnExpressionAdded(string expr, int index)
-        {
-            ExpressionAdded?.Invoke(this, new WatchExpressionArgs(expr, index));
-        }
+        protected void OnExpressionAdded(string expr, int index) => ExpressionAdded?.Invoke(this, new WatchExpressionArgs(expr, index));
 
-        protected void OnExpressionRemoved(string expr, int index)
-        {
-            ExpressionRemoved?.Invoke(this, new WatchExpressionArgs(expr, index));
-        }
+        protected void OnExpressionRemoved(string expr, int index) => ExpressionRemoved?.Invoke(this, new WatchExpressionArgs(expr, index));
 
-        protected void OnExpressionReplaced(string oldExpr, string newExpr, int index)
-        {
-            ExpressionReplaced?.Invoke(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
-        }
+        protected void OnExpressionReplaced(string oldExpr, string newExpr, int index) => ExpressionReplaced?.Invoke(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
 
         protected void OnExpressionsCleared(EventArgs e) => ExpressionsCleared?.Invoke(this, e);
 

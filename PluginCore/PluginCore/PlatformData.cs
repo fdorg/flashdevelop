@@ -222,7 +222,7 @@ namespace PluginCore
         {
             foreach (var version in Versions)
             {
-                if (version.Value == value) return version;
+                if (value == version.Value) return version;
             }
             return LastVersion;
         }

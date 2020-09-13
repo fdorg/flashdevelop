@@ -21,12 +21,12 @@ namespace FlashDevelop.Dialogs
 
         public ClipboardHistoryDialog()
         {
-            this.Owner = Globals.MainForm;
-            this.FormGuid = "9c9f995e-ea37-4359-8e3c-28a57f10f249";
-            this.InitializeComponent();
-            this.InitializeFont();
-            this.InitializeLocalization();
-            this.InitializeListBox();
+            Owner = Globals.MainForm;
+            FormGuid = "9c9f995e-ea37-4359-8e3c-28a57f10f249";
+            InitializeComponent();
+            InitializeFont();
+            InitializeLocalization();
+            InitializeListBox();
         }
 
         #region Windows Form Designer Generated Code
@@ -236,11 +236,10 @@ namespace FlashDevelop.Dialogs
             {
                 lines[i] = lines[i].Trim();
             }
-            string text = (e.Index + 1) + "    " + string.Join(" ", lines);
+            var text = (e.Index + 1) + "    " + string.Join(" ", lines);
             brush.Color = e.ForeColor;
-            using var stringFormat = new StringFormat();
-            stringFormat.Trimming = StringTrimming.EllipsisCharacter;
-            e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat);
+            using var format = new StringFormat {Trimming = StringTrimming.EllipsisCharacter};
+            e.Graphics.DrawString(text, e.Font, brush, e.Bounds, format);
         }
 
         void ListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -293,10 +292,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the clipboard history list by adding the new clipboard data to the list.
         /// </summary>
-        public static void UpdateHistory()
-        {
-            current?.AddNewClipboardData();
-        }
+        public static void UpdateHistory() => current?.AddNewClipboardData();
 
         /// <summary>
         /// 

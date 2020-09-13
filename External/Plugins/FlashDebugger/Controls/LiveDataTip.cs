@@ -17,10 +17,7 @@ namespace FlashDebugger
         DataTipForm m_ToolTip;
         MouseMessageFilter m_MouseMessageFilter;
 
-        public LiveDataTip()
-        {
-            UITools.Manager.OnMouseHover += Manager_OnMouseHover;
-        }
+        public LiveDataTip() => UITools.Manager.OnMouseHover += Manager_OnMouseHover;
 
         void Initialize()
         {

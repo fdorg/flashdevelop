@@ -102,10 +102,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Initializes the external images and texts
         /// </summary>
-        void InitializeExternals()
-        {
-            infoLabel.Text = TextHelper.GetString("Info.Initializing"); 
-        }
+        void InitializeExternals() => infoLabel.Text = TextHelper.GetString("Info.Initializing");
 
         /// <summary>
         /// Handles the load event
@@ -134,10 +131,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the progress
         /// </summary>
-        void ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            progressBar.Value = e.ProgressPercentage;
-        }
+        void ProgressChanged(object sender, ProgressChangedEventArgs e) => progressBar.Value = e.ProgressPercentage;
 
         /// <summary>
         /// Handles the finish of the work
@@ -247,7 +241,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Processes the default path arguments
         /// </summary>
-        string ProcessArguments(string text)
+        static string ProcessArguments(string text)
         {
             var result = text;
             if (result is null) return string.Empty;
@@ -298,7 +292,10 @@ namespace FlashDevelop.Dialogs
         public string Action;
         public string Data;
 
-        public Command(){}
+        public Command()
+        {
+        }
+
         public Command(int number, string action, string data)
         {
             Number = number;
@@ -307,7 +304,5 @@ namespace FlashDevelop.Dialogs
         }
 
     }
-
     #endregion
-
 }

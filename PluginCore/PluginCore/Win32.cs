@@ -268,10 +268,7 @@ namespace PluginCore
         /// <summary>
         /// 
         /// </summary>
-        public static Point GetScrollPos(Control ctrl)
-        {
-            return new Point(GetScrollPos(ctrl.Handle, SB_HORZ), GetScrollPos(ctrl.Handle, SB_VERT));
-        }
+        public static Point GetScrollPos(Control ctrl) => new Point(GetScrollPos(ctrl.Handle, SB_HORZ), GetScrollPos(ctrl.Handle, SB_VERT));
 
         /// <summary>
         /// 

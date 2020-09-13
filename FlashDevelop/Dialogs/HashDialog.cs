@@ -218,36 +218,21 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the output when the index is changed
         /// </summary>
-        void CheckBoxSelectedIndexChanged(object sender, EventArgs e)
-        {
-            InputTextBoxChanged(null, null);
-        }
+        void CheckBoxSelectedIndexChanged(object sender, EventArgs e) => InputTextBoxChanged(null, null);
 
         /// <summary>
         /// When text changes, update the hash to the output box
         /// </summary>
         void InputTextBoxChanged(object sender, EventArgs e)
         {
-            byte[] plainBytes = Encoding.UTF8.GetBytes(inputTextBox.Text);
+            var bytes = Encoding.UTF8.GetBytes(inputTextBox.Text);
             try
             {
-                if (hashComboBox.SelectedIndex == 1)
-                {
-                    OutputHash(MD5.Compute(plainBytes));
-                }
-                else if (hashComboBox.SelectedIndex == 2)
-                {
-                    OutputHash(SHA1.Compute(plainBytes));
-                }
-                else if (hashComboBox.SelectedIndex == 3)
-                {
-                    OutputHash(SHA256.Compute(plainBytes));
-                }
-                else if (hashComboBox.SelectedIndex == 4)
-                {
-                    OutputHash(RMD160.Compute(plainBytes));
-                }
-                else OutputHash(plainBytes);
+                if (hashComboBox.SelectedIndex == 1) OutputHash(MD5.Compute(bytes));
+                else if (hashComboBox.SelectedIndex == 2) OutputHash(SHA1.Compute(bytes));
+                else if (hashComboBox.SelectedIndex == 3) OutputHash(SHA256.Compute(bytes));
+                else if (hashComboBox.SelectedIndex == 4) OutputHash(RMD160.Compute(bytes));
+                else OutputHash(bytes);
             }
             catch (InvalidOperationException)
             {
@@ -262,13 +247,11 @@ namespace FlashDevelop.Dialogs
         {
             if (encodingComboBox.SelectedIndex == 0)
             {
-                string b16Hash = Base16.Encode(hashBytes);
-                outputTextBox.Text = HashResultText = b16Hash;
+                outputTextBox.Text = HashResultText = Base16.Encode(hashBytes);
             } 
             else if (encodingComboBox.SelectedIndex == 1)
             {
-                string b64Hash = Base64.Encode(hashBytes);
-                outputTextBox.Text = HashResultText = b64Hash;
+                outputTextBox.Text = HashResultText = Base64.Encode(hashBytes);
             }
             else if (encodingComboBox.SelectedIndex == 2)
             {
