@@ -363,13 +363,22 @@ namespace FlashDebugger
             }
         }
 
+        //NOTE: this method has 0 references but used by FlashDebugger.Util.SerializeXML
+        public BreakPointInfo()
+        {
+            FileFullPath = "";
+            Line = 0;
+            IsDeleted = false;
+            IsEnabled = false;
+            Exp = "";
+        }
+
         public BreakPointInfo(string fileFullPath, int line, string exp, bool bDeleted, bool bEnabled)
         {
             FileFullPath = fileFullPath;
             Line = line;
             IsDeleted = bDeleted;
             IsEnabled = bEnabled;
-            m_ParsedExpression = null;
             Exp = exp;
         }
     }
