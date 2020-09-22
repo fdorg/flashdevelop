@@ -1317,7 +1317,25 @@ namespace HaXeContext.Completion.Haxe3
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2757_1"))
                     .SetName("enumValue.<complete> Issue 2757. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2757");
+            }
+        }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue3048TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3048_1", 'o', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3048_1"))
+                    .SetName("var v:Boo<complete> Issue 3048. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3048");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3048_2", 'o', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3048_2"))
+                    .SetName("var value:haxe.Js<complete> Issue 3048. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3048");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3048_3", 'o', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3048_3"))
+                    .SetName("var haxe:haxe.Js<complete> Issue 3048. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3048");
             }
         }
 
@@ -1347,6 +1365,7 @@ namespace HaXeContext.Completion.Haxe3
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2726TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2750TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2757TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue3048TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
