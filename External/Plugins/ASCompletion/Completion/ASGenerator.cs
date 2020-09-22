@@ -54,18 +54,13 @@ namespace ASCompletion.Completion
         static bool IsHaxe => ASContext.Context.CurrentModel.haXe;
 
         public static bool HandleGeneratorCompletion(ScintillaControl sci, bool autoHide, string word)
-        {
-            if (ASContext.Context.CodeGenerator is ASGenerator generator
-                && !string.IsNullOrEmpty(word)
-                && word == ASContext.Context.Features.overrideKey)
-                return generator.HandleOverrideCompletion(autoHide);
-            return false;
-        }
+            => !string.IsNullOrEmpty(word)
+               && word == ASContext.Context.Features.overrideKey
+               && ASContext.Context.CodeGenerator is ASGenerator generator
+               && generator.HandleOverrideCompletion(autoHide);
 
         public static void ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options)
-        {
-            ASContext.Context.CodeGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
-        }
+            => ASContext.Context.CodeGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
 
         public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {

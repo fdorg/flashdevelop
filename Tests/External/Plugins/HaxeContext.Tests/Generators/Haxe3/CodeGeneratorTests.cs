@@ -104,10 +104,6 @@ namespace HaXeContext.Generators.Haxe3
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_4", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_4"))
                     .SetName("fo|o(this.bar().x). Generate function . Case 4");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
-                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5")
-                    .Ignore("Setup sdk");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", -1, false)
                     .Returns(null)
                     .SetName("Issue1747. Case 1")
@@ -2163,7 +2159,7 @@ namespace HaXeContext.Generators.Haxe3
             TestCaseSource(nameof(Issue2303TestCases)),
             TestCaseSource(nameof(Issue2407TestCases)),
             TestCaseSource(nameof(Issue2411TestCases)),
-            //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2086TestCases)),

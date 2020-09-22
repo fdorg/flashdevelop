@@ -30,6 +30,9 @@ namespace HaXeContext.Generators.Haxe4
                     .Returns(Haxe3.CodeGeneratorTests.ReadAllText("AfterAssignStatementToVar_issue1999_5"))
                     .SetName("if(true){}\n(v:String)|. Assign statement to var")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
+                    .Returns(Haxe3.CodeGeneratorTests.ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
+                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5");
             }
         }
 
