@@ -683,9 +683,9 @@ namespace ASCompletion.Completion
             if ((inClass is null || inClass.IsVoid()) && result.Member is null) return false;
             if (PluginBase.MainForm.CurrentDocument?.SciControl is null) return false;
 
-            int line = 0;
+            var line = 0;
             string name = null;
-            bool isClass = false;
+            var isClass = false;
             // member
             if (result.Member != null && result.Member.LineFrom > 0)
             {
@@ -710,10 +710,10 @@ namespace ASCompletion.Completion
             // select
             if (line > 0)
             {
-                if (isClass)
-                    LocateMember("(class|interface|abstract)", name, line);
-                else
-                    LocateMember("(function|var|const|get|set|property|namespace|[,(])", name, line);
+                var keyword = isClass
+                    ? "(class|interface|abstract)"
+                    : "(function|var|const|get|set|property|namespace|[,(])";
+                LocateMember(keyword, name, line);
             }
             return true;
         }
@@ -966,8 +966,7 @@ namespace ASCompletion.Completion
 
         static void ClearResolvedContext()
         {
-            if (CurrentResolvedContext != null && CurrentResolvedContext.Position == -1)
-                return;
+            if (CurrentResolvedContext != null && CurrentResolvedContext.Position == -1) return;
             CurrentResolvedContext = new ResolvedContext();
             NotifyContextChanged();
         }
@@ -1018,15 +1017,12 @@ namespace ASCompletion.Completion
         {
             if (expr?.LocalVars is null) return;
             MemberModel closestList = null;
-            foreach (MemberModel m in expr.LocalVars)
+            foreach (var m in expr.LocalVars)
             {
-                if (m.LineFrom > lineNum)
-                    continue;
-                if (closestList != null && m.LineFrom <= closestList.LineFrom)
-                    continue;
-
-                ClassModel aType2 = ResolveType(m.Type, context.CurrentModel);
-                string objType = ASContext.Context.Features.objectKey;
+                if (m.LineFrom > lineNum) continue;
+                if (closestList != null && m.LineFrom <= closestList.LineFrom) continue;
+                var aType2 = ResolveType(m.Type, context.CurrentModel);
+                var objType = ASContext.Context.Features.objectKey;
                 while (!aType2.IsVoid() && aType2.QualifiedName != objType)
                 {
                     if (aType2.IndexType != null)
@@ -1043,10 +1039,10 @@ namespace ASCompletion.Completion
 
         public static string FindFreeIterator(IASContext context, ClassModel cClass, ASExpr expr)
         {
-            int iteratorCount = 105;
-            string iterator = ((char)iteratorCount).ToString();
-            MemberList members = cClass.Members;
-            List<MemberModel> parameters = context.CurrentMember.Parameters;
+            var iteratorCount = 105;
+            var iterator = ((char)iteratorCount).ToString();
+            var members = cClass.Members;
+            var parameters = context.CurrentMember.Parameters;
             while (true)
             {
                 var restartCycle = false;
@@ -1100,7 +1096,7 @@ namespace ASCompletion.Completion
             if ((flags & (FlagType.Getter | FlagType.Setter)) > 0) return features.varKey;
             if ((flags & FlagType.Interface) > 0) return "interface";
             if ((flags & FlagType.Class) > 0) return "class";
-            return "";
+            return string.Empty;
         }
         #endregion
 
@@ -2767,60 +2763,66 @@ namespace ASCompletion.Completion
             var features = ctx.Features;
             if (!inClass.IsVoid() && !string.IsNullOrEmpty(features.ConstructorKey) && token == features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
-            var contextMember = local.ContextMember;
-            if (contextMember is null || local.coma != ComaExpression.None || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
-                || (local.WordBefore != features.functionKey))
+            if (local.Separator != ":")
             {
-                // local vars
-                if (local.LocalVars != null)
+                var contextMember = local.ContextMember;
+                if (contextMember is null
+                    || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
+                    || local.coma != ComaExpression.None
+                    || local.WordBefore != features.functionKey)
                 {
-                    // Haxe 3 get/set keyword in properties declaration
-                    if ((token == "set" || token == "get") && local.ContextFunction is null && contextMember?.Parameters != null && contextMember.Parameters.Count == 2)
+                    // local vars
+                    if (local.LocalVars != null)
                     {
-                        if (token == "get" && contextMember.Parameters[0].Name == "get") return EvalVariable("get_" + contextMember.Name, local, inFile, inClass);
-                        if (token == "set" && contextMember.Parameters[1].Name == "set") return EvalVariable("set_" + contextMember.Name, local, inFile, inClass);
-                    }
-                    if (local.LocalVars.Count > 0)
-                    {
-                        var vars = local.LocalVars.Where(it => it.Name == token).ToList();
-                        if (vars.Count > 0)
+                        // Haxe 3 get/set keyword in properties declaration
+                        if ((token == "set" || token == "get") && local.ContextFunction is null && contextMember?.Parameters != null && contextMember.Parameters.Count == 2)
                         {
-                            MemberModel var = null;
-                            if (vars.Count > 1)
+                            if (token == "get" && contextMember.Parameters[0].Name == "get") return EvalVariable("get_" + contextMember.Name, local, inFile, inClass);
+                            if (token == "set" && contextMember.Parameters[1].Name == "set") return EvalVariable("set_" + contextMember.Name, local, inFile, inClass);
+                        }
+                        if (local.LocalVars.Count > 0)
+                        {
+                            var vars = local.LocalVars.Where(it => it.Name == token).ToList();
+                            if (vars.Count > 0)
                             {
-                                vars.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
-                                var = vars.FirstOrDefault(it => it.LineTo < local.LineTo);
-                            }
-                            var ??= vars.FirstOrDefault();
-                            if (var != null)
-                            {
-                                result.Member = var;
-                                result.InFile = inFile;
-                                result.InClass = inClass;
-                                if (features.hasInference && (var.Type is null || ResolveType(var.Type, inFile).IsVoid()))
+                                MemberModel var = null;
+                                if (vars.Count > 1)
                                 {
-                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, var);
+                                    vars.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
+                                    var = vars.FirstOrDefault(it => it.LineTo < local.LineTo);
                                 }
-                                if (string.IsNullOrEmpty(var.Type)) result.Type = ResolveType(features.objectKey, null);
-                                else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ResolveType("Function", null);
-                                else result.Type = ResolveType(var.Type, inFile);
+                                var ??= vars.FirstOrDefault();
+                                if (var != null)
+                                {
+                                    result.Member = var;
+                                    result.InFile = inFile;
+                                    result.InClass = inClass;
+                                    if (features.hasInference && (var.Type is null || ResolveType(var.Type, inFile).IsVoid()))
+                                    {
+                                        if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, var);
+                                    }
+                                    if (string.IsNullOrEmpty(var.Type)) result.Type = ResolveType(features.objectKey, null);
+                                    else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ResolveType("Function", null);
+                                    else result.Type = ResolveType(var.Type, inFile);
+                                    return result;
+                                }
+                            }
+                        }
+                    }
+                    // method parameters
+                    if (local.ContextFunction?.Parameters != null)
+                    {
+                        foreach (var para in local.ContextFunction.Parameters)
+                            if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
+                            {
+                                result.Member = para;
+                                result.Type = ResolveType(para.Type, inFile);
                                 return result;
                             }
-                        }
                     }
                 }
-                // method parameters
-                if (local.ContextFunction?.Parameters != null)
-                {
-                    foreach (var para in local.ContextFunction.Parameters)
-                        if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
-                        {
-                            result.Member = para;
-                            result.Type = ResolveType(para.Type, inFile);
-                            return result;
-                        }
-                }
             }
+
             // class members
             if (!inClass.IsVoid())
             {
@@ -4940,9 +4942,8 @@ namespace ASCompletion.Completion
             // if completed a package-level member
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package.Length != 0)
             {
-                var inFile = context.Member.InFile;
                 import = (MemberModel) context.Member.Clone();
-                import.Type = inFile.Package + "." + import.Name;
+                import.Type = context.Member.InFile.Package + "." + import.Name;
             }
             // if not completed a type
             else if (context.IsNull() || !context.IsStatic || context.Type is null
@@ -4954,12 +4955,8 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateOverride(sci, context.InClass, context.Member, position);
                     return false;
                 }
-                if (!context.IsNull() && expr.WordBefore == features.importKey)
-                    ASContext.Context.RefreshContextCache(expr.Value);
-                // FIXME slavara: need to refactor
-                // for example: var foo : foo.Foo$(EntryPoint)
-                if (context.Member != null || context.Type is null || context.RelClass is null || !context.Path.Contains('.'))
-                    return true;
+                if (!context.IsNull() && expr.WordBefore == features.importKey) ASContext.Context.RefreshContextCache(expr.Value);
+                return true;
             }
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
@@ -4974,7 +4971,6 @@ namespace ASCompletion.Completion
             int offset = 0;
             int startPos = expr.PositionExpression;
             int endPos = sci.CurrentPos;
-
             if (ASContext.Context.Settings.GenerateImports && ShouldShortenType(sci, position, import, cFile, ref offset))
             {
                 // insert short name
@@ -5048,14 +5044,11 @@ namespace ASCompletion.Completion
         /// <returns>Code was generated</returns>
         static bool CodeAutoOnChar(ScintillaControl sci, int value)
         {
-            if (ASContext.Context.Settings is null || !ASContext.Context.Settings.GenerateImports)
-                return false;
-
-            int position = sci.CurrentPos;
-
-            if (value == '*' && position > 1 && sci.CharAt(position - 2) == '.' && LastExpression != null)
-                return HandleWildcardList(sci, position, LastExpression);
-
+            if (ASContext.Context.Settings is null
+                || !ASContext.Context.Settings.GenerateImports
+                || value != '*') return false;
+            var position = sci.CurrentPos;
+            if (position > 1 && sci.CharAt(position - 2) == '.' && LastExpression != null) return HandleWildcardList(sci, position, LastExpression);
             return false;
         }
 
@@ -5158,10 +5151,7 @@ namespace ASCompletion.Completion
     {
         static Bitmap icon;
 
-        public NonexistentMemberItem(string memberName)
-        {
-            Label = memberName;
-        }
+        public NonexistentMemberItem(string memberName) => Label = memberName;
 
         public string Label { get; }
 
@@ -5206,10 +5196,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public class DeclarationItem : ICompletionListItem
     {
-        public DeclarationItem(string label)
-        {
-            Label = label;
-        }
+        public DeclarationItem(string label) => Label = label;
 
         public string Label { get; }
 
