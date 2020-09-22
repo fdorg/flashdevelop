@@ -4956,8 +4956,9 @@ namespace ASCompletion.Completion
                 }
                 if (!context.IsNull() && expr.WordBefore == features.importKey)
                     ASContext.Context.RefreshContextCache(expr.Value);
+                // FIXME slavara: need to refactor
                 // for example: var foo : foo.Foo$(EntryPoint)
-                if (context.Member != null || context.Type is null || context.RelClass is null)
+                if (context.Member != null || context.Type is null || context.RelClass is null || !context.Path.Contains('.'))
                     return true;
             }
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
