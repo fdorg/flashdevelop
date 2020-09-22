@@ -224,10 +224,11 @@
     <Compile Include="CodeRefactor\Provider\HaxeCommandFactoryTests.cs" />
     <Compile Include="Completion\Haxe3\CodeCompleteTests.cs" />
     <Compile Include="Completion\Haxe4\CodeCompleteTests.cs" />
-    <Compile Include="Generators\CodeGeneratorTests2.cs" />
-    <Compile Include="Generators\CodeGeneratorTests.cs" />
+    <Compile Include="Generators\Haxe3\CodeGeneratorTests2.cs" />
+    <Compile Include="Generators\Haxe3\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
-    <Compile Include="Generators\DocumentationGeneratorTests.cs" />
+    <Compile Include="Generators\Haxe3\DocumentationGeneratorTests.cs" />
+    <Compile Include="Generators\Haxe4\CodeGeneratorTests.cs" />
     <Compile Include="Model\Haxe3\FileParserTests.cs" />
     <Compile Include="Model\Haxe4\FileParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

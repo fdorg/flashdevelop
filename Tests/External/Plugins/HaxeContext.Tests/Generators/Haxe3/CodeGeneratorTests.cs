@@ -18,7 +18,7 @@ using PluginCore.Helpers;
 using PluginCore.Managers;
 using ScintillaNet;
 
-namespace HaXeContext.Generators
+namespace HaXeContext.Generators.Haxe3
 {
     [TestFixture]
     public class CodeGeneratorTests : ASCompletionTests
@@ -679,11 +679,6 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_4"))
                     .SetName("if(true){}\n[]|. Assign statement to var")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
-                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_5", GeneratorJobType.AssignStatementToVar, true)
-                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_5"))
-                    .SetName("if(true){}\n(v:String)|. Assign statement to var")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999")
-                    .Ignore("Setup sdk");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_6", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
                     .SetName("Contextual generator shouldn't work. /*some comment*/|")
@@ -2238,7 +2233,7 @@ namespace HaXeContext.Generators
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
-        static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+        internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFileName(fileName);

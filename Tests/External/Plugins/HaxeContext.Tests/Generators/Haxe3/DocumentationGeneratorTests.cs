@@ -11,7 +11,7 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using ScintillaNet;
 
-namespace HaXeContext.Generators
+namespace HaXeContext.Generators.Haxe3
 {
     using DocumentationGeneratorItem = ASCompletion.Generators.DocumentationGenerator.GeneratorItem;
 

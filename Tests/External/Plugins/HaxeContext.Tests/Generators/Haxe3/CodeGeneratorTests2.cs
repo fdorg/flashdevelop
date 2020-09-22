@@ -8,7 +8,7 @@ using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
 
-namespace HaXeContext.Generators
+namespace HaXeContext.Generators.Haxe3
 {
     using GeneratorJobType = GeneratorJob;
 
