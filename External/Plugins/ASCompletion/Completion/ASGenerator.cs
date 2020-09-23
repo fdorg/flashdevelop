@@ -2838,10 +2838,7 @@ namespace ASCompletion.Completion
                 if ((param.Flags & FlagType.Function) != 0 && parameters.Count != param.Parameters.Count)
                 {
                     parameters.Clear();
-                    foreach (var it in param.Parameters)
-                    {
-                        parameters.Add(new FunctionParameter(it.Name, it.Type, it.Type, null));
-                    }
+                    parameters.AddRange(param.Parameters.Select(it => new FunctionParameter(it.Name, it.Type, it.Type, null)));
                 }
             }
             // add imports to function argument types
@@ -3186,9 +3183,9 @@ namespace ASCompletion.Completion
             var features = ASContext.Context.Features;
             if (name == features.ThisKey || name == features.BaseKey || type == name)
             {
-                if (!string.IsNullOrEmpty(type)) name = char.ToLower(type[0]) + type.Substring(1);
-                else if(name == features.BaseKey) name = "p_super";
-                else name = "p_this";
+                if (!string.IsNullOrEmpty(type)) return char.ToLower(type[0]) + type.Substring(1);
+                if (name == features.BaseKey) return "p_super";
+                return "p_this";
             }
             return name;
         }
@@ -3205,10 +3202,10 @@ namespace ASCompletion.Completion
             var result = new ASResult();
             var ctx = ASContext.Context;
             var features = ctx.Features;
-            var codeGenerator = ((ASGenerator) ctx.CodeGenerator);
+            var codeGenerator = (ASGenerator) ctx.CodeGenerator;
             var canGenerate = false;
             var isHaxe = IsHaxe;
-            var flags = (FlagType.Function | FlagType.Getter | FlagType.Setter);
+            var flags = FlagType.Function | FlagType.Getter | FlagType.Setter;
             if (isHaxe) flags |= FlagType.Variable;
 
             iType.ResolveExtends(); // expr inheritance chain
@@ -3681,7 +3678,7 @@ namespace ASCompletion.Completion
 
             MemberModel latest = null;
             MemberModel fallback = null;
-            foreach (MemberModel member in list)
+            foreach (var member in list)
             {
                 fallback = member;
                 if (isFlagMatchStrict && isVisibilityMatchStrict)
@@ -3764,14 +3761,14 @@ namespace ASCompletion.Completion
             {
                 if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
                 {
-                    foreach (MemberModel member in tmpClass.Members)
+                    foreach (var member in tmpClass.Members)
                     {
                         member.Namespace = "flash_proxy";
                         members.Add(member);
                     }
                     break;
                 }
-                foreach (MemberModel member in tmpClass.Members)
+                foreach (var member in tmpClass.Members)
                 {
                     if (curClass.Members.Contains(member.Name, FlagType.Override, 0)) continue;
                     if ((member.Flags & FlagType.Dynamic) == 0
@@ -3815,7 +3812,7 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             var features = ctx.Features;
             var typesUsed = new List<string>();
-            var isProxy = (member.Namespace == "flash_proxy");
+            var isProxy = member.Namespace == "flash_proxy";
             if (isProxy) typesUsed.Add("flash.utils.flash_proxy");
             
             var line = sci.LineFromPosition(position);
@@ -3873,7 +3870,7 @@ namespace ASCompletion.Completion
                         if (para.Type == "any") para.Type = "*";
 
                 newMember.Parameters = parameters;
-                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed);
+                var action = isProxy || isAS2Event ? "" : GetSuperCall(member, typesUsed);
                 var template = TemplateUtils.GetTemplate("MethodOverride");
                 template = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
@@ -3961,7 +3958,7 @@ namespace ASCompletion.Completion
                                 isVararg = true;
                         }
 
-                        string callMethodTemplate = TemplateUtils.GetTemplate("CallFunction");
+                        var callMethodTemplate = TemplateUtils.GetTemplate("CallFunction");
                         if (!isVararg)
                         {
                             callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Name", member.Name + "." + m.Name);
@@ -4080,7 +4077,7 @@ namespace ASCompletion.Completion
         static string CleanType(string type)
         {
             if (string.IsNullOrEmpty(type)) return type;
-            int p = type.IndexOf('$');
+            var p = type.IndexOf('$');
             if (p > 0) type = type.Substring(0, p);
             p = type.IndexOf('<');
             if (p > 1 && type[p - 1] == '.') p--;
@@ -4092,7 +4089,7 @@ namespace ASCompletion.Completion
 
         static string GetSuperCall(MemberModel member, ICollection<string> typesUsed)
         {
-            string args = "";
+            var args = "";
             if (member.Parameters != null)
                 foreach (var param in member.Parameters)
                 {
@@ -4101,7 +4098,7 @@ namespace ASCompletion.Completion
                     AddTypeOnce(typesUsed, param.Type);
                 }
 
-            bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
+            var noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
             if (!noRet) AddTypeOnce(typesUsed, member.Type);
 
             var result = "";
@@ -4315,8 +4312,7 @@ namespace ASCompletion.Completion
         static string RemoveAndExtractModifier(string modifier, ref string modifiers)
         {
             modifier += " ";
-            int index = modifiers.IndexOfOrdinal(modifier);
-
+            var index = modifiers.IndexOfOrdinal(modifier);
             if (index == -1) return null;
             modifiers = modifiers.Remove(index, modifier.Length);
             return modifier;
@@ -4324,11 +4320,9 @@ namespace ASCompletion.Completion
 
         protected static void UpdateLookupPosition(int position, int delta)
         {
-            if (lookupPosition > position)
-            {
-                if (lookupPosition < position + delta) lookupPosition = position;// replaced text at cursor position
-                else lookupPosition += delta;
-            }
+            if (lookupPosition <= position) return;
+            if (lookupPosition < position + delta) lookupPosition = position;// replaced text at cursor position
+            else lookupPosition += delta;
         }
 
         static void AddLookupPosition() => AddLookupPosition(PluginBase.MainForm.CurrentDocument?.SciControl);
