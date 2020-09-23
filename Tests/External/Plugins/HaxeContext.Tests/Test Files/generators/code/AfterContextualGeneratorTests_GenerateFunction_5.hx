@@ -4,7 +4,7 @@ class EFoo {
 		foo((this.bar().x:Int));
 	}
 	
-	function foo(int:Int) {
+	function foo(int:Int):Void {
 		
 	}
 	function bar() {

@@ -1400,7 +1400,7 @@ namespace HaXeContext.Completion.Haxe3
         public void Setup()
         {
             SetHaxeFeatures(sci);
-            ((HaXeSettings) ASContext.GetLanguageContext("haxe").Settings).DisableCompletionOnDemand = false;
+            ((HaXeSettings) ASContext.Context.Settings).DisableCompletionOnDemand = false;
         }
 
         static IEnumerable<TestCaseData> OnCharIssue825TestCases
@@ -1492,8 +1492,7 @@ namespace HaXeContext.Completion.Haxe3
         [
             Test,
             TestCaseSource(nameof(OnCharIssue825TestCases)),
-            // TODO: That tests pass without other tests
-            //TestCaseSource(nameof(OnCharIssue825TestCases2)),
+            TestCaseSource(nameof(OnCharIssue825TestCases2)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide) => OnChar(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide, false);
 
@@ -1512,10 +1511,13 @@ namespace HaXeContext.Completion.Haxe3
             }
         }
 
-        [Test, TestCaseSource(nameof(OnCharAndReplaceTextIssue2404TestCases))]
+        [
+            Test,
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2404TestCases)),
+        ]
         public string OnCharAndReplaceTextIssue2404(string fileName, char addedChar, bool autoHide, bool disableCompletionOnDemand)
         {
-            var settings = (HaXeSettings) ASContext.GetLanguageContext("haxe").Settings;
+            var settings = (HaXeSettings) ASContext.Context.Settings;
             var originDisableCompletionOnDemand = settings.DisableCompletionOnDemand;
             settings.DisableCompletionOnDemand = disableCompletionOnDemand;
             UITools.Init();

@@ -18,7 +18,7 @@ using PluginCore.Helpers;
 using PluginCore.Managers;
 using ScintillaNet;
 
-namespace HaXeContext.Generators
+namespace HaXeContext.Generators.Haxe3
 {
     [TestFixture]
     public class CodeGeneratorTests : ASCompletionTests
@@ -104,10 +104,6 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_4", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_4"))
                     .SetName("fo|o(this.bar().x). Generate function . Case 4");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
-                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5")
-                    .Ignore("Setup sdk");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", -1, false)
                     .Returns(null)
                     .SetName("Issue1747. Case 1")
@@ -679,11 +675,6 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_4"))
                     .SetName("if(true){}\n[]|. Assign statement to var")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
-                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_5", GeneratorJobType.AssignStatementToVar, true)
-                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_5"))
-                    .SetName("if(true){}\n(v:String)|. Assign statement to var")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999")
-                    .Ignore("Setup sdk");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_6", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
                     .SetName("Contextual generator shouldn't work. /*some comment*/|")
@@ -1541,21 +1532,6 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateFunction_issue103_12"))
                     .SetName("Issue103. Case 12")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_13", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13"))
-                    .SetName("Issue103. Case 13")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103")
-                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_14", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
-                    .SetName("Issue103. Case 14")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103")
-                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_14_1", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1"))
-                    .SetName("Issue103. Case 14.1")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103")
-                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
                 yield return new TestCaseData("BeforeGenerateFunction_issue103_15", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_issue103_15"))
                     .SetName("Issue103. Case 15")
@@ -1592,11 +1568,6 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateFunction_issue1645"))
                     .SetName("Issue1645. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
-                yield return new TestCaseData("BeforeGenerateFunction_issue1645_2", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
-                    .SetName("Issue1645. Case 2")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645")
-                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
                 yield return new TestCaseData("BeforeGenerateFunction_issue1780_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_issue1780_1"))
                     .SetName("foo(Math.round(1.5))")
@@ -2168,7 +2139,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2303TestCases)),
             TestCaseSource(nameof(Issue2407TestCases)),
             TestCaseSource(nameof(Issue2411TestCases)),
-            //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2086TestCases)),
@@ -2238,7 +2209,7 @@ namespace HaXeContext.Generators
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
-        static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+        internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFileName(fileName);
