@@ -854,8 +854,6 @@ namespace ASCompletion.Completion
                         .SetName("0xFF0000.|");
                     yield return new TestCaseData("OnChar_10", '.', false, true)
                         .SetName("{}.|");
-                    yield return new TestCaseData("OnChar_2", '.', false, false)
-                        .SetName("this.|. inside static function");
                 }
             }
 
