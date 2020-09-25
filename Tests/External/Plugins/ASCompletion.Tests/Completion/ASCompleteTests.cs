@@ -855,7 +855,6 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("OnChar_10", '.', false, true)
                         .SetName("{}.|");
                     yield return new TestCaseData("OnChar_2", '.', false, false)
-                        .Ignore("Completion shouldn't work for this case.")
                         .SetName("this.|. inside static function");
                 }
             }
