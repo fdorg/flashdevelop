@@ -130,13 +130,6 @@ namespace FlashDevelop.Controls
         }
 
         /// <summary>
-        /// Called when the browsable properties have changed.
-        /// </summary>
-        void OnBrowsablePropertiesChanged() 
-        {
-        }
-
-        /// <summary>
         /// Build the list of the properties to be displayed in the PropertyGrid, following the filters defined the Browsable and Hidden properties.
         /// </summary>
         void RefreshProperties() 
@@ -187,7 +180,7 @@ namespace FlashDevelop.Controls
                     {
                         ShowProperty(allproperties[propertyname]);
                     } 
-                    catch (Exception)
+                    catch
                     {
                         throw new ArgumentException("Property not found.", propertyname);
                     }

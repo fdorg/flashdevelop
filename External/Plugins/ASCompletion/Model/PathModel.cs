@@ -574,7 +574,7 @@ namespace ASCompletion.Model
                     var bin = new BinaryFormatter();
                     bin.Serialize(stream, files);
                 }
-                catch (Exception)
+                catch
                 {
                     TraceManager.AddAsync($"Failed to serialize: {path}");
                 }
@@ -601,7 +601,7 @@ namespace ASCompletion.Model
                 }
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 TraceManager.AddAsync($"Failed to deserialize: {path}");
                 return false;

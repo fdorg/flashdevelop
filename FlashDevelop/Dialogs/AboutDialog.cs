@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -118,18 +117,18 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ApplyLocalizedTexts()
         {
-            string name = Application.ProductName;
-            string bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
+            var name = Application.ProductName;
+            var bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
             Text = " " + TextHelper.GetString("Title.AboutDialog") + " " + bit;
             versionLabel.Font = new Font(Font, FontStyle.Bold);
             versionLabel.Text = name;
-            Regex shaRegex = new Regex("#([a-f0-9]*)");
-            string sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
-            string link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
-            int lastChar = versionLabel.Text.Length;
-            int firstChar = versionLabel.Text.IndexOf('(');
+            var shaRegex = new Regex("#([a-f0-9]*)");
+            var sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
+            var link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
+            var lastChar = versionLabel.Text.Length;
+            var firstChar = versionLabel.Text.IndexOf('(');
             versionLabel.Links.Add(new LinkLabel.Link(firstChar, lastChar, link));
-            ToolTip tooltip = new ToolTip();
+            var tooltip = new ToolTip();
             tooltip.SetToolTip(versionLabel, link);
         }
 

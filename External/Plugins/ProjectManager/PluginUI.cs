@@ -225,7 +225,7 @@ namespace ProjectManager
                         newName = Path.Combine(project.Directory, label);
                         newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
                     }
-                    catch (Exception)
+                    catch
                     {
                         e.CancelEdit = true;
                         IsEditingLabel = false;
@@ -238,7 +238,7 @@ namespace ProjectManager
                         {
                             File.Delete(oldName);
                         }
-                        catch (Exception)
+                        catch
                         {
                             // ignored
                         }

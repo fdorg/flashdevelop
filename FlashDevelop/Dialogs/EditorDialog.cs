@@ -1153,8 +1153,8 @@ namespace FlashDevelop.Dialogs
             italicsCheckBox.CheckState = CheckState.Indeterminate;
             if (currentStyleNode.Attributes["font"] != null)
             {
-                string[] fonts = currentStyleNode.Attributes["font"].Value.Split(',');
-                foreach (string font in fonts)
+                var fonts = currentStyleNode.Attributes["font"].Value.Split(',');
+                foreach (var font in fonts)
                 {
                     if (IsFontInstalled(font))
                     {
@@ -1380,17 +1380,17 @@ namespace FlashDevelop.Dialogs
                 if (boldCheckBox.CheckState == CheckState.Checked) fs |= FontStyle.Bold;
                 else if (boldCheckBox.CheckState == CheckState.Indeterminate)
                 {
-                    if (defaultStyleNode.Attributes["bold"] != null)
+                    if (defaultStyleNode.Attributes["bold"] != null && defaultStyleNode.Attributes["bold"].Value == "true")
                     {
-                        if (defaultStyleNode.Attributes["bold"].Value == "true") fs |= FontStyle.Bold;
+                        fs |= FontStyle.Bold;
                     }
                 }
                 if (italicsCheckBox.CheckState == CheckState.Checked) fs |= FontStyle.Italic;
                 else if (italicsCheckBox.CheckState == CheckState.Indeterminate)
                 {
-                    if (defaultStyleNode.Attributes["italics"] != null)
+                    if (defaultStyleNode.Attributes["italics"] != null && defaultStyleNode.Attributes["italics"].Value == "true")
                     {
-                        if (defaultStyleNode.Attributes["italics"].Value == "true") fs |= FontStyle.Italic;
+                        fs |= FontStyle.Italic;
                     }
                 }
                 sampleTextLabel.Text = TextHelper.GetString("Info.SampleText");
@@ -1398,7 +1398,7 @@ namespace FlashDevelop.Dialogs
                 sampleTextLabel.ForeColor = ColorTranslator.FromHtml(foreColor);
                 sampleTextLabel.BackColor = ColorTranslator.FromHtml(backColor);
             }
-            catch (Exception)
+            catch
             {
                 sampleTextLabel.Font = PluginBase.Settings.ConsoleFont;
                 sampleTextLabel.Text = "Preview not available...";

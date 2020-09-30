@@ -228,10 +228,10 @@ namespace FlashDevelop.Dialogs
 
     public class UpdateInfo
     {
-        public string UserVersion = null;
-        public string ServerVersion = null;
+        public string UserVersion;
+        public string ServerVersion;
         public string DownloadUrl = "http://www.flashdevelop.org/community/viewforum.php?f=11";
-        public bool NeedsUpdate = false;
+        public bool NeedsUpdate;
 
         public UpdateInfo(string userVersion, string serverVersion, string downloadUrl)
         {

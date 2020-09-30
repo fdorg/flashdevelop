@@ -452,7 +452,7 @@ namespace FlashDevelop.Dialogs
             languageDropDown.Items.Clear();
             foreach (string folderPath in folders)
             {
-                DirectoryInfo info = new DirectoryInfo(folderPath);
+                var info = new DirectoryInfo(folderPath);
                 if ((info.Attributes & FileAttributes.Hidden) > 0) continue;
                 string folderName = Path.GetFileNameWithoutExtension(folderPath);
                 string[] files = Directory.GetFiles(folderPath);
@@ -483,7 +483,7 @@ namespace FlashDevelop.Dialogs
                 foreach (string file in snippets[currentSyntax])
                 {
                     string snippet = Path.GetFileNameWithoutExtension(file);
-                    ListViewItem lvi = new ListViewItem(snippet, 0);
+                    var lvi = new ListViewItem(snippet, 0);
                     snippetListView.Items.Add(lvi);
                     if (!string.IsNullOrEmpty(toSelect) && snippet == toSelect)
                     {
@@ -515,9 +515,9 @@ namespace FlashDevelop.Dialogs
         {
             try
             {
-                string locale = PluginBase.Settings.LocaleVersion.ToString();
-                Stream stream = ResourceHelper.GetStream($"SnippetVars.{locale}.txt");
-                string contents = new StreamReader(stream).ReadToEnd();
+                var locale = PluginBase.Settings.LocaleVersion.ToString();
+                var stream = ResourceHelper.GetStream($"SnippetVars.{locale}.txt");
+                var contents = new StreamReader(stream).ReadToEnd();
                 if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")
                 {
                     #pragma warning disable CS0162 // Unreachable code detected
@@ -543,18 +543,16 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InsertComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (insertComboBox.SelectedItem != null && insertComboBox.SelectedIndex != 0)
+            if (insertComboBox.SelectedItem is null || insertComboBox.SelectedIndex == 0) return;
+            contentsTextBox.Focus();
+            var data = insertComboBox.SelectedItem.ToString();
+            if (!data.StartsWith('-'))
             {
-                contentsTextBox.Focus();
-                var data = insertComboBox.SelectedItem.ToString();
-                if (!data.StartsWith('-'))
-                {
-                    var variableEnd = data.IndexOf(')') + 1;
-                    var variable = data.Substring(0, variableEnd);
-                    InsertText(contentsTextBox, variable);
-                }
-                insertComboBox.SelectedIndex = 0;
+                var variableEnd = data.IndexOf(')') + 1;
+                var variable = data.Substring(0, variableEnd);
+                InsertText(contentsTextBox, variable);
             }
+            insertComboBox.SelectedIndex = 0;
         }
 
         /// <summary>

@@ -218,10 +218,12 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeContextMenu()
         {
-            var cms = new ContextMenuStrip();
-            cms.Font = PluginBase.Settings.DefaultFont;
-            cms.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            cms.Renderer = new DockPanelStripRenderer(false, false);
+            var cms = new ContextMenuStrip
+            {
+                Font = PluginBase.Settings.DefaultFont,
+                ImageScalingSize = ScaleHelper.Scale(new Size(16, 16)),
+                Renderer = new DockPanelStripRenderer(false, false)
+            };
             removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, RemoveShortcutClick);
             revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, RevertToDefaultClick);
             revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, RevertAllToDefaultClick);
@@ -241,7 +243,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ApplyLocalizedTexts()
         {
-            ToolTip tooltip = new ToolTip();
+            var tooltip = new ToolTip();
             idHeader.Text = TextHelper.GetString("Label.Command");
             keyHeader.Text = TextHelper.GetString("Label.Shortcut");
             infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
@@ -409,7 +411,8 @@ namespace FlashDevelop.Dialogs
             var item = (ShortcutListItem) listView.SelectedItems[0];
             AssignNewShortcut(item, e.KeyData);
             // Don't trigger list view default shortcuts like Ctrl+Add
-            switch (e.KeyData) {
+            switch (e.KeyData)
+            {
                 case Keys.Up:
                 case Keys.Down:
                 case Keys.PageDown:
@@ -680,7 +683,7 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the associated <see cref="ShortcutItem"/> object.
             /// </summary>
-            public ShortcutItem Item { get; }
+            ShortcutItem Item { get; }
 
             /// <summary>
             /// Gets whether this <see cref="ShortcutListItem"/> has other conflicting <see cref="ShortcutListItem"/> objects.

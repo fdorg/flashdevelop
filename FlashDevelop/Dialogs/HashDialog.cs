@@ -228,11 +228,15 @@ namespace FlashDevelop.Dialogs
             var bytes = Encoding.UTF8.GetBytes(inputTextBox.Text);
             try
             {
-                if (hashComboBox.SelectedIndex == 1) OutputHash(MD5.Compute(bytes));
-                else if (hashComboBox.SelectedIndex == 2) OutputHash(SHA1.Compute(bytes));
-                else if (hashComboBox.SelectedIndex == 3) OutputHash(SHA256.Compute(bytes));
-                else if (hashComboBox.SelectedIndex == 4) OutputHash(RMD160.Compute(bytes));
-                else OutputHash(bytes);
+                bytes = hashComboBox.SelectedIndex switch
+                {
+                    1 => MD5.Compute(bytes),
+                    2 => SHA1.Compute(bytes),
+                    3 => SHA256.Compute(bytes),
+                    4 => RMD160.Compute(bytes),
+                    _ => bytes
+                };
+                OutputHash(bytes);
             }
             catch (InvalidOperationException)
             {
@@ -245,19 +249,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void OutputHash(byte[] hashBytes)
         {
-            if (encodingComboBox.SelectedIndex == 0)
+            switch (encodingComboBox.SelectedIndex)
             {
-                outputTextBox.Text = HashResultText = Base16.Encode(hashBytes);
-            } 
-            else if (encodingComboBox.SelectedIndex == 1)
-            {
-                outputTextBox.Text = HashResultText = Base64.Encode(hashBytes);
-            }
-            else if (encodingComboBox.SelectedIndex == 2)
-            {
-                var output = string.Join(", ", hashBytes.Select(entry => entry.ToString()).ToArray());
-                outputTextBox.Text = output;
-                HashResultText = output;
+                case 0:
+                    outputTextBox.Text = HashResultText = Base16.Encode(hashBytes);
+                    break;
+                case 1:
+                    outputTextBox.Text = HashResultText = Base64.Encode(hashBytes);
+                    break;
+                case 2:
+                    outputTextBox.Text = HashResultText = string.Join(", ", hashBytes.Select(entry => entry.ToString()));
+                    break;
             }
         }
 

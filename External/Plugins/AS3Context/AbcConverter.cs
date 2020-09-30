@@ -51,8 +51,7 @@ namespace AS3Context
             if (parser.Docs.Count > 0)
                 foreach (string docFile in parser.Docs.Keys)
                 {
-                    if (docFile.EndsWithOrdinal(".dita.xml"))
-                        continue;
+                    if (docFile.EndsWithOrdinal(".dita.xml")) continue;
                     try
                     {
                         Match m = reDocFile.Match(docFile);
@@ -62,14 +61,14 @@ namespace AS3Context
                             ? Docs[package]
                             : new Dictionary<string, ASDocItem>();
 
-                        byte[] rawDoc = parser.Docs[docFile];
-                        ASDocsReader dr = new ASDocsReader(rawDoc);
+                        var rawDoc = parser.Docs[docFile];
+                        var dr = new ASDocsReader(rawDoc);
                         dr.ExcludedASDocs = ExcludedASDocs;
                         dr.Parse(packageDocs);
 
                         Docs[package] = packageDocs;
                     }
-                    catch (Exception)
+                    catch
                     {
                     }
                 }

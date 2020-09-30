@@ -500,7 +500,7 @@ namespace FlashDebugger
             {
                 if (name[0] == '#') id = Int64.Parse(name.Substring(1));
             }
-            catch (Exception)
+            catch
             {
                 id = Value.UNKNOWN_ID;
             }

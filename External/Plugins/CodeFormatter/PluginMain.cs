@@ -266,7 +266,7 @@ namespace CodeFormatter
                             break;
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
                     PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");

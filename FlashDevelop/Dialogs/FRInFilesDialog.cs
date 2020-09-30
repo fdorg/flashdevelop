@@ -940,13 +940,13 @@ namespace FlashDevelop.Dialogs
             var projPath = Path.GetDirectoryName(project.ProjectPath);
             var walker = new PathWalker(projPath, mask, recursive);
             var projFiles = walker.GetFiles();
-            foreach (string file in projFiles)
+            foreach (var file in projFiles)
             {
                 if (!IsFileHidden(file, project)) allFiles.Add(file);
             }
             foreach (var sp in project.SourcePaths)
             {
-                string sourcePath = project.GetAbsolutePath(sp);
+                var sourcePath = project.GetAbsolutePath(sp);
                 if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
                 {
                     walker = new PathWalker(sourcePath, mask, recursive);

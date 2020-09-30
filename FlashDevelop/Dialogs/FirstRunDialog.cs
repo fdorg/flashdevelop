@@ -110,9 +110,7 @@ namespace FlashDevelop.Dialogs
         void FirstRunDialogLoad(object sender, EventArgs e)
         {
             LoadCommandsFile();
-            worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.WorkerSupportsCancellation = true;
+            worker = new BackgroundWorker {WorkerReportsProgress = true, WorkerSupportsCancellation = true};
             worker.DoWork += ProcessCommands;
             worker.ProgressChanged += ProgressChanged;
             worker.RunWorkerCompleted += WorkerCompleted;
@@ -138,7 +136,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (((bool)e.Result))
+            if ((bool)e.Result)
             {
                 if (!File.Exists(FileNameHelper.SettingData))
                 {
@@ -172,7 +170,7 @@ namespace FlashDevelop.Dialogs
                         string data = ProcessArguments(command.Data);
                         if (command.Action.ToLower() == "copy")
                         {
-                            string[] args = data.Split(';');
+                            var args = data.Split(';');
                             if (Directory.Exists(args[0])) FolderHelper.CopyFolder(args[0], args[1]);
                             else
                             {
@@ -209,8 +207,8 @@ namespace FlashDevelop.Dialogs
                         }
                         else if (command.Action.ToLower() == "appman")
                         {
-                            string locale = PluginBase.Settings.LocaleVersion.ToString();
-                            string appman = Path.Combine(PathHelper.ToolDir, "appman/AppMan.exe");
+                            var locale = PluginBase.Settings.LocaleVersion.ToString();
+                            var appman = Path.Combine(PathHelper.ToolDir, "appman/AppMan.exe");
                             ProcessHelper.StartAsync(appman, "-locale=" + locale);
                         }
                     }

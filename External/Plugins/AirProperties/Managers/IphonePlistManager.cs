@@ -233,7 +233,7 @@ namespace AirProperties
                 // return the formatted string to caller (without the namespace declaration)
                 return sr.ReadToEnd();
             }
-            catch (Exception)
+            catch
             {
                 //debug purposes only
                 //MessageBox.Show(ex.ToString());

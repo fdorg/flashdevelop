@@ -163,7 +163,7 @@ namespace FlashDevelop.Dialogs
             if (sci is null) return;
             try
             {
-                int line = Convert.ToInt32(lineTextBox.Text) - 1;
+                var line = Convert.ToInt32(lineTextBox.Text) - 1;
                 sci.EnsureVisibleEnforcePolicy(line);
                 sci.GotoLineIndent(line);
                 Close();
@@ -183,8 +183,8 @@ namespace FlashDevelop.Dialogs
             if (sci is null) return;
             try
             {
-                int pos = Convert.ToInt32(lineTextBox.Text) - 1;
-                int line = sci.LineFromPosition(pos);
+                var pos = Convert.ToInt32(lineTextBox.Text) - 1;
+                var line = sci.LineFromPosition(pos);
                 sci.EnsureVisibleEnforcePolicy(line);
                 sci.GotoPos(pos);
                 Close();

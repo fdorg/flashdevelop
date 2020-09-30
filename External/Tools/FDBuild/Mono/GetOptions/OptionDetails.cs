@@ -7,24 +7,15 @@ namespace Mono.GetOptions
     internal class OptionDetails : IComparable
     {
         // Methods
-        static OptionDetails()
-        {
-            Verbose = false;
-        }
+        static OptionDetails() => Verbose = false;
 
         public OptionDetails(MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
         {
             paramName = null;
             optionHelp = null;
             ShortForm = ("" + option.ShortForm).Trim();
-            if (option.LongForm is null)
-            {
-                LongForm = string.Empty;
-            }
-            else
-            {
-                LongForm = option.LongForm.Length != 0 ? option.LongForm : memberInfo.Name;
-            }
+            if (option.LongForm is null) LongForm = string.Empty;
+            else LongForm = option.LongForm.Length != 0 ? option.LongForm : memberInfo.Name;
             AlternateForm = option.AlternateForm;
             ShortDescription = ExtractParamName(option.ShortDescription);
             Occurs = 0;
@@ -37,80 +28,73 @@ namespace Mono.GetOptions
             VBCStyleBoolean = option.VBCStyleBoolean;
             SecondLevelHelp = option.SecondLevelHelp;
             ParameterType = TypeOfMember(memberInfo);
-            if (ParameterType != null)
+            if (ParameterType is null) return;
+            if (ParameterType.FullName != "System.Boolean")
             {
-                if (ParameterType.FullName != "System.Boolean")
+                if (LongForm.IndexOf(':') >= 0)
                 {
-                    if (LongForm.IndexOf(':') >= 0)
-                    {
-                        throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + MemberInfo + " isn't]");
-                    }
-                    NeedsParameter = true;
-                    if (option.MaxOccurs == 1)
-                    {
-                        return;
-                    }
-                    if (ParameterType.IsArray)
-                    {
-                        Values = new ArrayList();
-                        MaxOccurs = option.MaxOccurs;
-                        return;
-                    }
-                    if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
-                    {
-                        MaxOccurs = option.MaxOccurs;
-                        return;
-                    }
-                    object[] objArray1 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", MemberInfo.ToString(), "] option" } ;
-                    throw new InvalidOperationException(string.Concat(objArray1));
+                    throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + MemberInfo + " isn't]");
                 }
-                BooleanOption = true;
-                if (option.MaxOccurs != 1)
+                NeedsParameter = true;
+                if (option.MaxOccurs == 1) return;
+                if (ParameterType.IsArray)
                 {
-                    if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
-                    {
-                        MaxOccurs = option.MaxOccurs;
-                    }
-                    else
-                    {
-                        object[] objArray2 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", MemberInfo.ToString(), "] option" } ;
-                        throw new InvalidOperationException(string.Concat(objArray2));
-                    }
+                    Values = new ArrayList();
+                    MaxOccurs = option.MaxOccurs;
+                    return;
+                }
+                if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
+                {
+                    MaxOccurs = option.MaxOccurs;
+                    return;
+                }
+                object[] objArray1 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", MemberInfo.ToString(), "] option" } ;
+                throw new InvalidOperationException(string.Concat(objArray1));
+            }
+            BooleanOption = true;
+            if (option.MaxOccurs != 1)
+            {
+                if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
+                {
+                    MaxOccurs = option.MaxOccurs;
+                }
+                else
+                {
+                    object[] objArray2 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", MemberInfo.ToString(), "] option" } ;
+                    throw new InvalidOperationException(string.Concat(objArray2));
                 }
             }
         }
 
         void DoIt(bool setValue)
         {
-            if (!NeedsParameter)
+            if (NeedsParameter) return;
+            Occurred(1);
+            if (Verbose) Console.WriteLine("<" + LongForm + "> set to [true]");
+            switch (MemberInfo)
             {
-                Occurred(1);
-                if (Verbose)
-                {
-                    Console.WriteLine("<" + LongForm + "> set to [true]");
-                }
-                if (MemberInfo is FieldInfo info)
-                {
+                case FieldInfo info:
                     info.SetValue(OptionBundle, setValue);
-                }
-                else if (MemberInfo is PropertyInfo propertyInfo)
-                {
-                    propertyInfo.SetValue(OptionBundle, setValue, null);
-                }
-                else if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, null) == WhatToDoNext.AbandonProgram)
-                {
-                    Environment.Exit(1);
-                }
+                    break;
+                case PropertyInfo info:
+                    info.SetValue(OptionBundle, setValue, null);
+                    break;
+                default:
+                    if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, null) == WhatToDoNext.AbandonProgram)
+                    {
+                        Environment.Exit(1);
+                    }
+                    break;
             }
         }
 
         void DoIt(string parameterValue)
         {
             parameterValue ??= "";
-            char[] chArray1 = { ',' } ;
-            string[] textArray1 = parameterValue.Split(chArray1);
+            char[] chArray1 = { ',' };
+            var textArray1 = parameterValue.Split(chArray1);
             Occurred(textArray1.Length);
-            string[] textArray2 = textArray1;
+            var textArray2 = textArray1;
             foreach (var text1 in textArray2)
             {
                 object obj1 = null;
@@ -125,7 +109,7 @@ namespace Mono.GetOptions
                     {
                         obj1 = Convert.ChangeType(text1, ParameterType.GetElementType());
                     }
-                    catch (Exception)
+                    catch
                     {
                         Console.WriteLine(
                             $"The value '{text1}' is not convertible to the appropriate type '{ParameterType.GetElementType().Name}' for the {DefaultForm} option");
@@ -140,28 +124,28 @@ namespace Mono.GetOptions
                         {
                             obj1 = Convert.ChangeType(text1, ParameterType);
                         }
-                        catch (Exception)
+                        catch
                         {
-                            Console.WriteLine(
-                                $"The value '{text1}' is not convertible to the appropriate type '{ParameterType.Name}' for the {DefaultForm} option");
+                            Console.WriteLine($"The value '{text1}' is not convertible to the appropriate type '{ParameterType.Name}' for the {DefaultForm} option");
                             goto Label_01B1;
                         }
                     }
-                    if (MemberInfo is FieldInfo fieldInfo)
+
+                    switch (MemberInfo)
                     {
-                        fieldInfo.SetValue(OptionBundle, obj1);
-                    }
-                    else if (MemberInfo is PropertyInfo propertyInfo)
-                    {
-                        propertyInfo.SetValue(OptionBundle, obj1, null);
-                    }
-                    else
-                    {
-                        object[] objArray1 = { obj1 } ;
-                        if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, objArray1) == WhatToDoNext.AbandonProgram)
-                        {
-                            Environment.Exit(1);
-                        }
+                        case FieldInfo info:
+                            info.SetValue(OptionBundle, obj1);
+                            break;
+                        case PropertyInfo info:
+                            info.SetValue(OptionBundle, obj1, null);
+                            break;
+                        default:
+                            object[] objArray1 = {obj1};
+                            if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, objArray1) == WhatToDoNext.AbandonProgram)
+                            {
+                                Environment.Exit(1);
+                            }
+                            break;
                     }
                 }
                 Label_01B1:;
@@ -282,44 +266,42 @@ namespace Mono.GetOptions
         public void TransferValues()
         {
             if (Values is null) return;
-            if (MemberInfo is FieldInfo fieldInfo)
+            switch (MemberInfo)
             {
-                fieldInfo.SetValue(OptionBundle, Values.ToArray(ParameterType.GetElementType()));
-            }
-            else if (MemberInfo is PropertyInfo propertyInfo)
-            {
-                propertyInfo.SetValue(OptionBundle, Values.ToArray(ParameterType.GetElementType()), null);
-            }
-            else
-            {
-                object[] objArray1 = { Values.ToArray(ParameterType.GetElementType()) } ;
-                if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, objArray1) == WhatToDoNext.AbandonProgram)
-                {
-                    Environment.Exit(1);
-                }
+                case FieldInfo info:
+                    info.SetValue(OptionBundle, Values.ToArray(ParameterType.GetElementType()));
+                    break;
+                case PropertyInfo info:
+                    info.SetValue(OptionBundle, Values.ToArray(ParameterType.GetElementType()), null);
+                    break;
+                default:
+                    object[] objArray1 = {Values.ToArray(ParameterType.GetElementType())};
+                    if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, objArray1) == WhatToDoNext.AbandonProgram)
+                    {
+                        Environment.Exit(1);
+                    }
+                    break;
             }
         }
 
         static Type TypeOfMember(MemberInfo memberInfo)
         {
-            if (memberInfo.MemberType == MemberTypes.Field && memberInfo is FieldInfo fieldInfo)
+            switch (memberInfo.MemberType)
             {
-                return fieldInfo.FieldType;
+                case MemberTypes.Field when memberInfo is FieldInfo fieldInfo:
+                    return fieldInfo.FieldType;
+                case MemberTypes.Property when memberInfo is PropertyInfo propertyInfo:
+                    return propertyInfo.PropertyType;
+                case MemberTypes.Method when memberInfo is MethodInfo methodInfo:
+                    if (methodInfo.ReturnType.FullName != typeof(WhatToDoNext).FullName)
+                    {
+                        throw new NotSupportedException("Option method must return '" + typeof(WhatToDoNext).FullName + "'");
+                    }
+                    var infoArray1 = methodInfo.GetParameters();
+                    return infoArray1.Length != 0 ? infoArray1[0].ParameterType : null;
+                default:
+                    throw new NotSupportedException("'" + memberInfo.MemberType + "' memberType is not supported");
             }
-            if (memberInfo.MemberType == MemberTypes.Property && memberInfo is PropertyInfo propertyInfo)
-            {
-                return propertyInfo.PropertyType;
-            }
-            if (memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo methodInfo)
-            {
-                if (methodInfo.ReturnType.FullName != typeof(WhatToDoNext).FullName)
-                {
-                    throw new NotSupportedException("Option method must return '" + typeof(WhatToDoNext).FullName + "'");
-                }
-                var infoArray1 = methodInfo.GetParameters();
-                return infoArray1.Length != 0 ? infoArray1[0].ParameterType : null;
-            }
-            throw new NotSupportedException("'" + memberInfo.MemberType + "' memberType is not supported");
         }
 
         // Properties

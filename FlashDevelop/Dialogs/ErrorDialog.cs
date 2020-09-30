@@ -146,8 +146,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            var error = PluginBase.MainForm.FindImage("197", false);
-            if (error != null) pictureBox.Image = error;
+            var image = PluginBase.MainForm.FindImage("197", false);
+            if (image != null) pictureBox.Image = image;
         }
 
         /// <summary>
@@ -178,8 +178,7 @@ namespace FlashDevelop.Dialogs
         public static void Show(Exception ex)
         {
             SystemSounds.Hand.Play();
-            using var dialog = new ErrorDialog();
-            dialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
+            using var dialog = new ErrorDialog {infoTextBox = {Text = ex.Message + "\r\n\r\n" + ex.StackTrace}};
             dialog.countLabel.Text += " " + errorCount++;
             dialog.exitButton.Enabled = errorCount >= 7;
             dialog.ShowDialog();

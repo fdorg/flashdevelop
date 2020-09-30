@@ -197,10 +197,10 @@ namespace FlashDevelop.Managers
                 }
                 if (action.Contains("SyntaxIs?"))
                 {
-                    string[] chunks = action.Split('?');
+                    var chunks = action.Split('?');
                     if (chunks.Length == 2)
                     {
-                        string language = sci.ConfigurationLanguage;
+                        var language = sci.ConfigurationLanguage;
                         if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
                     }
                 }
@@ -372,7 +372,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static string GetLabelAsPlainText(string name, bool unicode, bool hasBOM)
         {
-            string label = TextHelper.GetStringWithoutMnemonics(name);
+            var label = TextHelper.GetStringWithoutMnemonics(name);
             if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }

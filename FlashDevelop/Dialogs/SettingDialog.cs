@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using FlashDevelop.Utilities;
@@ -330,9 +331,8 @@ namespace FlashDevelop.Dialogs
             mainGroup.Items.Add(main);
             for (int i = 0; i < count; i++)
             {
-                AvailablePlugin plugin = PluginServices.AvailablePlugins[i];
-                ListViewItem item = new ListViewItem(plugin.Instance.Name, 0);
-                item.Tag = plugin.Instance;
+                var plugin = PluginServices.AvailablePlugins[i];
+                var item = new ListViewItem(plugin.Instance.Name, 0) {Tag = plugin.Instance};
                 if (PluginBase.Settings.DisabledPlugins.Contains(plugin.Instance.Guid))
                 {
                     item.ImageIndex = 1;
@@ -366,9 +366,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void SelectCorrectItem(string itemName)
         {
-            for (int i = 0; i < itemListView.Items.Count; i++)
+            for (var i = 0; i < itemListView.Items.Count; i++)
             {
-                ListViewItem item = itemListView.Items[i];
+                var item = itemListView.Items[i];
                 if (item.Text == itemName)
                 {
                     item.Selected = true;
@@ -384,7 +384,7 @@ namespace FlashDevelop.Dialogs
         {
             if (itemListView.SelectedIndices.Count > 0)
             {
-                int selectedIndex = itemListView.SelectedIndices[0];
+                var selectedIndex = itemListView.SelectedIndices[0];
                 if (selectedIndex == 0)
                 {
                     sdkContext = new InstalledSDKContext(null);
@@ -399,7 +399,7 @@ namespace FlashDevelop.Dialogs
                 }
                 else
                 {
-                    IPlugin plugin = (IPlugin)itemListView.SelectedItems[0].Tag;
+                    var plugin = (IPlugin)itemListView.SelectedItems[0].Tag;
                     sdkContext = new InstalledSDKContext(plugin as InstalledSDKOwner);
                     disableCheckBox.Checked = PluginBase.Settings.DisabledPlugins.Contains(plugin.Guid);
                     itemPropertyGrid.SelectedObject = plugin.Settings;
@@ -430,45 +430,37 @@ namespace FlashDevelop.Dialogs
         void FilterPropertySheet()
         {
             if (PlatformHelper.IsRunningOnMono()) return;
-            object settingsObj = itemPropertyGrid.SelectedObject;
-            string text = filterText.Text;
-            if (settingsObj != null)
+            var settingsObj = itemPropertyGrid.SelectedObject;
+            if (settingsObj is null) return;
+            var text = filterText.Text;
+            var i = 0;
+            string[] browsables = { "" };
+            foreach (var prop in settingsObj.GetType().GetProperties())
             {
-                int i = 0;
-                string[] browsables = { "" };
-                foreach (PropertyInfo prop in settingsObj.GetType().GetProperties())
+                if (PropertyMatches(prop, text))
                 {
-                    if (PropertyMatches(prop, text))
-                    {
-                        Array.Resize(ref browsables, i + 1);
-                        browsables[i++] = prop.Name;
-                    }
+                    Array.Resize(ref browsables, i + 1);
+                    browsables[i++] = prop.Name;
                 }
-                itemPropertyGrid.BrowsableProperties = browsables;
-                itemPropertyGrid.SelectedObject = settingsObj;
-                itemPropertyGrid.Refresh();
             }
+            itemPropertyGrid.BrowsableProperties = browsables;
+            itemPropertyGrid.SelectedObject = settingsObj;
+            itemPropertyGrid.Refresh();
         }
 
         /// <summary>
         /// Checks if a property exist in a plugin
         /// </summary>
-        bool CheckIfExist(IPlugin plugin, string text)
+        static bool CheckIfExist(IPlugin plugin, string text)
         {
             if (plugin.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
                 return true;
             }
-            var settingsObj = plugin.Settings;
-            if (settingsObj is null) return false;
-            foreach (PropertyInfo prop in settingsObj.GetType().GetProperties())
-            {
-                if (PropertyMatches(prop, text))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return plugin.Settings is { } settingsObj
+                   && settingsObj.GetType()
+                       .GetProperties()
+                       .Any(it => PropertyMatches(it, text));
         }
 
         /// <summary>
@@ -515,9 +507,9 @@ namespace FlashDevelop.Dialogs
         void PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             if (itemListView.SelectedIndices.Count == 0) return;
-            GridItem changedItem = e.ChangedItem;
-            string settingId = nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
-            TextEvent te = new TextEvent(EventType.SettingChanged, settingId);
+            var changedItem = e.ChangedItem;
+            var settingId = nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
+            var te = new TextEvent(EventType.SettingChanged, settingId);
             EventManager.DispatchEvent(PluginBase.MainForm, te);
             if (changedItem.PropertyDescriptor.Attributes.Matches(new RequiresRestartAttribute()))
             {
@@ -530,7 +522,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void UpdateRestartRequired(string key, object oldValue, object newValue)
         {
-            bool previous = requireRestart.Count > 0;
+            var previous = requireRestart.Count > 0;
             if (requireRestart.Contains(key))
             {
                 if (requireRestart[key].Equals(newValue))

@@ -1762,7 +1762,7 @@ namespace AirProperties
                             {
                                 zFile = new ZipFile(absolutePath);
                             }
-                            catch (Exception)
+                            catch
                             {
                                 continue;
                             }

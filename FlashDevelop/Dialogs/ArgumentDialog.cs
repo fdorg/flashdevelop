@@ -30,10 +30,7 @@ namespace FlashDevelop.Dialogs
         Button closeButton;
         Button addButton;
 
-        static ArgumentDialog()
-        {
-            CustomArguments = new List<Argument>();
-        }
+        static ArgumentDialog() => CustomArguments = new List<Argument>();
 
         public ArgumentDialog()
         {
@@ -301,13 +298,15 @@ namespace FlashDevelop.Dialogs
         {
             argsListView.BeginUpdate();
             argsListView.Items.Clear();
-            string message = TextHelper.GetString("Info.Argument");
-            foreach (Argument argument in arguments)
+            var message = TextHelper.GetString("Info.Argument");
+            foreach (var argument in arguments)
             {
-                var item = new ListViewItem();
-                item.ImageIndex = 0;
-                item.Tag = argument;
-                item.Text = message + " $(" + argument.Key + ")";
+                var item = new ListViewItem
+                {
+                    ImageIndex = 0,
+                    Tag = argument,
+                    Text = message + " $(" + argument.Key + ")"
+                };
                 argsListView.Items.Add(item);
                 argumentGroup.Items.Add(item);
             }

@@ -221,10 +221,10 @@ namespace FlashDevelop.Controls
         /// </summary>
         void InitializeGraphics()
         {
-            Color text = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
-            Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
-            Color back = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
-            bool useTheme = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor") != Color.Empty;
+            var text = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
+            var fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
+            var back = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
+            var useTheme = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor") != Color.Empty;
             if (back != Color.Empty) backColor = findTextBox.BackColor = back;
             if (text != Color.Empty) infoLabel.ForeColor = text;
             if (fore != Color.Empty) findTextBox.ForeColor = fore;
@@ -234,7 +234,7 @@ namespace FlashDevelop.Controls
                 previousButton.Image = PluginBase.MainForm.FindImage("63");
                 closeButton.Image = PluginBase.MainForm.FindImage("111");
             }
-            Padding pad = new Padding(0, 2, 6, useTheme ? 3 : 1);
+            var pad = new Padding(0, 2, 6, useTheme ? 3 : 1);
             highlightHost.Margin = matchCaseHost.Margin = wholeWordHost.Margin = pad;
             PluginBase.MainForm.SetUseTheme(highlightCheckBox, useTheme);
             PluginBase.MainForm.SetUseTheme(matchCaseCheckBox, useTheme);
@@ -698,22 +698,22 @@ namespace FlashDevelop.Controls
                     if (e.Item.Selected || ((ToolStripButton)e.Item).Checked || (isOver && e.Item.Enabled))
                     {
                         var border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
-                        Rectangle rect = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
-                        Rectangle rect2 = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
-                        LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
+                        var rect = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
+                        var rect2 = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
+                        var b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                         e.Graphics.FillRectangle(b, rect);
-                        Rectangle rect3 = new Rectangle(rect2.Left - 1, rect2.Top - 1, rect2.Width + 1, rect2.Height + 1);
-                        Rectangle rect4 = new Rectangle(rect3.Left + 1, rect3.Top + 1, rect3.Width - 2, rect3.Height - 2);
+                        var rect3 = new Rectangle(rect2.Left - 1, rect2.Top - 1, rect2.Width + 1, rect2.Height + 1);
+                        var rect4 = new Rectangle(rect3.Left + 1, rect3.Top + 1, rect3.Width - 2, rect3.Height - 2);
                         e.Graphics.DrawRectangle(new Pen(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border), rect3);
                         e.Graphics.DrawRectangle(new Pen(back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back), rect4);
                     }
                     if (e.Item.Pressed)
                     {
                         var active = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
-                        Rectangle rect = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
-                        LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
+                        var rect = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
+                        var b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                         e.Graphics.FillRectangle(b, rect);
-                        Rectangle rect2 = new Rectangle(rect.Left - 1, rect.Top - 1, rect.Width + 1, rect.Height + 1);
+                        var rect2 = new Rectangle(rect.Left - 1, rect.Top - 1, rect.Width + 1, rect.Height + 1);
                         e.Graphics.DrawRectangle(new Pen(active == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : active), rect2);
                     }
                 }

@@ -157,7 +157,7 @@ namespace PluginCore.Helpers
                 var attributes = File.GetAttributes(file);
                 return (attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -410,7 +410,7 @@ namespace PluginCore.Helpers
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 info = new EncodingFileInfo();
             }
