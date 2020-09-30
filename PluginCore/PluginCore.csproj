@@ -281,14 +281,6 @@
     <Compile Include="DockPanelSuite\Win32\NativeMethods.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJsonLib\IJsonWrapper.cs" />
-    <Compile Include="LitJsonLib\JsonData.cs" />
-    <Compile Include="LitJsonLib\JsonException.cs" />
-    <Compile Include="LitJsonLib\JsonMapper.cs" />
-    <Compile Include="LitJsonLib\JsonReader.cs" />
-    <Compile Include="LitJsonLib\JsonWriter.cs" />
-    <Compile Include="LitJsonLib\Lexer.cs" />
-    <Compile Include="LitJsonLib\ParserToken.cs" />
     <Compile Include="BBCode\BBCodeStyle.cs" />
     <Compile Include="BBCode\BBCodeTagHandler.cs" />
     <Compile Include="BBCode\BBCodeTagInfo.cs" />
