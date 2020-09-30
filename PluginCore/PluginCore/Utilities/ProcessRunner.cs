@@ -134,6 +134,5 @@ namespace PluginCore.Utilities
     
     public delegate void LineOutputHandler(object sender, string line);
     public delegate void ProcessEndedHandler(object sender, int exitCode);
-
     internal delegate void NextTask();
 }

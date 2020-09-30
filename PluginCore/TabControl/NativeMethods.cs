@@ -15,7 +15,7 @@ namespace System.Windows.Forms
 	//[SecurityPermission(SecurityAction.Assert, Flags=SecurityPermissionFlag.UnmanagedCode)]
 	internal sealed class NativeMethods
 	{
-		private NativeMethods(){}
+        NativeMethods(){}
 		
 #region Windows Constants
 
@@ -128,19 +128,19 @@ namespace System.Windows.Forms
 #region Windows Structures and Enums
 
 		[Flags()]
-		public enum TCHITTESTFLAGS{
+		public enum TCHITTESTFLAGS
+        {
 			TCHT_NOWHERE = 1,
 			TCHT_ONITEMICON = 2,
 			TCHT_ONITEMLABEL = 4,
 			TCHT_ONITEM = TCHT_ONITEMICON | TCHT_ONITEMLABEL
 		}
-	
- 
-		
+        
 		[StructLayout(LayoutKind.Sequential)]
-		public struct TCHITTESTINFO{
-			
-			public TCHITTESTINFO(Point location){
+		public struct TCHITTESTINFO
+        {
+            public TCHITTESTINFO(Point location)
+            {
 				pt = location;
 				flags = TCHITTESTFLAGS.TCHT_ONITEM;
 			}
@@ -150,7 +150,8 @@ namespace System.Windows.Forms
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 4)]
-		public struct PAINTSTRUCT{
+		public struct PAINTSTRUCT
+        {
 		    public IntPtr hdc;
 		    public int fErase;
 		    public RECT rcPaint;
@@ -161,31 +162,36 @@ namespace System.Windows.Forms
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct RECT{
+		public struct RECT
+        {
 		    public int left;
 		    public int top;
 		    public int right;
 		    public int bottom;
 		    
-		    public RECT(int left, int top, int right, int bottom){
+		    public RECT(int left, int top, int right, int bottom)
+            {
 		        this.left = left;
 		        this.top = top;
 		        this.right = right;
 		        this.bottom = bottom;
 		    }
 		
-		    public RECT(Rectangle r){
+		    public RECT(Rectangle r)
+            {
 		        this.left = r.Left;
 		        this.top = r.Top;
 		        this.right = r.Right;
 		        this.bottom = r.Bottom;
 		    }
 		
-		    public static RECT FromXYWH(int x, int y, int width, int height){
+		    public static RECT FromXYWH(int x, int y, int width, int height)
+            {
 		        return new RECT(x, y, x + width, y + height);
 		    }
 		
-		    public static RECT FromIntPtr(IntPtr ptr){
+		    public static RECT FromIntPtr(IntPtr ptr)
+            {
 		    	RECT rect = (RECT)Marshal.PtrToStructure(ptr, typeof(RECT));
 		    	return rect;
 		    }
@@ -197,5 +203,4 @@ namespace System.Windows.Forms
 #endregion
 
 	}
-	
 }

@@ -58,25 +58,29 @@ namespace PluginCore.Controls
         {
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
             // panel
-            toolTip = new Panel();
-            toolTip.Location = new Point(0,0);
-            toolTip.BackColor = SystemColors.Info;
-            toolTip.ForeColor = SystemColors.InfoText;
-            toolTip.BorderStyle = BorderStyle.FixedSingle;
-            toolTip.Visible = false;
+            toolTip = new Panel
+            {
+                Location = new Point(0, 0),
+                BackColor = SystemColors.Info,
+                ForeColor = SystemColors.InfoText,
+                BorderStyle = BorderStyle.FixedSingle,
+                Visible = false
+            };
             ((Form) mainForm).Controls.Add(toolTip);
             // text
-            toolTipRTB = new RichTextBox();
-            toolTipRTB.Font = PluginBase.Settings.DefaultFont;
-            toolTipRTB.BackColor = SystemColors.Info;
-            toolTipRTB.ForeColor = SystemColors.InfoText;
-            toolTipRTB.BorderStyle = BorderStyle.None;
-            toolTipRTB.ScrollBars = RichTextBoxScrollBars.None;
-            toolTipRTB.DetectUrls = false;
-            toolTipRTB.ReadOnly = true;
-            toolTipRTB.WordWrap = false;
-            toolTipRTB.Visible = true;
-            toolTipRTB.Text = "";
+            toolTipRTB = new RichTextBox
+            {
+                Font = PluginBase.Settings.DefaultFont,
+                BackColor = SystemColors.Info,
+                ForeColor = SystemColors.InfoText,
+                BorderStyle = BorderStyle.None,
+                ScrollBars = RichTextBoxScrollBars.None,
+                DetectUrls = false,
+                ReadOnly = true,
+                WordWrap = false,
+                Visible = true,
+                Text = ""
+            };
             toolTip.Controls.Add(toolTipRTB);
 
             // rtf cache
@@ -86,15 +90,13 @@ namespace PluginCore.Controls
 
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            if (e.Type == EventType.ApplyTheme)
-            {
-                Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
-                Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
-                toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
-                toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
-                toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
-                toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
-            }
+            if (e.Type != EventType.ApplyTheme) return;
+            var fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+            var back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
+            toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
+            toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+            toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+            toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
         }
 
         #endregion
@@ -222,23 +224,18 @@ namespace PluginCore.Controls
         public void Redraw(bool autoSize)
         {
             toolTipRTB.Rtf = GetRtfFor(rawText);
-
-            Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
-            Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
+            var fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+            var back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
             toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
             toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
             toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
             toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
-
-            if (autoSize)
-                AutoSize();
+            if (autoSize) AutoSize();
         }
 
         protected string GetRtfFor(string bbCodeText)
         {
-            if (rtfCache.ContainsKey(bbCodeText))
-                return rtfCache[bbCodeText];
-
+            if (rtfCache.ContainsKey(bbCodeText)) return rtfCache[bbCodeText];
             if (rtfCacheList.Count >= 512)
             {
                 var key = rtfCacheList[0];

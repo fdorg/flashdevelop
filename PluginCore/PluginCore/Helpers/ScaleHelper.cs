@@ -48,10 +48,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static Size Scale(Size value)
-        {
-            return new Size(Scale(value.Width), Scale(value.Height));
-        }
+        public static Size Scale(Size value) => new Size(Scale(value.Width), Scale(value.Height));
 
         /// <summary>
         /// Resizes based on display scale.
@@ -64,8 +61,8 @@ namespace PluginCore.Helpers
         public static Bitmap Scale(Bitmap image)
         {
             if (GetScale() == 1) return image;
-            int width = Scale(image.Width);
-            int height = Scale(image.Height);
+            var width = Scale(image.Width);
+            var height = Scale(image.Height);
             return (Bitmap)ImageKonverter.ImageResize(image, width, height);
         }
 
@@ -75,16 +72,12 @@ namespace PluginCore.Helpers
         public static void AdjustForHighDPI(Control control, double multi)
         {
             if (IsAdjusted(control)) return;
-            double scale = GetScale();
+            var scale = GetScale();
             foreach (Control ctrl in control.Controls)
             {
-                if (ctrl is Button)
+                if (ctrl is Button && scale >= 1.5)
                 {
-                    if (scale >= 1.5)
-                    {
-                        double noPad = ctrl.Height * multi;
-                        ctrl.Height = (int)noPad;
-                    }
+                    ctrl.Height = (int)(ctrl.Height * multi);
                 }
                 AdjustForHighDPI(ctrl, multi);
             }

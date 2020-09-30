@@ -35,14 +35,12 @@ namespace ScintillaNet.Configuration
 
         public bool IsKnownFile(string file)
         {
-            var filemask = Path.GetExtension(file).ToLower().Substring(1);
+            var extension = Path.GetExtension(file).ToLower().Substring(1);
+            var mask = "," + extension + ",";
             foreach (var lang in AllLanguages)
             {
                 var extensions = "," + lang.fileextensions + ",";
-                if (extensions.Contains("," + filemask + ","))
-                {
-                    return true;
-                }
+                if (extensions.Contains(mask)) return true;
             }
             return false;
         }
@@ -50,14 +48,15 @@ namespace ScintillaNet.Configuration
         public string GetLanguageFromFile(string file)
         {
             var result = "text";
-            var filemask = Path.GetExtension(file);
-            if (filemask.Length == 0) return result;
-            filemask = filemask.ToLower().Substring(1);
+            var extension = Path.GetExtension(file);
+            if (extension.Length == 0) return result;
+            extension = extension.ToLower().Substring(1);
+            var mask = "," + extension + ",";
             foreach (var lang in AllLanguages)
             {
                 var extensions = "," + lang.fileextensions + ",";
                 if (extensions.Contains(",*,")) result = lang.name;
-                if (extensions.Contains(","+filemask+",")) return lang.name;
+                if (extensions.Contains(mask)) return lang.name;
             }
             return result;
         }
@@ -66,30 +65,27 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (_languages is null)
+                if (_languages != null) return _languages;
+                var result = new HashSet<Language>();
+                if (MasterScintilla == this)
                 {
-                    var result = new Hashtable();
-                    if (MasterScintilla == this)
+                    // Check the children first (from the end)
+                    for (var i = includedFiles.Length - 1; i > -1; i--)
                     {
-                        // Check the children first (from the end)
-                        for (int i = includedFiles.Length-1; i>-1; i--)
+                        var child = (Scintilla)includedFiles[i];
+                        foreach (var language in child.AllLanguages)
                         {
-                            var child = (Scintilla)(includedFiles[i]);
-                            var kids = child.AllLanguages;
-                            foreach (Language k in kids)
-                            {
-                                if (!result.ContainsKey(k.name )) result.Add(k.name, k);
-                            }
+                            result.Add(language);
                         }
                     }
-                    // Otherwise just check here.
-                    for (int i = languages.Length-1; i>-1; i--)
-                    {
-                        if (!result.ContainsKey(languages[i].name)) result.Add(languages[i].name, languages[i]);
-                    }
-                    _languages = new Language[result.Count];
-                    result.Values.CopyTo(_languages, 0);
                 }
+                // Otherwise just check here.
+                for (var i = languages.Length - 1; i > -1; i--)
+                {
+                    result.Add(languages[i]);
+                }
+                _languages = new Language[result.Count];
+                result.CopyTo(_languages, 0);
                 return _languages;  
             }
         }
@@ -102,7 +98,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length-1; i>-1; i--)
                 {
-                    var child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)includedFiles[i];
                     result = child.GetValue(keyName);
                     if (result != null) return result;
                 }
@@ -123,7 +119,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length-1; i>-1; i--)
                 {
-                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)includedFiles[i];
                     result = child.GetCharacterClass(keyName);
                     if (result != null) return result;
                 }
@@ -145,7 +141,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length-1; i>-1; i--)
                 {
-                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)includedFiles[i];
                     result = child.GetStyleClass(styleName);
                     if (result != null) return result;
                 }
@@ -166,7 +162,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length-1; i>-1; i--)
                 {
-                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)includedFiles[i];
                     result = child.GetKeywordClass(keywordName);
                     if (result != null) return result;
                 }
@@ -189,7 +185,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length - 1; i > -1; i--)
                 {
-                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)includedFiles[i];
                     allLanguages.AddRange(child.GetLanguages());
                 }
             }

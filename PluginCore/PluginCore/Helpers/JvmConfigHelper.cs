@@ -14,18 +14,16 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Dictionary<string, string> ReadConfig(string configPath)
         {
-            if (configPath is null) configPath = "";
-            string hash = configPath;
+            configPath ??= "";
+            var hash = configPath;
             if (Cache.ContainsKey(hash)) return Cache[hash];
             if (Directory.Exists(configPath))
             {
                 var jvmconfig = Path.Combine(configPath, "bin", "jvm.config");
                 var buildproperties = Path.Combine(configPath, "build.properties");
 
-                if (File.Exists(jvmconfig))
-                    configPath = jvmconfig;
-                else if (File.Exists(buildproperties))
-                    configPath = buildproperties;
+                if (File.Exists(jvmconfig)) configPath = jvmconfig;
+                else if (File.Exists(buildproperties)) configPath = buildproperties;
             }
 
             var config = ConfigHelper.Parse(configPath, false).Flatten();
@@ -35,9 +33,10 @@ namespace PluginCore.Helpers
             if (!config.ContainsKey("java.home")) config["java.home"] = "";
             else config["java.home"] = config["java.home"].Trim('"', '\'', ' ', '\t');
 
-            string args = "-Dsun.io.useCanonCaches=false -Xms32m -Xmx512m";
+            string args;
             if (config.ContainsKey("java.args")) args = config["java.args"];
             else if (config.ContainsKey("jvm.args")) args = config["jvm.args"];
+            else args = "-Dsun.io.useCanonCaches=false -Xms32m -Xmx512m";
 
             args = ExpandArguments(args, config, 0);
 
@@ -61,10 +60,10 @@ namespace PluginCore.Helpers
         {
             while (value.IndexOf("${", StringComparison.Ordinal) is { } start && start >= 0)
             {
-                int end = value.IndexOf('}', start);
+                var end = value.IndexOf('}', start);
                 if (end < start) return value;
-                string key = value.Substring(start + 2, end - start - 2).Trim();
-                string eval = config.ContainsKey(key) ? config[key] : "";
+                var key = value.Substring(start + 2, end - start - 2).Trim();
+                var eval = config.ContainsKey(key) ? config[key] : "";
                 if (!string.IsNullOrEmpty(eval) && depth < 10) eval = ExpandArguments(eval, config, depth + 1);
                 value = value.Substring(0, start) + eval + value.Substring(end + 1);
             }
@@ -105,9 +104,8 @@ namespace PluginCore.Helpers
         static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            bool isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
-            bool isPathAbsSlashed = (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal)) && !isPathNetworked;
-            if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
+            var isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
+            if (!isPathNetworked && (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal))) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             string resolvedPath;
             if (relativeTo != null)

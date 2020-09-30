@@ -8,34 +8,34 @@ namespace PluginCore.Controls
     {
         #region Win32
 
-        private const uint MA_ACTIVATE = 1;
-        private const uint MA_ACTIVATEANDEAT = 2;
-        private const uint WM_MOUSEACTIVATE = 0x21;
+        const uint MA_ACTIVATE = 1;
+        const uint MA_ACTIVATEANDEAT = 2;
+        const uint WM_MOUSEACTIVATE = 0x21;
 
         #endregion
 
-        private bool clickThrough = true;
+        bool clickThrough = true;
 
         /// <summary>
         /// Listen for all items added
         /// </summary>
         public ToolStripEx()
         {
-            this.ItemAdded += this.OnItemAdded;
-            ((Form)PluginBase.MainForm).Deactivate += this.OnFormDeactivate;
-            ((Form)PluginBase.MainForm).Activated += this.OnFormDeactivate;
+            ItemAdded += OnItemAdded;
+            ((Form)PluginBase.MainForm).Deactivate += OnFormDeactivate;
+            ((Form)PluginBase.MainForm).Activated += OnFormDeactivate;
         }
 
         /// <summary>
         /// When the main form loses or gains input focus, clear all selections and repaint
         /// </summary>
-        private void OnFormDeactivate(object sender, EventArgs e)
+        void OnFormDeactivate(object sender, EventArgs e)
         {
             try
             {
-                MethodInfo method = typeof(ToolStrip).GetMethod("ClearAllSelections", BindingFlags.NonPublic | BindingFlags.Instance);
+                var method = typeof(ToolStrip).GetMethod("ClearAllSelections", BindingFlags.NonPublic | BindingFlags.Instance);
                 method.Invoke(this, null);
-                this.Invalidate();
+                Invalidate();
             }
             catch { /* No errors... */ }
         }
@@ -43,21 +43,21 @@ namespace PluginCore.Controls
         /// <summary>
         /// When button is added, listen for it's hover events
         /// </summary>
-        private void OnItemAdded(object sender, ToolStripItemEventArgs e)
+        static void OnItemAdded(object sender, ToolStripItemEventArgs e)
         {
             if (e.Item is ToolStripButton)
             {
-                e.Item.MouseEnter += this.OnOverChange;
-                e.Item.MouseLeave += this.OnOverChange;
+                e.Item.MouseEnter += OnOverChange;
+                e.Item.MouseLeave += OnOverChange;
             }
         }
 
         /// <summary>
         /// Invalidate button if it is not selected to workaround the "textbox selected, no button hover" issue. :)
         /// </summary>
-        private void OnOverChange(object sender, EventArgs e)
+        static void OnOverChange(object sender, EventArgs e)
         {
-            ToolStripItem item = sender as ToolStripItem;
+            var item = sender as ToolStripItem;
             if (!item.Selected) item.Invalidate();
         }
 
@@ -66,8 +66,8 @@ namespace PluginCore.Controls
         /// </summary>
         public bool ClickThrough
         {
-            get => this.clickThrough;
-            set => this.clickThrough = value;
+            get => clickThrough;
+            set => clickThrough = value;
         }
 
         /// <summary>
@@ -78,15 +78,12 @@ namespace PluginCore.Controls
             try
             {
                 base.WndProc(ref m);
-                if (this.clickThrough && m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
+                if (clickThrough && m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
                 {
                     m.Result = (IntPtr)MA_ACTIVATE;
                 }
             }
             catch {}
         }
-
     }
-
 }
-

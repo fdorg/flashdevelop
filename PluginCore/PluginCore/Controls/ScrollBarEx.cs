@@ -236,8 +236,8 @@ namespace PluginCore.Controls
             using Brush brush = new SolidBrush(color);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-            PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
-            float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
+            var headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
+            var baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
             g.FillPolygon(brush, new[]
             {
                 new PointF(rect.Left - 0.5f, baseY),
@@ -258,8 +258,8 @@ namespace PluginCore.Controls
             using Brush brush = new SolidBrush(color);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-            PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
-            float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
+            var headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
+            var baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
             g.FillPolygon(brush, new[]
             {
                 new PointF(baseX, rect.Top - 0.5f),
@@ -603,20 +603,14 @@ namespace PluginCore.Controls
             set
             {
                 // no change - return
-                if (value == orientation)
-                {
-                    return;
-                }
+                if (value == orientation) return;
                 orientation = value;
                 // change text of context menu entries
                 ChangeContextMenuItems();
                 // save scroll orientation for scroll event
                 scrollOrientation = value == ScrollBarOrientation.Vertical ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll;
                 // only in DesignMode switch width and height
-                if (DesignMode)
-                {
-                    Size = new Size(Height, Width);
-                }
+                if (DesignMode) Size = new Size(Height, Width);
                 // sets the scrollbar up
                 SetUpScrollBar();
             }
@@ -699,10 +693,7 @@ namespace PluginCore.Controls
             set
             {
                 // no change or new value invalid - return
-                if (value == viewPortSize || viewPortSize < 1)
-                {
-                    return;
-                }
+                if (value == viewPortSize || viewPortSize < 1) return;
                 viewPortSize = value;
                 SetUpScrollBar();
                 // adjust thumb position (already done by SetUpScrollBar())
@@ -722,10 +713,7 @@ namespace PluginCore.Controls
             set
             {
                 // no change or new small change value invalid - return
-                if (value == smallChange || value < 1 || value >= largeChange)
-                {
-                    return;
-                }
+                if (value == smallChange || value < 1 || value >= largeChange) return;
                 smallChange = value;
                 SetUpScrollBar();
             }
@@ -743,10 +731,7 @@ namespace PluginCore.Controls
             set
             {
                 // no change or new large change value is invalid - return
-                if (value == largeChange || value < smallChange || value < 2)
-                {
-                    return;
-                }
+                if (value == largeChange || value < smallChange || value < 2) return;
                 // if value is greater than scroll area - adjust
                 if (value > maximum - minimum)
                 {
@@ -1058,13 +1043,13 @@ namespace PluginCore.Controls
             // draw current line
             if (curPos > -1 && orientation == ScrollBarOrientation.Vertical)
             {
-                using SolidBrush brush = new SolidBrush(curPosColor);
+                using var brush = new SolidBrush(curPosColor);
                 e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                 e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, Width, ScaleHelper.Scale(2f));
             }
 
             // draw border
-            using Pen pen = new Pen((Enabled ? borderColor : borderColorDisabled));
+            using var pen = new Pen((Enabled ? borderColor : borderColorDisabled));
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
         }
@@ -1140,39 +1125,37 @@ namespace PluginCore.Controls
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            if (e.Button == MouseButtons.Left)
+            if (e.Button != MouseButtons.Left) return;
+            ContextMenuStrip = contextMenu;
+            if (thumbClicked)
             {
-                ContextMenuStrip = contextMenu;
-                if (thumbClicked)
-                {
-                    thumbClicked = false;
-                    thumbState = ScrollBarState.Normal;
-                    OnScroll(new ScrollEventArgs(ScrollEventType.EndScroll, -1, value, scrollOrientation));
-                }
-                else if (topArrowClicked)
-                {
-                    topArrowClicked = false;
-                    topButtonState = ScrollBarArrowButtonState.UpNormal;
-                    StopTimer();
-                }
-                else if (bottomArrowClicked)
-                {
-                    bottomArrowClicked = false;
-                    bottomButtonState = ScrollBarArrowButtonState.DownNormal;
-                    StopTimer();
-                }
-                else if (topBarClicked)
-                {
-                    topBarClicked = false;
-                    StopTimer();
-                }
-                else if (bottomBarClicked)
-                {
-                    bottomBarClicked = false;
-                    StopTimer();
-                }
-                Invalidate();
+                thumbClicked = false;
+                thumbState = ScrollBarState.Normal;
+                OnScroll(new ScrollEventArgs(ScrollEventType.EndScroll, -1, value, scrollOrientation));
             }
+            else if (topArrowClicked)
+            {
+                topArrowClicked = false;
+                topButtonState = ScrollBarArrowButtonState.UpNormal;
+                StopTimer();
+            }
+            else if (bottomArrowClicked)
+            {
+                bottomArrowClicked = false;
+                bottomButtonState = ScrollBarArrowButtonState.DownNormal;
+                StopTimer();
+            }
+            else if (topBarClicked)
+            {
+                topBarClicked = false;
+                StopTimer();
+            }
+            else if (bottomBarClicked)
+            {
+                bottomBarClicked = false;
+                StopTimer();
+            }
+            Invalidate();
         }
 
         /// <summary>
@@ -1302,7 +1285,6 @@ namespace PluginCore.Controls
             // only in design mode - constrain size
             if (DesignMode)
             {
-                var pad = ScaleHelper.Scale(10);
                 if (orientation == ScrollBarOrientation.Vertical)
                 {
                     if (height < 2 * arrowPaddedLength)
@@ -1317,10 +1299,7 @@ namespace PluginCore.Controls
                 }
             }
             base.SetBoundsCore(x, y, width, height, specified);
-            if (DesignMode)
-            {
-                SetUpScrollBar();
-            }
+            if (DesignMode) SetUpScrollBar();
         }
 
         /// <summary>
@@ -1342,8 +1321,8 @@ namespace PluginCore.Controls
         {
             // key handling is here - keys recognized by the control
             // Up&Down or Left&Right, PageUp, PageDown, Home, End
-            Keys keyUp = Keys.Up;
-            Keys keyDown = Keys.Down;
+            var keyUp = Keys.Up;
+            var keyDown = Keys.Down;
             if (orientation == ScrollBarOrientation.Horizontal)
             {
                 keyUp = Keys.Left;
@@ -1406,12 +1385,9 @@ namespace PluginCore.Controls
         void SetUpScrollBar()
         {
             // if no drawing - return
-            if (inUpdate)
-            {
-                return;
-            }
+            if (inUpdate) return;
             // save client rectangle
-            Rectangle rect = ClientRectangle;
+            var rect = ClientRectangle;
             // set up the width's, height's and rectangles for the different
             // elements
             thumbThickness = ScaleOddUp(THUMB_THICKNESS); // Should be odd for the thumb to be perfectly centered (since scrollbar width is odd)
@@ -1487,10 +1463,7 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">An object that contains the event data.</param>
-        void ProgressTimerTick(object sender, EventArgs e)
-        {
-            ProgressThumb(true);
-        }
+        void ProgressTimerTick(object sender, EventArgs e) => ProgressThumb(true);
 
         /// <summary>
         /// Resets the scroll status of the scrollbar.
@@ -1577,10 +1550,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Stops the progress timer.
         /// </summary>
-        void StopTimer()
-        {
-            progressTimer.Stop();
-        }
+        void StopTimer() => progressTimer.Stop();
 
         /// <summary>
         /// Changes the position of the thumb.
@@ -1588,10 +1558,8 @@ namespace PluginCore.Controls
         /// <param name="position">The new position.</param>
         void ChangeThumbPosition(int position)
         {
-            if (orientation == ScrollBarOrientation.Vertical)
-                thumbRectangle.Y = position;
-            else
-                thumbRectangle.X = position;
+            if (orientation == ScrollBarOrientation.Vertical) thumbRectangle.Y = position;
+            else thumbRectangle.X = position;
         }
 
         /// <summary>
@@ -1600,8 +1568,8 @@ namespace PluginCore.Controls
         /// <param name="enableTimer">true for enabling the timer, false otherwise.</param>
         void ProgressThumb(bool enableTimer)
         {
-            int scrollOldValue = value;
-            ScrollEventType type = ScrollEventType.First;
+            var scrollOldValue = value;
+            var type = ScrollEventType.First;
             var thumbPos = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Y : thumbRectangle.X;
             var thumbSize = (orientation == ScrollBarOrientation.Vertical) ? thumbRectangle.Height : thumbRectangle.Width;
             // arrow down or shaft down clicked
@@ -1885,10 +1853,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Initialize ScrollerBase
         /// </summary>
-        public ScrollerBase(Control control)
-        {
-            this.control = control;
-        }
+        public ScrollerBase(Control control) => this.control = control;
 
         /// <summary>
         /// Handle the incoming theme events
@@ -2106,10 +2071,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                textBox = null;
-            }
+            if (disposing) textBox = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2117,26 +2079,17 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the current line index
         /// </summary>
-        public int GetLineIndex(int index)
-        {
-            return Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
-        }
+        public int GetLineIndex(int index) => Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
 
         /// <summary>
         /// Gets the amount of lines, also with wrapping
         /// </summary>
-        public int GetLineCount()
-        {
-            return Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
-        }
+        public int GetLineCount() => Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
 
         /// <summary>
         /// Gets the first visible line on screen
         /// </summary>
-        public int GetFirstVisibleLine()
-        {
-            return Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
-        }
+        public int GetFirstVisibleLine() => Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
 
         /// <summary>
         /// Gets the amount of visible lines
@@ -2253,10 +2206,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                propertyGrid = null;
-            }
+            if (disposing) propertyGrid = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2270,8 +2220,8 @@ namespace PluginCore.Controls
             {
                 if (ctrl.Text == "PropertyGridView")
                 {
-                    Type type = ctrl.GetType();
-                    FieldInfo field = type.GetField("visibleRows", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var type = ctrl.GetType();
+                    var field = type.GetField("visibleRows", BindingFlags.Instance | BindingFlags.NonPublic);
                     return (int)field.GetValue(ctrl) - 1;
                 }
             }
@@ -2287,10 +2237,9 @@ namespace PluginCore.Controls
             {
                 if (ctrl.Text == "PropertyGridView")
                 {
-                    Type type = ctrl.GetType();
-                    MethodInfo info = type.GetMethod("SetScrollOffset");
-                    object[] parameters = { value };
-                    info.Invoke(ctrl, parameters);
+                    var type = ctrl.GetType();
+                    var info = type.GetMethod("SetScrollOffset");
+                    info.Invoke(ctrl, new object[] { value });
                 }
             }
         }
@@ -2304,8 +2253,8 @@ namespace PluginCore.Controls
             {
                 if (ctrl.Text == "PropertyGridView")
                 {
-                    Type type = ctrl.GetType();
-                    FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var type = ctrl.GetType();
+                    var field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
                     return field.GetValue(ctrl) as ScrollBar;
                 }
             }
@@ -2367,10 +2316,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                treeView = null;
-            }
+            if (disposing) treeView = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2394,7 +2340,6 @@ namespace PluginCore.Controls
                     int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
                     Win32.SendMessage(treeView.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
                 }
-
             }
             else
             {
@@ -2433,10 +2378,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                listView = null;
-            }
+            if (disposing) listView = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2487,10 +2429,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                listBox = null;
-            }
+            if (disposing) listBox = null;
             disposed = true;
             base.Dispose(disposing);
         }
@@ -2532,10 +2471,7 @@ namespace PluginCore.Controls
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-                dataGridView = null;
-            }
+            if (disposing) dataGridView = null;
             disposed = true;
             base.Dispose(disposing);
         }

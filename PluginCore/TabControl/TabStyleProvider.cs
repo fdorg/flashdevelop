@@ -9,82 +9,45 @@ using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
-	[System.ComponentModel.ToolboxItem(false)]
+	[ToolboxItem(false)]
 	public abstract class TabStyleProvider : Component
 	{
 		#region Constructor
 		
-		protected TabStyleProvider(CustomTabControl tabControl){
-			this._TabControl = tabControl;
-			
-			this._BorderColor = Color.Empty;
-			this._BorderColorSelected = Color.Empty;
-			this._FocusColor = Color.Orange;
-			
-			if (this._TabControl.RightToLeftLayout){
-				this._ImageAlign = ContentAlignment.MiddleRight;
-			} else {
-				this._ImageAlign = ContentAlignment.MiddleLeft;
-			}
-			
-			this.HotTrack = true;
-			
-			//	Must set after the _Overlap as this is used in the calculations of the actual padding
-			this.Padding = new Point(6,3);
+		protected TabStyleProvider(CustomTabControl tabControl)
+        {
+			_TabControl = tabControl;
+            _BorderColor = Color.Empty;
+			_BorderColorSelected = Color.Empty;
+			_FocusColor = Color.Orange;
+            _ImageAlign = _TabControl.RightToLeftLayout ? ContentAlignment.MiddleRight : ContentAlignment.MiddleLeft;
+            HotTrack = true;
+            //	Must set after the _Overlap as this is used in the calculations of the actual padding
+			Padding = new Point(6,3);
 		}
 		
 		#endregion
 
 		#region Factory Methods
 		
-		public static TabStyleProvider CreateProvider(CustomTabControl tabControl){
-			TabStyleProvider provider;
-			
-			//	Depending on the display style of the tabControl generate an appropriate provider.
-			switch (tabControl.DisplayStyle) {
-				case TabStyle.None:
-					provider = new TabStyleNoneProvider(tabControl);
-					break;
-					
-				case TabStyle.Default:
-					provider = new TabStyleDefaultProvider(tabControl);
-					break;
-					
-				case TabStyle.Angled:
-					provider = new TabStyleAngledProvider(tabControl);
-					break;
-					
-				case TabStyle.Rounded:
-					provider = new TabStyleRoundedProvider(tabControl);
-					break;
-					
-				case TabStyle.VisualStudio:
-					provider = new TabStyleVisualStudioProvider(tabControl);
-					break;
-					
-				case TabStyle.Chrome:
-					provider = new TabStyleChromeProvider(tabControl);
-					break;
-					
-				case TabStyle.IE8:
-					provider = new TabStyleIE8Provider(tabControl);
-					break;
-
-				case TabStyle.VS2010:
-					provider = new TabStyleVS2010Provider(tabControl);
-					break;
-
+		public static TabStyleProvider CreateProvider(CustomTabControl tabControl)
+        {
+            //	Depending on the display style of the tabControl generate an appropriate provider.
+            TabStyleProvider provider = tabControl.DisplayStyle switch
+            {
+                TabStyle.None => new TabStyleNoneProvider(tabControl),
+                TabStyle.Default => new TabStyleDefaultProvider(tabControl),
+                TabStyle.Angled => new TabStyleAngledProvider(tabControl),
+                TabStyle.Rounded => new TabStyleRoundedProvider(tabControl),
+                TabStyle.VisualStudio => new TabStyleVisualStudioProvider(tabControl),
+                TabStyle.Chrome => new TabStyleChromeProvider(tabControl),
+                TabStyle.IE8 => new TabStyleIE8Provider(tabControl),
+                TabStyle.VS2010 => new TabStyleVS2010Provider(tabControl),
                 // HACK: Added
-                case TabStyle.Flat:
-                    provider = new TabStyleFlatProvider(tabControl);
-                    break;
-
-				default:
-					provider = new TabStyleDefaultProvider(tabControl);
-					break;
-			}
-			
-			provider._Style = tabControl.DisplayStyle;
+                TabStyle.Flat => new TabStyleFlatProvider(tabControl),
+                _ => new TabStyleDefaultProvider(tabControl)
+            };
+            provider._Style = tabControl.DisplayStyle;
 			return provider;
 		}
 		
@@ -92,50 +55,50 @@ namespace System.Windows.Forms
 		
 		#region	Protected variables
 		
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected CustomTabControl _TabControl;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Point _Padding;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected bool _HotTrack;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected TabStyle _Style = TabStyle.Default;
 		
 		
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected ContentAlignment _ImageAlign;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected int _Radius = 1;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected int _Overlap;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected bool _FocusTrack;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected float _Opacity = 1;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected bool _ShowTabCloser;
 		
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Color _BorderColorSelected = Color.Empty;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Color _BorderColor = Color.Empty;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Color _BorderColorHot = Color.Empty;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		
 		protected Color _CloserColorActive = Color.Black;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Color _CloserColor = Color.DarkGray;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		
 		protected Color _FocusColor = Color.Empty;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		
 		protected Color _TextColor = Color.Empty;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Color _TextColorSelected = Color.Empty;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		protected Color _TextColorDisabled = Color.Empty;
 		
 		#endregion
@@ -144,19 +107,18 @@ namespace System.Windows.Forms
 		
 		public abstract void AddTabBorder(GraphicsPath path, Rectangle tabBounds);
 
-		public virtual Rectangle GetTabRect(int index){
-			
-			if (index < 0){
-				return new Rectangle();
+		public virtual Rectangle GetTabRect(int index)
+        {
+			if (index < 0) return new Rectangle();
+            var tabBounds = _TabControl.GetTabRect(index);
+			if (_TabControl.RightToLeftLayout)
+            {
+				tabBounds.X = _TabControl.Width - tabBounds.Right;
 			}
-			Rectangle tabBounds = this._TabControl.GetTabRect(index);
-			if (this._TabControl.RightToLeftLayout){
-				tabBounds.X = this._TabControl.Width - tabBounds.Right;
-			}
-			bool firstTabinRow = this._TabControl.IsFirstTabInRow(index);
-			
-			//	Expand to overlap the tabpage
-			switch (this._TabControl.Alignment) {
+			var firstTabinRow = _TabControl.IsFirstTabInRow(index);
+            //	Expand to overlap the tabpage
+			switch (_TabControl.Alignment)
+            {
 				case TabAlignment.Top:
 					tabBounds.Height += 2;
 					break;
@@ -172,98 +134,114 @@ namespace System.Windows.Forms
 					tabBounds.Width += 2;
 					break;
 			}
-			
-
+            
 			//	Greate Overlap unless first tab in the row to align with tabpage
-			if ((!firstTabinRow || this._TabControl.RightToLeftLayout) && this._Overlap > 0) {
-				if (this._TabControl.Alignment <= TabAlignment.Bottom) {
-					tabBounds.X -= this._Overlap;
-					tabBounds.Width += this._Overlap;
-				} else {
-					tabBounds.Y -= this._Overlap;
-					tabBounds.Height += this._Overlap;
+			if ((!firstTabinRow || _TabControl.RightToLeftLayout) && _Overlap > 0)
+            {
+				if (_TabControl.Alignment <= TabAlignment.Bottom)
+                {
+					tabBounds.X -= _Overlap;
+					tabBounds.Width += _Overlap;
+				}
+                else
+                {
+					tabBounds.Y -= _Overlap;
+					tabBounds.Height += _Overlap;
 				}
 			}
-
-			//	Adjust first tab in the row to align with tabpage
-			this.EnsureFirstTabIsInView(ref tabBounds, index);
-
-			return tabBounds;
+            //	Adjust first tab in the row to align with tabpage
+			EnsureFirstTabIsInView(ref tabBounds, index);
+            return tabBounds;
 		}
 
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "0#")]
-		protected virtual void EnsureFirstTabIsInView(ref Rectangle tabBounds, int index){
+        [Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "0#")]
+		protected virtual void EnsureFirstTabIsInView(ref Rectangle tabBounds, int index)
+        {
 			//	Adjust first tab in the row to align with tabpage
 			//	Make sure we only reposition visible tabs, as we may have scrolled out of view.
-			
-			bool firstTabinRow = this._TabControl.IsFirstTabInRow(index);
-
-			if (firstTabinRow) {
-				if (this._TabControl.Alignment <= TabAlignment.Bottom) {
-					if (this._TabControl.RightToLeftLayout) {
-						if (tabBounds.Left < this._TabControl.Right) {
-							int tabPageRight = this._TabControl.GetPageBounds(index).Right;
-							if (tabBounds.Right > tabPageRight) {
+            var firstTabinRow = _TabControl.IsFirstTabInRow(index);
+            if (firstTabinRow)
+            {
+				if (_TabControl.Alignment <= TabAlignment.Bottom)
+                {
+					if (_TabControl.RightToLeftLayout)
+                    {
+						if (tabBounds.Left < _TabControl.Right)
+                        {
+							int tabPageRight = _TabControl.GetPageBounds(index).Right;
+							if (tabBounds.Right > tabPageRight)
+                            {
 								tabBounds.Width -= (tabBounds.Right - tabPageRight);
 							}
 						}
-					} else {
-						if (tabBounds.Right > 0) {
-							int tabPageX = this._TabControl.GetPageBounds(index).X;
-							if (tabBounds.X < tabPageX) {
-								tabBounds.Width -= (tabPageX - tabBounds.X);
-								tabBounds.X = tabPageX;
-							}
-						}
 					}
-				} else {
-					if (this._TabControl.RightToLeftLayout) {
-						if (tabBounds.Top < this._TabControl.Bottom) {
-							int tabPageBottom = this._TabControl.GetPageBounds(index).Bottom;
-							if (tabBounds.Bottom > tabPageBottom) {
-								tabBounds.Height -= (tabBounds.Bottom - tabPageBottom);
-							}
-						}
-					} else {
-						if (tabBounds.Bottom > 0) {
-							int tabPageY = this._TabControl.GetPageBounds(index).Location.Y;
-							if (tabBounds.Y < tabPageY) {
-								tabBounds.Height -= (tabPageY - tabBounds.Y);
-								tabBounds.Y = tabPageY;
-							}
-						}
-					}
-				}
-			}
+                    else if (tabBounds.Right > 0)
+                    {
+                        int tabPageX = _TabControl.GetPageBounds(index).X;
+                        if (tabBounds.X < tabPageX)
+                        {
+                            tabBounds.Width -= (tabPageX - tabBounds.X);
+                            tabBounds.X = tabPageX;
+                        }
+                    }
+                }
+                else if (_TabControl.RightToLeftLayout)
+                {
+                    if (tabBounds.Top < _TabControl.Bottom)
+                    {
+                        int tabPageBottom = _TabControl.GetPageBounds(index).Bottom;
+                        if (tabBounds.Bottom > tabPageBottom)
+                        {
+                            tabBounds.Height -= (tabBounds.Bottom - tabPageBottom);
+                        }
+                    }
+                }
+                else if (tabBounds.Bottom > 0)
+                {
+                    int tabPageY = _TabControl.GetPageBounds(index).Location.Y;
+                    if (tabBounds.Y < tabPageY)
+                    {
+                        tabBounds.Height -= (tabPageY - tabBounds.Y);
+                        tabBounds.Y = tabPageY;
+                    }
+                }
+            }
 		}
 
-		protected virtual Brush GetTabBackgroundBrush(int index){
+		protected virtual Brush GetTabBackgroundBrush(int index)
+        {
 			LinearGradientBrush fillBrush = null;
 
 			//	Capture the colours dependant on selection state of the tab
-			Color dark = Color.FromArgb(207, 207, 207);
-			Color light = Color.FromArgb(242, 242, 242);
+			var dark = Color.FromArgb(207, 207, 207);
+			var light = Color.FromArgb(242, 242, 242);
 			
-			if (this._TabControl.SelectedIndex == index) {
+			if (_TabControl.SelectedIndex == index)
+            {
 				dark = SystemColors.ControlLight;
 				light = SystemColors.Window;
-			} else if (!this._TabControl.TabPages[index].Enabled){
+			}
+            else if (!_TabControl.TabPages[index].Enabled)
+            {
 				light = dark;
-			} else if (this._HotTrack && index == this._TabControl.ActiveIndex){
+			}
+            else if (_HotTrack && index == _TabControl.ActiveIndex)
+            {
 				//	Enable hot tracking
 				light = Color.FromArgb(234, 246, 253);
 				dark = Color.FromArgb(167, 217, 245);
 			}
 			
 			//	Get the correctly aligned gradient
-			Rectangle tabBounds = this.GetTabRect(index);
+			Rectangle tabBounds = GetTabRect(index);
 			tabBounds.Inflate(3,3);
 			tabBounds.X -= 1;
 			tabBounds.Y -= 1;
-			switch (this._TabControl.Alignment) {
+			switch (_TabControl.Alignment)
+            {
 				case TabAlignment.Top:
-					if (this._TabControl.SelectedIndex == index) {
+					if (_TabControl.SelectedIndex == index)
+                    {
 						dark = light;
 					}
 					fillBrush = new LinearGradientBrush(tabBounds, light, dark, LinearGradientMode.Vertical);
@@ -278,11 +256,9 @@ namespace System.Windows.Forms
 					fillBrush = new LinearGradientBrush(tabBounds, light, dark, LinearGradientMode.Horizontal);
 					break;
 			}
-			
-			//	Add the blend
-			fillBrush.Blend = this.GetBackgroundBlend();
-			
-			return fillBrush;
+            //	Add the blend
+			fillBrush.Blend = GetBackgroundBlend();
+            return fillBrush;
 		}
 
 		#endregion
@@ -290,263 +266,215 @@ namespace System.Windows.Forms
 		#region	Base Properties
 
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public TabStyle DisplayStyle {
-			get => this._Style;
-            set => this._Style = value;
+		public TabStyle DisplayStyle
+        {
+			get => _Style;
+            set => _Style = value;
         }
 
 		[Category("Appearance")]
-		public ContentAlignment ImageAlign {
-			get => this._ImageAlign;
-            set {
-				this._ImageAlign = value;
-				this._TabControl.Invalidate();
+		public ContentAlignment ImageAlign
+        {
+			get => _ImageAlign;
+            set 
+            {
+				_ImageAlign = value;
+				_TabControl.Invalidate();
 			}
 		}
 		
 		[Category("Appearance")]
-		public Point Padding {
-			get => this._Padding;
-            set {
-				this._Padding = value;
+		public Point Padding
+        {
+			get => _Padding;
+            set
+            {
+				_Padding = value;
 				//	This line will trigger the handle to recreate, therefore invalidating the control
-				if (this._ShowTabCloser){
-					if (value.X + this._Radius/2 < -6){
-						((TabControl)this._TabControl).Padding = new Point(0, value.Y);
-					} else {
-						((TabControl)this._TabControl).Padding = new Point(value.X + this._Radius/2 + 6, value.Y);
-					}
-				} else {
-					if (value.X + this._Radius/2 < 1){
-						((TabControl)this._TabControl).Padding = new Point(0, value.Y);
-					} else {
-						((TabControl)this._TabControl).Padding = new Point(value.X + this._Radius/2 -1, value.Y);
-					}
-				}
+				if (_ShowTabCloser)
+                {
+                    ((TabControl)_TabControl).Padding = value.X + _Radius/2 < -6
+                        ? new Point(0, value.Y)
+                        : new Point(value.X + _Radius/2 + 6, value.Y);
+                }
+                else
+                {
+                    ((TabControl)_TabControl).Padding = value.X + _Radius/2 < 1
+                        ? new Point(0, value.Y)
+                        : new Point(value.X + _Radius/2 -1, value.Y);
+                }
 			}
 		}
 
 
 		[Category("Appearance"), DefaultValue(1), Browsable(true)]
-		public int Radius {
-			get => this._Radius;
-            set {
-				if (value < 1){
-					throw new ArgumentException("The radius must be greater than 1", nameof(value));
-				}
-				this._Radius = value;
+		public int Radius
+        {
+			get => _Radius;
+            set
+            {
+				if (value < 1) throw new ArgumentException("The radius must be greater than 1", nameof(value));
+                _Radius = value;
 				//	Adjust padding
-				this.Padding = this._Padding;
+				Padding = _Padding;
 			}
 		}
 
 		[Category("Appearance")]
-		public int Overlap {
-			get => this._Overlap;
-            set {
-				if (value < 0){
-					throw new ArgumentException("The tabs cannot have a negative overlap", nameof(value));
-				}
-				this._Overlap = value;
-				
+		public int Overlap
+        {
+			get => _Overlap;
+            set
+            {
+				if (value < 0) throw new ArgumentException("The tabs cannot have a negative overlap", nameof(value));
+                _Overlap = value;
+            }
+		}
+        
+		[Category("Appearance")]
+		public bool FocusTrack
+        {
+			get => _FocusTrack;
+            set
+            {
+				_FocusTrack = value;
+				_TabControl.Invalidate();
 			}
 		}
 		
-		
 		[Category("Appearance")]
-		public bool FocusTrack {
-			get => this._FocusTrack;
-            set {
-				this._FocusTrack = value;
-				this._TabControl.Invalidate();
-			}
-		}
-		
-		[Category("Appearance")]
-		public bool HotTrack {
-			get => this._HotTrack;
-            set {
-				this._HotTrack = value;
-				((TabControl)this._TabControl).HotTrack = value;
+		public bool HotTrack
+        {
+			get => _HotTrack;
+            set
+            {
+				_HotTrack = value;
+				((TabControl)_TabControl).HotTrack = value;
 			}
 		}
 
 		[Category("Appearance")]
-		public bool ShowTabCloser {
-			get => this._ShowTabCloser;
-            set {
-				this._ShowTabCloser = value;
+		public bool ShowTabCloser
+        {
+			get => _ShowTabCloser;
+            set
+            {
+				_ShowTabCloser = value;
 				//	Adjust padding
-				this.Padding = this._Padding;
+				Padding = _Padding;
 			}
 		}
 
 		[Category("Appearance")]
-		public float Opacity {
-			get => this._Opacity;
-            set {
-				if (value < 0){
-					throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
-				}
-				if (value > 1){
-					throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
-				}
-				this._Opacity = value;
-				this._TabControl.Invalidate();
+		public float Opacity
+        {
+			get => _Opacity;
+            set
+            {
+				if (value < 0) throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
+                if (value > 1) throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
+                _Opacity = value;
+				_TabControl.Invalidate();
 			}
 		}
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColorSelected
 		{
-			get
+			get => _BorderColorSelected.IsEmpty ? ThemedColors.ToolBorder : _BorderColorSelected;
+            set
             {
-                if (this._BorderColorSelected.IsEmpty){
-					return ThemedColors.ToolBorder;
-				}
-
-                return this._BorderColorSelected;
+                _BorderColorSelected = value.Equals(ThemedColors.ToolBorder) ? Color.Empty : value;
+                _TabControl.Invalidate();
             }
-			set {
-				if (value.Equals(ThemedColors.ToolBorder)){
-					this._BorderColorSelected = Color.Empty;
-				} else {
-					this._BorderColorSelected = value;
-				}
-				this._TabControl.Invalidate();
-			}
 		}
 
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColorHot
 		{
-			get
+			get => _BorderColorHot.IsEmpty ? SystemColors.ControlDark : _BorderColorHot;
+            set
             {
-                if (this._BorderColorHot.IsEmpty){
-					return SystemColors.ControlDark;
-				}
-
-                return this._BorderColorHot;
+                _BorderColorHot = value.Equals(SystemColors.ControlDark) ? Color.Empty : value;
+                _TabControl.Invalidate();
             }
-			set {
-				if (value.Equals(SystemColors.ControlDark)){
-					this._BorderColorHot = Color.Empty;
-				} else {
-					this._BorderColorHot = value;
-				}
-				this._TabControl.Invalidate();
-			}
 		}
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColor
 		{
-			get
+			get => _BorderColor.IsEmpty ? SystemColors.ControlDark : _BorderColor;
+            set
             {
-                if (this._BorderColor.IsEmpty){
-					return SystemColors.ControlDark;
-				}
-
-                return this._BorderColor;
+                _BorderColor = value.Equals(SystemColors.ControlDark) ? Color.Empty : value;
+                _TabControl.Invalidate();
             }
-			set {
-				if (value.Equals(SystemColors.ControlDark)){
-					this._BorderColor = Color.Empty;
-				} else {
-					this._BorderColor = value;
-				}
-				this._TabControl.Invalidate();
-			}
 		}
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColor
 		{
-			get
+			get => _TextColor.IsEmpty ? SystemColors.ControlText : _TextColor;
+            set
             {
-                if (this._TextColor.IsEmpty){
-					return SystemColors.ControlText;
-				}
-
-                return this._TextColor;
+                _TextColor = value.Equals(SystemColors.ControlText) ? Color.Empty : value;
+                _TabControl.Invalidate();
             }
-			set {
-				if (value.Equals(SystemColors.ControlText)){
-					this._TextColor = Color.Empty;
-				} else {
-					this._TextColor = value;
-				}
-				this._TabControl.Invalidate();
-			}
 		}
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColorSelected
 		{
-			get
+			get => _TextColorSelected.IsEmpty ? SystemColors.ControlText : _TextColorSelected;
+            set
             {
-                if (this._TextColorSelected.IsEmpty){
-					return SystemColors.ControlText;
-				}
-
-                return this._TextColorSelected;
+                _TextColorSelected = value.Equals(SystemColors.ControlText) ? Color.Empty : value;
+                _TabControl.Invalidate();
             }
-			set {
-				if (value.Equals(SystemColors.ControlText)){
-					this._TextColorSelected = Color.Empty;
-				} else {
-					this._TextColorSelected = value;
-				}
-				this._TabControl.Invalidate();
-			}
 		}
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColorDisabled
 		{
-			get
+			get => _TextColor.IsEmpty ? SystemColors.ControlDark : _TextColorDisabled;
+            set
             {
-                if (this._TextColor.IsEmpty){
-					return SystemColors.ControlDark;
-				}
-
-                return this._TextColorDisabled;
+                _TextColorDisabled = value.Equals(SystemColors.ControlDark) ? Color.Empty : value;
+                _TabControl.Invalidate();
             }
-			set {
-				if (value.Equals(SystemColors.ControlDark)){
-					this._TextColorDisabled = Color.Empty;
-				} else {
-					this._TextColorDisabled = value;
-				}
-				this._TabControl.Invalidate();
-			}
 		}
 		
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "Orange")]
 		public Color FocusColor
 		{
-			get => this._FocusColor;
-            set { this._FocusColor = value;
-				this._TabControl.Invalidate();
+			get => _FocusColor;
+            set
+            {
+                _FocusColor = value;
+				_TabControl.Invalidate();
 			}
 		}
 
 		[Category("Appearance"), DefaultValue(typeof(Color), "Black")]
 		public Color CloserColorActive
 		{
-			get => this._CloserColorActive;
-            set { this._CloserColorActive = value;
-				this._TabControl.Invalidate();
+			get => _CloserColorActive;
+            set
+            {
+                _CloserColorActive = value;
+				_TabControl.Invalidate();
 			}
 		}
 		
 		[Category("Appearance"), DefaultValue(typeof(Color), "DarkGrey")]
 		public Color CloserColor
 		{
-			get => this._CloserColor;
-            set { this._CloserColor = value;
-				this._TabControl.Invalidate();
+			get => _CloserColor;
+            set
+            {
+                _CloserColor = value;
+				_TabControl.Invalidate();
 			}
 		}
 		
@@ -557,139 +485,141 @@ namespace System.Windows.Forms
         // HACK: Allow override
 		public virtual void PaintTab(int index, Graphics graphics)
         {
-            using GraphicsPath tabpath = this.GetTabBorder(index);
-            using Brush fillBrush = this.GetTabBackgroundBrush(index);
+            using var tabpath = GetTabBorder(index);
+            using var fillBrush = GetTabBackgroundBrush(index);
             //	Paint the background
             graphics.FillPath(fillBrush, tabpath);
 					
             //	Paint a focus indication
-            if (this._TabControl.Focused){
-                this.DrawTabFocusIndicator(tabpath, index, graphics);
+            if (_TabControl.Focused)
+            {
+                DrawTabFocusIndicator(tabpath, index, graphics);
             }
 
             //	Paint the closer
-            this.DrawTabCloser(index, graphics);
+            DrawTabCloser(index, graphics);
         }
 		
-		protected virtual void DrawTabCloser(int index, Graphics graphics){
-			if (this._ShowTabCloser){
-				Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
-				graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using GraphicsPath closerPath = TabStyleProvider.GetCloserPath(closerRect);
-                if (closerRect.Contains(this._TabControl.MousePosition))
-                {
-                    using Pen closerPen = new Pen(this._CloserColorActive);
-                    graphics.DrawPath(closerPen, closerPath);
-                } else
-                {
-                    using Pen closerPen = new Pen(this._CloserColor);
-                    graphics.DrawPath(closerPen, closerPath);
-                }
+		protected virtual void DrawTabCloser(int index, Graphics graphics)
+        {
+            if (!_ShowTabCloser) return;
+            var closerRect = _TabControl.GetTabCloserRect(index);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using var closerPath = GetCloserPath(closerRect);
+            if (closerRect.Contains(_TabControl.MousePosition))
+            {
+                using var closerPen = new Pen(_CloserColorActive);
+                graphics.DrawPath(closerPen, closerPath);
             }
-		}
+            else
+            {
+                using var closerPen = new Pen(_CloserColor);
+                graphics.DrawPath(closerPen, closerPath);
+            }
+        }
 		
-		protected static GraphicsPath GetCloserPath(Rectangle closerRect){
-			GraphicsPath closerPath = new GraphicsPath();
+		protected static GraphicsPath GetCloserPath(Rectangle closerRect)
+        {
+			var closerPath = new GraphicsPath();
 			closerPath.AddLine(closerRect.X, closerRect.Y, closerRect.Right, closerRect.Bottom);
 			closerPath.CloseFigure();
 			closerPath.AddLine(closerRect.Right, closerRect.Y, closerRect.X, closerRect.Bottom);
 			closerPath.CloseFigure();
-			
-			return closerPath;
+            return closerPath;
 		}
 
         // HACK: Allow override
         protected virtual void DrawTabFocusIndicator(GraphicsPath tabpath, int index, Graphics graphics)
-		{
-			if (this._FocusTrack && this._TabControl.Focused && index == this._TabControl.SelectedIndex) {
-				Brush focusBrush = null;
-				RectangleF pathRect = tabpath.GetBounds();
-				Rectangle focusRect = Rectangle.Empty;
-				switch (this._TabControl.Alignment) {
-					case TabAlignment.Top:
-						focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Y, (int)pathRect.Width, 4);
-						focusBrush = new LinearGradientBrush(focusRect,this._FocusColor, SystemColors.Window, LinearGradientMode.Vertical);
-						break;
-					case TabAlignment.Bottom:
-						focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Bottom - 4, (int)pathRect.Width, 4);
-						focusBrush = new LinearGradientBrush(focusRect, SystemColors.ControlLight, this._FocusColor, LinearGradientMode.Vertical);
-						break;
-					case TabAlignment.Left:
-						focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Y, 4, (int)pathRect.Height);
-						focusBrush = new LinearGradientBrush(focusRect, this._FocusColor, SystemColors.ControlLight, LinearGradientMode.Horizontal);
-						break;
-					case TabAlignment.Right:
-						focusRect = new Rectangle((int)pathRect.Right - 4, (int)pathRect.Y, 4, (int)pathRect.Height);
-						focusBrush = new LinearGradientBrush(focusRect, SystemColors.ControlLight, this._FocusColor, LinearGradientMode.Horizontal);
-						break;
-				}
+        {
+            if (!_FocusTrack || !_TabControl.Focused || index != _TabControl.SelectedIndex) return;
+            Brush focusBrush = null;
+            var pathRect = tabpath.GetBounds();
+            var focusRect = Rectangle.Empty;
+            switch (_TabControl.Alignment)
+            {
+                case TabAlignment.Top:
+                    focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Y, (int)pathRect.Width, 4);
+                    focusBrush = new LinearGradientBrush(focusRect,_FocusColor, SystemColors.Window, LinearGradientMode.Vertical);
+                    break;
+                case TabAlignment.Bottom:
+                    focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Bottom - 4, (int)pathRect.Width, 4);
+                    focusBrush = new LinearGradientBrush(focusRect, SystemColors.ControlLight, _FocusColor, LinearGradientMode.Vertical);
+                    break;
+                case TabAlignment.Left:
+                    focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Y, 4, (int)pathRect.Height);
+                    focusBrush = new LinearGradientBrush(focusRect, _FocusColor, SystemColors.ControlLight, LinearGradientMode.Horizontal);
+                    break;
+                case TabAlignment.Right:
+                    focusRect = new Rectangle((int)pathRect.Right - 4, (int)pathRect.Y, 4, (int)pathRect.Height);
+                    focusBrush = new LinearGradientBrush(focusRect, SystemColors.ControlLight, _FocusColor, LinearGradientMode.Horizontal);
+                    break;
+            }
 				
-				//	Ensure the focus stip does not go outside the tab
-				Region focusRegion = new Region(focusRect);
-				focusRegion.Intersect(tabpath);
-				graphics.FillRegion(focusBrush, focusRegion);
-				focusRegion.Dispose();
-				focusBrush.Dispose();
-			}
-		}
+            //	Ensure the focus stip does not go outside the tab
+            var focusRegion = new Region(focusRect);
+            focusRegion.Intersect(tabpath);
+            graphics.FillRegion(focusBrush, focusRegion);
+            focusRegion.Dispose();
+            focusBrush.Dispose();
+        }
 
 		#endregion
 		
 		#region Background brushes
 
-		private Blend GetBackgroundBlend(){
+        Blend GetBackgroundBlend()
+        {
 			float[] relativeIntensities = {0f, 0.7f, 1f};
 			float[] relativePositions = {0f, 0.6f, 1f};
 
 			//	Glass look to top aligned tabs
-			if (this._TabControl.Alignment == TabAlignment.Top){
-				relativeIntensities = new[]{0f, 0.5f, 1f, 1f};
-				relativePositions = new[]{0f, 0.5f, 0.51f, 1f};
-			}
-			
-			Blend blend = new Blend();
-			blend.Factors = relativeIntensities;
-			blend.Positions = relativePositions;
-			
-			return blend;
+			if (_TabControl.Alignment == TabAlignment.Top)
+            {
+                relativeIntensities = new[] {0f, 0.5f, 1f, 1f};
+                relativePositions = new[] {0f, 0.5f, 0.51f, 1f};
+            }
+
+            return new Blend {Factors = relativeIntensities, Positions = relativePositions};
 		}
 		
-		public virtual Brush GetPageBackgroundBrush(int index){
-
-			//	Capture the colours dependant on selection state of the tab
-			Color light = Color.FromArgb(242, 242, 242);
-			if (this._TabControl.Alignment == TabAlignment.Top){
+		public virtual Brush GetPageBackgroundBrush(int index)
+        {
+            //	Capture the colours dependant on selection state of the tab
+			var light = Color.FromArgb(242, 242, 242);
+			if (_TabControl.Alignment == TabAlignment.Top)
+            {
 				light = Color.FromArgb(207, 207, 207);
 			}
-			
-			if (this._TabControl.SelectedIndex == index) {
+            if (_TabControl.SelectedIndex == index)
+            {
 				light = SystemColors.Window;
-			} else if (!this._TabControl.TabPages[index].Enabled){
+			}
+            else if (!_TabControl.TabPages[index].Enabled)
+            {
 				light = Color.FromArgb(207, 207, 207);
-			} else if (this._HotTrack && index == this._TabControl.ActiveIndex){
+			}
+            else if (_HotTrack && index == _TabControl.ActiveIndex)
+            {
 				//	Enable hot tracking
 				light = Color.FromArgb(234, 246, 253);
 			}
-			
-			return new SolidBrush(light);
+            return new SolidBrush(light);
 		}
 		
 		#endregion
 		
 		#region Tab border and rect
 		
-		public GraphicsPath GetTabBorder(int index){
+		public GraphicsPath GetTabBorder(int index)
+        {
 			
-			GraphicsPath path = new GraphicsPath();
-			Rectangle tabBounds = this.GetTabRect(index);
-			
-			this.AddTabBorder(path, tabBounds);
-			
-			path.CloseFigure();
+			var path = new GraphicsPath();
+			var tabBounds = GetTabRect(index);
+            AddTabBorder(path, tabBounds);
+            path.CloseFigure();
 			return path;
 		}
 
 		#endregion
-		
-	}
+    }
 }

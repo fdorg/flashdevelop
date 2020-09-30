@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PluginCore.Controls
@@ -71,11 +72,9 @@ namespace PluginCore.Controls
         void ApplyTheming()
         {
             PluginBase.MainForm.SetUseTheme(this, UseTheme);
-            if (UseTheme)
-            {
-                ScrollBarEx.Attach(this, true);
-                PluginBase.MainForm.ThemeControls(this);
-            }
+            if (!UseTheme) return;
+            ScrollBarEx.Attach(this, true);
+            PluginBase.MainForm.ThemeControls(this);
         }
 
         /// <summary>
@@ -133,14 +132,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Get custom property value
         /// </summary>
-        public string GetPropValue(string key)
-        {
-            foreach (var argument in formProps.ExtraProps)
-            {
-                if (argument.Key == key) return argument.Value;
-            }
-            return null;
-        }
+        public string GetPropValue(string key) => formProps.ExtraProps.FirstOrDefault(it => it.Key == key)?.Value;
 
         /// <summary>
         /// Set custom property value

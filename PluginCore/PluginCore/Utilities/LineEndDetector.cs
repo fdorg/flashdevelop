@@ -7,15 +7,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Gets the correct EOL marker
         /// </summary>
-        public static string GetNewLineMarker(int eolMode)
+        public static string GetNewLineMarker(int eolMode) => eolMode switch
         {
-            return eolMode switch
-            {
-                1 => "\r",
-                2 => "\n",
-                _ => "\r\n",
-            };
-        }
+            1 => "\r",
+            2 => "\n",
+            _ => "\r\n",
+        };
 
         /// <summary>
         /// Basic detection of text's EOL marker

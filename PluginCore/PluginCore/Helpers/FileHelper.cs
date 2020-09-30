@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -19,13 +20,15 @@ namespace PluginCore.Helpers
         {
             if (Win32.ShouldUseWin32())
             {
-                InteropSHFileOperation fo = new InteropSHFileOperation();
-                fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
-                fo.fFlags.FOF_ALLOWUNDO = true;
-                fo.fFlags.FOF_NOCONFIRMATION = true;
-                fo.fFlags.FOF_NOERRORUI = true;
-                fo.fFlags.FOF_SILENT = true;
-                fo.pFrom = path;
+                var fo = new InteropSHFileOperation
+                {
+                    wFunc = InteropSHFileOperation.FO_Func.FO_DELETE,
+                    fFlags =
+                    {
+                        FOF_ALLOWUNDO = true, FOF_NOCONFIRMATION = true, FOF_NOERRORUI = true, FOF_SILENT = true
+                    },
+                    pFrom = path
+                };
                 return fo.Execute();
             }
 
@@ -48,7 +51,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string ReadFile(string file)
         {
-            EncodingFileInfo info = GetEncodingFileInfo(file);
+            var info = GetEncodingFileInfo(file);
             return info.Contents;
         }
 
@@ -73,7 +76,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void WriteFile(string file, string text, Encoding encoding, bool saveBOM)
         {
-            var useSkipBomWriter = (encoding == Encoding.UTF8 && !saveBOM);
+            var useSkipBomWriter = encoding == Encoding.UTF8 && !saveBOM;
             if (encoding == Encoding.UTF7) encoding = new UTF7EncodingFixed();
             if (!File.Exists(file) && Path.GetDirectoryName(file) is var dir && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
@@ -129,15 +132,15 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string EnsureUniquePath(string original)
         {
-            int counter = 0;
-            string result = original;
-            string folder = Path.GetDirectoryName(original);
-            string filename = Path.GetFileNameWithoutExtension(original);
-            string extension = Path.GetExtension(original);
+            var result = original;
+            var counter = 0;
+            var folder = Path.GetDirectoryName(original);
+            var filename = Path.GetFileNameWithoutExtension(original);
+            var extension = Path.GetExtension(original);
             while (File.Exists(result))
             {
                 counter++;
-                string fullname = filename + " (" + counter + ")" + extension;
+                var fullname = filename + " (" + counter + ")" + extension;
                 result = Path.Combine(folder, fullname);
             }
             return result;
@@ -174,22 +177,22 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void CopyDirectory(string oldPath, string newPath, bool overwrite)
         {
-            Stack<string> stack = new Stack<string>();
+            var stack = new Stack<string>();
             stack.Push(string.Empty);
-            string sep = Path.DirectorySeparatorChar.ToString();
-            string alt = Path.AltDirectorySeparatorChar.ToString();
-            int length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
+            var sep = Path.DirectorySeparatorChar.ToString();
+            var alt = Path.AltDirectorySeparatorChar.ToString();
+            var length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
-                string subPath = stack.Pop();
-                string sourcePath = Path.Combine(oldPath, subPath);
-                string targetPath = Path.Combine(newPath, subPath);
+                var subPath = stack.Pop();
+                var sourcePath = Path.Combine(oldPath, subPath);
+                var targetPath = Path.Combine(newPath, subPath);
                 if (!Directory.Exists(targetPath)) Directory.CreateDirectory(targetPath);
-                foreach (string file in Directory.GetFiles(sourcePath, "*.*"))
+                foreach (var file in Directory.GetFiles(sourcePath, "*.*"))
                 {
                     File.Copy(file, Path.Combine(targetPath, Path.GetFileName(file)), overwrite);
                 }
-                foreach (string folder in Directory.GetDirectories(sourcePath))
+                foreach (var folder in Directory.GetDirectories(sourcePath))
                 {
                     stack.Push(folder.Substring(length));
                 }
@@ -201,22 +204,22 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void ForceMoveDirectory(string oldPath, string newPath)
         {
-            Stack<string> stack = new Stack<string>();
+            var stack = new Stack<string>();
             stack.Push(string.Empty);
-            string sep = Path.DirectorySeparatorChar.ToString();
-            string alt = Path.AltDirectorySeparatorChar.ToString();
-            int length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
+            var sep = Path.DirectorySeparatorChar.ToString();
+            var alt = Path.AltDirectorySeparatorChar.ToString();
+            var length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
-                string subPath = stack.Pop();
-                string sourcePath = Path.Combine(oldPath, subPath);
-                string targetPath = Path.Combine(newPath, subPath);
+                var subPath = stack.Pop();
+                var sourcePath = Path.Combine(oldPath, subPath);
+                var targetPath = Path.Combine(newPath, subPath);
                 if (!Directory.Exists(targetPath)) Directory.CreateDirectory(targetPath);
-                foreach (string file in Directory.GetFiles(sourcePath, "*.*"))
+                foreach (var file in Directory.GetFiles(sourcePath, "*.*"))
                 {
                     ForceMove(file, Path.Combine(targetPath, Path.GetFileName(file)));
                 }
-                foreach (string folder in Directory.GetDirectories(sourcePath))
+                foreach (var folder in Directory.GetDirectories(sourcePath))
                 {
                     stack.Push(folder.Substring(length));
                 }
@@ -229,20 +232,20 @@ namespace PluginCore.Helpers
         /// </summary>
         public static bool ConfirmOverwrite(string path)
         {
-            string name = Path.GetFileName(path);
+            var name = Path.GetFileName(path);
             if (Directory.Exists(path))
             {
-                string title = $" {TextHelper.GetString("FlashDevelop.Title.ConfirmDialog")}";
-                string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFolder");
-                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                var title = $" {TextHelper.GetString("FlashDevelop.Title.ConfirmDialog")}";
+                var message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFolder");
+                var result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
 
             if (File.Exists(path))
             {
-                string title = $" {TextHelper.GetString("FlashDevelop.Title.ConfirmDialog")}";
-                string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
-                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                var title = $" {TextHelper.GetString("FlashDevelop.Title.ConfirmDialog")}";
+                var message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
+                var result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
             return true;
@@ -255,10 +258,10 @@ namespace PluginCore.Helpers
         /// <param name="filterMask">The search filter to apply. You can use multiple masks by using ;</param>
         public static bool FileMatchesSearchFilter(string fileName, string filterMask)
         {
-            foreach (string mask in filterMask.Split(';'))
+            foreach (var mask in filterMask.Split(';'))
             {
-                string convertedMask = "^" + Regex.Escape(mask).Replace("\\*", ".*").Replace("\\?", ".") + "$";
-                Regex regexMask = new Regex(convertedMask, RegexOptions.IgnoreCase);
+                var convertedMask = "^" + Regex.Escape(mask).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+                var regexMask = new Regex(convertedMask, RegexOptions.IgnoreCase);
                 if (regexMask.IsMatch(fileName)) return true;
             }
             return false;
@@ -302,7 +305,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static int GetFileCodepage(string file)
         {
-            EncodingFileInfo info = GetEncodingFileInfo(file);
+            var info = GetEncodingFileInfo(file);
             return info.CodePage;
         }
 
@@ -311,7 +314,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static bool ContainsBOM(string file)
         {
-            EncodingFileInfo info = GetEncodingFileInfo(file);
+            var info = GetEncodingFileInfo(file);
             return info.ContainsBOM;
         }
 
@@ -320,13 +323,13 @@ namespace PluginCore.Helpers
         /// </summary>
         public static EncodingFileInfo GetEncodingFileInfo(string file)
         {
-            int startIndex = 0;
-            EncodingFileInfo info = new EncodingFileInfo();
+            var startIndex = 0;
+            var info = new EncodingFileInfo();
             try
             {
                 if (File.Exists(file))
                 {
-                    byte[] bytes = File.ReadAllBytes(file);
+                    var bytes = File.ReadAllBytes(file);
                     if (bytes.Length > 2 && (bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf))
                     {
                         startIndex = 3;
@@ -384,11 +387,11 @@ namespace PluginCore.Helpers
                         }
                         else // Try detecting using Ude...
                         {
-                            Ude.CharsetDetector detector = new Ude.CharsetDetector();
+                            var detector = new Ude.CharsetDetector();
                             detector.Feed(bytes, 0, bytes.Length); detector.DataEnd();
                             if (detector.Charset != null)
                             {
-                                Encoding encoding = Encoding.GetEncoding(detector.Charset);
+                                var encoding = Encoding.GetEncoding(detector.Charset);
                                 info.Charset = encoding.WebName;
                                 info.CodePage = encoding.CodePage;
                             }
@@ -399,10 +402,10 @@ namespace PluginCore.Helpers
                             }
                         }
                     }
-                    int contentLength = bytes.Length - startIndex;
                     if (bytes.Length > 0 && bytes.Length > startIndex)
                     {
-                        Encoding encoding = Encoding.GetEncoding(info.CodePage);
+                        var contentLength = bytes.Length - startIndex;
+                        var encoding = Encoding.GetEncoding(info.CodePage);
                         info.Contents = encoding.GetString(bytes, startIndex, contentLength);
                     }
                 }
@@ -419,19 +422,12 @@ namespace PluginCore.Helpers
         /// </summary>
         public static List<string> FilterByExisting(List<string> paths, bool logicalDrivesOnly)
         {
-            List<string> toCheck = new List<string>(paths);
+            var toCheck = new List<string>(paths);
             if (logicalDrivesOnly)
             {
-                DriveInfo[] driveInfo = DriveInfo.GetDrives();
+                var driveInfo = DriveInfo.GetDrives();
                 toCheck = new List<string>(paths);
-                toCheck.RemoveAll(delegate(string path)
-                {
-                    foreach (DriveInfo drive in driveInfo)
-                    {
-                        if (path.StartsWithOrdinal(drive.RootDirectory.ToString())) return false;
-                    }
-                    return true;
-                });
+                toCheck.RemoveAll(path => driveInfo.All(drive => !path.StartsWithOrdinal(drive.RootDirectory.ToString())));
             }
             toCheck.RemoveAll(path => !File.Exists(path));
             paths.Clear();

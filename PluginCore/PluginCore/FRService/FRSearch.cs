@@ -109,17 +109,17 @@ namespace PluginCore.FRService
         /// <param name="replacement">Text replacement</param>
         public static void PadIndexes(List<SearchMatch> matches, int fromMatchIndex, string found, string replacement)
         {
-            int linesDiff = CountNewLines(replacement) - CountNewLines(found);
-            int charsDiff = replacement.Length - found.Length;
-            if (charsDiff != 0 || linesDiff != 0)
-                for (int i = fromMatchIndex; i < matches.Count; i++)
-                {
-                    var match = matches[i];
-                    match.Index += charsDiff;
-                    match.LineStart += charsDiff;
-                    match.LineEnd += charsDiff;
-                    match.Line += linesDiff;
-                }
+            var linesDiff = CountNewLines(replacement) - CountNewLines(found);
+            var charsDiff = replacement.Length - found.Length;
+            if (charsDiff == 0 && linesDiff == 0) return;
+            for (var i = fromMatchIndex; i < matches.Count; i++)
+            {
+                var match = matches[i];
+                match.Index += charsDiff;
+                match.LineStart += charsDiff;
+                match.LineEnd += charsDiff;
+                match.Line += linesDiff;
+            }
         }
 
         static int CountNewLines(string src)
@@ -448,8 +448,8 @@ namespace PluginCore.FRService
             int len = src.Length;
             int pos = startIndex - 1;
             int line = startLine;
-            List<int> lineStart = new List<int>();
-            for (int i = 0; i < startLine; i++) lineStart.Add(startIndex);
+            var lineStart = new List<int>();
+            for (var i = 0; i < startLine; i++) lineStart.Add(startIndex);
             char c = ' ';
 
             int matchIndex = 0;

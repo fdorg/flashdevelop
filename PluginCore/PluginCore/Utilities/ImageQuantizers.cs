@@ -188,10 +188,7 @@ namespace PluginCore.PluginCore.Utilities
             /// Keep track of the previous node that was quantized
             /// </summary>
             /// <param name="node">The node last quantized</param>
-            protected void TrackPrevious(OctreeNode node)
-            {
-                _previousNode = node;
-            }
+            protected void TrackPrevious(OctreeNode node) => _previousNode = node;
 
             /// <summary>
             /// Convert the nodes in the octree to a palette with a maximum of colorCount colors
@@ -463,11 +460,7 @@ namespace PluginCore.PluginCore.Utilities
         /// Contruct the Recolor Quantizer
         /// </summary>
         /// <param name="newColor">The new color for this image.</param>
-        public RecolorQuantizer(Color newColor)
-            : base(true)
-        {
-            _newColor = newColor;
-        }
+        public RecolorQuantizer(Color newColor) : base(true) => _newColor = newColor;
 
         protected override byte QuantizePixel(Color32* pixel) => pixel->Alpha;
 
@@ -494,10 +487,7 @@ namespace PluginCore.PluginCore.Utilities
         /// only call the 'QuantizeImage' function. If two passes are required, the code will call 'InitialQuantizeImage'
         /// and then 'QuantizeImage'.
         /// </remarks>
-        public Quantizer(bool singlePass)
-        {
-            _singlePass = singlePass;
-        }
+        public Quantizer(bool singlePass) => _singlePass = singlePass;
 
         /// <summary>
         /// Quantize an image and return the resulting output bitmap
@@ -511,13 +501,13 @@ namespace PluginCore.PluginCore.Utilities
             int width = source.Width;
 
             // And construct a rectangle from these dimensions
-            Rectangle bounds = new Rectangle(0, 0, width, height);
+            var bounds = new Rectangle(0, 0, width, height);
 
             // First off take a 32bpp copy of the image
-            Bitmap copy = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            var copy = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 
             // And construct an 8bpp version
-            Bitmap output = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+            var output = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
 
             // Now lock the bitmap into memory
             using var graphics = Graphics.FromImage(copy);
@@ -604,16 +594,16 @@ namespace PluginCore.PluginCore.Utilities
 
                 // Define the source data pointers. The source row is a byte to
                 // keep addition of the stride value easier (as this is in bytes)
-                byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
-                int* pSourcePixel = (int*)pSourceRow;
-                int* pPreviousPixel = pSourcePixel;
+                var pSourceRow = (byte*)sourceData.Scan0.ToPointer();
+                var pSourcePixel = (int*)pSourceRow;
+                var pPreviousPixel = pSourcePixel;
 
                 // Now define the destination data pointers
-                byte* pDestinationRow = (byte*)outputData.Scan0.ToPointer();
-                byte* pDestinationPixel = pDestinationRow;
+                var pDestinationRow = (byte*)outputData.Scan0.ToPointer();
+                var pDestinationPixel = pDestinationRow;
 
                 // And convert the first pixel, so that I have values going into the loop
-                byte pixelValue = QuantizePixel((Color32*)pSourcePixel);
+                var pixelValue = QuantizePixel((Color32*)pSourcePixel);
 
                 // Assign the value of the first pixel
                 *pDestinationPixel = pixelValue;

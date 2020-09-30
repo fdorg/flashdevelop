@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using PluginCore.Managers;
 
 namespace PluginCore.Bridge
@@ -29,10 +30,8 @@ namespace PluginCore.Bridge
         public static bool AlwaysOpenLocal(string path)
         {
             if (!Active) return true;
-            string ext = Path.GetExtension(path).ToLower();
-            foreach (string item in Settings.AlwaysOpenLocal)
-                if (ext == item) return true;
-            return false;
+            var ext = Path.GetExtension(path).ToLower();
+            return Settings.AlwaysOpenLocal.Any(item => ext == item);
         }
 
         /// <summary>
@@ -40,8 +39,7 @@ namespace PluginCore.Bridge
         /// </summary>
         public static void RemoteOpen(string shared)
         {
-            if (remoteClient is null || !remoteClient.Connected)
-                remoteClient = new BridgeClient();
+            if (remoteClient is null || !remoteClient.Connected) remoteClient = new BridgeClient();
             if (remoteClient.Connected)
             {
                 PluginBase.MainForm.StatusStrip.Items[0].Text = "  Opening document in host system...";
@@ -50,26 +48,8 @@ namespace PluginCore.Bridge
             else TraceManager.AddAsync("Unable to connect to FlashDevelop Bridge.");
         }
 
-        /// <summary>
-        /// Open the console in the shared location on the host
-        /// </summary>
-        /*static public void RemoteConsole(string shared)
-        {
-            if (remoteClient is null || !remoteClient.Connected)
-                remoteClient = new BridgeClient();
-            if (remoteClient != null && remoteClient.Connected)
-            {
-                PluginBase.MainForm.StatusStrip.Items[0].Text = "  Opening console in host system...";
-                remoteClient.Send("console:" + shared);
-            }
-            else TraceManager.AddAsync("Unable to connect to host bridge.");
-        }*/
-
         #endregion
 
-        public static bool IsRemote(string path)
-        {
-            return Active && path != null && path.StartsWithOrdinal(Settings.SharedDrive);
-        }
+        public static bool IsRemote(string path) => Active && path != null && path.StartsWithOrdinal(Settings.SharedDrive);
     }
 }

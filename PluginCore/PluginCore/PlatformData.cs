@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace PluginCore
@@ -218,19 +219,12 @@ namespace PluginCore
         public string[] DebuggerSupported;
         public XmlNode RawData;
 
-        public PlatformVersion GetVersion(string value)
-        {
-            foreach (var version in Versions)
-            {
-                if (value == version.Value) return version;
-            }
-            return LastVersion;
-        }
+        public PlatformVersion GetVersion(string value) => Versions.FirstOrDefault(it => it.Value == value) ?? LastVersion;
 
         public string GetProjectTemplate(string target)
         {
-            var templateNode = RawData.SelectSingleNode("templates/template[@target='" + target + "']/@value");
-            return templateNode?.Value;
+            var node = RawData.SelectSingleNode("templates/template[@target='" + target + "']/@value");
+            return node?.Value;
         }
     }
 

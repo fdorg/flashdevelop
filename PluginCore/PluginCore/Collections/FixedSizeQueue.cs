@@ -27,11 +27,7 @@ namespace PluginCore.Collections
         /// <exception cref="ArgumentOutOfRangeException"/>
         public FixedSizeQueue(int capacity)
         {
-            if (capacity < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(capacity));
-            }
-
+            if (capacity < 0) throw new ArgumentOutOfRangeException(nameof(capacity));
             _array = new T[capacity];
             _capacity = capacity;
             _head = 0;
@@ -49,20 +45,12 @@ namespace PluginCore.Collections
         {
             get
             {
-                if (index < 0 || index >= Count)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-
+                if (index < 0 || index >= Count) throw new ArgumentOutOfRangeException(nameof(index));
                 return _array[(_head + index) % _capacity];
             }
             set
             {
-                if (index < 0 || index >= Count)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-
+                if (index < 0 || index >= Count) throw new ArgumentOutOfRangeException(nameof(index));
                 _array[(_head + index) % _capacity] = value;
             }
         }
@@ -134,11 +122,7 @@ namespace PluginCore.Collections
         /// <param name="item">The object to add to the <see cref="ICollection{T}"/>.</param>
         void ICollection<T>.Add(T item)
         {
-            if (Count == _capacity)
-            {
-                Capacity = Math.Max(_capacity * 2, _capacity + 4);
-            }
-
+            if (Count == _capacity) Capacity = Math.Max(_capacity * 2, _capacity + 4);
             Enqueue(item);
         }
 
@@ -149,10 +133,7 @@ namespace PluginCore.Collections
         {
             if (Count > 0)
             {
-                if (_head < _tail)
-                {
-                    Array.Clear(_array, _head, Count);
-                }
+                if (_head < _tail) Array.Clear(_array, _head, Count);
                 else
                 {
                     Array.Clear(_array, _head, _capacity - _head);
@@ -173,36 +154,22 @@ namespace PluginCore.Collections
         /// <param name="item">The object to locate in the <see cref="FixedSizeQueue{T}"/>. The value can be <see langword="null"/> for reference types.</param>
         public bool Contains(T item)
         {
-            if (Count > 0)
+            if (Count == 0) return false;
+            var index = _head;
+            var equalityComparer = EqualityComparer<T>.Default;
+            for (var i = Count; i > 0; i--)
             {
-                int index = _head;
-                var equalityComparer = EqualityComparer<T>.Default;
-
-                for (int i = Count; i > 0; i--)
+                if (item is null)
                 {
-                    if (item is null)
-                    {
-                        if (_array[index] is null)
-                        {
-                            return true;
-                        }
-                    }
-                    else if (_array[index] != null)
-                    {
-                        if (equalityComparer.Equals(_array[index], item))
-                        {
-                            return true;
-                        }
-                    }
-
-                    index++;
-                    if (index == _capacity)
-                    {
-                        index = 0;
-                    }
+                    if (_array[index] is null) return true;
                 }
+                else if (_array[index] != null)
+                {
+                    if (equalityComparer.Equals(_array[index], item)) return true;
+                }
+                index++;
+                if (index == _capacity) index = 0;
             }
-
             return false;
         }
 
@@ -216,32 +183,19 @@ namespace PluginCore.Collections
         /// <exception cref="ArgumentException"/>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            if (array is null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            if (arrayIndex < 0 || arrayIndex > array.Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
-            }
+            if (array is null) throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0 || arrayIndex > array.Length) throw new ArgumentOutOfRangeException(nameof(arrayIndex));
             if (array.Length - arrayIndex < Count)
             {
                 throw new ArgumentException("The number of elements in the source " + nameof(FixedSizeQueue<T>) + " is greater than the available space from " + nameof(arrayIndex) + " to the end of the destination " + nameof(array));
             }
-
-            if (Count > 0)
+            if (Count == 0) return;
+            if (_head < _tail) Array.Copy(_array, _head, array, arrayIndex, Count);
+            else
             {
-                if (_head < _tail)
-                {
-                    Array.Copy(_array, _head, array, arrayIndex, Count);
-                }
-                else
-                {
-                    int length = _capacity - _head;
-                    Array.Copy(_array, _head, array, 0, length);
-                    Array.Copy(_array, 0, array, arrayIndex + length, _tail);
-                }
+                int length = _capacity - _head;
+                Array.Copy(_array, _head, array, 0, length);
+                Array.Copy(_array, 0, array, arrayIndex + length, _tail);
             }
         }
 
@@ -251,21 +205,12 @@ namespace PluginCore.Collections
         /// <exception cref="InvalidOperationException"/>
         public T Dequeue()
         {
-            if (Count == 0)
-            {
-                throw new InvalidOperationException("The " + nameof(FixedSizeQueue<T>) + " is empty.");
-            }
-
+            if (Count == 0) throw new InvalidOperationException("The " + nameof(FixedSizeQueue<T>) + " is empty.");
             var obj = _array[_head];
             _array[_head] = default;
             Count--;
-
             _head++;
-            if (_head == _capacity)
-            {
-                _head = 0;
-            }
-
+            if (_head == _capacity) _head = 0;
             _version++;
             return obj;
         }

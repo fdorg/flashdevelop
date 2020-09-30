@@ -10,7 +10,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string GetFilteredTypeName(Type type)
         {
-            string name = type.Name;
+            var name = type.Name;
             name = name.EndsWithOrdinal("Ex") ? name.Remove(name.Length - 2) : name;
             return name == nameof(CheckedListBox) ? nameof(ListBox) : name;
         }

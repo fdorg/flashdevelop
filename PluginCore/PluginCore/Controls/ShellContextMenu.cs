@@ -36,18 +36,14 @@ namespace PluginCore.Controls
     {
         #region Constructor
         /// <summary>Default constructor</summary>
-        public ShellContextMenu()
-        {
-            CreateHandle(new CreateParams());
-        }
+        public ShellContextMenu() => CreateHandle(new CreateParams());
+
         #endregion
 
         #region Destructor
         /// <summary>Ensure all resources get released</summary>
-        ~ShellContextMenu()
-        {
-            ReleaseAll();
-        }
+        ~ShellContextMenu() => ReleaseAll();
+
         #endregion
 
         #region GetContextMenuInterfaces()
@@ -141,20 +137,22 @@ namespace PluginCore.Controls
 
         #region InvokeCommand
 
-        void InvokeCommand(IContextMenu oContextMenu, uint nCmd, string strFolder, Point pointInvoke)
+        static void InvokeCommand(IContextMenu oContextMenu, uint nCmd, string strFolder, Point pointInvoke)
         {
-            CMINVOKECOMMANDINFOEX invoke = new CMINVOKECOMMANDINFOEX();
-            invoke.cbSize = cbInvokeCommand;
-            invoke.lpVerb = (IntPtr)(nCmd - CMD_FIRST);
-            invoke.lpDirectory = strFolder;
-            invoke.lpVerbW = (IntPtr)(nCmd - CMD_FIRST);
-            invoke.lpDirectoryW = strFolder;
-            invoke.fMask = CMIC.UNICODE | CMIC.PTINVOKE |
-                ((Control.ModifierKeys & Keys.Control) != 0 ? CMIC.CONTROL_DOWN : 0) |
-                ((Control.ModifierKeys & Keys.Shift) != 0 ? CMIC.SHIFT_DOWN : 0);
-            invoke.ptInvoke = new POINT(pointInvoke.X, pointInvoke.Y);
-            invoke.nShow = SW.SHOWNORMAL;
-
+            var invoke = new CMINVOKECOMMANDINFOEX
+            {
+                cbSize = cbInvokeCommand,
+                lpVerb = (IntPtr) (nCmd - CMD_FIRST),
+                lpDirectory = strFolder,
+                lpVerbW = (IntPtr) (nCmd - CMD_FIRST),
+                lpDirectoryW = strFolder,
+                fMask = CMIC.UNICODE
+                        | CMIC.PTINVOKE
+                        | ((Control.ModifierKeys & Keys.Control) != 0 ? CMIC.CONTROL_DOWN : 0)
+                        | ((Control.ModifierKeys & Keys.Shift) != 0 ? CMIC.SHIFT_DOWN : 0),
+                ptInvoke = new POINT(pointInvoke.X, pointInvoke.Y),
+                nShow = SW.SHOWNORMAL
+            };
             oContextMenu.InvokeCommand(ref invoke);
         }
         #endregion
@@ -230,21 +228,21 @@ namespace PluginCore.Controls
         {
             if (_oParentFolder is null)
             {
-                IShellFolder oDesktopFolder = GetDesktopFolder();
+                var oDesktopFolder = GetDesktopFolder();
                 if (oDesktopFolder is null) return null;
 
                 uint pchEaten = 0;
                 SFGAO pdwAttributes = 0;
-                int nResult = oDesktopFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, folderName, ref pchEaten, out var pPIDL, ref pdwAttributes);
+                var nResult = oDesktopFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, folderName, ref pchEaten, out var pPIDL, ref pdwAttributes);
                 if (S_OK != nResult) return null;
 
-                IntPtr pStrRet = Marshal.AllocCoTaskMem(MAX_PATH * 2 + 4);
+                var pStrRet = Marshal.AllocCoTaskMem(MAX_PATH * 2 + 4);
                 Marshal.WriteInt32(pStrRet, 0, 0);
                 _oDesktopFolder.GetDisplayNameOf(pPIDL, SHGNO.FORPARSING, pStrRet);
-                StringBuilder strFolder = new StringBuilder(MAX_PATH);
-                StrRetToBuf(pStrRet, pPIDL, strFolder, MAX_PATH);
+                var sb = new StringBuilder(MAX_PATH);
+                StrRetToBuf(pStrRet, pPIDL, sb, MAX_PATH);
                 Marshal.FreeCoTaskMem(pStrRet);
-                _strParentFolder = strFolder.ToString();
+                _strParentFolder = sb.ToString();
 
                 // Get the IShellFolder for folder
                 nResult = oDesktopFolder.BindToObject(pPIDL, IntPtr.Zero, ref IID_IShellFolder, out var pUnknownParentFolder);
@@ -271,15 +269,15 @@ namespace PluginCore.Controls
             var oParentFolder = GetParentFolder(arrFI[0].DirectoryName);
             if (oParentFolder is null) return null;
 
-            IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
-            int n = 0;
-            foreach (FileInfo fi in arrFI)
+            var arrPIDLs = new IntPtr[arrFI.Length];
+            var n = 0;
+            foreach (var fi in arrFI)
             {
                 // Get the file relative to folder
                 uint pchEaten = 0;
                 SFGAO pdwAttributes = 0;
-                IntPtr pPIDL = IntPtr.Zero;
-                int nResult = oParentFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, fi.Name, ref pchEaten, out pPIDL, ref pdwAttributes);
+                var pPIDL = IntPtr.Zero;
+                var nResult = oParentFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, fi.Name, ref pchEaten, out pPIDL, ref pdwAttributes);
                 if (S_OK != nResult)
                 {
                     FreePIDLs(arrPIDLs);
@@ -304,15 +302,15 @@ namespace PluginCore.Controls
             var oParentFolder = GetParentFolder(arrFI[0].Parent.FullName);
             if (oParentFolder is null) return null;
 
-            IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
-            int n = 0;
-            foreach (DirectoryInfo fi in arrFI)
+            var arrPIDLs = new IntPtr[arrFI.Length];
+            var n = 0;
+            foreach (var fi in arrFI)
             {
                 // Get the file relative to folder
                 uint pchEaten = 0;
                 SFGAO pdwAttributes = 0;
-                IntPtr pPIDL = IntPtr.Zero;
-                int nResult = oParentFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, fi.Name, ref pchEaten, out pPIDL, ref pdwAttributes);
+                var pPIDL = IntPtr.Zero;
+                var nResult = oParentFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, fi.Name, ref pchEaten, out pPIDL, ref pdwAttributes);
                 if (S_OK != nResult)
                 {
                     FreePIDLs(arrPIDLs);
@@ -333,15 +331,13 @@ namespace PluginCore.Controls
         /// <param name="arrPIDLs">Array of PIDLs (IntPtr)</param>
         protected void FreePIDLs(IntPtr[] arrPIDLs)
         {
-            if (null != arrPIDLs)
+            if (arrPIDLs == null) return;
+            for (int n = 0; n < arrPIDLs.Length; n++)
             {
-                for (int n = 0; n < arrPIDLs.Length; n++)
+                if (arrPIDLs[n] != IntPtr.Zero)
                 {
-                    if (arrPIDLs[n] != IntPtr.Zero)
-                    {
-                        Marshal.FreeCoTaskMem(arrPIDLs[n]);
-                        arrPIDLs[n] = IntPtr.Zero;
-                    }
+                    Marshal.FreeCoTaskMem(arrPIDLs[n]);
+                    arrPIDLs[n] = IntPtr.Zero;
                 }
             }
         }

@@ -18,8 +18,8 @@ namespace ScintillaNet
             var colors = new List<string>();
             var chars  = new List<char>();
             
-            OctreeQuantizer quantizer = new OctreeQuantizer(50, 8, ColorTranslator.FromHtml(tColor));
-            Bitmap reducedBmp = quantizer.Quantize(bmp);
+            var quantizer = new OctreeQuantizer(50, 8, ColorTranslator.FromHtml(tColor));
+            var reducedBmp = quantizer.Quantize(bmp);
 
             int width = reducedBmp.Width;
             int height = reducedBmp.Height;
@@ -49,12 +49,10 @@ namespace ScintillaNet
                 sb.Append("\"");
             }
             sb.Append("};");
-            string result = sb.ToString();
-            int p = result.IndexOf('?');
-            string finalColor = result.Substring(0, p) + colors.Count + result.Substring(p + 1).Replace(tColor.ToUpper(), "None");
+            var result = sb.ToString();
+            var p = result.IndexOf('?');
+            var finalColor = result.Substring(0, p) + colors.Count + result.Substring(p + 1).Replace(tColor.ToUpper(), "None");
             return finalColor;
         }
-        
     }
-    
 }

@@ -18,10 +18,10 @@ namespace PluginCore.Controls
 
         protected override CollectionForm CreateCollectionForm()
         {
-            var form = base.CreateCollectionForm();
-            form.Size = ScaleHelper.Scale(new Size(600, 400));
-            ShowDescription(form);
-            return form;
+            var result = base.CreateCollectionForm();
+            result.Size = ScaleHelper.Scale(new Size(600, 400));
+            ShowDescription(result);
+            return result;
         }
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)

@@ -42,8 +42,7 @@ namespace PluginCore.Utilities
                     }
                     _theInstance.OnNewInstanceMessage(obj);
                 }
-                else
-                    base.WndProc(ref m);
+                else base.WndProc(ref m);
             }
         }
 

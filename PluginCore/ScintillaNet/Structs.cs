@@ -69,5 +69,4 @@ namespace ScintillaNet
         public int Right;
         public int Bottom;
     }
-    
 }

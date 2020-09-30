@@ -19,9 +19,9 @@ namespace System.Windows.Forms
 		
 		#region	Construction
 
-		public CustomTabControl(){
-			
-			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque | ControlStyles.ResizeRedraw , true);
+		public CustomTabControl()
+        {
+            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque | ControlStyles.ResizeRedraw , true);
 			
 			_BackBuffer = new Bitmap(Width, Height);
 			_BackBufferGraphics = Graphics.FromImage(_BackBuffer);
@@ -32,12 +32,12 @@ namespace System.Windows.Forms
 			
 		}
 
-		protected override void OnCreateControl(){
+		protected override void OnCreateControl()
+        {
 			base.OnCreateControl();
 			OnFontChanged(EventArgs.Empty);
 		} 
 
-		
 		protected override CreateParams CreateParams
         {
 			[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
@@ -53,13 +53,13 @@ namespace System.Windows.Forms
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			if (disposing) {
+			if (disposing)
+            {
                 _BackImage?.Dispose();
                 _BackBufferGraphics?.Dispose();
                 _BackBuffer?.Dispose();
                 _TabBufferGraphics?.Dispose();
                 _TabBuffer?.Dispose();
-
                 _StyleProvider?.Dispose();
             }
 		}
@@ -87,22 +87,27 @@ namespace System.Windows.Forms
 		#region Public properties
 
 		[Category("Appearance"),  DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-		public TabStyleProvider DisplayStyleProvider {
-			get {
-				if (_StyleProvider is null){
+		public TabStyleProvider DisplayStyleProvider
+        {
+			get
+            {
+				if (_StyleProvider is null)
+                {
 					DisplayStyle = TabStyle.Default;
 				}
-				
-				return _StyleProvider;
+                return _StyleProvider;
 			}
 			set => _StyleProvider = value;
         }
 
 		[Category("Appearance"), DefaultValue(typeof(TabStyle), "Default"), RefreshProperties(RefreshProperties.All)]
-		public TabStyle DisplayStyle {
+		public TabStyle DisplayStyle
+        {
 			get => _Style;
-            set {
-				if (_Style != value){
+            set
+            {
+				if (_Style != value)
+                {
 					_Style = value;
 					_StyleProvider = TabStyleProvider.CreateProvider(this);
 					Invalidate();
@@ -111,9 +116,11 @@ namespace System.Windows.Forms
 		}
 
 		[Category("Appearance"), RefreshProperties(RefreshProperties.All)]
-		public new bool Multiline {
+		public new bool Multiline
+        {
 			get => base.Multiline;
-            set {
+            set
+            {
 				base.Multiline = value;
 				Invalidate();
 			}
@@ -123,14 +130,17 @@ namespace System.Windows.Forms
 		//	Hide the Padding attribute so it can not be changed
 		//	We are handling this on the Style Provider
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-		public new Point Padding {
+		public new Point Padding
+        {
 			get => DisplayStyleProvider.Padding;
             set => DisplayStyleProvider.Padding = value;
         }
 		
-		public override bool RightToLeftLayout {
+		public override bool RightToLeftLayout
+        {
 			get => base.RightToLeftLayout;
-            set { 
+            set
+            { 
 				base.RightToLeftLayout = value; 
 				UpdateStyles();
 			}
@@ -140,96 +150,77 @@ namespace System.Windows.Forms
 		//	Hide the HotTrack attribute so it can not be changed
 		//	We are handling this on the Style Provider
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-		public new bool HotTrack {
+		public new bool HotTrack
+        {
 			get => DisplayStyleProvider.HotTrack;
             set => DisplayStyleProvider.HotTrack = value;
         }
 
 		[Category("Appearance")]
-		public new TabAlignment Alignment {
+		public new TabAlignment Alignment
+        {
 			get => base.Alignment;
-            set {
-				base.Alignment = value;
-				switch (value) {
-					case TabAlignment.Top:
-					case TabAlignment.Bottom:
-						Multiline = false;
-						break;
-					case TabAlignment.Left:
-					case TabAlignment.Right:
-						Multiline = true;
-						break;
-				}
-				
-			}
+            set
+            {
+                base.Alignment = value;
+                Multiline = value switch
+                {
+                    TabAlignment.Top => false,
+                    TabAlignment.Bottom => false,
+                    TabAlignment.Left => true,
+                    TabAlignment.Right => true,
+                    _ => Multiline
+                };
+            }
 		}
 		
 		//	Hide the Appearance attribute so it can not be changed
 		//	We don't want it as we are doing all the painting.
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		[Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value")]
-		public new TabAppearance Appearance{
+		public new TabAppearance Appearance
+        {
 			get => base.Appearance;
             set => base.Appearance = TabAppearance.Normal;
         }
 		
-		public override Rectangle DisplayRectangle {
-			get {
+		public override Rectangle DisplayRectangle
+        {
+			get
+            {
 				//	Special processing to hide tabs
-				if (_Style == TabStyle.None) {
-					return new Rectangle(0, 0, Width, Height);
-				}
-
-                int tabStripHeight = 0;
-                int itemHeight = 0;
-					
-                if (Alignment <= TabAlignment.Bottom) {
-                    itemHeight = ItemSize.Height;
-                } else {
-                    itemHeight = ItemSize.Width;
-                }
-					
-                tabStripHeight = 5 + (itemHeight * RowCount);
-					
-                Rectangle rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
-                switch (Alignment) {
-                    case TabAlignment.Top:
-                        rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
-                        break;
-                    case TabAlignment.Bottom:
-                        rect = new Rectangle(4, 4, Width - 8, Height - tabStripHeight - 4);
-                        break;
-                    case TabAlignment.Left:
-                        rect = new Rectangle(tabStripHeight, 4, Width - tabStripHeight - 4, Height - 8);
-                        break;
-                    case TabAlignment.Right:
-                        rect = new Rectangle(4, 4, Width - tabStripHeight - 4, Height - 8);
-                        break;
-                }
-                return rect;
+				if (_Style == TabStyle.None) return new Rectangle(0, 0, Width, Height);
+                var itemHeight = Alignment <= TabAlignment.Bottom ? ItemSize.Height : ItemSize.Width;
+                var tabStripHeight = 5 + (itemHeight * RowCount);
+                return Alignment switch
+                {
+                    TabAlignment.Top => new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4),
+                    TabAlignment.Bottom => new Rectangle(4, 4, Width - 8, Height - tabStripHeight - 4),
+                    TabAlignment.Left => new Rectangle(tabStripHeight, 4, Width - tabStripHeight - 4, Height - 8),
+                    TabAlignment.Right => new Rectangle(4, 4, Width - tabStripHeight - 4, Height - 8),
+                    _ => new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4)
+                };
             }
 		}
 
 		[Browsable(false)]
-		public int ActiveIndex {
-			get {
-				NativeMethods.TCHITTESTINFO hitTestInfo = new NativeMethods.TCHITTESTINFO(PointToClient(Control.MousePosition));
-				int index = NativeMethods.SendMessage(Handle, NativeMethods.TCM_HITTEST, IntPtr.Zero, NativeMethods.ToIntPtr(hitTestInfo)).ToInt32();
-				if (index == -1){
-					return -1;
-				}
-
-                if (TabPages[index].Enabled){
-                    return index;
-                }
-
+		public int ActiveIndex
+        {
+			get
+            {
+				var hitTestInfo = new NativeMethods.TCHITTESTINFO(PointToClient(Control.MousePosition));
+				var index = NativeMethods.SendMessage(Handle, NativeMethods.TCM_HITTEST, IntPtr.Zero, NativeMethods.ToIntPtr(hitTestInfo)).ToInt32();
+				if (index == -1) return -1;
+                if (TabPages[index].Enabled) return index;
                 return -1;
             }
 		}
 		
 		[Browsable(false)]
-		public TabPage ActiveTab{
-			get{
+		public TabPage ActiveTab
+        {
+			get
+            {
 				int activeIndex = ActiveIndex;
 				if (activeIndex > -1){
 					return TabPages[activeIndex];
@@ -1090,28 +1081,19 @@ namespace System.Windows.Forms
 			return textRect;
 		}
 
-		public int GetTabRow(int index){
+		public int GetTabRow(int index)
+        {
 			//	All calculations will use this rect as the base point
 			//	because the itemsize does not return the correct width.
-			Rectangle rect = GetTabRect(index);
-			
-			int row = -1;
-			
-			switch (Alignment) {
-				case TabAlignment.Top:
-					row = (rect.Y - 2)/rect.Height;
-					break;
-				case TabAlignment.Bottom:
-					row = ((Height - rect.Y - 2)/rect.Height) - 1;
-					break;
-				case TabAlignment.Left:
-					row = (rect.X - 2)/rect.Width;
-					break;
-				case TabAlignment.Right:
-					row = ((Width - rect.X - 2)/rect.Width) - 1;
-					break;
-			}
-			return row;
+			var rect = GetTabRect(index);
+            return Alignment switch
+            {
+                TabAlignment.Top => (rect.Y - 2) / rect.Height,
+                TabAlignment.Bottom => ((Height - rect.Y - 2) / rect.Height) - 1,
+                TabAlignment.Left => (rect.X - 2) / rect.Width,
+                TabAlignment.Right => ((Width - rect.X - 2) / rect.Width) - 1,
+                _ => -1
+            };
 		}
 
 		public Point GetTabPosition(int index){
@@ -1152,27 +1134,25 @@ namespace System.Windows.Forms
 			return new Point(0, 0);
 		}
 		
-		public bool IsFirstTabInRow(int index){
-			if (index < 0) {
-				return false;
-			}
-			bool firstTabinRow = (index == 0);
-			if (!firstTabinRow){
-				if (Alignment <= TabAlignment.Bottom) {
-					if (GetTabRect(index).X == 2){
-						firstTabinRow = true;
-					}
-				} else {
-					if (GetTabRect(index).Y == 2){
-						firstTabinRow = true;
-					}
-				}
-			}
+		public bool IsFirstTabInRow(int index)
+        {
+			if (index < 0) return false;
+            var firstTabinRow = (index == 0);
+			if (!firstTabinRow)
+            {
+				if (Alignment <= TabAlignment.Bottom)
+                {
+					if (GetTabRect(index).X == 2) return true;
+                }
+                else if (GetTabRect(index).Y == 2) return true;
+            }
 			return firstTabinRow;
 		}
 
-        void AddPageBorder(GraphicsPath path, Rectangle pageBounds, Rectangle tabBounds){
-			switch (Alignment) {
+        void AddPageBorder(GraphicsPath path, Rectangle pageBounds, Rectangle tabBounds)
+        {
+			switch (Alignment)
+            {
 				case TabAlignment.Top:
 					path.AddLine(tabBounds.Right, pageBounds.Y, pageBounds.Right, pageBounds.Y);
 					path.AddLine(pageBounds.Right, pageBounds.Y, pageBounds.Right, pageBounds.Bottom);
@@ -1206,13 +1186,14 @@ namespace System.Windows.Forms
 
         Rectangle GetTabImageRect(int index)
         {
-            using GraphicsPath tabBorderPath = _StyleProvider.GetTabBorder(index);
+            using var tabBorderPath = _StyleProvider.GetTabBorder(index);
             return GetTabImageRect(tabBorderPath);
         }
 
-        Rectangle GetTabImageRect(GraphicsPath tabBorderPath){
-			Rectangle imageRect = new Rectangle();
-			RectangleF rect = tabBorderPath.GetBounds();
+        Rectangle GetTabImageRect(GraphicsPath tabBorderPath)
+        {
+			Rectangle imageRect;
+			var rect = tabBorderPath.GetBounds();
 			
 			//	Make it shorter or thinner to fit the height or width because of the padding added to the tab for painting
 			switch (Alignment) {
@@ -1282,13 +1263,14 @@ namespace System.Windows.Forms
 			return imageRect;
 		}
 
-		public Rectangle GetTabCloserRect(int index){
-			var closerRect = new Rectangle();
-            using GraphicsPath path = _StyleProvider.GetTabBorder(index);
-            RectangleF rect = path.GetBounds();
-				
+		public Rectangle GetTabCloserRect(int index)
+        {
+			Rectangle closerRect;
+            using var path = _StyleProvider.GetTabBorder(index);
+            var rect = path.GetBounds();
             //	Make it shorter or thinner to fit the height or width because of the padding added to the tab for painting
-            switch (Alignment) {
+            switch (Alignment)
+            {
                 case TabAlignment.Top:
                     rect.Y += 4;
                     rect.Height -= 6;
@@ -1339,15 +1321,13 @@ namespace System.Windows.Forms
             return closerRect;
 		}
 
-		public new Point MousePosition{
+		public new Point MousePosition
+        {
 			get
             {
-				Point loc = PointToClient(Control.MousePosition);
-				if (RightToLeftLayout)
-                {
-					loc.X = (Width - loc.X);
-				}			
-				return loc;
+				var loc = PointToClient(Control.MousePosition);
+				if (RightToLeftLayout) loc.X = (Width - loc.X);
+                return loc;
 			}
 		}
 

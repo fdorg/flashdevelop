@@ -7,27 +7,18 @@ namespace PluginCore.Controls
     {
         static readonly RichTextBox _tempRTB = new RichTextBox();
 
-        public static Size MeasureRichTextBox(RichTextBox richTextBox)
-        {
-            return MeasureRichTextBox(richTextBox, true, richTextBox.Width, richTextBox.Height, richTextBox.WordWrap);
-        }
+        public static Size MeasureRichTextBox(RichTextBox richTextBox) => MeasureRichTextBox(richTextBox, true, richTextBox.Width, richTextBox.Height, richTextBox.WordWrap);
+
         public static Size MeasureRichTextBox(RichTextBox richTextBox, bool useSelfForTest, int width, int height, bool wordWrap)
         {
-            Size outSize = new Size();
-
-            if (richTextBox is null)
-                return outSize;
-
-            string rtf = richTextBox.Rtf;
-            if (rtf is null)
-                return outSize;
-
-            int lastIdx = rtf.LastIndexOf('}');
-            if (lastIdx < 1)
-                return outSize;
-
+            var outSize = new Size();
+            if (richTextBox is null) return outSize;
+            var rtf = richTextBox.Rtf;
+            if (rtf is null) return outSize;
+            var lastIdx = rtf.LastIndexOf('}');
+            if (lastIdx < 1) return outSize;
             _tempRTB.Visible = false;
-            RichTextBox rtb = useSelfForTest ? richTextBox : _tempRTB;
+            var rtb = useSelfForTest ? richTextBox : _tempRTB;
             rtb.Rtf = rtf.Substring(0, lastIdx) + @"\par}";
             
             rtb.Width = width;
@@ -46,12 +37,9 @@ namespace PluginCore.Controls
             while (true)
             {
                 lastIdx = rtb.Text.IndexOf('\n', lastIdx + 1);
-                if (lastIdx < 0)
-                    break;
-
+                if (lastIdx < 0) break;
                 currW = rtb.GetPositionFromCharIndex(lastIdx).X;
-                if (currW > maxW)
-                    maxW = currW;
+                if (currW > maxW) maxW = currW;
             }
 
             if (wordWrap)
@@ -66,9 +54,7 @@ namespace PluginCore.Controls
                 for (i = 0; i < l;)
                 {
                     currW = rtb.GetPositionFromCharIndex(i).X;
-                    if (currW > maxW)
-                        maxW = currW;
-
+                    if (currW > maxW) maxW = currW;
                     if (maxDelta < 0.0f && prevW > currW)
                     {
                         if (currLineChars > firstLineChars)
@@ -86,19 +72,12 @@ namespace PluginCore.Controls
                         ++i;
                         continue;
                     }
-
                     var delta = Lerp(maxDelta, -0.1f * maxDelta, currW / ((float)width));
-
-                    if (delta < 1.0f)
-                        delta = 1.0f;
-
+                    if (delta < 1.0f) delta = 1.0f;
                     i += (int)delta;
                 }
             }
-
-            if (useSelfForTest)
-                rtb.Rtf = rtf;
-
+            if (useSelfForTest) rtb.Rtf = rtf;
             outSize.Width = maxW;
             return outSize;
         }

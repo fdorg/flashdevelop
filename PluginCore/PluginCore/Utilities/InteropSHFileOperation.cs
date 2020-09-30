@@ -70,14 +70,16 @@ namespace PluginCore.Utilities
         public InteropSHFileOperation()
         {
             fFlags = new FILEOP_FLAGS();
-            _ShFile = new SHFILEOPSTRUCT();
-            _ShFile.hwnd = IntPtr.Zero;
-            _ShFile.wFunc = FO_Func.FO_COPY;
-            _ShFile.pFrom = "";
-            _ShFile.pTo = "";
-            _ShFile.fAnyOperationsAborted = false;
-            _ShFile.hNameMappings = IntPtr.Zero;
-            _ShFile.lpszProgressTitle = "";
+            _ShFile = new SHFILEOPSTRUCT
+            {
+                hwnd = IntPtr.Zero,
+                wFunc = FO_Func.FO_COPY,
+                pFrom = "",
+                pTo = "",
+                fAnyOperationsAborted = false,
+                hNameMappings = IntPtr.Zero,
+                lpszProgressTitle = ""
+            };
 
         }
 

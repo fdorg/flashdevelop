@@ -67,8 +67,8 @@ namespace PluginCore.Bridge
         {
             try
             {
-                Socket server = (Socket)result.AsyncState;
-                Socket client = server.EndAccept(result);
+                var server = (Socket)result.AsyncState;
+                var client = server.EndAccept(result);
                 SetupReceiveCallback(client);
                 server.BeginAccept(OnConnectRequest, server);
             }
@@ -102,18 +102,13 @@ namespace PluginCore.Bridge
             return true;
         }
         
-        public int Send(string message)
-        {
-            return SendTo(conn, message);
-        }
+        public int Send(string message) => SendTo(conn, message);
 
         public void Disconnect()
         {
-            if (conn != null)
-            {
-                conn.Disconnect(false);
-                conn = null;
-            }
+            if (conn is null) return;
+            conn.Disconnect(false);
+            conn = null;
         }
         
         #endregion
@@ -132,7 +127,7 @@ namespace PluginCore.Bridge
         /// </summary>
         protected void SetupReceiveCallback(Socket client)
         {
-            StateObject so = new StateObject(client);
+            var so = new StateObject(client);
             try
             {
                 AsyncCallback receiveData = OnReceivedData;
@@ -154,18 +149,18 @@ namespace PluginCore.Bridge
         /// </summary>
         protected void OnReceivedData(IAsyncResult result)
         {
-            StateObject so = (StateObject)result.AsyncState;
+            var so = (StateObject)result.AsyncState;
             try
             {
-                int bytesReceived = so.Client.EndReceive(result);
+                var bytesReceived = so.Client.EndReceive(result);
                 if (bytesReceived > 0)
                 {
-                    string chunk = Encoding.UTF8.GetString(so.Buffer, 0, bytesReceived);
+                    var chunk = Encoding.UTF8.GetString(so.Buffer, 0, bytesReceived);
                     if (chunk.Contains('*'))
                     {
                         so.Data.Append(chunk);
-                        string[] lines = so.Data.ToString().Split('*');
-                        foreach (string line in lines)
+                        var lines = so.Data.ToString().Split(new []{'*'}, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var line in lines)
                         {
                             if (line.Length > 0)
                                 DataReceived?.Invoke(this, new DataReceivedEventArgs(line, so.Client));
@@ -215,24 +210,15 @@ namespace PluginCore.Bridge
         public Socket Socket { get; }
     }
     
-    
     public class StateObject
     {
-        public int Size; 
+        public int Size = 1024; 
         public Socket Client;
-        public StringBuilder Data;
-        public byte[] Buffer;
+        public StringBuilder Data = new StringBuilder();
+        public byte[] Buffer = new byte[1024];
         
-        public StateObject(Socket client)
-        {
-            Size = 1024;
-            Data = new StringBuilder();
-            Buffer = new byte[Size];
-            Client = client;
-        }
-        
+        public StateObject(Socket client) => Client = client;
     }
     
     #endregion
-    
 }

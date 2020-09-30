@@ -62,16 +62,16 @@ namespace PluginCore.Helpers
         public static ActionPoint ProcessActionPoint(string text)
         {
             text = text.Trim().Replace(BOUNDARY, "");
-            int entryPosition = text.IndexOfOrdinal(ENTRYPOINT);
-            int exitPosition = text.IndexOfOrdinal(EXITPOINT);
+            var entryPosition = text.IndexOfOrdinal(ENTRYPOINT);
+            var exitPosition = text.IndexOfOrdinal(EXITPOINT);
             if (entryPosition != -1 && exitPosition != -1)
             {
-                string cleaned = text.Replace(ENTRYPOINT, "").Replace(EXITPOINT, "");
+                var cleaned = text.Replace(ENTRYPOINT, "").Replace(EXITPOINT, "");
                 return new ActionPoint(cleaned, entryPosition, exitPosition - ENTRYPOINT.Length);
             }
             if (entryPosition != -1 && exitPosition == -1)
             {
-                string cleaned = text.Replace(ENTRYPOINT, "");
+                var cleaned = text.Replace(ENTRYPOINT, "");
                 return new ActionPoint(cleaned, entryPosition, -1);
             }
             return new ActionPoint(text, -1, -1);
@@ -84,13 +84,13 @@ namespace PluginCore.Helpers
         {
             if (point.EntryPosition != -1 && point.ExitPosition != -1)
             {
-                int start = sci.MBSafePosition(point.EntryPosition);
-                int end = sci.MBSafePosition(point.ExitPosition);
+                var start = sci.MBSafePosition(point.EntryPosition);
+                var end = sci.MBSafePosition(point.ExitPosition);
                 sci.SetSel(start, end);
             }
             else if (point.EntryPosition != -1 && point.ExitPosition == -1)
             {
-                int start = sci.MBSafePosition(point.EntryPosition);
+                var start = sci.MBSafePosition(point.EntryPosition);
                 sci.SetSel(start, start);
             }
         }
@@ -110,14 +110,14 @@ namespace PluginCore.Helpers
                 int indent = sci.GetLineIndentation(line);
                 sci.ReplaceSel("");
                 
-                int lineMarker = LineEndDetector.DetectNewLineMarker(text);
-                string newline = LineEndDetector.GetNewLineMarker(lineMarker);
+                var lineMarker = LineEndDetector.DetectNewLineMarker(text);
+                var newline = LineEndDetector.GetNewLineMarker(lineMarker);
                 if (newline != "\n") text = text.Replace(newline, "\n");
                 newline = LineEndDetector.GetNewLineMarker((int)PluginBase.Settings.EOLMode);
                 text = PluginBase.MainForm.ProcessArgString(text).Replace(newline, "\n");
                 newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-                string[] splitted = text.Trim().Split('\n');
-                for (int j = 0; j < splitted.Length; j++)
+                var splitted = text.Trim().Split('\n');
+                for (var j = 0; j < splitted.Length; j++)
                 {
                     if (j != splitted.Length - 1) sci.InsertText(sci.CurrentPos, splitted[j] + newline);
                     else sci.InsertText(sci.CurrentPos, splitted[j]);
@@ -129,8 +129,8 @@ namespace PluginCore.Helpers
                         sci.SetLineIndentation(line, newIndent);
                     }
                 }
-                int length = sci.CurrentPos - currentPosition - newline.Length;
-                int delta = PostProcessSnippets(sci, currentPosition);
+                var length = sci.CurrentPos - currentPosition - newline.Length;
+                var delta = PostProcessSnippets(sci, currentPosition);
                 return length + delta;
             }
             finally

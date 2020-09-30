@@ -158,15 +158,12 @@ namespace PluginCore
         /// <param name="value">The collection to test.</param>
         /// <returns>
         /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
-        public static bool IsNullOrEmpty(this IEnumerable value)
+        public static bool IsNullOrEmpty(this IEnumerable value) => value switch
         {
-            return value switch
-            {
-                null => true,
-                IList list => list.Count == 0,
-                _ => !value.GetEnumerator().MoveNext(),
-            };
-        }
+            null => true,
+            IList list => list.Count == 0,
+            _ => !value.GetEnumerator().MoveNext(),
+        };
 
         /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>
         /// <param name="value">The collection to test.</param>

@@ -238,7 +238,7 @@ namespace ScintillaNet
                 if (pointer == IntPtr.Zero) pointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
                 if (pointer == IntPtr.Zero)
                 {
-                    var msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
+                    const string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
                     throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
                 }
                 _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(pointer, typeof(Perform));
@@ -363,16 +363,15 @@ namespace ScintillaNet
         /// </summary>
         public string GetFileExtension()
         {
-            string extension = Path.GetExtension(FileName);
-            if (!string.IsNullOrEmpty(extension))
-                extension = extension.Substring(1); // remove dot
+            var extension = Path.GetExtension(FileName);
+            if (!string.IsNullOrEmpty(extension)) extension = extension.Substring(1); // remove dot
             return extension;
         }
 
         public void SaveExtensionToSyntaxConfig(string extension)
         {
-            List<Language> languages = Configuration.GetLanguages();
-            foreach (Language language in languages)
+            var languages = Configuration.GetLanguages();
+            foreach (var language in languages)
             {
                 if (language.name == configLanguage)
                 {
@@ -397,7 +396,7 @@ namespace ScintillaNet
 
         void SetLanguage(string value)
         {
-            Language lang = Configuration.GetLanguage(value);
+            var lang = Configuration.GetLanguage(value);
             if (lang is null) return;
             StyleClearAll();
             try
@@ -436,11 +435,8 @@ namespace ScintillaNet
                 MarkerSetBack(0, lang.editorstyle.BookmarkLineColor);
                 MarkerSetBack(2, lang.editorstyle.ModifiedLineColor);
             }
-            if (lang.characterclass != null)
-            {
-                WordChars(lang.characterclass.Characters);
-            }
-            var lexerType = ((Enums.Lexer) lang.lexer.key) switch
+            if (lang.characterclass != null) WordChars(lang.characterclass.Characters);
+            var lexerType = (Enums.Lexer) lang.lexer.key switch
             {
                 Enums.Lexer.PYTHON => typeof(PYTHON),
                 Enums.Lexer.CPP => typeof(CPP),
@@ -566,7 +562,7 @@ namespace ScintillaNet
             for (int j = 0; j < 9; j++) KeyWords(j, "");
             foreach (var usekeyword in lang.usekeywords)
             {
-                KeywordClass kc = Configuration.GetKeywordClass(usekeyword.cls);
+                var kc = Configuration.GetKeywordClass(usekeyword.cls);
                 if (kc != null) KeyWords(usekeyword.key, kc.val);
             }
 
@@ -1460,18 +1456,12 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the EOL marker
         /// </summary>
-        public string NewLineMarker
+        public string NewLineMarker => EOLMode switch
         {
-            get
-            {
-                return EOLMode switch
-                {
-                    1 => "\r",
-                    2 => "\n",
-                    _ => "\r\n"
-                };
-            }
-        }
+            1 => "\r",
+            2 => "\n",
+            _ => "\r\n"
+        };
 
         /// <summary>
         /// Compact the document buffer and return a read-only pointer to the characters in the document.
@@ -1582,8 +1572,8 @@ namespace ScintillaNet
         /// </summary>
         public void SmartSelectionDuplicate()
         {
-            bool wholeLine = SelectionStart == SelectionEnd;
-            int selectionLength = SelectionEnd - SelectionStart;
+            var wholeLine = SelectionStart == SelectionEnd;
+            var selectionLength = SelectionEnd - SelectionStart;
             SelectionDuplicate();
             if (wholeLine) LineDown();
             else
@@ -1688,10 +1678,7 @@ namespace ScintillaNet
         /// <summary>
         /// Sets a style to be italic or not.
         /// </summary>
-        public void StyleSetItalic(int style, bool italic)
-        {
-            SPerform(2054, style, italic ? 1 : 0);
-        }
+        public void StyleSetItalic(int style, bool italic) => SPerform(2054, style, italic ? 1 : 0);
 
         /// <summary>
         /// Gets whether a style is italic or not.
@@ -2733,18 +2720,12 @@ namespace ScintillaNet
         /// <summary>
         /// Get position of start of word.
         /// </summary>
-        public int WordStartPosition(int pos, bool onlyWordCharacters)
-        {
-            return SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
-        }
+        public int WordStartPosition(int pos, bool onlyWordCharacters) => SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
 
         /// <summary>
         /// Get position of end of word.
         /// </summary>
-        public int WordEndPosition(int pos, bool onlyWordCharacters)
-        {
-            return SPerform(2267, pos, onlyWordCharacters ? 1 : 0);
-        }
+        public int WordEndPosition(int pos, bool onlyWordCharacters) => SPerform(2267, pos, onlyWordCharacters ? 1 : 0);
 
         /// <summary>
         /// Measure the pixel width of some text in a particular style.
@@ -3790,24 +3771,19 @@ namespace ScintillaNet
 
         public delegate IntPtr Perform(IntPtr sci, int iMessage, IntPtr wParam, IntPtr lParam);
 
-        public uint SlowPerform(uint message, uint wParam, uint lParam)
-        {
-            return (uint) SendMessage(HandleSci, (int) message, (IntPtr)wParam, (IntPtr)lParam);
-        }
+        public uint SlowPerform(uint message, uint wParam, uint lParam) => (uint) SendMessage(HandleSci, (int) message, (IntPtr)wParam, (IntPtr)lParam);
 
         public IntPtr SlowPerform(int message, IntPtr wParam, IntPtr lParam) => SendMessage(HandleSci, message, wParam, lParam);
 
         public int SPerform(int message, int wParam, uint lParam)
-        {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
-            return Encoding.ASCII.CodePage;
-        }
+            => Win32.ShouldUseWin32()
+                ? (int) _sciFunction(directPointer, message, (IntPtr) wParam, (IntPtr) lParam)
+                : Encoding.ASCII.CodePage;
 
         public int SPerform(int message, int wParam, int lParam)
-        {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
-            return Encoding.ASCII.CodePage;
-        }
+            => Win32.ShouldUseWin32()
+                ? (int) _sciFunction(directPointer, message, (IntPtr) wParam, (IntPtr) lParam)
+                : Encoding.ASCII.CodePage;
 
         public IntPtr SPerform(int message) => SPerform(message, IntPtr.Zero);
 
@@ -3821,10 +3797,9 @@ namespace ScintillaNet
                 : (IntPtr) Encoding.ASCII.CodePage;
 
         public int SPerform(int message, int wParam, IntPtr lParam)
-        {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, lParam);
-            return Encoding.ASCII.CodePage;
-        }
+            => Win32.ShouldUseWin32()
+                ? (int) _sciFunction(directPointer, message, (IntPtr) wParam, lParam)
+                : Encoding.ASCII.CodePage;
 
         public override bool PreProcessMessage(ref Message m)
         {
@@ -3866,7 +3841,7 @@ namespace ScintillaNet
             }
             else if (m.Msg == WM_NOTIFY)
             {
-                SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
+                var scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
                 if (scn.nmhdr.hwndFrom == HandleSci && !DisableAllSciEvents)
                 {
                     switch (scn.nmhdr.code)
@@ -3972,7 +3947,7 @@ namespace ScintillaNet
                             break;
 
                         case (uint)Enums.ScintillaEvents.Modified:
-                            bool notify = false;
+                            var notify = false;
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.InsertText) > 0)
                             {
                                 TextInserted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
@@ -4075,18 +4050,14 @@ namespace ScintillaNet
                 switch (PluginBase.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
-                    {
                         StartHighlightSelectionTimer();
                         break;
-                    }
                     case Enums.HighlightMatchingWordsMode.SelectedWord:
-                    {
                         if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
                         {
                             StartHighlightSelectionTimer();
                         }
                         break;
-                    }
                 }
             }
             lastSelectionStart = sci.SelectionStart;
@@ -4165,12 +4136,12 @@ namespace ScintillaNet
         /// </summary>
         void OnBlockSelect(ScintillaControl sci)
         {
-            int position = CurrentPos - 1;
-            char character = (char)CharAt(position);
+            var position = CurrentPos - 1;
+            var character = (char)CharAt(position);
             if (character != '{' && character != '(' && character != '[') return;
             if (PositionIsOnComment(position)) return;
-            int bracePosStart = position;
-            int bracePosEnd = BraceMatch(position);
+            var bracePosStart = position;
+            var bracePosEnd = BraceMatch(position);
             if (bracePosEnd != -1) SetSel(bracePosStart, bracePosEnd + 1);
         }
 
@@ -4219,11 +4190,10 @@ namespace ScintillaNet
         ///
         internal void OnSmartIndent(ScintillaControl ctrl, int ch)
         {
-            char newline = (EOLMode == 1) ? '\r' : '\n';
+            var newline = EOLMode == 1 ? '\r' : '\n';
             switch (SmartIndentType)
             {
-                case Enums.SmartIndent.None:
-                    return;
+                case Enums.SmartIndent.None: return;
                 case Enums.SmartIndent.Simple:
                     if (ch == newline)
                     {
@@ -4355,10 +4325,7 @@ namespace ScintillaNet
                     }
                     break;
                 case Enums.SmartIndent.Custom:
-                    if (ch == newline)
-                    {
-                        SmartIndent?.Invoke(this);
-                    }
+                    if (ch == newline) SmartIndent?.Invoke(this);
                     break;
             }
         }
@@ -4952,7 +4919,7 @@ namespace ScintillaNet
         /// </summary>
         public int SelectText(string text)
         {
-            int pos = Text.IndexOfOrdinal(text, MBSafeCharPosition(CurrentPos));
+            var pos = Text.IndexOfOrdinal(text, MBSafeCharPosition(CurrentPos));
             if (pos >= 0) MBSafeSetSel(pos, text);
             return pos;
         }
@@ -4962,7 +4929,7 @@ namespace ScintillaNet
         /// </summary>
         public int SelectText(string text, int startPos)
         {
-            int pos = Text.IndexOfOrdinal(text, startPos);
+            var pos = Text.IndexOfOrdinal(text, startPos);
             if (pos >= 0) MBSafeSetSel(pos, text);
             return pos;
         }
@@ -4991,13 +4958,10 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeInsertText(int position, string text)
         {
-            if (CodePage != 65001)
-            {
-                InsertText(position, text);
-            }
+            if (CodePage != 65001) InsertText(position, text);
             else
             {
-                int mbpos = MBSafePosition(position);
+                var mbpos = MBSafePosition(position);
                 InsertText(mbpos, text);
             }
         }
@@ -5007,10 +4971,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeGotoPos(int position)
         {
-            if (CodePage != 65001)
-            {
-                GotoPos(position);
-            }
+            if (CodePage != 65001) GotoPos(position);
             else
             {
                 int mbpos = MBSafePosition(position);
@@ -5023,10 +4984,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeSetSel(int start, int end)
         {
-            if (CodePage != 65001)
-            {
-                SetSel(start, end);
-            }
+            if (CodePage != 65001) SetSel(start, end);
             else
             {
                 var count = Text.Substring(start, end - start);
@@ -5041,10 +4999,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeSetSel(int start, string text)
         {
-            if (CodePage != 65001)
-            {
-                SetSel(start, start + text.Length);
-            }
+            if (CodePage != 65001) SetSel(start, start + text.Length);
             else
             {
                 int mbpos = MBSafePosition(start);
@@ -5236,7 +5191,7 @@ namespace ScintillaNet
             if (matches is null) return;
             var doc = DocumentManager.FindDocument(this);
             if (doc is null) return;
-            foreach (SearchMatch match in matches)
+            foreach (var match in matches)
             {
                 int es = EndStyled;
                 int mask = (1 << StyleBits) - 1;
@@ -5492,17 +5447,14 @@ namespace ScintillaNet
         /// </summary>
         public int GetStartLine(int line)
         {
-            string str = GetLine(line);
-            char marker = (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css") ? '>' : ')';
-            int pos = str.LastIndexOf(marker);
+            var str = GetLine(line);
+            var marker = (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css") ? '>' : ')';
+            var pos = str.LastIndexOf(marker);
             if (pos >= 0)
             {
                 pos += PositionFromLine(line);
                 pos = BraceMatch(pos);
-                if (pos != -1 /*INVALID_POSITION*/)
-                {
-                    line = LineFromPosition(pos);
-                }
+                if (pos != -1 /*INVALID_POSITION*/) line = LineFromPosition(pos);
             }
             return line;
         }
@@ -5512,8 +5464,8 @@ namespace ScintillaNet
         /// </summary>
         public bool IsComment(string str)
         {
-            string lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
-            string blockComment = Configuration.GetLanguage(ConfigurationLanguage).commentstart;
+            var lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
+            var blockComment = Configuration.GetLanguage(ConfigurationLanguage).commentstart;
             var ret = ((!string.IsNullOrEmpty(lineComment) && str.StartsWithOrdinal(lineComment)) || (!string.IsNullOrEmpty(blockComment) && str.StartsWith(blockComment)));
             return ret;
         }
@@ -5665,10 +5617,7 @@ namespace ScintillaNet
                 end = PositionFromLine(line + 1);
             }
 
-            if (start < end)
-            {
-                CopyRTF(start, end);
-            }
+            if (start < end) CopyRTF(start, end);
         }
 
         /// <summary>
@@ -5701,10 +5650,7 @@ namespace ScintillaNet
                 end = PositionFromLine(line + 1);
             }
 
-            if (start < end)
-            {
-                CopyRTF(start, end);
-            }
+            if (start < end) CopyRTF(start, end);
         }
 
         /// <summary>

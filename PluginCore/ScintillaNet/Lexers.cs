@@ -2381,5 +2381,4 @@ namespace ScintillaNet.Lexers
         INDENTGUIDE = 37,
         LASTPREDEFINED = 39
     }
-
 }

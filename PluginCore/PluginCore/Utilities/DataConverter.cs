@@ -16,10 +16,10 @@ namespace PluginCore.Utilities
         {
             try
             {
-                Encoding toEnc = Encoding.GetEncoding(from);
-                Encoding fromEnc = Encoding.GetEncoding(to);
-                byte[] fromBytes = fromEnc.GetBytes(text);
-                byte[] toBytes = Encoding.Convert(fromEnc, toEnc, fromBytes);
+                var toEnc = Encoding.GetEncoding(from);
+                var fromEnc = Encoding.GetEncoding(to);
+                var fromBytes = fromEnc.GetBytes(text);
+                var toBytes = Encoding.Convert(fromEnc, toEnc, fromBytes);
                 return toEnc.GetString(toBytes);
             }
             catch (Exception ex)
@@ -32,11 +32,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Converts Keys to correct string presentation
         /// </summary>
-        public static string KeysToString(Keys keys)
-        {
-            KeysConverter kc = new KeysConverter();
-            return kc.ConvertToString(keys);
-        }
+        public static string KeysToString(Keys keys) => new KeysConverter().ConvertToString(keys);
 
         /// <summary>
         /// Converts a string to a Base64 string
@@ -45,8 +41,8 @@ namespace PluginCore.Utilities
         {
             try
             {
-                char[] chars = text.ToCharArray();
-                byte[] bytes = encoding.GetBytes(chars);
+                var chars = text.ToCharArray();
+                var bytes = encoding.GetBytes(chars);
                 return Convert.ToBase64String(bytes);
             }
             catch (Exception ex)
@@ -63,7 +59,7 @@ namespace PluginCore.Utilities
         {
             try
             {
-                byte[] bytes = Convert.FromBase64String(base64);
+                var bytes = Convert.FromBase64String(base64);
                 return encoding.GetString(bytes);
             }
             catch (Exception ex)
@@ -78,19 +74,16 @@ namespace PluginCore.Utilities
         /// </summary>
         public static int StringToColor(string aColor)
         {
-            if (aColor != null)
+            if (aColor == null) return 0;
+            var c = Color.FromName(aColor);
+            if (c.ToArgb() == 0 && aColor.Length >= 6)
             {
-                Color c = Color.FromName(aColor);
-                if (c.ToArgb() == 0 && aColor.Length >= 6)
-                {
-                    int col;
-                    if (aColor.StartsWithOrdinal("0x")) int.TryParse(aColor.Substring(2), NumberStyles.HexNumber, null, out col);
-                    else int.TryParse(aColor, out col);
-                    return TO_COLORREF(col);
-                }
-                return TO_COLORREF(c.ToArgb() & 0x00ffffff);
+                int col;
+                if (aColor.StartsWithOrdinal("0x")) int.TryParse(aColor.Substring(2), NumberStyles.HexNumber, null, out col);
+                else int.TryParse(aColor, out col);
+                return TO_COLORREF(col);
             }
-            return 0;
+            return TO_COLORREF(c.ToArgb() & 0x00ffffff);
         }
 
         static int TO_COLORREF(int c) => (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
@@ -98,10 +91,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Converts a color to a string
         /// </summary>
-        public static string ColorToHex(Color color)
-        {
-            return string.Concat("0x", color.R.ToString("X2", null), color.G.ToString("X2", null), color.B.ToString("X2", null));
-        }
+        public static string ColorToHex(Color color) => string.Concat("0x", color.R.ToString("X2", null), color.G.ToString("X2", null), color.B.ToString("X2", null));
 
         /// <summary>
         /// Converts a integer (BGR order) to a color

@@ -38,10 +38,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Creates a search/replace service instance
         /// </summary>
-        public FRRunner()
-        {
-            CreateWorker();
-        }
+        public FRRunner() => CreateWorker();
 
         /// <summary>
         /// Do a synchronous search
@@ -53,7 +50,7 @@ namespace PluginCore.FRService
         {
             try
             {
-                var results = new FRResults();
+                var result = new FRResults();
                 var files = configuration.GetFiles();
                 var search = configuration.GetSearch();
                 foreach (var file in files)
@@ -62,9 +59,9 @@ namespace PluginCore.FRService
                     search.SourceFile = file;
                     var matches = search.Matches(src);
                     FRSearch.ExtractResultsLineText(matches, src);
-                    results[file] = matches;
+                    result[file] = matches;
                 }
-                return results;
+                return result;
             }
             catch (Exception ex)
             {
@@ -83,24 +80,24 @@ namespace PluginCore.FRService
         {
             try
             {
-                var results = new FRResults();
+                var result = new FRResults();
                 var files = configuration.GetFiles();
                 var search = configuration.GetSearch();
                 var replacement = configuration.Replacement;
-                if (replacement is null) return results;
+                if (replacement is null) return result;
                 foreach (var file in files)
                 {
                     var src = configuration.GetSource(file);
                     search.SourceFile = file;
                     var matches = search.Matches(src);
-                    results[file] = matches;
+                    result[file] = matches;
                     foreach (var match in matches)
                     {
                         src = search.ReplaceAll(src, replacement, matches);
                         configuration.SetSource(file, src);
                     }
                 }
-                return results;
+                return result;
             }
             catch (Exception ex)
             {
@@ -144,9 +141,7 @@ namespace PluginCore.FRService
         /// </summary>
         void CreateWorker()
         {
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerReportsProgress = true;
-            backgroundWorker.WorkerSupportsCancellation = true;
+            backgroundWorker = new BackgroundWorker {WorkerReportsProgress = true, WorkerSupportsCancellation = true};
             backgroundWorker.DoWork += BackgroundWork;
             backgroundWorker.ProgressChanged += BackgroundReport;
             backgroundWorker.RunWorkerCompleted += BackgroundDone;
@@ -212,7 +207,7 @@ namespace PluginCore.FRService
                     // do search
                     var total = files.Count;
                     var lastPercent = 0;
-                    foreach (string file in files)
+                    foreach (var file in files)
                     {
                         if (backgroundWorker.CancellationPending) e.Cancel = true;
                         else

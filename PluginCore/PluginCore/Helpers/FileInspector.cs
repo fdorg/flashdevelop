@@ -49,7 +49,7 @@ namespace PluginCore.Helpers
         public static bool ShouldUseShellExecute(string path)
         {
             if (ExecutableFileTypes is null) return false;
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             return ExecutableFileTypes.Any(type => type == ext);
         }
 
@@ -61,10 +61,7 @@ namespace PluginCore.Helpers
             return (ext == ".xml" || (ext.Length == 5 && ext.EndsWith("ml", StringComparison.Ordinal)));
         }
 
-        public static bool IsText(string path, string ext)
-        {
-            return ext == ".txt" || Path.GetFileName(path).StartsWith(".", StringComparison.Ordinal);
-        }
+        public static bool IsText(string path, string ext) => ext == ".txt" || Path.GetFileName(path).StartsWith(".", StringComparison.Ordinal);
 
         public static bool IsAS2Project(string ext) => ext == ".fdp" || ext == ".as2proj";
 
@@ -72,7 +69,7 @@ namespace PluginCore.Helpers
 
         public static bool IsFlexBuilderPackagedProject(string path)
         {
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             return ext == ".fxp" || ext == ".zip" || ext == ".fxpl";
         }
 
@@ -84,10 +81,10 @@ namespace PluginCore.Helpers
 
         public static bool IsProject(string path) => IsProject(path, Path.GetExtension(path).ToLower());
 
-        public static bool IsProject(string path, string ext)
-        {
-            return IsAS2Project(ext) || IsAS3Project(path, ext) || IsHaxeProject(ext) || IsGenericProject(ext);
-        }
+        public static bool IsProject(string path, string ext) => IsAS2Project(ext)
+                                                                 || IsAS3Project(path, ext)
+                                                                 || IsHaxeProject(ext)
+                                                                 || IsGenericProject(ext);
 
         public static bool IsTemplate(string ext) => ext == ".template";
     }

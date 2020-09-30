@@ -14,11 +14,8 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the specified attribute from the specified XmlNode.
         /// </summary>
-        public static string GetAttribute(XmlNode node, string attName)
-        {
-            return node?.Attributes?[attName] != null ? node.Attributes[attName].Value : null;
-        }
-        
+        public static string GetAttribute(XmlNode node, string attName) => node?.Attributes?[attName]?.Value;
+
         /// <summary>
         /// Checks that if the XmlNode has a value.
         /// </summary>

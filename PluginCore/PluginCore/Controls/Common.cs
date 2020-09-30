@@ -162,16 +162,16 @@ namespace System.Windows.Forms
 
         protected virtual void OnDrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
-            Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
-            Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
-            Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            var back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
+            var text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
+            var border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
             if (UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 1, 3, e.Bounds.X + e.Bounds.Width - 1, e.Bounds.Height - 6);
-                int textHeight = TextRenderer.MeasureText("HeightTest", e.Font).Height + 1;
-                Rectangle textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2) - (textHeight / 2), e.Bounds.Width, e.Bounds.Height);
+                var textHeight = TextRenderer.MeasureText("HeightTest", e.Font).Height + 1;
+                var textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2) - (textHeight / 2), e.Bounds.Width, e.Bounds.Height);
                 TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text);
             }
             else e.DrawDefault = true;
@@ -195,13 +195,13 @@ namespace System.Windows.Forms
         protected override void OnEnter(EventArgs e)
         {
             base.OnEnter(e);
-            Message m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            var m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
             WndProc(ref m);
         }
         protected override void OnSelectedIndexChanged(EventArgs e)
         {
             base.OnSelectedIndexChanged(e);
-            Message m = Message.Create(Handle, 0x127, new IntPtr(0x10001), new IntPtr(0));
+            var m = Message.Create(Handle, 0x127, new IntPtr(0x10001), new IntPtr(0));
             WndProc(ref m);
         }
 
@@ -235,13 +235,14 @@ namespace System.Windows.Forms
         protected override void OnEnter(EventArgs e) // Removes focus cues
         {
             base.OnEnter(e);
-            Message m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            var m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
             WndProc(ref m);
         }
+
         protected override void OnAfterSelect(TreeViewEventArgs e)
         {
             base.OnAfterSelect(e);
-            Message m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            var m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
             WndProc(ref m);
         }
 
@@ -267,7 +268,7 @@ namespace System.Windows.Forms
     {
         public ToolStripComboBoxEx() : base(new FlatCombo())
         {
-            Font font = PluginBase.Settings.DefaultFont;
+            var font = PluginBase.Settings.DefaultFont;
             FlatCombo.FlatStyle = FlatStyle.Popup;
             FlatCombo.Font = font;
         }
@@ -276,26 +277,26 @@ namespace System.Windows.Forms
 
         public ComboBoxStyle DropDownStyle
         {
-            set => FlatCombo.DropDownStyle = value;
             get => FlatCombo.DropDownStyle;
+            set => FlatCombo.DropDownStyle = value;
         }
 
         public FlatStyle FlatStyle
         {
-            set => FlatCombo.FlatStyle = FlatStyle.Popup;
             get => FlatCombo.FlatStyle;
+            set => FlatCombo.FlatStyle = FlatStyle.Popup;
         }
 
         public int SelectedIndex
         {
-            set => FlatCombo.SelectedIndex = value;
             get => FlatCombo.SelectedIndex;
+            set => FlatCombo.SelectedIndex = value;
         }
 
         public object SelectedItem
         {
-            set => FlatCombo.SelectedItem = value;
             get => FlatCombo.SelectedItem;
+            set => FlatCombo.SelectedItem = value;
         }
 
         public ComboBox.ObjectCollection Items => FlatCombo.Items;
@@ -312,8 +313,8 @@ namespace System.Windows.Forms
 
         public void AfterTheming()
         {
-            Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
-            Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
+            var fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
+            var back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
             borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             ForeColor = UseTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
             BackColor = UseTheme && back != Color.Empty ? back : SystemColors.Window;
@@ -323,13 +324,13 @@ namespace System.Windows.Forms
         protected override void OnEnter(EventArgs e)
         {
             base.OnEnter(e);
-            Message m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            var m = Message.Create(Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
             WndProc(ref m);
         }
         protected override void OnSelectedIndexChanged(EventArgs e)
         {
             base.OnSelectedIndexChanged(e);
-            Message m = Message.Create(Handle, 0x127, new IntPtr(0x10001), new IntPtr(0));
+            var m = Message.Create(Handle, 0x127, new IntPtr(0x10001), new IntPtr(0));
             WndProc(ref m);
         }
 
@@ -346,11 +347,11 @@ namespace System.Windows.Forms
                     var pen = new Pen(borderColor);
                     var back = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor", SystemColors.Window));
                     var arrow = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor", SystemColors.ControlText));
-                    Rectangle backRect = new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
-                    Rectangle dropRect = new Rectangle(ClientRectangle.Right - width, ClientRectangle.Y, width, ClientRectangle.Height);
+                    var backRect = new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
+                    var dropRect = new Rectangle(ClientRectangle.Right - width, ClientRectangle.Y, width, ClientRectangle.Height);
                     if (Enabled) g.FillRectangle(back, dropRect);
                     g.DrawRectangle(pen, backRect);
-                    Point middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
+                    var middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
                     Point[] shape = {
                         new Point(middle.X - pad, middle.Y - 1),
                         new Point(middle.X + pad + 1, middle.Y - 1),
@@ -599,8 +600,8 @@ namespace System.Windows.Forms
             {
                 if (ctrl.Text == "PropertyGridView")
                 {
-                    Type type = ctrl.GetType();
-                    FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var type = ctrl.GetType();
+                    var field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
                     return field.GetValue(ctrl) as ScrollBar;
                 }
             }
@@ -618,12 +619,9 @@ namespace System.Windows.Forms
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (DesignMode) return;
-            if (UseTheme)
-            {
-                Color color = PluginBase.MainForm.GetThemeColor("PropertyGrid.BackColor", SystemColors.Control);
-                e.Graphics.FillRectangle(new SolidBrush(color), ClientRectangle);
-            }
+            if (DesignMode || !UseTheme) return;
+            var color = PluginBase.MainForm.GetThemeColor("PropertyGrid.BackColor", SystemColors.Control);
+            e.Graphics.FillRectangle(new SolidBrush(color), ClientRectangle);
         }
     }
 
@@ -741,8 +739,8 @@ namespace System.Windows.Forms
             if (WindowState != FormWindowState.Maximized && (FormBorderStyle == FormBorderStyle.Sizable || FormBorderStyle == FormBorderStyle.SizableToolWindow))
             {
                 SizeGripStyle = SizeGripStyle.Hide;
-                Color dark = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlDark);
-                Color light = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlLight);
+                var dark = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlDark);
+                var light = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlLight);
                 using SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light);
                 int y = ClientRectangle.Bottom - 3 * 2 + 1;
                 for (int i = 3; i >= 1; i--)
@@ -846,8 +844,8 @@ namespace System.Windows.Forms
         void OverrideControl()
         {
             OnUnsubscribeControlEvents(Control);
-            Type type = GetType();
-            FieldInfo prop = type.BaseType.BaseType.GetField("control", BindingFlags.NonPublic | BindingFlags.Instance);
+            var type = GetType();
+            var prop = type.BaseType.BaseType.GetField("control", BindingFlags.NonPublic | BindingFlags.Instance);
             prop.SetValue(this, new ProgressBarEx());
             OnSubscribeControlEvents(Control);
             Invalidate();

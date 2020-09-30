@@ -42,10 +42,7 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class StringValueAttribute : Attribute
     {
-        public StringValueAttribute(string value)
-        {
-            Value = value;
-        }
+        public StringValueAttribute(string value) => Value = value;
 
         /// <summary>
         /// Gets the string value of the class

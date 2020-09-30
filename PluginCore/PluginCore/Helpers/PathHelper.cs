@@ -48,43 +48,25 @@ namespace PluginCore.Helpers
         /// Path to the snippets directory
         /// </summary>
         public static string SnippetDir
-        {
-            get
-            {
-                var path = PluginBase.Settings.CustomSnippetDir;
-                return Directory.Exists(path)
-                    ? path
-                    : Path.Combine(BaseDir, "Snippets");
-            }
-        }
+            => PluginBase.Settings.CustomSnippetDir is {} path && Directory.Exists(path) 
+                ? path
+                : Path.Combine(BaseDir, "Snippets");
 
         /// <summary>
         /// Path to the templates directory
         /// </summary>
         public static string TemplateDir
-        {
-            get
-            {
-                var path = PluginBase.Settings.CustomTemplateDir;
-                return Directory.Exists(path)
-                    ? path
-                    : Path.Combine(BaseDir, "Templates");
-            }
-        }
+            => PluginBase.Settings.CustomTemplateDir is {} path && Directory.Exists(path)
+                ? path
+                : Path.Combine(BaseDir, "Templates");
 
         /// <summary>
         /// Path to the project templates directory
         /// </summary>
         public static string ProjectsDir
-        {
-            get
-            {
-                var path = PluginBase.Settings.CustomProjectsDir;
-                return Directory.Exists(path)
-                    ? path
-                    : Path.Combine(AppDir, "Projects");
-            }
-        }
+            => PluginBase.Settings.CustomProjectsDir is {} path && Directory.Exists(path)
+                ? path
+                : Path.Combine(AppDir, "Projects");
 
         /// <summary>
         /// Path to the settings directory
@@ -107,7 +89,7 @@ namespace PluginCore.Helpers
         public static string UserProjectsDir => Path.Combine(UserAppDir, "Projects");
 
         /// <summary>
-        /// Path to the user lirbrary directory
+        /// Path to the user library directory
         /// </summary>
         public static string UserLibraryDir => Path.Combine(UserAppDir, "Library");
 
@@ -159,7 +141,7 @@ namespace PluginCore.Helpers
                     catch {} // Not working...
                 }
             }
-            string userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
+            var userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
             return Path.Combine(userProfile, "mm.cfg");
         }
 
@@ -179,9 +161,8 @@ namespace PluginCore.Helpers
         public static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            bool isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
-            bool isPathAbsSlashed = (path.StartsWith('\\') || path.StartsWith('/')) && !isPathNetworked;
-            if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
+            var isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
+            if (!isPathNetworked && (path.StartsWith('\\') || path.StartsWith('/'))) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             string resolvedPath;
             if (relativeTo != null)
@@ -213,11 +194,11 @@ namespace PluginCore.Helpers
                     Win32.PathCompactPathEx(sb, path, max, 0);
                     return sb.ToString();
                 }
-
                 const string pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
                 const string replacement = "$1$2...$3";
-                if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
-                return path;
+                return Regex.IsMatch(path, pattern)
+                    ? Regex.Replace(path, pattern, replacement)
+                    : path;
             }
             catch (Exception ex)
             {
@@ -233,15 +214,11 @@ namespace PluginCore.Helpers
         {
             try
             {
-                if (Win32.ShouldUseWin32())
-                {
-                    int max = longName.Length + 1;
-                    StringBuilder sb = new StringBuilder(max);
-                    Win32.GetShortPathName(longName, sb, max);
-                    return sb.ToString();
-                }
-
-                return longName; // For other platforms
+                if (!Win32.ShouldUseWin32()) return longName; // For other platforms
+                var max = longName.Length + 1;
+                var sb = new StringBuilder(max);
+                Win32.GetShortPathName(longName, sb, max);
+                return sb.ToString();
             }
             catch (Exception ex)
             {
@@ -257,14 +234,11 @@ namespace PluginCore.Helpers
         {
             try
             {
-                if (Win32.ShouldUseWin32())
-                {
-                    StringBuilder longNameBuffer = new StringBuilder(256);
-                    Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
-                    return longNameBuffer.ToString();
-                }
+                if (!Win32.ShouldUseWin32()) return shortName; // For other platforms
+                var sb = new StringBuilder(256);
+                Win32.GetLongPathName(shortName, sb, sb.Capacity);
+                return sb.ToString();
 
-                return shortName; // For other platforms
             }
             catch (Exception ex)
             {
@@ -280,22 +254,15 @@ namespace PluginCore.Helpers
         {
             try
             {
-                if (Win32.ShouldUseWin32())
-                {
-                    int rgflnOut = 0;
-                    var r = Win32.SHILCreateFromPath(path, out var ppidl, ref rgflnOut);
-                    if (r == 0)
-                    {
-                        StringBuilder sb = new StringBuilder(260);
-                        if (Win32.SHGetPathFromIDList(ppidl, sb))
-                        {
-                            char sep = Path.DirectorySeparatorChar;
-                            char alt = Path.AltDirectorySeparatorChar;
-                            return sb.ToString().Replace(alt, sep);
-                        }
-                    }
-                }
-                return path;
+                if (!Win32.ShouldUseWin32()) return path;
+                var rgflnOut = 0;
+                var r = Win32.SHILCreateFromPath(path, out var ppidl, ref rgflnOut);
+                if (r != 0) return path;
+                var sb = new StringBuilder(260);
+                if (!Win32.SHGetPathFromIDList(ppidl, sb)) return path;
+                var sep = Path.DirectorySeparatorChar;
+                var alt = Path.AltDirectorySeparatorChar;
+                return sb.ToString().Replace(alt, sep);
             }
             catch (Exception ex)
             {
@@ -310,8 +277,8 @@ namespace PluginCore.Helpers
         public static string FindFromProgramFiles(string partialPath)
         {
             // This return always x86, FlashDevelop is x86
-            string programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-            string toolPath = Path.Combine(programFiles, partialPath);
+            var programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
+            var toolPath = Path.Combine(programFiles, partialPath);
             if (File.Exists(toolPath)) return toolPath;
             if (programFiles.Contains(" (x86)")) // Is the app in x64 program files?
             {
@@ -326,9 +293,9 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string GetJavaInstallPath()
         {
-            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+            const string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
             using var rk = Registry.LocalMachine.OpenSubKey(javaKey);
-            string currentVersion = rk.GetValue("CurrentVersion").ToString();
+            var currentVersion = rk.GetValue("CurrentVersion").ToString();
             using var key = rk.OpenSubKey(currentVersion);
             return key.GetValue("JavaHome").ToString();
         }
@@ -414,7 +381,7 @@ namespace PluginCore.Helpers
 
                 if (font is null) throw new ArgumentNullException(nameof(font));
 
-                Size s = TextRenderer.MeasureText(text, font);
+                var s = TextRenderer.MeasureText(text, font);
 
                 // control is large enough to display the whole text
                 if (s.Width <= proposedWidth) return text;

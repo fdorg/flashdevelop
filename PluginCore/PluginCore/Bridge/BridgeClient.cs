@@ -7,7 +7,8 @@ namespace PluginCore.Bridge
     public class BridgeClient : ServerSocket
     {
         #region configuration
-        private static string ip;
+
+        static string ip;
 
         public static string BridgeIP
         {
@@ -24,15 +25,17 @@ namespace PluginCore.Bridge
         {
             try
             {
-                string issue = "Unable to find a gateway";
+                var issue = "Unable to find a gateway";
                 foreach (var f in NetworkInterface.GetAllNetworkInterfaces())
                 {
                     issue += "\n" + f.Name + ", " + f.Description;
                     if (f.OperationalStatus == OperationalStatus.Up)
+                    {
                         foreach (var d in f.GetIPProperties().GatewayAddresses)
                         {
                             return d.Address.ToString();
                         }
+                    }
                 }
                 throw new Exception(issue);
             }
@@ -47,8 +50,7 @@ namespace PluginCore.Bridge
 
         public bool Connected => conn != null && conn.Connected;
 
-        public BridgeClient()
-            : base(BridgeIP, BridgePort)
+        public BridgeClient() : base(BridgeIP, BridgePort)
         {
             if (!isInvalid) ConnectClient();
         }

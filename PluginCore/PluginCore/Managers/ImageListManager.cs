@@ -18,10 +18,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// The <see cref="ImageListManager"/> static constructor.
         /// </summary>
-        static ImageListManager()
-        {
-            instances = new List<WeakReference>();
-        }
+        static ImageListManager() => instances = new List<WeakReference>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageListManager"/> class with default values for <see cref="ColorDepth"/>, <see cref="ImageSize"/>, and <see cref="TransparentColor"/>.

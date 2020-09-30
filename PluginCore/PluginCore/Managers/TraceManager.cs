@@ -22,9 +22,7 @@ namespace PluginCore.Managers
             traceLog = new List<TraceItem>();
             asyncQueue = new List<TraceItem>();
             traceGroups = new Dictionary<string, TraceGroup>();
-            asyncTimer = new Timer();
-            asyncTimer.Interval = 200;
-            asyncTimer.AutoReset = false;
+            asyncTimer = new Timer {Interval = 200, AutoReset = false};
             asyncTimer.Elapsed += AsyncTimer_Elapsed;
             uniqueToken = 0;
         }
@@ -138,10 +136,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupDataUnique(string groupId, params string[] args)
         {
-            if (args.IsNullOrEmpty())
-            {
-                return CreateGroupData(groupId, uniqueToken++.ToString());
-            }
+            if (args.IsNullOrEmpty()) return CreateGroupData(groupId, uniqueToken++.ToString());
             return CreateGroupData(groupId, args) + "," + uniqueToken++;
         }
 
@@ -225,10 +220,8 @@ namespace PluginCore.Managers
 
     public class TraceItem
     {
-
         public TraceItem(string message, int state) : this(message, state, null)
         {
-
         }
 
         public TraceItem(string message, int state, string groupData)

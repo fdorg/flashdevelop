@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class Lexer : ConfigItem
     {
         [XmlAttribute("key")]

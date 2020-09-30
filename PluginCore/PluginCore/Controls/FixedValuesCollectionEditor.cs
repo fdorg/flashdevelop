@@ -223,11 +223,11 @@ namespace PluginCore.Controls
         void InitializeAvailableList(T[] all, T[] values)
         {
             availableItems.BeginUpdate();
-            for (int i = 0; i < all.Length; i++)
+            foreach (var it in all)
             {
-                if (!values.Contains(all[i]))
+                if (!values.Contains(it))
                 {
-                    availableItems.Items.Add(new Item(all[i]));
+                    availableItems.Items.Add(new Item(it));
                 }
             }
             availableItems.EndUpdate();
@@ -236,9 +236,9 @@ namespace PluginCore.Controls
         void InitializeUsedList(T[] values, T[] lockedValues)
         {
             usedItems.BeginUpdate();
-            for (int i = 0; i < values.Length; i++)
+            foreach (var it in values)
             {
-                usedItems.Items.Add(new Item(values[i], lockedValues.Contains(values[i])));
+                usedItems.Items.Add(new Item(it, lockedValues.Contains(it)));
             }
             usedItems.EndUpdate();
         }
@@ -267,11 +267,7 @@ namespace PluginCore.Controls
             availableItems.EndUpdate();
         }
 
-        void AvailableItems_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var indices = availableItems.SelectedIndices;
-            btnAdd.Enabled = indices.Count > 0;
-        }
+        void AvailableItems_SelectedIndexChanged(object sender, EventArgs e) => btnAdd.Enabled = availableItems.SelectedIndices.Count > 0;
 
         void UsedItems_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -299,9 +295,8 @@ namespace PluginCore.Controls
             var items = new Item[selectedItems.Count];
             selectedItems.CopyTo(items, 0);
 
-            for (int i = 0; i < items.Length; i++)
+            foreach (var item in items)
             {
-                var item = items[i];
                 availableItems.Items.Remove(item);
                 usedItems.Items.Add(item);
             }
@@ -322,9 +317,8 @@ namespace PluginCore.Controls
             var items = new Item[selectedItems.Count];
             selectedItems.CopyTo(items, 0);
 
-            for (int i = 0; i < items.Length; i++)
+            foreach (var item in items)
             {
-                var item = items[i];
                 if (item.Locked) continue;
                 usedItems.Items.Remove(item);
                 availableItems.Items.Add(item);
@@ -343,9 +337,9 @@ namespace PluginCore.Controls
 
             var indices = usedItems.SelectedIndices;
 
-            for (int i = 0; i < indices.Count; i++)
+            for (var i = 0; i < indices.Count; i++)
             {
-                int index = indices[i];
+                var index = indices[i];
                 var items = usedItems.Items;
                 var item = items[index];
                 items.RemoveAt(index);
@@ -359,18 +353,15 @@ namespace PluginCore.Controls
         void BtnDown_Click(object sender, EventArgs e)
         {
             usedItems.BeginUpdate();
-
             var indices = usedItems.SelectedIndices;
-
-            for (int i = indices.Count - 1; i >= 0; i--)
+            for (var i = indices.Count - 1; i >= 0; i--)
             {
-                int index = indices[i];
+                var index = indices[i];
                 var items = usedItems.Items;
                 var item = items[index];
                 items.RemoveAt(index);
                 items.Insert(index + 1, item);
             }
-
             usedItems.EndUpdate();
             usedItems.Select();
         }
@@ -378,9 +369,9 @@ namespace PluginCore.Controls
         void BtnOK_Click(object sender, EventArgs e)
         {
             var items = usedItems.Items;
-            int count = items.Count;
+            var count = items.Count;
             value = new T[count];
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 value[i] = ((Item) items[i]).Value;
             }
@@ -400,12 +391,8 @@ namespace PluginCore.Controls
 
         class Item : ListViewItem
         {
-            readonly bool locked;
-            readonly T value;
-
-            public bool Locked => locked;
-
-            public T Value => value;
+            public bool Locked { get; }
+            public T Value { get; }
 
             public Item(T value) : this(value, false)
             {
@@ -414,8 +401,8 @@ namespace PluginCore.Controls
             public Item(T value, bool locked)
             {
                 Text = Name = Convert.ToString(value);
-                this.value = value;
-                this.locked = locked;
+                Value = value;
+                Locked = locked;
             }
         }
 

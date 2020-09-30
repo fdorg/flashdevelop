@@ -61,23 +61,24 @@ namespace PluginCore.Controls
         /// </summary>
         public static void CreateControl(IMainForm mainForm)
         {
-            tempo = new System.Timers.Timer();
-            tempo.SynchronizingObject = (Form)mainForm;
+            tempo = new System.Timers.Timer {SynchronizingObject = (Form) mainForm, AutoReset = false};
             tempo.Elapsed += DisplayList;
-            tempo.AutoReset = false;
-            tempoTip = new System.Timers.Timer();
-            tempoTip.SynchronizingObject = (Form)mainForm;
+            tempoTip = new System.Timers.Timer
+            {
+                SynchronizingObject = (Form) mainForm,
+                AutoReset = false,
+                Interval = 800
+            };
             tempoTip.Elapsed += UpdateTip;
-            tempoTip.AutoReset = false;
-            tempoTip.Interval = 800;
-            
-            completionList = new ListBox();
-            completionList.Font = new Font(PluginBase.Settings.DefaultFont, FontStyle.Regular);
-            completionList.Visible = false;
-            completionList.Location = new Point(400,200);
+            completionList = new ListBox
+            {
+                Font = new Font(PluginBase.Settings.DefaultFont, FontStyle.Regular),
+                Visible = false,
+                Location = new Point(400, 200),
+                Size = new Size(180, 100),
+                DrawMode = DrawMode.OwnerDrawFixed,
+            };
             completionList.ItemHeight = completionList.Font.Height + 2;
-            completionList.Size = new Size(180, 100);
-            completionList.DrawMode = DrawMode.OwnerDrawFixed;
             completionList.DrawItem += CLDrawListItem;
             completionList.Click += CLClick;
             completionList.DoubleClick += CLDoubleClick;
@@ -165,7 +166,7 @@ namespace PluginCore.Controls
                 currentWord = null;
             }
             MinWordLength = 1;
-            fullList = (word.Length == 0) || !autoHide || !PluginBase.Settings.AutoFilterList;
+            fullList = word.Length == 0 || !autoHide || !PluginBase.Settings.AutoFilterList;
             lastIndex = 0;
             exactMatchInList = false;
             if (sci.SelectionStart == sci.SelectionEnd) startPos = sci.CurrentPos - word.Length;
@@ -232,7 +233,7 @@ namespace PluginCore.Controls
                 var size = g.MeasureString(widestLabel, cl.Font);
                 cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), ScaleHelper.Scale(400)) + ScaleHelper.Scale(10);
             }
-            int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
+            var newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             if (newHeight != cl.Height) cl.Height = newHeight;
             // place control
             var coord = new Point(sci.PointXFromPosition(startPos), sci.PointYFromPosition(startPos));
@@ -316,7 +317,7 @@ namespace PluginCore.Controls
                 var fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
                 var sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
                 var selected = (e.State & DrawItemState.Selected) > 0;
-                using Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
+                using Brush textBrush = selected ? new SolidBrush(sel) : new SolidBrush(fore);
                 using Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
                 var bounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
                 var g = e.Graphics;
@@ -356,8 +357,8 @@ namespace PluginCore.Controls
             int rightWidth = ((Form)PluginBase.MainForm).ClientRectangle.Right - completionList.Right - 10;
             int leftWidth = completionList.Left;
 
-            Point posTarget = new Point(completionList.Right, completionList.Top);
-            int widthTarget = rightWidth;
+            var posTarget = new Point(completionList.Right, completionList.Top);
+            var widthTarget = rightWidth;
             if (rightWidth < 220 && leftWidth > 220)
             {
                 widthTarget = leftWidth;
@@ -581,7 +582,7 @@ namespace PluginCore.Controls
         {
             if (defaultItem != null && completionList.Items.Contains(defaultItem))
             {
-                int score = (len == 0) ? 1 : SmartMatch(defaultItem.Label, word, len);
+                var score = len == 0 ? 1 : SmartMatch(defaultItem.Label, word, len);
                 if (score > 0 && score < 6) return completionList.Items.IndexOf(defaultItem);
             }
             return index;
@@ -606,7 +607,7 @@ namespace PluginCore.Controls
             bool firstUpper = char.IsUpper(word[0]);
             if (firstUpper)
             {
-                int abbr = IsAbbreviation(label, word);
+                var abbr = IsAbbreviation(label, word);
                 if (abbr > 0) return abbr;
             }
                    
@@ -774,8 +775,8 @@ namespace PluginCore.Controls
 
         public static void OnChar(ScintillaControl sci, int value)
         {
-            char c = (char)value;
-            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var c = (char)value;
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             if (characterClass.Contains(c))
             {
                 word += c;

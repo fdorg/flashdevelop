@@ -18,13 +18,9 @@ namespace PluginCore.Controls
 
         public CodeTip(IMainForm mainForm)
         {
-            editor = new ScintillaControl();
-            editor.Enabled = false;
-            editor.IsUseTabs = false;
-            codeTip = new Panel();
-            codeTip.BorderStyle = BorderStyle.FixedSingle;
+            editor = new ScintillaControl {Enabled = false, IsUseTabs = false};
+            codeTip = new Panel {BorderStyle = BorderStyle.FixedSingle, Visible = false};
             codeTip.Controls.Add(editor);
-            codeTip.Visible = false;
             mainForm.Controls.Add(codeTip);
         }
 
@@ -116,15 +112,11 @@ namespace PluginCore.Controls
             var mainForm = ((Form)PluginBase.MainForm);
             p = mainForm.PointToClient(sci.PointToScreen(p));
 
-            if (p.Y > codeTip.Height)
-                codeTip.Top = p.Y - codeTip.Height;
-            else
-                codeTip.Top = p.Y + rowHeight;
+            if (p.Y > codeTip.Height) codeTip.Top = p.Y - codeTip.Height;
+            else codeTip.Top = p.Y + rowHeight;
 
-            if (p.X + codeTip.Width < mainForm.ClientSize.Width)
-                codeTip.Left = p.X;
-            else
-                codeTip.Left = mainForm.ClientSize.Width - codeTip.Width;
+            if (p.X + codeTip.Width < mainForm.ClientSize.Width) codeTip.Left = p.X;
+            else codeTip.Left = mainForm.ClientSize.Width - codeTip.Width;
         }
 
         static Language GetLanguage(string name) => PluginBase.MainForm?.SciConfig?.GetLanguage(name);

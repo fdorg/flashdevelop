@@ -201,17 +201,10 @@ namespace PluginCore.Controls
             }
         }
 
-        Rectangle GetWindowBounds(Control ctrl)
+        static Rectangle GetWindowBounds(Control ctrl)
         {
             while (ctrl.Parent != null && !(ctrl is DockWindow)) ctrl = ctrl.Parent;
             return ctrl.Bounds;
-        }
-
-        Point GetMousePosIn(Control ctrl)
-        {
-            Point ctrlPos = ctrl.PointToScreen(new Point());
-            Point pos = Cursor.Position;
-            return new Point(pos.X - ctrlPos.X, pos.Y - ctrlPos.Y);
         }
 
         void HandleDwellEnd(ScintillaControl sci, int position, int x, int y)
@@ -227,35 +220,28 @@ namespace PluginCore.Controls
         
         public bool PreFilterMessage(ref Message m)
         {
-            if (m.Msg == Win32.WM_MOUSEWHEEL) // capture all MouseWheel events 
+            switch (m.Msg)
             {
-                if (!callTip.CallTipActive || !callTip.Focused)
-                {
-                    if (Win32.ShouldUseWin32())
+                // capture all MouseWheel events 
+                case Win32.WM_MOUSEWHEEL when !callTip.CallTipActive || !callTip.Focused:
+                    if (!Win32.ShouldUseWin32()) return false;
+                    Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int) m.WParam, (int) m.LParam);
+                    return true;
+                case Win32.WM_MOUSEWHEEL: return false;
+                case Win32.WM_KEYDOWN:
+                    if ((int) m.WParam == 17) // Ctrl
                     {
-                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int)m.WParam, (int)m.LParam);
-                        return true;
+                        if (CompletionList.Active) CompletionList.FadeOut();
+                        if (callTip.CallTipActive && !callTip.Focused) callTip.FadeOut();
                     }
-                    return false;
-                }
-                return false;
-            }
-
-            if (m.Msg == Win32.WM_KEYDOWN)
-            {
-                if ((int)m.WParam == 17) // Ctrl
-                {
-                    if (CompletionList.Active) CompletionList.FadeOut();
-                    if (callTip.CallTipActive && !callTip.Focused) callTip.FadeOut();
-                }
-            }
-            else if (m.Msg == Win32.WM_KEYUP)
-            {
-                if ((int)m.WParam == 17 || (int)m.WParam == 18) // Ctrl / AltGr
-                {
-                    if (CompletionList.Active) CompletionList.FadeIn();
-                    if (callTip.CallTipActive) callTip.FadeIn();
-                }
+                    break;
+                case Win32.WM_KEYUP:
+                    if ((int) m.WParam == 17 || (int) m.WParam == 18) // Ctrl / AltGr
+                    {
+                        if (CompletionList.Active) CompletionList.FadeIn();
+                        if (callTip.CallTipActive) callTip.FadeIn();
+                    }
+                    break;
             }
             return false;
         }
@@ -287,12 +273,12 @@ namespace PluginCore.Controls
             var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { OnUIRefresh(sci); });
+                mainForm.BeginInvoke((MethodInvoker)(() => OnUIRefresh(sci)));
                 return;
             }
             if (sci != null && sci.IsFocus)
             {
-                int position = sci.SelectionEnd;
+                var position = sci.SelectionEnd;
                 if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
                 if (callTip.CallTipActive && callTip.CheckPosition(position)) return;
             }
@@ -355,7 +341,7 @@ namespace PluginCore.Controls
                 }*/
                 // offer to handle the shortcut
                 ignoreKeys = true;
-                KeyEvent ke = new KeyEvent(EventType.Keys, key);
+                var ke = new KeyEvent(EventType.Keys, key);
                 EventManager.DispatchEvent(this, ke);
                 ignoreKeys = false;
                 // if not handled - show snippets
@@ -392,7 +378,7 @@ namespace PluginCore.Controls
                 return false;
             }
             // chars
-            string ks = key.ToString();
+            var ks = key.ToString();
             if (ks.Length == 1 || (ks.EndsWithOrdinal(", Shift") && ks.IndexOf(',') == 1) || ks.StartsWithOrdinal("NumPad"))
             {
                 return false;

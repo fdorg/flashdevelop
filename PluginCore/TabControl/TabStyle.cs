@@ -5,7 +5,8 @@
 
 namespace System.Windows.Forms
 {
-	public enum TabStyle{
+	public enum TabStyle
+    {
 		None = 0,
 		Default = 1,
 		VisualStudio = 2,
@@ -16,5 +17,4 @@ namespace System.Windows.Forms
 		VS2010 = 7,
         Flat = 8
     }
-
 }

@@ -64,7 +64,7 @@ namespace PluginCore.Localization
         public static string RemoveMnemonics(string text)
         {
             if (string.IsNullOrEmpty(text)) return string.Empty;
-            int index = text.Length;
+            var index = text.Length;
             if (index > 4 &&
                 text[--index].Equals(')') &&
                 char.IsUpper(text[--index]) &&
@@ -135,7 +135,7 @@ namespace PluginCore.Localization
             {
                 if (PluginBase.MainForm?.Settings is null) return false;
                 storedLocale = PluginBase.Settings.LocaleVersion;
-                string path = "PluginCore.PluginCore.Resources." + storedLocale;
+                var path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }
             return true;
