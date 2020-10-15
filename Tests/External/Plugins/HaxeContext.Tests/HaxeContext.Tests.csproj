@@ -2000,6 +2000,7 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue3055_5.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue3055_6.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue3055_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue3075_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

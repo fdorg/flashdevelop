@@ -2788,7 +2788,7 @@ namespace ASCompletion.Completion
                                 MemberModel var = null;
                                 if (vars.Count > 1)
                                 {
-                                    vars.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
+                                    vars.Sort((l, r) => r.LineFrom.CompareTo(l.LineFrom));
                                     var = vars.FirstOrDefault(it => it.LineTo < local.LineTo);
                                 }
                                 var ??= vars.FirstOrDefault();
@@ -2852,8 +2852,8 @@ namespace ASCompletion.Completion
                 return result;
             }
             // visible types & declarations
-            var visible = ctx.GetVisibleExternalElements();
-            foreach (MemberModel aDecl in visible)
+            var list = ctx.GetVisibleExternalElements();
+            foreach (var aDecl in list)
             {
                 if (aDecl.Name != token) continue;
                 if ((aDecl.Flags & FlagType.Package) > 0)
@@ -2971,6 +2971,24 @@ namespace ASCompletion.Completion
             if (rvalue.Length == 0) return;
             var offset = rvalue.Length - rvalue.Value.TrimStart().Length;
             var rvalueStart = lineStartPosition + rvalue.Index + offset;
+            if (local.ContextFunction is {} function)
+            {
+                /**
+                 * for example:
+                 * function foo() {
+                 *   var expr = foo();
+                 *   return expr;
+                 * }
+                 */
+                var p = rvalueStart;
+                if (function.Name == GetWordRight(sci, ref p) && GetCharRight(sci, ref p) == '(')
+                {
+                    // TODO slavara: trace possible stack overflow error
+                    member.Type = function.Type ?? ASContext.Context.Features.voidKey;
+                    member.Flags |= FlagType.Inferred;
+                    return;
+                }
+            }
             InferVariableType(sci, text, rvalueStart, local, member);
         }
 
