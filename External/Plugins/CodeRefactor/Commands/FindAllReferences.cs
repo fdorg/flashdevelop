@@ -94,7 +94,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Invoked as the FRSearch gathers results.
         /// </summary>
-        private void RunnerProgress(int percentDone)
+        static void RunnerProgress(int percentDone)
         {
             // perhaps we should show some progress to the user, especially if there are a lot of files to check...
             UserInterfaceManager.ProgressDialog.UpdateProgress(percentDone);
@@ -133,7 +133,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Filters the initial result set by determining which entries actually resolve back to our declaration target.
         /// </summary>
-        private IDictionary<string, List<SearchMatch>> ResolveActualMatches(FRResults results, ASResult target)
+        IDictionary<string, List<SearchMatch>> ResolveActualMatches(FRResults results, ASResult target)
         {
             // this will hold actual references back to the source member (some result hits could point to different members with the same name)
             var actualMatches = new Dictionary<string, List<SearchMatch>>();
@@ -180,14 +180,12 @@ namespace CodeRefactor.Commands
         }
 
         protected virtual bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
-        {
-            return RefactoringHelper.IsInsideCommentOrString(match, sci, IncludeComments, IncludeStrings);
-        }
+            => RefactoringHelper.IsInsideCommentOrString(match, sci, includeComments, includeStrings);
 
         /// <summary>
         /// Outputs the results to the TraceManager
         /// </summary>
-        private void ReportResults()
+        void ReportResults()
         {
             var groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member is null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
             PluginBase.MainForm.CallCommand("PluginCommand", $"ResultsPanel.ClearResults;{groupData}");
