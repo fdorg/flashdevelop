@@ -38,10 +38,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Creates a search/replace service instance
         /// </summary>
-        public FRRunner()
-        {
-            CreateWorker();
-        }
+        public FRRunner() => CreateWorker();
 
         /// <summary>
         /// Do a synchronous search
@@ -144,9 +141,7 @@ namespace PluginCore.FRService
         /// </summary>
         void CreateWorker()
         {
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerReportsProgress = true;
-            backgroundWorker.WorkerSupportsCancellation = true;
+            backgroundWorker = new BackgroundWorker {WorkerReportsProgress = true, WorkerSupportsCancellation = true};
             backgroundWorker.DoWork += BackgroundWork;
             backgroundWorker.ProgressChanged += BackgroundReport;
             backgroundWorker.RunWorkerCompleted += BackgroundDone;
@@ -212,7 +207,7 @@ namespace PluginCore.FRService
                     // do search
                     var total = files.Count;
                     var lastPercent = 0;
-                    foreach (string file in files)
+                    foreach (var file in files)
                     {
                         if (backgroundWorker.CancellationPending) e.Cancel = true;
                         else
@@ -221,10 +216,9 @@ namespace PluginCore.FRService
                             var src = configuration.GetSource(file);
                             search.SourceFile = file;
                             var matches = search.Matches(src);
-                            results[file] = matches;
-
                             if (matches.Count > 0)
                             {
+                                results[file] = matches;
                                 if (replacement != null)
                                 {
                                     // replace text
