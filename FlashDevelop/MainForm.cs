@@ -455,6 +455,16 @@ namespace FlashDevelop
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
+        public DockContent OpenEditableDocument(string file) => OpenEditableDocument(file, null, true);
+
+        /// <summary>
+        /// Opens the specified file and creates an editable document
+        /// </summary>
+        public DockContent OpenEditableDocument(string file, bool restorePosition) => OpenEditableDocument(file, null, restorePosition);
+
+        /// <summary>
+        /// Opens the specified file and creates an editable document
+        /// </summary>
         public DockContent OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
         {
             var file = PathHelper.GetPhysicalPathName(org);
@@ -507,7 +517,7 @@ namespace FlashDevelop
                 info.Contents = FileHelper.ReadFile(file, encoding);
                 info.CodePage = encoding.CodePage;
             }
-            DataEvent de = new DataEvent(EventType.FileDecode, file, null);
+            var de = new DataEvent(EventType.FileDecode, file, null);
             EventManager.DispatchEvent(this, de); // Lets ask if a plugin wants to decode the data..
             if (de.Handled)
             {
@@ -541,10 +551,6 @@ namespace FlashDevelop
             return createdDoc;
         }
 
-        public DockContent OpenEditableDocument(string file, bool restorePosition) => OpenEditableDocument(file, null, restorePosition);
-
-        public DockContent OpenEditableDocument(string file) => OpenEditableDocument(file, null, true);
-
         #endregion
 
         #region Construct Components
@@ -562,14 +568,14 @@ namespace FlashDevelop
             try
             {
                 // Check for FD update
-                string update = Path.Combine(PathHelper.BaseDir, ".update");
+                var update = Path.Combine(PathHelper.BaseDir, ".update");
                 if (File.Exists(update))
                 {
                     File.Delete(update);
                     RefreshConfig = true;
                 }
                 // Check for appman update
-                string appman = Path.Combine(PathHelper.BaseDir, ".appman");
+                var appman = Path.Combine(PathHelper.BaseDir, ".appman");
                 if (File.Exists(appman))
                 {
                     File.Delete(appman);
@@ -578,12 +584,12 @@ namespace FlashDevelop
                 // Load platform data from user files
                 PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
                 // Load current theme for applying later
-                string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                var currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                 if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                 // Apply FD dir and appman dir to PATH
-                string amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
-                string oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-                string newPath = oldPath + ";" + amPath + ";" + PathHelper.AppDir;
+                var amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
+                var oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+                var newPath = oldPath + ";" + amPath + ";" + PathHelper.AppDir;
                 Environment.SetEnvironmentVariable("PATH", newPath, EnvironmentVariableTarget.Process);
                 // Watch for appman update notifications
                 amWatcher = new FileSystemWatcher(PathHelper.BaseDir, ".appman");
@@ -616,13 +622,15 @@ namespace FlashDevelop
         /// </summary>
         void InitializeRestartButton()
         {
-            restartButton = new ToolStripButton();
-            restartButton.Image = FindImage("73|6|3|3");
-            restartButton.Alignment = ToolStripItemAlignment.Right;
-            restartButton.Text = TextHelper.GetString("Label.Restart");
-            restartButton.ToolTipText = TextHelper.GetString("Info.RequiresRestart");
-            restartButton.Click += delegate { Restart(null, null); };
-            restartButton.Visible = false;
+            restartButton = new ToolStripButton
+            {
+                Image = FindImage("73|6|3|3"),
+                Alignment = ToolStripItemAlignment.Right,
+                Text = TextHelper.GetString("Label.Restart"),
+                ToolTipText = TextHelper.GetString("Info.RequiresRestart"),
+                Visible = false
+            };
+            restartButton.Click += Restart;
             ToolStrip.Items.Add(restartButton);
         }
 
@@ -3628,7 +3636,7 @@ namespace FlashDevelop
             else
             {
                 CallCommand("ExtractZip", dialog.FileName + ";true");
-                string currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                var currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                 if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                 ThemeManager.WalkControls(this);
                 RefreshSciConfig();
@@ -3708,7 +3716,6 @@ namespace FlashDevelop
         public bool CallCommand(string command, string args)
         {
             if (IsDisposed) return false;
-
             try
             {
                 var method = GetType().GetMethod(command);
@@ -3887,9 +3894,9 @@ namespace FlashDevelop
             var file = ProcessArgString(((ItemData)button.Tag).Tag);
             try
             {
-                var host = new Host();
                 var args = file.Split(';');
                 if (args.Length == 1 || string.IsNullOrEmpty(args[1])) return; // no file selected / the open file dialog was cancelled
+                var host = new Host();
                 switch (args[0])
                 {
                     case "Internal":

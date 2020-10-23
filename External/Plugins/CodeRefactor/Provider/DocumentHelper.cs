@@ -17,10 +17,7 @@ namespace CodeRefactor.Provider
         /// already open, this instance will not consider those files to be 
         /// temporary.  Consider this when managing multiple DocumentHelpers.
         /// </summary>
-        public DocumentHelper()
-        {
-            InitiallyOpenedFiles = GetOpenDocuments();
-        }
+        public DocumentHelper() => InitiallyOpenedFiles = GetOpenDocuments();
 
         public bool PreventClosing { get; } = false;
 
@@ -114,14 +111,11 @@ namespace CodeRefactor.Provider
         /// </summary>
         public bool CloseDocument(string fileName)
         {
-            if (FilesOpenedDocumentReferences.ContainsKey(fileName) && !InitiallyOpenedFiles.ContainsKey(fileName))
-            {
-                FilesOpenedDocumentReferences[fileName].Close();
-                FilesOpenedAndUsed.Remove(fileName);
-                FilesOpenedDocumentReferences.Remove(fileName);
-                return true;
-            }
-            return false;
+            if (!FilesOpenedDocumentReferences.ContainsKey(fileName) || InitiallyOpenedFiles.ContainsKey(fileName)) return false;
+            FilesOpenedDocumentReferences[fileName].Close();
+            FilesOpenedAndUsed.Remove(fileName);
+            FilesOpenedDocumentReferences.Remove(fileName);
+            return true;
         }
 
         /// <summary>
@@ -129,23 +123,21 @@ namespace CodeRefactor.Provider
         /// </summary>
         public void CloseTemporarilyOpenedDocuments()
         {
-            if (!PreventClosing)
+            if (PreventClosing) return;
+            // retrieve a list of documents to close
+            var documentsToClose = new List<string>();
+            foreach (var openedAndUsedFile in FilesOpenedAndUsed)
             {
-                // retrieve a list of documents to close
-                var documentsToClose = new List<string>();
-                foreach (var openedAndUsedFile in FilesOpenedAndUsed)
+                // if the value is true, it means the document was flagged as permanent/changed, so we shouldn't close it
+                if (!openedAndUsedFile.Value)
                 {
-                    // if the value is true, it means the document was flagged as permanent/changed, so we shouldn't close it
-                    if (!openedAndUsedFile.Value)
-                    {
-                        documentsToClose.Add(openedAndUsedFile.Key);
-                    }
+                    documentsToClose.Add(openedAndUsedFile.Key);
                 }
-                // close each document
-                foreach (var fileName in documentsToClose)
-                {
-                    CloseDocument(fileName);
-                }
+            }
+            // close each document
+            foreach (var fileName in documentsToClose)
+            {
+                CloseDocument(fileName);
             }
         }
     }

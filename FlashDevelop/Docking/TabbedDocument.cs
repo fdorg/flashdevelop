@@ -219,8 +219,7 @@ namespace FlashDevelop.Docking
             SplitSci1.Dock = DockStyle.Fill;
             SplitSci2 = ScintillaManager.CreateControl(file, text, codepage);
             SplitSci2.Dock = DockStyle.Fill;
-            SplitContainer = new SplitContainer();
-            SplitContainer.Name = "fdSplitView";
+            SplitContainer = new SplitContainer {Name = "fdSplitView"};
             SplitContainer.SplitterWidth = ScaleHelper.Scale(SplitContainer.SplitterWidth);
             SplitContainer.Orientation = Orientation.Horizontal;
             SplitContainer.BackColor = SystemColors.Control;
@@ -280,13 +279,9 @@ namespace FlashDevelop.Docking
         {
             var fileName = FileName;
             fileInfo ??= new FileInfo(fileName);
-            if (!PluginBase.MainForm.ClosingEntirely && File.Exists(fileName))
-            {
-                var fi = new FileInfo(fileName);
-                if (fileInfo.IsReadOnly != fi.IsReadOnly) return true;
-                if (fileInfo.LastWriteTime != fi.LastWriteTime) return true;
-            }
-            return false;
+            if (PluginBase.MainForm.ClosingEntirely || !File.Exists(fileName)) return false;
+            var fi = new FileInfo(fileName);
+            return fileInfo.IsReadOnly != fi.IsReadOnly || fileInfo.LastWriteTime != fi.LastWriteTime;
         }
 
         /// <summary>
@@ -428,8 +423,8 @@ namespace FlashDevelop.Docking
             if (sci is null) return;
             if (showQuestion)
             {
-                string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.AreYouSureToRevert");
+                var dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.AreYouSureToRevert");
                 if (MessageBox.Show(PluginBase.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             var te = new TextEvent(EventType.FileRevert, sci.FileName);
