@@ -4285,32 +4285,50 @@ namespace ASCompletion.Completion
 
         public static char GetCharLeft(ScintillaControl sci, ref int position) => GetCharLeft(sci, true, ref position);
 
+        public static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, int position) => GetCharLeft(sci, skipWhiteSpace, ref position);
+
         public static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
         {
-            while (position >= 0)
+            var result = position - 1;
+            while (result >= 0)
             {
-                if (!sci.PositionIsOnComment(position))
+                if (!sci.PositionIsOnComment(result))
                 {
-                    if (sci.CharAt(position) is var c && (!skipWhiteSpace || c > ' ')) return (char) c;
+                    var c = (char) sci.CharAt(result);
+                    if (!skipWhiteSpace || c > ' ')
+                    {
+                        position = result;
+                        return c;
+                    }
                 }
-                --position;
+                --result;
             }
+            position = -1;
             return ' ';
         }
 
         public static char GetCharRight(ScintillaControl sci,ref int position) => GetCharRight(sci, true, ref position);
 
+        public static char GetCharRight(ScintillaControl sci, bool skipWhiteSpace, int position) => GetCharRight(sci, skipWhiteSpace, ref position);
+
         public static char GetCharRight(ScintillaControl sci, bool skipWhiteSpace, ref int position)
         {
             var length = sci.Length;
-            while (position < length)
+            var result = position;
+            while (result < length)
             {
-                if (!sci.PositionIsOnComment(position))
+                if (!sci.PositionIsOnComment(result))
                 {
-                    if (sci.CharAt(position) is var c && (!skipWhiteSpace || c > ' ')) return (char) c;
+                    var c = (char)sci.CharAt(result);
+                    if (!skipWhiteSpace || c > ' ')
+                    {
+                        position = result;
+                        return c;
+                    }
                 }
-                ++position;
+                ++result;
             }
+            position = -1;
             return ' ';
         }
 
