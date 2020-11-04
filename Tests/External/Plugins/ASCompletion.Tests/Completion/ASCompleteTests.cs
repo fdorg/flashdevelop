@@ -15,7 +15,6 @@ using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
-    [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
         protected static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
@@ -1244,9 +1243,11 @@ namespace ASCompletion.Completion
             }
 
             [Test]
-            [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
+            [
+                TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
                 TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases)),
-                TestCaseSource(nameof(DeleteWhitespaceTestCases))]
+                TestCaseSource(nameof(DeleteWhitespaceTestCases))
+            ]
             public string AS3(string text)
             {
                 SetAs3Features(sci);
@@ -1254,9 +1255,11 @@ namespace ASCompletion.Completion
             }
 
             [Test]
-            [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
+            [
+                TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
                 TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases)),
-                TestCaseSource(nameof(DeleteWhitespaceTestCases)), TestCaseSource(nameof(InsideInterpolationTestCases))]
+                TestCaseSource(nameof(DeleteWhitespaceTestCases)), TestCaseSource(nameof(InsideInterpolationTestCases))
+            ]
             public string Haxe(string text)
             {
                 SetHaxeFeatures(sci);
@@ -1266,8 +1269,8 @@ namespace ASCompletion.Completion
             static string Common(string text, ScintillaControl sci)
             {
                 text = "\n" + text + "\n"; // Surround with new line characters to enable colourisation
-                int cursor = text.IndexOf('+'); // Char before is added
-                bool addedChar = cursor >= 0;
+                var cursor = text.IndexOf('+'); // Char before is added
+                var addedChar = cursor >= 0;
                 if (!addedChar)
                 {
                     cursor = text.IndexOf('-'); // Char before is about to be deleted
@@ -1277,12 +1280,9 @@ namespace ASCompletion.Completion
                 sci.SetSel(cursor, cursor + 1);
                 sci.ReplaceSel("");
                 sci.Colourise(0, -1);
-                int c = addedChar ? sci.CharAt(sci.CurrentPos - 1) : sci.CurrentChar;
+                var c = addedChar ? sci.CharAt(sci.CurrentPos - 1) : sci.CurrentChar;
                 ASComplete.HandleAddClosingBraces(sci, (char) c, addedChar);
-                if (!addedChar)
-                {
-                    sci.DeleteBack(); // Backspace is handled after HandleAddClosingBraces(), so mimic that behaviour
-                }
+                if (!addedChar) sci.DeleteBack(); // Backspace is handled after HandleAddClosingBraces(), so mimic that behaviour
                 return sci.GetTextRange(1, sci.TextLength - 1); // Ignore the surrounding new line characters
             }
         }

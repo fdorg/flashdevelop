@@ -253,6 +253,7 @@
     <Compile Include="ASCompletionTests.cs" />
     <Compile Include="Completion\ASCompleteTests.cs" />
     <Compile Include="Completion\ASGeneratorTests.cs" />
+    <Compile Include="Completion\CodeCompleteTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
