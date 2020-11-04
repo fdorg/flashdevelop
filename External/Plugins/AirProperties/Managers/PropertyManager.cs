@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using PluginCore;
@@ -16,7 +17,7 @@ namespace AirProperties
         static XmlNamespaceManager _namespaceManager;
         static XmlNode _rootNode;
         const string _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        const string _MaxSupportedVersion = "33.0";
+        const string _MaxSupportedVersion = "33.1";
 
         public enum AirVersion
         {
@@ -60,6 +61,7 @@ namespace AirProperties
             V310 = 42,  // Version 31.0
             V320 = 43,  // Version 32.0
             V330 = V320,// Version 33.0
+            V331 = 44,  // Version 33.1
         }
 
         public static Exception LastException { get; private set; }
@@ -129,11 +131,12 @@ namespace AirProperties
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "31.0")) MajorVersion = AirVersion.V310;
                 //else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "32.0")) MajorVersion = AirVersion.V320;
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "32.0")) MajorVersion = AirVersion.V330;
+                else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "33.1")) MajorVersion = AirVersion.V331;
                 else
                 {
                     // Is a valid AIR descriptor, but version not supported so default to max supported version
                     IsUnsupportedVersion = true;
-                    MajorVersion = AirVersion.V330;
+                    MajorVersion = AirVersion.V331;
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
                 _namespaceManager.AddNamespace("air", _rootNode.NamespaceURI);
@@ -163,10 +166,7 @@ namespace AirProperties
             return result;
         }
 
-        public static void GetAttribute(string attribute, TextBox field)
-        {
-            field.Text = GetAttribute(attribute);
-        }
+        public static void GetAttribute(string attribute, TextBox field) => field.Text = GetAttribute(attribute);
 
         public static string GetAttribute(string attribute)
         {
@@ -272,7 +272,7 @@ namespace AirProperties
 
         public static void GetProperty(string property, ComboBox field, int defaultIndex)
         {
-            bool foundListItem = false;
+            var foundListItem = false;
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
@@ -403,10 +403,7 @@ namespace AirProperties
             return result;
         }
 
-        public static void SetProperty(string property, TextBox field, string locale)
-        {
-            SetProperty(property, field, locale, false);
-        }
+        public static void SetProperty(string property, TextBox field, string locale) => SetProperty(property, field, locale, false);
 
         public static void SetProperty(string property, TextBox field, string locale, bool isDefaultLocale)
         {
@@ -825,10 +822,7 @@ namespace AirProperties
             {
                 get
                 {
-                    foreach (var icon in Icons)
-                    {
-                        if (!icon.IsValid) return false;
-                    }
+                    if (Icons.Any(icon => !icon.IsValid)) return false;
                     return NameIsValid && ExtensionIsValid && DescriptionIsValid && ContentTypeIsValid;
                 }
             }
