@@ -114,5 +114,35 @@ namespace ASCompletion.Completion
             SetSrc(sci, text);
             return ASComplete.GetWordLeft(sci, sci.CurrentPos);
         }
+
+        static IEnumerable<TestCaseData> Issue3087GetWordRightTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("$(EntryPoint)word")
+                    .SetName("|word. Issue 3085. Case 1")
+                    .Returns("word")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3087");
+                yield return new TestCaseData("$(EntryPoint) word")
+                    .SetName("| word. Issue 3085. Case 2")
+                    .Returns("word")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3087");
+                yield return new TestCaseData("$(EntryPoint)     word")
+                    .SetName("|     word. Issue 3085. Case 3")
+                    .Returns("word")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3087");
+                yield return new TestCaseData("word2$(EntryPoint) word")
+                    .SetName("word2| word. Issue 3085. Case 4")
+                    .Returns("word")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3087");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(Issue3087GetWordRightTestCases))]
+        public string GetWordRight(string text)
+        {
+            SetSrc(sci, text);
+            return ASComplete.GetWordRight(sci, sci.CurrentPos);
+        }
     }
 }
