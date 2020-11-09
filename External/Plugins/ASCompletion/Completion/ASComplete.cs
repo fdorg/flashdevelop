@@ -334,16 +334,17 @@ namespace ASCompletion.Completion
                 || !ASContext.Context.Features.hasEcmaTyping
                 || ASContext.CommonSettings.AlwaysCompleteWordLength <= 0) return;
             // fire completion if starting to write a word
-            int n = ASContext.CommonSettings.AlwaysCompleteWordLength;
-            int wordStart = sci.WordStartPosition(position, true);
+            var n = ASContext.CommonSettings.AlwaysCompleteWordLength;
+            var wordStart = sci.WordStartPosition(position, true);
             if (position - wordStart != n) return;
-            char c = (char)sci.CharAt(wordStart);
-            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            if (char.IsDigit(c) || !characterClass.Contains(c)) return;
+            var c = (char)sci.CharAt(wordStart);
+            if (char.IsDigit(c)) return;
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            if (!characterClass.Contains(c)) return;
             // give a guess to the context (do not complete where it should not)
-            int pos = wordStart - 1;
-            bool hadWS = false;
-            bool canComplete = false;
+            var pos = wordStart - 1;
+            var hadWS = false;
+            var canComplete = false;
             while (pos > 0)
             {
                 c = (char) sci.CharAt(pos--);
@@ -2276,7 +2277,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                bool outOfDate = ctx.UnsetOutOfDate();
+                var outOfDate = ctx.UnsetOutOfDate();
                 // list visible classes
                 var known = GetVisibleElements();
                 var list = known.Select(member => new MemberItem(member)).ToList<ICompletionListItem>();
@@ -2409,7 +2410,7 @@ namespace ASCompletion.Completion
             if (word.Length == 0)
             {
                 var c = (char)sci.CharAt(pos);
-                if (c == ':' && features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
+                if (c == ':' && features.hasEcmaTyping) return HandleColonCompletion(sci, string.Empty, autoHide);
                 if (c == ',')
                 {
                     var currentClass = ctx.CurrentClass;
@@ -4379,15 +4380,16 @@ namespace ASCompletion.Completion
                     {
                         if (c == ':' || c == ',')
                         {
-                            genType = new MemberModel();
-                            genType.Name = sb.ToString();
-                            genType.Type = sb.ToString();
-                            genType.Flags = FlagType.TypeDef;
+                            genType = new MemberModel
+                            {
+                                Name = sb.ToString(),
+                                Type = sb.ToString(),
+                                Flags = FlagType.TypeDef
+                            };
                             inConstraint = c == ':';
                             result ??= new MemberList();
                             result.Add(genType);
                             sb.Length = 0;
-
                             continue;
                         }
                         if (char.IsWhiteSpace(c)) continue;
