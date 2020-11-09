@@ -277,12 +277,14 @@ namespace ASCompletion.Completion
                 if (!ASContext.HasContext
                     || !ASContext.Context.IsFileValid
                     || ASContext.Context.Settings.LazyClasspathExploration) return false;
-                var position = sci.CurrentPos - 1;
-                var tail = GetWordLeft(sci, ref position);
-                var features = ASContext.Context.Features;
-                if (!tail.Contains(features.dot) && features.HasTypePreKey(tail)) tail = "";
+                var word = GetWordLeft(sci, sci.CurrentPos - 1);
+                if (word.Length > 0)
+                {
+                    var features = ASContext.Context.Features;
+                    if (!word.Contains(features.dot) && features.HasTypePreKey(word)) word = "";
+                }
                 // display the full project classes list
-                HandleAllClassesCompletion(sci, tail, false, true);
+                HandleAllClassesCompletion(sci, word, false, true);
                 return true;
             }
             // hot build
@@ -4307,7 +4309,7 @@ namespace ASCompletion.Completion
             return ' ';
         }
 
-        public static char GetCharRight(ScintillaControl sci,ref int position) => GetCharRight(sci, true, ref position);
+        public static char GetCharRight(ScintillaControl sci, ref int position) => GetCharRight(sci, true, ref position);
 
         public static char GetCharRight(ScintillaControl sci, bool skipWhiteSpace, int position) => GetCharRight(sci, skipWhiteSpace, ref position);
 

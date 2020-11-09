@@ -127,7 +127,7 @@ namespace HaXeContext.Completion
                         && member.Flags.HasFlag(FlagType.Function) && member.Flags.HasFlag((FlagType) HaxeFlagType.Macro))
                     {
                         // for example: $a<complete>
-                        if (value != '$' && !string.IsNullOrEmpty(GetWordLeft(sci, ref currentPos))) value = (char) sci.CharAt(currentPos);
+                        if (value != '$' && GetWordLeft(sci, ref currentPos).Length > 0) value = (char) sci.CharAt(currentPos);
                         if (value == '$')
                         {
                             // for example: var $<complete>
@@ -1086,7 +1086,7 @@ namespace HaXeContext.Completion
                     {
                         var p = expr.PositionExpression - 1;
                         wordBefore = GetWordLeft(sci, ref p);
-                        if (!string.IsNullOrEmpty(wordBefore)) expr.WordBeforePosition = p;
+                        if (wordBefore.Length > 0) expr.WordBeforePosition = p;
                     }
                     var isUntyped = wordBefore == "untyped";
                     if (isUntyped || wordBefore == "new") wordBefore = GetWordLeft(sci, expr.WordBeforePosition - 1);
