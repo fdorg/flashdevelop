@@ -131,7 +131,7 @@ namespace HaXeContext.Completion
                         if (value == '$')
                         {
                             // for example: var $<complete>
-                            if (GetWordLeft(sci, ref currentPos) == "var") return false;
+                            if (GetWordLeft(sci, currentPos) == "var") return false;
                             // TODO slavara: handle object.$<complete>
                             return HandleExpressionReificationCompletion(sci, autoHide);
                         }
@@ -174,7 +174,7 @@ namespace HaXeContext.Completion
             {
                 var pos = position - 1;
                 wordLeft = GetWordLeft(sci, ref pos);
-                if (string.IsNullOrEmpty(wordLeft))
+                if (wordLeft.Length == 0)
                 {
                     var c = (char) sci.CharAt(pos--);
                     if (c == '=') return HandleAssignCompletion(sci, pos, autoHide);
