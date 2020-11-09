@@ -2341,7 +2341,7 @@ namespace ASCompletion.Completion
                     keyword = GetWordLeft(sci, ref position);
                 }
                 if (keyword == features.functionKey) return ComaExpression.FunctionDeclaration;
-                keyword = GetWordLeft(sci, ref position);
+                keyword = GetWordLeft(sci, position);
                 if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
                     return ComaExpression.FunctionDeclaration;
                 if (ctx.CurrentModel.haXe
@@ -2351,11 +2351,10 @@ namespace ASCompletion.Completion
                 return ComaExpression.None;
             }
             // config constant, or namespace access
-            if (string.IsNullOrEmpty(keyword) && position > 0 && (char)sci.CharAt(position) == ':')
+            if (autoHide && string.IsNullOrEmpty(keyword) && position > 0 && (char)sci.CharAt(position) == ':')
             {
-                var pos = position - 1;
-                keyword = GetWordLeft(sci, ref pos);
-                if (string.IsNullOrEmpty(keyword) && autoHide) return ComaExpression.None;
+                keyword = GetWordLeft(sci, position - 1);
+                if (keyword.Length == 0) return ComaExpression.None;
             }
             return DisambiguateComa(sci, position, 0);
         }
