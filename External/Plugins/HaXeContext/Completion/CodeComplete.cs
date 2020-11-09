@@ -20,16 +20,13 @@ namespace HaXeContext.Completion
     class CodeComplete : ASComplete
     {
         protected override bool IsAvailable(IASContext ctx, bool autoHide)
-        {
-            return base.IsAvailable(ctx, autoHide) && (!autoHide || ((HaXeSettings)ctx.Settings).DisableCompletionOnDemand);
-        }
+            => base.IsAvailable(ctx, autoHide)
+               && (!autoHide || ((HaXeSettings)ctx.Settings).DisableCompletionOnDemand);
 
         /// <inheritdoc />
         protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
-        {
-            return base.IsAvailableForToolTip(sci, position)
-                   || (sci.GetWordFromPosition(position) is { } word && (word == "cast" || word == "new"));
-        }
+            => base.IsAvailableForToolTip(sci, position)
+               || (sci.GetWordFromPosition(position) is { } word && (word == "cast" || word == "new"));
 
         /// <summary>
         /// Whether the character at the position is inside of the
@@ -61,10 +58,8 @@ namespace HaXeContext.Completion
         }
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
-        {
-            return base.IsRegexStyle(sci, position)
-                   || (sci.BaseStyleAt(position) == 10 && sci.CharAt(position) == '~' && sci.CharAt(position + 1) == '/');
-        }
+            => base.IsRegexStyle(sci, position)
+               || (sci.BaseStyleAt(position) == 10 && sci.CharAt(position) == '~' && sci.CharAt(position + 1) == '/');
 
         /// <summary>
         /// Returns whether or not position is inside of an expression block in String interpolation ('${expr}')
@@ -111,11 +106,11 @@ namespace HaXeContext.Completion
                     break;
                 case '>':
                     // for example: SomeType-><complete>
-                    if (prevValue == '-' && IsType(currentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                    if (prevValue == '-' && IsType(sci, currentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
                 case '(':
                     // for example: SomeType->(<complete>
-                    if (prevValue == '>' && (currentPos - 3) is { } p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
+                    if (prevValue == '>' && (currentPos - 3) is { } p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(sci, p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     // for example: someFunction(<complete>
                     if (HandleFunctionCompletion(sci, currentPos, autoHide)) return false;
@@ -127,11 +122,11 @@ namespace HaXeContext.Completion
                         && member.Flags.HasFlag(FlagType.Function) && member.Flags.HasFlag((FlagType) HaxeFlagType.Macro))
                     {
                         // for example: $a<complete>
-                        if (value != '$' && !string.IsNullOrEmpty(GetWordLeft(sci, ref currentPos))) value = (char) sci.CharAt(currentPos);
+                        if (value != '$' && GetWordLeft(sci, ref currentPos).Length > 0) value = (char) sci.CharAt(currentPos);
                         if (value == '$')
                         {
                             // for example: var $<complete>
-                            if (GetWordLeft(sci, ref currentPos) == "var") return false;
+                            if (GetWordLeft(sci, currentPos) == "var") return false;
                             // TODO slavara: handle object.$<complete>
                             return HandleExpressionReificationCompletion(sci, autoHide);
                         }
@@ -140,7 +135,7 @@ namespace HaXeContext.Completion
             }
             return false;
             // Utils
-            bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is { } t && !t.IsVoid();
+            static bool IsType(ScintillaControl sci, int position) => GetExpressionType(sci, position, false, true).Type is { } t && !t.IsVoid();
         }
 
         protected override bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword, List<ICompletionListItem> list)
@@ -174,7 +169,7 @@ namespace HaXeContext.Completion
             {
                 var pos = position - 1;
                 wordLeft = GetWordLeft(sci, ref pos);
-                if (string.IsNullOrEmpty(wordLeft))
+                if (wordLeft.Length == 0)
                 {
                     var c = (char) sci.CharAt(pos--);
                     if (c == '=') return HandleAssignCompletion(sci, pos, autoHide);
@@ -538,9 +533,7 @@ namespace HaXeContext.Completion
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
-        {
-            LocateMember(sci, line, $"{keyword ?? ""}\\s*(\\?)?(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
-        }
+            => LocateMember(sci, line, $"{keyword ?? ""}\\s*(\\?)?(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
 
         protected override void ParseLocalVars(ASExpr expression, FileModel model)
         {
@@ -1086,7 +1079,7 @@ namespace HaXeContext.Completion
                     {
                         var p = expr.PositionExpression - 1;
                         wordBefore = GetWordLeft(sci, ref p);
-                        if (!string.IsNullOrEmpty(wordBefore)) expr.WordBeforePosition = p;
+                        if (wordBefore.Length > 0) expr.WordBeforePosition = p;
                     }
                     var isUntyped = wordBefore == "untyped";
                     if (isUntyped || wordBefore == "new") wordBefore = GetWordLeft(sci, expr.WordBeforePosition - 1);
@@ -1760,7 +1753,7 @@ namespace HaXeContext.Completion
                     if (braCount < 0)
                     {
                         var expr = GetExpressionType(sci, position, false, true);
-                        var list = GetCompletionList(expr);
+                        var list = GetCompletionList(ctx, expr);
                         if (list != null)
                         {
                             if (expr.Member.Type.StartsWithOrdinal("Null<")) list.Insert(0, new DeclarationItem("null"));
@@ -1775,7 +1768,7 @@ namespace HaXeContext.Completion
             }
             return false;
             // Utils
-            List<ICompletionListItem> GetCompletionList(ASResult expr)
+            static List<ICompletionListItem> GetCompletionList(IASContext ctx, ASResult expr)
             {
                 if (expr.Member is { } m && m.Type is { } typeName)
                 {
