@@ -3481,7 +3481,7 @@ namespace ASCompletion.Completion
                                 var pos = position - 1;
                                 var word = GetWordLeft(sci, ref pos);
                                 // for example: return [].<complete>
-                                if (features.codeKeywords.Contains(word))
+                                if (word.Length > 0 && features.codeKeywords.Contains(word))
                                 {
                                     expression.Separator = ";";
                                     expression.WordBefore = word;
@@ -3556,7 +3556,7 @@ namespace ASCompletion.Completion
                                 var pos = position - 1;
                                 var word = GetWordLeft(sci, ref pos);
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
-                                if (word != "new" && word != "trace" && features.codeKeywords.Contains(word))
+                                if (word.Length > 0 && word != "new" && word != "trace" && features.codeKeywords.Contains(word))
                                 {
                                     expression.Separator = ";";
                                     expression.WordBefore = word;
@@ -3570,11 +3570,12 @@ namespace ASCompletion.Completion
                                 expression.Separator = ";";
                                 var testPos = position - 1;
                                 var testWord = GetWordLeft(sci, ref testPos); // anonymous function
-                                var pos = testPos;
-                                var testWord2 = GetWordLeft(sci, ref pos); // regular function
-                                if (testWord == features.functionKey || testWord == "catch"
+                                var testWord2 = GetWordLeft(sci, testPos); // regular function
+                                if (testWord == features.functionKey
+                                    || testWord == "catch"
                                     || testWord2 == features.functionKey
-                                    || testWord2 == features.getKey || testWord2 == features.setKey)
+                                    || testWord2 == features.getKey
+                                    || testWord2 == features.setKey)
                                 {
                                     expression.Separator = ",";
                                     expression.coma = ComaExpression.FunctionDeclaration;
@@ -4007,10 +4008,10 @@ namespace ASCompletion.Completion
                     {
                         position--;
                         var word1 = GetWordLeft(sci, ref position);
-                        c = (word1.Length > 0) ? word1[word1.Length - 1] : (char) sci.CharAt(position);
+                        c = word1.Length > 0 ? word1[word1.Length - 1] : (char) sci.CharAt(position);
                         if (":,(=".Contains(c))
                         {
-                            string line = sci.GetLine(sci.LineFromPosition(position));
+                            var line = sci.GetLine(sci.LineFromPosition(position));
                             //TODO: Very limited check, the case|default could be in a previous line, or it could be something else in the same line
                             if (Regex.IsMatch(line, @"\b(case|default)\b.*:")) break; // case: code block
                             if (c == ':' && sci.ConfigurationLanguage == "haxe")
@@ -4040,8 +4041,8 @@ namespace ASCompletion.Completion
                         {
                             // Possible anonymous structure optional field. Check we are not in a ternary operator
                             position--;
-                            string word1 = GetWordLeft(sci, ref position);
-                            c = (word1.Length > 0) ? word1[word1.Length - 1] : (char) sci.CharAt(position);
+                            var word1 = GetWordLeft(sci, ref position);
+                            c = word1.Length > 0 ? word1[word1.Length - 1] : (char) sci.CharAt(position);
                             if (c == ',' || c == '{') return coma;
                         }
                     }
@@ -4054,7 +4055,7 @@ namespace ASCompletion.Completion
 
         /// <summary>
         /// Parse function body for local var definitions
-        /// TODO  ASComplete: parse coma separated local vars definitions
+        /// TODO ASComplete: parse coma separated local vars definitions
         /// </summary>
         /// <param name="expression">Expression source</param>
         /// <returns>Local vars dictionary (name, type)</returns>
@@ -4500,15 +4501,12 @@ namespace ASCompletion.Completion
         static MemberList GetVisibleElements()
         {
             var result = ASContext.Context.GetVisibleExternalElements();
-            if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
+            if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid()
+                && GetVisibleTypeParameters() is { } @params && @params.Count > 0)
             {
-                var @params = GetVisibleTypeParameters();
-                if (!@params.IsNullOrEmpty())
-                {
-                    @params.Sort();
-                    @params.Merge(result);
-                    result = @params;
-                }
+                @params.Sort();
+                @params.Merge(result);
+                return @params;
             }
             return result;
         }
@@ -4544,17 +4542,11 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        static bool IsMatchingQuote(char quote, int style)
-        {
-            return quote == '"' && IsStringStyle(style) || quote == '\'' && IsCharStyle(style);
-        }
+        static bool IsMatchingQuote(char quote, int style) => quote == '"' && IsStringStyle(style) || quote == '\'' && IsCharStyle(style);
 
         protected virtual bool IsMetadataArgument(ScintillaControl sci, int position) => false;
 
-        static bool IsXmlType(ClassModel model)
-        {
-            return model != null && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
-        }
+        static bool IsXmlType(ClassModel model) => model != null && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
 
         public static int ExpressionEndPosition(ScintillaControl sci, int position) => ExpressionEndPosition(sci, position, false);
 
@@ -4569,8 +4561,7 @@ namespace ASCompletion.Completion
 
         public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos, bool skipWhiteSpace)
         {
-            var wordStartPosition = sci.WordStartPosition(startPos, true) - 1;
-            var word = GetWordLeft(sci, ref wordStartPosition);
+            var word = GetWordLeft(sci, sci.WordStartPosition(startPos, true) - 1);
             var ctx = ASContext.Context;
             if (ctx.Features.declKeywords.Contains(word) || ctx.Features.typesKeywords.Contains(word)) return sci.WordEndPosition(startPos, true);
             var isInStringInterpolation = ctx.CodeComplete.IsStringInterpolationStyle(sci, startPos);
