@@ -91,7 +91,6 @@ namespace ProjectManager
             help.LinkClicked += link_LinkClicked;
             help.Dock = DockStyle.Fill;
             help.TextAlign = ContentAlignment.MiddleCenter;
-            help.ContextMenu = new ContextMenu();
 
             #endregion
 
