@@ -367,7 +367,7 @@ namespace FileExplorer
             // Prevent double call caused by AddToMRU
             if (updateInProgress) return;
             updateInProgress = true;
-            fileView.ContextMenu = null;
+            fileView.ContextMenuStrip = null;
             syncronizeButton.Enabled = false;
             browseButton.Enabled = false;
             selectedPath.Enabled = false;
