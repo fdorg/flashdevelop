@@ -4,11 +4,7 @@ namespace ProjectManager.Projects.Haxe
     {
         readonly HaxeProject project;
 
-        public HaxeProjectWriter(Project project, string filename)
-            : base(project, filename)
-        {
-            this.project = Project as HaxeProject;
-        }
+        public HaxeProjectWriter(Project project, string filename) : base(project, filename) => this.project = Project as HaxeProject;
 
         protected override void OnAfterWriteClasspaths()
         {
@@ -20,7 +16,7 @@ namespace ProjectManager.Projects.Haxe
         {
             WriteComment(" haxelib libraries ");
             WriteStartElement("haxelib");
-            string[] list = project.CompilerOptions.Libraries;
+            var list = project.CompilerOptions.Libraries;
             if (list.Length > 0)
             {
                 foreach (string name in list)

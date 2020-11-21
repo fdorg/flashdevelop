@@ -9,11 +9,7 @@ namespace ProjectManager.Projects.AS3
     {
         readonly AS3Project project;
 
-        public AS3ProjectReader(string filename)
-            : base(filename, new AS3Project(filename))
-        {
-            project = Project as AS3Project;
-        }
+        public AS3ProjectReader(string filename) : base(filename, new AS3Project(filename)) => project = Project as AS3Project;
 
         public new AS3Project ReadProject() => base.ReadProject() as AS3Project;
 
@@ -25,6 +21,7 @@ namespace ProjectManager.Projects.AS3
             // import FD3 project
             if (project.MovieOptions.MajorVersion > 10)
             {
+                // TODO slavara: actualize for last FP
                 project.MovieOptions.MajorVersion = 10;
                 project.MovieOptions.MinorVersion = 1;
             }
@@ -38,6 +35,7 @@ namespace ProjectManager.Projects.AS3
                     add = Regex.Replace(add, "(\\+)?configname=air", "");
                     project.CompilerOptions.Additional = add.Trim().Replace("\n\n", "\n").Split('\n');
                     project.MovieOptions.Platform = "AIR";
+                    // TODO slavara: actualize for last AIR
                     project.MovieOptions.MajorVersion = 2;
                     project.MovieOptions.MinorVersion = 0;
                     project.Save();
@@ -62,30 +60,15 @@ namespace ProjectManager.Projects.AS3
                 }
         }
 
-        private void ReadIntrinsicPaths()
-        {
-            project.CompilerOptions.IntrinsicPaths = ReadLibrary("intrinsics", SwfAssetMode.Ignore);
-        }
+        private void ReadIntrinsicPaths() => project.CompilerOptions.IntrinsicPaths = ReadLibrary("intrinsics", SwfAssetMode.Ignore);
 
-        private void ReadRSLPaths()
-        {
-            project.CompilerOptions.RSLPaths = ReadLibrary("rslPaths", SwfAssetMode.Ignore);
-        }
+        private void ReadRSLPaths() => project.CompilerOptions.RSLPaths = ReadLibrary("rslPaths", SwfAssetMode.Ignore);
 
-        private void ReadExternalLibraryPaths()
-        {
-            project.CompilerOptions.ExternalLibraryPaths = ReadLibrary("externalLibraryPaths", SwfAssetMode.ExternalLibrary);
-        }
+        private void ReadExternalLibraryPaths() => project.CompilerOptions.ExternalLibraryPaths = ReadLibrary("externalLibraryPaths", SwfAssetMode.ExternalLibrary);
 
-        private void ReadLibrayPath()
-        {
-            project.CompilerOptions.LibraryPaths = ReadLibrary("libraryPaths", SwfAssetMode.Library);
-        }
+        private void ReadLibrayPath() => project.CompilerOptions.LibraryPaths = ReadLibrary("libraryPaths", SwfAssetMode.Library);
 
-        private void ReadIncludeLibraries()
-        {
-            project.CompilerOptions.IncludeLibraries = ReadLibrary("includeLibraries", SwfAssetMode.IncludedLibrary);
-        }
+        private void ReadIncludeLibraries() => project.CompilerOptions.IncludeLibraries = ReadLibrary("includeLibraries", SwfAssetMode.IncludedLibrary);
 
         private string[] ReadLibrary(string name, SwfAssetMode mode)
         {

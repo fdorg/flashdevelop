@@ -73,18 +73,16 @@ namespace ProjectManager.Helpers
         void process_Exited(object sender, EventArgs e) => throw new Exception("Process Exited");
 
         public void Compile(string projectPath,
-                            bool configChanged,
                             string arguments,
                             out string output,
                             out string[] errors,
                             out string[] warnings,
                             string jvmarg)
         {
-            Compile(projectPath, configChanged, arguments, out output, out errors, out warnings, jvmarg, "java.exe" /*or JvmConfigHelper.GetJavaEXE( null )*/ );
+            Compile(projectPath, arguments, out output, out errors, out warnings, jvmarg, "java.exe" /*or JvmConfigHelper.GetJavaEXE( null )*/ );
         }
 
         public void Compile(string projectPath,
-                            bool configChanged,
                             string arguments,
                             out string output,
                             out string[] errors,
@@ -151,7 +149,7 @@ namespace ProjectManager.Helpers
                 // force a fresh compile
                 lastCompileID = 0;
                 lastArguments = null;
-                Compile(projectPath, true, arguments, out output, out errors, out warnings, jvmarg, javaExe);
+                Compile(projectPath, arguments, out output, out errors, out warnings, jvmarg, javaExe);
                 return;
             }
 

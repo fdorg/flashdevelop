@@ -6,11 +6,7 @@ namespace ProjectManager.Projects.AS3
     {
         readonly AS3Project project;
 
-        public AS3ProjectWriter(Project project, string filename)
-            : base(project, filename)
-        {
-            this.project = Project as AS3Project;
-        }
+        public AS3ProjectWriter(Project project, string filename) : base(project, filename) => this.project = Project as AS3Project;
 
         protected override void OnAfterWriteClasspaths()
         {
@@ -93,13 +89,10 @@ namespace ProjectManager.Projects.AS3
             WriteOption("linkReport", options.LinkReport);
             WriteOption("loadExterns", options.LoadExterns);
             WriteOption("staticLinkRSL", options.StaticLinkRSL);
-
             WriteOption("additional", string.Join("\n", options.Additional));
             WriteOption("compilerConstants", string.Join("\n", options.CompilerConstants));
             WriteOption("minorVersion", options.MinorVersion);
-
             WriteNamespaces(options);
-
             WriteEndElement();
         }
 
@@ -117,16 +110,11 @@ namespace ProjectManager.Projects.AS3
             foreach (var ns in options.Namespaces)
             {
                 if (string.IsNullOrEmpty(ns.Uri) || string.IsNullOrEmpty(ns.Manifest)) continue;
-
                 string relPath = project.GetRelativePath(ns.Manifest);
-
                 namespaces.Append(ns.Uri).Append('\n').Append(relPath).Append('\n');
             }
-
             if (namespaces.Length == 0) return;
-            
             namespaces.Remove(namespaces.Length - 1, 1);
-
             WriteOption("namespaces", namespaces.ToString());
         }
     }
