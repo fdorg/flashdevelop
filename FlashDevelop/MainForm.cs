@@ -192,7 +192,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the CurrentDocument
         /// </summary>
-        public ITabbedDocument CurrentDocument => DockPanel.ActiveDocument as ITabbedDocument;
+        public ITabbedDocument? CurrentDocument => DockPanel.ActiveDocument as ITabbedDocument;
 
         /// <summary>
         /// Is FlashDevelop closing?
@@ -2822,11 +2822,9 @@ namespace FlashDevelop
         {
             try
             {
-                string zipLog = string.Empty;
                 string zipFile = string.Empty;
                 bool requiresRestart = false;
                 bool silentRemove = Silent;
-                var removeDirs = new List<string>();
                 var button = (ToolStripItem)sender;
                 var chunks = ((ItemData)button.Tag).Tag.Split(';');
                 if (chunks.Length > 1)
@@ -2836,6 +2834,8 @@ namespace FlashDevelop
                 }
                 else zipFile = chunks[0];
                 if (!File.Exists(zipFile)) return; // Skip missing file...
+                var zipLog = string.Empty;
+                var removeDirs = new List<string>();
                 string caption = TextHelper.GetString("Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.ZipConfirmRemove") + "\n" + zipFile;
                 if (silentRemove || MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
@@ -2900,13 +2900,8 @@ namespace FlashDevelop
             }
         }
 
-        static bool DirIsImportant(string dir)
-        {
-            var full = Path.GetDirectoryName(dir);
-            return full == PathHelper.UserPluginDir
-                || full == PathHelper.UserLibraryDir
-                || full == PathHelper.UserProjectsDir;
-        }
+        static bool DirIsImportant(string dir) => Path.GetDirectoryName(dir) is { } full
+                && (full == PathHelper.UserPluginDir || full == PathHelper.UserLibraryDir || full == PathHelper.UserProjectsDir);
 
         /// <summary>
         /// Opens the browser with the specified file
@@ -2994,7 +2989,8 @@ namespace FlashDevelop
         /// </summary>
         public void ClearBookmarks(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             sci.MarkerDeleteAll(0);
             UITools.Manager.MarkerChanged(sci, -1);
             ButtonManager.UpdateFlaggedButtons();
@@ -3007,9 +3003,9 @@ namespace FlashDevelop
         {
             try
             {
-                var button = (ToolStripItem)sender;
-                var sci = CurrentDocument.SciControl;
-                var eolMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
+                var eolMode = Convert.ToInt32(((ItemData)((ToolStripItem)sender).Tag).Tag);
                 sci.ConvertEOLs(eolMode);
                 sci.EOLMode = eolMode;
                 OnScintillaControlUpdateControl(sci);
@@ -3033,10 +3029,9 @@ namespace FlashDevelop
         {
             try
             {
-                var button = (ToolStripItem)sender;
-                var settingKey = ((ItemData)button.Tag).Tag;
-                var value = (bool)AppSettings.GetValue(settingKey);
-                AppSettings.SetValue(settingKey, !value);
+                var key = ((ItemData)((ToolStripItem)sender).Tag).Tag;
+                var value = (bool)AppSettings.GetValue(key);
+                AppSettings.SetValue(key, !value);
                 ApplyAllSettings();
             }
             catch (Exception ex)
@@ -3052,9 +3047,9 @@ namespace FlashDevelop
         {
             try
             {
-                var button = (ToolStripItem)sender;
-                var sci = CurrentDocument.SciControl;
-                var encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
+                var encMode = Convert.ToInt32(((ItemData)((ToolStripItem)sender).Tag).Tag);
                 sci.Encoding = Encoding.GetEncoding(encMode);
                 OnScintillaControlUpdateControl(sci);
                 OnDocumentModify(CurrentDocument);
@@ -3069,7 +3064,8 @@ namespace FlashDevelop
         {
             try
             {
-                var sci = CurrentDocument.SciControl;
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 sci.SaveBOM = !sci.SaveBOM;
                 OnScintillaControlUpdateControl(sci);
                 OnDocumentModify(CurrentDocument);
@@ -3087,9 +3083,10 @@ namespace FlashDevelop
         {
             try
             {
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 var button = (ToolStripItem)sender;
                 var encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                var sci = CurrentDocument.SciControl;
                 var curMode = sci.Encoding.CodePage; // From current..
                 var converted = DataConverter.ChangeEncoding(sci.Text, curMode, encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
@@ -3110,7 +3107,7 @@ namespace FlashDevelop
         {
             try
             {
-                string word = (((ItemData)((ToolStripItem)sender).Tag).Tag);
+                string word = ((ItemData)((ToolStripItem)sender).Tag).Tag;
                 SnippetManager.InsertTextByWord(word != "null" ? word : null);
             }
             catch (Exception ex)
@@ -3147,9 +3144,10 @@ namespace FlashDevelop
         {
             try
             {
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 bool hasPrefix = true;
                 bool isAsterisk = false;
-                var sci = CurrentDocument.SciControl;
                 if (sci.SelTextSize > 0)
                 {
                     var selText = sci.SelText;
@@ -3196,7 +3194,8 @@ namespace FlashDevelop
         {
             try
             {
-                var sci = CurrentDocument.SciControl;
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 var fileInfo = new FileInfo(sci.FileName);
                 var message = TextHelper.GetString("Info.FileDetails");
                 var newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
@@ -3221,10 +3220,12 @@ namespace FlashDevelop
         {
             try
             {
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 var button = (ToolStripItem)sender;
                 var date = (((ItemData)button.Tag).Tag);
                 var currentDate = DateTime.Now.ToString(date);
-                CurrentDocument.SciControl.ReplaceSel(currentDate);
+                sci.ReplaceSel(currentDate);
             }
             catch (Exception ex)
             {
@@ -3239,10 +3240,11 @@ namespace FlashDevelop
         {
             try
             {
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 var button = (ToolStripItem)sender;
                 var file = ProcessArgString(((ItemData)button.Tag).Tag);
                 if (!File.Exists(file)) return;
-                var sci = CurrentDocument.SciControl;
                 var to = sci.Encoding;
                 var info = FileHelper.GetEncodingFileInfo(file);
                 if (info.CodePage == -1) return; // If the file is locked, stop.
@@ -3262,9 +3264,10 @@ namespace FlashDevelop
         {
             try
             {
+                var sci = CurrentDocument?.SciControl;
+                if (sci is null) return;
                 var button = (ToolStripItem)sender;
                 var language = ((ItemData) button.Tag).Tag;
-                var sci = CurrentDocument.SciControl;
                 if (sci.ConfigurationLanguage.Equals(language)) return; // already using this syntax
                 ScintillaManager.ChangeSyntax(language, sci);
                 var extension = sci.GetFileExtension();
@@ -3287,7 +3290,8 @@ namespace FlashDevelop
         /// </summary>
         public void SortLines(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             int curLine = sci.LineFromPosition(sci.SelectionStart);
             int endLine = sci.LineFromPosition(sci.SelectionEnd);
             var lines = new List<string>();
@@ -3312,7 +3316,8 @@ namespace FlashDevelop
         /// </summary>
         public void SortLineGroups(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             var curLine = sci.LineFromPosition(sci.SelectionStart);
             var endLine = sci.LineFromPosition(sci.SelectionEnd);
             var lineLists = new List<List<string>>();
@@ -3359,7 +3364,8 @@ namespace FlashDevelop
         /// </summary>
         public void CommentLine(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             var lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             if (lineComment.Length == 0) return;
             int position = sci.CurrentPos;
@@ -3408,7 +3414,8 @@ namespace FlashDevelop
         /// </summary>
         public void UncommentLine(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             var lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             if (lineComment.Length == 0) return;
             int position = sci.CurrentPos;
@@ -3463,7 +3470,8 @@ namespace FlashDevelop
 
         bool? CommentSelection()
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return null;
             var selEnd = sci.SelectionEnd;
             var selStart = sci.SelectionStart;
             var commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
@@ -3503,7 +3511,8 @@ namespace FlashDevelop
         /// </summary>
         public void UncommentBlock(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             sci.Colourise(0, -1); // update coloring
             int selEnd = sci.SelectionEnd;
             int selStart = sci.SelectionStart;
@@ -3556,7 +3565,8 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleLineComment(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             var lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             var position = sci.CurrentPos;
             // try doing a block comment on the current line instead (xml, html...)
@@ -3611,7 +3621,9 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleBlockComment(object sender, EventArgs e)
         {
-            if (CurrentDocument.SciControl.SelTextSize > 0) CommentSelection(null, null);
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
+            if (sci.SelTextSize > 0) CommentSelection(null, null);
             else UncommentBlock(null, null);
         }
 
@@ -3678,9 +3690,10 @@ namespace FlashDevelop
         {
             try
             {
+                var sci = CurrentDocument.SciControl;
+                if (sci is null) return;
                 var button = (ToolStripItem)sender;
                 var command = ((ItemData)button.Tag).Tag;
-                var sci = CurrentDocument.SciControl;
                 var mfType = sci.GetType();
                 var method = mfType.GetMethod(command, Array.Empty<Type>());
                 method.Invoke(sci, null);

@@ -17,13 +17,13 @@ namespace FlashDevelop
         /// Quick reference to CurrentDocument 
         /// </summary>
         [Obsolete("Use PluginBase.MainForm.CurrentDocument")]
-        public static ITabbedDocument CurrentDocument => PluginBase.MainForm.CurrentDocument;
+        public static ITabbedDocument? CurrentDocument => PluginBase.MainForm.CurrentDocument;
 
         /// <summary>
         /// Quick reference to SciControl 
         /// </summary>
         [Obsolete("Use PluginBase.MainForm.CurrentDocument?.SciControl")]
-        public static ScintillaControl SciControl => CurrentDocument.SciControl;
+        public static ScintillaControl? SciControl => CurrentDocument?.SciControl;
 
         /// <summary>
         /// Quick reference to PreviousDocuments 
