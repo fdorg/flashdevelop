@@ -370,7 +370,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the current <see cref="ITabbedDocument"/> object.
         /// </summary>
-        ITabbedDocument CurrentDocument { get; }
+        ITabbedDocument? CurrentDocument { get; }
         /// <summary>
         /// Gets all available documents.
         /// </summary>

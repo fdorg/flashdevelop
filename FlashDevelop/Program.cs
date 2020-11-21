@@ -42,7 +42,7 @@ namespace FlashDevelop
             MainForm.IsFirst = isFirst;
             MainForm.Arguments = arguments;
             var mainForm = new MainForm();
-            SingleInstanceApp.NewInstanceMessage += delegate(object sender, object message)
+            SingleInstanceApp.NewInstanceMessage += (_, message) =>
             {
                 MainForm.Arguments = message as string[];
                 mainForm.ProcessParameters(message as string[]);
