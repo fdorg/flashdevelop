@@ -189,14 +189,10 @@ namespace ProjectManager.Building.AS3
                 config.WriteConfig(project, sdkVersion, extraClasspaths, noTrace == false, asc2Mode);
 
                 //compare tmp to current
-                bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) ||
-                                     !FileComparer.IsEqual(configFileTmp, configFile);
+                bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) || !FileComparer.IsEqual(configFileTmp, configFile);
 
                 //copy temp file to config if there is a change
-                if (configChanged)
-                {
-                    File.Copy(configFileTmp, configFile, true);
-                }
+                if (configChanged) File.Copy(configFileTmp, configFile, true);
 
                 //remove temp
                 File.Delete(configFileTmp);
@@ -216,7 +212,7 @@ namespace ProjectManager.Building.AS3
                 }
                 else Console.WriteLine("mxmlc " + mxmlcArgs);
 
-                CompileWithMxmlc(project.Directory, mxmlcArgs, configChanged);
+                CompileWithMxmlc(project.Directory, mxmlcArgs);
 
                 // if we get here, the build was successful
                 string output = project.FixDebugReleasePath(project.OutputPathAbsolute);
@@ -251,7 +247,7 @@ namespace ProjectManager.Building.AS3
             return major + (minor < 10 ? minor / 10 : minor / 100);
         }
 
-        public void CompileWithMxmlc(string workingdir, string arguments, bool configChanged)
+        public void CompileWithMxmlc(string workingdir, string arguments)
         {
             if (fcsh != null)
             {
@@ -259,7 +255,7 @@ namespace ProjectManager.Building.AS3
                 string jvmarg = VMARGS + " -Dapplication.home=\"" + sdkPath 
                     //+ "\" -Dflexlib=\"" + Path.Combine(sdkPath, "frameworks")
                     + "\" -jar \"" + jar + "\"";
-                fcsh.Compile(workingdir, configChanged, arguments, out var output, out var errors, out var warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
+                fcsh.Compile(workingdir, arguments, out var output, out var errors, out var warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
 
                 string[] lines = output.Split('\n');
                 foreach (string line in lines)

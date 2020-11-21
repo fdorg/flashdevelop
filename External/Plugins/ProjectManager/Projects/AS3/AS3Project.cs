@@ -77,11 +77,6 @@ namespace ProjectManager.Projects.AS3
         {
             if (isDirectory || (Path.GetExtension(path) != ".as" && Path.GetExtension(path) != ".mxml")) 
                 return CompileTargetType.None;
-
-            /*foreach (string cp in AbsoluteClasspaths)
-                if (path.StartsWith(cp, StringComparison.OrdinalIgnoreCase))
-                    return CompileTargetType.DocumentClass;
-            return CompileTargetType.None;*/
             return CompileTargetType.DocumentClass; // can actually be outside of the classpath...
         }
 
@@ -260,6 +255,4 @@ namespace ProjectManager.Projects.AS3
         #endregion
 
     }
-
 }
-

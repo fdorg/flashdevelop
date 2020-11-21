@@ -42,8 +42,7 @@ namespace ProjectManager.Projects.Generic
             }
             catch (XmlException exception)
             {
-                string format =
-                    $"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.";
+                string format = $"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.";
                 throw new Exception(format, exception);
             }
             finally { reader.Close(); }

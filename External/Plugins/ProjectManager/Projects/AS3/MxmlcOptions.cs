@@ -194,7 +194,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Additional Compiler Options")]
         [LocalizedDescription("ProjectManager.Description.Additional")]
         [DefaultValue(new string[] { })]
-        public string[] Additional {
+        public string[] Additional
+        {
             get => additional;
             set => additional = value;
         }
@@ -204,7 +205,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Advanced Telemetry")]
         [LocalizedDescription("ProjectManager.Description.AdvancedTelemetry")]
         [DefaultValue(false)]
-        public bool AdvancedTelemetry {
+        public bool AdvancedTelemetry
+        {
             get => advancedTelemetry;
             set => advancedTelemetry = value;
         }
@@ -214,7 +216,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Advanced Telemetry Password")]
         [LocalizedDescription("ProjectManager.Description.AdvancedTelemetryPassword")]
         [DefaultValue("")]
-        public string AdvancedTelemetryPassword {
+        public string AdvancedTelemetryPassword
+        {
             get => advancedTelemetryPassword;
             set => advancedTelemetryPassword = value;
         }
@@ -224,7 +227,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Inline Functions")]
         [LocalizedDescription("ProjectManager.Description.InlineFunctions")]
         [DefaultValue(false)]
-        public bool InlineFunctions {
+        public bool InlineFunctions
+        {
             get => inlineFunctions;
             set => inlineFunctions = value;
         }
@@ -234,7 +238,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Compiler Constants")]
         [LocalizedDescription("ProjectManager.Description.CompilerConstants")]
         [DefaultValue(new string[] { })]
-        public string[] CompilerConstants {
+        public string[] CompilerConstants
+        {
             get => compilerConstants;
             set => compilerConstants = value;
         }
@@ -244,7 +249,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Player Minor Version")]
         [LocalizedDescription("ProjectManager.Description.MinorVersion")]
         [DefaultValue("")]
-        public string MinorVersion {
+        public string MinorVersion
+        {
             get => minorVersion;
             set => minorVersion = value;
         }
@@ -309,7 +315,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Use Network Services")]
         [LocalizedDescription("ProjectManager.Description.UseNetwork")]
         [DefaultValue(true)]
-        public bool UseNetwork {
+        public bool UseNetwork
+        {
             get => useNetwork;
             set => useNetwork = value;
         }
@@ -319,7 +326,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Link Report")]
         [LocalizedDescription("ProjectManager.Description.LinkReport")]
         [DefaultValue("")]
-        public string LinkReport {
+        public string LinkReport
+        {
             get => linkReport;
             set => linkReport = value;
         }
@@ -329,7 +337,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Load Externs")]
         [LocalizedDescription("ProjectManager.Description.LoadExterns")]
         [DefaultValue("")]
-        public string LoadExterns {
+        public string LoadExterns
+        {
             get => loadExterns;
             set => loadExterns = value;
         }
@@ -339,7 +348,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Static Link RSL")]
         [LocalizedDescription("ProjectManager.Description.StaticLinkRSL")]
         [DefaultValue(true)]
-        public bool StaticLinkRSL {
+        public bool StaticLinkRSL
+        {
             get => staticLinkRSL;
             set => staticLinkRSL = value;
         }
