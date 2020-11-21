@@ -9,11 +9,7 @@ namespace ProjectManager.Projects.Haxe
     {
         readonly HaxeProject project;
 
-        public HaxeProjectReader(string filename)
-            : base(filename, new HaxeProject(filename))
-        {
-            project = Project as HaxeProject;
-        }
+        public HaxeProjectReader(string filename) : base(filename, new HaxeProject(filename)) => project = Project as HaxeProject;
 
         public new HaxeProject ReadProject() => base.ReadProject() as HaxeProject;
 
@@ -24,7 +20,7 @@ namespace ProjectManager.Projects.Haxe
             if (version > 1)
             {
                 bool needSave = false;
-                // old projects fix
+                //TODO slava: old projects fix
                 if (options.Platform == "NME" && project.TargetBuild is null
                     && project.TestMovieCommand != "" && project.TestMovieBehavior != TestMovieBehavior.OpenDocument)
                 {
@@ -56,9 +52,10 @@ namespace ProjectManager.Projects.Haxe
                 return;
             }
 
+            //TODO slava: actualize for haxe 4.1.4
             if (options.MajorVersion > 10)
             {
-                // old projects fix
+                //TODO slava: old projects fix
                 string platform = null;
                 switch (options.MajorVersion)
                 {
@@ -82,6 +79,7 @@ namespace ProjectManager.Projects.Haxe
                 if (platform is null)
                 {
                     platform = PlatformData.FLASHPLAYER_PLATFORM;
+                    //TODO slava: actualize for haxe 4.1.4
                     options.MajorVersion = 14;
                 }
                 options.Platform = platform;
@@ -138,7 +136,7 @@ namespace ProjectManager.Projects.Haxe
                 MoveToFirstAttribute();
                 switch (Name)
                 {
-                    case "directives": options.Directives = (Value=="") ? new string[]{} : Value.Split('\n'); break;
+                    case "directives": options.Directives = (Value=="") ? Array.Empty<string>() : Value.Split('\n'); break;
                     case "flashStrict": options.FlashStrict = BoolValue; break;
                     case "noInlineOnDebug": options.NoInlineOnDebug = BoolValue; break;
                     case "mainClass": options.MainClass = Value; break;

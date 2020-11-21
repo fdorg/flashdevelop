@@ -70,10 +70,7 @@ namespace ProjectManager.Helpers
             return null;
         }
 
-        public static string KeyForProjectPath(string path)
-        {
-            return "project" + Path.GetExtension(path).ToLower();
-        }
+        public static string KeyForProjectPath(string path) => "project" + Path.GetExtension(path).ToLower();
     }
 }
 

@@ -19,7 +19,7 @@ namespace ProjectManager.Building
         }
 
         //parse line into command/argument pair
-        private string[] tokenize(string line)
+        private string[] Tokenize(string line)
         {
             string[] result = new string[2];
 
@@ -71,7 +71,7 @@ namespace ProjectManager.Building
                 line = project.FixDebugReleasePath(line);
 
                 Console.WriteLine("cmd: " + line);
-                string[] tokens = tokenize(line);
+                string[] tokens = Tokenize(line);
                 string command = tokens[0];
                 string args = tokens[1];
 
@@ -83,13 +83,12 @@ namespace ProjectManager.Building
                         break;
 
                     case "RunMxmlc":
-                        string[] mxmlctokens = tokenize(args);
+                        string[] mxmlctokens = Tokenize(args);
                         FDBuild.Program.BuildMXMLC(mxmlctokens[0], mxmlctokens[1]);
                         break;
 
-                    case "RunCompc": 
-                        string[] compctokens = tokenize(args);
-                        FDBuild.Program.BuildCOMPC(compctokens[0], compctokens[1]);
+                    case "RunCompc":
+                        FDBuild.Program.BuildCOMPC();
                         break;
 
                     default:
