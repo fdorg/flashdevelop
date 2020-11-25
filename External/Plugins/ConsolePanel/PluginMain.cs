@@ -15,9 +15,11 @@ namespace ConsolePanel
     {
         string settingFilename;
         Settings settingObject;
-        DockContent cmdPanelDockContent;
+        DockContent pluginPanel;
         Gui.TabbedConsole tabView;
         Image image;
+
+        #region Required Properties
 
         public int Api => 1;
 
@@ -34,18 +36,19 @@ namespace ConsolePanel
         [Browsable(false)]
         public object Settings => settingObject;
 
+        #endregion
+
         public IConsoleProvider ConsoleProvider { get; set; }
 
         public void Initialize()
         {
             InitBasics();
             LoadSettings();
+            AddEventHandlers();
             CreatePluginPanel();
+            CreateMenuItem();
             CreateDefaultConsoleProvider();
             CreateConsolePanel();
-            CreateMenuItem();
-
-            EventManager.AddEventHandler(this, EventType.Command, HandlingPriority.Normal);
         }
 
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
@@ -83,26 +86,37 @@ namespace ConsolePanel
             else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command, HandlingPriority.Normal);
+
         void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         void CreatePluginPanel()
         {
             tabView = new Gui.TabbedConsole(this);
-            cmdPanelDockContent = PluginBase.MainForm.CreateDockablePanel(tabView, Guid, image, DockState.DockBottom);
-            cmdPanelDockContent.Text = "Console";
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(tabView, Guid, image, DockState.DockBottom);
+            pluginPanel.Text = "Console";
         }
+
+        void CreateMenuItem()
+        {
+            var label = "Console Panel";
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var cmdItem = new ToolStripMenuItem(label, image, OpenPanel);
+            viewMenu.DropDownItems.Add(cmdItem);
+        }
+
+        void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         void CreateDefaultConsoleProvider() => ConsoleProvider = new Implementation.CmdProcess.CmdConsoleProvider();
 
         public IConsole CreateConsolePanel()
         {
-            cmdPanelDockContent.Show();
             var cmdPanel = ConsoleProvider.GetConsole();
             cmdPanel.Exited += (sender, args) =>
             {
                 if (tabView.InvokeRequired)
                 {
-                    tabView.Invoke((MethodInvoker) (() =>
+                    tabView.Invoke((MethodInvoker)(() =>
                     {
                         if (!PluginBase.MainForm.ClosingEntirely)
                             tabView.RemoveConsole(cmdPanel);
@@ -114,15 +128,5 @@ namespace ConsolePanel
             tabView.AddConsole(cmdPanel);
             return cmdPanel;
         }
-
-        void CreateMenuItem()
-        {
-            var label = "Console Panel";
-            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            var cmdItem = new ToolStripMenuItem(label, image, OpenCmdPanel);
-            viewMenu.DropDownItems.Add(cmdItem);
-        }
-
-        void OpenCmdPanel(object sender, EventArgs e) => CreateConsolePanel();
     }
 }
