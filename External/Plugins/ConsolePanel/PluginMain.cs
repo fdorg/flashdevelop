@@ -125,25 +125,18 @@ namespace ConsolePanel
             var console = ConsoleProvider.GetConsole(workingDirectory);
             console.Exited += (sender, args) =>
             {
-                if (tabView.InvokeRequired)
-                {
-                    tabView.Invoke((MethodInvoker)(() =>
-                    {
-                        if (!PluginBase.MainForm.ClosingEntirely)
-                        {
-                            tabView.RemoveConsole(console);
-                            if (tabView.Consoles.Count == 0) pluginPanel.Hide();
-                        }
-                    }));
-                }
-                else if (!PluginBase.MainForm.ClosingEntirely)
-                {
-                    tabView.RemoveConsole(console);
-                    if (tabView.Consoles.Count == 0) pluginPanel.Hide();
-                }
+                if (tabView.InvokeRequired) tabView.Invoke((MethodInvoker) RemoveConsole);
+                else RemoveConsole();
             };
             tabView.AddConsole(console);
             return console;
+            // Utils
+            void RemoveConsole()
+            {
+                if (PluginBase.MainForm.ClosingEntirely) return;
+                tabView.RemoveConsole(console);
+                if (tabView.Consoles.Count == 0) pluginPanel.Hide();
+            }
         }
     }
 }
