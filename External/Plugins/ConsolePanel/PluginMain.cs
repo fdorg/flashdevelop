@@ -111,29 +111,39 @@ namespace ConsolePanel
             viewMenu.DropDownItems.Add(cmdItem);
         }
 
-        void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
+        void OpenPanel(object sender, EventArgs e)
+        {
+            if (tabView.Consoles.Count == 0) CreateConsolePanel();
+            pluginPanel.Show();
+        }
 
         void CreateDefaultConsoleProvider() => ConsoleProvider = new Implementation.CmdProcess.CmdConsoleProvider();
 
         public IConsole CreateConsolePanel()
         {
             var workingDirectory = PluginBase.CurrentProject?.GetAbsolutePath(string.Empty);
-            var panel = ConsoleProvider.GetConsole(workingDirectory);
-            panel.Exited += (sender, args) =>
+            var console = ConsoleProvider.GetConsole(workingDirectory);
+            console.Exited += (sender, args) =>
             {
                 if (tabView.InvokeRequired)
                 {
                     tabView.Invoke((MethodInvoker)(() =>
                     {
                         if (!PluginBase.MainForm.ClosingEntirely)
-                            tabView.RemoveConsole(panel);
+                        {
+                            tabView.RemoveConsole(console);
+                            if (tabView.Consoles.Count == 0) pluginPanel.Hide();
+                        }
                     }));
                 }
                 else if (!PluginBase.MainForm.ClosingEntirely)
-                    tabView.RemoveConsole(panel);
+                {
+                    tabView.RemoveConsole(console);
+                    if (tabView.Consoles.Count == 0) pluginPanel.Hide();
+                }
             };
-            tabView.AddConsole(panel);
-            return panel;
+            tabView.AddConsole(console);
+            return console;
         }
     }
 }

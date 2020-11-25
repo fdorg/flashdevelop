@@ -77,5 +77,8 @@ namespace ConsoleControl
             AdjustWindowRect(ref size, style, false);
             MoveWindow(hWnd, size.Left, size.Top, size.Right - size.Left, size.Bottom - size.Top, true);
         }
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetFocus(IntPtr hWnd);
     }
 }

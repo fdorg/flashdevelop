@@ -112,7 +112,7 @@ namespace ConsolePanel.Implementation.CmdProcess
         /// </summary>
         public void Create()
         {
-            if (Process != null && !Process.HasExited) return;
+            if (Process is not null && !Process.HasExited) return;
             try
             {
                 Process = new Process
@@ -121,10 +121,11 @@ namespace ConsolePanel.Implementation.CmdProcess
                     {
                         FileName = "cmd",
                         UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Hidden,
                     },
                     EnableRaisingEvents = true
                 };
-                if (lastWorkingDir != null) Process.StartInfo.WorkingDirectory = lastWorkingDir;
+                if (lastWorkingDir is not null) Process.StartInfo.WorkingDirectory = lastWorkingDir;
                 Process.Exited += Process_Exited;
                 Process.Start();
 
@@ -142,6 +143,11 @@ namespace ConsolePanel.Implementation.CmdProcess
             catch
             {
             }
+
+            GotFocus += (sender, args) =>
+            {
+                pnlClipping.Focus();
+            };
         }
 
         /// <summary>
@@ -191,7 +197,7 @@ namespace ConsolePanel.Implementation.CmdProcess
         void ResizeConsole()
         {
             WinApi.ShowWindow(cmdHandle, WinApi.SW_SHOWMAXIMIZED);
-            WinApi.ResizeClientRectTo(cmdHandle, new Rectangle(new Point(0, 0), Size));
+            WinApi.ResizeClientRectTo(cmdHandle, new Rectangle(Point.Empty, Size));
             SetRealConsoleSize();
             var tooWide = realSize.Width > Width;
             var tooHigh = realSize.Height > Height;

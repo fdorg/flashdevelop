@@ -24,12 +24,12 @@ namespace ConsolePanel.Gui
 
         public void AddConsole(IConsole console)
         {
-            var tabPage = new TabPage(console.ConsoleControl.Text);
+            var tab = new TabPage(console.ConsoleControl.Text);
             console.ConsoleControl.Dock = DockStyle.Fill;
-            tabPage.Controls.Add(console.ConsoleControl);
+            tab.Controls.Add(console.ConsoleControl);
 
-            tabConsoles.TabPages.Add(tabPage);
-            tabConsoles.SelectTab(tabPage);
+            tabConsoles.TabPages.Add(tab);
+            tabConsoles.SelectTab(tab);
             consoleTabMap.Add(console, tabConsoles.SelectedTab);
             tabConsoleMap.Add(tabConsoles.SelectedTab, console);
         }
