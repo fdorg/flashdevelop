@@ -9,7 +9,6 @@ using LitJson;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using ScintillaNet;
 
 namespace XMLCompletion
 {
@@ -28,10 +27,10 @@ namespace XMLCompletion
             if (def.ContainsKey("inline_level")) ParseSet(inline_level, (string)def["inline_level"]);
         }
 
-        void ParseSet(Hashtable set, string def)
+        static void ParseSet(IDictionary set, string def)
         {
-            string[] tokens = def.Split(',');
-            foreach (string token in tokens) set[token] = true;
+            var tokens = def.Split(',');
+            foreach (var token in tokens) set[token] = true;
         }
     }
 
@@ -51,9 +50,9 @@ namespace XMLCompletion
 
         public static ZenSettings Read(string filePath)
         {
-            string src = File.ReadAllText(filePath);
+            var src = File.ReadAllText(filePath);
             src = SanitizeJSon(src);
-            JsonReader reader = new JsonReader(src);
+            var reader = new JsonReader(src);
             return ReadZenSettings(reader);
         }
 
@@ -209,20 +208,13 @@ namespace XMLCompletion
                     watcherConfig.EnableRaisingEvents = true;
                 }
             }
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            string docType = sci?.ConfigurationLanguage.ToLower();
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var docType = sci?.ConfigurationLanguage.ToLower();
             lang = null;
-            if (docType != null)
-            {
-                if (settings.langs.ContainsKey(docType))
-                    lang = settings.langs[docType];
-            }
+            if (docType != null && settings.langs.ContainsKey(docType)) lang = settings.langs[docType];
         }
 
-        static void watcherConfig_Changed(object sender, FileSystemEventArgs e)
-        {
-            inited = false;
-        }
+        static void watcherConfig_Changed(object sender, FileSystemEventArgs e) => inited = false;
 
         static void DelayOpenConfig_Tick(object sender, EventArgs e)
         {
@@ -275,11 +267,11 @@ namespace XMLCompletion
         {
             if (data["snippet"] is null)
             {
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 if (sci is null) return false;
                 // extract zen expression
-                int pos = sci.CurrentPos - 1;
-                int lastValid = sci.CurrentPos;
+                var pos = sci.CurrentPos - 1;
+                var lastValid = sci.CurrentPos;
                 while (pos >= 0)
                 {
                     var c = (char)sci.CharAt(pos);
@@ -520,10 +512,7 @@ namespace XMLCompletion
             return src;
         }
 
-        static string ProcessVars(string tag)
-        {
-            return reVariable.Replace(tag, VarReplacer);
-        }
+        static string ProcessVars(string tag) => reVariable.Replace(tag, VarReplacer);
 
         static string VarReplacer(Match m)
         {
@@ -541,10 +530,7 @@ namespace XMLCompletion
             return res.Trim();
         }
 
-        static bool isBlock(string tag)
-        {
-            return lang.element_types.block_level.ContainsKey(tag);
-        }
+        static bool isBlock(string tag) => lang.element_types.block_level.ContainsKey(tag);
 
         static bool isInline(string tag)
         {

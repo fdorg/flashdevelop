@@ -28,7 +28,8 @@ namespace CodeRefactor.Provider
             if (currentCommand != null) return;
             currentCommand = command;
 
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             startState = new StartState
             {
                 FileName = sci.FileName,

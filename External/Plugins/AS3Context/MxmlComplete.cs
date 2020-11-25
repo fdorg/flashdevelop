@@ -12,7 +12,6 @@ using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using ScintillaNet;
 using XMLCompletion;
 
 namespace AS3Context
@@ -26,7 +25,7 @@ namespace AS3Context
         #region shortcuts
         public static bool GotoDeclaration()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return false;
             if (sci.ConfigurationLanguage != "xml") return false;
 
@@ -194,8 +193,9 @@ namespace AS3Context
         {
             if (!GetContext(data)) return false;
             if (tagContext.Closing) return false;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return false;
             var type = ResolveType(mxmlContext, tagContext.Name);
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (type.StartsWithOrdinal("mx.builtin.") || type.StartsWithOrdinal("fx.builtin.")) // special tags
             {
                 if (type.EndsWithOrdinal(".Script"))
@@ -303,7 +303,7 @@ namespace AS3Context
             return true;
         }
 
-        static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
+        static bool GetTagAttributes(ClassModel tagClass, ICollection<ICompletionListItem> mix, ICollection<string> excludes, string ns)
         {
             var curClass = mxmlContext.model.GetPublicClass();
             var tmpClass = tagClass;
@@ -357,10 +357,10 @@ namespace AS3Context
 
         static List<ICompletionListItem> GetTagAttributeValues(ClassModel tagClass, string ns, string attribute)
         {
-            ClassModel curClass = mxmlContext.model.GetPublicClass();
-            ClassModel tmpClass = tagClass;
-            FlagType mask = FlagType.Variable | FlagType.Setter | FlagType.Getter;
-            Visibility acc = context.TypesAffinity(curClass, tmpClass);
+            var curClass = mxmlContext.model.GetPublicClass();
+            var tmpClass = tagClass;
+            var mask = FlagType.Variable | FlagType.Setter | FlagType.Getter;
+            var acc = context.TypesAffinity(curClass, tmpClass);
 
             if (tmpClass.InFile.Package != "mx.builtin" && tmpClass.InFile.Package != "fx.builtin" && attribute == "id")
                 return null;
@@ -573,7 +573,7 @@ namespace AS3Context
 
             if (type == "Class")
             {
-                ASComplete.HandleAllClassesCompletion(PluginBase.MainForm.CurrentDocument.SciControl, tokenContext,
+                ASComplete.HandleAllClassesCompletion(PluginBase.MainForm.CurrentDocument?.SciControl, tokenContext,
                     true, false);
             }
             else if (type == "Function")
@@ -681,14 +681,13 @@ namespace AS3Context
         {
             if (mxmlContext?.model is null) return false;
 
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return false;
 
             // XmlComplete context
             try
             {
-                if (data is XMLContextTag)
-                    tagContext = (XMLContextTag)data;
+                if (data is XMLContextTag tag) tagContext = tag;
                 else
                 {
                     object[] o = (object[])data;
@@ -721,9 +720,9 @@ namespace AS3Context
 
         static void GetAllTags()
         {
-            Dictionary<string, string> nss = mxmlContext.namespaces;
-            MemberList allClasses = context.GetAllProjectClasses();
-            Dictionary<string, string> packages = new Dictionary<string, string>();
+            var nss = mxmlContext.namespaces;
+            var allClasses = context.GetAllProjectClasses();
+            var packages = new Dictionary<string, string>();
             allTags = new Dictionary<string, List<string>>();
 
             foreach (string key in nss.Keys)
@@ -757,7 +756,7 @@ namespace AS3Context
 
             foreach (MxmlCatalog cat in mxmlContext.catalogs)
             {
-                List<string> cls = allTags.ContainsKey(cat.NS) ? allTags[cat.NS] : new List<string>();
+                var cls = allTags.ContainsKey(cat.NS) ? allTags[cat.NS] : new List<string>();
                 cls.AddRange(cat.Keys);
                 allTags[cat.NS] = cls;
             }

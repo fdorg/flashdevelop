@@ -9,10 +9,7 @@ namespace PluginCore.Managers
     {
         static int DocumentCount;
         
-        static DocumentManager()
-        {
-            DocumentCount = 1;
-        }
+        static DocumentManager() => DocumentCount = 1;
 
         /// <summary>
         /// Creates a new name for new document 
@@ -110,16 +107,12 @@ namespace PluginCore.Managers
         /// Finds the document by the file name
         /// </summary>
         public static ITabbedDocument FindDocument(string filename)
-        {
-            return PluginBase.MainForm.Documents.FirstOrDefault(document => document.FileName == filename);
-        }
+            => PluginBase.MainForm.Documents.FirstOrDefault(document => document.FileName == filename);
 
         /// <summary>
         /// Finds the document by the ScintillaControl
         /// </summary>
         public static ITabbedDocument FindDocument(ScintillaControl sci)
-        {
-            return PluginBase.MainForm.Documents.FirstOrDefault(document => document.SciControl == sci);
-        }
+            => PluginBase.MainForm.Documents.FirstOrDefault(document => document.SciControl == sci);
     }
 }

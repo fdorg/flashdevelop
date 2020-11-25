@@ -1067,7 +1067,7 @@ namespace ASCompletion
 
         void FindProcTxtChanged(object sender, EventArgs e)
         {
-            string text = findTextTxt.Text;
+            var text = findTextTxt.Text;
             if (text == searchInvitation) return;
             HighlightAllMatchingDeclaration(text.ToUpper());
             clearButton.Enabled = text.Length > 0;
@@ -1096,10 +1096,7 @@ namespace ASCompletion
             findTextTxt.Text = "";
             FindProcTxtLeave(null, null);
             OutlineTree.Focus();
-            if (PluginBase.MainForm.CurrentDocument.IsEditable)
-            {
-                PluginBase.MainForm.CurrentDocument.SciControl.Focus();
-            }
+            if (PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable) doc.SciControl?.Focus();
         }
 
         // Update colors on start after theme engine
@@ -1119,7 +1116,7 @@ namespace ASCompletion
                 }
                 if (findTextTxt.Text != searchInvitation)
                 {
-                    TreeNode node = FindMatch(OutlineTree.Nodes);
+                    var node = FindMatch(OutlineTree.Nodes);
                     if (node != null)
                     {
                         OutlineTree.SelectedNode = node;
@@ -1134,9 +1131,9 @@ namespace ASCompletion
                 findTextTxt.Text = "";
                 FindProcTxtLeave(null, null);
                 OutlineTree.Focus();
-                if (PluginBase.MainForm.CurrentDocument.IsEditable)
+                if (PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable)
                 {
-                    PluginBase.MainForm.CurrentDocument.SciControl.Focus();
+                    doc.SciControl?.Focus();
                 }
                 return true;
             }
@@ -1153,11 +1150,7 @@ namespace ASCompletion
             foreach (TreeNode node in nodes)
             {
                 if (node.BackColor == PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight)) return node;
-                if (node.Nodes.Count > 0)
-                {
-                    var subnode = FindMatch(node.Nodes);
-                    if (subnode != null) return subnode;
-                }
+                if (node.Nodes.Count > 0 && FindMatch(node.Nodes) is {} result) return result;
             }
             return null;
         }
@@ -1199,10 +1192,7 @@ namespace ASCompletion
     {
         public MemberTreeNode(MemberModel member, int imageIndex)
             : base(member.ToString(), imageIndex, imageIndex)
-        {
-            Tag = member.Name + "@" + member.LineFrom;
-        }
+            => Tag = member.Name + "@" + member.LineFrom;
     }
     #endregion
-
 }

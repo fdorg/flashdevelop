@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
-using ScintillaNet;
 
 namespace AS3Context.Controls
 {
@@ -40,22 +39,21 @@ namespace AS3Context.Controls
         void delayOpen_Tick(object sender, EventArgs e)
         {
             delayOpen.Stop();
-            if (fileToOpen != null)
+            if (fileToOpen is null) return;
+            if (File.Exists(fileToOpen))
             {
-                if (File.Exists(fileToOpen))
+                PluginBase.MainForm.OpenEditableDocument(fileToOpen, false);
+                if (PluginBase.MainForm.CurrentDocument is {} doc
+                    && doc.IsEditable
+                    && doc.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase)
+                    && doc.SciControl is {} sci)
                 {
-                    PluginBase.MainForm.OpenEditableDocument(fileToOpen, false);
-                    if (PluginBase.MainForm.CurrentDocument.IsEditable
-                        && PluginBase.MainForm.CurrentDocument.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase))
-                    {
-                        ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                        int pos = sci.PositionFromLine(lineToOpen);
-                        sci.SetSel(pos, pos);
-                        sci.EnsureVisibleEnforcePolicy(lineToOpen);
-                    }
+                    var pos = sci.PositionFromLine(lineToOpen);
+                    sci.SetSel(pos, pos);
+                    sci.EnsureVisibleEnforcePolicy(lineToOpen);
                 }
-                fileToOpen = null;
             }
+            fileToOpen = null;
         }
 
         void objectsGrid_Open(object sender, EventArgs e)

@@ -112,12 +112,12 @@ namespace PluginCore.FRService
         /// <summary>
         /// Reads the source
         /// </summary>
-        protected string ReadCurrentFileSource(string file)
+        protected string? ReadCurrentFileSource(string file)
         {
             if (cacheDocuments)
             {
                 if (openDocuments is null) CacheOpenDocuments();
-                if (openDocuments.TryGetValue(file, out var doc)) return doc.SciControl.Text;
+                if (openDocuments.TryGetValue(file, out var doc)) return doc.SciControl?.Text;
             }
             return FileHelper.ReadFile(file);
         }

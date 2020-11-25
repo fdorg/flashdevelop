@@ -48,20 +48,18 @@ namespace XMLCompletion
             {
                 cFile = value;
                 cType = XMLType.Invalid;
-
                 if (cFile is null) return;
-
-                string lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage;
-                string ext = Path.GetExtension(value);
+                var ext = Path.GetExtension(value);
                 if (ext.Length == 0) return;
                 ext = ext.Substring(1);
+                var lang = PluginBase.MainForm.CurrentDocument?.SciControl.ConfigurationLanguage;
                 if (lang == "html") ext = "html";
                 languageTags ??= new Dictionary<string, LanguageDef>();
                 if (!languageTags.ContainsKey(ext)) TryLoadDeclaration(ext);
                 if (languageTags[ext] != null)
                 {
                     cType = XMLType.Known;
-                    LanguageDef def = languageTags[ext];
+                    var def = languageTags[ext];
                     knownTags = def.KnownTags;
                     namespaces = def.Namespaces;
                     defaultNS = def.DefaultNS;
@@ -401,9 +399,7 @@ namespace XMLCompletion
                     if (value == '/')
                     {
                         if ((position < 2) || ((char)sci.CharAt(position-2) != '<')) return;
-                        ctag = new XMLContextTag();
-                        ctag.Position = position - 2;
-                        ctag.Closing = true;
+                        ctag = new XMLContextTag {Position = position - 2, Closing = true};
                     }
                     else 
                     {
@@ -442,7 +438,7 @@ namespace XMLCompletion
                     // Show namespace's tags
                     if (PluginSettings.EnableXMLCompletion && cType == XMLType.Known)
                     {
-                        List<ICompletionListItem> items = new List<ICompletionListItem>();
+                        var items = new List<ICompletionListItem>();
                         string previous = null;
                         foreach (HTMLTag tag in knownTags)
                             if (tag.Name != previous && tag.NS == ctag.NameSpace)

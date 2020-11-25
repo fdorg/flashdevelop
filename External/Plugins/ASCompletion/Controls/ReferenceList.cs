@@ -142,10 +142,10 @@ namespace ASCompletion.Controls
             var reference = (Reference)selection.Tag;
 
             HideList();
-            if (PluginBase.MainForm.CurrentDocument.SciControl is { } sci)
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
                 ASComplete.SaveLastLookupPosition(sci);
             PluginBase.MainForm.OpenEditableDocument(reference.File, false);
-            PluginBase.MainForm.CurrentDocument.SciControl.GotoLine(reference.Line);
+            PluginBase.MainForm.CurrentDocument?.SciControl.GotoLine(reference.Line);
         }
         #endregion
 

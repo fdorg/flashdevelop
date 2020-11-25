@@ -296,7 +296,8 @@ namespace FlashDebugger
 
         internal static void RunToCursor_Click(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             PluginMain.breakPointManager.SetTemporaryBreakPoint(sci.FileName, sci.CurrentLine);
             PluginMain.debugManager.Continue_Click(sender, e);
         }

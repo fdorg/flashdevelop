@@ -26,8 +26,10 @@ namespace FlashDevelop.Managers
         {
             if ((Control.ModifierKeys & Keys.Control) != 0) return;
             TabTimer.Enabled = false;
-            TabHistory.Remove(PluginBase.MainForm.CurrentDocument);
-            TabHistory.Insert(0, PluginBase.MainForm.CurrentDocument);
+            var document = PluginBase.MainForm.CurrentDocument;
+            if (document is null) return;
+            TabHistory.Remove(document);
+            TabHistory.Insert(0, document);
         }
 
         /// <summary>
@@ -53,6 +55,7 @@ namespace FlashDevelop.Managers
         public static void NavigateTabsSequentially(int direction)
         {
             var current = PluginBase.MainForm.CurrentDocument;
+            if (current is null) return;
             var documents = PluginBase.MainForm.Documents;
             var count = documents.Length;
             if (count <= 1) return;

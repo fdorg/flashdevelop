@@ -35,6 +35,7 @@ namespace FlashDevelop.Managers
         {
             var mainForm = PluginBase.MainForm;
             var document = mainForm.CurrentDocument;
+            if (document is null) return false;
             if (action.Contains("!IsEditable"))
             {
                 if (document.IsEditable) return false;

@@ -16,7 +16,7 @@ namespace PluginCore.Utilities
         readonly bool recursive;
         List<string> knownPathes;
         List<string> foundFiles;
-        readonly Regex reUnsafeMask = new Regex("^\\*(\\.[a-z0-9]{3})$"); 
+        readonly Regex reUnsafeMask = new("^\\*(\\.[a-z0-9]{3})$"); 
 
         public PathWalker(string basePath, string fileMask, bool recursive)
         {

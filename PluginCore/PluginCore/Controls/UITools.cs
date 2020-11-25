@@ -360,7 +360,7 @@ namespace PluginCore.Controls
                 ignoreKeys = false;
                 // if not handled - show snippets
                 if (!ke.Handled
-                    && PluginBase.MainForm.CurrentDocument.SciControl is { } scintilla
+                    && PluginBase.MainForm.CurrentDocument?.SciControl is { } scintilla
                     && !scintilla.IsSelectionRectangle)
                 {
                     PluginBase.MainForm.CallCommand("InsertSnippet", "null");
@@ -372,7 +372,7 @@ namespace PluginCore.Controls
             if (key == Keys.F1 && Tip.Visible && !CompletionList.Active)
             {
                 ShowDetails = !ShowDetails;
-                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument?.SciControl);
                 return true;
             }
 

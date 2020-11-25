@@ -234,7 +234,7 @@ namespace AS3Context.Compiler
             debugMode = false;
             var hasOutput = false;
             var cmd = "";
-            var mCmd = Regex.Match(PluginBase.MainForm.CurrentDocument.SciControl.Text, "\\s@mxmlc\\s(?<cmd>.*)");
+            var mCmd = Regex.Match(PluginBase.MainForm.CurrentDocument?.SciControl.Text, "\\s@mxmlc\\s(?<cmd>.*)");
             if (mCmd.Success)
             {
                 try

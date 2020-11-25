@@ -102,7 +102,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Current ScintillaControl of the document
         /// </summary>
-        public ScintillaControl SciControl
+        public ScintillaControl? SciControl
         {
             get
             {

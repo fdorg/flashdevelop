@@ -63,7 +63,7 @@ namespace PluginCore
         bool UseCustomIcon { get; set; }
         Control.ControlCollection Controls { get; }
         SplitContainer SplitContainer { get; }
-        ScintillaControl SciControl { get; }
+        ScintillaControl? SciControl { get; }
         ScintillaControl SplitSci1 { get; }
         ScintillaControl SplitSci2 { get; }
         bool IsModified { get; set; }

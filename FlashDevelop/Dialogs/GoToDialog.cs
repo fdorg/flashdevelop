@@ -150,7 +150,7 @@ namespace FlashDevelop.Dialogs
         void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            PluginBase.MainForm.CurrentDocument.Activate();
+            PluginBase.MainForm.CurrentDocument?.Activate();
             Hide();
         }
 
@@ -159,7 +159,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void LineButtonClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             try
             {
@@ -179,7 +179,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void PositionButtonClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             try
             {

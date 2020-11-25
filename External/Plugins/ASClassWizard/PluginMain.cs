@@ -114,7 +114,7 @@ namespace ASClassWizard
                     break;
 
                 case EventType.FileSwitch:
-                    if (PluginBase.MainForm.CurrentDocument.FileName == WizardContext.processOnSwitch)
+                    if (PluginBase.MainForm.CurrentDocument?.FileName == WizardContext.processOnSwitch)
                     {
                         WizardContext.processOnSwitch = null;
                         if (WizardContext.lastFileOptions?.interfaces is null) return;

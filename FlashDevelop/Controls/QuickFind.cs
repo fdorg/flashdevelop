@@ -323,11 +323,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         void UpdateFindText()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci != null && sci.SelTextSize > 0)
-            {
-                findTextBox.Text = sci.SelText;
-            }
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is not null && sci.SelTextSize > 0) findTextBox.Text = sci.SelText;
         }
 
         /// <summary>
@@ -358,7 +355,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void FindTextBoxTextChanged(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.SciControl.TextLength > 30000)
+            if (PluginBase.MainForm.CurrentDocument?.SciControl.TextLength > 30000)
             {
                 typingTimer.Stop();
                 typingTimer.Start();
@@ -380,9 +377,12 @@ namespace FlashDevelop.Controls
             {
                 infoLabel.Text = "";
                 findTextBox.BackColor = backColor;
-                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                sci.SetSel(sci.CurrentPos, sci.CurrentPos);
-                sci.RemoveHighlights();
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is not null)
+                {
+                    sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                    sci.RemoveHighlights();
+                }
             }
             Globals.MainForm.SetFindText(this, findTextBox.Text);
         }
@@ -393,7 +393,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void FindTextBoxOnKeyEscape()
         {
-            PluginBase.MainForm.CurrentDocument.Activate();
+            PluginBase.MainForm.CurrentDocument?.Activate();
             CloseButtonClick(null, null);
         }
 
@@ -436,7 +436,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         void HighlightAllCheckBoxClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             if (highlightCheckBox.Checked)
             {
                 if (findTextBox.Text.Length == 0) return;
@@ -456,7 +457,8 @@ namespace FlashDevelop.Controls
         {
             if (string.IsNullOrEmpty(text)) return;
             findTextBox.BackColor = backColor;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             var matches = GetResults(sci, text);
             if (matches.Count != 0)
             {
@@ -482,7 +484,8 @@ namespace FlashDevelop.Controls
         {
             if (text == "") return;
             findTextBox.BackColor = backColor;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             var matches = GetResults(sci, text);
             if (matches.Count != 0)
             {
@@ -508,7 +511,8 @@ namespace FlashDevelop.Controls
         {
             if (text == "") return;
             findTextBox.BackColor = backColor;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             var matches = GetResults(sci, text);
             if (matches.Count != 0)
             {

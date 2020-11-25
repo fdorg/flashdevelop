@@ -332,7 +332,7 @@ namespace BookmarkPanel
         /// </summary>
         void SearchBookmarks()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var matches = GetResults(sci);
             if (!matches.IsNullOrEmpty())
@@ -379,13 +379,15 @@ namespace BookmarkPanel
         List<SearchMatch> GetResults(ScintillaControl sci)
         {
             if (searchBox.Text.Length == 0) return null;
-            var search = new FRSearch(searchBox.Text);
-            search.IsEscaped = false;
-            search.WholeWord = false;
-            search.NoCase = true;
-            search.IsRegex = true;
-            search.Filter = SearchFilter.None;
-            search.SourceFile = sci.FileName;
+            var search = new FRSearch(searchBox.Text)
+            {
+                IsEscaped = false,
+                WholeWord = false,
+                NoCase = true,
+                IsRegex = true,
+                Filter = SearchFilter.None,
+                SourceFile = sci.FileName
+            };
             return search.Matches(sci.Text);
         }
 
@@ -411,7 +413,7 @@ namespace BookmarkPanel
         /// </summary>
         void ManagerOnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            ListViewGroup group = FindGroup(sender.FileName);
+            var group = FindGroup(sender.FileName);
             if (group is null) return;
             group.Tag = null; // bookmarks list may be dirty
             updateTimer.Stop();
@@ -423,7 +425,7 @@ namespace BookmarkPanel
         /// </summary>
         void ManagerOnMarkerChanged(ScintillaControl sender, int line)
         {
-            ListViewGroup group = FindGroup(sender.FileName);
+            var group = FindGroup(sender.FileName);
             if (group is null) return;
             group.Tag = null; // bookmarks list may be dirty
             updateTimer.Stop();
@@ -436,12 +438,12 @@ namespace BookmarkPanel
         void UpdateTimerTick(object sender, EventArgs e)
         {
             updateTimer.Stop();
-            List<ListViewGroup> groups = new List<ListViewGroup>();
+            var groups = new List<ListViewGroup>();
             foreach (ListViewGroup group in listView.Groups)
             {
                 if (group.Tag is null) groups.Add(group);
             }
-            foreach (ListViewGroup group in groups)
+            foreach (var group in groups)
             {
                 UpdateMarkers(group.Name);
             }
@@ -622,8 +624,7 @@ namespace BookmarkPanel
         /// </summary>
         public void SetTimeout(TimeoutDelegate timeoutHandler, string tag, int timeout)
         {
-            TagTimer timer = new TagTimer();
-            timer.Interval = timeout;
+            var timer = new TagTimer {Interval = timeout};
             timer.Tick += TimerElapsed;
             timer.Tag = tag;
             timer.TimeoutHandler = timeoutHandler;
@@ -633,9 +634,9 @@ namespace BookmarkPanel
         /// <summary>
         /// Handles the elapsed event
         /// </summary>
-        void TimerElapsed(object sender, EventArgs e)
+        static void TimerElapsed(object sender, EventArgs e)
         {
-            TagTimer timer = ((TagTimer)sender);
+            var timer = ((TagTimer)sender);
             timer.Enabled = false;
             timer.Stop();
             timer.TimeoutHandler(timer.Tag as string);

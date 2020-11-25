@@ -202,78 +202,78 @@ namespace CodeFormatter
         /// </summary>
         void DoFormat(ITabbedDocument doc)
         {
-            if (doc.IsEditable)
+            if (!doc.IsEditable) return;
+            var sci = doc.SciControl;
+            if (sci is null) return;
+            sci.BeginUndoAction();
+            int oldPos = CurrentPos;
+            string source = sci.Text;
+            try
             {
-                doc.SciControl.BeginUndoAction();
-                int oldPos = CurrentPos;
-                string source = doc.SciControl.Text;
-                try
+                switch (DocumentType)
                 {
-                    switch (DocumentType)
-                    {
-                        case TYPE_AS3:
-                            var asPrinter = new ASPrettyPrinter(true, source);
-                            FormatUtility.configureASPrinter(asPrinter, settingObject);
-                            var asResultData = asPrinter.print(0);
-                            if (asResultData is null)
-                            {
-                                TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
-                                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
-                            }
-                            else
-                            {
-                                doc.SciControl.Text = asResultData;
-                                doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
-                            }
-                            break;
+                    case TYPE_AS3:
+                        var asPrinter = new ASPrettyPrinter(true, source);
+                        FormatUtility.configureASPrinter(asPrinter, settingObject);
+                        var asResultData = asPrinter.print(0);
+                        if (asResultData is null)
+                        {
+                            TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
+                            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                        }
+                        else
+                        {
+                            sci.Text = asResultData;
+                            sci.ConvertEOLs(sci.EOLMode);
+                        }
+                        break;
 
-                        case TYPE_MXML:
-                        case TYPE_XML:
-                            MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
-                            FormatUtility.configureMXMLPrinter(mxmlPrinter, settingObject);
-                            string mxmlResultData = mxmlPrinter.print(0);
-                            if (mxmlResultData is null)
-                            {
-                                TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
-                                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
-                            }
-                            else
-                            {
-                                doc.SciControl.Text = mxmlResultData;
-                                doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
-                            }
-                            break;
+                    case TYPE_MXML:
+                    case TYPE_XML:
+                        MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
+                        FormatUtility.configureMXMLPrinter(mxmlPrinter, settingObject);
+                        string mxmlResultData = mxmlPrinter.print(0);
+                        if (mxmlResultData is null)
+                        {
+                            TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
+                            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                        }
+                        else
+                        {
+                            sci.Text = mxmlResultData;
+                            sci.ConvertEOLs(sci.EOLMode);
+                        }
+                        break;
 
-                        case TYPE_CPP:
-                            AStyleInterface asi = new AStyleInterface();
-                            string optionData = GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
-                            string resultData = asi.FormatSource(source, optionData);
-                            if (string.IsNullOrEmpty(resultData))
+                    case TYPE_CPP:
+                        AStyleInterface asi = new AStyleInterface();
+                        string optionData = GetOptionData(sci.ConfigurationLanguage.ToLower());
+                        string resultData = asi.FormatSource(source, optionData);
+                        if (string.IsNullOrEmpty(resultData))
+                        {
+                            TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
+                            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                        }
+                        else
+                        {
+                            // Remove all empty lines if not specified for astyle
+                            if (!optionData.Contains("--delete-empty-lines"))
                             {
-                                TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
-                                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                                resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
                             }
-                            else
-                            {
-                                // Remove all empty lines if not specified for astyle
-                                if (!optionData.Contains("--delete-empty-lines"))
-                                {
-                                    resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
-                                }
-                                doc.SciControl.Text = resultData;
-                                doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
-                            }
-                            break;
-                    }
+                            sci.Text = resultData;
+                            sci.ConvertEOLs(sci.EOLMode);
+                        }
+                        break;
                 }
-                catch (Exception)
-                {
-                    TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
-                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
-                }
-                CurrentPos = oldPos;
-                doc.SciControl.EndUndoAction();
             }
+            catch (Exception)
+            {
+                TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
+                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+            }
+            CurrentPos = oldPos;
+            sci.EndUndoAction();
         }
 
         /// <summary>

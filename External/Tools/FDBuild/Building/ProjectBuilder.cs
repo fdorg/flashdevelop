@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Reflection;
 using FDBuild.Building.AS3;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;

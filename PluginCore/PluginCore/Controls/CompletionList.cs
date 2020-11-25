@@ -140,7 +140,7 @@ namespace PluginCore.Controls
         /// </summary>
         public static void Show(IList<ICompletionListItem> itemList, bool autoHide)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             try
             {
@@ -219,7 +219,7 @@ namespace PluginCore.Controls
 
         static void DisplayList(object sender, System.Timers.ElapsedEventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var cl = completionList;
             if (cl.Items.Count == 0) return;
@@ -289,14 +289,14 @@ namespace PluginCore.Controls
             Hide();
             var onCancel = OnCancel;
             if (onCancel is null) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             onCancel(sci, currentPos, currentWord, trigger, null);
         }
 
         public static void SelectWordInList(string tail)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null)
             {
                 Hide();
@@ -375,7 +375,7 @@ namespace PluginCore.Controls
 
         static void CLClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null)
             {
                 Hide();
@@ -386,7 +386,7 @@ namespace PluginCore.Controls
 
         static void CLDoubleClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null)
             {
                 Hide();

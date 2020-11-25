@@ -66,7 +66,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetSelText()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return string.Empty;
             if (sci.SelTextSize > 0) return sci.SelText;
             if (PrevSelText.Length > 0) return PrevSelText;
@@ -78,7 +78,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurWord()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return string.Empty;
             var word = sci.GetWordFromPosition(sci.CurrentPos);
             if (!string.IsNullOrEmpty(word)) return word;
@@ -91,7 +91,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFile()
         {
-            return PluginBase.MainForm.CurrentDocument.SciControl is { } sci
+            return PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
                 ? sci.FileName
                 : string.Empty;
         }
@@ -101,7 +101,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            return PluginBase.MainForm.CurrentDocument.IsEditable
+            return PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable
                 ? Path.GetDirectoryName(GetCurFile())
                 : PluginBase.MainForm.WorkingDirectory;
         }
@@ -111,7 +111,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilename()
         {
-            return PluginBase.MainForm.CurrentDocument.IsEditable
+            return PluginBase.MainForm.CurrentDocument is { } doc && doc.IsEditable
                 ? Path.GetFileName(GetCurFile())
                 : string.Empty;
         }
@@ -121,7 +121,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilenameNoExt()
         {
-            return PluginBase.MainForm.CurrentDocument.IsEditable
+            return PluginBase.MainForm.CurrentDocument is { } doc && doc.IsEditable
                 ? Path.GetFileNameWithoutExtension(GetCurFile())
                 : string.Empty;
         }
@@ -220,7 +220,7 @@ namespace FlashDevelop.Utilities
                 return PluginBase.CurrentProject.Language.ToLower();
             }
 
-            if (PluginBase.MainForm.CurrentDocument.SciControl is {} sci)
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is {} sci)
             {
                 return sci.ConfigurationLanguage.ToLower();
             }
@@ -415,11 +415,9 @@ namespace FlashDevelop.Utilities
                 switch (match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case "DATETIME":
-                    {
-                        string dateFormat = "";
+                        var dateFormat = "";
                         if (match.Groups.Count == 3) dateFormat = match.Groups[2].Value;
                         return DateTime.Now.ToString(dateFormat);
-                    }
                 }
             }
             return match.Value;
