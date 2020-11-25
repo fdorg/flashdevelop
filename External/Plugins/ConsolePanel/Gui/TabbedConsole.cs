@@ -10,8 +10,8 @@ namespace ConsolePanel.Gui
 
         public ICollection<IConsole> Consoles => consoleTabMap.Keys;
 
-        public Dictionary<IConsole, TabPage> consoleTabMap;
-        public Dictionary<TabPage, IConsole> tabConsoleMap;
+        readonly Dictionary<IConsole, TabPage> consoleTabMap;
+        readonly Dictionary<TabPage, IConsole> tabConsoleMap;
 
         public TabbedConsole(PluginMain plugin)
         {

@@ -7,6 +7,16 @@ namespace ConsolePanel.Implementation.CmdProcess
     {
         readonly ConsoleControl cmd;
 
+        public CmdConsole() : this(null)
+        {
+        }
+
+        public CmdConsole(string workingDirectory)
+        {
+            cmd = new ConsoleControl(true, workingDirectory) { Text = "cmd" };
+            cmd.Exited += (sender, e) => Exited?.Invoke(sender, e);
+        }
+
         public Control ConsoleControl => cmd;
 
         public string WorkingDirectory
@@ -21,11 +31,5 @@ namespace ConsolePanel.Implementation.CmdProcess
         public void Cancel() => cmd.Cancel();
 
         public void SendString(string str) => cmd.SendString(str, false);
-
-        public CmdConsole()
-        {
-            cmd = new ConsoleControl {Text = "cmd"};
-            cmd.Exited += (sender, e) => Exited?.Invoke(sender, e);
-        }
     }
 }

@@ -44,11 +44,10 @@ namespace ConsolePanel
         {
             InitBasics();
             LoadSettings();
-            AddEventHandlers();
             CreatePluginPanel();
             CreateMenuItem();
             CreateDefaultConsoleProvider();
-            CreateConsolePanel();
+            AddEventHandlers();
         }
 
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
@@ -64,6 +63,9 @@ namespace ConsolePanel
                             panel.WorkingDirectory = PluginBase.CurrentProject.GetAbsolutePath("");
                         }
                     }
+                    break;
+                case EventType.UIStarted:
+                    CreateConsolePanel();
                     break;
             }
         }
@@ -86,7 +88,11 @@ namespace ConsolePanel
             else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
-        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command, HandlingPriority.Normal);
+        void AddEventHandlers()
+        {
+            EventManager.AddEventHandler(this, EventType.Command);
+            EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
+        }
 
         void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
@@ -111,22 +117,23 @@ namespace ConsolePanel
 
         public IConsole CreateConsolePanel()
         {
-            var cmdPanel = ConsoleProvider.GetConsole();
-            cmdPanel.Exited += (sender, args) =>
+            var workingDirectory = PluginBase.CurrentProject?.GetAbsolutePath(string.Empty);
+            var panel = ConsoleProvider.GetConsole(workingDirectory);
+            panel.Exited += (sender, args) =>
             {
                 if (tabView.InvokeRequired)
                 {
                     tabView.Invoke((MethodInvoker)(() =>
                     {
                         if (!PluginBase.MainForm.ClosingEntirely)
-                            tabView.RemoveConsole(cmdPanel);
+                            tabView.RemoveConsole(panel);
                     }));
                 }
                 else if (!PluginBase.MainForm.ClosingEntirely)
-                    tabView.RemoveConsole(cmdPanel);
+                    tabView.RemoveConsole(panel);
             };
-            tabView.AddConsole(cmdPanel);
-            return cmdPanel;
+            tabView.AddConsole(panel);
+            return panel;
         }
     }
 }

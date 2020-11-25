@@ -2,6 +2,7 @@
 {
     class CmdConsoleProvider : IConsoleProvider
     {
-        public IConsole GetConsole() => new CmdConsole();
+        public IConsole GetConsole() => GetConsole(null);
+        public IConsole GetConsole(string workingDirectory) => new CmdConsole(workingDirectory);
     }
 }

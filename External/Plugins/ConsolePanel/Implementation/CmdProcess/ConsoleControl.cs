@@ -131,7 +131,7 @@ namespace ConsolePanel.Implementation.CmdProcess
                 cmdHandle = Process.MainWindowHandle;
                 window = AutomationElement.FromHandle(cmdHandle);
                 WinApi.SetParent(cmdHandle, pnlClipping.Handle);
-                SendString("cls");
+                SendString(" ",false);
                 ResizeConsole();
             }
             catch
