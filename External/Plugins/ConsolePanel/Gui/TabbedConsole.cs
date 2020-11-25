@@ -36,29 +36,23 @@ namespace ConsolePanel.Gui
 
         public void RemoveConsole(IConsole console)
         {
-            if (consoleTabMap.ContainsKey(console))
-            {
-                console.Cancel();
-
-                var page = consoleTabMap[console];
-                tabConsoles.TabPages.Remove(page);
-                consoleTabMap.Remove(console);
-                tabConsoleMap.Remove(page);
-            }
+            if (!consoleTabMap.ContainsKey(console)) return;
+            console.Cancel();
+            var page = consoleTabMap[console];
+            tabConsoles.TabPages.Remove(page);
+            consoleTabMap.Remove(console);
+            tabConsoleMap.Remove(page);
         }
 
         void tabConsoles_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Middle)
+            if (e.Button != MouseButtons.Middle) return;
+            for (int i = 0; i < tabConsoles.TabCount; i++)
             {
-                for (int i = 0; i < tabConsoles.TabCount; i++)
+                if (tabConsoles.GetTabRect(i).Contains(e.Location))
                 {
-                    if (tabConsoles.GetTabRect(i).Contains(e.Location))
-                    {
-                        RemoveConsole(tabConsoleMap[tabConsoles.TabPages[i]]);
-                    }
+                    RemoveConsole(tabConsoleMap[tabConsoles.TabPages[i]]);
                 }
-                
             }
         }
 

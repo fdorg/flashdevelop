@@ -10,14 +10,13 @@ namespace ConsolePanel.Implementation.CmdProcess
 {
     public partial class ConsoleControl : UserControl
     {
-        Process process;
         IntPtr cmdHandle;
         AutomationElement window;
         Size realSize;
 
         ConsoleColor backColor = ConsoleColor.Black;
         ConsoleColor foreColor = ConsoleColor.White;
-        List<string> commandsToDo = new List<string>();
+        readonly List<string> commandsToDo = new List<string>();
         string lastWorkingDir;
 
         public event EventHandler Exited;
@@ -27,11 +26,7 @@ namespace ConsolePanel.Implementation.CmdProcess
             set
             {
                 lastWorkingDir = value;
-
-                if (process == null)
-                {
-                    Create();
-                }
+                if (Process == null) Create();
                 else
                 {
                     SendString("cd \"" + value + "\"");
@@ -42,24 +37,15 @@ namespace ConsolePanel.Implementation.CmdProcess
 
         public ConsoleColor ConsoleBackColor
         {
-            get
-            {
-                return backColor;
-            }
+            get => backColor;
             set
             {
-                if (backColor == value)
-                    return;
-
+                if (value == backColor) return;
                 backColor = value;
-
                 var trimmedFore = foreColor.ToString("X").TrimStart('0');
                 var trimmedBack = backColor.ToString("X").TrimStart('0');
-                if (trimmedFore == "")
-                    trimmedFore = "0";
-                if (trimmedBack == "")
-                    trimmedBack = "0";
-
+                if (trimmedFore == "") trimmedFore = "0";
+                if (trimmedBack == "") trimmedBack = "0";
                 SendString("color " + trimmedBack + trimmedFore);
                 SendString("cls");
             }
@@ -67,24 +53,15 @@ namespace ConsolePanel.Implementation.CmdProcess
 
         public ConsoleColor ConsoleForeColor
         {
-            get
-            {
-                return foreColor;
-            }
+            get => foreColor;
             set
             {
-                if (foreColor == value)
-                    return;
-
+                if (value == foreColor) return;
                 foreColor = value;
-
                 var trimmedFore = foreColor.ToString("X").TrimStart('0');
                 var trimmedBack = backColor.ToString("X").TrimStart('0');
-                if (trimmedFore == "")
-                    trimmedFore = "0";
-                if (trimmedBack == "")
-                    trimmedBack = "0";
-
+                if (trimmedFore == "") trimmedFore = "0";
+                if (trimmedBack == "") trimmedBack = "0";
                 SendString("color " + trimmedBack + trimmedFore);
                 SendString("cls");
             }
@@ -94,21 +71,9 @@ namespace ConsolePanel.Implementation.CmdProcess
         /// Returns the actual size of the console window's client area
         /// (the width of a console window only changes by specific values)
         /// </summary>
-        public Size ActualSize
-        {
-            get
-            {
-                return realSize;
-            }
-        }
+        public Size ActualSize => realSize;
 
-        public Process Process
-        {
-            get
-            {
-                return process;
-            }
-        }
+        public Process Process { get; set; }
 
         /// <summary>
         /// Creates a new ConsoleControl
@@ -119,11 +84,8 @@ namespace ConsolePanel.Implementation.CmdProcess
         {
             InitializeComponent();
             SetStyle(ControlStyles.Selectable, true);
-
             lastWorkingDir = workingDirectory;
-
-            if (init)
-                Create();
+            if (init) Create();
         }
 
         /// <summary>
@@ -131,21 +93,18 @@ namespace ConsolePanel.Implementation.CmdProcess
         /// </summary>
         public void Cancel()
         {
-            if (process != null)
+            if (Process is null) return;
+            if (!Process.HasExited)
             {
-                if (!process.HasExited)
+                SendString("^(c)", false);
+                try
                 {
-                    SendString("^(c)", false);
-                    try
-                    {
-                        process.Kill();
-                    }
-                    catch { }
-                    
+                    Process.Kill();
                 }
-                
-                process = null;
+                catch { }
+                    
             }
+            Process = null;
         }
 
         /// <summary>
@@ -153,35 +112,25 @@ namespace ConsolePanel.Implementation.CmdProcess
         /// </summary>
         public void Create()
         {
-            if (process != null && !process.HasExited)
-            {
-                return;
-            }
-
+            if (Process != null && !Process.HasExited) return;
             try
             {
-                process = new Process();
-
-                process.StartInfo.FileName = "cmd";
-
-                if (lastWorkingDir != null)
-                    process.StartInfo.WorkingDirectory = lastWorkingDir;
-                process.StartInfo.UseShellExecute = false;
-                
-                process.EnableRaisingEvents = true;
-                process.Exited += Process_Exited;
-
-                process.Start();
+                Process = new Process();
+                Process.StartInfo.FileName = "cmd";
+                if (lastWorkingDir != null) Process.StartInfo.WorkingDirectory = lastWorkingDir;
+                Process.StartInfo.UseShellExecute = false;
+                Process.EnableRaisingEvents = true;
+                Process.Exited += Process_Exited;
+                Process.Start();
 
                 //Wait for cmd window
-                while (process.MainWindowHandle == IntPtr.Zero)
+                while (Process.MainWindowHandle == IntPtr.Zero)
                 {
-                    process.Refresh();
+                    Process.Refresh();
                 }
-                cmdHandle = process.MainWindowHandle;
-                window = System.Windows.Automation.AutomationElement.FromHandle(cmdHandle);
+                cmdHandle = Process.MainWindowHandle;
+                window = AutomationElement.FromHandle(cmdHandle);
                 WinApi.SetParent(cmdHandle, pnlClipping.Handle);
-
                 SendString("cls");
                 ResizeConsole();
             }
@@ -197,8 +146,7 @@ namespace ConsolePanel.Implementation.CmdProcess
         /// <param name="execute">if true, a "\r" is appended to the given string</param>
         public void SendString(string str, bool execute = true)
         {
-            if (execute)
-                str += "\r";
+            if (execute) str += "\r";
             ProcessCommandCache();
             try
             {
@@ -210,12 +158,11 @@ namespace ConsolePanel.Implementation.CmdProcess
             }
         }
 
-        private void ProcessCommandCache()
+        void ProcessCommandCache()
         {
             while (commandsToDo.Count > 0)
             {
                 var toDo = commandsToDo[0];
-                
                 try
                 {
                     RunCommandWithoutCache(toDo);
@@ -228,55 +175,40 @@ namespace ConsolePanel.Implementation.CmdProcess
             }
         }
 
-        private void RunCommandWithoutCache(string cmd)
+        void RunCommandWithoutCache(string cmd)
         {
             window.SetFocus();
             //TODO: prevent user from clicking around while doing this
             SendKeys.SendWait(cmd);
-
             Focus();
         }
 
-        private void ResizeConsole()
+        void ResizeConsole()
         {
             WinApi.ShowWindow(cmdHandle, WinApi.SW_SHOWMAXIMIZED);
-            
             WinApi.ResizeClientRectTo(cmdHandle, new Rectangle(new Point(0, 0), Size));
-
             SetRealConsoleSize();
-
             var tooWide = realSize.Width > Width;
             var tooHigh = realSize.Height > Height;
             if (tooWide || tooHigh)
             {
                 int newWidth = realSize.Width;
                 int newHeight = realSize.Height;
-                if (tooWide)
-                {
-                    newWidth -= 8;
-                }
-                if (tooHigh)
-                {
-                    newHeight -= 12;
-                }
-
+                if (tooWide) newWidth -= 8;
+                if (tooHigh) newHeight -= 12;
                 WinApi.ResizeClientRectTo(cmdHandle, new Rectangle(0, 0, newWidth, newHeight));
                 SetRealConsoleSize();
             }
-
             pnlClipping.Size = realSize;
         }
 
-        private void SetRealConsoleSize()
+        void SetRealConsoleSize()
         {
-            WINDOWINFO info;
-            WinApi.GetWindowInfo(cmdHandle, out info);
-
+            WinApi.GetWindowInfo(cmdHandle, out var info);
             var leftBorder = info.rcClient.Left - info.rcWindow.Left;
             var topBorder = info.rcClient.Top - info.rcWindow.Top;
             var rightBorder = (int)info.cxWindowBorders;
             var bottomBorder = (int)info.cyWindowBorders;
-
             var width = info.rcWindow.Right - info.rcWindow.Left;
             var height = info.rcWindow.Bottom - info.rcWindow.Top;
 
@@ -284,16 +216,12 @@ namespace ConsolePanel.Implementation.CmdProcess
             realSize.Height = height - topBorder - bottomBorder;
         }
 
-        private void CmdPanel_Resize(object sender, EventArgs e)
-        {
-            ResizeConsole();
-        }
+        void CmdPanel_Resize(object sender, EventArgs e) => ResizeConsole();
 
-        private void Process_Exited(object sender, EventArgs e)
+        void Process_Exited(object sender, EventArgs e)
         {
             cmdHandle = IntPtr.Zero;
-            if (Exited != null)
-                Exited(sender, e);
+            Exited?.Invoke(sender, e);
         }
 
         /// <summary> 
@@ -302,30 +230,21 @@ namespace ConsolePanel.Implementation.CmdProcess
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-
+            if (disposing) components?.Dispose();
             Cancel();
-
             base.Dispose(disposing);
         }
 
-        private void CmdPanel_Enter(object sender, EventArgs e)
+        void CmdPanel_Enter(object sender, EventArgs e)
         {
             try
             {
                 window.SetFocus();
             }
             catch { }
-            
             ProcessCommandCache();
         }
 
-        private void ConsoleControl_Paint(object sender, PaintEventArgs e)
-        {
-            ResizeConsole();
-        }
+        void ConsoleControl_Paint(object sender, PaintEventArgs e) => ResizeConsole();
     }
 }

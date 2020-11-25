@@ -56,10 +56,8 @@ namespace ConsolePanel.Managers
 
         static void ProcessCachedProvider()
         {
-            if (cachedProvider != null)
-            {
-                main.ConsoleProvider = cachedProvider;
-            }
+            if (cachedProvider is null) return;
+            main.ConsoleProvider = cachedProvider;
         }
     }
 }
