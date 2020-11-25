@@ -60,7 +60,7 @@ namespace ConsolePanel
                     {
                         foreach (var panel in tabView.Consoles)
                         {
-                            panel.WorkingDirectory = PluginBase.CurrentProject.GetAbsolutePath("");
+                            panel.WorkingDirectory = PluginBase.CurrentProject.GetAbsolutePath(string.Empty);
                         }
                     }
                     break;

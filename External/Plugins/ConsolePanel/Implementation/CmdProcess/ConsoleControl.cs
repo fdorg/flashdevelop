@@ -43,9 +43,9 @@ namespace ConsolePanel.Implementation.CmdProcess
                 if (value == backColor) return;
                 backColor = value;
                 var trimmedFore = foreColor.ToString("X").TrimStart('0');
+                if (trimmedFore.Length == 0) trimmedFore = "0";
                 var trimmedBack = backColor.ToString("X").TrimStart('0');
-                if (trimmedFore == "") trimmedFore = "0";
-                if (trimmedBack == "") trimmedBack = "0";
+                if (trimmedBack.Length == 0) trimmedBack = "0";
                 SendString("color " + trimmedBack + trimmedFore);
                 SendString("cls");
             }
@@ -59,9 +59,9 @@ namespace ConsolePanel.Implementation.CmdProcess
                 if (value == foreColor) return;
                 foreColor = value;
                 var trimmedFore = foreColor.ToString("X").TrimStart('0');
+                if (trimmedFore.Length == 0) trimmedFore = "0";
                 var trimmedBack = backColor.ToString("X").TrimStart('0');
-                if (trimmedFore == "") trimmedFore = "0";
-                if (trimmedBack == "") trimmedBack = "0";
+                if (trimmedBack.Length == 0) trimmedBack = "0";
                 SendString("color " + trimmedBack + trimmedFore);
                 SendString("cls");
             }
@@ -115,11 +115,16 @@ namespace ConsolePanel.Implementation.CmdProcess
             if (Process != null && !Process.HasExited) return;
             try
             {
-                Process = new Process();
-                Process.StartInfo.FileName = "cmd";
+                Process = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = "cmd",
+                        UseShellExecute = false,
+                    },
+                    EnableRaisingEvents = true
+                };
                 if (lastWorkingDir != null) Process.StartInfo.WorkingDirectory = lastWorkingDir;
-                Process.StartInfo.UseShellExecute = false;
-                Process.EnableRaisingEvents = true;
                 Process.Exited += Process_Exited;
                 Process.Start();
 

@@ -24,7 +24,7 @@ namespace ConsolePanel.Gui
 
         public void AddConsole(IConsole console)
         {
-            var tabPage = new TabPage("Console");
+            var tabPage = new TabPage(console.ConsoleControl.Text);
             console.ConsoleControl.Dock = DockStyle.Fill;
             tabPage.Controls.Add(console.ConsoleControl);
 
