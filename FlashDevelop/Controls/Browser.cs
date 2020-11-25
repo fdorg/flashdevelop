@@ -25,9 +25,9 @@ namespace FlashDevelop.Controls
             try
             {
                 // Sets a key in registry so that latest .NET browser control is used
-                string valueName = Path.GetFileName(Application.ExecutablePath);
-                string subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
-                RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
+                var valueName = Path.GetFileName(Application.ExecutablePath);
+                var subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
+                var emu = Registry.CurrentUser.OpenSubKey(subKey, true);
                 {
                     var value = emu.GetValue(valueName);
                     if (value is null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
@@ -193,7 +193,7 @@ namespace FlashDevelop.Controls
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)
             {
-                ComponentResourceManager resources = new ComponentResourceManager(typeof(Browser));
+                var resources = new ComponentResourceManager(typeof(Browser));
                 goButton.Image = ((Image)(resources.GetObject("goButton.Image32")));
                 forwardButton.Image = ((Image)(resources.GetObject("forwardButton.Image32")));
                 refreshButton.Image = ((Image)(resources.GetObject("refreshButton.Image32")));
@@ -226,7 +226,7 @@ namespace FlashDevelop.Controls
         void WebBrowserNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
             addressComboBox.Text = webBrowser.Url.ToString();
-            Globals.MainForm.OnScintillaControlUpdateControl(PluginBase.MainForm.CurrentDocument.SciControl);
+            Globals.MainForm.OnScintillaControlUpdateControl(PluginBase.MainForm.CurrentDocument?.SciControl);
         }
 
         /// <summary>
@@ -236,9 +236,8 @@ namespace FlashDevelop.Controls
         {
             if (webBrowser.DocumentTitle.Trim().Length == 0)
             {
-                string domain = webBrowser.Document.Domain.Trim();
-                if (!string.IsNullOrEmpty(domain)) Parent.Text = domain;
-                else Parent.Text = TextHelper.GetString("Info.UntitledFileStart");
+                var domain = webBrowser.Document?.Domain.Trim();
+                Parent.Text = !string.IsNullOrEmpty(domain) ? domain : TextHelper.GetString("Info.UntitledFileStart");
             }
             else Parent.Text = webBrowser.DocumentTitle;
         }
@@ -248,11 +247,9 @@ namespace FlashDevelop.Controls
         /// </summary>
         void AddressComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (addressComboBox.SelectedItem != null)
-            {
-                string url = addressComboBox.SelectedItem.ToString();
-                webBrowser.Navigate(url);
-            }
+            if (addressComboBox.SelectedItem == null) return;
+            var url = addressComboBox.SelectedItem.ToString();
+            webBrowser.Navigate(url);
         }
 
         /// <summary>
@@ -275,7 +272,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void BrowseButtonClick(object sender, EventArgs e)
         {
-            string url = addressComboBox.Text;
+            var url = addressComboBox.Text;
             if (!addressComboBox.Items.Contains(url))
             {
                 addressComboBox.Items.Insert(0, url);
@@ -288,19 +285,15 @@ namespace FlashDevelop.Controls
         /// </summary>
         void AddressComboBoxKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)Keys.Enter)
+            if (e.KeyChar != (char) Keys.Enter) return;
+            var url = addressComboBox.Text;
+            if (!addressComboBox.Items.Contains(url))
             {
-                string url = addressComboBox.Text;
-                if (!addressComboBox.Items.Contains(url))
-                {
-                    addressComboBox.Items.Insert(0, url);
-                }
-                webBrowser.Navigate(url);
+                addressComboBox.Items.Insert(0, url);
             }
+            webBrowser.Navigate(url);
         }
-
         #endregion
-
     }
 
     #region WebBrowserEx
@@ -310,13 +303,8 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Redirect events to MainForm.
         /// </summary>
-        public override bool PreProcessMessage(ref Message msg)
-        {
-            return Globals.MainForm.PreProcessMessage(ref msg);
-        }
-
+        public override bool PreProcessMessage(ref Message msg) => Globals.MainForm.PreProcessMessage(ref msg);
     }
 
     #endregion
-
 }

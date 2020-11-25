@@ -61,18 +61,12 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Gets if the language is valid for refactoring
         /// </summary>
-        public static bool GetLanguageIsValid()
-        {
-            return GetLanguageIsValid(PluginBase.MainForm.CurrentDocument?.SciControl);
-        }
+        public static bool GetLanguageIsValid() => GetLanguageIsValid(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Gets if the language is valid for refactoring
         /// </summary>
-        public static bool GetLanguageIsValid(ScintillaControl sci)
-        {
-            return sci != null && CommandFactoryProvider.ContainsLanguage(sci.ConfigurationLanguage);
-        }
+        public static bool GetLanguageIsValid(ScintillaControl sci) => sci != null && CommandFactoryProvider.ContainsLanguage(sci.ConfigurationLanguage);
 
         /// <summary>
         /// Checks if the model is not null and file exists
@@ -100,8 +94,9 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static ASResult GetDefaultRefactorTarget()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (!ASContext.Context.IsFileValid || sci is null) return null;
+            if (!ASContext.Context.IsFileValid) return null;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return null;
             var position = sci.WordEndPosition(sci.CurrentPos, true);
             return ASComplete.GetExpressionType(sci, position);
         }

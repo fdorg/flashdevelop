@@ -208,8 +208,7 @@ namespace BasicCompletion
         /// </summary>
         public void InitTimer()
         {
-            updateTimer = new Timer();
-            updateTimer.SynchronizingObject = PluginBase.MainForm as Form;
+            updateTimer = new Timer {SynchronizingObject = PluginBase.MainForm as Form};
             updateTimer.Elapsed += UpdateTimerElapsed;
             updateTimer.Interval = 500;
         }
@@ -219,8 +218,8 @@ namespace BasicCompletion
         /// </summary>
         void UpdateTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            var doc = PluginBase.MainForm.CurrentDocument;
-            if (doc?.SciControl is {} sci && isSupported) AddDocumentKeywords(sci);
+            if (isSupported && PluginBase.MainForm.CurrentDocument?.SciControl is {} sci)
+                AddDocumentKeywords(sci);
         }
 
         /// <summary>
@@ -315,7 +314,7 @@ namespace BasicCompletion
         /// <summary>
         /// Adds document keywords from config file to hashtable
         /// </summary>
-        public void AddDocumentKeywords(ITabbedDocument document) => AddDocumentKeywords(document.SciControl);
+        public void AddDocumentKeywords(ITabbedDocument document) => AddDocumentKeywords(document?.SciControl);
 
         /// <summary>
         /// Adds document keywords from config file to hashtable

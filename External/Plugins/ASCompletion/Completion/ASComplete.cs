@@ -747,7 +747,7 @@ namespace ASCompletion.Completion
         }
 
         public static void LocateMember(string keyword, string name, int line)
-            => LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
+            => LocateMember(PluginBase.MainForm.CurrentDocument?.SciControl, keyword, name, line);
 
         public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
         {

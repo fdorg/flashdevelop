@@ -415,9 +415,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void UpdateFindText()
         {
-            if (useRegexCheckBox.Checked) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (lookupIsDirty || sci is null || sci.SelTextSize == 0) return;
+            if (useRegexCheckBox.Checked || lookupIsDirty) return;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null || sci.SelTextSize == 0) return;
             findComboBox.Text = sci.SelText;
             lookupIsDirty = false;
         }
@@ -427,7 +427,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public void InitializeFindText()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null || sci.SelTextSize == 0) return;
             findComboBox.Text = sci.SelText;
             lookupIsDirty = false;
@@ -446,7 +446,7 @@ namespace FlashDevelop.Dialogs
         {
             currentMatch = null;
             if (update) UpdateFindText();
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var matches = GetResults(sci, simple);
             if (!matches.IsNullOrEmpty())
@@ -490,7 +490,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void BookmarkAllButtonClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var matches = GetResults(sci);
             if (matches != null && lookComboBox.SelectedIndex == 1 && sci.SelTextSize > 0)
@@ -512,7 +512,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ReplaceButtonClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             if (sci.SelTextSize == 0)
             {
@@ -538,7 +538,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ReplaceAllButtonClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
             var matches = GetResults(sci);
             var selectionOnly = lookComboBox.SelectedIndex == 1 && sci.SelTextSize > 0;
@@ -622,7 +622,7 @@ namespace FlashDevelop.Dialogs
         void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            PluginBase.MainForm.CurrentDocument.Activate();
+            PluginBase.MainForm.CurrentDocument?.Activate();
             Hide();
         }
 

@@ -107,7 +107,8 @@ namespace CodeRefactor.Commands
         {
             if (string.IsNullOrEmpty(newName)) newName = GetNewName();
             if (string.IsNullOrEmpty(newName)) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             var pos = sci.SelectionEnd;
             var expr = ASComplete.GetExpressionType(sci, pos, false, true);
             var type = !expr.IsNull() && expr.Type != null ? expr.Type.Name : string.Empty;

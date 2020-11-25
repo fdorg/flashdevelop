@@ -3866,7 +3866,7 @@ namespace ScintillaNet
             }
             else if (m.Msg == WM_NOTIFY)
             {
-                SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
+                var scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
                 if (scn.nmhdr.hwndFrom == HandleSci && !DisableAllSciEvents)
                 {
                     switch (scn.nmhdr.code)
@@ -4075,18 +4075,14 @@ namespace ScintillaNet
                 switch (PluginBase.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
-                    {
                         StartHighlightSelectionTimer();
                         break;
-                    }
                     case Enums.HighlightMatchingWordsMode.SelectedWord:
-                    {
                         if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
                         {
                             StartHighlightSelectionTimer();
                         }
                         break;
-                    }
                 }
             }
             lastSelectionStart = sci.SelectionStart;

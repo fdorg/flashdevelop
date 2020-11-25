@@ -452,7 +452,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Move" command
         /// </summary>
-        static void MoveClicked(object sender, EventArgs e) => MoveFile(PluginBase.MainForm.CurrentDocument.FileName);
+        static void MoveClicked(object sender, EventArgs e) => MoveFile(PluginBase.MainForm.CurrentDocument?.FileName);
 
         static void MoveFile(string fileName)
         {

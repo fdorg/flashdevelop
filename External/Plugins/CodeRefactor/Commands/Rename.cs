@@ -392,7 +392,8 @@ namespace CodeRefactor.Commands
 
             if (useInline)
             {
-                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is null) return;
                 var position = sci.WordEndPosition(sci.CurrentPos, true);
                 var inlineRename = new InlineRename(sci, oldName, position, null, null, isRenamePackage ? new bool?() : true, Target);
                 inlineRename.Apply += OnApply;
@@ -422,12 +423,7 @@ namespace CodeRefactor.Commands
         {
             UpdateDefaultFlags(sender);
             if (newName.Length == 0 || oldName == newName) return;
-
-            if (isRenamePackage)
-            {
-                renamePackage = new Move(new Dictionary<string, string> { { renamePackagePath, newName } }, true, true);
-            }
-
+            if (isRenamePackage) renamePackage = new Move(new Dictionary<string, string> {{renamePackagePath, newName}}, true, true);
             OldName = oldName;
             NewName = newName;
             RenamingHelper.AddToQueue(this);

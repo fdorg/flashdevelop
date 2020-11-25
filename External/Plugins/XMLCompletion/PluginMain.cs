@@ -79,7 +79,7 @@ namespace XMLCompletion
             {
                 case EventType.FileSwitch:
                 case EventType.SyntaxChange:
-                    XMLComplete.CurrentFile = PluginBase.MainForm.CurrentDocument.FileName;
+                    XMLComplete.CurrentFile = PluginBase.MainForm.CurrentDocument?.FileName;
                     break;
 
                 case EventType.Completion:

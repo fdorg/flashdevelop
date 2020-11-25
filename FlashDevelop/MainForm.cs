@@ -1524,7 +1524,7 @@ namespace FlashDevelop
             document.IsModified = false;
             ReloadingDocument = false;
             OnUpdateMainFormDialogTitle();
-            if (document.SciControl is {} sci) sci.MarkerDeleteAll(2);
+            document.SciControl?.MarkerDeleteAll(2);
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1536,7 +1536,7 @@ namespace FlashDevelop
             var sci = document.SciControl;
             if (sci is null || document.IsModified || ReloadingDocument || ProcessingContents) return;
             document.IsModified = true;
-            TextEvent te = new TextEvent(EventType.FileModify, sci.FileName);
+            var te = new TextEvent(EventType.FileModify, sci.FileName);
             EventManager.DispatchEvent(this, te);
         }
 
@@ -1547,15 +1547,15 @@ namespace FlashDevelop
         {
             if (oldFile != null)
             {
-                string args = document.FileName + ";" + oldFile;
-                TextEvent rename = new TextEvent(EventType.FileRename, args);
+                var args = document.FileName + ";" + oldFile;
+                var rename = new TextEvent(EventType.FileRename, args);
                 EventManager.DispatchEvent(this, rename);
-                TextEvent open = new TextEvent(EventType.FileOpen, document.FileName);
+                var open = new TextEvent(EventType.FileOpen, document.FileName);
                 EventManager.DispatchEvent(this, open);
             }
             OnUpdateMainFormDialogTitle();
-            if (document.SciControl is { } sci) sci.MarkerDeleteAll(2);
-            TextDataEvent save = new TextDataEvent(EventType.FileSave, document.FileName, reason);
+            document.SciControl?.MarkerDeleteAll(2);
+            var save = new TextDataEvent(EventType.FileSave, document.FileName, reason);
             EventManager.DispatchEvent(this, save);
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
@@ -1681,10 +1681,9 @@ namespace FlashDevelop
         /// <summary>
         /// Gets a theme property color with a fallback
         /// </summary>
-        public Color GetThemeColor(string id, Color fallback)
-        {
-            return ThemeManager.GetThemeColor(id) is {} color && color != Color.Empty ? color : fallback;
-        }
+        public Color GetThemeColor(string id, Color fallback) => ThemeManager.GetThemeColor(id) is {} color && color != Color.Empty
+            ? color
+            : fallback;
 
         /// <summary>
         /// Gets a theme property value
@@ -1858,7 +1857,7 @@ namespace FlashDevelop
             /**
             * Notify plugins about start arguments
             */
-            NotifyEvent ne = new NotifyEvent(EventType.StartArgs);
+            var ne = new NotifyEvent(EventType.StartArgs);
             EventManager.DispatchEvent(this, ne);
         }
 
@@ -1871,7 +1870,7 @@ namespace FlashDevelop
                 file = PathHelper.GetLongPathName(file);
                 if (!File.Exists(file)) return;
                 if (OpenEditableDocument(file, false) is TabbedDocument doc) ApplyOpenParams(openParams, doc.SciControl);
-                else if (CurrentDocument.SciControl is { } sci && sci.FileName == file) ApplyOpenParams(openParams, sci);
+                else if (CurrentDocument?.SciControl is { } sci && sci.FileName == file) ApplyOpenParams(openParams, sci);
             }
             else if (File.Exists(file))
             {
@@ -2256,7 +2255,7 @@ namespace FlashDevelop
         /// </summary>
         public void ClipboardHistory(object sender, EventArgs e)
         {
-            if (ClipboardHistoryDialog.Show(out var data)) CurrentDocument.SciControl.ReplaceSel(data.Text);
+            if (ClipboardHistoryDialog.Show(out var data)) CurrentDocument?.SciControl.ReplaceSel(data.Text);
         }
 
         /// <summary>
@@ -2264,8 +2263,8 @@ namespace FlashDevelop
         /// </summary>
         public void SmartPaste(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
-            if (!sci.CanPaste) return;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null || !sci.CanPaste) return;
             // if clip is not line-based, then just do simple paste
             if ((sci.SelTextSize > 0 && !sci.SelText.EndsWith('\n')) || !Clipboard.GetText().EndsWith('\n') || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
             else
@@ -2394,7 +2393,7 @@ namespace FlashDevelop
                 if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                 {
                     string file = saveFileDialog.FileName;
-                    FileHelper.WriteFile(file, CurrentDocument.SciControl.SelText, Encoding.UTF8);
+                    FileHelper.WriteFile(file, CurrentDocument?.SciControl.SelText, Encoding.UTF8);
                 }
                 saveFileDialog.InitialDirectory = prevRootPath;
                 saveFileDialog.Filter = prevFilter;
@@ -2422,7 +2421,7 @@ namespace FlashDevelop
                 if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                 {
                     string file = saveFileDialog.FileName;
-                    FileHelper.WriteFile(file, CurrentDocument.SciControl.SelText, Encoding.UTF8);
+                    FileHelper.WriteFile(file, CurrentDocument?.SciControl.SelText, Encoding.UTF8);
                 }
                 saveFileDialog.InitialDirectory = prevRootPath;
                 saveFileDialog.Filter = prevFilter;
@@ -2499,7 +2498,7 @@ namespace FlashDevelop
         /// <summary>
         /// Closes the current document
         /// </summary>
-        public void Close(object sender, EventArgs e) => CurrentDocument.Close();
+        public void Close(object sender, EventArgs e) => CurrentDocument?.Close();
 
         /// <summary>
         /// Closes all open documents in the current pane
@@ -2521,7 +2520,8 @@ namespace FlashDevelop
         /// </summary>
         public void Duplicate(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             var extension = Path.GetExtension(sci.FileName);
             var filename = DocumentManager.GetNewDocumentName(extension);
             var document = CreateEditableDocument(filename, sci.Text, sci.Encoding.CodePage);
@@ -2531,19 +2531,19 @@ namespace FlashDevelop
         /// <summary>
         /// Reverts the document to the default state
         /// </summary>
-        public void Revert(object sender, EventArgs e) => CurrentDocument.Revert(true);
+        public void Revert(object sender, EventArgs e) => CurrentDocument?.Revert(true);
 
         /// <summary>
         /// Reloads the current document
         /// </summary>
-        public void Reload(object sender, EventArgs e) => CurrentDocument.Reload(true);
+        public void Reload(object sender, EventArgs e) => CurrentDocument?.Reload(true);
 
         /// <summary>
         /// Prints the current document
         /// </summary>
         public void Print(object sender, EventArgs e)
         {
-            if (CurrentDocument.SciControl.TextLength == 0)
+            if (CurrentDocument?.SciControl?.TextLength == 0)
             {
                 var message = TextHelper.GetString("Info.NothingToPrint");
                 ErrorManager.ShowInfo(message);
@@ -2569,7 +2569,7 @@ namespace FlashDevelop
         /// </summary>
         public void PrintPreview(object sender, EventArgs e)
         {
-            if (CurrentDocument.SciControl.TextLength == 0)
+            if (CurrentDocument?.SciControl?.TextLength == 0)
             {
                 string message = TextHelper.GetString("Info.NothingToPrint");
                 ErrorManager.ShowInfo(message);
@@ -2945,7 +2945,7 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleSplitView(object sender, EventArgs e)
         {
-            if (CurrentDocument.SciControl is null) return;
+            if (CurrentDocument?.SciControl is null) return;
             CurrentDocument.IsSplitted = !CurrentDocument.IsSplitted;
             ButtonManager.UpdateFlaggedButtons();
         }
@@ -2955,7 +2955,8 @@ namespace FlashDevelop
         /// </summary>
         public void GoToMatchingBrace(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
+            var sci = CurrentDocument?.SciControl;
+            if (sci is null) return;
             var curPos = sci.CurrentPos;
             char c;
             if (curPos > 0)
@@ -2972,17 +2973,29 @@ namespace FlashDevelop
         /// <summary>
         /// Adds or removes a bookmark
         /// </summary>
-        public void ToggleBookmark(object sender, EventArgs e) => MarkerManager.ToggleMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
+        public void ToggleBookmark(object sender, EventArgs e)
+        {
+            var sci = CurrentDocument?.SciControl;
+            if (sci is not null) MarkerManager.ToggleMarker(sci, 0, sci.CurrentLine);
+        }
 
         /// <summary>
         /// Moves the cursor to the next bookmark
         /// </summary>
-        public void NextBookmark(object sender, EventArgs e) => MarkerManager.NextMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
+        public void NextBookmark(object sender, EventArgs e)
+        {
+            var sci = CurrentDocument?.SciControl;
+            if (sci is not null) MarkerManager.NextMarker(sci, 0, sci.CurrentLine);
+        }
 
         /// <summary>
         /// Moves the cursor to the previous bookmark
         /// </summary>
-        public void PrevBookmark(object sender, EventArgs e) => MarkerManager.PreviousMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
+        public void PrevBookmark(object sender, EventArgs e)
+        {
+            var sci = CurrentDocument?.SciControl;
+            if (sci is not null) MarkerManager.PreviousMarker(sci, 0, sci.CurrentLine);
+        }
 
         /// <summary>
         /// Removes all bookmarks
@@ -3020,7 +3033,11 @@ namespace FlashDevelop
         /// <summary>
         /// Toggles the folding of the editor
         /// </summary>
-        public void ToggleFold(object sender, EventArgs e) => CurrentDocument.SciControl.ToggleFold(CurrentDocument.SciControl.CurrentLine);
+        public void ToggleFold(object sender, EventArgs e)
+        {
+            var sci = CurrentDocument?.SciControl;
+            sci?.ToggleFold(sci.CurrentLine);
+        }
 
         /// <summary>
         /// Toggles a boolean setting
@@ -3121,8 +3138,8 @@ namespace FlashDevelop
         /// </summary>
         public void InsertGUID(object sender, EventArgs e)
         {
-            string guid = Guid.NewGuid().ToString();
-            CurrentDocument.SciControl.ReplaceSel(guid);
+            var guid = Guid.NewGuid().ToString();
+            CurrentDocument?.SciControl?.ReplaceSel(guid);
         }
 
         /// <summary>
@@ -3131,10 +3148,7 @@ namespace FlashDevelop
         public void InsertHash(object sender, EventArgs e)
         {
             using var dialog = new HashDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                CurrentDocument.SciControl.ReplaceSel(dialog.HashResultText);
-            }
+            if (dialog.ShowDialog() == DialogResult.OK) CurrentDocument?.SciControl?.ReplaceSel(dialog.HashResultText);
         }
 
         /// <summary>
@@ -3690,13 +3704,13 @@ namespace FlashDevelop
         {
             try
             {
-                var sci = CurrentDocument.SciControl;
+                var sci = CurrentDocument?.SciControl;
                 if (sci is null) return;
                 var button = (ToolStripItem)sender;
                 var command = ((ItemData)button.Tag).Tag;
                 var mfType = sci.GetType();
                 var method = mfType.GetMethod(command, Array.Empty<Type>());
-                method.Invoke(sci, null);
+                method?.Invoke(sci, null);
             }
             catch (Exception ex)
             {

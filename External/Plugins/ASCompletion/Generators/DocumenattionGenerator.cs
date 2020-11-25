@@ -99,7 +99,8 @@ namespace ASCompletion.Generators
             {
                 case Empty:
                 case MethodDetails:
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                    if (sci is null) return;
                     sci.BeginUndoAction();
                     try
                     {

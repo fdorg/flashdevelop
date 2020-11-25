@@ -827,7 +827,7 @@ namespace FlashDevelop.Dialogs
         {
             e.Cancel = true;
             runner?.CancelAsync();
-            PluginBase.MainForm.CurrentDocument.Activate();
+            PluginBase.MainForm.CurrentDocument?.Activate();
             Hide();
         }
         
@@ -1048,7 +1048,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public void UpdateFindText()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci != null && sci.SelTextSize > 0) findComboBox.Text = sci.SelText;
         }
 

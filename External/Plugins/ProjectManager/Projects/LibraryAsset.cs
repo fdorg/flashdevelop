@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS2;
 

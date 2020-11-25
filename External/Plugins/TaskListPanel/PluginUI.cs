@@ -189,7 +189,6 @@ namespace TaskListPanel
             statusStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
-
         }
 
         /// <summary>
@@ -293,9 +292,9 @@ namespace TaskListPanel
         /// <summary>
         /// Get all available files with extension matches, filters out hidden paths.
         /// </summary>
-        List<string> GetFiles(string path, ExplorationContext context)
+        IEnumerable<string> GetFiles(string path, ExplorationContext context)
         {
-            List<string> files = new List<string>();
+            var files = new List<string>();
             foreach (string extension in extensions)
             {
                 string[] allFiles = Directory.GetFiles(path, "*" + extension);
@@ -328,7 +327,7 @@ namespace TaskListPanel
         /// </summary>
         List<string> GetFiles(ExplorationContext context)
         {
-            List<string> files = new List<string>();
+            var files = new List<string>();
             foreach (string path in context.Directories)
             {
                 if (context.Worker.CancellationPending) return new List<string>();
@@ -348,7 +347,7 @@ namespace TaskListPanel
         /// <summary>
         /// Checks if the path should be scanned for tasks
         /// </summary>
-        bool ShouldBeScanned(string path, string[] excludedPaths)
+        static bool ShouldBeScanned(string path, string[] excludedPaths)
         {
             string name = Path.GetFileName(path);
             if ("._- ".Contains(name[0])) return false;
@@ -395,9 +394,9 @@ namespace TaskListPanel
             if (parseTimer.Enabled) parseTimer.Stop();
             parseTimer.Tag = null;
             if (bgWork != null && bgWork.IsBusy) bgWork.CancelAsync();
-            IProject project = PluginBase.CurrentProject;
-            ExplorationContext context = new ExplorationContext();
-            Settings settings = (Settings)pluginMain.Settings;
+            var project = PluginBase.CurrentProject;
+            var context = new ExplorationContext();
+            var settings = (Settings)pluginMain.Settings;
             context.ExcludedPaths = (string[])settings.ExcludedPaths.Clone();
             context.Directories = (string[])project.SourcePaths.Clone();
             for (int i = 0; i < context.Directories.Length; i++)
@@ -413,8 +412,8 @@ namespace TaskListPanel
             bgWork = new BackgroundWorker();
             context.Worker = bgWork;
             bgWork.WorkerSupportsCancellation = true;
-            bgWork.DoWork += bgWork_DoWork;
-            bgWork.RunWorkerCompleted += bgWork_RunWorkerCompleted;
+            bgWork.DoWork += BgWork_DoWork;
+            bgWork.RunWorkerCompleted += BgWork_RunWorkerCompleted;
             bgWork.RunWorkerAsync(context);
             string message = TextHelper.GetString("Info.Refreshing");
             toolStripLabel.Text = message;
@@ -439,7 +438,7 @@ namespace TaskListPanel
         /// <summary>
         /// 
         /// </summary>
-        void bgWork_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void BgWork_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled) return;
             var context = (ExplorationContext) e.Result;
@@ -454,7 +453,7 @@ namespace TaskListPanel
         /// <summary>
         /// 
         /// </summary>
-        void bgWork_DoWork(object sender, DoWorkEventArgs e)
+        void BgWork_DoWork(object sender, DoWorkEventArgs e)
         {
             var context = (ExplorationContext) e.Argument;
             context.Files = GetFiles(context);
@@ -528,17 +527,19 @@ namespace TaskListPanel
         void ParseFile(string path)
         {
             if (!File.Exists(path)) return;
-            EncodingFileInfo info = FileHelper.GetEncodingFileInfo(path);
+            var info = FileHelper.GetEncodingFileInfo(path);
             if (info.CodePage == -1) return; // If the file is locked, stop.
-            MatchCollection matches = todoParser.Matches(info.Contents);
+            var matches = todoParser.Matches(info.Contents);
             RemoveItemsByPath(path);
             if (matches.Count == 0) return;
             foreach (Match match in matches)
             {
-                var itemTag = new Hashtable();
-                itemTag["FullPath"] = path;
-                itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
-                itemTag["Position"] = match.Groups[2].Index;
+                var itemTag = new Hashtable
+                {
+                    ["FullPath"] = path,
+                    ["LastWriteTime"] = new FileInfo(path).LastWriteTime,
+                    ["Position"] = match.Groups[2].Index
+                };
                 var item = new ListViewItem(new[] {
                     "",
                     match.Groups[2].Index.ToString(),
@@ -558,22 +559,24 @@ namespace TaskListPanel
         /// <summary>
         /// Clean match from dirt
         /// </summary>
-        string CleanMatch(string value) => reClean.Replace(value, "").Trim();
+        static string CleanMatch(string value) => reClean.Replace(value, "").Trim();
 
         /// <summary>
         /// Parse a string
         /// </summary>
         void ParseFile(string text, string path)
         {
-            MatchCollection matches = todoParser.Matches(text);
+            var matches = todoParser.Matches(text);
             RemoveItemsByPath(path);
             if (matches.Count == 0) return;
             foreach (Match match in matches)
             {
-                var itemTag = new Hashtable();
-                itemTag["FullPath"] = path;
-                itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
-                itemTag["Position"] = match.Groups[2].Index;
+                var itemTag = new Hashtable
+                {
+                    ["FullPath"] = path,
+                    ["LastWriteTime"] = new FileInfo(path).LastWriteTime,
+                    ["Position"] = match.Groups[2].Index
+                };
                 var item = new ListViewItem(new[] {
                     "",
                     match.Groups[2].Index.ToString(),
@@ -611,9 +614,7 @@ namespace TaskListPanel
             if (found) gp.Items.Add(item);
             else
             {
-                gp = new ListViewGroup();
-                gp.Tag = path;
-                gp.Header = gpname;
+                gp = new ListViewGroup {Tag = path, Header = gpname};
                 listView.Groups.Add(gp);
                 gp.Items.Add(item);
             }
@@ -633,15 +634,14 @@ namespace TaskListPanel
         /// </summary>
         void InitGraphics()
         {
-            imageList = new ImageListManager();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList = new ImageListManager {ColorDepth = ColorDepth.Depth32Bit};
             imageList.Initialize(ImageList_Populate);
             listView.SmallImageList = imageList;
         }
 
         void ImageList_Populate(object sender, EventArgs e)
         {
-            Settings settings = (Settings) pluginMain.Settings;
+            var settings = (Settings) pluginMain.Settings;
             if (settings?.ImageIndexes is null) return;
             foreach (int index in settings.ImageIndexes)
             {
@@ -654,8 +654,8 @@ namespace TaskListPanel
         /// </summary>
         void RemoveItemsByPath(string path)
         {
-            ListViewItem[] items = listView.Items.Find(path, false);
-            foreach (ListViewItem item in items) item.Remove();
+            var items = listView.Items.Find(path, false);
+            foreach (var item in items) item.Remove();
         }
 
         /// <summary>
@@ -744,8 +744,7 @@ namespace TaskListPanel
             var path = firstSelected.Name;
             currentFileName = path;
             currentPos = (int)((Hashtable)firstSelected.Tag)["Position"];
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document.SciControl is { } sci)
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
             {
                 if (sci.FileName.ToUpper() == path.ToUpper())
                 {
@@ -775,7 +774,7 @@ namespace TaskListPanel
             {
                 case EventType.FileSwitch:
                 {
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                     if (sci != null)
                     {
                         if (currentFileName != null && currentPos > -1)
@@ -793,7 +792,7 @@ namespace TaskListPanel
                 }
                 case EventType.FileSave:
                 {
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                     if (sci != null) RefreshCurrentFile(sci);
                     break;
                 }
@@ -801,7 +800,7 @@ namespace TaskListPanel
                     var keys = ((KeyEvent) e).Value;
                     if (ContainsFocus && keys == Keys.Escape)
                     {
-                        var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                        var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                         if (sci != null)
                         {
                             sci.Focus();
