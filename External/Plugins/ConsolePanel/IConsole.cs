@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ConsolePanel
@@ -16,16 +13,9 @@ namespace ConsolePanel
         /// <summary>
         /// The Control that is added to the FlashDevelop form
         /// </summary>
-        Control ConsoleControl
-        {
-            get;
-        }
+        Control ConsoleControl { get; }
 
-        string WorkingDirectory
-        {
-            //get;
-            set;
-        }
+        string WorkingDirectory { set; }
 
         void Clear();
 

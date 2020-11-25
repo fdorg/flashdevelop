@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace ConsolePanel.Managers
 {
-    public delegate void OnExited();
-
     public class ConsoleManager
     {
         static PluginMain main;
 
-        static List<string> commandList = new List<string>();
+        static readonly List<string> CommandList = new List<string>();
         static IConsoleProvider cachedProvider;
 
         /// <summary>
@@ -22,12 +17,12 @@ namespace ConsolePanel.Managers
         {
             if (main != null)
             {
-                processCommandList();
+                ProcessCommandList();
                 main.CreateConsolePanel().SendString(command);
             }
             else
             {
-                commandList.Add(command);
+                CommandList.Add(command);
             }
         }
 
@@ -46,20 +41,20 @@ namespace ConsolePanel.Managers
         public static void Init(PluginMain plugin)
         {
             main = plugin;
-            processCachedProvider();
-            processCommandList();
+            ProcessCachedProvider();
+            ProcessCommandList();
         }
 
-        static void processCommandList()
+        static void ProcessCommandList()
         {
-            while (commandList.Count > 0)
+            while (CommandList.Count > 0)
             {
-                main.CreateConsolePanel().SendString(commandList[0]);
-                commandList.RemoveAt(0);
+                main.CreateConsolePanel().SendString(CommandList[0]);
+                CommandList.RemoveAt(0);
             }
         }
 
-        static void processCachedProvider()
+        static void ProcessCachedProvider()
         {
             if (cachedProvider != null)
             {

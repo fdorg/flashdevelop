@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using PluginCore;
 using System.ComponentModel;
 using PluginCore.Managers;
@@ -9,93 +8,33 @@ using PluginCore.Helpers;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Drawing;
-using ProjectManager.Projects;
 
 namespace ConsolePanel
 {
     public class PluginMain : IPlugin
     {
-        private string pluginName = "ConsolePanel";
-        private string pluginGuid = "AEDE556E-54C3-4EFB-8EF3-54E85DC37D1E";
-        private string pluginHelp = "http://hexmachina.org/";
-        private string pluginDesc = "Plugin that adds an embedded console window to FlashDevelop.";
-        private string pluginAuth = "Christoph Otter";
-        private string settingFilename;
-        private Settings settingObject;
-        private DockContent cmdPanelDockContent;
-        private Gui.TabbedConsole tabView;
-        private Image image;
+        string settingFilename;
+        Settings settingObject;
+        DockContent cmdPanelDockContent;
+        Gui.TabbedConsole tabView;
+        Image image;
 
-        private IConsoleProvider provider;
+        public int Api => 1;
 
-        public int Api
-        {
-            get
-            {
-                return 1;
-            }
-        }
+        public string Author { get; } = "Christoph Otter";
 
-        public string Author
-        {
-            get
-            {
-                return pluginAuth;
-            }
-        }
+        public string Description { get; } = "Plugin that adds an embedded console window to FlashDevelop.";
 
-        public string Description
-        {
-            get
-            {
-                return pluginDesc;
-            }
-        }
+        public string Guid { get; } = "AEDE556E-54C3-4EFB-8EF3-54E85DC37D1E";
 
-        public string Guid
-        {
-            get
-            {
-                return pluginGuid;
-            }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
-        public string Help
-        {
-            get
-            {
-                return pluginHelp;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return pluginName;
-            }
-        }
+        public string Name { get; } = nameof(ConsolePanel);
 
         [Browsable(false)]
-        public object Settings
-        {
-            get
-            {
-                return settingObject;
-            }
-        }
+        public object Settings => settingObject;
 
-        public IConsoleProvider ConsoleProvider
-        {
-            get
-            {
-                return provider;
-            }
-            set
-            {
-                provider = value;
-            }
-        }
+        public IConsoleProvider ConsoleProvider { get; set; }
 
         public void Initialize()
         {
@@ -117,7 +56,6 @@ namespace ConsolePanel
                     var data = (DataEvent)e;
                     if (data.Action == "ProjectManager.Project")
                     {
-                        var project = (Project) data.Data;
                         foreach (var panel in tabView.Consoles)
                         {
                             panel.WorkingDirectory = PluginBase.CurrentProject.GetAbsolutePath("");
@@ -127,95 +65,64 @@ namespace ConsolePanel
             }
         }
 
-        public void Dispose()
-        {
-            SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
-        private void InitBasics()
+        void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, pluginName);
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-
+            var path = Path.Combine(PathHelper.DataDir, Name);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
             image = PluginBase.MainForm.FindImage("57");
-
             Managers.ConsoleManager.Init(this);
         }
 
-        private void LoadSettings()
+        void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
-        private void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
-        private void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             tabView = new Gui.TabbedConsole(this);
-            cmdPanelDockContent = PluginBase.MainForm.CreateDockablePanel(tabView, pluginGuid, image, DockState.DockBottom);
+            cmdPanelDockContent = PluginBase.MainForm.CreateDockablePanel(tabView, Guid, image, DockState.DockBottom);
             cmdPanelDockContent.Text = "Console";
         }
 
-        private void CreateDefaultConsoleProvider()
-        {
-            ConsoleProvider = new Implementation.CmdProcess.CmdConsoleProvider();
-        }
+        void CreateDefaultConsoleProvider() => ConsoleProvider = new Implementation.CmdProcess.CmdConsoleProvider();
 
         public IConsole CreateConsolePanel()
         {
             cmdPanelDockContent.Show();
-
             var cmdPanel = ConsoleProvider.GetConsole();
-            //var cmdPanel = new ConsoleControl.ConsoleControl(false);
-            //cmdPanel.Text = "Console";
-            //cmdPanel.ConsoleBackColor = settingObject.BackgroundColor;
-            //cmdPanel.ConsoleForeColor = settingObject.ForegroundColor;
-
-            cmdPanel.Exited += delegate
+            cmdPanel.Exited += (sender, args) =>
             {
                 if (tabView.InvokeRequired)
                 {
-                    tabView.Invoke((MethodInvoker)delegate
+                    tabView.Invoke((MethodInvoker) (() =>
                     {
                         if (!PluginBase.MainForm.ClosingEntirely)
                             tabView.RemoveConsole(cmdPanel);
-                    });
+                    }));
                 }
-                else
-                {
-                    if (!PluginBase.MainForm.ClosingEntirely)
-                        tabView.RemoveConsole(cmdPanel);
-                }
+                else if (!PluginBase.MainForm.ClosingEntirely)
+                    tabView.RemoveConsole(cmdPanel);
             };
-
             tabView.AddConsole(cmdPanel);
-
             return cmdPanel;
         }
 
-        private void CreateMenuItem()
+        void CreateMenuItem()
         {
-            string label = "Embedded Console";
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem cmdItem = new ToolStripMenuItem(label, image, OpenCmdPanel);
-
+            var label = "Console Panel";
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var cmdItem = new ToolStripMenuItem(label, image, OpenCmdPanel);
             viewMenu.DropDownItems.Add(cmdItem);
         }
 
-        private void OpenCmdPanel(object sender, EventArgs e)
-        {
-            CreateConsolePanel();
-            //cmdPanelDockContent.Show();
-        }
+        void OpenCmdPanel(object sender, EventArgs e) => CreateConsolePanel();
     }
 }

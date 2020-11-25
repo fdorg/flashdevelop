@@ -111,7 +111,7 @@ namespace CssCompletion
         /// <param name="theCurState">The current CSS parsing state.</param>
         /// 
         /// <returns>The future CSS parsing state.</returns>
-        private static CssState GetState(string theCss, ref int thePos, CssState theCurState)
+        static CssState GetState(string theCss, ref int thePos, CssState theCurState)
         {
             int aLen = theCss.Length;
             int i = thePos;
@@ -181,19 +181,18 @@ namespace CssCompletion
             
             thePos = i;
             char c = theCss[i];
-            if (IsTokenChar(c))
-                return CssState.Token;
-
-            if (c == '\"')
-                return CssState.StringD;
-            if (c == '\'')
-                return CssState.StringS;
-            return CssState.Punctuation;
+            if (IsTokenChar(c)) return CssState.Token;
+            return c switch
+            {
+                '\"' => CssState.StringD,
+                '\'' => CssState.StringS,
+                _ => CssState.Punctuation
+            };
         }
 
-        private static bool IsWhitespaceChar(char p) => p == '\t' || p == '\r' || p == '\n' || p == ' ';
+        static bool IsWhitespaceChar(char p) => p == '\t' || p == '\r' || p == '\n' || p == ' ';
 
-        private static bool IsTokenChar(char theChar)
+        static bool IsTokenChar(char theChar)
         {
             if (theChar >= 'a' && theChar <= 'z') return true;
             if (theChar >= '0' && theChar <= '9') return true;

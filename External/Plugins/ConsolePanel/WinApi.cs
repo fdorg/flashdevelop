@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 
 namespace ConsoleControl
 {
@@ -65,9 +61,7 @@ namespace ConsoleControl
 
         public static Rectangle GetClientRect(IntPtr hWnd)
         {
-            RECT rc;
-            GetClientRect(hWnd, out rc);
-
+            GetClientRect(hWnd, out var rc);
             return new Rectangle(rc.Left, rc.Top, rc.Right - rc.Left, rc.Bottom - rc.Top);
         }
 

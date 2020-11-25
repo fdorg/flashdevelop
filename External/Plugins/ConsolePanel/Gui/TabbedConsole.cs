@@ -6,16 +6,9 @@ namespace ConsolePanel.Gui
 {
     public partial class TabbedConsole : UserControl
     {
-        //private List<CmdPanel> consoles;
-        private PluginMain main;
+        readonly PluginMain main;
 
-        public ICollection<IConsole> Consoles
-        {
-            get
-            {
-                return consoleTabMap.Keys;
-            }
-        }
+        public ICollection<IConsole> Consoles => consoleTabMap.Keys;
 
         public Dictionary<IConsole, TabPage> consoleTabMap;
         public Dictionary<TabPage, IConsole> tabConsoleMap;
@@ -23,11 +16,9 @@ namespace ConsolePanel.Gui
         public TabbedConsole(PluginMain plugin)
         {
             InitializeComponent();
-
             main = plugin;
             consoleTabMap = new Dictionary<IConsole, TabPage>();
             tabConsoleMap = new Dictionary<TabPage, IConsole>();
-
             btnNew.Image = PluginCore.PluginBase.MainForm.FindImage16("33");
         }
 
@@ -56,7 +47,7 @@ namespace ConsolePanel.Gui
             }
         }
 
-        private void tabConsoles_MouseClick(object sender, MouseEventArgs e)
+        void tabConsoles_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
             {
@@ -71,9 +62,6 @@ namespace ConsolePanel.Gui
             }
         }
 
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            main.CreateConsolePanel();
-        }
+        void btnNew_Click(object sender, EventArgs e) => main.CreateConsolePanel();
     }
 }
