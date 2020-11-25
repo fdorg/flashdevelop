@@ -1,0 +1,8 @@
+package $(Package);
+
+$(Import)/**
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+interface $(FileName)$(Template)$(Extends) $(CSLB){
+	$(EntryPoint)
+}

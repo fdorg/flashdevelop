@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using HaXeContext.Helpers;
 
 namespace HaXeContext
 {
-    class CompilerCompletionHandler : IHaxeCompletionHandler
+    public class CompilerCompletionHandler : IHaxeCompletionHandler
     {
-        private Process haxeProcess;
+        readonly ThreadLocal<ProcessStartInfo> haxeProcessStartInfo;
 
-        public CompilerCompletionHandler(Process haxeProcess)
+        public CompilerCompletionHandler(ProcessStartInfo haxeProcessStartInfo)
         {
-            this.haxeProcess = haxeProcess;
+            this.haxeProcessStartInfo = haxeProcessStartInfo != null ? new ThreadLocal<ProcessStartInfo>(haxeProcessStartInfo.Clone) : null;
             Environment.SetEnvironmentVariable("HAXE_SERVER_PORT", "0");
         }
 
-        public string GetCompletion(string[] args)
-        {
-            return GetCompletion(args, null);
-        }
+        public string GetCompletion(string[] args) => GetCompletion(args, null);
+
         public string GetCompletion(string[] args, string fileContent)
         {
-            if (args == null || haxeProcess == null)
-                return string.Empty;
+            if (args is null || haxeProcessStartInfo is null) return string.Empty;
             try
             {
-                haxeProcess.StartInfo.Arguments = String.Join(" ", args);
-                haxeProcess.Start();
-                var lines = haxeProcess.StandardError.ReadToEnd();
-                haxeProcess.Close();
-                return lines;
+                using var process = new Process();
+                process.StartInfo = haxeProcessStartInfo.Value;
+                process.StartInfo.Arguments = string.Join(" ", args);
+                process.EnableRaisingEvents = true;
+                process.Start();
+                return process.StandardError.ReadToEnd();
             }
             catch 
             { 

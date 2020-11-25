@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PluginCore;
 using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
@@ -9,18 +9,18 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// List of closed tab documents.
         /// </summary>
-        public static List<String> OldTabs = new List<String>();
+        public static List<string> OldTabs = new List<string>();
         
         /// <summary>
         /// Opens the last closed tabs if they are not open.
         /// </summary>
         public static void OpenOldTabDocument()
         {
-            for (Int32 i = 0; i < OldTabs.Count; i++)
+            foreach (var fileName in OldTabs)
             {
-                if (DocumentManager.FindDocument(OldTabs[i]) == null)
+                if (DocumentManager.FindDocument(fileName) is null)
                 {
-                    Globals.MainForm.OpenEditableDocument(OldTabs[i]);
+                    PluginBase.MainForm.OpenEditableDocument(fileName);
                     break;
                 }
             }
@@ -29,16 +29,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Saves the closed tab document if it's editable.
         /// </summary>
-        public static void SaveOldTabDocument(String filename)
+        public static void SaveOldTabDocument(string filename)
         {
             if (!OldTabs.Contains(filename)) OldTabs.Insert(0, filename);
-            while (OldTabs.Count > 10)
-            {
-                Int32 last = OldTabs.Count - 1;
-                if (last >= 0) OldTabs.RemoveAt(last);
-            }
+            if (OldTabs.Count - 10 is var count && count > 0) OldTabs.RemoveRange(10, count);
         }
-
     }
-
 }

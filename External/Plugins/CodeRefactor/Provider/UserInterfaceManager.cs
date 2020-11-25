@@ -4,34 +4,21 @@ using PluginCore;
 
 namespace CodeRefactor.Provider
 {
-    internal static class UserInterfaceManager
+    public static class UserInterfaceManager
     {
-        private static ProgressDialog progressDialog;
+        static ProgressDialog progressDialog;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private static Form Main
-        {
-            get { return PluginBase.MainForm as Form; }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal static ProgressDialog ProgressDialog
+        public static ProgressDialog ProgressDialog
         {
             get
             {
-                if (progressDialog == null)
+                if (progressDialog is null)
                 {
                     progressDialog = new ProgressDialog();
-                    Main.AddOwnedForm(progressDialog);
+                    ((Form) PluginBase.MainForm).AddOwnedForm(progressDialog);
                 }
                 return progressDialog;
             }
         }
-
     }
-
 }

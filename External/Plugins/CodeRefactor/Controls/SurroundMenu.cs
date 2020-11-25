@@ -1,38 +1,29 @@
 using System;
 using System.IO;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore;
+using CodeRefactor.Commands;
+using PluginCore.Controls;
 
 namespace CodeRefactor.Controls
 {
     public class SurroundMenu : ToolStripMenuItem
     {
-        private List<String> items;
+        private readonly List<ICompletionListItem> items;
 
         public SurroundMenu()
         {
-            this.Text = TextHelper.GetString("Label.SurroundWith");
+            Text = TextHelper.GetString("Label.SurroundWith");
+            items = new List<ICompletionListItem>();
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public override bool Enabled
+
+        public void Clear()
         {
-            set
-            {
-                base.Enabled = value;
-                // explicitly en- / disable drop down items, the menu can still open
-                foreach (ToolStripDropDownItem dropDownItem in DropDownItems)
-                {
-                    dropDownItem.Enabled = value;
-                }
-            }
+            items.Clear();
         }
 
         /// <summary>
@@ -40,45 +31,40 @@ namespace CodeRefactor.Controls
         /// </summary>
         public void GenerateSnippets(ScintillaNet.ScintillaControl sci)
         {
-            String path;
-            String content;
-            PathWalker walker;
-            List<String> files;
-            items = new List<String>();
-            String surroundFolder = "surround";
-            path = Path.Combine(PathHelper.SnippetDir, surroundFolder);
-            if (Directory.Exists(path))
+            var files = new List<string>();
+
+            string specific = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage, SurroundWithCommand.SurroundFolder);
+            if (Directory.Exists(specific))
             {
-                walker = new PathWalker(PathHelper.SnippetDir + surroundFolder, "*.fds", false);
-                files = walker.GetFiles();
-                foreach (String file in files)
-                {
-                    items.Add(file);
-                }
+                var walker = new PathWalker(specific, "*" + SurroundWithCommand.SurroundExt, false);
+                files.AddRange(walker.GetFiles());
             }
-            path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
-            path = Path.Combine(path, surroundFolder);
-            if (Directory.Exists(path))
+
+            string global = Path.Combine(PathHelper.SnippetDir, SurroundWithCommand.SurroundFolder);
+            if (Directory.Exists(global))
             {
-                walker = new PathWalker(path, "*.fds", false);
-                files = walker.GetFiles();
-                foreach (String file in files)
-                {
-                    items.Add(file);
-                }
+                var walker = new PathWalker(global, "*" + SurroundWithCommand.SurroundExt, false);
+                files.AddRange(walker.GetFiles());
             }
-            if (items.Count > 0) items.Sort();
-            this.DropDownItems.Clear();
-            foreach (String itm in items)
+
+            items.Clear();
+            if (files.Count > 0)
             {
-                content = File.ReadAllText(itm);
-                if (content.IndexOfOrdinal("{0}") > -1)
+                files.Sort();
+                foreach (string file in files)
                 {
-                    this.DropDownItems.Insert(this.DropDownItems.Count, new ToolStripMenuItem(Path.GetFileNameWithoutExtension(itm)));
+                    string content = File.ReadAllText(file);
+                    if (content.Contains("{0}"))
+                    {
+                        items.Add(new SurroundWithItem(Path.GetFileNameWithoutExtension(file)));
+                    }
                 }
             }
         }
 
+        protected override void OnClick(EventArgs e)
+        {
+            CompletionList.Show(items, false);
+        }
     }
-
 }

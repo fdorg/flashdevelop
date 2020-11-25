@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using PluginCore.Helpers;
-using PluginCore.Utilities;
 
 namespace PluginCore.Controls
 {
@@ -22,6 +15,8 @@ namespace PluginCore.Controls
         Label lblUsed;
         ListView availableItems;
         ListView usedItems;
+        ColumnHeader availableItemsHeader;
+        ColumnHeader usedItemsHeader;
         Button btnAdd;
         Button btnRemove;
         Button btnUp;
@@ -46,60 +41,58 @@ namespace PluginCore.Controls
         }
 
         #region Windows Form Designer generated code
-        
+
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ColumnHeader availableItemsHeader;
-            System.Windows.Forms.ColumnHeader usedItemsHeader;
             this.lblAvailable = new System.Windows.Forms.Label();
             this.lblUsed = new System.Windows.Forms.Label();
-            this.availableItems = new System.Windows.Forms.ListView();
-            this.usedItems = new System.Windows.Forms.ListView();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnRemove = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnDown = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnOK = new System.Windows.Forms.Button();
-            availableItemsHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            usedItemsHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.availableItems = new System.Windows.Forms.ListViewEx();
+            this.usedItems = new System.Windows.Forms.ListViewEx();
+            this.availableItemsHeader = ((System.Windows.Forms.ColumnHeader) (new System.Windows.Forms.ColumnHeader()));
+            this.usedItemsHeader = ((System.Windows.Forms.ColumnHeader) (new System.Windows.Forms.ColumnHeader()));
+            this.btnAdd = new System.Windows.Forms.ButtonEx();
+            this.btnRemove = new System.Windows.Forms.ButtonEx();
+            this.btnUp = new System.Windows.Forms.ButtonEx();
+            this.btnDown = new System.Windows.Forms.ButtonEx();
+            this.btnCancel = new System.Windows.Forms.ButtonEx();
+            this.btnOK = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // availableItemsHeader
             // 
-            availableItemsHeader.Width = -1;
+            this.availableItemsHeader.Width = -1;
             // 
             // usedItemsHeader
             // 
-            usedItemsHeader.Width = -1;
+            this.usedItemsHeader.Width = -1;
             // 
             // lblAvailable
             // 
             this.lblAvailable.AutoSize = true;
-            this.lblAvailable.Location = new System.Drawing.Point(9, 9);
+            this.lblAvailable.Location = new System.Drawing.Point(8, 9);
             this.lblAvailable.Name = "lblAvailable";
-            this.lblAvailable.Size = new System.Drawing.Size(87, 15);
+            this.lblAvailable.Size = new System.Drawing.Size(111, 20);
             this.lblAvailable.Text = "&Available Items";
             // 
             // lblUsed
             // 
             this.lblUsed.AutoSize = true;
-            this.lblUsed.Location = new System.Drawing.Point(195, 9);
+            this.lblUsed.Location = new System.Drawing.Point(200, 9);
             this.lblUsed.Name = "lblUsed";
-            this.lblUsed.Size = new System.Drawing.Size(65, 15);
+            this.lblUsed.Size = new System.Drawing.Size(82, 20);
             this.lblUsed.Text = "&Used Items";
             // 
             // availableItems
             // 
-            this.availableItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { availableItemsHeader });
+            this.availableItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.availableItemsHeader });
             this.availableItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.availableItems.Location = new System.Drawing.Point(12, 27);
+            this.availableItems.Location = new System.Drawing.Point(12, 32);
             this.availableItems.Name = "availableItems";
-            this.availableItems.Size = new System.Drawing.Size(150, 200);
+            this.availableItems.Size = new System.Drawing.Size(150, 260);
             this.availableItems.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.availableItems.TabStop = false;
             this.availableItems.UseCompatibleStateImageBehavior = false;
@@ -109,11 +102,11 @@ namespace PluginCore.Controls
             // 
             // usedItems
             // 
-            this.usedItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { usedItemsHeader });
+            this.usedItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.usedItemsHeader });
             this.usedItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.usedItems.Location = new System.Drawing.Point(198, 27);
+            this.usedItems.Location = new System.Drawing.Point(204, 32);
             this.usedItems.Name = "usedItems";
-            this.usedItems.Size = new System.Drawing.Size(150, 200);
+            this.usedItems.Size = new System.Drawing.Size(150, 260);
             this.usedItems.TabStop = false;
             this.usedItems.UseCompatibleStateImageBehavior = false;
             this.usedItems.View = System.Windows.Forms.View.Details;
@@ -122,36 +115,36 @@ namespace PluginCore.Controls
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(168, 101);
+            this.btnAdd.Location = new System.Drawing.Point(168, 120);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(24, 24);
+            this.btnAdd.Size = new System.Drawing.Size(30, 30);
             this.btnAdd.TabStop = false;
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(168, 131);
+            this.btnRemove.Location = new System.Drawing.Point(168, 156);
             this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(24, 24);
+            this.btnRemove.Size = new System.Drawing.Size(30, 30);
             this.btnRemove.TabStop = false;
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
             // 
             // btnUp
             // 
-            this.btnUp.Location = new System.Drawing.Point(354, 50);
+            this.btnUp.Location = new System.Drawing.Point(360, 60);
             this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(24, 24);
+            this.btnUp.Size = new System.Drawing.Size(30, 30);
             this.btnUp.TabStop = false;
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.BtnUp_Click);
             // 
             // btnDown
             // 
-            this.btnDown.Location = new System.Drawing.Point(354, 80);
+            this.btnDown.Location = new System.Drawing.Point(360, 96);
             this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(24, 24);
+            this.btnDown.Size = new System.Drawing.Size(30, 30);
             this.btnDown.TabStop = false;
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.BtnDown_Click);
@@ -159,9 +152,9 @@ namespace PluginCore.Controls
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(303, 233);
+            this.btnCancel.Location = new System.Drawing.Point(315, 298);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(75, 30);
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -170,9 +163,9 @@ namespace PluginCore.Controls
             // btnOK
             // 
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(222, 233);
+            this.btnOK.Location = new System.Drawing.Point(234, 298);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.Size = new System.Drawing.Size(75, 30);
             this.btnOK.TabIndex = 0;
             this.btnOK.Text = "&OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -181,10 +174,10 @@ namespace PluginCore.Controls
             // FixedValuesCollectionEditor
             // 
             this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(390, 268);
+            this.ClientSize = new System.Drawing.Size(402, 340);
             this.Controls.Add(this.lblAvailable);
             this.Controls.Add(this.lblUsed);
             this.Controls.Add(this.availableItems);
@@ -212,10 +205,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the modified array of items.
         /// </summary>
-        public T[] Value
-        {
-            get { return value; }
-        }
+        public T[] Value => value;
 
         #endregion
 
@@ -223,7 +213,7 @@ namespace PluginCore.Controls
 
         void InitializeGraphics()
         {
-            Font = PluginBase.MainForm.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
             btnAdd.Image = PluginBase.MainForm.FindImage16("67", false);
             btnRemove.Image = PluginBase.MainForm.FindImage16("63", false);
             btnUp.Image = PluginBase.MainForm.FindImage16("74", false);
@@ -269,14 +259,14 @@ namespace PluginCore.Controls
             foreach (Item item in usedItems.SelectedItems) item.Selected = false;
             usedItems.EndUpdate();
         }
-        
+
         void UsedItems_Enter(object sender, EventArgs e)
         {
             availableItems.BeginUpdate();
             foreach (Item item in availableItems.SelectedItems) item.Selected = false;
             availableItems.EndUpdate();
         }
-        
+
         void AvailableItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             var indices = availableItems.SelectedIndices;
@@ -315,7 +305,9 @@ namespace PluginCore.Controls
                 availableItems.Items.Remove(item);
                 usedItems.Items.Add(item);
             }
-            
+
+            availableItemsHeader.Width = -1;
+            usedItemsHeader.Width = -1;
             availableItems.EndUpdate();
             usedItems.EndUpdate();
             usedItems.Select();
@@ -338,6 +330,8 @@ namespace PluginCore.Controls
                 availableItems.Items.Add(item);
             }
 
+            availableItemsHeader.Width = -1;
+            usedItemsHeader.Width = -1;
             availableItems.EndUpdate();
             usedItems.EndUpdate();
             availableItems.Select();
@@ -406,18 +400,12 @@ namespace PluginCore.Controls
 
         class Item : ListViewItem
         {
-            bool locked;
-            T value;
+            readonly bool locked;
+            readonly T value;
 
-            public bool Locked
-            {
-                get { return locked; }
-            }
+            public bool Locked => locked;
 
-            public T Value
-            {
-                get { return value; }
-            }
+            public T Value => value;
 
             public Item(T value) : this(value, false)
             {

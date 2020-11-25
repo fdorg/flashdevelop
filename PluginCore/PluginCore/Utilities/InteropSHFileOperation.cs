@@ -34,86 +34,63 @@ namespace PluginCore.Utilities
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         static extern int SHFileOperation([In] ref SHFILEOPSTRUCT lpFileOp);
 
-        private SHFILEOPSTRUCT _ShFile;
+        SHFILEOPSTRUCT _ShFile;
         public FILEOP_FLAGS fFlags;
 
         public IntPtr hwnd
         {
-            set
-            {
-                this._ShFile.hwnd = value;
-            }
+            set => _ShFile.hwnd = value;
         }
         public FO_Func wFunc
         {
-            set
-            {
-                this._ShFile.wFunc = value;
-            }
+            set => _ShFile.wFunc = value;
         }
 
         public string pFrom
         {
-            set
-            {
-                this._ShFile.pFrom = value + '\0' + '\0';
-            }
+            set => _ShFile.pFrom = value + '\0' + '\0';
         }
         public string pTo
         {
-            set
-            {
-                this._ShFile.pTo = value + '\0' + '\0';
-            }
+            set => _ShFile.pTo = value + '\0' + '\0';
         }
         public bool fAnyOperationsAborted
         {
-            set
-            {
-                this._ShFile.fAnyOperationsAborted = value;
-            }
+            set => _ShFile.fAnyOperationsAborted = value;
         }
         public IntPtr hNameMappings
         {
-            set
-            {
-                this._ShFile.hNameMappings = value;
-            }
+            set => _ShFile.hNameMappings = value;
         }
         public string lpszProgressTitle
         {
-            set
-            {
-                this._ShFile.lpszProgressTitle = value + '\0';
-            }
+            set => _ShFile.lpszProgressTitle = value + '\0';
         }
 
         public InteropSHFileOperation()
         {
-            this.fFlags = new FILEOP_FLAGS();
-            this._ShFile = new SHFILEOPSTRUCT();
-            this._ShFile.hwnd = IntPtr.Zero;
-            this._ShFile.wFunc = FO_Func.FO_COPY;
-            this._ShFile.pFrom = "";
-            this._ShFile.pTo = "";
-            this._ShFile.fAnyOperationsAborted = false;
-            this._ShFile.hNameMappings = IntPtr.Zero;
-            this._ShFile.lpszProgressTitle = "";
+            fFlags = new FILEOP_FLAGS();
+            _ShFile = new SHFILEOPSTRUCT();
+            _ShFile.hwnd = IntPtr.Zero;
+            _ShFile.wFunc = FO_Func.FO_COPY;
+            _ShFile.pFrom = "";
+            _ShFile.pTo = "";
+            _ShFile.fAnyOperationsAborted = false;
+            _ShFile.hNameMappings = IntPtr.Zero;
+            _ShFile.lpszProgressTitle = "";
 
         }
 
         public bool Execute()
         {
-            this._ShFile.fFlags = this.fFlags.Flag;
-            int returnValue = SHFileOperation(ref this._ShFile);
-            if (returnValue == 0) return true;
-            else return false;
+            _ShFile.fFlags = fFlags.Flag;
+            return SHFileOperation(ref _ShFile) == 0;
         }
 
         public class FILEOP_FLAGS
         {
             [Flags]
-            private enum FILEOP_FLAGS_ENUM : ushort
+            enum FILEOP_FLAGS_ENUM : ushort
             {
                 FOF_MULTIDESTFILES = 0x0001,
                 FOF_CONFIRMMOUSE = 0x0002,
@@ -155,24 +132,24 @@ namespace PluginCore.Utilities
             {
                 get
                 {
-                    ushort returnValue = 0;
-                    if (this.FOF_MULTIDESTFILES) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_MULTIDESTFILES;
-                    if (this.FOF_CONFIRMMOUSE) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_CONFIRMMOUSE;
-                    if (this.FOF_SILENT) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SILENT;
-                    if (this.FOF_RENAMEONCOLLISION) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_RENAMEONCOLLISION;
-                    if (this.FOF_NOCONFIRMATION) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMATION;
-                    if (this.FOF_WANTMAPPINGHANDLE) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTMAPPINGHANDLE;
-                    if (this.FOF_ALLOWUNDO) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_ALLOWUNDO;
-                    if (this.FOF_FILESONLY) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_FILESONLY;
-                    if (this.FOF_SIMPLEPROGRESS) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SIMPLEPROGRESS;
-                    if (this.FOF_NOCONFIRMMKDIR) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMMKDIR;
-                    if (this.FOF_NOERRORUI) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOERRORUI;
-                    if (this.FOF_NOCOPYSECURITYATTRIBS) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCOPYSECURITYATTRIBS;
-                    if (this.FOF_NORECURSION) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSION;
-                    if (this.FOF_NO_CONNECTED_ELEMENTS) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NO_CONNECTED_ELEMENTS;
-                    if (this.FOF_WANTNUKEWARNING) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTNUKEWARNING;
-                    if (this.FOF_NORECURSEREPARSE) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSEREPARSE;
-                    return returnValue;
+                    ushort result = 0;
+                    if (FOF_MULTIDESTFILES) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_MULTIDESTFILES;
+                    if (FOF_CONFIRMMOUSE) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_CONFIRMMOUSE;
+                    if (FOF_SILENT) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_SILENT;
+                    if (FOF_RENAMEONCOLLISION) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_RENAMEONCOLLISION;
+                    if (FOF_NOCONFIRMATION) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMATION;
+                    if (FOF_WANTMAPPINGHANDLE) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTMAPPINGHANDLE;
+                    if (FOF_ALLOWUNDO) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_ALLOWUNDO;
+                    if (FOF_FILESONLY) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_FILESONLY;
+                    if (FOF_SIMPLEPROGRESS) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_SIMPLEPROGRESS;
+                    if (FOF_NOCONFIRMMKDIR) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMMKDIR;
+                    if (FOF_NOERRORUI) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOERRORUI;
+                    if (FOF_NOCOPYSECURITYATTRIBS) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCOPYSECURITYATTRIBS;
+                    if (FOF_NORECURSION) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSION;
+                    if (FOF_NO_CONNECTED_ELEMENTS) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NO_CONNECTED_ELEMENTS;
+                    if (FOF_WANTNUKEWARNING) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTNUKEWARNING;
+                    if (FOF_NORECURSEREPARSE) result |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSEREPARSE;
+                    return result;
                 }
             }
         }

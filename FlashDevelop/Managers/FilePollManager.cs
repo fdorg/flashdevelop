@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
 using FlashDevelop.Docking;
+using FlashDevelop.Settings;
 using PluginCore;
 using PluginCore.Localization;
 
 namespace FlashDevelop.Managers
 {
-    class FilePollManager
+    internal class FilePollManager
     {
-        private static Timer FilePollTimer;
-        private static Boolean YesToAll = false;
+        static Timer FilePollTimer;
+        static bool YesToAll;
 
         /// <summary>
         /// Initialize the file change polling
@@ -18,52 +19,53 @@ namespace FlashDevelop.Managers
         {
             CheckSettingValues();
             FilePollTimer = new Timer();
-            FilePollTimer.Interval = Globals.Settings.FilePollInterval;
-            FilePollTimer.Tick += new EventHandler(FilePollTimerTick);
+            FilePollTimer.Interval = ((SettingObject)PluginBase.Settings).FilePollInterval;
+            FilePollTimer.Tick += FilePollTimerTick;
             FilePollTimer.Start();
         }
 
         /// <summary>
         /// Checks the setting value validity
         /// </summary>
-        private static void CheckSettingValues()
+        static void CheckSettingValues()
         {
-            Int32 interval = Globals.Settings.FilePollInterval;
-            if (interval == 0) Globals.Settings.FilePollInterval = 3000;
+            var settings = (SettingObject)PluginBase.Settings;
+            if (settings.FilePollInterval == 0) settings.FilePollInterval = 3000;
         }
 
         /// <summary>
         /// Checks if a file has been changed outside
         /// </summary>
-        private static void CheckFileChange(ITabbedDocument document)
+        static void CheckFileChange(ITabbedDocument document)
         {
-            TabbedDocument casted = document as TabbedDocument;
-            if (casted.IsEditable && casted.CheckFileChange())
+            if (document is TabbedDocument doc
+                && doc.SciControl is { } sci
+                && doc.CheckFileChange())
             {
-                if (Globals.Settings.AutoReloadModifiedFiles)
+                if (PluginBase.Settings.AutoReloadModifiedFiles)
                 {
-                    casted.RefreshFileInfo();
-                    casted.Reload(false);
+                    doc.RefreshFileInfo();
+                    doc.Reload(false);
                 }
                 else
                 {
                     if (YesToAll)
                     {
-                        casted.RefreshFileInfo();
-                        casted.Reload(false);
+                        doc.RefreshFileInfo();
+                        doc.Reload(false);
                         return;
                     }
-                    String dlgTitle = TextHelper.GetString("Title.InfoDialog");
-                    String dlgMessage = TextHelper.GetString("Info.FileIsModifiedOutside");
-                    String formatted = String.Format(dlgMessage, "\n", casted.FileName);
+                    string dlgTitle = TextHelper.GetString("Title.InfoDialog");
+                    string dlgMessage = TextHelper.GetString("Info.FileIsModifiedOutside");
+                    string formatted = string.Format(dlgMessage, "\n", sci.FileName);
                     MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
                     MessageBoxManager.Register(); // Use custom labels...
-                    DialogResult result = MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
-                    casted.RefreshFileInfo(); // User may have waited before responding, save info now
-                    if (result == DialogResult.Yes) casted.Reload(false);
+                    var result = MessageBox.Show(PluginBase.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    doc.RefreshFileInfo(); // User may have waited before responding, save info now
+                    if (result == DialogResult.Yes) doc.Reload(false);
                     else if (result == DialogResult.Cancel)
                     {
-                        casted.Reload(false);
+                        doc.Reload(false);
                         YesToAll = true;
                     }
                     MessageBoxManager.Unregister();
@@ -74,15 +76,14 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// After an interval check if the files have changed
         /// </summary>
-        private static void FilePollTimerTick(Object sender, EventArgs e)
+        static void FilePollTimerTick(object sender, EventArgs e)
         {
             try
             {
                 FilePollTimer.Enabled = false;
-                ITabbedDocument[] documents = Globals.MainForm.Documents;
-                ITabbedDocument current = Globals.MainForm.CurrentDocument;
+                var current = PluginBase.MainForm.CurrentDocument;
                 CheckFileChange(current); // Check the current first..
-                foreach (ITabbedDocument document in documents)
+                foreach (var document in PluginBase.MainForm.Documents)
                 {
                     if (document != current) CheckFileChange(document);
                 }
@@ -91,7 +92,5 @@ namespace FlashDevelop.Managers
             }
             catch { /* No errors shown here.. */ }
         }
-
     }
-
 }

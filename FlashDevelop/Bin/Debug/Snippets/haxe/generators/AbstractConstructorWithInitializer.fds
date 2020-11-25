@@ -1,0 +1,3 @@
+$(Modifiers) function new(value:$(ExtendsType)) $(CSLB){
+	this = value;$(EntryPoint)
+}

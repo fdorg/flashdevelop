@@ -14,75 +14,47 @@ namespace OutputPanel
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "OutputPanel";
-        private String pluginGuid = "54749f71-694b-47e0-9b05-e9417f39f20d";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginAuth = "FlashDevelop Team";
-        private String pluginDesc = "Adds a output panel for debug messages to FlashDevelop.";
-        private String settingFilename;
-        private Settings settingObject;
-        private DockContent pluginPanel;
-        private PluginUI pluginUI;
-        private Image pluginImage;
+        string settingFilename;
+        PluginUI pluginUI;
+        Image pluginImage;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(OutputPanel);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "54749f71-694b-47e0-9b05-e9417f39f20d";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; private set; } = "Adds a output panel for debug messages to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => PluginSettings;
 
         #endregion
         
@@ -93,62 +65,69 @@ namespace OutputPanel
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreatePluginPanel();
-            this.CreateMenuItem();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreatePluginPanel();
+            CreateMenuItem();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.ProcessStart:
-                    this.pluginUI.ClearOutput(null, null);
+                    if (PluginSettings.ClearMode == ClearModeAction.OnEveryProcess)
+                    {
+                        pluginUI.ClearOutput(null, null);
+                    }
                     break;
 
                 case EventType.ProcessEnd:
-                    if (this.settingObject.ShowOnProcessEnd && !this.settingObject.ShowOnOutput)
+                    if (PluginSettings.ShowOnProcessEnd && !PluginSettings.ShowOnOutput)
                     {
-                        this.pluginUI.DisplayOutput();
+                        pluginUI.DisplayOutput();
                     }
                     break;
 
                 case EventType.Trace:
-                    this.pluginUI.AddTraces();
-                    if (this.settingObject.ShowOnOutput)
+                    pluginUI.AddTraces();
+                    if (PluginSettings.ShowOnOutput)
                     {
-                        this.pluginUI.DisplayOutput();
+                        pluginUI.DisplayOutput();
                     }
                     break;
 
                 case EventType.Keys:
-                    Keys keys = (e as KeyEvent).Value;
-                    e.Handled = this.pluginUI.OnShortcut(keys);
+                    e.Handled = pluginUI.OnShortcut(((KeyEvent) e).Value);
                     break;
 
                 case EventType.ApplySettings:
-                    this.pluginUI.ApplyWrapText();
+                    pluginUI.ApplyWrapText();
                     break;
 
                 case EventType.UIStarted:
-                    this.pluginUI.UpdateAfterTheme();
+                    pluginUI.UpdateAfterTheme();
+                    break;
+
+                case EventType.Command:
+                    var de = (DataEvent) e;
+                    if (de.Action == "ProjectManager.BuildingProject" && PluginSettings.ClearMode == ClearModeAction.OnBuildStart)
+                    {
+                        pluginUI.ClearOutput(null, null);
+                    }
                     break;
             }
         }
-        
+
         #endregion
 
         #region Custom Properties
@@ -157,19 +136,13 @@ namespace OutputPanel
         /// Gets the PluginPanel
         /// </summary>
         [Browsable(false)]
-        public DockContent PluginPanel
-        {
-            get { return this.pluginPanel; }
-        }
+        public DockContent PluginPanel { get; private set; }
 
         /// <summary>
         /// Gets the PluginSettings
         /// </summary>
         [Browsable(false)]
-        public Settings PluginSettings
-        {
-            get { return this.settingObject; }
-        }
+        public Settings PluginSettings { get; private set; }
 
         #endregion
 
@@ -180,11 +153,11 @@ namespace OutputPanel
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "OutputPanel");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("50");
+            var path = Path.Combine(PathHelper.DataDir, nameof(OutputPanel));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
+            pluginImage = PluginBase.MainForm.FindImage("50");
         }
 
         /// <summary>
@@ -192,7 +165,7 @@ namespace OutputPanel
         /// </summary>
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted;
+            const EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted | EventType.Command;
             EventManager.AddEventHandler(this, eventMask);
         }
 
@@ -201,9 +174,9 @@ namespace OutputPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            String label = TextHelper.GetString("Label.ViewMenuItem");
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, new EventHandler(this.OpenPanel));
+            var label = TextHelper.GetString("Label.ViewMenuItem");
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var viewItem = new ToolStripMenuItem(label, pluginImage, OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowOutput", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -213,9 +186,8 @@ namespace OutputPanel
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottom);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            PluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottom);
         }
 
         /// <summary>
@@ -223,33 +195,21 @@ namespace OutputPanel
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            PluginSettings = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else PluginSettings = ObjectSerializer.Deserialize(settingFilename, PluginSettings);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, PluginSettings);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
-        {
-            this.pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => PluginPanel.Show();
 
         #endregion
-        
     }
-    
 }

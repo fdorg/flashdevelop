@@ -1,175 +1,166 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PluginCore.Managers
 {
-    public class EventManager
+    /// <summary>
+    /// Provides an application-wide event management methods.
+    /// </summary>
+    public static class EventManager
     {
-        /// <summary>
-        /// Properties of the class
-        /// </summary>
-        private static List<EventObject> highObjects;
-        private static List<EventObject> normalObjects;
-        private static List<EventObject> lowObjects;
+        static readonly List<EventObject> highObjects = new List<EventObject>();
+        static readonly List<EventObject> normalObjects = new List<EventObject>();
+        static readonly List<EventObject> lowObjects = new List<EventObject>();
+        static EventObject[] eventObjectsSnapshot = Array.Empty<EventObject>();
+        static bool snapshotInvalid;
+        static readonly object eventLock = new object();
 
-        /// <summary>
-        /// Static constructor of the class
-        /// </summary>
         static EventManager()
         {
-            highObjects = new List<EventObject>();
-            normalObjects = new List<EventObject>();
-            lowObjects = new List<EventObject>();
         }
 
         /// <summary>
-        /// Gets the event lists as an array
+        /// Adds an event handler with <see cref="HandlingPriority.Normal"/>.
         /// </summary>
-        private static List<EventObject>[] GetObjectListCollection()
-        {
-            List<EventObject>[] collection = new List<EventObject>[3];
-            collection.SetValue(highObjects, 0);
-            collection.SetValue(normalObjects, 1);
-            collection.SetValue(lowObjects, 2);
-            return collection;
-        }
+        public static void AddEventHandler(IEventHandler handler, EventType mask) => AddEventHandler(handler, mask, HandlingPriority.Normal);
 
         /// <summary>
-        /// Adds a new event handler with a specific HandlingPriority
+        /// Adds an event handler with the specific <see cref="HandlingPriority"/> value.
         /// </summary>
         public static void AddEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
         {
-            try
+            if (handler is null) throw new ArgumentNullException(nameof(handler));
+            lock (eventLock)
             {
-                EventObject eo = new EventObject(handler, mask, priority);
-                switch (priority)
-                {
-                    case HandlingPriority.High:
-                        highObjects.Add(eo);
-                        break;
-                    case HandlingPriority.Normal:
-                        normalObjects.Add(eo);
-                        break;
-                    case HandlingPriority.Low:
-                        lowObjects.Add(eo);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
+                snapshotInvalid = true;
+                GetEventObjects(priority).Add(new EventObject(handler, mask, priority));
             }
         }
 
         /// <summary>
-        /// Adds a new event handler with default HandlingPriority
-        /// </summary>
-        public static void AddEventHandler(IEventHandler handler, EventType mask)
-        {
-            AddEventHandler(handler, mask, HandlingPriority.Normal);
-        }
-
-        /// <summary>
-        /// Removes the specified event handler
-        /// </summary>
-        public static void RemoveEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
-        {
-            try
-            {
-                EventObject eo = new EventObject(handler, mask, priority);
-                switch (priority)
-                {
-                    case HandlingPriority.High:
-                        highObjects.Remove(eo);
-                        break;
-                    case HandlingPriority.Normal:
-                        normalObjects.Remove(eo);
-                        break;
-                    case HandlingPriority.Low:
-                        lowObjects.Remove(eo);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-            }
-        }
-
-        /// <summary>
-        /// Removes all registered event handler instances
+        /// Removes the event handler.
         /// </summary>
         public static void RemoveEventHandler(IEventHandler handler)
         {
-            try 
+            var eventObjectsList = new[] {highObjects, normalObjects, lowObjects};
+            foreach (var eventObjects in eventObjectsList)
             {
-                List<EventObject>[] objectList = GetObjectListCollection();
-                for (Int32 i = 0; i < objectList.Length; i++)
+                lock (eventLock)
                 {
-                    List<EventObject> subObjects = objectList[i];
-                    for (Int32 j = 0; j < subObjects.Count; j++)
+                    for (var i = 0; i < eventObjects.Count; i++)
                     {
-                        if (subObjects[j].Handler == handler)
-                        {
-                            objectList[i].Remove(subObjects[j]);
-                        }
+                        if (eventObjects[i].Handler != handler) continue;
+                        snapshotInvalid = true;
+                        eventObjects.RemoveAt(i);
+                        break;
                     }
                 }
-            } 
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
             }
         }
 
         /// <summary>
-        /// Dispatches an event to the registered event handlers
+        /// Removes the specified <see cref="EventType"/> mask from the event handler.
         /// </summary>
-        public static void DispatchEvent(Object sender, NotifyEvent e)
+        public static void RemoveEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
         {
-            try 
+            var eventObjects = GetEventObjects(priority);
+            lock (eventLock)
             {
-                List<EventObject>[] objectList = GetObjectListCollection();
-                for (Int32 i = 0; i < objectList.Length; i++)
+                for (var i = 0; i < eventObjects.Count; i++)
                 {
-                    List<EventObject> subObjects = objectList[i];
-                    for (Int32 j = 0; j < subObjects.Count; j++)
+                    var obj = eventObjects[i];
+                    if (obj.Handler != handler) continue;
+                    obj.Mask &= ~mask;
+                    if (obj.Mask == 0)
                     {
-                        EventObject obj = subObjects[j];
-                        if ((obj.Mask & e.Type) > 0)
-                        {
-                            obj.Handler.HandleEvent(sender, e, obj.Priority);
-                            if (e.Handled) return;
-                        }
+                        snapshotInvalid = true;
+                        eventObjects.RemoveAt(i);
+                    }
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dispatches an event to the registered event handlers.
+        /// </summary>
+        public static void DispatchEvent(object sender, NotifyEvent e)
+        {
+            int length;
+            EventObject[] eventObjectsCopy;
+            if (snapshotInvalid)
+            {
+                lock (eventLock)
+                {
+                    if (snapshotInvalid)
+                    {
+                        length = highObjects.Count + normalObjects.Count + lowObjects.Count;
+                        eventObjectsCopy = new EventObject[length];
+                        highObjects.CopyTo(eventObjectsCopy, 0);
+                        normalObjects.CopyTo(eventObjectsCopy, highObjects.Count);
+                        lowObjects.CopyTo(eventObjectsCopy, highObjects.Count + normalObjects.Count);
+                        eventObjectsSnapshot = eventObjectsCopy;
+                        snapshotInvalid = false;
+                    }
+                    else
+                    {
+                        eventObjectsCopy = eventObjectsSnapshot;
+                        length = eventObjectsCopy.Length;
                     }
                 }
             }
-            catch (Exception ex)
+            else
             {
-                ErrorManager.ShowError(ex);
+                eventObjectsCopy = eventObjectsSnapshot;
+                length = eventObjectsCopy.Length;
+            }
+
+            for (var i = 0; i < length; i++)
+            {
+                var obj = eventObjectsCopy[i];
+                if ((obj.Mask & e.Type) == 0) continue;
+                try
+                {
+                    obj.Handler.HandleEvent(sender, e, obj.Priority);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
+                if (e.Handled)
+                {
+                    break;
+                }
             }
         }
 
-        class EventObject
+        /// <summary>
+        /// Gets the list of event objects with the specified priority.
+        /// </summary>
+        static List<EventObject> GetEventObjects(HandlingPriority priority)
         {
-            /// <summary>
-            /// Properties of the class
-            /// </summary>
-            public IEventHandler Handler;
-            public HandlingPriority Priority;
-            public EventType Mask;
-
-            /// <summary>
-            /// Constructor of the class
-            /// </summary>
-            public EventObject(IEventHandler handler, EventType mask, HandlingPriority priority)
+            return priority switch
             {
-                this.Handler = handler;
-                this.Priority = priority;
-                this.Mask = mask;
-            }
+                HandlingPriority.High => highObjects,
+                HandlingPriority.Normal => normalObjects,
+                HandlingPriority.Low => lowObjects,
+                _ => throw new InvalidEnumArgumentException(nameof(priority), (int) priority, typeof(HandlingPriority)),
+            };
         }
 
-    }
+        sealed class EventObject
+        {
+            internal readonly IEventHandler Handler;
+            internal readonly HandlingPriority Priority;
+            internal EventType Mask;
 
+            internal EventObject(IEventHandler handler, EventType mask, HandlingPriority priority)
+            {
+                Handler = handler;
+                Priority = priority;
+                Mask = mask;
+            }
+        }
+    }
 }

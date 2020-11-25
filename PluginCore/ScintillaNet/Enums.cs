@@ -1,3 +1,5 @@
+using System;
+
 namespace ScintillaNet.Enums
 {
     public enum Position
@@ -261,15 +263,18 @@ namespace ScintillaNet.Enums
     public enum CursorShape
     {    
         Normal = -1,
-        Wait = 4
+        Arrow = 2,
+        Wait = 4,
+        ReverseArror = 7
     }
     
+    [Flags]
     public enum CaretPolicy
     {    
         Slop = 0x01,
         Strict = 0x04,
+        Even = 0x08,
         Jumps = 0x10,
-        Even = 0x08
     }
 
     public enum CaretStyle

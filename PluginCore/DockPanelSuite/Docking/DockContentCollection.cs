@@ -6,7 +6,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public class DockContentCollection : ReadOnlyCollection<IDockContent>
     {
-        private static List<IDockContent> _emptyList = new List<IDockContent>(0);
+        private static readonly List<IDockContent> _emptyList = new List<IDockContent>(0);
 
         internal DockContentCollection()
             : base(new List<IDockContent>())
@@ -19,20 +19,16 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockPane = pane;
         }
 
-        private DockPane m_dockPane = null;
-        private DockPane DockPane
-        {
-            get { return m_dockPane; }
-        }
+        private readonly DockPane m_dockPane = null;
+        private DockPane DockPane => m_dockPane;
 
         public new IDockContent this[int index]
         {
             get
             {
-                if (DockPane == null)
+                if (DockPane is null)
                     return Items[index];
-                else
-                    return GetVisibleContent(index);
+                return GetVisibleContent(index);
             }
         }
 
@@ -68,34 +64,31 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public new bool Contains(IDockContent content)
         {
-            if (DockPane == null)
+            if (DockPane is null)
                 return Items.Contains(content);
-            else
-                return (GetIndexOfVisibleContents(content) != -1);
+            return (GetIndexOfVisibleContents(content) != -1);
         }
 
         public new int Count
         {
             get
             {
-                if (DockPane == null)
+                if (DockPane is null)
                     return base.Count;
-                else
-                    return CountOfVisibleContents;
+                return CountOfVisibleContents;
             }
         }
 
         public new int IndexOf(IDockContent content)
         {
-            if (DockPane == null)
+            if (DockPane is null)
             {
                 if (!Contains(content))
                     return -1;
-                else
-                    return Items.IndexOf(content);
+                return Items.IndexOf(content);
             }
-            else
-                return GetIndexOfVisibleContents(content);
+
+            return GetIndexOfVisibleContents(content);
         }
 
         internal void Remove(IDockContent content)
@@ -114,7 +107,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
 #if DEBUG
-                if (DockPane == null)
+                if (DockPane is null)
                     throw new InvalidOperationException();
 #endif
 
@@ -131,7 +124,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private IDockContent GetVisibleContent(int index)
         {
 #if DEBUG
-            if (DockPane == null)
+            if (DockPane is null)
                 throw new InvalidOperationException();
 #endif
 
@@ -150,11 +143,11 @@ namespace WeifenLuo.WinFormsUI.Docking
         private int GetIndexOfVisibleContents(IDockContent content)
         {
 #if DEBUG
-            if (DockPane == null)
+            if (DockPane is null)
                 throw new InvalidOperationException();
 #endif
 
-            if (content == null)
+            if (content is null)
                 return -1;
 
             int index = -1;

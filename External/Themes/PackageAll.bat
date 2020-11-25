@@ -12,6 +12,7 @@ cd ..
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\DimGrayTheme.fdz .\External\Themes\FullThemes\DimGrayTheme\* -xr!.empty
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ObsidianTheme.fdz .\External\Themes\FullThemes\ObsidianTheme\* -xr!.empty
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ThyleusTheme.fdz .\External\Themes\FullThemes\ThyleusTheme\* -xr!.empty
+7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ThyleusThemeV2.fdz .\External\Themes\FullThemes\ThyleusThemeV2\* -xr!.empty
 
 :: Package syntax themes
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\SyntaxThemes\DefaultTheme.fdz .\External\Themes\SyntaxThemes\DefaultTheme\* -xr!.empty

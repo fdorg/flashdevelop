@@ -19,13 +19,7 @@ namespace ProjectManager.Projects.Haxe
             return supported;
         }
 
-        public override OutputType[] OutputTypes
-        {
-            get
-            {
-                return new OutputType[] { OutputType.CustomBuild, OutputType.Application };
-            }
-        }
+        public override OutputType[] OutputTypes => new[] { OutputType.CustomBuild, OutputType.Application };
 
         public override bool HasOutput(OutputType output)
         {
@@ -33,9 +27,6 @@ namespace ProjectManager.Projects.Haxe
                 || (HasPlatformSupport && PlatformSupport.ExternalToolchain != null);
         }
 
-        public override OutputType DefaultOutput(string platform)
-        {
-            return OutputType.Application;
-        }
+        public override OutputType DefaultOutput(string platform) => OutputType.Application;
     }
 }

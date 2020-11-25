@@ -3,37 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CodeRefactor</RootNamespace>
     <AssemblyName>CodeRefactor</AssemblyName>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -52,18 +28,21 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>false</Optimize>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -75,15 +54,16 @@
   -->
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchProcessors\ConsistentEOLProcessor.cs" />
+    <Compile Include="BatchProcessors\FormatCodeProcessor.cs" />
+    <Compile Include="BatchProcessors\TruncateImportsProcessor.cs" />
     <Compile Include="Commands\ExtractLocalVariableCommand.cs" />
     <Compile Include="Commands\ExtractMethodCommand.cs" />
-    <Compile Include="Commands\DelegateMethodsCommand.cs" />
+    <Compile Include="Commands\DelegateMethods.cs" />
     <Compile Include="Commands\InlineRename.cs" />
     <Compile Include="Commands\Move.cs" />
     <Compile Include="Commands\OrganizeImports.cs" />
@@ -94,10 +74,11 @@
     <Compile Include="Controls\BatchProcessDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\BatchProcessorItem.cs" />
     <Compile Include="Controls\DelegateMethodsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\DividedCheckedListBox.cs">
+    <Compile Include="Controls\CheckedListBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\MoveDialog.cs">
@@ -115,16 +96,20 @@
     <Compile Include="Controls\SurroundMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Managers\BatchProcessManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Commands\RefactorCommand.cs" />
     <Compile Include="Commands\RefactorCompleteEventArgs.cs" />
+    <Compile Include="Provider\CommandFactory.cs" />
+    <Compile Include="Provider\CommandFactoryProvider.cs" />
     <Compile Include="Provider\DocumentHelper.cs" />
+    <Compile Include="Provider\ICommandFactory.cs" />
     <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\RenamingHelper.cs" />
     <Compile Include="Provider\UserInterfaceManager.cs" />
-    <Compile Include="RefactorItem.cs" />
+    <Compile Include="CompletionListItems.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -145,25 +130,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <Compile Include="BatchProcessors\OrganizeImportsProcessor.cs" />
   </ItemGroup>
 </Project>

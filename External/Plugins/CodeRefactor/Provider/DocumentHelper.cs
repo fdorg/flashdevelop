@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using PluginCore;
 
@@ -12,36 +11,15 @@ namespace CodeRefactor.Provider
     /// </summary>
     public class DocumentHelper
     {
-        private Boolean preventClosing = false;
-        private IDictionary<String, Boolean> filesOpenedAndUsed = new Dictionary<String, Boolean>();
-        private IDictionary<String, ITabbedDocument> filesOpenedDocumentReferences = new Dictionary<String, ITabbedDocument>();
-        private IDictionary<String, ITabbedDocument> initiallyOpenedFiles;
-       
         /// <summary>
         /// Constructor. Creates a new helper.  Stores the current state of 
         /// open files at this time.  Therefore, if there are temporary files 
         /// already open, this instance will not consider those files to be 
         /// temporary.  Consider this when managing multiple DocumentHelpers.
         /// </summary>
-        public DocumentHelper()
-        {
-            this.initiallyOpenedFiles = this.GetOpenDocuments();
-        }
+        public DocumentHelper() => InitiallyOpenedFiles = GetOpenDocuments();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Boolean PreventClosing
-        {
-            get
-            {
-                return this.preventClosing;
-            }
-            set
-            {
-                this.preventClosing = value;
-            }
-        }
+        public bool PreventClosing { get; } = false;
 
         /// <summary>
         /// Tracks files that have been opened.
@@ -51,74 +29,51 @@ namespace CodeRefactor.Provider
         /// opened, there is reportable/changed content in the file and it 
         /// should remain open.
         /// </summary>
-        public IDictionary<String, Boolean> FilesOpenedAndUsed
-        {
-            get
-            {
-                return this.filesOpenedAndUsed;
-            }
-            protected set
-            {
-                this.filesOpenedAndUsed = value;
-            }
-        }
+        public IDictionary<string, bool> FilesOpenedAndUsed { get; } = new Dictionary<string, bool>();
 
         /// <summary>
         /// Keeps track of opened files.  Provides reference to the files' 
         /// associated DockContent so that they may be closed.
         /// </summary>
-        public IDictionary<String, ITabbedDocument> FilesOpenedDocumentReferences
-        {
-            get
-            {
-                return this.filesOpenedDocumentReferences;
-            }
-            protected set
-            {
-                this.filesOpenedDocumentReferences = value;
-            }
-        }
+        public IDictionary<string, ITabbedDocument> FilesOpenedDocumentReferences { get; } = new Dictionary<string, ITabbedDocument>();
 
         /// <summary>
         /// Gets the collection of files opened when this DocumentHelper was created.
         /// </summary>
-        public IDictionary<String, ITabbedDocument> InitiallyOpenedFiles
-        {
-            get { return initiallyOpenedFiles; }
-        }
+        public IDictionary<string, ITabbedDocument> InitiallyOpenedFiles { get; }
 
         /// <summary>
         /// Retrieves a list of the currently open documents.
         /// </summary>
-        protected IDictionary<String, ITabbedDocument> GetOpenDocuments()
+        static IDictionary<string, ITabbedDocument> GetOpenDocuments()
         {
-            IDictionary<String, ITabbedDocument> openedFiles = new Dictionary<String, ITabbedDocument>();
-            foreach (ITabbedDocument openDocument in PluginBase.MainForm.Documents)
+            var result = new Dictionary<string, ITabbedDocument>();
+            foreach (var openDocument in PluginBase.MainForm.Documents)
             {
-                if (openDocument.IsEditable)
+                if (openDocument.SciControl is { } sci)
                 {
-                    openedFiles[openDocument.FileName] = openDocument;
+                    result[sci.FileName] = openDocument;
                 }
             }
-            return openedFiles;
+            return result;
         }
 
         /// <summary>
         /// Flags the given file as used (not temporary).
         /// This will prevent it from being purged later on.
         /// </summary>
-        public void MarkDocumentToKeep(String fileName)
+        public void MarkDocumentToKeep(string fileName)
         {
-            if (this.filesOpenedAndUsed.ContainsKey(fileName))
+            if (FilesOpenedAndUsed.ContainsKey(fileName))
             {
-                this.filesOpenedAndUsed[fileName] = true;
+                FilesOpenedAndUsed[fileName] = true;
             }
             else
             {
-                this.LoadDocument(fileName);
-                if (this.filesOpenedAndUsed.ContainsKey(fileName))
+                LoadDocument(fileName);
+                if (FilesOpenedAndUsed.ContainsKey(fileName))
                 {
-                    this.filesOpenedAndUsed[fileName] = true;
+                    FilesOpenedAndUsed[fileName] = true;
                 }
             }
         }
@@ -128,25 +83,24 @@ namespace CodeRefactor.Provider
         /// If the document was not already previously opened, this will flag 
         /// it as a temporary file.
         /// </summary>
-        public ITabbedDocument LoadDocument(String fileName)
+        public ITabbedDocument LoadDocument(string fileName)
         {
-            ITabbedDocument newDocument = (ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(fileName);
-            this.RegisterLoadedDocument(newDocument);
-            return newDocument;
+            var result = (ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(fileName);
+            RegisterLoadedDocument(result);
+            return result;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void RegisterLoadedDocument(ITabbedDocument document)
         {
             //if it's null, it means it was already opened, or the caller sent us garbage
-            if (document != null && !filesOpenedAndUsed.ContainsKey(document.FileName))
+            if (document != null
+                && document.FileName is { } fileName
+                && !FilesOpenedAndUsed.ContainsKey(fileName))
             {
                 //newly opened document.  Let's store it so we can close it later if it's not part of our result set.
                 //false to indicate that it so far hasn't found any matching entries.
-                this.filesOpenedAndUsed.Add(document.FileName, false);
-                this.filesOpenedDocumentReferences.Add(document.FileName, document);
+                FilesOpenedAndUsed.Add(fileName, false);
+                FilesOpenedDocumentReferences.Add(fileName, document);
             }
         }
 
@@ -155,16 +109,13 @@ namespace CodeRefactor.Provider
         /// If the document is part of the initially opened files list, it 
         /// will not be closed or purged.
         /// </summary>
-        public Boolean CloseDocument(String fileName)
+        public bool CloseDocument(string fileName)
         {
-            if (this.filesOpenedDocumentReferences.ContainsKey(fileName) && !this.initiallyOpenedFiles.ContainsKey(fileName))
-            {
-                this.filesOpenedDocumentReferences[fileName].Close();
-                this.filesOpenedAndUsed.Remove(fileName);
-                this.filesOpenedDocumentReferences.Remove(fileName);
-                return true;
-            }
-            return false;
+            if (!FilesOpenedDocumentReferences.ContainsKey(fileName) || InitiallyOpenedFiles.ContainsKey(fileName)) return false;
+            FilesOpenedDocumentReferences[fileName].Close();
+            FilesOpenedAndUsed.Remove(fileName);
+            FilesOpenedDocumentReferences.Remove(fileName);
+            return true;
         }
 
         /// <summary>
@@ -172,26 +123,22 @@ namespace CodeRefactor.Provider
         /// </summary>
         public void CloseTemporarilyOpenedDocuments()
         {
-            if (!this.PreventClosing)
+            if (PreventClosing) return;
+            // retrieve a list of documents to close
+            var documentsToClose = new List<string>();
+            foreach (var openedAndUsedFile in FilesOpenedAndUsed)
             {
-                // retrieve a list of documents to close
-                List<String> documentsToClose = new List<String>();
-                foreach (KeyValuePair<String, Boolean> openedAndUsedFile in filesOpenedAndUsed)
+                // if the value is true, it means the document was flagged as permanent/changed, so we shouldn't close it
+                if (!openedAndUsedFile.Value)
                 {
-                    // if the value is true, it means the document was flagged as permanent/changed, so we shouldn't close it
-                    if (!openedAndUsedFile.Value)
-                    {
-                        documentsToClose.Add(openedAndUsedFile.Key);
-                    }
-                }
-                // close each document
-                foreach (String fileName in documentsToClose)
-                {
-                    this.CloseDocument(fileName);
+                    documentsToClose.Add(openedAndUsedFile.Key);
                 }
             }
+            // close each document
+            foreach (var fileName in documentsToClose)
+            {
+                CloseDocument(fileName);
+            }
         }
-
     }
-
 }

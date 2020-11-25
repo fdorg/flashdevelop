@@ -41,6 +41,11 @@ namespace SourceControl.Sources
         /// SC notification that IO changes happened in a location under VC 
         /// </summary>
         bool SetPathDirty(string path, string rootPath);
+
+        /// <summary>
+        /// Commits the given files with the given message
+        /// </summary>
+        void Commit(string[] files, string message);
     }
 
     /// <summary>
@@ -70,6 +75,7 @@ namespace SourceControl.Sources
         ToolStripItem Push { get; }
         ToolStripItem ShowLog { get; }
         ToolStripItem MidSeparator { get; }
+        ToolStripItem Annotate { get; }
         ToolStripItem Diff { get; }
         ToolStripItem DiffChange { get; }
         ToolStripItem Add { get; }

@@ -13,9 +13,9 @@ namespace SourceControl.Managers
 {
     public class FSWatchers
     {
-        Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
-        List<IVCManager> dirtyVC = new List<IVCManager>();
-        Timer updateTimer;
+        readonly Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
+        readonly HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
+        readonly Timer updateTimer;
         string lastDirtyPath;
         bool disposing;
 
@@ -38,11 +38,11 @@ namespace SourceControl.Managers
         {
             try
             {
-                if (updateTimer != null) updateTimer.Stop();
+                updateTimer?.Stop();
 
                 lock (watchers)
                 {
-                    foreach (FileSystemWatcher watcher in watchers.Keys)
+                    foreach (var watcher in watchers.Keys)
                     {
                         watcher.EnableRaisingEvents = false;
                         watcher.Dispose();
@@ -50,12 +50,12 @@ namespace SourceControl.Managers
                     watchers.Clear();
                 }
             }
-            catch (Exception) { }
+            catch { }
         }
 
         internal WatcherVCResult ResolveVC(string path, bool andStatus)
         {
-            WatcherVCResult result = ResolveVC(path);
+            var result = ResolveVC(path);
             if (result != null && andStatus)
                 result.Status = result.Manager.GetOverlay(path, result.Watcher.Path);
 
@@ -64,7 +64,7 @@ namespace SourceControl.Managers
 
         internal WatcherVCResult ResolveVC(string path)
         {
-            foreach (FileSystemWatcher watcher in watchers.Keys)
+            foreach (var watcher in watchers.Keys)
                 if (path.StartsWithOrdinal(watcher.Path))
                     return new WatcherVCResult(watcher, watchers[watcher]);
             return null;
@@ -73,7 +73,7 @@ namespace SourceControl.Managers
         internal void SetProject(Project project)
         {
             Clear();
-            if (project == null) return;
+            if (project is null) return;
 
             CreateWatchers(project.Directory);
 
@@ -89,12 +89,11 @@ namespace SourceControl.Managers
             updateTimer.Start();
         }
 
-        private void CreateWatchers(string path)
+        void CreateWatchers(string path)
         {
             try
             {
-                if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
-                    return;
+                if (!Directory.Exists(path)) return;
 
                 foreach (FileSystemWatcher watcher in watchers.Keys)
                     if (path.StartsWith(watcher.Path, StringComparison.OrdinalIgnoreCase))
@@ -105,7 +104,7 @@ namespace SourceControl.Managers
             catch { }
         }
 
-        private void ExploreDirectory(string path, bool rootDir, int depth)
+        void ExploreDirectory(string path, bool rootDir, int depth)
         {
             foreach (IVCManager manager in ProjectWatcher.VCManagers)
                 if (manager.IsPathUnderVC(path))
@@ -126,20 +125,20 @@ namespace SourceControl.Managers
                 }
         }
 
-        private void CreateWatcher(string path, IVCManager manager)
+        void CreateWatcher(string path, IVCManager manager)
         {
             var watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.Attributes;
-            watcher.Changed += new FileSystemEventHandler(Watcher_Changed);
-            watcher.Deleted += new FileSystemEventHandler(Watcher_Changed);
+            watcher.Changed += Watcher_Changed;
+            watcher.Deleted += Watcher_Changed;
             watcher.EnableRaisingEvents = true;
             watchers.Add(watcher, manager);
 
             dirtyVC.Add(manager);
         }
 
-        private bool ParentDirUnderVC(string path)
+        bool ParentDirUnderVC(string path)
         {
             try
             {
@@ -165,7 +164,7 @@ namespace SourceControl.Managers
             return false;
         }
 
-        private void Watcher_Changed(object sender, FileSystemEventArgs e)
+        void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (lastDirtyPath != null && e.FullPath.StartsWithOrdinal(lastDirtyPath))
                 return;
@@ -179,12 +178,11 @@ namespace SourceControl.Managers
 
         public void Changed(IVCManager manager)
         {
-            if (disposing || updateTimer == null) return;
+            if (disposing || updateTimer is null) return;
 
             lock (dirtyVC)
             {
-                if (!dirtyVC.Contains(manager))
-                    dirtyVC.Add(manager);
+                dirtyVC.Add(manager);
             }
 
             updateTimer.Stop();
@@ -218,8 +216,7 @@ namespace SourceControl.Managers
                 foreach (FileSystemWatcher watcher in watchers.Keys)
                 {
                     IVCManager manager = watchers[watcher];
-                    if (!dirtyVC.Contains(manager))
-                        dirtyVC.Add(manager);
+                    dirtyVC.Add(manager);
                 }
             }
 
@@ -229,7 +226,7 @@ namespace SourceControl.Managers
         }
     }
 
-    class WatcherVCResult
+    internal class WatcherVCResult
     {
         public FileSystemWatcher Watcher;
         public IVCManager Manager;

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using PluginCore;
 
 namespace FlashDebugger
 {
@@ -16,16 +16,10 @@ namespace FlashDebugger
         /// <returns>Substring before the specified search term</returns>
         public static string Before(this string text, string find, int startAt = 0, bool returnAll = false, bool forward = true)
         {
-            if (text == null) return returnAll ? null : "";
-            int idx;
-            if (forward)
-            {
-                idx = text.IndexOf(find, startAt, StringComparison.Ordinal);
-            }
-            else
-            {
-                idx = text.LastIndexOf(find, text.Length - startAt, StringComparison.Ordinal);
-            }
+            if (text is null) return returnAll ? null : "";
+            var idx = forward
+                ? text.IndexOfOrdinal(find, startAt)
+                : text.LastIndexOfOrdinal(find, text.Length - startAt);
             if (idx == -1) return returnAll ? text : "";
             return text.Substring(0, idx);
         }
@@ -41,16 +35,10 @@ namespace FlashDebugger
         /// <returns>Substring after the specified search term</returns>
         public static string After(this string text, string find, int startAt = 0, bool returnAll = false, bool forward = true)
         {
-            if (text == null) return returnAll ? null : "";
-            int idx;
-            if (!forward)
-            {
-                idx = text.LastIndexOf(find, text.Length - startAt, StringComparison.Ordinal);
-            }
-            else
-            {
-                idx = text.IndexOf(find, startAt, StringComparison.Ordinal);
-            }
+            if (text is null) return returnAll ? null : "";
+            var idx = forward
+                ? text.IndexOfOrdinal(find, startAt)
+                : text.LastIndexOfOrdinal(find, text.Length - startAt);
             if (idx == -1) return returnAll ? text : "";
             idx += find.Length;
             return text.Substring(idx);
@@ -65,14 +53,10 @@ namespace FlashDebugger
         /// <returns>Substring after the last instance of search term</returns>
         public static string AfterLast(this string text, string find, bool returnAll = false)
         {
-            int idx = text.LastIndexOf(find, StringComparison.Ordinal);
-            if (idx == -1)
-            {
-                return returnAll ? text : "";
-            }
+            var idx = text.LastIndexOfOrdinal(find);
+            if (idx == -1) return returnAll ? text : "";
             idx += find.Length;
             return text.Substring(idx);
         }
-
     }
 }

@@ -10,31 +10,13 @@ namespace FlashDebugger.Controls
 {
     public partial class DataTipForm : Form
     {
-        public TreeViewAdv Tree
-        {
-            get
-            {
-                return dataTreeControl.Tree;
-            }
-        }
+        public TreeViewAdv Tree => dataTreeControl.Tree;
 
-        public DataTreeControl DataTree
-        {
-            get
-            {
-                return dataTreeControl;
-            }
-        }
+        public DataTreeControl DataTree => dataTreeControl;
 
-        public AutoRowHeightLayout RowLayout
-        {
-            get
-            {
-                return rowLayout;
-            }
-        }
+        public AutoRowHeightLayout RowLayout => rowLayout;
 
-        AutoRowHeightLayout rowLayout;
+        readonly AutoRowHeightLayout rowLayout;
 
         public DataTipForm()
         {
@@ -47,7 +29,7 @@ namespace FlashDebugger.Controls
             DataTree.ValueChanged += Tree_SizeChanged;
         }
 
-        public void SetVariable(Variable variable, String path)
+        public void SetVariable(Variable variable, string path)
         {
             SetVariable(variable);
             DataTree.Nodes[0].Tag = path;
@@ -111,7 +93,7 @@ namespace FlashDebugger.Controls
             if (Win32.ShouldUseWin32())
             {
                 Win32.ReleaseCapture();
-                Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
+                Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, screenPoint.Y << 16 | screenPoint.X);
             }
         }
 
@@ -126,79 +108,74 @@ namespace FlashDebugger.Controls
                     // Cursor Top Left
                     return Win32.HitTest.HTTOPLEFT;
                 }
-                else if (Y > (Height - cornerHeight))
+
+                if (Y > (Height - cornerHeight))
                 {
                     // Cursor Bottom Left
                     return Win32.HitTest.HTBOTTOMLEFT;
                 }
-                else
-                {
-                    // Cursor Left
-                    return Win32.HitTest.HTLEFT;
-                }
+// Cursor Left
+                return Win32.HitTest.HTLEFT;
             }
-            else if (X > (Width - cornerWidth))
+
+            if (X > (Width - cornerWidth))
             {
                 if (Y < cornerHeight)
                 {
                     // Cursor Top Right
                     return Win32.HitTest.HTTOPRIGHT;
                 }
-                else if (Y > (Height - cornerHeight))
+
+                if (Y > (Height - cornerHeight))
                 {
                     // Cursor Bottom Right
                     return Win32.HitTest.HTBOTTOMRIGHT;
                 }
-                else
-                {
-                    // Cursor Right
-                    return Win32.HitTest.HTRIGHT;
-                }
+// Cursor Right
+                return Win32.HitTest.HTRIGHT;
             }
-            else if (Y < cornerHeight)
+            if (Y < cornerHeight)
             {
                 // Cursor Top
                 return Win32.HitTest.HTTOP;
             }
-            else if (Y > (Height - cornerHeight))
+            if (Y > (Height - cornerHeight))
             {
                 // Cursor Bottom
                 return Win32.HitTest.HTBOTTOM;
             }
-            else return Win32.HitTest.HTCLIENT;
+            return Win32.HitTest.HTCLIENT;
         }
 
         private void DoResize()
         {
-            using (Graphics g = Tree.CreateGraphics())
+            using Graphics g = Tree.CreateGraphics();
+            int nameMaxW = TextWidth(g, Tree.Columns[0].Header) + DataTree.Margin.Horizontal;
+            int valueMaxW = TextWidth(g, Tree.Columns[1].Header) + DataTree.Margin.Horizontal;
+            int height = 0;
+            DataTree.Tree.Columns[0].Width = Screen.GetWorkingArea(this).Width;
+            foreach (TreeNodeAdv node in DataTree.Tree.Root.Children)
             {
-                int nameMaxW = TextWidth(g, Tree.Columns[0].Header) + DataTree.Margin.Horizontal;
-                int valueMaxW = TextWidth(g, Tree.Columns[1].Header) + DataTree.Margin.Horizontal;
-                int height = 0;
-                DataTree.Tree.Columns[0].Width = Screen.GetWorkingArea(this).Width;
-                foreach (TreeNodeAdv node in DataTree.Tree.Root.Children)
-                {
-                    CalcHeightWidth(g, node, ref height, ref nameMaxW, ref valueMaxW);
-                }
-                DataTree.Tree.Columns[0].Width = nameMaxW;
-                DataTree.Tree.Columns[1].Width = valueMaxW;
-                int width = nameMaxW + valueMaxW + DataTree.Tree.Margin.Horizontal + Padding.Horizontal + SystemInformation.VerticalScrollBarWidth;
-                Form parentForm = PluginBase.MainForm as Form;
-                Point locationMainForm = parentForm.PointToClient(Location);
-                int maxWidth = parentForm.Width - locationMainForm.X - Padding.Horizontal - 2 * SystemInformation.VerticalScrollBarWidth;
-                if (width > maxWidth)
-                {
-                    width = maxWidth;
-                }
-                Width = width;
-                int h = DataTree.Tree.ColumnHeaderHeight + height + Padding.Vertical + SystemInformation.HorizontalScrollBarHeight;
-                int maxHeight = parentForm.Height - locationMainForm.Y - Padding.Vertical - 2 * SystemInformation.HorizontalScrollBarHeight;
-                if (h > maxHeight)
-                {
-                    h = maxHeight;
-                }
-                Height = h;
+                CalcHeightWidth(g, node, ref height, ref nameMaxW, ref valueMaxW);
             }
+            DataTree.Tree.Columns[0].Width = nameMaxW;
+            DataTree.Tree.Columns[1].Width = valueMaxW;
+            int width = nameMaxW + valueMaxW + DataTree.Tree.Margin.Horizontal + Padding.Horizontal + SystemInformation.VerticalScrollBarWidth;
+            Form parentForm = PluginBase.MainForm as Form;
+            Point locationMainForm = parentForm.PointToClient(Location);
+            int maxWidth = parentForm.Width - locationMainForm.X - Padding.Horizontal - 2 * SystemInformation.VerticalScrollBarWidth;
+            if (width > maxWidth)
+            {
+                width = maxWidth;
+            }
+            Width = width;
+            int h = DataTree.Tree.ColumnHeaderHeight + height + Padding.Vertical + SystemInformation.HorizontalScrollBarHeight;
+            int maxHeight = parentForm.Height - locationMainForm.Y - Padding.Vertical - 2 * SystemInformation.HorizontalScrollBarHeight;
+            if (h > maxHeight)
+            {
+                h = maxHeight;
+            }
+            Height = h;
         }
 
         private bool CalcHeightWidth(Graphics g, TreeNodeAdv node, ref int height, ref int widthName, ref int widthValue)

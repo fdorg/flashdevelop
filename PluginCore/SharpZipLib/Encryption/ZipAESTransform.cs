@@ -58,16 +58,16 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         // block but use only the first 16 bytes of it, and discard the second half.
         private const int ENCRYPT_BLOCK = 16;
 
-        private int _blockSize;
-        private ICryptoTransform _encryptor;
+        private readonly int _blockSize;
+        private readonly ICryptoTransform _encryptor;
         private readonly byte[] _counterNonce;
-        private byte[] _encryptBuffer;
+        private readonly byte[] _encryptBuffer;
         private int _encrPos;
-        private byte[] _pwdVerifier;
-        private HMACSHA1 _hmacsha1;
+        private readonly byte[] _pwdVerifier;
+        private readonly HMACSHA1 _hmacsha1;
         private bool _finalised;
 
-        private bool _writeMode;
+        private readonly bool _writeMode;
 
         /// <summary>
         /// Constructor.
@@ -140,11 +140,7 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         /// <summary>
         /// Returns the 2 byte password verifier
         /// </summary>
-        public byte[] PwdVerifier {
-            get {
-                return _pwdVerifier;
-            }
-        }
+        public byte[] PwdVerifier => _pwdVerifier;
 
         /// <summary>
         /// Returns the 10 byte AUTH CODE to be checked or appended immediately following the AES data stream.
@@ -172,38 +168,22 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         /// <summary>
         /// Gets the size of the input data blocks in bytes.
         /// </summary>
-        public int InputBlockSize {
-            get {
-                return _blockSize;
-            }
-        }
+        public int InputBlockSize => _blockSize;
 
         /// <summary>
         /// Gets the size of the output data blocks in bytes.
         /// </summary>
-        public int OutputBlockSize {
-            get {
-                return _blockSize;
-            }
-        }
+        public int OutputBlockSize => _blockSize;
 
         /// <summary>
         /// Gets a value indicating whether multiple blocks can be transformed.
         /// </summary>
-        public bool CanTransformMultipleBlocks {
-            get {
-                return true;
-            }
-        }
+        public bool CanTransformMultipleBlocks => true;
 
         /// <summary>
         /// Gets a value indicating whether the current transform can be reused.
         /// </summary>
-        public bool CanReuseTransform {
-            get {
-                return true;
-            }
-        }
+        public bool CanReuseTransform => true;
 
         /// <summary>
         /// Cleanup internal state.

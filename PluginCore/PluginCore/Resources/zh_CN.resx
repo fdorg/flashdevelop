@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AS2Context.Description.DefaultFlashVersion" xml:space="preserve">
     <value>当无项目定义时，使用默认 Flash Player 版本.</value>
@@ -337,6 +337,7 @@
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
     <value>项目类型资源管理器(&amp;X)...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>大纲面板</value>
@@ -1750,7 +1751,7 @@
     <value>项目没有输出,也没有配置编译命令.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|创建新项目|{0}或{0}|打开一个现有的项目|{0}或{0}|导入一个 Flash Builder 项目|</value>
+    <value>|Open a folder|{0}or{0}|创建新项目|{0}或{0}|打开一个现有的项目|{0}或{0}|导入一个 Flash Builder 项目|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>无法在模板目录中找到模板.你将无法创建新项目.你可以尝试重新安装 FlashDevelop 软件.</value>
@@ -2465,7 +2466,7 @@
     <value>选择导入的项目</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder 项目 (.actionScriptProperties)|.actionScriptProperties|打包的 Adobe Flash Builder 项目 (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder 项目 (.actionScriptProperties)|.actionScriptProperties|打包的 Adobe Flash Builder 项目 (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml 项目 (*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>发送结果到结果面板</value>
@@ -6034,6 +6035,10 @@
     <value>The number of recent files to remember in the recent files drop-down.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>单次可以输出的最大行数。</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
     <comment>Added after 5.2.0</comment>
@@ -6107,5 +6112,260 @@ Exclusive - Add closing brace before the unspecified styles.</value>
 OR - One or more conditions are met.
 AND - All conditions are met.</value>
     <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="OutputPanel.Description.ClearMode" xml:space="preserve">
+    <value>Defines which method should be used to clean the contents of the output panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="Label.GotoTypeDeclaration" xml:space="preserve">
+    <value>Goto Type Declaration</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
+    <value>The default column to group results by.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
+    <value>Runs the available linters when a file is saved.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
+    <value>Runs the available linters when a file is opened.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
+    <value>Run Linters</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
+    <value>Unused import</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.UnresolvedIdentifier" xml:space="preserve">
+    <value>Unresolved identifier</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
+    <value>'{0}' References</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">
+    <value>Find and Replace</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.LintingResults" xml:space="preserve">
+    <value>Linters</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
+    <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Description.UseGenericsShortNotation" xml:space="preserve">
+    <value>Use short notation for generics instantiation whenever possible (ie. var arr:Array&lt;String&gt; = new Array())</value>
+    <comment>after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.Clear" xml:space="preserve">
+    <value>&amp;Clear</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.ClipboardHistory" xml:space="preserve">
+    <value>Clipboard History</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
+    <value>The number of items to store in the clipboard history. Minimum value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Label.KeepResults" xml:space="preserve">
+    <value>Keep Results</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.HighlightOnlyActivePanelEntries" xml:space="preserve">
+    <value>Highlight only the entries in the active panel and the main panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
+    <value>Keep result panels locked by default.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="SourceControl.Description.NeverAskForCommit" xml:space="preserve">
+    <value>Sets whether you will be asked to make a commit after moving / deleting files, etc.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Never" xml:space="preserve">
+    <value>Never</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.CreateCommit" xml:space="preserve">
+    <value>Would you like to create a commit for this action?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.AddFile" xml:space="preserve">
+    <value>Would you like to add this file to version control?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.RemoveFiles" xml:space="preserve">
+    <value>Would you like to remove the file(s) from version control?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Description.EndAtLastLine" xml:space="preserve">
+    <value>Sets the scroll range so that maximum scroll position has the last line at the bottom of the view. Setting this to false allows scrolling one page below the last line.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.ImplementedBy" xml:space="preserve">
+    <value>Implemented by...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Implements" xml:space="preserve">
+    <value>Implements...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.OverriddenBy" xml:space="preserve">
+    <value>Overridden by...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Overrides" xml:space="preserve">
+    <value>Overrides...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Inheritance Navigation</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
+    <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 1.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="PluginCore.Label.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.NoToAll" xml:space="preserve">
+    <value>No to All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.YesToAll" xml:space="preserve">
+    <value>Yes To All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.DontAskAgain" xml:space="preserve">
+    <value>Remember, don't ask again</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="ProjectManager.Description.ShowExternalLibraries" xml:space="preserve">
+    <value>Sets whether or not to include external libraries directories in the project tree.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Info.GenerateSwitch" xml:space="preserve">
+    <value>Generate switch</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.PeekDefinition" xml:space="preserve">
+    <value>Peek Definition</value>
+    <comment>Added after 5.3.4</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateInterface" xml:space="preserve">
+    <value>Create new interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewAs2Interface" xml:space="preserve">
+    <value>New ActionScript 2 Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewAs3Interface" xml:space="preserve">
+    <value>New ActionScript 3 Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewHaxeInterface" xml:space="preserve">
+    <value>New Haxe Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.ExtendsInterface" xml:space="preserve">
+    <value>Base Interface:</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewInterface" xml:space="preserve">
+    <value>INewInterface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyInterfaceName" xml:space="preserve">
+    <value>Interface name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.InvalidInterfaceName" xml:space="preserve">
+    <value>Interface name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseInterfaceName" xml:space="preserve">
+    <value>Interface name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsCaseSensitive" xml:space="preserve">
+    <value>Match case</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ASCompletion.Label.GeneratePrivateStaticVar" xml:space="preserve">
+    <value>Declare private static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GeneratePublicStaticVar" xml:space="preserve">
+    <value>Declare public static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateEnum" xml:space="preserve">
+    <value>Create new enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Label.NewEnum" xml:space="preserve">
+    <value>New Haxe Enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Info.Description" xml:space="preserve">
+    <value>Adds a Haxe type wizard to FlashDevelop.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.EmptyEnumName" xml:space="preserve">
+    <value>Enum name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.InvalidEnumName" xml:space="preserve">
+    <value>Enum name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.LowercaseEnumName" xml:space="preserve">
+    <value>Enum name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeCompletion.Label.GenerateConstructorWithInitializer" xml:space="preserve">
+    <value>Generate constructor with initializer</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
+    <value>Initialize {0}</value>
+    <comment>Added After 5.3.3</comment>
+  </data>
+  <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
+    <value>Open &amp;Folder...</value>
+    <comment>Added after 5.3.1</comment>
   </data>
 </root>

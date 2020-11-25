@@ -6,10 +6,11 @@ using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
+using PluginCore.Controls;
 
 namespace CodeRefactor.Controls
 {
-    public partial class MoveDialog : Form
+    public partial class MoveDialog : SmartForm
     {
         IEnumerable<string> GetClasspaths(string path)
         {
@@ -33,7 +34,7 @@ namespace CodeRefactor.Controls
 
         static string GetClasspath(string path, string projectDirName)
         {
-            path = projectDirName == null ? path : path.Replace(projectDirName, string.Empty);
+            path = projectDirName is null ? path : path.Replace(projectDirName, string.Empty);
             return path.Trim(Path.DirectorySeparatorChar);
         }
 
@@ -42,12 +43,14 @@ namespace CodeRefactor.Controls
 
         public MoveDialog(string file):this(new List<string> { file })
         {
+
         }
         public MoveDialog(List<string> files)
         {
             MovingFiles = files;
             InitializeComponent();
-            Font = PluginBase.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
+            this.FormGuid = "2823102d-d712-4ce6-aa36-58e0bb4bf61d";
             tree.ItemHeight = tree.Font.Height;
             InitializeClasspaths();
             InitializeInput();
@@ -61,16 +64,18 @@ namespace CodeRefactor.Controls
             get
             {
                 string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                return Path.Combine(projectDir, tree.SelectedItem.ToString());
+                if (tree.SelectedItem != null) return Path.Combine(projectDir, tree.SelectedItem.ToString());
+
+                return null;
             }
         }
 
-        public bool FixPackages { get { return fixPackages.Checked; }}
+        public bool FixPackages => fixPackages.Checked;
 
         void InitializeClasspaths()
         {
             IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            if (context == null) return;
+            if (context is null) return;
             string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             foreach (PathModel classpath in context.Classpath)
             {
@@ -118,8 +123,13 @@ namespace CodeRefactor.Controls
                     return score > 0 && score < 6;
                 });
             }
-            if (classpaths.Count > 0) tree.Items.AddRange(classpaths.ToArray());
-            if (tree.Items.Count > 0) tree.SelectedIndex = 0;
+            if (classpaths.Count > 0)
+            {
+                tree.Items.AddRange(classpaths.ToArray());
+                tree.SelectedIndex = 0;
+                processButton.Enabled = true;
+            }
+            else processButton.Enabled = false;
         }
 
         void OnShowExternalClasspathsCheckStateChanged(object sender, EventArgs e)

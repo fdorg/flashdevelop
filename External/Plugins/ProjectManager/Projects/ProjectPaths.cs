@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -29,7 +28,6 @@ namespace ProjectManager.Projects
             string[] a = baseDirectory.Split(slash);
             string[] b = path.Split(slash);
 
-            ArrayList relPath = new ArrayList();
             int i = 0;
 
             // skip equal parts
@@ -40,10 +38,10 @@ namespace ProjectManager.Projects
             }
 
             // only common drive letter, consider not relative
-            if (i <= 1)
-                return path; 
+            if (i <= 1) return path;
 
             // at this point, i is the index of the first diverging element of the two paths
+            var relPath = new List<string>();
             int backtracks = a.Length - i;
             for (int j = 0; j < backtracks; j++)
                 relPath.Add("..");
@@ -51,7 +49,7 @@ namespace ProjectManager.Projects
             for (int j = i; j < b.Length; j++)
                 relPath.Add(b[j]);
 
-            string relativePath = string.Join(slash.ToString(), relPath.ToArray(typeof(string)) as string[]);
+            string relativePath = string.Join(slash.ToString(), relPath);
             string special = (relativePath.Length > 0) ? relativePath : "."; // special case
 
             if (special.StartsWith("..", StringComparison.Ordinal) && special.Contains(":")) // invalid relative path...
@@ -68,19 +66,38 @@ namespace ProjectManager.Projects
             return Path.GetFullPath(combinedPath);
         }
 
-        public static string ApplicationDirectory
-        {
-            get
-            {
-                string url = Assembly.GetEntryAssembly().GetName().CodeBase;
-                Uri uri = new Uri(url);
-                return Path.GetDirectoryName(uri.LocalPath);
-            }
-        }
+        public static string ApplicationDirectory => applicationDirectory ??= Path.GetDirectoryName(GetAssemblyPath(Assembly.GetEntryAssembly()));
 
-        public static string DefaultProjectsDirectory 
+        static string applicationDirectory;
+
+        public static string DefaultProjectsDirectory => Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+        /// <summary>
+        /// Path to the main application directory
+        /// </summary>
+        public static string AppDir => appDir ??= Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
+
+        static string appDir;
+
+        public static string GetAssemblyPath(Assembly assembly)
         {
-            get { return Environment.GetFolderPath(Environment.SpecialFolder.Personal); }
+            var codeBase = assembly.CodeBase;
+            if (!codeBase.ToLower().StartsWith(Uri.UriSchemeFile)) return assembly.Location;
+            // Skip over the file:// part
+            var start = Uri.UriSchemeFile.Length + Uri.SchemeDelimiter.Length;
+            if (codeBase[start] == '/') // third slash means a local path
+            {
+                // Handle Windows Drive specifications
+                if (codeBase[start + 2] == ':')
+                    ++start;
+                // else leave the last slash so path is absolute
+            }
+            else // It's either a Windows Drive spec or a share
+            {
+                if (codeBase[start + 1] != ':')
+                    start -= 2; // Back up to include two slashes
+            }
+            return codeBase.Substring(start);
         }
     }
 }

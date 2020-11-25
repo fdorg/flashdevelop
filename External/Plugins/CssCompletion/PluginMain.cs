@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -18,80 +17,54 @@ namespace CssCompletion
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "CssCompletion";
-        private String pluginGuid = "c156cdec-5c88-4bcb-b186-a5678516698c";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds CSS completion to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String settingFilename;
-        private Settings settingObject;
-        private Dictionary<String, CssFeatures> enabledLanguages;
-        private SimpleIni config;
-        private Completion completion;
-        private CssFeatures features;
-        private Timer updater;
-        private string updateFile;
-        private CssFeatures updateFeatures;
+        string settingFilename;
+        Settings settingObject;
+        Dictionary<string, CssFeatures> enabledLanguages;
+        SimpleIni config;
+        Completion completion;
+        CssFeatures features;
+        Timer updater;
+        string updateFile;
+        CssFeatures updateFeatures;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(CssCompletion);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "c156cdec-5c88-4bcb-b186-a5678516698c";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds CSS completion to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -101,38 +74,32 @@ namespace CssCompletion
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             switch (e.Type)
             {
                 case EventType.Keys:
                 {
-                    Keys keys = (e as KeyEvent).Value;
-                    if (this.IsSupported(document) && keys == (Keys.Control | Keys.Space))
+                    var keys = ((KeyEvent) e).Value;
+                    if (IsSupported(sci) && keys == (Keys.Control | Keys.Space) && completion != null)
                     {
-                        if (completion != null)
-                        {
-                            completion.OnComplete(document.SciControl, document.SciControl.CurrentPos);
-                            e.Handled = true;
-                        }
+                        completion.OnComplete(sci, sci.CurrentPos);
+                        e.Handled = true;
                     }
                     break;
                 }
@@ -140,16 +107,15 @@ namespace CssCompletion
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (document.IsEditable && this.IsSupported(document))
+                    if (IsSupported(sci))
                     {
-                        string ext = Path.GetExtension(document.FileName).ToLower();
+                        var ext = Path.GetExtension(sci.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
-                        if (completion == null) completion = new Completion(config, settingObject);
+                        completion ??= new Completion(config, settingObject);
                         completion.OnFileChanged(features);
-                        if (features != null && features.Syntax != null)
+                        if (features?.Syntax != null)
                         {
-                            ScintillaControl sci = document.SciControl;
-                            sci.SetProperty(features.Syntax, features != null ? "1" : "0");
+                            sci.SetProperty(features.Syntax, "1");
                             sci.Colourise(0, -1);
                         }
                     }
@@ -162,9 +128,9 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (document != null && document.IsEditable && this.IsSupported(document))
+                    if (IsSupported(sci))
                     {
-                        updateFile = document.FileName;
+                        updateFile = sci.FileName;
                         updateFeatures = features;
                         updater.Start();
                     }
@@ -182,16 +148,16 @@ namespace CssCompletion
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "CssCompletion");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(CssCompletion));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
 
             updater = new Timer();
             updater.Interval = 100;
             updater.AutoReset = false;
             updater.SynchronizingObject = PluginBase.MainForm as Form;
-            updater.Elapsed += updater_Elapsed;
+            updater.Elapsed += Updater_Elapsed;
 
             CompletionItem.TagIcon = (Bitmap)PluginBase.MainForm.FindImage("417");
             CompletionItem.PropertyIcon = (Bitmap)PluginBase.MainForm.FindImage("532");
@@ -201,10 +167,7 @@ namespace CssCompletion
             CompletionItem.PrefixesIcon = (Bitmap)PluginBase.MainForm.FindImage("480");
         }
 
-        void updater_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Optimizer.ProcessFile(updateFile, updateFeatures, settingObject);
-        }
+        void Updater_Elapsed(object sender, ElapsedEventArgs e) => Optimizer.ProcessFile(updateFile, updateFeatures, settingObject);
 
         /// <summary>
         /// Adds the required event handlers
@@ -214,8 +177,7 @@ namespace CssCompletion
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
             CompletionList.OnInsert += CompletionList_OnInsert;
-            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Completion;
-            EventManager.AddEventHandler(this, eventTypes);
+            EventManager.AddEventHandler(this, EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Completion);
         }
 
         /// <summary>
@@ -223,57 +185,46 @@ namespace CssCompletion
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
 
             enabledLanguages = new Dictionary<string, CssFeatures>();
             config = ConfigHelper.Parse(PathHelper.ResolvePath("tools/css/completion.ini"), false);
             foreach (var def in config)
             {
                 var section = def.Value;
-                if (section.ContainsKey("ext"))
-                {
-                    string[] exts = section["ext"].Trim().Split(',');
-                    var features = new CssFeatures(def.Key, section);
-                    foreach (string ext in exts)
-                        enabledLanguages.Add("." + ext, features);
-                }
+                if (!section.ContainsKey("ext")) continue;
+                var exts = section["ext"].Trim().Split(',');
+                var features = new CssFeatures(def.Key, section);
+                foreach (var ext in exts)
+                    enabledLanguages.Add("." + ext, features);
             }
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Checks if the language should use basic completion 
         /// </summary>
-        public Boolean IsSupported(ITabbedDocument document)
-        {
-            string lang = document.SciControl.ConfigurationLanguage;
-            return lang == "css";
-        }
+        public bool IsSupported(ITabbedDocument document) => IsSupported(document.SciControl);
+
+        public bool IsSupported(ScintillaControl sci) => sci.ConfigurationLanguage == "css";
 
         #endregion
 
         #region UI events
 
-        private void CompletionList_OnInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
+        void CompletionList_OnInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
             if (completion != null && sender.ConfigurationLanguage == "css")
                 completion.OnInsert(sender, position, text, trigger, item);
         }
 
-        private void SciControlTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        void SciControlTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (completion != null && sender.ConfigurationLanguage == "css")
                 completion.OnTextChanged(sender, position, length, linesAdded); 
@@ -282,15 +233,12 @@ namespace CssCompletion
         /// <summary>
         /// Shows the completion list atomaticly after typing three chars
         /// </summary>
-        private void SciControlCharAdded(ScintillaControl sci, Int32 value)
+        void SciControlCharAdded(ScintillaControl sci, int value)
         {
             if (completion != null && sci.ConfigurationLanguage == "css")
                 completion.OnCharAdded(sci, sci.CurrentPos, value);
         }
 
         #endregion
-
     }
-
 }
-

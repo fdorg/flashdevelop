@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Utilities;
@@ -11,8 +10,9 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Private properties
         /// </summary>
-        private static double curScale = double.MinValue;
-        private static HashSet<Control> adjustedItems = new HashSet<Control>();
+        static double curScale = double.MinValue;
+
+        static readonly HashSet<Control> adjustedItems = new HashSet<Control>();
 
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.
@@ -20,44 +20,30 @@ namespace PluginCore.Helpers
         public static double GetScale()
         {
             if (curScale != double.MinValue) return curScale;
-            using (var g = Graphics.FromHwnd(PluginBase.MainForm.Handle))
-            {
-                curScale = g.DpiX / 96f;
-            }
+            using var graphics = Graphics.FromHwnd(PluginBase.MainForm.Handle);
+            curScale = graphics.DpiX / 96f;
             return curScale;
         }
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static int Scale(int value)
-        {
-            return (int)(value * GetScale());
-        }
+        public static int Scale(int value) => (int)(value * GetScale());
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static long Scale(long value)
-        {
-            return (long)(value * GetScale());
-        }
+        public static long Scale(long value) => (long)(value * GetScale());
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static float Scale(float value)
-        {
-            return (float)(value * GetScale());
-        }
+        public static float Scale(float value) => (float)(value * GetScale());
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static double Scale(double value)
-        {
-            return value * GetScale();
-        }
+        public static double Scale(double value) => value * GetScale();
 
         /// <summary>
         /// Resizes based on display scale.
@@ -70,10 +56,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static SizeF Scale(SizeF value)
-        {
-            return new SizeF(Scale(value.Width), Scale(value.Height));
-        }
+        public static SizeF Scale(SizeF value) => new SizeF(Scale(value.Width), Scale(value.Height));
 
         /// <summary>
         /// Resizes the image based on the display scale. Uses high quality settings.
@@ -100,34 +83,23 @@ namespace PluginCore.Helpers
                     if (scale >= 1.5)
                     {
                         double noPad = ctrl.Height * multi;
-                        ctrl.Height = (Int32)noPad;
+                        ctrl.Height = (int)noPad;
                     }
                 }
                 AdjustForHighDPI(ctrl, multi);
             }
         }
-        public static void AdjustForHighDPI(Control control)
-        {
-            AdjustForHighDPI(control, 0.92);
-        }
+        public static void AdjustForHighDPI(Control control) => AdjustForHighDPI(control, 0.92);
 
         /// <summary>
         /// Keep track and adjust forms only once
         /// </summary>
-        private static Boolean IsAdjusted(Control control)
+        static bool IsAdjusted(Control control)
         {
-            if (control is Form)
-            {
-                if (adjustedItems.Contains(control)) return true;
-                else
-                {
-                    adjustedItems.Add(control);
-                    return false;
-                }
-            }
-            else return false;
+            if (!(control is Form)) return false;
+            if (adjustedItems.Contains(control)) return true;
+            adjustedItems.Add(control);
+            return false;
         }
-
     }
-
 }

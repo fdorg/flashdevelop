@@ -35,10 +35,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Ude.Core
 {
     /// <summary>
@@ -163,11 +159,11 @@ namespace Ude.Core
          * Typical Distribution Ratio about 25% of Ideal one, still much higher that RDR
          *****************************************************************************/
 
-        private static float GB2312_TYPICAL_DISTRIBUTION_RATIO = 0.9f;
+        private static readonly float GB2312_TYPICAL_DISTRIBUTION_RATIO = 0.9f;
 
-        private static int GB2312_TABLE_SIZE = 3760;
+        private static readonly int GB2312_TABLE_SIZE = 3760;
 
-        private static int[] GB2312_CHAR2FREQ_ORDER = {
+        private static readonly int[] GB2312_CHAR2FREQ_ORDER = {
         1671, 749,1443,2364,3924,3807,2330,3921,1704,3463,2691,1511,1515, 572,3191,2205,
         2361, 224,2558, 479,1711, 963,3162, 440,4060,1905,2966,2947,3580,2647,3961,3842,
         2204, 869,4207, 970,2678,5626,2944,2956,1479,4048, 514,3595, 588,1346,2820,3409,
@@ -613,12 +609,11 @@ namespace Ude.Core
         /// no validation needed here. State machine has done that
         /// </summary>
         /// <returns></returns>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xB0 && buf[offset+1] >= 0xA1)  
                 return 94 * (buf[offset] - 0xb0) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
     
@@ -641,11 +636,11 @@ namespace Ude.Core
          * Typical Distribution Ratio about 25% of Ideal one, still much higher than RDR
          *****************************************************************************/
 
-        private static float EUCTW_TYPICAL_DISTRIBUTION_RATIO = 0.75f;
+        private static readonly float EUCTW_TYPICAL_DISTRIBUTION_RATIO = 0.75f;
 
-        private static int EUCTW_TABLE_SIZE = 8102;
+        private static readonly int EUCTW_TABLE_SIZE = 8102;
 
-        private static int[] EUCTW_CHAR2FREQ_ORDER = {
+        private static readonly int[] EUCTW_CHAR2FREQ_ORDER = {
            1,1800,1506, 255,1431, 198,   9,  82,   6,7310, 177, 202,3615,1256,2808, 110, // 2742
         3735,  33,3241, 261,  76,  44,2113,  16,2931,2184,1176, 659,3868,  26,3404,2643, // 2758
         1198,3869,3313,4060, 410,2211, 302, 590, 361,1963,   8, 204,  58,4296,7311,1931, // 2774
@@ -1042,12 +1037,11 @@ namespace Ude.Core
         ///  second byte range: 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xC4)  
                 return 94 * (buf[offset] - 0xC4) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
     
@@ -1636,12 +1630,11 @@ namespace Ude.Core
         ///  second byte range: 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xB0)  
                 return 94 * (buf[offset] - 0xB0) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
     
@@ -1663,11 +1656,11 @@ namespace Ude.Core
          * Typical Distribution Ratio about 25% of Ideal one, still much higher than RDR
          *****************************************************************************/
 
-        private static float BIG5_TYPICAL_DISTRIBUTION_RATIO = 0.75f;
+        private static readonly float BIG5_TYPICAL_DISTRIBUTION_RATIO = 0.75f;
 
-        private static int BIG5_TABLE_SIZE = 5376;
+        private static readonly int BIG5_TABLE_SIZE = 5376;
 
-        private static int[] BIG5_CHAR2FREQ_ORDER = {
+        private static readonly int[] BIG5_CHAR2FREQ_ORDER = {
            1,1801,1506, 255,1431, 198,   9,  82,   6,5008, 177, 202,3681,1256,2821, 110, //   16
         3814,  33,3274, 261,  76,  44,2114,  16,2946,2187,1176, 659,3971,  26,3451,2653, //   32
         1198,3972,3350,4202, 410,2215, 302, 590, 361,1964,   8, 204,  58,4510,5009,1932, //   48
@@ -2562,16 +2555,16 @@ namespace Ude.Core
         ///  second byte range: 0x40 -- 0x7e , 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
-            if (buf[offset] >= 0xA4) {
+        public override int GetOrder(byte[] buf, int offset)
+        {
+            if (buf[offset] >= 0xA4)
+            {
                 if (buf[offset+1] >= 0xA1)
                     return 157 * (buf[offset] - 0xA4) + buf[offset+1] - 0xA1 + 63;
-                else
-                    return 157 * (buf[offset] - 0xA4) + buf[offset+1] - 0x40;
-            } else {
-                return -1;            
-            }  
+                return 157 * (buf[offset] - 0xA4) + buf[offset+1] - 0x40;
+            }
+
+            return -1;
         }
     }
 
@@ -3164,12 +3157,11 @@ namespace Ude.Core
         ///  second byte range: 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xA0)  
                 return 94 * (buf[offset] - 0xA1) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
 

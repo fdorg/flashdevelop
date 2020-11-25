@@ -16,36 +16,21 @@ namespace PluginCore.Controls
         public delegate void LineEventHandler(ScintillaControl sender, int line);
 
         #region Singleton Instance
-        static private UITools manager;
 
-        static public UITools Manager
-        {
-            get {
-                if (manager == null)
-                {
-                    manager = new UITools();
-                }
-                return manager; 
-            }
-        }
+        static UITools manager;
 
-        static public RichToolTip Tip
-        {
-            get { return manager.simpleTip; }
-        }
+        public static UITools Manager => manager ??= new UITools();
 
-        static public MethodCallTip CallTip
-        {
-            get { return manager.callTip; }
-        }
+        public static CodeTip CodeTip => manager.codeTip;
 
-        static public void Init()
-        {
-            if (manager == null)
-            {
-                manager = new UITools();
-            }
-        }
+        public static RichToolTip Tip => manager.simpleTip;
+
+        public static RichToolTip ErrorTip => manager.errorTip;
+
+        public static MethodCallTip CallTip => manager.callTip;
+
+        public static void Init() => manager ??= new UITools();
+
         #endregion
 
         #region Initialization
@@ -65,35 +50,30 @@ namespace PluginCore.Controls
         /// Default value is defined in the main settings.
         /// State is switched using F1 key when a tip is visible.
         /// </remarks>
-        public bool ShowDetails
+        public bool ShowDetails { get; set; }
+
+        const EventType eventMask = EventType.Keys | EventType.FileSave | EventType.Command | EventType.FileSwitch;
+
+        readonly CodeTip codeTip;
+        readonly RichToolTip simpleTip;
+        readonly MethodCallTip callTip;
+        readonly RichToolTip errorTip;
+
+        bool ignoreKeys;
+
+        UITools()
         {
-            get { return showDetails; }
-            set { showDetails = value; }
-        }
-
-        private EventType eventMask = 
-            EventType.Keys | 
-            EventType.FileSave | 
-            EventType.Command | 
-            EventType.FileSwitch;
-
-        private RichToolTip simpleTip;
-        private MethodCallTip callTip;
-
-        private bool ignoreKeys;
-        private bool showDetails;
-
-        private UITools()
-        {
-            showDetails = PluginBase.Settings.ShowDetails;
+            ShowDetails = PluginBase.Settings.ShowDetails;
             //
             // CONTROLS
             //
             try
             {
                 CompletionList.CreateControl(PluginBase.MainForm);
+                codeTip = new CodeTip(PluginBase.MainForm);
                 simpleTip = new RichToolTip(PluginBase.MainForm);
                 callTip = new MethodCallTip(PluginBase.MainForm);
+                errorTip = new RichToolTip(PluginBase.MainForm);
             }
             catch(Exception ex)
             {
@@ -104,20 +84,20 @@ namespace PluginCore.Controls
             //
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
-            PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
+            PluginBase.MainForm.DockPanel.ActivePaneChanged += DockPanel_ActivePaneChanged;
             EventManager.AddEventHandler(this, eventMask);
         }
         #endregion
 
-        private WeakReference lockedSciControl;
-        private Point lastMousePos = new Point(0,0);
+        WeakReference lockedSciControl;
+        Point lastMousePos = new Point(0,0);
 
         #region SciControls & MainForm Events
 
-        private void DockPanel_ActivePaneChanged(object sender, EventArgs e)
+        void DockPanel_ActivePaneChanged(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.DockPanel.ActivePane != null 
-                && PluginBase.MainForm.DockPanel.ActivePane != PluginBase.MainForm.DockPanel.ActiveDocumentPane)
+            var panel = PluginBase.MainForm.DockPanel;
+            if (panel.ActivePane != null && panel.ActivePane != panel.ActiveDocumentPane)
             {
                 OnUIRefresh(null);
             }
@@ -136,7 +116,8 @@ namespace PluginCore.Controls
                     return;
 
                 case EventType.Command:
-                    string cmd = (e as DataEvent).Action;
+                    string cmd = ((DataEvent)e).Action;
+                    // EventType.Command handlind should quite probably disappear when merging the "Decoupled CompletionList". This is too hacky and error-prone...
                     if (cmd.IndexOfOrdinal("ProjectManager") > 0
                         || cmd.IndexOfOrdinal("Changed") > 0
                         || cmd.IndexOfOrdinal("Context") > 0
@@ -144,7 +125,13 @@ namespace PluginCore.Controls
                         || cmd.IndexOfOrdinal("Watcher") > 0
                         || cmd.IndexOfOrdinal("Get") > 0
                         || cmd.IndexOfOrdinal("Set") > 0
-                        || cmd.IndexOfOrdinal("SDK") > 0)
+                        || cmd.IndexOfOrdinal("SDK") > 0
+                        || cmd == "ASCompletion.FileModelUpdated"
+                        || cmd == "ASCompletion.PathExplorerFinished"
+                        || cmd == "ASCompletion.ContextualGenerator.AddOptions"
+                        || cmd == "ASCompletion.DotCompletion"
+                        || cmd == "ResultsPanel.ClearResults"
+                        || cmd.IndexOfOrdinal("LintingManager.") == 0)
                         return; // ignore notifications
                     break;
             }
@@ -158,31 +145,28 @@ namespace PluginCore.Controls
         public void ListenTo(ScintillaControl sci)
         {
             // hook scintilla events
-            sci.MouseDwellTime = PluginBase.MainForm.Settings.HoverDelay;
-            sci.DwellStart += new DwellStartHandler(HandleDwellStart);
-            sci.DwellEnd += new DwellEndHandler(HandleDwellEnd);
-            sci.CharAdded += new ScintillaNet.CharAddedHandler(OnChar);
-            sci.UpdateUI += new UpdateUIHandler(OnUIRefresh);
-            sci.TextInserted += new TextInsertedHandler(OnTextInserted);
-            sci.TextDeleted += new TextDeletedHandler(OnTextDeleted);
+            sci.MouseDwellTime = PluginBase.Settings.HoverDelay;
+            sci.DwellStart += HandleDwellStart;
+            sci.DwellEnd += HandleDwellEnd;
+            sci.CharAdded += OnChar;
+            sci.UpdateUI += OnUIRefresh;
+            sci.TextInserted += OnTextInserted;
+            sci.TextDeleted += OnTextDeleted;
         }
 
         /// <summary>
         /// Notify all listeners that document markers were changed
         /// </summary>
-        public void MarkerChanged(ScintillaControl sender, int line)
-        {
-            if (OnMarkerChanged != null) OnMarkerChanged(sender, line);
-        }
+        public void MarkerChanged(ScintillaControl sender, int line) => OnMarkerChanged?.Invoke(sender, line);
 
-        private void HandleDwellStart(ScintillaControl sci, int position)
+        void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
         {
-            if (OnMouseHover == null || sci == null || DisableEvents) return;
+            if (OnMouseHover is null || sci is null || DisableEvents) return;
             try
             {
                 // check mouse over the editor
-                if ((position < 0) || simpleTip.Visible || CompletionList.HasMouseIn) return;
-                Point mousePos = (PluginBase.MainForm as Form).PointToClient(Cursor.Position);
+                if ((position < 0) || simpleTip.Visible || errorTip.Visible || CompletionList.HasMouseIn) return;
+                Point mousePos = ((Form) PluginBase.MainForm).PointToClient(Cursor.Position);
                 if (mousePos.X == lastMousePos.X && mousePos.Y == lastMousePos.Y)
                     return;
 
@@ -191,8 +175,8 @@ namespace PluginCore.Controls
                 if (!bounds.Contains(mousePos)) return;
 
                 // check no panel is over the editor
-                DockPanel panel = PluginBase.MainForm.DockPanel;
-                DockContentCollection panels = panel.Contents;
+                var panel = PluginBase.MainForm.DockPanel;
+                var panels = panel.Contents;
                 foreach (DockContent content in panels)
                 {
                     if (content.IsHidden || content.Bounds.Height == 0 || content.Bounds.Width == 0
@@ -202,7 +186,12 @@ namespace PluginCore.Controls
                     if (bounds.Contains(mousePos))
                         return;
                 }
-                if (OnMouseHover != null) OnMouseHover(sci, position);
+                OnMouseHover?.Invoke(sci, position);
+                if (errorTip.Visible)
+                {
+                    //move simpleTip up to not overlap error tip
+                    simpleTip.Location = new Point(simpleTip.Location.X, simpleTip.Location.Y - errorTip.Size.Height);
+                }
             }
             catch (Exception ex)
             {
@@ -212,24 +201,24 @@ namespace PluginCore.Controls
             }
         }
 
-        private Rectangle GetWindowBounds(Control ctrl)
+        Rectangle GetWindowBounds(Control ctrl)
         {
             while (ctrl.Parent != null && !(ctrl is DockWindow)) ctrl = ctrl.Parent;
-            if (ctrl != null) return ctrl.Bounds;
-            else return new Rectangle();
+            return ctrl.Bounds;
         }
 
-        private Point GetMousePosIn(Control ctrl)
+        Point GetMousePosIn(Control ctrl)
         {
             Point ctrlPos = ctrl.PointToScreen(new Point());
             Point pos = Cursor.Position;
             return new Point(pos.X - ctrlPos.X, pos.Y - ctrlPos.Y);
         }
 
-        private void HandleDwellEnd(ScintillaControl sci, int position)
+        void HandleDwellEnd(ScintillaControl sci, int position, int x, int y)
         {
             simpleTip.Hide();
-            if (OnMouseHoverEnd != null) OnMouseHoverEnd(sci, position);
+            errorTip.Hide();
+            OnMouseHoverEnd?.Invoke(sci, position);
         }
 
         #endregion
@@ -244,14 +233,15 @@ namespace PluginCore.Controls
                 {
                     if (Win32.ShouldUseWin32())
                     {
-                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int)m.WParam, (int)m.LParam);
                         return true;
                     }
-                    else return false;
+                    return false;
                 }
-                else return false;
+                return false;
             }
-            else if (m.Msg == Win32.WM_KEYDOWN)
+
+            if (m.Msg == Win32.WM_KEYDOWN)
             {
                 if ((int)m.WParam == 17) // Ctrl
                 {
@@ -282,23 +272,22 @@ namespace PluginCore.Controls
 
         public void UnlockControl()
         {
-            if (CompletionList.Active || CallTip.CallTipActive)
-                return;
+            if (CompletionList.Active || CallTip.CallTipActive) return;
             Application.RemoveMessageFilter(this);
             if (lockedSciControl != null && lockedSciControl.IsAlive)
             {
-                ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
+                var sci = (ScintillaControl)lockedSciControl.Target;
                 sci.IgnoreAllKeys = false;
             }
             lockedSciControl = null;
         }
 
-        private void OnUIRefresh(ScintillaControl sci)
+        void OnUIRefresh(ScintillaControl sci)
         {
-            Form mainForm = PluginBase.MainForm as Form;
+            var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { this.OnUIRefresh(sci); });
+                mainForm.BeginInvoke((MethodInvoker)delegate { OnUIRefresh(sci); });
                 return;
             }
             if (sci != null && sci.IsFocus)
@@ -307,25 +296,26 @@ namespace PluginCore.Controls
                 if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
                 if (callTip.CallTipActive && callTip.CheckPosition(position)) return;
             }
+            codeTip.Hide();
             callTip.Hide();
             CompletionList.Hide();
             simpleTip.Hide();
-        }
-        
-        private void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
-        {
-            if (OnTextChanged != null && !DisableEvents) 
-                OnTextChanged(sci, position, length, linesAdded);
-        }
-        private void OnTextDeleted(ScintillaControl sci, int position, int length, int linesAdded)
-        {
-            if (OnTextChanged != null && !DisableEvents) 
-                OnTextChanged(sci, position, -length, linesAdded);
+            errorTip.Hide();
         }
 
-        private void OnChar(ScintillaControl sci, int value)
+        void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
         {
-            if (sci == null || DisableEvents) return;
+            if (!DisableEvents) OnTextChanged?.Invoke(sci, position, length, linesAdded);
+        }
+
+        void OnTextDeleted(ScintillaControl sci, int position, int length, int linesAdded)
+        {
+            if (!DisableEvents) OnTextChanged?.Invoke(sci, position, -length, linesAdded);
+        }
+
+        void OnChar(ScintillaControl sci, int value)
+        {
+            if (sci is null || DisableEvents) return;
             if (!CompletionList.Active && !callTip.CallTipActive)
             {
                 SendChar(sci, value);
@@ -334,24 +324,21 @@ namespace PluginCore.Controls
             if (lockedSciControl != null && lockedSciControl.IsAlive) sci = (ScintillaControl)lockedSciControl.Target;
             else
             {
+                codeTip.Hide();
                 callTip.Hide();
                 CompletionList.Hide();
                 SendChar(sci, value);
                 return;
             }
             
-            if (callTip.CallTipActive) callTip.OnChar(sci, value);
+            if (callTip.CallTipActive) callTip.OnChar(sci);
             if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
-            return;
         }
 
-        public void SendChar(ScintillaControl sci, int value)
-        {
-            if (OnCharAdded != null) OnCharAdded(sci, value);   
-        }
-        
-        private bool HandleKeys(Keys key)
+        public void SendChar(ScintillaControl sci, int value) => OnCharAdded?.Invoke(sci, value);
+
+        bool HandleKeys(Keys key)
         {
             // UITools is currently broadcasting a shortcut, ignore!
             if (ignoreKeys || DisableEvents) return false;
@@ -363,6 +350,7 @@ namespace PluginCore.Controls
                 {
                     UnlockControl();
                     CompletionList.Hide();
+                    codeTip.Hide();
                     callTip.Hide();
                 }*/
                 // offer to handle the shortcut
@@ -371,8 +359,9 @@ namespace PluginCore.Controls
                 EventManager.DispatchEvent(this, ke);
                 ignoreKeys = false;
                 // if not handled - show snippets
-                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable
-                    && !PluginBase.MainForm.CurrentDocument.SciControl.IsSelectionRectangle)
+                if (!ke.Handled
+                    && PluginBase.MainForm.CurrentDocument?.SciControl is { } scintilla
+                    && !scintilla.IsSelectionRectangle)
                 {
                     PluginBase.MainForm.CallCommand("InsertSnippet", "null");
                 }
@@ -382,8 +371,8 @@ namespace PluginCore.Controls
             // toggle "long-description" for the hover tooltip
             if (key == Keys.F1 && Tip.Visible && !CompletionList.Active)
             {
-                showDetails = !showDetails;
-                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                ShowDetails = !ShowDetails;
+                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument?.SciControl);
                 return true;
             }
 
@@ -391,41 +380,41 @@ namespace PluginCore.Controls
             if (!CompletionList.Active && !callTip.CallTipActive) return false;
             
             // hide if pressing Esc or Ctrl+Key combination
-            if (lockedSciControl == null || !lockedSciControl.IsAlive || key == Keys.Escape
+            if (lockedSciControl is null || !lockedSciControl.IsAlive || key == Keys.Escape
                 || ((Control.ModifierKeys & Keys.Control) != 0 && Control.ModifierKeys != (Keys.Control|Keys.Alt)) )
             {
                 if (key == (Keys.Control | Keys.C) || key == (Keys.Control | Keys.A))
                     return false; // let text copy in tip
                 UnlockControl();
                 CompletionList.Hide((char)27);
+                codeTip.Hide();
                 callTip.Hide();
                 return false;
             }
-            ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
             // chars
             string ks = key.ToString();
             if (ks.Length == 1 || (ks.EndsWithOrdinal(", Shift") && ks.IndexOf(',') == 1) || ks.StartsWithOrdinal("NumPad"))
             {
                 return false;
             }
-
+            var sci = (ScintillaControl)lockedSciControl.Target;
             // toggle "long-description"
             if (key == Keys.F1)
             {
-                showDetails = !showDetails;
+                ShowDetails = !ShowDetails;
                 if (callTip.CallTipActive) callTip.UpdateTip(sci);
                 else CompletionList.UpdateTip(null, null);
                 return true;
             }
             
             // switches
-            else if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
+            if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
             {
                 return false;
             }
 
             // handle special keys
-            bool handled = false;
+            var handled = false;
             if (callTip.CallTipActive) handled |= callTip.HandleKeys(sci, key);
             if (CompletionList.Active) handled |= CompletionList.HandleKeys(sci, key);
             return handled;
@@ -437,11 +426,11 @@ namespace PluginCore.Controls
         /// </summary>
         public int LineHeight(ScintillaControl sci)
         {
-            if (sci == null) return 0;
+            if (sci is null) return 0;
             // evaluate the font size
-            Font tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
-            Graphics g = sci.CreateGraphics();
-            SizeF textSize = g.MeasureString("S", tempFont);
+            using var tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
+            var g = sci.CreateGraphics();
+            var textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);
         }
 

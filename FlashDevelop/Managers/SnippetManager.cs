@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using FlashDevelop.Utilities;
 using PluginCore;
@@ -15,72 +15,66 @@ using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
-    class SnippetManager
+    internal class SnippetManager
     {
         /// <summary>
         /// Gets a snippet from a file in the snippets directory
         /// </summary>
-        public static String GetSnippet(String word, String syntax, Encoding current)
+        public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
-            String specificDir = Path.Combine(PathHelper.SnippetDir, syntax);
-            String specific = Path.Combine(specificDir, word + ".fds");
+            var specific = Path.Combine(PathHelper.SnippetDir, syntax, word + ".fds");
             if (File.Exists(specific))
             {
-                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
+                var info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else if (File.Exists(global))
+            var global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
+            if (File.Exists(global))
             {
-                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
+                var info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else return null;
+            return null;
         }
 
         /// <summary>
         /// Inserts text from the snippets class
         /// </summary>
-        public static Boolean InsertTextByWord(String word, Boolean emptyUndoBuffer)
+        public static bool InsertTextByWord(string word)
         {
-            ScintillaControl sci = Globals.SciControl;
-            if (sci == null) return false;
-            Boolean canShowList = false; 
-            String snippet = null;
-            if (word == null)
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return false;
+            var canShowList = false; 
+            string snippet = null;
+            if (word is null)
             {
                 canShowList = true;
                 word = sci.GetWordFromPosition(sci.CurrentPos);
             }
-            if (!string.IsNullOrEmpty(word))
-            {
-                snippet = GetSnippet(word, sci.ConfigurationLanguage, sci.Encoding);
-            }
+            if (!string.IsNullOrEmpty(word)) snippet = GetSnippet(word, sci.ConfigurationLanguage, sci.Encoding);
             // let plugins handle the snippet
-            Hashtable data = new Hashtable();
-            data["word"] = word;
-            data["snippet"] = snippet;
-            DataEvent de = new DataEvent(EventType.Command, "SnippetManager.Expand", data);
-            EventManager.DispatchEvent(Globals.MainForm, de);
+            var data = new Hashtable {["word"] = word, ["snippet"] = snippet};
+            var de = new DataEvent(EventType.Command, "SnippetManager.Expand", data);
+            EventManager.DispatchEvent(PluginBase.MainForm, de);
             if (de.Handled) return true;
             snippet = (string)data["snippet"];
-            if (!String.IsNullOrEmpty(sci.SelText))
+            if (sci.SelTextSize != 0)
             {
                 // Remember the previous selection
                 ArgsProcessor.PrevSelText = sci.SelText;
             }
             if (snippet != null)
             {
-                Int32 endPos = sci.SelectionEnd;
-                Int32 startPos = sci.SelectionStart;
-                String curWord = sci.GetWordFromPosition(endPos);
+                var endPos = sci.SelectionEnd;
+                var startPos = sci.SelectionStart;
+                var curWord = sci.GetWordFromPosition(endPos);
                 if (startPos == endPos)
                 {
                     endPos = sci.WordEndPosition(sci.CurrentPos, true);
                     startPos = sci.WordStartPosition(sci.CurrentPos, true);
                     sci.SetSel(startPos, endPos);
                 }
-                if (!String.IsNullOrEmpty(curWord))
+                if (!string.IsNullOrEmpty(curWord))
                 {
                     // Remember the current word
                     ArgsProcessor.PrevSelWord = curWord;
@@ -88,107 +82,85 @@ namespace FlashDevelop.Managers
                 SnippetHelper.InsertSnippetText(sci, endPos, snippet);
                 return true;
             }
-            else if (canShowList)
+            if (!canShowList) return false;
+            var walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
+            var files = walker.GetFiles();
+            var items = files
+                .Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file))
+                .ToList<ICompletionListItem>();
+            var path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
+            if (Directory.Exists(path))
             {
-                ICompletionListItem item;
-                List<ICompletionListItem> items = new List<ICompletionListItem>();
-                PathWalker walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
-                List<String> files = walker.GetFiles();
-                foreach (String file in files)
-                {
-                    item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
-                    items.Add(item);
-                }
-                String path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
-                if (Directory.Exists(path))
-                {
-                    walker = new PathWalker(path, "*.fds", false);
-                    files = walker.GetFiles();
-                    foreach (String file in files)
-                    {
-                        item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
-                        items.Add(item);
-                    }
-                }
-                if (items.Count > 0)
-                {
-                    items.Sort();
-                    if (!String.IsNullOrEmpty(sci.SelText)) word = sci.SelText;
-                    else
-                    {
-                        word = sci.GetWordFromPosition(sci.CurrentPos);
-                        if (word == null) word = String.Empty;
-                    }
-                    CompletionList.OnInsert += new InsertedTextHandler(HandleListInsert);
-                    CompletionList.OnCancel += new InsertedTextHandler(HandleListInsert);
-                    CompletionList.Show(items, false, word);
-                    return true;
-                }
+                walker = new PathWalker(path, "*.fds", false);
+                files = walker.GetFiles();
+                items.AddRange(files.Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file)));
             }
-            return false;
+            if (items.Count == 0) return false;
+            items.Sort();
+            if (sci.SelTextSize != 0) word = sci.SelText;
+            else word = sci.GetWordFromPosition(sci.CurrentPos) ?? string.Empty;
+            CompletionList.OnInsert += HandleListInsert;
+            CompletionList.OnCancel += HandleListInsert;
+            CompletionList.Show(items, false, word);
+            return true;
         }
 
         /// <summary>
         /// On completion list insert or cancel, reset the previous selection
         /// </summary>
-        private static void HandleListInsert(ScintillaControl sender, Int32 position, String text, Char trigger, ICompletionListItem item)
+        static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
-            CompletionList.OnInsert -= new InsertedTextHandler(HandleListInsert);
-            CompletionList.OnCancel -= new InsertedTextHandler(HandleListInsert);
-            ArgsProcessor.PrevSelText = String.Empty;
+            CompletionList.OnInsert -= HandleListInsert;
+            CompletionList.OnCancel -= HandleListInsert;
+            ArgsProcessor.PrevSelText = string.Empty;
         }
-
     }
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        private String word;
-        private String snippet;
-        private String fileName;
-        private Bitmap icon;
+        string snippet;
+        readonly string fileName;
+        Bitmap icon;
 
-        public SnippetItem(String word, String fileName)
+        public SnippetItem(string word, string fileName)
         {
-            this.word = word;
+            Label = word;
             this.fileName = fileName;
         }
 
         /// <summary>
         /// Label of the snippet item
         /// </summary>
-        public String Label
-        {
-            get { return this.word; }
-        }
+        public string Label { get; }
 
         /// <summary>
         /// Description of the snippet item
         /// </summary>
-        public String Description
+        public string Description
         {
             get
             {
-                String desc = TextHelper.GetString("Info.SnippetItemDesc");
-                if (this.snippet == null)
+                if (snippet is null)
                 {
-                    this.snippet = FileHelper.ReadFile(this.fileName);
-                    this.snippet = ArgsProcessor.ProcessCodeStyleLineBreaks(this.snippet);
-                    this.snippet = this.snippet.Replace(SnippetHelper.ENTRYPOINT, "|");
-                    this.snippet = this.snippet.Replace(SnippetHelper.EXITPOINT, "|");
+                    snippet = FileHelper.ReadFile(fileName);
+                    snippet = ArgsProcessor.ProcessCodeStyleLineBreaks(snippet);
+                    snippet = snippet.Replace(SnippetHelper.ENTRYPOINT, "|");
+                    snippet = snippet.Replace(SnippetHelper.EXITPOINT, "|");
                 }
-                if (this.snippet.Length > 40) return desc + ": " + this.snippet.Substring(0, 40) + "...";
-                else return desc + ": " + this.snippet;
+                var desc = TextHelper.GetString("Info.SnippetItemDesc");
+                if (snippet.Length > 40) return desc + ": " + snippet.Substring(0, 40) + "...";
+                return desc + ": " + snippet;
             }
         }
 
         /// <summary>
         /// String value if the snippet item
         /// </summary>
-        public String Value
+        public string Value
         {
             get
             {
-                SnippetManager.InsertTextByWord(this.word, false);
+                SnippetManager.InsertTextByWord(Label);
                 return null;
             }
         }
@@ -198,41 +170,23 @@ namespace FlashDevelop.Managers
         /// </summary>
         public Bitmap Icon
         {
-            get 
-            {
-                if (icon == null)
-                {
-                    this.icon = (Bitmap)Globals.MainForm.FindImage("341");
-                }
-                return icon;
-            }
-            set 
-            {
-                this.icon = value;
-            }
+            get => icon ??= (Bitmap) PluginBase.MainForm.FindImage("341");
+            set => icon = value;
         }
 
         /// <summary>
         /// Checks the validity of the completion list item 
         /// </summary> 
-        Int32 IComparable.CompareTo(Object obj)
+        int IComparable.CompareTo(object obj)
         {
-            if (obj as ICompletionListItem != null) return String.Compare(Label, (obj as ICompletionListItem).Label, true);
-            else
-            {
-                String message = TextHelper.GetString("Info.CompareError");
-                throw new Exception(message);
-            }
+            if (obj is ICompletionListItem item) return string.Compare(Label, item.Label, true);
+            var message = TextHelper.GetString("Info.CompareError");
+            throw new Exception(message);
         }
 
         /// <summary>
         /// Compares the completion list items
         /// </summary> 
-        Int32 IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
-        {
-            return String.Compare(Label, other.Label, true);
-        }
-
+        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other) => string.Compare(Label, other.Label, true);
     }
-
 }

@@ -15,73 +15,47 @@ namespace AS2Context
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private String pluginName = "AS2Context";
-        private String pluginGuid = "1f387fab-421b-42ac-a985-72a03534f731";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "ActionScript 2 context for the ASCompletion engine.";
-        private String pluginAuth = "FlashDevelop Team";
-        private AS2Settings settingObject;
-        private Context contextInstance;
-        private String settingFilename;
+        AS2Settings settingObject;
+        Context contextInstance;
+        string settingFilename;
 
         #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(AS2Context);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "1f387fab-421b-42ac-a985-72a03534f731";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "ActionScript 2 context for the ASCompletion engine.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => settingObject;
 
         #endregion
 
@@ -92,23 +66,20 @@ namespace AS2Context
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
 
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -130,70 +101,58 @@ namespace AS2Context
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "AS2Context");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(AS2Context));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary>
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.UIStarted);
-        }
+        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new AS2Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new AS2Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (AS2Settings)obj;
+                settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
                 if (settingObject.InstalledSDKs != null)
-                    foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                    foreach (var sdk in settingObject.InstalledSDKs)
                         sdk.Owner = this;
             }
-            if (this.settingObject.MMClassPath == null) this.settingObject.MMClassPath = FindMMClassPath();
-            if (this.settingObject.UserClasspath == null)
-            {
-                if (this.settingObject.MMClassPath != null) this.settingObject.UserClasspath = new String[] { this.settingObject.MMClassPath };
-                else this.settingObject.UserClasspath = new String[] {};
-            }
+            settingObject.MMClassPath ??= FindMMClassPath();
+            settingObject.UserClasspath ??= settingObject.MMClassPath != null
+                ? new[] {settingObject.MMClassPath}
+                : Array.Empty<string>();
         }
 
         /// <summary>
         /// Fix some settings values when the context has been created
         /// </summary>
-        private void ValidateSettings()
+        void ValidateSettings()
         {
-            if (settingObject.InstalledSDKs == null || settingObject.InstalledSDKs.Length == 0)
+            if (settingObject.InstalledSDKs.IsNullOrEmpty())
             {
-                List<InstalledSDK> allSdks = new List<InstalledSDK>();
-                string includedSDK = "Tools\\mtasc";
+                var allSdks = new List<InstalledSDK>();
+                var includedSDK = "Tools\\mtasc";
                 if (Directory.Exists(PathHelper.ResolvePath(includedSDK)))
                 {
-                    InstalledSDK sdk = new InstalledSDK(this);
-                    sdk.Path = includedSDK;
-                    allSdks.Add(sdk);
+                    allSdks.Add(new InstalledSDK(this) {Path = includedSDK});
                 }
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\mtasc");
+                var appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\mtasc");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] versionDirs = Directory.GetDirectories(appManDir);
-                    foreach (string versionDir in versionDirs)
+                    var versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (var versionDir in versionDirs)
                     {
-                        if (Directory.Exists(versionDir))
-                        {
-                            InstalledSDK sdk = new InstalledSDK(this);
-                            sdk.Path = versionDir;
-                            allSdks.Add(sdk);
-                        }
+                        if (!Directory.Exists(versionDir)) continue;
+                        allSdks.Add(new InstalledSDK(this) {Path = versionDir});
                     }
                 }
                 settingObject.InstalledSDKs = allSdks.ToArray();
@@ -211,18 +170,12 @@ namespace AS2Context
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged()
-        {
-            if (contextInstance != null) contextInstance.BuildClassPath();
-        }
+        void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
 
@@ -232,16 +185,15 @@ namespace AS2Context
         {
             sdk.Owner = this;
             
-            IProject project = PluginBase.CurrentProject;
-            string path = sdk.Path;
-            if (project != null)
-                path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
-            else
-                path = PathHelper.ResolvePath(path);
+            var project = PluginBase.CurrentProject;
+            var path = sdk.Path;
+            path = project != null
+                ? PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath))
+                : PathHelper.ResolvePath(path);
             
             try
             {
-                if (path == null || (!Directory.Exists(path) && !File.Exists(path)))
+                if (!Directory.Exists(path) && !File.Exists(path))
                 {
                     ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
                     return false;
@@ -254,18 +206,18 @@ namespace AS2Context
             }
 
             if (!Directory.Exists(path)) path = Path.GetDirectoryName(path);
-            string descriptor = Path.Combine(path, "changes.txt");
+            var descriptor = Path.Combine(path, "changes.txt");
             if (File.Exists(descriptor))
             {
-                string raw = File.ReadAllText(descriptor);
-                Match mVer = Regex.Match(raw, "[0-9\\-]+\\s*:\\s*([0-9.]+)");
+                var text = File.ReadAllText(descriptor);
+                var mVer = Regex.Match(text, "[0-9\\-]+\\s*:\\s*([0-9.]+)");
                 if (mVer.Success)
                 {
                     sdk.Version = mVer.Groups[1].Value;
-                    sdk.Name = "MTASC " + sdk.Version;
+                    sdk.Name = $"MTASC {sdk.Version}";
                     return true;
                 }
-                else ErrorManager.ShowInfo("Invalid changes.txt file:\n" + descriptor);
+                ErrorManager.ShowInfo("Invalid changes.txt file:\n" + descriptor);
             }
             else ErrorManager.ShowInfo("No changes.txt found:\n" + descriptor);
             return false;
@@ -276,7 +228,7 @@ namespace AS2Context
         #region Macromedia/Adobe Flash IDE
 
         // locations in Application Data
-        static readonly private string[] MACROMEDIA_VERSIONS = {
+        static readonly string[] MACROMEDIA_VERSIONS = {
             "\\Adobe\\Flash CS5\\",
             "\\Adobe\\Flash CS4\\",
             "\\Adobe\\Flash CS3\\",
@@ -287,7 +239,7 @@ namespace AS2Context
         /// <summary>
         /// Explore the possible locations for the Macromedia Flash IDE classpath
         /// </summary>
-        static private string FindMMClassPath()
+        static string FindMMClassPath()
         {
             bool found = false;
             string deflang = CultureInfo.CurrentUICulture.Name;
@@ -306,7 +258,7 @@ namespace AS2Context
                 // look for other languages
                 else if (Directory.Exists(cp))
                 {
-                    string[] dirs = Directory.GetDirectories(cp);
+                    var dirs = Directory.GetDirectories(cp);
                     foreach (string dir in dirs)
                     {
                         if (Directory.Exists(dir + "\\Configuration\\Classes\\"))
@@ -319,12 +271,8 @@ namespace AS2Context
                 }
                 if (found) break;
             }
-            if (found) return cp;
-            else return null;
+            return found ? cp : null;
         }
         #endregion
-
     }
-
 }
-

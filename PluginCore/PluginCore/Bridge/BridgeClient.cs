@@ -7,34 +7,29 @@ namespace PluginCore.Bridge
     public class BridgeClient : ServerSocket
     {
         #region configuration
-        static private string ip;
+        private static string ip;
 
-        static public string BridgeIP
+        public static string BridgeIP
         {
             get
             {
                 if (BridgeManager.Settings.CustomIP.Length > 0) return BridgeManager.Settings.CustomIP;
-                else if (ip == null)
-                {
-                    ip = DetectIP();
-                    if (ip == null) ip = "invalid";
-                }
-                return ip;
+                return ip ??= DetectIP() ?? "invalid";
             }
         }
 
-        static public int BridgePort { get { return BridgeManager.Settings.Port; } }
+        public static int BridgePort => BridgeManager.Settings.Port;
 
         static string DetectIP()
         {
             try
             {
                 string issue = "Unable to find a gateway";
-                foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
+                foreach (var f in NetworkInterface.GetAllNetworkInterfaces())
                 {
                     issue += "\n" + f.Name + ", " + f.Description;
                     if (f.OperationalStatus == OperationalStatus.Up)
-                        foreach (GatewayIPAddressInformation d in f.GetIPProperties().GatewayAddresses)
+                        foreach (var d in f.GetIPProperties().GatewayAddresses)
                         {
                             return d.Address.ToString();
                         }
@@ -50,7 +45,7 @@ namespace PluginCore.Bridge
 
         #endregion
 
-        public bool Connected { get { return conn != null && conn.Connected; } }
+        public bool Connected => conn != null && conn.Connected;
 
         public BridgeClient()
             : base(BridgeIP, BridgePort)

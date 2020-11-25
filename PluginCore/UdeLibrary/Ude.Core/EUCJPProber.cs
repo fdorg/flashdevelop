@@ -35,16 +35,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {
     public class EUCJPProber : CharsetProber
     {
-        private CodingStateMachine codingSM;
-        private EUCJPContextAnalyser contextAnalyser;
-        private EUCJPDistributionAnalyser distributionAnalyser;
-        private byte[] lastChar = new byte[2];
+        private readonly CodingStateMachine codingSM;
+        private readonly EUCJPContextAnalyser contextAnalyser;
+        private readonly EUCJPDistributionAnalyser distributionAnalyser;
+        private readonly byte[] lastChar = new byte[2];
         
         public EUCJPProber()
         {

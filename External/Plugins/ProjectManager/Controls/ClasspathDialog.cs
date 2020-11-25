@@ -1,12 +1,7 @@
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore;
 
@@ -16,16 +11,16 @@ namespace ProjectManager.Controls
     {
         #region Form Designer
 
-        private ClasspathControl classpathControl;
-        private Button btnCancel;
-        private Button btnOK;
-        private Label label2;
-        private GroupBox groupBox1;
+        ClasspathControl classpathControl;
+        Button btnCancel;
+        Button btnOK;
+        Label label2;
+        GroupBox groupBox1;
 
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        readonly System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -33,9 +28,9 @@ namespace ProjectManager.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -49,17 +44,17 @@ namespace ProjectManager.Controls
         private void InitializeComponent()
         {
             this.classpathControl = new ProjectManager.Controls.ClasspathControl();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.ButtonEx();
+            this.btnOK = new System.Windows.Forms.ButtonEx();
             this.label2 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBoxEx();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // classpathControl
             // 
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.classpathControl.Classpaths = new string[0];
+            this.classpathControl.Classpaths = Array.Empty<string>();
             this.classpathControl.Location = new System.Drawing.Point(10, 19);
             this.classpathControl.Name = "classpathControl";
             this.classpathControl.Size = new System.Drawing.Size(357, 135);
@@ -140,7 +135,7 @@ namespace ProjectManager.Controls
 
         #endregion
 
-        ProjectManagerSettings settings;
+        readonly ProjectManagerSettings settings;
         bool pathChanged;
 
         public ClasspathDialog(ProjectManagerSettings settings)
@@ -148,72 +143,72 @@ namespace ProjectManager.Controls
             this.settings = settings;
             InitializeComponent();
             InitializeLocalization();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.FormGuid = "695815f3-0c88-418e-aa88-c86a5dfec7ef";
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "695815f3-0c88-418e-aa88-c86a5dfec7ef";
         }
 
         public string Language
         {
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 string label = TextHelper.GetString("Title.GlobalClasspathsBox");
-                groupBox1.Text = String.Format(label, value.ToUpper());
+                groupBox1.Text = string.Format(label, value.ToUpper());
                 classpathControl.Language = value;
             }
-            get { return classpathControl.Language; }
+            get => classpathControl.Language;
         }
 
         public void InitializeLocalization()
         {
-            this.btnOK.Text = TextHelper.GetString("Label.OK");
-            this.btnCancel.Text = TextHelper.GetString("Label.Cancel");
-            this.label2.Text = TextHelper.GetString("Info.ClasspathsAreSaved");
-            this.groupBox1.Text = TextHelper.GetString("Title.GlobalClasspaths");
-            this.Text = " " + TextHelper.GetString("Title.GlobalClasspaths");
+            btnOK.Text = TextHelper.GetString("Label.OK");
+            btnCancel.Text = TextHelper.GetString("Label.Cancel");
+            label2.Text = TextHelper.GetString("Info.ClasspathsAreSaved");
+            groupBox1.Text = TextHelper.GetString("Title.GlobalClasspaths");
+            Text = " " + TextHelper.GetString("Title.GlobalClasspaths");
         }
 
         public string[] Classpaths
         {
-            get { return classpathControl.Classpaths; }
-            set { classpathControl.Classpaths = value; }
+            get => classpathControl.Classpaths;
+            set => classpathControl.Classpaths = value;
         }
 
-        private void classpathControl_Changed(object sender, EventArgs e)
+        void classpathControl_Changed(object sender, EventArgs e)
         {
             pathChanged = true;
         }
 
-        private void classpathControl_IndexChanged(object sender, EventArgs e)
+        void classpathControl_IndexChanged(object sender, EventArgs e)
         {
             SaveClasspath();
-            Int32 index = classpathControl.LanguageBox.SelectedIndex;
-            this.Language = classpathControl.LanguageBox.Items[index].ToString().ToLower();
-            this.Classpaths = this.settings.GetGlobalClasspaths(this.Language).ToArray();
+            int index = classpathControl.LanguageBox.SelectedIndex;
+            Language = classpathControl.LanguageBox.Items[index].ToString().ToLower();
+            Classpaths = settings.GetGlobalClasspaths(Language).ToArray();
         }
 
-        private void SaveClasspath()
+        void SaveClasspath()
         {
             if (pathChanged)
             {
                 pathChanged = false;
-                List<String> cps = new List<String>();
-                cps.AddRange(this.Classpaths);
-                this.settings.SetGlobalClasspaths(this.Language, cps);
+                var cps = new List<string>();
+                cps.AddRange(Classpaths);
+                settings.SetGlobalClasspaths(Language, cps);
             }
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        void btnOK_Click(object sender, EventArgs e)
         {
             SaveClasspath();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

@@ -14,11 +14,11 @@ namespace TaskListPanel
     [Serializable]
     public class Settings
     {
-        private ExploringMode exploringMode = ExploringMode.Light;
-        private Int32[] images = new Int32[] { 229, 197, 197 };
-        private String[] extensions = new String[] { ".txt" };
-        private String[] groups = new String[] { "TODO", "FIXME", "BUG" };
-        private String[] excluded = new String[0] {};
+        ExploringMode exploringMode = ExploringMode.Light;
+        int[] images = { 229, 197, 197 };
+        string[] extensions = { ".txt" };
+        string[] groups = { "TODO", "FIXME", "BUG" };
+        string[] excluded = Array.Empty<string>();
 
         /// <summary> 
         /// Exploring mode, the way we should operate
@@ -28,8 +28,8 @@ namespace TaskListPanel
         [DefaultValue(ExploringMode.Light)]
         public ExploringMode ExploringMode
         {
-            get { return this.exploringMode; }
-            set { this.exploringMode = value; }
+            get => exploringMode;
+            set => exploringMode = value;
         }
 
         /// <summary> 
@@ -37,11 +37,11 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Excluded Paths")]
         [LocalizedDescription("TaskListPanel.Description.ExcludedPaths")]
-        [DefaultValue(new String[0] {})]
-        public String[] ExcludedPaths
+        [DefaultValue(new string[] {})]
+        public string[] ExcludedPaths
         {
-            get { return this.excluded; }
-            set { this.excluded = value; }
+            get => excluded;
+            set => excluded = value;
         }
 
         /// <summary> 
@@ -49,11 +49,11 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("File Extensions")]
         [LocalizedDescription("TaskListPanel.Description.FileExtensions")]
-        [DefaultValue(new String[] { ".txt" })]
-        public String[] FileExtensions
+        [DefaultValue(new[] { ".txt" })]
+        public string[] FileExtensions
         {
-            get { return this.extensions; }
-            set { this.extensions = value; }
+            get => extensions;
+            set => extensions = value;
         }
 
         /// <summary> 
@@ -61,11 +61,11 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Group Values")]
         [LocalizedDescription("TaskListPanel.Description.GroupValues")]
-        [DefaultValue(new String[] { "TODO", "FIXME", "BUG" })]
-        public String[] GroupValues
+        [DefaultValue(new[] { "TODO", "FIXME", "BUG" })]
+        public string[] GroupValues
         {
-            get { return this.groups; }
-            set { this.groups = value; }
+            get => groups;
+            set => groups = value;
         }
 
         /// <summary> 
@@ -73,11 +73,11 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Image Indexes")]
         [LocalizedDescription("TaskListPanel.Description.ImageIndexes")]
-        [DefaultValue(new Int32[] { 229, 197, 197 })]
-        public Int32[] ImageIndexes
+        [DefaultValue(new[] { 229, 197, 197 })]
+        public int[] ImageIndexes
         {
-            get { return this.images; }
-            set { this.images = value; }
+            get => images;
+            set => images = value;
         }
 
     }

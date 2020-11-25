@@ -52,8 +52,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="baseDirectory"></param>
         public WindowsNameTransform(string baseDirectory)
         {
-            if ( baseDirectory == null ) {
-                throw new ArgumentNullException("baseDirectory", "Directory name is invalid");
+            if ( baseDirectory is null ) {
+                throw new ArgumentNullException(nameof(baseDirectory), "Directory name is invalid");
             }
 
             BaseDirectory = baseDirectory;
@@ -72,10 +72,10 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public string BaseDirectory
         {
-            get { return _baseDirectory; }
+            get => _baseDirectory;
             set {
-                if ( value == null ) {
-                    throw new ArgumentNullException("value");
+                if ( value is null ) {
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 _baseDirectory = Path.GetFullPath(value);
@@ -87,8 +87,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool TrimIncomingPaths
         {
-            get { return _trimIncomingPaths; }
-            set { _trimIncomingPaths = value; }
+            get => _trimIncomingPaths;
+            set => _trimIncomingPaths = value;
         }
         
         /// <summary>
@@ -182,8 +182,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>Returns a valid name</returns>
         public static string MakeValidName(string name, char replacement)
         {
-            if ( name == null ) {
-                throw new ArgumentNullException("name");
+            if ( name is null ) {
+                throw new ArgumentNullException(nameof(name));
             }
             
             name = WindowsPathUtils.DropPathRoot(name.Replace("/", @"\"));
@@ -237,18 +237,16 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public char Replacement
         {
-            get { return _replacementChar; }
-            set { 
-                for ( int i = 0; i < InvalidEntryChars.Length; ++i ) {
-                    if ( InvalidEntryChars[i] == value ) {
-                        throw new ArgumentException("invalid path character");
-                    }
+            get => _replacementChar;
+            set
+            { 
+                foreach (var it in InvalidEntryChars)
+                {
+                    if (it == value) throw new ArgumentException("invalid path character");
                 }
 
-                if ((value == '\\') || (value == '/')) {
+                if ((value == '\\') || (value == '/'))
                     throw new ArgumentException("invalid replacement character");
-                }
-                
                 _replacementChar = value;
             }
         }

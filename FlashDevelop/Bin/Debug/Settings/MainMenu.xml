@@ -31,7 +31,7 @@
 		<button label="Label.Close" click="Close" shortcut="Control|W" image="275|4|5|4" />
 		<button label="Label.UndoClose" click="ReopenClosed" shortcut="Control|Shift|T" image="73" flags="Enable:HasClosedDocs" />
 		<button label="Label.CloseOthers" click="CloseOthers" shortcut="Control|Shift|W" flags="Enable:!IsAloneInPane" />
-		<button label="Label.CloseAll" click="CloseAll" shortcut="Control|Shift|V" flags="Enable:!IsAloneInPane" />
+		<button label="Label.CloseAll" click="CloseAll" shortcut="Control|Alt|W" flags="Enable:!IsAloneInPane" />
 		<separator />
 		<menu label="Label.Encoding" name="EncodingMenu" flags="Enable:IsEditable">
 			<button label="Label.8Bits" click="ChangeEncoding" tag="0" flags="Check:IsEditable|!IsUnicode" />
@@ -69,6 +69,7 @@
 		<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLine" shortcut="Control|X" image="158" flags="Enable:IsEditable" />
 		<button label="Label.Copy" click="ScintillaCommand" tag="CopyAllowLineEx" shortcut="Control|C" image="278" flags="Enable:IsEditable" />
 		<button label="Label.Paste" click="ScintillaCommand" tag="Paste" shortcut="Control|V" image="283" flags="Enable:IsEditable|CanPaste" />
+		<button label="Label.ClipboardHistory" click="ClipboardHistory" shortcut="Control|Shift|V" image="283|16|-2|2" flags="Enable:IsEditable" />
 		<button label="Label.SmartPaste" click="SmartPaste" shortcut="Control|Alt|V" flags="Enable:IsEditable|CanPaste" />
 		<button label="Label.SelectAll" click="ScintillaCommand" tag="SelectAll" shortcut="Control|A" flags="Enable:IsEditable" />
 		<separator />

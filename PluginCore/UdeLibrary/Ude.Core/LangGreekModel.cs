@@ -36,8 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {   
     public abstract class GreekModel : SequenceModel
@@ -48,7 +46,7 @@ namespace Ude.Core
         // first 1024 sequences:1.7001%
         // rest  sequences:     0.0359%
         // negative sequences:  0.0148% 
-        private readonly static byte[] GREEK_LANG_MODEL = {
+        private static readonly byte[] GREEK_LANG_MODEL = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,3,2,2,3,3,3,3,3,3,3,3,1,3,3,3,0,2,2,3,3,0,3,0,3,2,0,3,3,3,0,
@@ -194,7 +192,7 @@ namespace Ude.Core
         252: 0 - 9
         *****************************************************************/
         //Character Mapping Table:
-        private readonly static byte[] LATIN7_CHAR_TO_ORDER_MAP = {
+        private static readonly byte[] LATIN7_CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20
@@ -220,7 +218,7 @@ namespace Ude.Core
     
     public class Win1253Model : GreekModel
     {
-        private readonly static byte[] WIN1253__CHAR_TO_ORDER_MAP = {
+        private static readonly byte[] WIN1253__CHAR_TO_ORDER_MAP = {
             255,255,255,255,255,255,255,255,255,255,254,255,255,254,255,255,  //00
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  //10
             +253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,  //20

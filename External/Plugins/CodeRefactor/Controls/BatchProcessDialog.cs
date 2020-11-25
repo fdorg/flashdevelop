@@ -1,33 +1,29 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
-using CodeRefactor.Commands;
+using CodeRefactor.Managers;
 using PluginCore.Localization;
 using PluginCore.Controls;
-using PluginCore.Managers;
 using PluginCore;
 
 namespace CodeRefactor.Controls
 {
-    public class BatchProcessDialog : Form
+    public class BatchProcessDialog : SmartForm
     {
-        private System.Windows.Forms.Label targetLabel;
-        private System.Windows.Forms.Label operationLabel;
-        private System.Windows.Forms.ComboBox operationComboBox;
-        private System.Windows.Forms.ComboBox targetComboBox;
-        private System.Windows.Forms.Button processButton;
-        private System.Windows.Forms.Button cancelButton;
+        Label targetLabel;
+        Label operationLabel;
+        ComboBox operationComboBox;
+        ComboBox targetComboBox;
+        Button processButton;
+        Button cancelButton;
 
         public BatchProcessDialog()
         {
-            this.Owner = (Form)PluginBase.MainForm;
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.InitializeComponent();
-            this.InitializeDefaults();
+            Owner = (Form)PluginBase.MainForm;
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "8edcdafb-b859-410f-9d78-59c0002db62d";
+            InitializeComponent();
+            InitializeDefaults();
         }
 
         #region Windows Form Designer Generated Code
@@ -36,98 +32,98 @@ namespace CodeRefactor.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.operationComboBox = new System.Windows.Forms.ComboBox();
-            this.operationLabel = new System.Windows.Forms.Label();
-            this.targetLabel = new System.Windows.Forms.Label();
-            this.processButton = new System.Windows.Forms.Button();
-            this.targetComboBox = new System.Windows.Forms.ComboBox();
-            this.SuspendLayout();
+            cancelButton = new ButtonEx();
+            operationComboBox = new FlatCombo();
+            operationLabel = new Label();
+            targetLabel = new Label();
+            processButton = new ButtonEx();
+            targetComboBox = new FlatCombo();
+            SuspendLayout();
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(133, 106);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 0;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += CancelButtonClick;
+            cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            cancelButton.Location = new System.Drawing.Point(216, 106);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.TabIndex = 0;
+            cancelButton.Text = "Cancel";
+            cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += CancelButtonClick;
             // 
             // operationComboBox
             // 
-            this.operationComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.operationComboBox.FormattingEnabled = true;
-            this.operationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.operationComboBox.Location = new System.Drawing.Point(15, 27);
-            this.operationComboBox.Name = "operationComboBox";
-            this.operationComboBox.Size = new System.Drawing.Size(276, 21);
-            this.operationComboBox.TabIndex = 2;
+            operationComboBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            operationComboBox.FormattingEnabled = true;
+            operationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            operationComboBox.Location = new System.Drawing.Point(15, 27);
+            operationComboBox.Name = "operationComboBox";
+            operationComboBox.Size = new System.Drawing.Size(276, 21);
+            operationComboBox.TabIndex = 2;
             // 
             // operationLabel
             // 
-            this.operationLabel.AutoSize = true;
-            this.operationLabel.Location = new System.Drawing.Point(12, 9);
-            this.operationLabel.Name = "operationLabel";
-            this.operationLabel.Size = new System.Drawing.Size(59, 13);
-            this.operationLabel.Text = "Operation:";
+            operationLabel.AutoSize = true;
+            operationLabel.Location = new System.Drawing.Point(12, 9);
+            operationLabel.Name = "operationLabel";
+            operationLabel.Size = new System.Drawing.Size(59, 13);
+            operationLabel.Text = "Operation:";
             // 
             // targetLabel
             // 
-            this.targetLabel.AutoSize = true;
-            this.targetLabel.Location = new System.Drawing.Point(12, 55);
-            this.targetLabel.Name = "targetLabel";
-            this.targetLabel.Size = new System.Drawing.Size(43, 13);
-            this.targetLabel.Text = "Target:";
+            targetLabel.AutoSize = true;
+            targetLabel.Location = new System.Drawing.Point(12, 55);
+            targetLabel.Name = "targetLabel";
+            targetLabel.Size = new System.Drawing.Size(43, 13);
+            targetLabel.Text = "Target:";
             // 
             // processButton
             // 
-            this.processButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.processButton.Location = new System.Drawing.Point(216, 106);
-            this.processButton.Name = "processButton";
-            this.processButton.Size = new System.Drawing.Size(75, 23);
-            this.processButton.TabIndex = 1;
-            this.processButton.Text = "Process";
-            this.processButton.UseVisualStyleBackColor = true;
-            this.processButton.Click += ProcessButtonClick;
+            processButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            processButton.Location = new System.Drawing.Point(133, 106);
+            processButton.Name = "processButton";
+            processButton.Size = new System.Drawing.Size(75, 23);
+            processButton.TabIndex = 1;
+            processButton.Text = "Process";
+            processButton.UseVisualStyleBackColor = true;
+            processButton.Click += ProcessButtonClick;
             // 
             // targetComboBox
             // 
-            this.targetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.targetComboBox.FormattingEnabled = true;
-            this.targetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.targetComboBox.Location = new System.Drawing.Point(15, 73);
-            this.targetComboBox.Name = "targetComboBox";
-            this.targetComboBox.Size = new System.Drawing.Size(276, 21);
-            this.targetComboBox.TabIndex = 3;
+            targetComboBox.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            targetComboBox.FormattingEnabled = true;
+            targetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            targetComboBox.Location = new System.Drawing.Point(15, 73);
+            targetComboBox.Name = "targetComboBox";
+            targetComboBox.Size = new System.Drawing.Size(276, 21);
+            targetComboBox.TabIndex = 3;
             // 
             // BatchProcessDialog
             //
-            this.MinimizeBox = false;
-            this.MaximizeBox = false;
-            this.AcceptButton = this.processButton;
-            this.CancelButton = this.cancelButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.ClientSize = new System.Drawing.Size(305, 143);
-            this.Controls.Add(this.targetComboBox);
-            this.Controls.Add(this.processButton);
-            this.Controls.Add(this.targetLabel);
-            this.Controls.Add(this.operationLabel);
-            this.Controls.Add(this.operationComboBox);
-            this.Controls.Add(this.cancelButton);
-            this.Name = "BatchProcessDialog";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.Text = "Batch Process";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            MinimizeBox = false;
+            MaximizeBox = false;
+            AcceptButton = processButton;
+            CancelButton = cancelButton;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            StartPosition = FormStartPosition.CenterParent;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            SizeGripStyle = SizeGripStyle.Hide;
+            ClientSize = new System.Drawing.Size(305, 143);
+            Controls.Add(targetComboBox);
+            Controls.Add(processButton);
+            Controls.Add(targetLabel);
+            Controls.Add(operationLabel);
+            Controls.Add(operationComboBox);
+            Controls.Add(cancelButton);
+            Name = "BatchProcessDialog";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            Text = "Batch Process";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -138,113 +134,55 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Initializes the settings and localization
         /// </summary>
-        private void InitializeDefaults()
+        void InitializeDefaults()
         {
-            this.targetComboBox.Items.AddRange(new Object[] 
+            targetComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            operationComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            targetComboBox.Items.AddRange(new object[] 
             {
                 TextHelper.GetString("Info.OpenFiles"),
                 TextHelper.GetString("Info.ProjectSources")
             });
-            this.operationComboBox.Items.AddRange(new Object[] 
+            //Add processors from BatchProcessManager
+            var customProcessors = BatchProcessManager.GetAvailableProcessors();
+            foreach (var proc in customProcessors)
             {
-                TextHelper.GetString("Info.FormatCode"),
-                TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports"),
-                TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
-                TextHelper.GetString("Info.ConsistentEOLs"),
-            });
-            this.Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
-            this.targetComboBox.SelectedIndex = 0;
-            this.operationComboBox.SelectedIndex = 0;
-            this.processButton.Focus();
+                operationComboBox.Items.Add(new BatchProcessorItem(proc));
+            }
+            Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
+            targetComboBox.SelectedIndex = 0;
+            operationComboBox.SelectedIndex = 0;
+            processButton.Focus();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void ProcessButtonClick(Object sender, EventArgs e)
+        void ProcessButtonClick(object sender, EventArgs e)
         {
-            switch (this.targetComboBox.SelectedIndex)
+            var item = (BatchProcessorItem)operationComboBox.SelectedItem;
+            switch (targetComboBox.SelectedIndex)
             {
                 case 0: // Open Files
-                {
-                    foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+                    var files = new List<string>();
+                    foreach (var document in PluginBase.MainForm.Documents)
                     {
-                        if (document.IsEditable && !document.IsUntitled) this.DoProcess(document);
+                        if (document.SciControl is { } sci && !document.IsUntitled) files.Add(sci.FileName);
                     }
+                    
+                    item.Processor.Process(files);
+                    
                     break;
-                }
                 case 1: // Project Sources
-                {
-                    IProject project = PluginBase.CurrentProject;
+                    var project = PluginBase.CurrentProject;
                     if (project != null)
-                    {
-                        List<String> files = new List<String>();
-                        String[] filters = project.DefaultSearchFilter.Split(';');
-                        foreach (String path in project.SourcePaths)
-                        {
-                            foreach (String filter in filters)
-                            {
-                                files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter, SearchOption.AllDirectories));
-                            }
-                        }
-                        foreach (String file in files)
-                        {
-                            if (File.Exists(file))
-                            {
-                                ITabbedDocument document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                                this.DoProcess(document);
-                            }
-                        }
-                    }
+                        item.Processor.ProcessProject(project);
                     break;
-                }
             }
-            this.Close();
-        }
-
-        /// <summary>
-        /// Processes the specified document
-        /// </summary>
-        private void DoProcess(ITabbedDocument document)
-        {
-            switch (this.operationComboBox.SelectedIndex)
-            {
-                case 0: // Format Code
-                {
-                    DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
-                    EventManager.DispatchEvent(this, de);
-                    break;
-                }
-                case 1: // Organize Imports
-                {
-                    OrganizeImports command = new OrganizeImports();
-                    command.SciControl = document.SciControl;
-                    command.Execute();
-                    break;
-                }
-                case 2: // Truncate Imports
-                {
-                    OrganizeImports command = new OrganizeImports();
-                    command.SciControl = document.SciControl;
-                    command.TruncateImports = true;
-                    command.Execute();
-                    break;
-                }
-                case 3: // Consistent EOLs
-                {
-                    document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
-                    break;
-                }
-            }
+            Close();
         }
 
         /// <summary>
         /// Closes the batch process dialog
         /// </summary>
-        private void CancelButtonClick(Object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        void CancelButtonClick(object sender, EventArgs e) => Close();
 
         #endregion
 

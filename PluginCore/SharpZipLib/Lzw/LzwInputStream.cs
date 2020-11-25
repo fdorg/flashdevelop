@@ -88,8 +88,8 @@ namespace ICSharpCode.SharpZipLib.LZW
         /// </remarks>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner; }
-            set { isStreamOwner = value; }
+            get => isStreamOwner;
+            set => isStreamOwner = value;
         }
 
         /// <summary>
@@ -359,9 +359,7 @@ namespace ICSharpCode.SharpZipLib.LZW
                 throw new LzwException("Failed to read LZW header");
 
             if (hdr[0] != (LzwConstants.MAGIC >> 8) || hdr[1] != (LzwConstants.MAGIC & 0xff)) {
-                throw new LzwException(String.Format(
-                    "Wrong LZW header. Magic bytes don't match. 0x{0:x2} 0x{1:x2}",
-                    hdr[0], hdr[1]));
+                throw new LzwException($"Wrong LZW header. Magic bytes don't match. 0x{hdr[0]:x2} 0x{hdr[1]:x2}");
             }
 
             // Check the 3rd header byte
@@ -400,46 +398,22 @@ namespace ICSharpCode.SharpZipLib.LZW
         /// <summary>
         /// Gets a value indicating whether the current stream supports reading
         /// </summary>
-        public override bool CanRead
-        {
-            get
-            {
-                return baseInputStream.CanRead;
-            }
-        }
+        public override bool CanRead => baseInputStream.CanRead;
 
         /// <summary>
         /// Gets a value of false indicating seeking is not supported for this stream.
         /// </summary>
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanSeek => false;
 
         /// <summary>
         /// Gets a value of false indicating that this stream is not writeable.
         /// </summary>
-        public override bool CanWrite
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanWrite => false;
 
         /// <summary>
         /// A value representing the length of the stream in bytes.
         /// </summary>
-        public override long Length
-        {
-            get
-            {
-                return got;
-            }
-        }
+        public override long Length => got;
 
         /// <summary>
         /// The current position within the stream.
@@ -448,14 +422,8 @@ namespace ICSharpCode.SharpZipLib.LZW
         /// <exception cref="NotSupportedException">Attempting to set the position</exception>
         public override long Position
         {
-            get
-            {
-                return baseInputStream.Position;
-            }
-            set
-            {
-                throw new NotSupportedException("InflaterInputStream Position not supported");
-            }
+            get => baseInputStream.Position;
+            set => throw new NotSupportedException("InflaterInputStream Position not supported");
         }
 
         /// <summary>
@@ -549,7 +517,7 @@ namespace ICSharpCode.SharpZipLib.LZW
 
         #region Instance Fields
 
-        Stream baseInputStream;
+        readonly Stream baseInputStream;
 
         /// <summary>
         /// Flag indicating wether this instance is designated the stream owner.

@@ -9,25 +9,25 @@ namespace CodeFormatter.Preferences
 {
     public class AttrGroup
     {
-        private int mSortMode;
-        private List<String> mAttrs;
-        private String mName;
-        private int mWrapMode;
-        private List<String> mRegexAttrs;
-        private int mData; //depends on wrap mode.  
-        private bool mIncludeStates;
+        int mSortMode;
+        readonly List<string> mAttrs;
+        string mName;
+        int mWrapMode;
+        List<string> mRegexAttrs;
+        int mData; //depends on wrap mode.  
+        bool mIncludeStates;
         public static int Wrap_Data_Use_Default=-1;
-        private static String Tag_name = "name=";
-        private static String Tag_sort = "sort=";
-        private static String Tag_includeStates = "includeStates=";
-        private static String Tag_wrap = "wrap=";
-        private static String Tag_attrs = "attrs=";
-        private static String Tag_data = "data=";
-        public static String TagSplitter = "|";
-        public static String GroupingSplitter = ",";
-        public static String SplitterEscape = "char(Splitter)";
+        static readonly string Tag_name = "name=";
+        static readonly string Tag_sort = "sort=";
+        static readonly string Tag_includeStates = "includeStates=";
+        static readonly string Tag_wrap = "wrap=";
+        static readonly string Tag_attrs = "attrs=";
+        static readonly string Tag_data = "data=";
+        public static string TagSplitter = "|";
+        public static string GroupingSplitter = ",";
+        public static string SplitterEscape = "char(Splitter)";
     
-        public AttrGroup(String name, List<String> attrs, int sortMode, int wrapMode, bool includeStates)
+        public AttrGroup(string name, List<string> attrs, int sortMode, int wrapMode, bool includeStates)
         {
             mName=name;
             mAttrs=attrs;
@@ -38,59 +38,34 @@ namespace CodeFormatter.Preferences
             mData=Wrap_Data_Use_Default;
         }
 
-        public int getWrapMode() 
-        {
-            return mWrapMode;
-        }
+        public int getWrapMode() => mWrapMode;
 
-        public void setWrapMode(int wrapMode) 
-        {
-            mWrapMode = wrapMode;
-        }
+        public void setWrapMode(int wrapMode) => mWrapMode = wrapMode;
 
-        public String getName()
-        {
-            return mName;
-        }
+        public string getName() => mName;
 
-        public int getSortMode() 
-        {
-            return mSortMode;
-        }
-        public void setSortMode(int sortMode)
-        {
-            mSortMode = sortMode;
-        }
+        public int getSortMode() => mSortMode;
 
-        public List<String> getAttrs() {
-            return mAttrs;
-        }
+        public void setSortMode(int sortMode) => mSortMode = sortMode;
 
-        public void setName(String name) 
-        {
-            mName=name;
-        }
+        public List<string> getAttrs() => mAttrs;
 
-        public bool isIncludeStates() 
-        {
-            return mIncludeStates;
-        }
+        public void setName(string name) => mName=name;
 
-        public void setIncludeStates(bool includeStates) 
-        {
-            mIncludeStates = includeStates;
-        }
+        public bool isIncludeStates() => mIncludeStates;
+
+        public void setIncludeStates(bool includeStates) => mIncludeStates = includeStates;
 
         public AttrGroup copy()
         {
-            List<String> attrs=new List<String>();
+            List<string> attrs=new List<string>();
             attrs.AddRange(getAttrs());
-            AttrGroup group=new AttrGroup(getName(), attrs, getSortMode(), getWrapMode(), isIncludeStates());
-            group.setData(getData());
-            return group;
+            AttrGroup result = new AttrGroup(getName(), attrs, getSortMode(), getWrapMode(), isIncludeStates());
+            result.setData(getData());
+            return result;
         }
 
-        public String save()
+        public string save()
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append(Tag_name);
@@ -106,7 +81,7 @@ namespace CodeFormatter.Preferences
             buffer.Append(getWrapMode().ToString());
             buffer.Append(TagSplitter);
             buffer.Append(Tag_attrs);
-            foreach (String attr in getAttrs()) 
+            foreach (string attr in getAttrs()) 
             {
                 buffer.Append(attr.Replace(TagSplitter, SplitterEscape));
                 buffer.Append(GroupingSplitter);
@@ -118,72 +93,72 @@ namespace CodeFormatter.Preferences
             return buffer.ToString();
         }
     
-        public static String getValue(String source, String tagName)
+        public static string getValue(string source, string tagName)
         {
             try
             {
                 int index = source.IndexOfOrdinal(tagName);
                 int endIndex = source.IndexOfOrdinal(TagSplitter, index);
                 if (index < 0 || endIndex < 0) return null;
-                String value = source.Substring(index + tagName.Length, endIndex - (index + tagName.Length));
+                string value = source.Substring(index + tagName.Length, endIndex - (index + tagName.Length));
                 value = value.Replace(SplitterEscape, TagSplitter);
                 return value;
             }
             catch { return null; }
         }
     
-        public static AttrGroup load(String data)
+        public static AttrGroup load(string data)
         {
-            List<String> attrs=new List<String>();
+            List<string> attrs=new List<string>();
             bool includeStates=true;
             int sortMode=MXMLPrettyPrinter.MXML_Sort_AscByCase;
             int wrapMode=MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT;
-            String name=getValue(data, Tag_name);
-            if (name==null) return null;
-            String num=getValue(data, Tag_sort);
+            string name=getValue(data, Tag_name);
+            if (name is null) return null;
+            string num=getValue(data, Tag_sort);
             if (num!=null)
             {
-                try { sortMode=Int32.Parse(num); }
+                try { sortMode=int.Parse(num); }
                 catch {}
             }
             num=getValue(data, Tag_wrap);
             if (num!=null)
             {
-                try { wrapMode=Int32.Parse(num); }
+                try { wrapMode=int.Parse(num); }
                 catch {}
             }
             int wrapData = Wrap_Data_Use_Default;
             num = getValue(data, Tag_data);
             if (num!=null)
             {
-                try { wrapData=Int32.Parse(num); }
+                try { wrapData=int.Parse(num); }
                 catch{}
             }
-            String attrString = getValue(data, Tag_attrs);
+            string attrString = getValue(data, Tag_attrs);
             if (attrString != null)
             {
-                String[] atts = attrString.Split(new string[]{GroupingSplitter}, StringSplitOptions.RemoveEmptyEntries);
-                foreach (String attr in atts) 
+                string[] atts = attrString.Split(new[]{GroupingSplitter}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string attr in atts) 
                 {
-                    String attr2 = AntlrUtilities.asTrim(attr);
+                    string attr2 = AntlrUtilities.asTrim(attr);
                     if (attr2.Length > 0) attrs.Add(attr2);
                 }
             }
-            String includeStatesData=getValue(data, Tag_includeStates);
+            string includeStatesData=getValue(data, Tag_includeStates);
             if (includeStatesData!=null)
             {
-                includeStates=Boolean.Parse(includeStatesData);
+                includeStates=bool.Parse(includeStatesData);
             }
             AttrGroup group=new AttrGroup(name, attrs, sortMode, wrapMode, includeStates);
             group.setData(wrapData);
             return group;
         }
-    
-        private void cacheRegexAttrs()
+
+        void cacheRegexAttrs()
         {
             if (mRegexAttrs!=null) return;
-            mRegexAttrs=new List<String>();
-            foreach (String attr in mAttrs)
+            mRegexAttrs=new List<string>();
+            foreach (string attr in mAttrs)
             {
                 if (isRegexString(attr))
                 {
@@ -196,19 +171,19 @@ namespace CodeFormatter.Preferences
             }
         }
     
-        public List<String> getRegexAttrs()
+        public List<string> getRegexAttrs()
         {
             cacheRegexAttrs();
             return mRegexAttrs;
         }
     
-        public bool isRegexAttr(String attr)
+        public bool isRegexAttr(string attr)
         {
             cacheRegexAttrs();
             return mRegexAttrs.Contains(attr);
         }
     
-        public static bool isRegexString(String str)
+        public static bool isRegexString(string str)
         {
             for (int i=0;i<str.Length;i++)
             {
@@ -220,12 +195,12 @@ namespace CodeFormatter.Preferences
             return false;
         }
 
-        public String toString()
+        public string toString()
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append(getName());
             buffer.Append("(");
-            foreach (String attr in getAttrs()) 
+            foreach (string attr in getAttrs()) 
             {
                 buffer.Append(attr);
                 buffer.Append(",");
@@ -234,16 +209,8 @@ namespace CodeFormatter.Preferences
             return buffer.ToString();
         }
 
-        public int getData()
-        {
-            return mData;
-        }
+        public int getData() => mData;
 
-        public void setData(int data) 
-        {
-            mData = data;
-        }
-    
+        public void setData(int data) => mData = data;
     }
-
 }

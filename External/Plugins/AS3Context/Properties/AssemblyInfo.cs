@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using PluginCore;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the information which is associated with the assembly you compile.
 [assembly: AssemblyTitle("AS3Context")]
-[assembly: AssemblyDescription("AS3Context Plugin For ASCompletion In " + DistroConfig.DISTRIBUTION_NAME)]
+[assembly: AssemblyDescription("AS3 Context Plugin For ASCompletion In " + DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("AS3Context")]
@@ -12,3 +13,5 @@ using PluginCore;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.0.0.0")]
+
+[assembly: InternalsVisibleTo("AS3Context.Tests")]

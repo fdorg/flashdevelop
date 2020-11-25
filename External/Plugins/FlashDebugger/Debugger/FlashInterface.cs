@@ -14,8 +14,6 @@ using PluginCore.Managers;
 namespace FlashDebugger
 {
     public delegate void TraceEventHandler(object sender, string trace);
-    public delegate void SwfLoadedEventHandler(object sender, SwfLoadedEvent e);
-    public delegate void SwfUnloadedEventHandler(object sender, SwfUnloadedEvent e);
     public delegate void DebuggerEventHandler(object sender);
     public delegate void DebuggerProgressEventHandler(object sender, int current, int total);
 
@@ -41,64 +39,24 @@ namespace FlashDebugger
 
         public BreakPointManager m_BreakPointManager = null;
 
-        public bool isDebuggerStarted
-        {
-            get
-            {
-                return m_Session != null && m_CurrentState != DebuggerState.Initializing && m_CurrentState != DebuggerState.Stopped;
-            }
-        }
+        public bool isDebuggerStarted => Session != null && m_CurrentState != DebuggerState.Initializing && m_CurrentState != DebuggerState.Stopped;
 
-        public bool isDebuggerSuspended
-        {
-            get
-            {
-                if (ActiveSession == 1)
-                {
-                    return m_Session.isSuspended();
-                }
-                return runningIsolates[ActiveSession].i_Session.isSuspended();
-            }
-        }
+        public bool isDebuggerSuspended => ActiveSession == 1 ? Session.isSuspended() : IsolateSessions[ActiveSession].i_Session.isSuspended();
 
-        public int suspendReason
-        {
-            get
-            {
-                return m_Session.suspendReason();
-            }
-        }
+        public int suspendReason => Session.suspendReason();
 
-        public Session Session
-        {
-            get
-            {
-                return m_Session;
-            }
-        }
+        public Session Session { get; private set; }
 
-        public Dictionary<int, IsolateInfo> IsolateSessions
-        {
-            get
-            {
-                return runningIsolates;
-            }
-        }
+        public Dictionary<int, IsolateInfo> IsolateSessions { get; set; }
 
         public int ActiveSession
         {
-            get
-            {
-                return m_activeSession;
-            }
+            get => m_activeSession;
             set
             {
                 // todo
                 m_activeSession = value;
-                if (ThreadsEvent != null)
-                {
-                    ThreadsEvent(this);
-                }
+                ThreadsEvent?.Invoke(this);
             }
         }
 
@@ -106,60 +64,49 @@ namespace FlashDebugger
 
         #region Private Properties
 
-        private Session m_Session = null;
-        private DebuggerState m_CurrentState = DebuggerState.Initializing;
-        private Boolean m_RequestPause;
-        private Boolean m_RequestResume;
-        private Boolean m_RequestStop;
-        private Boolean m_RequestDetach;
-        private Boolean m_StepResume;
-        private EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
-        private Boolean m_SuspendWaiting;
-        private int m_activeSession; // 1 is m_session else lookup runningIsolates
+        DebuggerState m_CurrentState = DebuggerState.Initializing;
+        bool m_RequestPause;
+        bool m_RequestResume;
+        bool m_RequestStop;
+        bool m_RequestDetach;
+        bool m_StepResume;
+        readonly EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
+        bool m_SuspendWaiting;
+        int m_activeSession; // 1 is m_session else lookup runningIsolates
 
         // Isolates 
-        private Dictionary<int, IsolateInfo> runningIsolates;
 
-        private IsolateInfo addRunningIsolate(int i_id)
+        IsolateInfo AddRunningIsolate(int iId)
         {
-            removeRunningIsolate(i_id);
-            runningIsolates[i_id] = new IsolateInfo();
-
-            return runningIsolates[i_id];
+            RemoveRunningIsolate(iId);
+            IsolateSessions[iId] = new IsolateInfo();
+            return IsolateSessions[iId];
         }
 
-        private void removeRunningIsolate(int i_id)
+        void RemoveRunningIsolate(int iId)
         {
-            if (runningIsolates.ContainsKey(i_id))
-            {
-                runningIsolates.Remove(i_id);
-            }
-            if (ActiveSession == i_id)
-            {
-                ActiveSession = 1;
-            }
+            if (IsolateSessions.ContainsKey(iId)) IsolateSessions.Remove(iId);
+            if (ActiveSession == iId) ActiveSession = 1;
         }
 
         // Probably more info needed :)
         public class IsolateInfo
         {
-            public IsolateSession i_Session = null;
+            public IsolateSession i_Session;
             public Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
-            public Boolean requestPause;
+            public bool requestPause;
         }
 
         // breakpoint mappings
-        private Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
+        readonly Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
 
         // Global Properties
-        private int m_HaltTimeout;
-        private int m_UpdateDelay;
+        readonly int m_HaltTimeout;
+        readonly int m_UpdateDelay;
 
         // Session Properties
-        private int m_MetadataAttemptsPeriod;   // 1/4s per attempt
-        private int m_MetadataNotAvailable;     // counter for failures
-        private int m_MetadataAttempts;
-        private int m_PlayerFullSupport;
+        int m_MetadataAttemptsPeriod;   // 1/4s per attempt
+        int m_MetadataAttempts;
 
         #endregion
 
@@ -177,64 +124,61 @@ namespace FlashDebugger
         {
             m_CurrentState = DebuggerState.Starting;
             m_activeSession = 1;
-            SessionManager mgr = Bootstrap.sessionManager();
+            var mgr = Bootstrap.sessionManager();
             //mgr.setDebuggerCallbacks(new FlashDebuggerCallbacks()); // obsoleted
             mgr.setPreference(SessionManager_.PREF_GETVAR_RESPONSE_TIMEOUT, 5000);
             m_RequestDetach = false;
             mgr.startListening();
             try
             {
-                m_Session = mgr.accept(this);
+                Session = mgr.accept(this);
                 if (mgr.isListening()) mgr.stopListening();
                 TraceManager.AddAsync("[Starting debug session with FDB]", -1);
-                if (m_Session == null)
+                if (Session is null)
                 {
                     m_CurrentState = DebuggerState.Stopped;
                     throw new Exception(TextHelper.GetString("Info.UnableToStartDebugger"));
                 }
-                initSession();
+                InitSession();
                 m_CurrentState = DebuggerState.Running;
-                if (StartedEvent != null)
-                {
-                    StartedEvent(this);
-                }
+                StartedEvent?.Invoke(this);
                 try
                 {
-                    waitTilHalted();
+                    WaitTilHalted();
                 }
-                catch (Exception){}
+                catch {}
                 try
                 {
-                    waitForMetaData();
+                    WaitForMetaData();
                 }
-                catch (Exception){}
+                catch {}
                 m_CurrentState = DebuggerState.Running;
-                m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
+                Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
                 // now poke to see if the player is good enough
                 try
                 {
-                    if (m_Session.getPreference(SessionManager_.PLAYER_SUPPORTS_GET) == 0)
+                    if (Session.getPreference(SessionManager_.PLAYER_SUPPORTS_GET) == 0)
                     {
                         TraceManager.AddAsync(TextHelper.GetString("Info.WarningNotAllCommandsSupported"));
                     }
                 }
-                catch (Exception){}
+                catch {}
                 m_SuspendWaiting = false;
                 bool stop = false;
                 while (!stop)
                 {
-                    if (m_Session != null && m_Session.getEventCount() > 0) m_SuspendWaiting = false;
+                    if (Session != null && Session.getEventCount() > 0) m_SuspendWaiting = false;
 
-                    processEvents();
+                    ProcessEvents();
                     // not there, not connected
-                    if (m_RequestStop || m_RequestDetach || !haveConnection())
+                    if (m_RequestStop || m_RequestDetach || !HaveConnection())
                     {
                         stop = true;
                         if (m_RequestResume)
                         {
                             // resume before we disconnect, this is in case of ExceptionHalt
-                            m_Session.resume(); // just throw for now
-                            if (ThreadsEvent != null) ThreadsEvent(this);
+                            Session.resume(); // just throw for now
+                            ThreadsEvent?.Invoke(this);
                         }
                         continue;
                     }
@@ -245,13 +189,13 @@ namespace FlashDebugger
                         {
                             if (m_StepResume)
                             {
-                                m_Session.stepContinue();
+                                Session.stepContinue();
                             }
                             else
                             {
-                                m_Session.resume();
+                                Session.resume();
                             }
-                            if (ThreadsEvent != null) ThreadsEvent(this);
+                            ThreadsEvent?.Invoke(this);
                         }
                         catch (NotSuspendedException)
                         {
@@ -268,7 +212,7 @@ namespace FlashDebugger
                         continue;
                     }
 
-                    if (m_Session.isSuspended())
+                    if (Session.isSuspended())
                     {
                         /*
                         * We have stopped for some reason.
@@ -279,12 +223,12 @@ namespace FlashDebugger
                         */
 
                         int tries = 3;
-                        while (tries-- > 0 && m_Session.suspendReason() == SuspendReason_.Unknown)
+                        while (tries-- > 0 && Session.suspendReason() == SuspendReason_.Unknown)
                         {
                             try
                             {
                                 Thread.Sleep(100);
-                                processEvents();
+                                ProcessEvents();
                             }
                             catch (ThreadInterruptedException){}
                         }
@@ -294,13 +238,13 @@ namespace FlashDebugger
                         {
                             case 1://SuspendReason_.Breakpoint:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (BreakpointEvent != null)
+                                if (BreakpointEvent is { } breakpointEvent)
                                 {
                                     m_RequestPause = true;
                                     // trigger only for main worker here (if we are main worker, or if we are not and are not suspended)
                                     if (ActiveSession == 1 || !isDebuggerSuspended)
                                     {
-                                        Frame[] frames = m_Session.getFrames();
+                                        var frames = Session.getFrames();
                                         Location loc = null;
                                         if (frames.Length > 0)
                                         {
@@ -309,7 +253,7 @@ namespace FlashDebugger
                                         if (loc != null && m_BreakPointManager.ShouldBreak(loc.getFile(), loc.getLine(), frames[0]))
                                         {
                                             ActiveSession = 1;
-                                            BreakpointEvent(this);
+                                            breakpointEvent(this);
                                         }
                                         else
                                         {
@@ -319,10 +263,7 @@ namespace FlashDebugger
                                     }
                                     else
                                     {
-                                        if (ThreadsEvent != null)
-                                        {
-                                            ThreadsEvent(this);
-                                        }
+                                        ThreadsEvent?.Invoke(this);
                                     }
                                 }
                                 else
@@ -333,9 +274,9 @@ namespace FlashDebugger
 
                             case 3://SuspendReason_.Fault:
                                 m_CurrentState = DebuggerState.ExceptionHalt;
-                                if (FaultEvent != null)
+                                if (FaultEvent is { } faultEvent)
                                 {
-                                    FaultEvent(this);
+                                    faultEvent(this);
                                 }
                                 else
                                 {
@@ -346,18 +287,18 @@ namespace FlashDebugger
                             case 7://SuspendReason_.ScriptLoaded:
                                 try
                                 {
-                                     waitForMetaData();
+                                     WaitForMetaData();
                                 } 
                                 catch (InProgressException) {}
                                 m_CurrentState = DebuggerState.PauseHalt;
 
                                 // refresh breakpoints
-                                clearBreakpoints();
+                                ClearBreakpoints();
                                 UpdateBreakpoints(m_BreakPointManager.BreakPoints);
 
-                                if (ScriptLoadedEvent != null)
+                                if (ScriptLoadedEvent is { } scriptLoadedEvent)
                                 {
-                                    ScriptLoadedEvent(this);
+                                    scriptLoadedEvent(this);
                                 }
                                 else
                                 {
@@ -367,9 +308,9 @@ namespace FlashDebugger
 
                             case 5://SuspendReason_.Step:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (StepEvent != null)
+                                if (StepEvent is { } stepEvent)
                                 {
-                                    StepEvent(this);
+                                    stepEvent(this);
                                 }
                                 else
                                 {
@@ -379,9 +320,9 @@ namespace FlashDebugger
 
                             case 4://SuspendReason_.StopRequest:
                                 m_CurrentState = DebuggerState.PauseHalt;
-                                if (PauseEvent != null)
+                                if (PauseEvent is { } pauseEvent)
                                 {
-                                    PauseEvent(this);
+                                    pauseEvent(this);
                                 }
                                 else
                                 {
@@ -391,9 +332,9 @@ namespace FlashDebugger
 
                             case 2://SuspendReason_.Watch:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (WatchpointEvent != null)
+                                if (WatchpointEvent is { } watchPointEvent)
                                 {
-                                    WatchpointEvent(this);
+                                    watchPointEvent(this);
                                 }
                                 else
                                 {
@@ -407,9 +348,9 @@ namespace FlashDebugger
 
                             default:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (UnknownHaltEvent != null)
+                                if (UnknownHaltEvent is { } unknownHaltEvent)
                                 {
-                                    UnknownHaltEvent(this);
+                                    unknownHaltEvent(this);
                                 }
                                 else
                                 {
@@ -432,23 +373,20 @@ namespace FlashDebugger
                                 m_CurrentState = DebuggerState.Pausing;
                                 try
                                 {
-                                    m_Session.suspend();
+                                    Session.suspend();
                                 }
                                 catch { } // No crash here please...
-                                if (!haveConnection()) // no connection => dump state and end
+                                if (!HaveConnection()) // no connection => dump state and end
                                 {
                                     stop = true;
                                     continue;
                                 }
-                                else if (!m_Session.isSuspended())
+                                if (!Session.isSuspended())
                                 {
                                     m_RequestPause = false;
                                     m_CurrentState = DebuggerState.Running;
                                     TraceManager.AddAsync(TextHelper.GetString("Info.CouldNotHalt"));
-                                    if (PauseFailedEvent != null)
-                                    {
-                                        PauseFailedEvent(this);
-                                    }
+                                    PauseFailedEvent?.Invoke(this);
                                 }
                             }
                             catch (ArgumentException)
@@ -460,7 +398,7 @@ namespace FlashDebugger
                             {
                                 IDictionary args = new Hashtable();
                                 args["error"] = io.Message; //$NON-NLS-1$
-                                TraceManager.AddAsync(replaceInlineReferences(TextHelper.GetString("Info.ContinuingDueToError"), args));
+                                TraceManager.AddAsync(ReplaceInlineReferences(TextHelper.GetString("Info.ContinuingDueToError"), args));
                             }
                             catch (SuspendedException)
                             {
@@ -471,7 +409,7 @@ namespace FlashDebugger
                     // sleep for a bit, then process our events.
 
                     // process isolates
-                    foreach (var kv in runningIsolates)
+                    foreach (var kv in IsolateSessions)
                     {
                         if (kv.Value.requestPause)
                         {
@@ -481,7 +419,7 @@ namespace FlashDebugger
                             }
                             catch (Exception e)
                             {
-                                TraceManager.AddAsync("Isolate suspend exception: " + e.ToString());
+                                TraceManager.AddAsync("Isolate suspend exception: " + e);
                             }
                         }
                         kv.Value.requestPause = false;
@@ -506,11 +444,8 @@ namespace FlashDebugger
             }
             finally
             {
-                if (DisconnectedEvent != null)
-                {
-                    DisconnectedEvent(this);
-                }
-                exitSession();
+                DisconnectedEvent?.Invoke(this);
+                ExitSession();
             }
         }
 
@@ -519,60 +454,50 @@ namespace FlashDebugger
             if (m_CurrentState != DebuggerState.Starting &&
                 m_CurrentState != DebuggerState.Stopped)
             {
-                m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
+                Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
             }
         }
 
-        internal virtual void initSession()
+        internal virtual void InitSession()
         {
-            bool correctVersion = true;
             try
             {
-                m_Session.bind();
+                Session.bind();
             }
             catch (VersionException)
             {
-                correctVersion = false;
             }
             // reset session properties
             m_MetadataAttemptsPeriod = 250;                 // 1/4s per attempt
-            m_MetadataNotAvailable = 0;                     // counter for failures
             m_MetadataAttempts = METADATA_RETRIES;
-            m_PlayerFullSupport = correctVersion ? 1 : 0;
             m_RequestStop = false;
             m_RequestPause = false;
             m_RequestResume = false;
             m_StepResume = false;
 
-            runningIsolates = new Dictionary<int, IsolateInfo>();
+            IsolateSessions = new Dictionary<int, IsolateInfo>();
             PluginMain.settingObject.BreakOnThrowChanged += settingObject_BreakOnThrowChanged;
         }
 
         /// <summary> If we still have a socket try to send an exit message
         /// Doesn't seem to work ?!?
         /// </summary>
-        internal virtual void exitSession()
+        internal virtual void ExitSession()
         {
             PluginMain.settingObject.BreakOnThrowChanged -= settingObject_BreakOnThrowChanged;
             // clear out our watchpoint list and displays
             // keep breakpoints around so that we can try to reapply them if we reconnect
-            if (m_Session != null)
+            if (Session != null)
             {
-                if (m_RequestDetach)
-                {
-                    m_Session.unbind();
-                }
-                else
-                {
-                    m_Session.terminate();                    
-                }
-                m_Session = null;
+                if (m_RequestDetach) Session.unbind();
+                else Session.terminate();
+                Session = null;
             }
-            if (runningIsolates != null) runningIsolates.Clear();
-            SessionManager mgr = Bootstrap.sessionManager();
+            IsolateSessions?.Clear();
+            var mgr = Bootstrap.sessionManager();
             if (mgr != null && mgr.isListening()) mgr.stopListening();
             m_CurrentState = DebuggerState.Stopped;
-            clearBreakpoints();
+            ClearBreakpoints();
         }
 
         internal virtual void Detach()
@@ -581,16 +506,13 @@ namespace FlashDebugger
             m_SuspendWait.Set();
         }
 
-        private bool haveConnection()
-        {
-            return m_Session != null && m_Session.isConnected();
-        }
+        bool HaveConnection() => Session != null && Session.isConnected();
 
-        private void waitForMetaData()
+        void WaitForMetaData()
         {
             // perform a query to see if our metadata has loaded
             int metadatatries = m_MetadataAttempts;
-            int maxPerCall = 8; // cap on how many attempt we make per call
+            const int maxPerCall = 8; // cap on how many attempt we make per call
             int tries = Math.Min(maxPerCall, metadatatries);
             if (tries > 0)
             {
@@ -598,7 +520,7 @@ namespace FlashDebugger
                 // perform the call and then update our remaining number of attempts
                 try
                 {
-                    tries = waitForMetaData(tries);
+                    tries = WaitForMetaData(tries);
                     remain = metadatatries - tries; // update our used count
                 }
                 catch (InProgressException ipe)
@@ -616,7 +538,7 @@ namespace FlashDebugger
         /// 
         /// We wait period * attempts
         /// </summary>
-        public virtual int waitForMetaData(int attempts)
+        public virtual int WaitForMetaData(int attempts)
         {
             int start = attempts;
             int period = m_MetadataAttemptsPeriod;
@@ -624,15 +546,12 @@ namespace FlashDebugger
             {
                 // are we done yet?
                 if (MetaDataAvailable) break;
-                else
+                try
                 {
-                    try
-                    {
-                        attempts--;
-                        Thread.Sleep(period);
-                    }
-                    catch (ThreadInterruptedException){}
+                    attempts--;
+                    Thread.Sleep(period);
                 }
+                catch (ThreadInterruptedException){}
             }
             // throw exception if still not ready
             if (!MetaDataAvailable) throw new InProgressException();
@@ -640,7 +559,7 @@ namespace FlashDebugger
         }
 
         /// <summary> Ask each swf if metadata processing is complete</summary>
-        virtual public bool MetaDataAvailable
+        public virtual bool MetaDataAvailable
         {
             get
             {
@@ -648,11 +567,9 @@ namespace FlashDebugger
                 try
                 {
                     // we need to ask the session since our fileinfocache will hide the exception
-                    SwfInfo[] swfs = m_Session.getSwfs();
-                    for (int i = 0; i < swfs.Length; i++)
+                    var swfs = Session.getSwfs();
+                    foreach (var swf in swfs)
                     {
-                        // check if our processing is finished.
-                        SwfInfo swf = swfs[i];
                         if (swf != null && !swf.isProcessingComplete())
                         {
                             allLoaded = false;
@@ -666,7 +583,9 @@ namespace FlashDebugger
                     allLoaded = false;
                 }
                 // count the number of times we checked and it wasn't there
-                if (!allLoaded) m_MetadataNotAvailable++;
+                if (!allLoaded)
+                {
+                }
                 else
                 {
                     // success so we reset our attempt counter
@@ -677,164 +596,131 @@ namespace FlashDebugger
         }
 
         /// <summary> Process the incoming debug event queue</summary>
-        internal virtual void processEvents()
+        internal virtual void ProcessEvents()
         {
-            while (m_Session != null && m_Session.getEventCount() > 0)
+            while (Session != null && Session.getEventCount() > 0)
             {
-                DebugEvent e = m_Session.nextEvent();
-                if (e is TraceEvent)
+                var e = Session.nextEvent();
+                switch (e)
                 {
-                    dumpTraceLine(e.information);
-                    if (TraceEvent != null)
-                    {
-                        TraceEvent(this, e.information);
-                    }
-                }
-                else if (e is SwfLoadedEvent)
-                {
-                    if (PluginMain.settingObject.VerboseOutput)
-                        dumpSwfLoadedEvent((SwfLoadedEvent)e);
-                }
-                else if (e is SwfUnloadedEvent)
-                {
-                    if (PluginMain.settingObject.VerboseOutput)
-                        dumpSwfUnloadedEvent((SwfUnloadedEvent)e);
-                }
-                else if (e is IsolateCreateEvent)
-                {
-                    TraceManager.AddAsync("Created Worker " + ((IsolateCreateEvent)e).isolate.getId());
-                    dumpIsolateCreateEvent((IsolateCreateEvent)e);
-                }
-                else if (e is IsolateExitEvent)
-                {
-                    TraceManager.AddAsync("Worker " + ((IsolateExitEvent)e).isolate.getId() + " Exited");
-                    dumpIsolateExitEvent((IsolateExitEvent)e);
-                }
-                else if (e is BreakEvent)
-                {
-                    // handle only worker events
-                    BreakEvent be = (BreakEvent)e;
-                    if (PluginMain.settingObject.VerboseOutput)
-                        TraceManager.AddAsync("Worker " + be.isolateId + " BreakEvent");
-                    if (be.isolateId > 1 && runningIsolates.ContainsKey(be.isolateId))
-                    {
-                        IsolateInfo ii = runningIsolates[be.isolateId];
-                        if (!ii.i_Session.isSuspended())
+                    case TraceEvent _:
+                        DumpTraceLine(e.information);
+                        TraceEvent?.Invoke(this, e.information);
+                        break;
+                    case SwfLoadedEvent @event:
+                        if (PluginMain.settingObject.VerboseOutput) DumpSwfLoadedEvent(@event);
+                        break;
+                    case SwfUnloadedEvent @event:
+                        if (PluginMain.settingObject.VerboseOutput) DumpSwfUnloadedEvent(@event);
+                        break;
+                    case IsolateCreateEvent @event:
+                        TraceManager.AddAsync("Created Worker " + @event.isolate.getId());
+                        DumpIsolateCreateEvent(@event);
+                        break;
+                    case IsolateExitEvent @event:
+                        TraceManager.AddAsync("Worker " + @event.isolate.getId() + " Exited");
+                        DumpIsolateExitEvent(@event);
+                        break;
+                    case BreakEvent @event:
+                        // handle only worker events
+                        if (PluginMain.settingObject.VerboseOutput)
+                            TraceManager.AddAsync("Worker " + @event.isolateId + " BreakEvent");
+                        if (@event.isolateId > 1 && IsolateSessions.ContainsKey(@event.isolateId))
                         {
-                            continue;
-                        }
-                        Frame[] frames = ii.i_Session.getFrames();
-                        Location loc = null;
-                        if (frames.Length > 0)
-                        {
-                            loc = frames[0].getLocation();
+                            var ii = IsolateSessions[@event.isolateId];
+                            if (!ii.i_Session.isSuspended()) continue;
+
+                            var frames = ii.i_Session.getFrames();
+                            Location loc = null;
+                            if (frames.Length > 0) loc = frames[0].getLocation();
+
+                            if (ii.i_Session.suspendReason() == 1) // SuspendReason_.Breakpoint
+                            {
+                                if (loc != null &&
+                                    m_BreakPointManager.ShouldBreak(loc.getFile(), loc.getLine(), frames[0]))
+                                {
+                                    // switch and break only if we are not dealing with some other thread
+                                    if (ActiveSession == @event.isolateId || !isDebuggerSuspended)
+                                    {
+                                        ActiveSession = @event.isolateId;
+                                        BreakpointEvent?.Invoke(this);
+                                    }
+                                    else ThreadsEvent?.Invoke(this);
+                                }
+                                else ii.i_Session.stepContinue();
+                            }
+                            else if (ii.i_Session.suspendReason() == 3) //SuspendReason_.Fault
+                            {
+                                if (ActiveSession == @event.isolateId || !isDebuggerSuspended)
+                                {
+                                    ActiveSession = @event.isolateId;
+                                    if (FaultEvent is { } faultEvent) faultEvent(this);
+                                    else ii.i_Session.resume();
+                                }
+                                else ThreadsEvent?.Invoke(this);
+                            }
+                            else if (ii.i_Session.suspendReason() == 5) //SuspendReason_.Step
+                            {
+                                if (ActiveSession == @event.isolateId || !isDebuggerSuspended)
+                                {
+                                    ActiveSession = @event.isolateId;
+                                    if (StepEvent is { } stepEvent) stepEvent(this);
+                                    else ii.i_Session.resume();
+                                }
+                                else ThreadsEvent?.Invoke(this);
+                            }
+                            else if (ii.i_Session.suspendReason() == 4) //SuspendReason_.StopRequest
+                            {
+                                if (ActiveSession == @event.isolateId || !isDebuggerSuspended)
+                                {
+                                    ActiveSession = @event.isolateId;
+                                    if (PauseEvent is { } pauseEvent) pauseEvent(this);
+                                    else ii.i_Session.resume();
+                                }
+                                else ThreadsEvent?.Invoke(this);
+                            }
+                            else if (ii.i_Session.suspendReason() == 2) //SuspendReason_.Watch
+                            {
+                                if (ActiveSession == @event.isolateId || !isDebuggerSuspended)
+                                {
+                                    ActiveSession = @event.isolateId;
+                                    if (WatchpointEvent is { } watchpointEvent) watchpointEvent(this);
+                                    else ii.i_Session.resume();
+                                }
+                                else ThreadsEvent?.Invoke(this);
+                            }
                         }
 
-                        if (ii.i_Session.suspendReason() == 1) // SuspendReason_.Breakpoint
+                        break;
+                    case FileListModifiedEvent _:
+                        // we ignore this
+                        break;
+                    case FunctionMetaDataAvailableEvent _:
+                        // we ignore this
+                        break;
+                    case FaultEvent @event:
+                        DumpFaultLine(@event);
+                        break;
+                    default:
+                        if (PluginMain.settingObject.VerboseOutput)
                         {
-                            if (loc != null && m_BreakPointManager.ShouldBreak(loc.getFile(), loc.getLine(), frames[0]))
-                            {
-                                // switch and break only if we are not dealing with some other thread
-                                if (ActiveSession == be.isolateId || !isDebuggerSuspended)
-                                {
-                                    ActiveSession = be.isolateId;
-                                    if (BreakpointEvent != null) BreakpointEvent(this);
-                                }
-                                else
-                                {
-                                    if (ThreadsEvent != null) ThreadsEvent(this);
-                                }
-                            }
-                            else
-                            {
-                                ii.i_Session.stepContinue();
-                            }
+                            IDictionary args = new Hashtable();
+                            args["type"] = e; //$NON-NLS-1$
+                            args["info"] = e.information; //$NON-NLS-1$
+                            TraceManager.AddAsync(ReplaceInlineReferences(TextHelper.GetString("Info.UnknownEvent"), args));
                         }
-                        else if (ii.i_Session.suspendReason() == 3) //SuspendReason_.Fault
-                        {
-                            if (ActiveSession == be.isolateId || !isDebuggerSuspended)
-                            {
-                                ActiveSession = be.isolateId;
-                                if (FaultEvent != null) FaultEvent(this); else ii.i_Session.resume();
-                            }
-                            else
-                            {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
-                            }
-                        }
-                        else if (ii.i_Session.suspendReason() == 5) //SuspendReason_.Step
-                        {
-                            if (ActiveSession == be.isolateId || !isDebuggerSuspended)
-                            {
-                                ActiveSession = be.isolateId;
-                                if (StepEvent != null) StepEvent(this); else ii.i_Session.resume();
-                            }
-                            else
-                            {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
-                            }
-                        }
-                        else if (ii.i_Session.suspendReason() == 4) //SuspendReason_.StopRequest
-                        {
-                            if (ActiveSession == be.isolateId || !isDebuggerSuspended)
-                            {
-                                ActiveSession = be.isolateId;
-                                if (PauseEvent != null) PauseEvent(this); else ii.i_Session.resume();
-                            }
-                            else
-                            {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
-                            }
-                        }
-                        else if (ii.i_Session.suspendReason() == 2) //SuspendReason_.Watch
-                        {
-                            if (ActiveSession == be.isolateId || !isDebuggerSuspended)
-                            {
-                                ActiveSession = be.isolateId;
-                                if (WatchpointEvent != null) WatchpointEvent(this); else ii.i_Session.resume();
-                            }
-                            else
-                            {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
-                            }
-                        }
-                    }
-                }
-                else if (e is FileListModifiedEvent)
-                {
-                    // we ignore this
-                }
-                else if (e is FunctionMetaDataAvailableEvent)
-                {
-                    // we ignore this
-                }
-                else if (e is FaultEvent)
-                {
-                    dumpFaultLine((FaultEvent)e);
-                }
-                else
-                {
-                    if (PluginMain.settingObject.VerboseOutput)
-                    {
-                        IDictionary args = new Hashtable();
-                        args["type"] = e; //$NON-NLS-1$
-                        args["info"] = e.information; //$NON-NLS-1$
-                        TraceManager.AddAsync(replaceInlineReferences(TextHelper.GetString("Info.UnknownEvent"), args));
-                    }
+                        break;
                 }
             }
         }
 
         // wait a little bit of time until the player halts, if not throw an exception!
-        internal virtual void waitTilHalted()
+        internal virtual void WaitTilHalted()
         {
-            if (!haveConnection()) throw new InvalidOperationException();
+            if (!HaveConnection()) throw new InvalidOperationException();
             // spin for a while waiting for a halt; updating trace messages as we get them
-            waitForSuspend(m_HaltTimeout, m_UpdateDelay);
-            if (!m_Session.isSuspended())
-            {
-                throw new SynchronizationLockException();
-            }
+            WaitForSuspend(m_HaltTimeout, m_UpdateDelay);
+            if (!Session.isSuspended()) throw new SynchronizationLockException();
         }
 
         /// <summary> We spin in this spot until the player reaches the
@@ -844,16 +730,13 @@ namespace FlashDebugger
         /// and update the display and our state with information
         /// received from the debug event queue.
         /// </summary>
-        internal virtual void waitForSuspend(int timeout, int period)
+        internal virtual void WaitForSuspend(int timeout, int period)
         {
             while (timeout > 0)
             {
                 // dump our events to the console while we are waiting.
-                processEvents();
-                if (m_Session.isSuspended())
-                {
-                    break;
-                }
+                ProcessEvents();
+                if (Session.isSuspended()) break;
                 try
                 {
                     Thread.Sleep(period);
@@ -864,15 +747,12 @@ namespace FlashDebugger
         }
 
         // pretty print a trace statement to the console
-        internal virtual void dumpTraceLine(String s)
-        {
-            TraceManager.AddAsync(s, 1);
-        }
+        internal virtual void DumpTraceLine(string s) => TraceManager.AddAsync(s, 1);
 
         // pretty print a fault statement to the console
-        internal virtual void dumpFaultLine(FaultEvent e)
+        internal virtual void DumpFaultLine(FaultEvent e)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             // use a slightly different format for ConsoleErrorFaults
             if (e is ConsoleErrorFault)
             {
@@ -882,7 +762,7 @@ namespace FlashDebugger
             }
             else
             {
-                String name = e.name();
+                string name = e.name();
                 sb.Append(TextHelper.GetString("Info.LinePrefixWhenDisplayingFault")); //$NON-NLS-1$
                 sb.Append(' ');
                 sb.Append(name);
@@ -898,40 +778,38 @@ namespace FlashDebugger
                 }
             }
 
-            if (e.isolateId == 1)
-                TraceManager.AddAsync(sb.ToString(), 3);
-            else
-                TraceManager.AddAsync("Worker " + e.isolateId + ": " + sb.ToString(), 3);
+            if (e.isolateId == 1) TraceManager.AddAsync(sb.ToString(), 3);
+            else TraceManager.AddAsync("Worker " + e.isolateId + ": " + sb, 3);
         }
 
         /// <summary> Called when a swf has been loaded by the player</summary>
         /// <param name="e">event documenting the load
         /// </param>
-        internal virtual void dumpSwfLoadedEvent(SwfLoadedEvent e)
+        internal virtual void DumpSwfLoadedEvent(SwfLoadedEvent e)
         {
             // now rip off any trailing ? options
-            int at = e.path.lastIndexOf('?');
-            String name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
-            StringBuilder sb = new StringBuilder();
+            var at = e.path.lastIndexOf('?');
+            string name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
+            var sb = new StringBuilder();
             sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfLoaded"));
             sb.Append(' ');
             sb.Append(name);
             sb.Append(" - "); //$NON-NLS-1$
             IDictionary args = new Hashtable();
             args["size"] = e.swfSize.ToString("N0"); //$NON-NLS-1$
-            sb.Append(replaceInlineReferences(TextHelper.GetString("Info.SizeAfterDecompression"), args));
+            sb.Append(ReplaceInlineReferences(TextHelper.GetString("Info.SizeAfterDecompression"), args));
             TraceManager.AddAsync(sb.ToString());
         }
 
         /// <summary> Perform the tasks need for when a swf is unloaded
         /// the player
         /// </summary>
-        internal virtual void dumpSwfUnloadedEvent(SwfUnloadedEvent e)
+        internal virtual void DumpSwfUnloadedEvent(SwfUnloadedEvent e)
         {
             // now rip off any trailing ? options
-            int at = e.path.lastIndexOf('?');
-            String name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
-            StringBuilder sb = new StringBuilder();
+            var at = e.path.lastIndexOf('?');
+            string name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
+            var sb = new StringBuilder();
             sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfUnloaded")); //$NON-NLS-1$
             sb.Append(' ');
             sb.Append(name);
@@ -940,76 +818,59 @@ namespace FlashDebugger
 
         /// <summary> Perform the tasks need for when an isolate is created
         /// </summary>
-        internal virtual void dumpIsolateCreateEvent(IsolateCreateEvent e)
+        internal virtual void DumpIsolateCreateEvent(IsolateCreateEvent e)
         {
-            IsolateSession i_Session = m_Session.getWorkerSession(e.isolate.getId());
-
+            var i_Session = Session.getWorkerSession(e.isolate.getId());
             i_Session.breakOnCaughtExceptions(true);
-
-            IsolateInfo ii = addRunningIsolate(e.isolate.getId());
+            var ii = AddRunningIsolate(e.isolate.getId());
             ii.i_Session = i_Session;
-
             UpdateIsolateBreakpoints(m_BreakPointManager.BreakPoints, ii);
-
             i_Session.resume();
-
-            if (ThreadsEvent != null)
-            {
-                ThreadsEvent(this);
-            }
+            ThreadsEvent?.Invoke(this);
         }
 
         /// <summary> Perform the tasks need for when an isolate has exited
         /// </summary>
-        internal virtual void dumpIsolateExitEvent(IsolateExitEvent e)
+        internal virtual void DumpIsolateExitEvent(IsolateExitEvent e)
         {
-            removeRunningIsolate(e.isolate.getId());
-            if (ThreadsEvent != null)
-            {
-                ThreadsEvent(this);
-            }
-
+            RemoveRunningIsolate(e.isolate.getId());
+            ThreadsEvent?.Invoke(this);
         }
 
-        internal virtual Location getCurrentLocation()
+        internal virtual Location GetCurrentLocation()
         {
-            if (ActiveSession == 1)
-            {
-                return getCurrentMainLocation();
-            }
-            return getCurrentIsolateLocation(ActiveSession);
+            return ActiveSession == 1
+                ? GetCurrentMainLocation()
+                : GetCurrentIsolateLocation(ActiveSession);
         }
 
-        internal virtual Location getCurrentMainLocation()
+        internal virtual Location GetCurrentMainLocation()
         {
             Location where = null;
             try
             {
-                Frame[] frames = m_Session.getFrames();
-
+                var frames = Session.getFrames();
                 where = frames.Length > 0 ? frames[0].getLocation() : null;
             }
             catch (PlayerDebugException)
             {
-                // where == null
+                // where is null
             }
             return where;
         }
 
-        internal virtual Location getCurrentIsolateLocation(int i_id)
+        internal virtual Location GetCurrentIsolateLocation(int iId)
         {
-            IsolateInfo ii = runningIsolates[i_id];
-
+            var ii = IsolateSessions[iId];
             Location where = null;
             try
             {
-                Frame[] frames = ii.i_Session.getFrames();
-
+                var frames = ii.i_Session.getFrames();
                 where = frames.Length > 0 ? frames[0].getLocation() : null;
             }
             catch (PlayerDebugException)
             {
-                // where == null
+                // where is null
             }
             return where;
         }
@@ -1017,15 +878,15 @@ namespace FlashDebugger
         public void Stop()
         {
             m_RequestStop = true;
-            if (m_CurrentState == DebuggerState.Starting)
+            switch (m_CurrentState)
             {
-                SessionManager mgr = Bootstrap.sessionManager();
-                mgr.stopListening();
-                return;
-            }
-            if (m_CurrentState == DebuggerState.ExceptionHalt)
-            {
-                m_RequestResume = true;
+                case DebuggerState.Starting:
+                    var mgr = Bootstrap.sessionManager();
+                    mgr.stopListening();
+                    return;
+                case DebuggerState.ExceptionHalt:
+                    m_RequestResume = true;
+                    break;
             }
             m_SuspendWait.Set();
         }
@@ -1042,15 +903,15 @@ namespace FlashDebugger
         {
             if (ActiveSession > 1)
             {
-                if (runningIsolates[ActiveSession].i_Session.isSuspended())
+                if (IsolateSessions[ActiveSession].i_Session.isSuspended())
                 {
-                    runningIsolates[ActiveSession].i_Session.stepOver();
+                    IsolateSessions[ActiveSession].i_Session.stepOver();
                 }
                 return;
             }
-            if (m_Session.isSuspended())
+            if (Session.isSuspended())
             {
-                m_Session.stepOver();
+                Session.stepOver();
                 m_SuspendWait.Set();
             }
         }
@@ -1059,34 +920,15 @@ namespace FlashDebugger
         {
             if (ActiveSession > 1)
             {
-                if (runningIsolates[ActiveSession].i_Session.isSuspended())
+                if (IsolateSessions[ActiveSession].i_Session.isSuspended())
                 {
-                    runningIsolates[ActiveSession].i_Session.stepInto();
+                    IsolateSessions[ActiveSession].i_Session.stepInto();
                 }
                 return;
             }
-            if (m_Session.isSuspended())
+            if (Session.isSuspended())
             {
-                m_Session.stepInto();
-                m_SuspendWait.Set();
-            }
-        }
-
-        public void StepResume()
-        {
-            // fix me, needs to move to thread
-            if (ActiveSession > 1)
-            {
-                if (runningIsolates[ActiveSession].i_Session.isSuspended())
-                {
-                    runningIsolates[ActiveSession].i_Session.resume();
-                }
-                return;
-            }
-            if (m_Session.isSuspended())
-            {
-                m_StepResume = true;
-                m_RequestResume = true;
+                Session.stepInto();
                 m_SuspendWait.Set();
             }
         }
@@ -1096,13 +938,13 @@ namespace FlashDebugger
             // fix me, needs to move to thread
             if (ActiveSession > 1)
             {
-                if (runningIsolates[ActiveSession].i_Session.isSuspended())
+                if (IsolateSessions[ActiveSession].i_Session.isSuspended())
                 {
-                    runningIsolates[ActiveSession].i_Session.resume();
+                    IsolateSessions[ActiveSession].i_Session.resume();
                 }
                 return;
             }
-            if (m_Session.isSuspended())
+            if (Session.isSuspended())
             {
                 m_RequestResume = true;
                 m_SuspendWait.Set();
@@ -1114,14 +956,14 @@ namespace FlashDebugger
             // fix me, needs to move to thread
             if (ActiveSession > 1)
             {
-                if (!runningIsolates[ActiveSession].i_Session.isSuspended())
+                if (!IsolateSessions[ActiveSession].i_Session.isSuspended())
                 {
-                    runningIsolates[ActiveSession].requestPause = true;
+                    IsolateSessions[ActiveSession].requestPause = true;
                     m_SuspendWait.Set();
                 }
                 return;
             }
-            if (!m_Session.isSuspended())
+            if (!Session.isSuspended())
             {
                 m_RequestPause = true;
                 m_SuspendWait.Set();
@@ -1132,92 +974,65 @@ namespace FlashDebugger
         {
             if (ActiveSession > 1)
             {
-                if (runningIsolates[ActiveSession].i_Session.isSuspended())
+                if (IsolateSessions[ActiveSession].i_Session.isSuspended())
                 {
-                    runningIsolates[ActiveSession].i_Session.stepOut();
+                    IsolateSessions[ActiveSession].i_Session.stepOut();
                 }
                 return;
             }
-            if (m_Session.isSuspended())
+            if (Session.isSuspended())
             {
-                m_Session.stepOut();
+                Session.stepOut();
                 m_SuspendWait.Set();
             }
         }
 
         public Frame[] GetFrames()
         {
-            if (ActiveSession == 1)
-            {
-                return m_Session.getFrames();
-            }
-            return runningIsolates[ActiveSession].i_Session.getFrames();
+            return ActiveSession == 1
+                ? Session.getFrames()
+                : IsolateSessions[ActiveSession].i_Session.getFrames();
         }
 
-        public Variable[] GetArgs(int frameNumber)
-        {
-            return GetFrames()[frameNumber].getArguments(m_Session);
-        }
+        public Variable[] GetArgs(int frameNumber) => GetFrames()[frameNumber].getArguments(Session);
 
-        public Variable GetThis(int frameNumber)
-        {
-            return GetFrames()[frameNumber].getThis(m_Session);
-        }
+        public Variable GetThis(int frameNumber) => GetFrames()[frameNumber].getThis(Session);
 
-        public Variable[] GetLocals(int frameNumber)
-        {
-            return GetFrames()[frameNumber].getLocals(m_Session);
-        }
-
-        //public Value GetValue(int idValue)
-        //{
-        //  return m_Session.getValue(idValue);
-        //}
+        public Variable[] GetLocals(int frameNumber) => GetFrames()[frameNumber].getLocals(Session);
 
         public void UpdateBreakpoints(List<BreakPointInfo> breakpoints)
         {
-            commonUpdateBreakpoints(breakpoints, breakpointLocations, null);
-            foreach (IsolateInfo ii in IsolateSessions.Values)
+            CommonUpdateBreakpoints(breakpoints, breakpointLocations, null);
+            foreach (var ii in IsolateSessions.Values)
             {
                 UpdateIsolateBreakpoints(breakpoints, ii);
             }
         }
 
-        private void UpdateIsolateBreakpoints(List<BreakPointInfo> breakpoints, IsolateInfo ii)
-        {
-            commonUpdateBreakpoints(breakpoints, ii.breakpointLocations, ii.i_Session);
-        }
+        void UpdateIsolateBreakpoints(IReadOnlyCollection<BreakPointInfo> breakpoints, IsolateInfo ii) => CommonUpdateBreakpoints(breakpoints, ii.breakpointLocations, ii.i_Session);
 
-        private void commonUpdateBreakpoints(List<BreakPointInfo> breakpoints, Dictionary<BreakPointInfo, Location> breakpointLocations, IsolateSession i_Session)
+        void CommonUpdateBreakpoints(IReadOnlyCollection<BreakPointInfo> breakpoints, IDictionary<BreakPointInfo, Location> breakpointLocations, IsolateSession iSession)
         {
-            Dictionary<string, int> files = new Dictionary<string, int>();
+            var files = new Dictionary<string, int>();
             foreach (BreakPointInfo bp in breakpoints)
             {
-                if (!breakpointLocations.ContainsKey(bp))
-                {
-                    if (!bp.IsDeleted && bp.IsEnabled)
-                    {
-                        if (!files.ContainsKey(bp.FileFullPath))
-                        {
-                            files.Add(bp.FileFullPath, int.MaxValue);
-                        }
-                    }
-                }
+                if (breakpointLocations.ContainsKey(bp) || bp.IsDeleted || !bp.IsEnabled) continue;
+                if (files.ContainsKey(bp.FileFullPath)) continue;
+                files.Add(bp.FileFullPath, int.MaxValue);
             }
-            int nFiles = files.Count;
-            if (nFiles > 0)
+            if (files.Count > 0)
             {
                 // reverse loop to take latest loded swf first, and ignore old swf.
-                SwfInfo[] swfInfo = (i_Session != null) ? i_Session.getSwfs() : m_Session.getSwfs();
+                var swfInfo = (iSession != null) ? iSession.getSwfs() : Session.getSwfs();
                 for (int swfC = swfInfo.Length - 1; swfC >= 0; swfC--) 
                 {
                     SwfInfo swf = swfInfo[swfC];
-                    if (swf == null) continue;
+                    if (swf is null) continue;
                     try
                     {
-                        foreach (SourceFile src in swf.getSourceList(m_Session))
+                        foreach (SourceFile src in swf.getSourceList(Session))
                         {
-                            String localPath = PluginMain.debugManager.GetLocalPath(src);
+                            string localPath = PluginMain.debugManager.GetLocalPath(src);
                             if (localPath != null && files.ContainsKey(localPath) && files[localPath] > src.getId())
                             {
                                 files[localPath] = src.getId();
@@ -1236,7 +1051,7 @@ namespace FlashDebugger
                     {
                         if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != int.MaxValue)
                         {
-                            Location l = (i_Session != null) ? i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : m_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
+                            var l = (iSession != null) ? iSession.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
                             if (l != null)
                             {
                                 breakpointLocations.Add(bp, l);
@@ -1249,23 +1064,24 @@ namespace FlashDebugger
                     if (bp.IsDeleted || !bp.IsEnabled)
                     {
                         // todo, i_Session does not have a clearBreakpoint method, m_Session clears them all. optimize out extra loops
-                        m_Session.clearBreakpoint(breakpointLocations[bp]);
+                        Session.clearBreakpoint(breakpointLocations[bp]);
                         breakpointLocations.Remove(bp);
                     }
                 }
             }
         }
 
-        private void clearBreakpoints()
+        void ClearBreakpoints()
         {
             if (isDebuggerStarted)
             {
-                foreach (Location l in m_Session.getBreakpointList())
+                foreach (Location l in Session.getBreakpointList())
                 {
-                    m_Session.clearBreakpoint(l);
+                    Session.clearBreakpoint(l);
                 }
             }
-            if (breakpointLocations != null) breakpointLocations.Clear();
+
+            breakpointLocations?.Clear();
             if (IsolateSessions != null)
                 foreach (IsolateInfo ii in IsolateSessions.Values)
                 {
@@ -1273,9 +1089,9 @@ namespace FlashDebugger
                 }
         }
 
-        private static String replaceInlineReferences(String text, IDictionary parameters)
+        static string ReplaceInlineReferences(string text, IDictionary parameters)
         {
-            if (parameters == null) return text;
+            if (parameters is null) return text;
             int depth = 100;
             while (depth-- > 0)
             {
@@ -1286,34 +1102,23 @@ namespace FlashDebugger
                     o = text.IndexOfOrdinal("${", o + 2);
                     if (o == -1) break;
                 }
-                int c = text.IndexOfOrdinal("}", o);
+                int c = text.IndexOf('}', o);
                 if (c == -1)
                 {
                     return null; // FIXME
                 }
-                String name = text.Substring(o + 2, (c) - (o + 2));
-                String value = null;
+                string name = text.Substring(o + 2, (c) - (o + 2));
+                string value = null;
                 if (parameters.Contains(name) && (parameters[name] != null))
                 {
                     value = parameters[name].ToString();
                 }
-                if (value == null)
-                {
-                    value = "";
-                }
+                value ??= "";
                 text = text.Substring(0, (o) - (0)) + value + text.Substring(c + 1);
             }
             return text.Replace("$${", "${");
         }
 
-        public void setProgress(int current, int total)
-        {
-            if (ProgressEvent != null)
-            {
-                ProgressEvent(this, current, total);
-            }
-        }
-
+        public void setProgress(int current, int total) => ProgressEvent?.Invoke(this, current, total);
     }
-
 }

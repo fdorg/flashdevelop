@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.BBCode;
 using PluginCore.Managers;
@@ -14,47 +14,40 @@ namespace PluginCore.Controls
     /// </summary>
     public class RichToolTip : IEventHandler
     {
+        static readonly Regex reEscapedSequence = new Regex("`+[^`]*`", RegexOptions.Compiled);
         public delegate void UpdateTipHandler(ScintillaControl sender, Point mousePosition);
 
         // events
         public event UpdateTipHandler OnUpdateSimpleTip;
 
         // controls
-        protected Panel toolTip;
-        protected RichTextBox toolTipRTB;
+        protected readonly Panel toolTip;
+        protected readonly RichTextBox toolTipRTB;
         protected string rawText;
-        protected string lastRawText;
-        protected string cachedRtf;
-        protected Dictionary<String, String> rtfCache;
-        protected List<String> rtfCacheList;
+        protected readonly Dictionary<string, string> rtfCache;
+        protected readonly List<string> rtfCacheList;
         protected Point mousePos;
 
         #region Public Properties
         
-        public bool Visible 
-        {
-            get { return toolTip.Visible; }
-        }
+        public bool Visible => toolTip.Visible;
 
         public Size Size
         {
-            get { return toolTip.Size; }
-            set { toolTip.Size = value; }
+            get => toolTip.Size;
+            set => toolTip.Size = value;
         }
 
         public Point Location
         {
-            get { return toolTip.Location;  }
-            set { toolTip.Location = value; }
+            get => toolTip.Location;
+            set => toolTip.Location = value;
         }
 
         public string Text 
         {
-            get { return toolTipRTB.Text; }
-            set 
-            {
-                SetText(value, true);
-            }
+            get => toolTipRTB.Text;
+            set => SetText(value, true);
         }
                 
         #endregion
@@ -71,7 +64,7 @@ namespace PluginCore.Controls
             toolTip.ForeColor = SystemColors.InfoText;
             toolTip.BorderStyle = BorderStyle.FixedSingle;
             toolTip.Visible = false;
-            (mainForm as Form).Controls.Add(toolTip);
+            ((Form) mainForm).Controls.Add(toolTip);
             // text
             toolTipRTB = new RichTextBox();
             toolTipRTB.Font = PluginBase.Settings.DefaultFont;
@@ -87,12 +80,11 @@ namespace PluginCore.Controls
             toolTip.Controls.Add(toolTipRTB);
 
             // rtf cache
-            rtfCache = new Dictionary<String, String>();
-            rtfCacheList = new List<String>();
+            rtfCache = new Dictionary<string, string>();
+            rtfCacheList = new List<string>();
         }
 
-
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme)
             {
@@ -109,14 +101,10 @@ namespace PluginCore.Controls
         
         #region Tip Methods
 
-        public bool AutoSize()
-        {
-            return AutoSize(0);
-        }
-        public bool AutoSize(int availableWidth)
-        {
-            return AutoSize(availableWidth, 1024);
-        }
+        public bool AutoSize() => AutoSize(0);
+
+        public bool AutoSize(int availableWidth) => AutoSize(availableWidth, 1024);
+
         public bool AutoSize(int availableWidth, int maxWidth)
         {
             bool tooSmall = false;
@@ -206,11 +194,8 @@ namespace PluginCore.Controls
             toolTip.BringToFront();
         }
 
-        public void UpdateTip(ScintillaControl sci)
-        {
-            if (OnUpdateSimpleTip != null) OnUpdateSimpleTip(sci, mousePos);
-        }
-        
+        public void UpdateTip(ScintillaControl sci) => OnUpdateSimpleTip?.Invoke(sci, mousePos);
+
         public virtual void Hide()
         {
             if (toolTip.Visible)
@@ -226,21 +211,17 @@ namespace PluginCore.Controls
             toolTip.BringToFront();
         }
 
-        public void SetText(String rawText, bool redraw)
+        public void SetText(string rawText, bool redraw)
         {
             this.rawText = rawText ?? "";
-
-            if (redraw)
-                Redraw();
+            if (redraw) Redraw();
         }
 
-        public void Redraw()
-        {
-            Redraw(true);
-        }
+        public void Redraw() => Redraw(true);
+
         public void Redraw(bool autoSize)
         {
-            toolTipRTB.Rtf = getRtfFor(rawText);
+            toolTipRTB.Rtf = GetRtfFor(rawText);
 
             Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
@@ -253,14 +234,14 @@ namespace PluginCore.Controls
                 AutoSize();
         }
 
-        protected String getRtfFor(String bbcodeText)
+        protected string GetRtfFor(string bbCodeText)
         {
-            if (rtfCache.ContainsKey(bbcodeText))
-                return rtfCache[bbcodeText];
+            if (rtfCache.ContainsKey(bbCodeText))
+                return rtfCache[bbCodeText];
 
             if (rtfCacheList.Count >= 512)
             {
-                String key = rtfCacheList[0];
+                var key = rtfCacheList[0];
                 rtfCache[key] = null;
                 rtfCache.Remove(key);
                 rtfCacheList[0] = null;
@@ -271,13 +252,20 @@ namespace PluginCore.Controls
             toolTipRTB.ScrollBars = RichTextBoxScrollBars.None;
             toolTipRTB.WordWrap = false;
 
-            rtfCacheList.Add(bbcodeText);
-            rtfCache[bbcodeText] = BBCodeUtils.bbCodeToRtf(bbcodeText, toolTipRTB);
-            return rtfCache[bbcodeText];
+            rtfCacheList.Add(bbCodeText);
+            var result = bbCodeText;
+            var matches = reEscapedSequence.Matches(bbCodeText);
+            if (matches.Count > 0) result = reEscapedSequence.Replace(result, "`__escaped_sequence__`");
+            result = BBCodeUtils.bbCodeToRtf(result, toolTipRTB);
+            if (matches.Count > 0)
+            {
+                var i  = 0;
+                result = reEscapedSequence.Replace(result, _ => matches[i++].Value);
+            }
+            rtfCache[bbCodeText] = result;
+            return result;
         }
 
         #endregion
-
     }
-
 }

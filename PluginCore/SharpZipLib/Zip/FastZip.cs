@@ -174,8 +174,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>The default interval is three seconds.</remarks>
         public TimeSpan ProgressInterval
         {
-            get { return progressInterval_; }
-            set { progressInterval_ = value; }
+            get => progressInterval_;
+            set => progressInterval_ = value;
         }
 
         #region Instance Fields
@@ -233,8 +233,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool CreateEmptyDirectories
         {
-            get { return createEmptyDirectories_; }
-            set { createEmptyDirectories_ = value; }
+            get => createEmptyDirectories_;
+            set => createEmptyDirectories_ = value;
         }
 
 #if !NETCF_1_0
@@ -243,8 +243,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public string Password
         {
-            get { return password_; }
-            set { password_ = value; }
+            get => password_;
+            set => password_ = value;
         }
 #endif
 
@@ -254,10 +254,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="EntryFactory"></seealso>
         public INameTransform NameTransform
         {
-            get { return entryFactory_.NameTransform; }
-            set {
-                entryFactory_.NameTransform = value;
-            }
+            get => entryFactory_.NameTransform;
+            set => entryFactory_.NameTransform = value;
         }
 
         /// <summary>
@@ -265,9 +263,9 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public IEntryFactory EntryFactory
         {
-            get { return entryFactory_; }
+            get => entryFactory_;
             set {
-                if ( value == null ) {
+                if ( value is null ) {
                     entryFactory_ = new ZipEntryFactory();
                 }
                 else {
@@ -289,8 +287,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </remarks>
         public UseZip64 UseZip64
         {
-            get { return useZip64_; }
-            set { useZip64_ = value; }
+            get => useZip64_;
+            set => useZip64_ = value;
         }
         
         /// <summary>
@@ -300,12 +298,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>The default value is false.</remarks>
         public bool RestoreDateTimeOnExtract
         {
-            get {
-                return restoreDateTimeOnExtract_;
-            }
-            set {
-                restoreDateTimeOnExtract_ = value;
-            }
+            get => restoreDateTimeOnExtract_;
+            set => restoreDateTimeOnExtract_ = value;
         }
         
         /// <summary>
@@ -314,8 +308,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool RestoreAttributesOnExtract
         {
-            get { return restoreAttributesOnExtract_; }
-            set { restoreAttributesOnExtract_ = value; }
+            get => restoreAttributesOnExtract_;
+            set => restoreAttributesOnExtract_ = value;
         }
         #endregion
         
@@ -377,9 +371,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 
                 outputStream_.UseZip64 = UseZip64;
                 FileSystemScanner scanner = new FileSystemScanner(fileFilter, directoryFilter);
-                scanner.ProcessFile += new ProcessFileHandler(ProcessFile);
+                scanner.ProcessFile += ProcessFile;
                 if ( this.CreateEmptyDirectories ) {
-                    scanner.ProcessDirectory += new ProcessDirectoryHandler(ProcessDirectory);
+                    scanner.ProcessDirectory += ProcessDirectory;
                 }
                 
                 if (events_ != null) {
@@ -444,8 +438,8 @@ namespace ICSharpCode.SharpZipLib.Zip
                        string fileFilter, string directoryFilter, bool restoreDateTime,
                        bool isStreamOwner)
         {
-            if ((overwrite == Overwrite.Prompt) && (confirmDelegate == null)) {
-                throw new ArgumentNullException("confirmDelegate");
+            if ((overwrite == Overwrite.Prompt) && (confirmDelegate is null)) {
+                throw new ArgumentNullException(nameof(confirmDelegate));
             }
 
             continueRunning_ = true;
@@ -480,9 +474,6 @@ namespace ICSharpCode.SharpZipLib.Zip
                             ExtractEntry(entry);
                         }
                     }
-                    else {
-                        // Do nothing for volume labels etc...
-                    }
                 }
             }
         }
@@ -492,10 +483,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         void ProcessDirectory(object sender, DirectoryEventArgs e)
         {
             if ( !e.HasMatchingFiles && CreateEmptyDirectories ) {
-                if ( events_ != null ) {
-                    events_.OnProcessDirectory(e.Name, e.HasMatchingFiles);
-                }
-                
+                events_?.OnProcessDirectory(e.Name, e.HasMatchingFiles);
+
                 if ( e.ContinueRunning ) {
                     if (e.Name != sourceDirectory_) {
                         ZipEntry entry = entryFactory_.MakeDirectoryEntry(e.Name);
@@ -507,20 +496,18 @@ namespace ICSharpCode.SharpZipLib.Zip
         
         void ProcessFile(object sender, ScanEventArgs e)
         {
-            if ( (events_ != null) && (events_.ProcessFile != null) ) {
-                events_.ProcessFile(sender, e);
-            }
-            
+            events_?.ProcessFile?.Invoke(sender, e);
+
             if ( e.ContinueRunning ) {
-                try {
+                try
+                {
                     // The open below is equivalent to OpenRead which gaurantees that if opened the 
                     // file will not be changed by subsequent openers, but precludes opening in some cases
                     // were it could succeed.
-                    using (FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                        ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
-                        outputStream_.PutNextEntry(entry);
-                        AddFileContents(e.Name, stream);
-                    }
+                    using FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
+                    outputStream_.PutNextEntry(entry);
+                    AddFileContents(e.Name, stream);
                 }
                 catch(Exception ex) {
                     if (events_ != null) {
@@ -536,15 +523,15 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void AddFileContents(string name, Stream stream)
         {
-            if( stream==null ) {
-                throw new ArgumentNullException("stream");
+            if( stream is null ) {
+                throw new ArgumentNullException(nameof(stream));
             }
 
-            if( buffer_==null ) {
+            if( buffer_ is null ) {
                 buffer_=new byte[4096];
             }
 
-            if( (events_!=null)&&(events_.Progress!=null) ) {
+            if( events_?.Progress != null ) {
                 StreamUtils.Copy(stream, outputStream_, buffer_,
                     events_.Progress, events_.ProgressInterval, this, name);
             }
@@ -579,10 +566,10 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if ( continueRunning_ ) {
                     try {
                         using ( FileStream outputStream = File.Create(targetName) ) {
-                            if ( buffer_ == null ) {
+                            if ( buffer_ is null ) {
                                 buffer_ = new byte[4096];
                             }
-                            if ((events_ != null) && (events_.Progress != null))
+                            if (events_?.Progress != null)
                             {
                                 StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_,
                                     events_.Progress, events_.ProgressInterval, this, entry.Name, entry.Size);
@@ -715,7 +702,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         bool restoreDateTimeOnExtract_;
         bool restoreAttributesOnExtract_;
         bool createEmptyDirectories_;
-        FastZipEvents events_;
+        readonly FastZipEvents events_;
         IEntryFactory entryFactory_ = new ZipEntryFactory();
         INameTransform extractNameTransform_;
         UseZip64 useZip64_=UseZip64.Dynamic;

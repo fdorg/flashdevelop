@@ -2,18 +2,10 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
     <AssemblyName>PluginCore</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -21,16 +13,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>PluginCore</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
     <SignAssembly>false</SignAssembly>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -68,6 +52,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>Bin\Release\</OutputPath>
@@ -90,12 +75,14 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>Bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -105,12 +92,12 @@
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -310,12 +297,20 @@
     </Compile>
     <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
+    <Compile Include="PluginCore\Collections\FixedSizeQueue.cs" />
+    <Compile Include="PluginCore\Controls\CodeTip.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
     <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\MemoryMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\MemoryMessageBox.Designer.cs">
+      <DependentUpon>MemoryMessageBox.cs</DependentUpon>
     </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
@@ -339,6 +334,7 @@
     <Compile Include="PluginCore\Helpers\SnippetHelper.cs" />
     <Compile Include="PluginCore\Helpers\DrawHelper.cs" />
     <Compile Include="PluginCore\DataClasses.cs" />
+    <Compile Include="PluginCore\Helpers\ThemeHelper.cs" />
     <Compile Include="PluginCore\Localization\Attributes.cs" />
     <Compile Include="PluginCore\Localization\LocaleVersion.cs" />
     <Compile Include="PluginCore\Localization\TextHelper.cs" />
@@ -525,6 +521,42 @@
     <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="TabControl\CustomTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\NativeMethods.cs" />
+    <Compile Include="TabControl\TabStyle.cs" />
+    <Compile Include="TabControl\TabStyleProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleFlatProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleAngledProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleChromeProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleDefaultProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleIE8Provider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleNoneProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleRoundedProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleVisualStudioProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\TabStyleProviders\TabStyleVS2010Provider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabControl\ThemedColors.cs" />
     <Compile Include="UdeLibrary\Ude.Core\Big5Prober.cs" />
     <Compile Include="UdeLibrary\Ude.Core\BitPackage.cs" />
     <Compile Include="UdeLibrary\Ude.Core\CharDistributionAnalyser.cs" />
@@ -573,19 +605,19 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
+    <EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resX">
+    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\en_US.resX">
+    <EmbeddedResource Include="PluginCore\Resources\en_US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\eu_ES.resX">
+    <EmbeddedResource Include="PluginCore\Resources\eu_ES.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ja_JP.resX">
+    <EmbeddedResource Include="PluginCore\Resources\ja_JP.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\MessageBarClose.bmp" />
@@ -646,6 +678,7 @@
   <ItemGroup>
     <Compile Include="PluginCore\Helpers\PlatformHelper.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

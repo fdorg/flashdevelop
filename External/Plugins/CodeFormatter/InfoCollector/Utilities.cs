@@ -1,11 +1,10 @@
-using System;
 using System.Text;
 
 namespace CodeFormatter.InfoCollector
 {
     public class Utilities
     {
-        public static String convertCarriageReturnsToLineFeeds(String source)
+        public static string convertCarriageReturnsToLineFeeds(string source)
         {
             // We know the result string will be same length
             StringBuilder buffer = new StringBuilder(source.Length);
@@ -30,7 +29,7 @@ namespace CodeFormatter.InfoCollector
 
         public static bool isJavaIdentifierPart(char ch)
         {
-            return Char.IsLetterOrDigit(ch) || ch == '_' || ch == '$';
+            return char.IsLetterOrDigit(ch) || ch == '_' || ch == '$';
         }
 
     }

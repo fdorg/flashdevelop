@@ -1,53 +1,41 @@
-using System;
 using System.IO;
 using System.Text;
-using ASCompletion.Context;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Utilities;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
     public class SurroundWithCommand
     {
+        public const string SurroundFolder = "surround";
+        public const string SurroundExt = ".fds";
+
         protected string SnippetCode;
 
         public SurroundWithCommand(string snippet)
         {
-            this.SnippetCode = snippet;
+            SnippetCode = snippet;
         }
 
-        public void Execute()
-        {
-            ExecutionImplementation();
-        }
+        public void Execute() => ExecutionImplementation();
 
         /// <summary>
         /// The actual process implementation
         /// </summary>
         protected void ExecutionImplementation()
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             sci.BeginUndoAction();
             try
             {
                 string selection = sci.SelText;
-                if (string.IsNullOrEmpty(selection))
-                {
-                    return;
-                }
+                if (string.IsNullOrEmpty(selection)) return;
+                if (selection.TrimStart().Length == 0) return;
 
-                if (selection.TrimStart().Length == 0)
-                {
-                    return;
-                }
-
-                sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length,
-                    sci.SelectionEnd);
+                sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length, sci.SelectionEnd);
                 sci.CurrentPos = sci.SelectionEnd;
-                selection = sci.SelText;
-
+                
                 int lineStart = sci.LineFromPosition(sci.SelectionStart);
                 int lineEnd = sci.LineFromPosition(sci.SelectionEnd);
                 int firstLineIndent = sci.GetLineIndentation(lineStart);
@@ -94,26 +82,22 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public static String GetSnippet(String word, String syntax, Encoding current)
+        public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            string surroundFolder = "surround";
-
-            String globalDir = Path.Combine(PathHelper.SnippetDir, surroundFolder);
-            String global = Path.Combine(globalDir, word + ".fds");
-            String specificDir = Path.Combine(PathHelper.SnippetDir, syntax);
-            specificDir = Path.Combine(specificDir, surroundFolder);
-            String specific = Path.Combine(specificDir, word + ".fds");
+            string specific = Path.Combine(PathHelper.SnippetDir, syntax, SurroundFolder, word + SurroundExt);
+            string global = Path.Combine(PathHelper.SnippetDir, SurroundFolder, word + SurroundExt);
             if (File.Exists(specific))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else if (File.Exists(global))
+
+            if (File.Exists(global))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else return null;
+            return null;
         }
 
     }

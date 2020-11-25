@@ -38,7 +38,6 @@ namespace AirProperties.Controls
                 public EventArgs EventArgs { get; set; }
 
                 public CCBoxEventArgs(EventArgs e, bool assignValues)
-                    : base()
                 {
                     EventArgs = e;
                     AssignValues = assignValues;
@@ -55,10 +54,9 @@ namespace AirProperties.Controls
                 private int curSelIndex = -1;
 
                 public CustomCheckedListBox()
-                    : base()
                 {
-                    this.SelectionMode = SelectionMode.One;
-                    this.HorizontalScrollbar = true;
+                    SelectionMode = SelectionMode.One;
+                    HorizontalScrollbar = true;
                 }
                 /// <summary>
                 /// Intercepts the keyboard input, [Enter] confirms a selection and [Esc] cancels it.
@@ -69,14 +67,14 @@ namespace AirProperties.Controls
                     if (e.KeyCode == Keys.Enter)
                     {
                         // Enact selection.
-                        ((CheckedComboBox.Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, true));
+                        ((Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, true));
                         e.Handled = true;
 
                     }
                     else if (e.KeyCode == Keys.Escape)
                     {
                         // Cancel selection.
-                        ((CheckedComboBox.Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, false));
+                        ((Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, false));
                         e.Handled = true;
 
                     }
@@ -122,7 +120,7 @@ namespace AirProperties.Controls
 
             // ********************************************* Data *********************************************
 
-            private CheckedComboBox ccbParent;
+            private readonly CheckedComboBox ccbParent;
 
             // Keeps track of whether checked item(s) changed, hence the value of the CheckedComboBox as a whole changed.
             // This is simply done via maintaining the old string-representation of the value(s) and the new one and comparing them!
@@ -136,10 +134,8 @@ namespace AirProperties.Controls
                     {
                         return (oldStrValue.CompareTo(newStrValue) != 0);
                     }
-                    else
-                    {
-                        return (oldStrValue.Length != newStrValue.Length);
-                    }
+
+                    return (oldStrValue.Length != newStrValue.Length);
                 }
             }
 
@@ -152,8 +148,8 @@ namespace AirProperties.Controls
             private CustomCheckedListBox cclb;
             public CustomCheckedListBox List
             {
-                get { return cclb; }
-                set { cclb = value; }
+                get => cclb;
+                set => cclb = value;
             }
 
             // ********************************************* Construction *********************************************
@@ -162,9 +158,9 @@ namespace AirProperties.Controls
             {
                 this.ccbParent = ccbParent;
                 InitializeComponent();
-                this.ShowInTaskbar = false;
+                ShowInTaskbar = false;
                 // Add a handler to notify our parent of ItemCheck events.
-                this.cclb.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.cclb_ItemCheck);
+                cclb.ItemCheck += cclb_ItemCheck;
             }
 
             // ********************************************* Methods *********************************************
@@ -172,33 +168,33 @@ namespace AirProperties.Controls
             // Create a CustomCheckedListBox which fills up the entire form area.
             private void InitializeComponent()
             {
-                this.cclb = new CustomCheckedListBox();
-                this.SuspendLayout();
+                cclb = new CustomCheckedListBox();
+                SuspendLayout();
                 // 
                 // cclb
                 // 
-                this.cclb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-                this.cclb.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.cclb.FormattingEnabled = true;
-                this.cclb.Location = new System.Drawing.Point(0, 0);
-                this.cclb.Name = "cclb";
-                this.cclb.Size = new System.Drawing.Size(47, 15);
-                this.cclb.TabIndex = 0;
+                cclb.BorderStyle = BorderStyle.FixedSingle;
+                cclb.Dock = DockStyle.Fill;
+                cclb.FormattingEnabled = true;
+                cclb.Location = new Point(0, 0);
+                cclb.Name = "cclb";
+                cclb.Size = new Size(47, 15);
+                cclb.TabIndex = 0;
                 // 
                 // Dropdown
                 // 
-                this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.BackColor = System.Drawing.SystemColors.Menu;
-                this.ClientSize = new System.Drawing.Size(47, 16);
-                this.ControlBox = false;
-                this.Controls.Add(this.cclb);
-                this.ForeColor = System.Drawing.SystemColors.ControlText;
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                this.MinimizeBox = false;
-                this.Name = "ccbParent";
-                this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-                this.ResumeLayout(false);
+                AutoScaleDimensions = new SizeF(6F, 13F);
+                AutoScaleMode = AutoScaleMode.Font;
+                BackColor = SystemColors.Menu;
+                ClientSize = new Size(47, 16);
+                ControlBox = false;
+                Controls.Add(cclb);
+                ForeColor = SystemColors.ControlText;
+                FormBorderStyle = FormBorderStyle.None;
+                MinimizeBox = false;
+                Name = "ccbParent";
+                StartPosition = FormStartPosition.Manual;
+                ResumeLayout(false);
             }
 
             public string GetCheckedItemsStringValue()
@@ -249,7 +245,7 @@ namespace AirProperties.Controls
                 dropdownClosed = true;
                 // Set the focus to our parent CheckedComboBox and hide the dropdown check list.
                 ccbParent.Focus();
-                this.Hide();
+                Hide();
                 // Notify CheckedComboBox that its dropdown is closed. (NOTE: it does not matter which parameters we pass to
                 // OnDropDownClosed() as long as the argument is CCBoxEventArgs so that the method knows the notification has
                 // come from our code and not from the framework).
@@ -289,10 +285,7 @@ namespace AirProperties.Controls
 
             private void cclb_ItemCheck(object sender, ItemCheckEventArgs e)
             {
-                if (ccbParent.ItemCheck != null)
-                {
-                    ccbParent.ItemCheck(sender, e);
-                }
+                ccbParent.ItemCheck?.Invoke(sender, e);
             }
 
         } // end internal class Dropdown
@@ -301,9 +294,9 @@ namespace AirProperties.Controls
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private readonly System.ComponentModel.IContainer components = null;
         // A form-derived object representing the drop-down list of the checked combo box.
-        private Dropdown dropdown;
+        private readonly Dropdown dropdown;
 
         // The valueSeparator character(s) between the ticked elements as they appear in the 
         // text portion of the CheckedComboBox.
@@ -311,35 +304,23 @@ namespace AirProperties.Controls
 
         public bool CheckOnClick
         {
-            get { return dropdown.List.CheckOnClick; }
-            set { dropdown.List.CheckOnClick = value; }
+            get => dropdown.List.CheckOnClick;
+            set => dropdown.List.CheckOnClick = value;
         }
 
         public new string DisplayMember
         {
-            get { return dropdown.List.DisplayMember; }
-            set { dropdown.List.DisplayMember = value; }
+            get => dropdown.List.DisplayMember;
+            set => dropdown.List.DisplayMember = value;
         }
 
-        public new CheckedListBox.ObjectCollection Items
-        {
-            get { return dropdown.List.Items; }
-        }
+        public new CheckedListBox.ObjectCollection Items => dropdown.List.Items;
 
-        public CheckedListBox.CheckedItemCollection CheckedItems
-        {
-            get { return dropdown.List.CheckedItems; }
-        }
+        public CheckedListBox.CheckedItemCollection CheckedItems => dropdown.List.CheckedItems;
 
-        public CheckedListBox.CheckedIndexCollection CheckedIndices
-        {
-            get { return dropdown.List.CheckedIndices; }
-        }
+        public CheckedListBox.CheckedIndexCollection CheckedIndices => dropdown.List.CheckedIndices;
 
-        public bool ValueChanged
-        {
-            get { return dropdown.ValueChanged; }
-        }
+        public bool ValueChanged => dropdown.ValueChanged;
 
         /*protected override CreateParams CreateParams
         {
@@ -359,19 +340,18 @@ namespace AirProperties.Controls
         // ******************************** Construction ********************************
 
         public CheckedComboBox()
-            : base()
         {
             // We want to do the drawing of the dropdown.
-            this.DrawMode = DrawMode.Normal;
+            DrawMode = DrawMode.Normal;
             // Default value separator.
-            this.ValueSeparator = ", ";
+            ValueSeparator = ", ";
             // This prevents the actual ComboBox dropdown to show, although it's not strickly-speaking necessary.
             // But including this remove a slight flickering just before our dropdown appears (which is caused by
             // the empty-dropdown list of the ComboBox which is displayed for fractions of a second).
-            this.DropDownHeight = 1;
-            this.dropdown = new Dropdown(this);
+            DropDownHeight = 1;
+            dropdown = new Dropdown(this);
             // CheckOnClick style for the dropdown (NOTE: must be set after dropdown is created).
-            this.CheckOnClick = true;
+            CheckOnClick = true;
         }
 
         // ******************************** Operations ********************************
@@ -382,9 +362,9 @@ namespace AirProperties.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -393,18 +373,18 @@ namespace AirProperties.Controls
         {
             if (!dropdown.Visible)
             {
-                Rectangle rect = RectangleToScreen(this.ClientRectangle);
-                dropdown.Location = new Point(rect.X, rect.Y + this.Size.Height);
+                Rectangle rect = RectangleToScreen(ClientRectangle);
+                dropdown.Location = new Point(rect.X, rect.Y + Size.Height);
                 int count = dropdown.List.Items.Count;
-                if (count > this.MaxDropDownItems)
+                if (count > MaxDropDownItems)
                 {
-                    count = this.MaxDropDownItems;
+                    count = MaxDropDownItems;
                 }
                 else if (count == 0)
                 {
                     count = 1;
                 }
-                dropdown.Size = new Size(this.Size.Width, (dropdown.List.ItemHeight) * count + 2);
+                dropdown.Size = new Size(Size.Width, (dropdown.List.ItemHeight) * count + 2);
                 dropdown.List.Focus();
                 dropdown.Show(this);
             }
@@ -450,52 +430,44 @@ namespace AirProperties.Controls
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
-            else
-            {
-                return dropdown.List.GetItemChecked(index);
-            }
+
+            return dropdown.List.GetItemChecked(index);
         }
 
         public void SetItemChecked(int index, bool isChecked)
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
-            else
-            {
-                dropdown.List.SetItemChecked(index, isChecked);
-                // Need to update the Text.
-                SetText(dropdown.GetCheckedItemsStringValue());
-            }
+
+            dropdown.List.SetItemChecked(index, isChecked);
+            // Need to update the Text.
+            SetText(dropdown.GetCheckedItemsStringValue());
         }
 
         public CheckState GetItemCheckState(int index)
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
-            else
-            {
-                return dropdown.List.GetItemCheckState(index);
-            }
+
+            return dropdown.List.GetItemCheckState(index);
         }
 
         public void SetItemCheckState(int index, CheckState state)
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
-            else
-            {
-                dropdown.List.SetItemCheckState(index, state);
-                // Need to update the Text.
-                SetText(dropdown.GetCheckedItemsStringValue());
-            }
+
+            dropdown.List.SetItemCheckState(index, state);
+            // Need to update the Text.
+            SetText(dropdown.GetCheckedItemsStringValue());
         }
 
         /*protected override void OnDrawItem(DrawItemEventArgs e)

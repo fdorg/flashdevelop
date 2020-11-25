@@ -12,9 +12,9 @@ namespace ASCompletion.Commands
 {
     public class CallFlashIDE
     {
-        private delegate void RunBackgroundInvoker(string exe, string args);
-
-        static readonly private string[] FLASHIDE_PATH = {
+        static readonly string[] FLASHIDE_PATH = {
+            @"C:\Program Files\Adobe\Adobe Animate CC 2017\Animate.exe",
+            @"C:\Program Files (x86)\Adobe\Adobe Animate CC 2017\Animate.exe",
             @"C:\Program Files\Adobe\Adobe Animate CC 2016\Animate.exe",
             @"C:\Program Files (x86)\Adobe\Adobe Animate CC 2016\Animate.exe",
             @"C:\Program Files\Adobe\Adobe Animate CC 2015\Animate.exe",
@@ -32,13 +32,13 @@ namespace ASCompletion.Commands
             @"C:\Program Files\Macromedia\Flash MX 2004\Flash.exe",
             @"C:\Program Files (x86)\Macromedia\Flash MX 2004\Flash.exe"
         };
-        static private DateTime lastRun;
+        private static DateTime lastRun;
 
         /// <summary>
         /// Return the path to the most recent Flash.exe 
         /// </summary>
         /// <returns></returns>
-        static public string FindFlashIDE()
+        public static string FindFlashIDE()
         {
             return FindFlashIDE(false);
         }
@@ -48,7 +48,7 @@ namespace ASCompletion.Commands
         /// </summary>
         /// <param name="AS3CapableOnly">Only AS3-capable authoring</param>
         /// <returns></returns>
-        static public string FindFlashIDE(bool AS3CapableOnly)
+        public static string FindFlashIDE(bool AS3CapableOnly)
         {
             string found = null;
             foreach (string flashexe in FLASHIDE_PATH)
@@ -68,22 +68,22 @@ namespace ASCompletion.Commands
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns>Operation successful</returns>
-        static public bool Run(string pathToIDE, string cmdData)
+        public static bool Run(string pathToIDE, string cmdData)
         {
             if (BridgeManager.Active) pathToIDE = "Flash";
             else
             {
-                if (pathToIDE != null && Directory.Exists(pathToIDE))
+                if (Directory.Exists(pathToIDE))
                 {
                     var exe = Path.Combine(pathToIDE, "Animate.exe");
                     if (!File.Exists(exe)) exe = Path.Combine(pathToIDE, "Flash.exe");
                     pathToIDE = exe;
                 }
-                if (pathToIDE == null || !File.Exists(pathToIDE))
+                if (!File.Exists(pathToIDE))
                 {
-                    string msg = TextHelper.GetString("Info.ConfigureFlashPath");
-                    string title = TextHelper.GetString("Info.ConfigurationRequired");
-                    DialogResult result = MessageBox.Show(msg, title, MessageBoxButtons.OKCancel);
+                    var msg = TextHelper.GetString("Info.ConfigureFlashPath");
+                    var title = TextHelper.GetString("Info.ConfigurationRequired");
+                    var result = MessageBox.Show(msg, title, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK)
                     {
                         PluginBase.MainForm.ShowSettingsDialog("ASCompletion", "Flash");
@@ -100,7 +100,7 @@ namespace ASCompletion.Commands
             if (cmdData != null)
             {
                 args = PluginBase.MainForm.ProcessArgString(cmdData);
-                if (args.IndexOf('"') < 0) args = '"' + args + '"';
+                if (!args.Contains('"')) args = '"' + args + '"';
             }
 
             // execution

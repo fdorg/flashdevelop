@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using PluginCore;
@@ -10,81 +11,55 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Projects;
 using SourceControl.Actions;
+using SourceControl.Helpers;
 
 namespace SourceControl
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "SourceControl";
-        private String pluginGuid = "42ac7fab-421b-1f38-a985-5735468ac489";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Source Control integration for FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private static Settings settingObject;
-        private String settingFilename;
-        private Boolean ready;
+        private string settingFilename;
+        private bool ready;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(SourceControl);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "42ac7fab-421b-1f38-a985-5735468ac489";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Source Control integration for FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return settingObject; }
-        }
-        
+        public object Settings => SCSettings;
+
         #endregion
-        
+
         #region Required Methods
         
         /// <summary>
@@ -92,9 +67,9 @@ namespace SourceControl
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
         
         /// <summary>
@@ -103,26 +78,26 @@ namespace SourceControl
         public void Dispose()
         {
             ProjectWatcher.Dispose();
-            this.SaveSettings();
+            SaveSettings();
         }
         
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.UIStarted:
                     ProjectWatcher.Init();
-                    this.ready = true;
+                    ready = true;
                     break;
 
                 // Catches Project change event and display the active project path
                 case EventType.Command:
-                    if (!this.ready) return;
-                    DataEvent de = e as DataEvent;
-                    String cmd = de.Action;
+                    if (!ready) return;
+                    DataEvent de = (DataEvent) e;
+                    string cmd = de.Action;
                     if (!cmd.StartsWithOrdinal("ProjectManager.")) return;
                     switch (cmd)
                     {
@@ -141,7 +116,7 @@ namespace SourceControl
                         case ProjectFileActionsEvents.FileBeforeRename:
                             try
                             {
-                                de.Handled = ProjectWatcher.HandleFileBeforeRename(de.Data as String);
+                                de.Handled = ProjectWatcher.HandleFileBeforeRename(de.Data as string);
                             }
                             catch (Exception ex)
                             {
@@ -153,7 +128,7 @@ namespace SourceControl
                         case ProjectFileActionsEvents.FileRename:
                             try
                             {
-                                de.Handled = ProjectWatcher.HandleFileRename(de.Data as String[]);
+                                de.Handled = ProjectWatcher.HandleFileRename(de.Data as string[]);
                             }
                             catch (Exception ex)
                             {
@@ -165,7 +140,7 @@ namespace SourceControl
                         case ProjectFileActionsEvents.FileDeleteSilent:
                             try
                             {
-                                de.Handled = ProjectWatcher.HandleFileDelete(de.Data as String[], false);
+                                de.Handled = ProjectWatcher.HandleFileDelete(de.Data as string[], false);
                             }
                             catch (Exception ex)
                             {
@@ -173,11 +148,17 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
+                        case ProjectManagerEvents.FilePasted: //ProjectFileActionsEvents.FilePaste
+                            //cannot distinguish between copy and cut, so assume it was copied
+                            var files = de.Data as Hashtable;
+                            ProjectWatcher.HandleFileCopied((string)files["fromPath"], (string)files["toPath"]);
+                            break;
+
 
                         case ProjectFileActionsEvents.FileDelete:
                             try
                             {
-                                de.Handled = ProjectWatcher.HandleFileDelete(de.Data as String[], true);
+                                de.Handled = ProjectWatcher.HandleFileDelete(de.Data as string[], true);
                             }
                             catch (Exception ex)
                             {
@@ -185,11 +166,11 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
-
-                        case ProjectFileActionsEvents.FileMove:
+                            
+                        case ProjectFileActionsEvents.FileMove: //this is never called, because CodeRefactor catches it before us
                             try
                             {
-                                de.Handled = ProjectWatcher.HandleFileMove(de.Data as String[]);
+                                de.Handled = ProjectWatcher.HandleFileMove(de.Data as string[]);
                             }
                             catch (Exception ex)
                             {
@@ -198,6 +179,18 @@ namespace SourceControl
                             }
                             break;
 
+                        case ProjectManagerEvents.FileMoved:
+                            try
+                            {
+                                var file = de.Data as Hashtable;
+                                ProjectWatcher.HandleFileMoved((string)file["fromPath"], (string)file["toPath"]);
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorManager.ShowError(ex);
+                                de.Handled = true;
+                            }
+                            break;
                         case ProjectManagerEvents.BuildProject:
                             try
                             {
@@ -238,7 +231,7 @@ namespace SourceControl
                 case EventType.FileOpen:
                     try
                     {
-                        e.Handled = ProjectWatcher.HandleFileOpen((e as TextEvent).Value);
+                        e.Handled = ProjectWatcher.HandleFileOpen(((TextEvent) e).Value);
                     }
                     catch (Exception ex)
                     {
@@ -249,7 +242,7 @@ namespace SourceControl
                 case EventType.FileReload:
                     try
                     {
-                        e.Handled = ProjectWatcher.HandleFileReload((e as TextEvent).Value);
+                        e.Handled = ProjectWatcher.HandleFileReload(((TextEvent) e).Value);
                     }
                     catch (Exception ex)
                     {
@@ -260,7 +253,7 @@ namespace SourceControl
                 case EventType.FileModifyRO:
                     try
                     {
-                        e.Handled = ProjectWatcher.HandleFileModifyRO((e as TextEvent).Value);
+                        e.Handled = ProjectWatcher.HandleFileModifyRO(((TextEvent) e).Value);
                     }
                     catch (Exception ex)
                     {
@@ -272,13 +265,17 @@ namespace SourceControl
                 case EventType.FileTemplate:
                     try
                     {
-                        e.Handled = ProjectWatcher.HandleFileNew((e as TextEvent).Value);
+                        var file = ((TextEvent) e).Value;
+                        if (File.Exists(file)) e.Handled = ProjectWatcher.HandleFileNew(file);   
                     }
                     catch (Exception ex)
                     {
                         ErrorManager.ShowError(ex);
                         e.Handled = true;
                     }
+                    break;
+                case EventType.ApplyTheme:
+                    AnnotatedDocument.ApplyTheme();
                     break;
             }
         }
@@ -290,20 +287,17 @@ namespace SourceControl
         /// <summary>
         /// Acessor got the settings object
         /// </summary>
-        public static Settings SCSettings 
-        { 
-            get { return settingObject; }
-        }
+        public static Settings SCSettings { get; set; }
 
         /// <summary>
         /// Initializes important variables
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "SourceControl");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(SourceControl));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -311,7 +305,7 @@ namespace SourceControl
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate | EventType.ApplyTheme);
         }
 
         /// <summary>
@@ -319,28 +313,24 @@ namespace SourceControl
         /// </summary>
         public void LoadSettings()
         {
-            settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
-                settingObject = (Settings)obj;
-            }
+            SCSettings = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else SCSettings = ObjectSerializer.Deserialize(settingFilename, SCSettings);
 
             #region Detect Git
 
             // Try to find git path from program files
-            if (settingObject.GITPath == "git.exe")
+            if (SCSettings.GITPath == "git.exe")
             {
-                String gitPath = PathHelper.FindFromProgramFiles(@"Git\bin\git.exe");
-                if (File.Exists(gitPath)) settingObject.GITPath = gitPath;
+                var gitPath = PathHelper.FindFromProgramFiles(@"Git\bin\git.exe");
+                if (File.Exists(gitPath)) SCSettings.GITPath = gitPath;
 
             }
             // Try to find TortoiseProc path from program files
-            if (settingObject.TortoiseGITProcPath == "TortoiseGitProc.exe")
+            if (SCSettings.TortoiseGITProcPath == "TortoiseGitProc.exe")
             {
-                String torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
-                if (File.Exists(torProcPath)) settingObject.TortoiseGITProcPath = torProcPath;
+                string torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
+                if (File.Exists(torProcPath)) SCSettings.TortoiseGITProcPath = torProcPath;
             }
 
             #endregion
@@ -348,64 +338,57 @@ namespace SourceControl
             #region Detect SVN
 
             // Try to find svn path from: Tools/sliksvn/
-            if (settingObject.SVNPath == "svn.exe")
+            if (SCSettings.SVNPath == "svn.exe")
             {
-                String svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
-                if (PathHelper.ResolvePath(svnCmdPath) != null) settingObject.SVNPath = svnCmdPath;
+                string svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
+                if (PathHelper.ResolvePath(svnCmdPath) != null) SCSettings.SVNPath = svnCmdPath;
             }
             // Try to find sliksvn path from program files
-            if (settingObject.SVNPath == "svn.exe")
+            if (SCSettings.SVNPath == "svn.exe")
             {
-                String slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
-                if (File.Exists(slSvnPath)) settingObject.SVNPath = slSvnPath;
+                string slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
+                if (File.Exists(slSvnPath)) SCSettings.SVNPath = slSvnPath;
             }
             // Try to find svn from TortoiseSVN
-            if (settingObject.SVNPath == "svn.exe")
+            if (SCSettings.SVNPath == "svn.exe")
             {
-                String torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
-                if (File.Exists(torSvnPath)) settingObject.SVNPath = torSvnPath;
+                string torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
+                if (File.Exists(torSvnPath)) SCSettings.SVNPath = torSvnPath;
             }
             // Try to find TortoiseProc path from program files
-            if (settingObject.TortoiseSVNProcPath == "TortoiseProc.exe")
+            if (SCSettings.TortoiseSVNProcPath == "TortoiseProc.exe")
             {
-                String torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
-                if (File.Exists(torProcPath)) settingObject.TortoiseSVNProcPath = torProcPath;
+                string torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
+                if (File.Exists(torProcPath)) SCSettings.TortoiseSVNProcPath = torProcPath;
             }
 
             #endregion
 
-            CheckPathExists(settingObject.SVNPath, "TortoiseSVN (svn)");
-            CheckPathExists(settingObject.TortoiseSVNProcPath, "TortoiseSVN (Proc)");
-            CheckPathExists(settingObject.GITPath, "TortoiseGit (git)");
-            CheckPathExists(settingObject.TortoiseGITProcPath, "TortoiseGIT (Proc)");
-            CheckPathExists(settingObject.HGPath, "TortoiseHG (hg)");
-            CheckPathExists(settingObject.TortoiseHGProcPath, "TortoiseHG (Proc)");
+            CheckPathExists(SCSettings.SVNPath, "TortoiseSVN (svn)");
+            CheckPathExists(SCSettings.TortoiseSVNProcPath, "TortoiseSVN (Proc)");
+            CheckPathExists(SCSettings.GITPath, "TortoiseGit (git)");
+            CheckPathExists(SCSettings.TortoiseGITProcPath, "TortoiseGIT (Proc)");
+            CheckPathExists(SCSettings.HGPath, "TortoiseHG (hg)");
+            CheckPathExists(SCSettings.TortoiseHGProcPath, "TortoiseHG (Proc)");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private void CheckPathExists(String path, String name)
+        private void CheckPathExists(string path, string name)
         {
-            if (String.IsNullOrEmpty(path)) return;
+            if (string.IsNullOrEmpty(path)) return;
             if (!Path.IsPathRooted(path)) return;
-            if (!File.Exists(path))
-            {
-                String msg = String.Format(TextHelper.GetString("FlashDevelop.Info.InvalidToolPath"), name, "SourceControl") + ":\n" + path;
-                TraceManager.AddAsync(msg, -3);
-            }
+            if (File.Exists(path)) return;
+            var msg = string.Format(TextHelper.GetString("FlashDevelop.Info.InvalidToolPath"), name, "SourceControl") + ":\n" + path;
+            TraceManager.AddAsync(msg, -3);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, SCSettings);
 
         #endregion
-
     }
-    
 }

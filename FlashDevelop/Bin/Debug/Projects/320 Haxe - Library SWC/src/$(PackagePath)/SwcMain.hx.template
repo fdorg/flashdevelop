@@ -1,0 +1,12 @@
+package $(PackageName);
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+class SwcMain $(CSLB){
+	
+	static function main() $(CSLB){
+		// Entry point
+	}
+}

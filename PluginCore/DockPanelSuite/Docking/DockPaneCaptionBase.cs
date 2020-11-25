@@ -1,7 +1,5 @@
-using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace WeifenLuo.WinFormsUI.Docking
@@ -22,21 +20,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             SetStyle(ControlStyles.Selectable, false);
         }
 
-        private DockPane m_dockPane;
-        protected DockPane DockPane
-        {
-            get {   return m_dockPane;  }
-        }
+        private readonly DockPane m_dockPane;
+        protected DockPane DockPane => m_dockPane;
 
-        protected DockPane.AppearanceStyle Appearance
-        {
-            get {   return DockPane.Appearance; }
-        }
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
-        protected bool HasTabPageContextMenu
-        {
-            get { return DockPane.HasTabPageContextMenu; }
-        }
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
 
         protected void ShowTabPageContextMenu(Point position)
         {
@@ -83,11 +72,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DockPane.DockPanel.ActiveAutoHideContent = null;
                     return;
                 }
-
-                if (DockPane.IsFloat)
-                    DockPane.RestoreToPanel();
-                else
-                    DockPane.Float();
+                if (DockPane.DockPanel.AllowEndUserFloatChange)
+                {
+                    if (DockPane.IsFloat) DockPane.RestoreToPanel();
+                    else DockPane.Float();
+                }
             }
             base.WndProc(ref m);
         }

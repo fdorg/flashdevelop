@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.IO;
 using System.Diagnostics;
 using System.Threading;
@@ -13,7 +12,7 @@ namespace ProjectManager.Building
         public static bool Run(string fileName, string arguments, bool ignoreExitCode, bool mergeErrors)
         {
             // CrossOver native call
-            Boolean isNative = fileName == "FDEXE.sh" || Path.GetExtension(fileName) == ".command";
+            bool isNative = fileName == "FDEXE.sh" || Path.GetExtension(fileName) == ".command";
 
             Process process = new Process();
             process.StartInfo.UseShellExecute = false;
@@ -31,8 +30,8 @@ namespace ProjectManager.Building
             LineFilter stdoutFilter = new LineFilter(process.StandardOutput, Console.Out, false);
             LineFilter stderrFilter = new LineFilter(process.StandardError, Console.Error, mergeErrors);
 
-            Thread outThread = new Thread(new ThreadStart(stdoutFilter.Filter));
-            Thread errThread = new Thread(new ThreadStart(stderrFilter.Filter));
+            Thread outThread = new Thread(stdoutFilter.Filter);
+            Thread errThread = new Thread(stderrFilter.Filter);
 
             outThread.Start();
             errThread.Start();
@@ -50,11 +49,11 @@ namespace ProjectManager.Building
 
     class LineFilter
     {
-        static Regex reSplitError = new Regex(@"\.[a-z]+:[0-9]+$");
-        TextReader reader;
-        TextWriter writer;
-        bool mergeErrors;
-        string unsplit = null;
+        static readonly Regex reSplitError = new Regex(@"\.[a-z]+:[0-9]+$");
+        readonly TextReader reader;
+        readonly TextWriter writer;
+        readonly bool mergeErrors;
+        string unsplit;
         public int Lines;
 
         public LineFilter(TextReader reader, TextWriter writer, bool mergeErrors)
@@ -69,7 +68,7 @@ namespace ProjectManager.Building
             while (true)
             {
                 string line = reader.ReadLine();
-                if (line == null) break;
+                if (line is null) break;
 
                 if (mergeErrors)
                 {

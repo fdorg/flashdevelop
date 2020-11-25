@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Model;
 
@@ -22,7 +24,9 @@ namespace ASCompletion.Completion
         public bool hasClasses;
         public bool hasMultipleDefs;
         public bool hasExtends;
+        public string ExtendsKey;
         public bool hasImplements;
+        public string ImplementsKey;
         public bool hasInterfaces;
         public bool hasEnums;
         public bool hasTypeDefs;
@@ -40,6 +44,7 @@ namespace ASCompletion.Completion
         public bool hasStaticInheritance;
         public bool hasInference;
         public bool hasStringInterpolation;
+        public bool HasMultilineString;
         public bool checkFileName;
         public char hiddenPackagePrefix;
 
@@ -72,16 +77,18 @@ namespace ASCompletion.Completion
         public string objectKey;
         public string booleanKey;
         public string numberKey;
+        public string IntegerKey;
         public string stringKey;
         public string arrayKey;
         public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
-        public string[] typesPreKeys = new string[] { };
-        public string[] accessKeywords = new string[] { };
-        public string[] codeKeywords = new string[] { };
-        public string[] declKeywords = new string[] { };
-        public string[] typesKeywords = new string[] { };
+        public string[] typesPreKeys = Array.Empty<string>();
+        public string[] accessKeywords = Array.Empty<string>();
+        public string[] codeKeywords = Array.Empty<string>();
+        public string[] declKeywords = Array.Empty<string>();
+        public string[] typesKeywords = Array.Empty<string>();
+        public HashSet<string> Literals = new HashSet<string>();
         public string varKey;
         public string constKey;
         public string functionKey;
@@ -98,10 +105,20 @@ namespace ASCompletion.Completion
         public string inlineKey;
         public string namespaceKey;
         public string stringInterpolationQuotes = "";
+        public string ThisKey;
+        public string BaseKey;
 
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
         public MemberModel functionArguments;
+        public char[] SpecialPostfixOperators = Array.Empty<char>();
+        public string ConstructorKey;
+        public bool HasGenericsShortNotation;
+        public HashSet<char> ArithmeticOperators = new HashSet<char>();
+        public string[] IncrementDecrementOperators = Array.Empty<string>();
+        public string[] BitwiseOperators = Array.Empty<string>();
+        public string[] BooleanOperators = Array.Empty<string>();
+        public string[] TernaryOperators = Array.Empty<string>();
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')
@@ -110,10 +127,7 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         internal bool HasTypePreKey(string word)
         {
-            if (typesPreKeys != null)
-            foreach (string key in typesPreKeys)
-                if (key == word) return true;
-            return false;
+            return typesPreKeys != null && typesPreKeys.Any(it => it == word);
         }
 
         /// <summary>
@@ -123,8 +137,8 @@ namespace ASCompletion.Completion
         /// <returns>Keywords list</returns>
         internal List<string> GetDeclarationKeywords(string text, bool insideClass)
         {
-            List<string> access = new List<string>(accessKeywords);
-            List<string> members = new List<string>(declKeywords);
+            var result = new List<string>(accessKeywords);
+            var members = new List<string>(declKeywords);
             if (!insideClass) members.AddRange(typesKeywords);
 
             string foundMember = null;
@@ -142,9 +156,9 @@ namespace ASCompletion.Completion
                 }
                 foreach (string token in tokens)
                 {
-                    if (token.Length > 0 && access.Contains(token))
+                    if (token.Length > 0 && result.Contains(token))
                     {
-                        access.Remove(token);
+                        result.Remove(token);
                         if (token == overrideKey)
                         {
                             members.Clear();
@@ -152,9 +166,9 @@ namespace ASCompletion.Completion
                         }
                         else if (token == privateKey || token == internalKey || token == publicKey)
                         {
-                            if (privateKey != null) access.Remove(privateKey);
-                            if (internalKey != null) access.Remove(internalKey);
-                            if (publicKey != null) access.Remove(publicKey);
+                            if (privateKey != null) result.Remove(privateKey);
+                            if (internalKey != null) result.Remove(internalKey);
+                            if (publicKey != null) result.Remove(publicKey);
                         }
                         else 
                         {
@@ -165,23 +179,20 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (foundMember == null)
-            {
-                access.AddRange(members);
-            }
+            if (foundMember is null) result.AddRange(members);
             else if (foundMember == "class" || foundMember == "interface")
             {
-                if (hasExtends) access.Add("extends");
-                if (hasImplements && foundMember != "interface") access.Add("implements");
+                if (hasExtends) result.Add("extends");
+                if (hasImplements && foundMember != "interface") result.Add("implements");
             }
             else if (foundMember == "abstract")
             {
-                access.Add("to");
-                access.Add("from");
+                result.Add("to");
+                result.Add("from");
             }
 
-            access.Sort();
-            return access;
+            result.Sort();
+            return result;
         }
     }
 }

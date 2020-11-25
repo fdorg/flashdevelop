@@ -1,12 +1,13 @@
 :: Builds the binary locally and launches the installer
 
 :: Set paths
-set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
-set PATH=%PATH%;C:\Program Files\Git\bin\
-set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
-set PATH=%PATH%;C:\Program Files\7-Zip\
-set PATH=%PATH%;C:\Program Files (x86)\7-Zip\
-set PATH=%PATH%;C:\Program Files (x86)\NSIS
+:: set PATH=%PATH%;C:\Program Files (x86)\MSBuild\14.0\Bin\
+:: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin
+:: set PATH=%PATH%;C:\Program Files\Git\bin\
+:: set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
+:: set PATH=%PATH%;C:\Program Files\7-Zip\
+:: set PATH=%PATH%;C:\Program Files (x86)\7-Zip\
+:: set PATH=%PATH%;C:\Program Files (x86)\NSIS
 
 :: Need path up
 cd ..
@@ -112,5 +113,5 @@ start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit 0
 
 :error
-
+pause
 exit -1

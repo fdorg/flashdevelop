@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using PluginCore.Localization;
 using ProjectManager.Projects.Haxe;
 using PluginCore;
@@ -8,6 +9,7 @@ namespace HaXeContext
 {
     public delegate void ClasspathChangedEvent();
     public delegate void CompletionModeChangedEventHandler();
+    public delegate void UseGenericsShortNotationChangedEventHandler();
 
     [Serializable]
     public class HaXeSettings : ASCompletion.Settings.IContextSettings
@@ -17,15 +19,48 @@ namespace HaXeContext
 
         #region IContextSettings Documentation
 
-        const string DEFAULT_DOC_COMMAND = "http://www.google.com/search?q=$(ItmTypPkg)+$(ItmTypName)+$(ItmName)+site:http://api.haxe.org/";
+        const string DEFAULT_DOC_COMMAND = "http://www.google.com/search?q=$(ItmTypPkg)+$(ItmTypName)+$(ItmName)+Haxe";
         protected string documentationCommandLine = DEFAULT_DOC_COMMAND;
 
         [DisplayName("Documentation Command Line")]
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.DocumentationCommandLine"), DefaultValue(DEFAULT_DOC_COMMAND)]
         public string DocumentationCommandLine
         {
-            get { return documentationCommandLine; }
-            set { documentationCommandLine = value; }
+            get => documentationCommandLine;
+            set => documentationCommandLine = value;
+        }
+        
+        bool disableTypeDeclaration = false;
+
+        [DisplayName("Disable type declaration for variables")]
+        [LocalizedCategory("ASCompletion.Category.Generation")]
+        [DefaultValue(false)]
+        public bool DisableTypeDeclaration
+        {
+            get => disableTypeDeclaration;
+            set => disableTypeDeclaration = value;
+        }
+        
+        bool disableVoidTypeDeclaration = false;
+
+        [DisplayName("Disable void type declaration for functions")]
+        [LocalizedCategory("ASCompletion.Category.Generation")]
+        [DefaultValue(false)]
+        public bool DisableVoidTypeDeclaration
+        {
+            get => disableVoidTypeDeclaration;
+            set => disableVoidTypeDeclaration = value;
+        }
+
+        bool enableLeadingAsterisks = true;
+
+        [DisplayName("Enable Leading Asterisks")]
+        [Category("Documentation Generator")]
+        [DefaultValue(true)]
+        public bool EnableLeadingAsterisks
+        {
+            get => enableLeadingAsterisks;
+            set => enableLeadingAsterisks = value;
         }
 
         #endregion
@@ -42,7 +77,7 @@ namespace HaXeContext
         const bool DEFAULT_FIXPACKAGEAUTOMATICALLY = true;
 
         protected bool checkSyntaxOnSave = DEFAULT_CHECKSYNTAX;
-        private bool lazyClasspathExploration = DEFAULT_LAZYMODE;
+        bool lazyClasspathExploration = DEFAULT_LAZYMODE;
         protected bool completionListAllTypes = DEFAULT_LISTALL;
         protected bool completionShowQualifiedTypes = DEFAULT_QUALIFY;
         protected bool completionEnabled = DEFAULT_COMPLETIONENABLED;
@@ -53,42 +88,30 @@ namespace HaXeContext
         protected InstalledSDK[] installedSDKs = null;
 
         [Browsable(false)]
-        public string LanguageId
-        {
-            get { return "HAXE"; }
-        }
+        public string LanguageId => "HAXE";
 
         [Browsable(false)]
-        public string DefaultExtension
-        {
-            get { return ".hx"; }
-        }
+        public string DefaultExtension => ".hx";
 
         [Browsable(false)]
-        public string CheckSyntaxRunning
-        {
-            get { return TextHelper.GetString("Info.HaXeRunning"); }
-        }
+        public string CheckSyntaxRunning => TextHelper.GetString("Info.HaXeRunning");
 
         [Browsable(false)]
-        public string CheckSyntaxDone
-        {
-            get { return TextHelper.GetString("Info.HaXeDone"); }
-        }
+        public string CheckSyntaxDone => TextHelper.GetString("Info.HaXeDone");
 
         [DisplayName("Check Syntax On Save")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CheckSyntaxOnSave"), DefaultValue(DEFAULT_CHECKSYNTAX)]
         public bool CheckSyntaxOnSave
         {
-            get { return checkSyntaxOnSave; }
-            set { checkSyntaxOnSave = value; }
+            get => checkSyntaxOnSave;
+            set => checkSyntaxOnSave = value;
         }
 
         [DisplayName("User Classpath")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.UserClasspath")]
         public string[] UserClasspath
         {
-            get { return userClasspath; }
+            get => userClasspath;
             set
             {
                 userClasspath = value;
@@ -100,7 +123,7 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.HaXePath")]
         public InstalledSDK[] InstalledSDKs
         {
-            get { return installedSDKs; }
+            get => installedSDKs;
             set
             {
                 installedSDKs = value;
@@ -110,9 +133,7 @@ namespace HaXeContext
 
         public InstalledSDK GetDefaultSDK()
         {
-            if (installedSDKs == null || installedSDKs.Length == 0)
-                return InstalledSDK.INVALID_SDK;
-
+            if (installedSDKs.IsNullOrEmpty()) return InstalledSDK.INVALID_SDK;
             foreach (InstalledSDK sdk in installedSDKs)
                 if (sdk.IsValid) return sdk;
             return InstalledSDK.INVALID_SDK;
@@ -122,16 +143,16 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionEnabled"), DefaultValue(DEFAULT_COMPLETIONENABLED)]
         public bool CompletionEnabled
         {
-            get { return completionEnabled; }
-            set { completionEnabled = value; }
+            get => completionEnabled;
+            set => completionEnabled = value;
         }
 
         [DisplayName("Generate Imports")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.GenerateImports"), DefaultValue(DEFAULT_GENERATEIMPORTS)]
         public bool GenerateImports
         {
-            get { return generateImports; }
-            set { generateImports = value; }
+            get => generateImports;
+            set => generateImports = value;
         }
 
         /// <summary>
@@ -141,8 +162,8 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionListAllTypes"), DefaultValue(DEFAULT_LISTALL)]
         public bool CompletionListAllTypes
         {
-            get { return completionListAllTypes; }
-            set { completionListAllTypes = value; }
+            get => completionListAllTypes;
+            set => completionListAllTypes = value;
         }
 
         /// <summary>
@@ -152,8 +173,8 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionShowQualifiedTypes"), DefaultValue(DEFAULT_QUALIFY)]
         public bool CompletionShowQualifiedTypes
         {
-            get { return completionShowQualifiedTypes; }
-            set { completionShowQualifiedTypes = value; }
+            get => completionShowQualifiedTypes;
+            set => completionShowQualifiedTypes = value;
         }
 
         /// <summary>
@@ -163,54 +184,63 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.LazyClasspathExploration"), DefaultValue(DEFAULT_LAZYMODE)]
         public bool LazyClasspathExploration
         {
-            get { return lazyClasspathExploration; }
-            set { lazyClasspathExploration = value; }
+            get => lazyClasspathExploration;
+            set => lazyClasspathExploration = value;
         }
 
         [DisplayName("Play After Build")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.PlayAfterBuild"), DefaultValue(DEFAULT_PLAY)]
         public bool PlayAfterBuild
         {
-            get { return playAfterBuild; }
-            set { playAfterBuild = value; }
+            get => playAfterBuild;
+            set => playAfterBuild = value;
         }
 
         [DisplayName("Fix Package Automatically")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.FixPackageAutomatically"), DefaultValue(DEFAULT_FIXPACKAGEAUTOMATICALLY)]
         public bool FixPackageAutomatically
         {
-            get { return fixPackageAutomatically; }
-            set { fixPackageAutomatically = value; }
+            get => fixPackageAutomatically;
+            set => fixPackageAutomatically = value;
         }
 
         #endregion
 
-        #region haXe specific members
+        #region Haxe specific members
 
         [field: NonSerialized]
         public event CompletionModeChangedEventHandler CompletionModeChanged;
 
-        private const int DEFAULT_COMPLETION_SERVER_PORT = 6000;
+        [field: NonSerialized]
+        public event UseGenericsShortNotationChangedEventHandler UseGenericsShortNotationChanged;
+
+        const int DEFAULT_COMPLETION_SERVER_PORT = 6000;
         const int DEFAULT_FLASHVERSION = 10;
         const string DEFAULT_HAXECHECKPARAMS = "";
-        private const HaxeCompletionModeEnum DEFAULT_HAXECOMPLETIONMODE = HaxeCompletionModeEnum.Compiler;
+        const HaxeCompletionModeEnum DEFAULT_HAXECOMPLETIONMODE = HaxeCompletionModeEnum.Compiler;
+
         const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
         const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         const bool DEFAULT_EXPORTHXML = false;
+        const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
+        const bool DEFAULT_USEGENERICSSHORTNOTATION = true;
+        const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage | CompletionFeatures.EnableForFindAllReferences;
 
-        private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
-        private int flashVersion = 10;
-        private string haXeCheckParameters = DEFAULT_HAXECHECKPARAMS;
-        private bool disableMixedCompletion = DEFAULT_DISABLEMIXEDCOMPLETION;
-        private bool disableCompletionOnDemand = DEFAULT_DISABLECOMPLETIONONDEMAND;
-        private bool exportHXML = DEFAULT_EXPORTHXML;
-        private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
+        int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
+        int flashVersion = 10;
+        string haXeCheckParameters = DEFAULT_HAXECHECKPARAMS;
+        bool disableMixedCompletion = DEFAULT_DISABLEMIXEDCOMPLETION;
+        bool disableCompletionOnDemand = DEFAULT_DISABLECOMPLETIONONDEMAND;
+        bool exportHXML = DEFAULT_EXPORTHXML;
+        HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
+        bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
+        bool useGenericsShortNotation = DEFAULT_USEGENERICSSHORTNOTATION;
 
         [DisplayName("Default Flash Version")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
         public int DefaultFlashVersion
         {
-            get { return flashVersion; }
+            get => flashVersion;
             set
             {
                 if (value == flashVersion) return;
@@ -226,15 +256,15 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.HaXeCheckParameters"), DefaultValue(DEFAULT_HAXECHECKPARAMS)]
         public string HaXeCheckParameters
         {
-            get { return haXeCheckParameters; }
-            set { haXeCheckParameters = value; }
+            get => haXeCheckParameters;
+            set => haXeCheckParameters = value;
         }
 
         [DisplayName("Completion Mode")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.CompletionMode"), DefaultValue(DEFAULT_HAXECOMPLETIONMODE)]
         public HaxeCompletionModeEnum CompletionMode
         {
-            get { return _completionMode; }
+            get => _completionMode;
             set
             {
                 _completionMode = value;
@@ -246,8 +276,9 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.CompletionServerPort"), DefaultValue(DEFAULT_COMPLETION_SERVER_PORT)]
         public int CompletionServerPort
         {
-            get { return completionServerPort; }
-            set {
+            get => completionServerPort;
+            set
+            {
                 completionServerPort = value;
                 FireCompletionMode();
             }
@@ -257,46 +288,86 @@ namespace HaXeContext
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DisableMixedCompletion"), DefaultValue(DEFAULT_DISABLEMIXEDCOMPLETION)]
         public bool DisableMixedCompletion
         {
-            get { return disableMixedCompletion; }
-            set { disableMixedCompletion = value; }
+            get => disableMixedCompletion;
+            set => disableMixedCompletion = value;
         }
 
         [DisplayName("Disable Completion On Demand")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DisableCompletionOnDemand"), DefaultValue(DEFAULT_DISABLECOMPLETIONONDEMAND)]
         public bool DisableCompletionOnDemand
         {
-            get { return disableCompletionOnDemand; }
-            set { disableCompletionOnDemand = value; }
+            get => disableCompletionOnDemand;
+            set => disableCompletionOnDemand = value;
         }
 
         [DisplayName("Export HXML")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.ExportHXML"), DefaultValue(DEFAULT_EXPORTHXML)]
         public bool ExportHXML
         {
-            get { return exportHXML; }
-            set { HaxeProject.saveHXML = exportHXML = value; }
+            get => exportHXML;
+            set => HaxeProject.saveHXML = exportHXML = value;
         }
+
+        /// <summary>
+        /// A flag enum of enabled compiler features.
+        /// It should never actually be set to null (only 0).
+        /// It is only nullable because otherwise the deserializer will set it to 0 by default (instead of everything enabled)
+        /// </summary>
+        [DisplayName("Enabled Compiler Services")]
+        [LocalizedCategory("ASCompletion.Category.Language"),
+         LocalizedDescription("HaXeContext.Description.EnabledCompilerServices"),
+         DefaultValue(DEFAULT_ENABLEDCOMPILERSERVICES)]
+        [Editor(typeof(Helpers.FlagEnumEditor),
+            typeof(UITypeEditor))]
+        public CompletionFeatures? EnabledFeatures { get; set; } = DEFAULT_ENABLEDCOMPILERSERVICES;
+
+        [DisplayName("Disable Automatic Libraries Installation")]
+        [DefaultValue(DEFAULT_DISABLE_LIB_INSTALLATION)]
+        public bool DisableLibInstallation
+        {
+            get => disableLibInstallation;
+            set => disableLibInstallation = value;
+        }
+
+        [DisplayName("Use Short Notation For Generics")]
+        [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.UseGenericsShortNotation"), DefaultValue(DEFAULT_USEGENERICSSHORTNOTATION)]
+        public bool UseGenericsShortNotation
+        {
+            get => useGenericsShortNotation;
+            set
+            {
+                if (value != useGenericsShortNotation)
+                {
+                    useGenericsShortNotation = value;
+                    UseGenericsShortNotationChanged?.Invoke();
+                }
+            }
+        }
+
+        [DisplayName("Maximum Number Of Diagnostics Processes")]
+        [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.MaximumDiagnosticsProcesses"), DefaultValue(1)]
+        public int MaximumDiagnosticsProcesses { get; set; } = 1;
 
         #endregion
 
         [Browsable(false)]
-        private void FireChanged()
-        {
-            if (OnClasspathChanged != null) OnClasspathChanged();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
 
         [Browsable(false)]
-        private void FireCompletionMode()
-        {
-            if (CompletionModeChanged != null) CompletionModeChanged();
-        }
+        void FireCompletionMode() => CompletionModeChanged?.Invoke();
 
         [Browsable(false)]
-        public void Init()
-        {
-            HaxeProject.saveHXML = exportHXML;
-        }
+        public void Init() => HaxeProject.saveHXML = exportHXML;
 
+        const string DefaultAddSpaceAfter = "if for while do catch switch";
+
+        [
+            DisplayName("Always Add Space After"),
+            LocalizedCategory("ASCompletion.Category.Helpers"),
+            LocalizedDescription("ASCompletion.Description.AddSpaceAfter"),
+            DefaultValue(DefaultAddSpaceAfter),
+        ]
+        public string AddSpaceAfter { get; set; } = DefaultAddSpaceAfter;
     }
 
     public enum HaxeCompletionModeEnum
@@ -304,5 +375,14 @@ namespace HaXeContext
         FlashDevelop,
         Compiler,
         CompletionServer
+    }
+
+    [Flags]
+    public enum CompletionFeatures
+    {
+        Diagnostics = 1,
+        Usage = 2,
+        DisplayStdIn = 4,
+        EnableForFindAllReferences = 8
     }
 }

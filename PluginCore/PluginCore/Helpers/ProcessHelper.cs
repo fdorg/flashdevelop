@@ -9,19 +9,39 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Starts a basic process asynchronously
         /// </summary>
-        public static void StartAsync(String path)
+        public static void StartAsync(string path)
         {
-            StartDelegate1 dlgt = new StartDelegate1(Start);
-            dlgt.BeginInvoke(path, null, null);
+            StartDelegate1 dlgt = Start;
+            dlgt.BeginInvoke(path, ar =>
+            {
+                try
+                {
+                    dlgt.EndInvoke(ar);
+                }
+                catch
+                {
+                    // Something wrong, handling for possible leaks
+                }
+            }, null);
         }
         
         /// <summary>
         /// Starts a process with arguments asynchronously
         /// </summary>
-        public static void StartAsync(String path, String arguments)
+        public static void StartAsync(string path, string arguments)
         {
-            StartDelegate2 dlgt = new StartDelegate2(Start);
-            dlgt.BeginInvoke(path, arguments, null, null);
+            StartDelegate2 dlgt = Start;
+            dlgt.BeginInvoke(path, arguments, ar =>
+            {
+                try
+                {
+                    dlgt.EndInvoke(ar);
+                }
+                catch
+                {
+                    // Something wrong, handling for possible leaks
+                }
+            }, null);
         }
 
         /// <summary>
@@ -29,20 +49,31 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void StartAsync(ProcessStartInfo psi)
         {
-            StartDelegate3 dlgt = new StartDelegate3(Start);
-            dlgt.BeginInvoke(psi, null, null);
+            StartDelegate3 dlgt = Start;
+            dlgt.BeginInvoke(psi, ar =>
+                {
+                    try
+                    {
+                        dlgt.EndInvoke(ar);
+                    }
+                    catch
+                    {
+                        // Something wrong, handling for possible leaks
+                    }
+                },
+            null);
         }
 
         /// <summary>
         /// Runs a basic process
         /// </summary>
-        private static void Start(String path)
+        static void Start(string path)
         {
             try
             {
                 Process.Start(path);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TraceManager.AddAsync(ex.Message);
             }
@@ -51,7 +82,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with arguments
         /// </summary>
-        private static void Start(String path, String arguments)
+        static void Start(string path, string arguments)
         {
             try
             {
@@ -66,7 +97,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with start info
         /// </summary>
-        private static void Start(ProcessStartInfo psi)
+        static void Start(ProcessStartInfo psi)
         {
             try
             {
@@ -81,10 +112,10 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Event delegates of the class
         /// </summary>
-        private delegate void StartDelegate1(String path);
-        private delegate void StartDelegate2(String path, String arguments);
-        private delegate void StartDelegate3(ProcessStartInfo psi);
+        delegate void StartDelegate1(string path);
 
+        delegate void StartDelegate2(string path, string arguments);
+
+        delegate void StartDelegate3(ProcessStartInfo psi);
     }
-
 }

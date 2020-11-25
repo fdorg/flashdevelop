@@ -7,19 +7,19 @@ namespace PluginCore.Helpers
 {
     public class JvmConfigHelper
     {
-        static public Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
 
         /// <summary>
-        /// Read a jvm.config file and returns its variables as a Dictionnary.
+        /// Read a jvm.config file and returns its variables as a Dictionary.
         /// </summary>
         public static Dictionary<string, string> ReadConfig(string configPath)
         {
-            if (configPath == null) configPath = "";
+            if (configPath is null) configPath = "";
             string hash = configPath;
             if (Cache.ContainsKey(hash)) return Cache[hash];
             if (Directory.Exists(configPath))
             {
-                var jvmconfig = Path.Combine(configPath,Path.Combine("bin", "jvm.config"));
+                var jvmconfig = Path.Combine(configPath, "bin", "jvm.config");
                 var buildproperties = Path.Combine(configPath, "build.properties");
 
                 if (File.Exists(jvmconfig))
@@ -28,12 +28,12 @@ namespace PluginCore.Helpers
                     configPath = buildproperties;
             }
 
-            Dictionary<string, string> config = ConfigHelper.Parse(configPath, false).Flatten();
+            var config = ConfigHelper.Parse(configPath, false).Flatten();
             Cache[hash] = config;
 
             // default values
             if (!config.ContainsKey("java.home")) config["java.home"] = "";
-            else config["java.home"] = config["java.home"].Trim(new char[] { '"', '\'', ' ', '\t' });
+            else config["java.home"] = config["java.home"].Trim('"', '\'', ' ', '\t');
 
             string args = "-Dsun.io.useCanonCaches=false -Xms32m -Xmx512m";
             if (config.ContainsKey("java.args")) args = config["java.args"];
@@ -42,13 +42,13 @@ namespace PluginCore.Helpers
             args = ExpandArguments(args, config, 0);
 
             // add language if not specified
-            if (args.IndexOf("-Duser.language", StringComparison.Ordinal) < 0)
+            if (!args.Contains("-Duser.language"))
             {
                 args += " -Duser.language=en -Duser.region=US";
             }
 
             // flex needs old Java 6 sort
-            if (args.IndexOf("-Djava.util.Arrays.useLegacyMergeSort", StringComparison.Ordinal) < 0)
+            if (!args.Contains("-Djava.util.Arrays.useLegacyMergeSort"))
             {
                 args += " -Djava.util.Arrays.useLegacyMergeSort=true";
             }
@@ -57,11 +57,10 @@ namespace PluginCore.Helpers
             return config;
         }
 
-        private static string ExpandArguments(string value, Dictionary<string, string> config, int depth)
+        static string ExpandArguments(string value, IDictionary<string, string> config, int depth)
         {
-            while (value.IndexOf("${", StringComparison.Ordinal) >= 0)
+            while (value.IndexOf("${", StringComparison.Ordinal) is { } start && start >= 0)
             {
-                int start = value.IndexOf("${", StringComparison.Ordinal);
                 int end = value.IndexOf('}', start);
                 if (end < start) return value;
                 string key = value.Substring(start + 2, end - start - 2).Trim();
@@ -72,23 +71,18 @@ namespace PluginCore.Helpers
             return value;
         }
 
-        public static string GetJavaEXE()
-        {
-            return GetJavaEXE(null, null);
-        }
-        public static string GetJavaEXE(Dictionary<string, string> jvmConfig)
-        {
-            return GetJavaEXE(jvmConfig, null);
-        }
+        public static string GetJavaEXE() => GetJavaEXE(null, null);
+
+        public static string GetJavaEXE(Dictionary<string, string> jvmConfig) => GetJavaEXE(jvmConfig, null);
+
         public static string GetJavaEXE(Dictionary<string, string> jvmConfig, string flexSdkPath)
         {
-            string defaultExe = "java";
-            string home = GetJavaHome(jvmConfig, flexSdkPath);
-            if (!String.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
+            var home = GetJavaHome(jvmConfig, flexSdkPath);
+            if (!string.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
-                return Path.Combine(home, Path.Combine("bin","java"));
+                return Path.Combine(home, "bin", "java");
             }
-            return defaultExe;
+            return "java";
         }
 
         public static string GetJavaHome(Dictionary<string, string> jvmConfig, string flexSdkPath)
@@ -96,9 +90,9 @@ namespace PluginCore.Helpers
             string home = null;
             if (jvmConfig != null && jvmConfig.ContainsKey("java.home"))
             {
-                home = ResolvePath(jvmConfig["java.home"], flexSdkPath, true);
+                home = ResolvePath(jvmConfig["java.home"], flexSdkPath);
             }
-            if (home == null)
+            if (home is null)
             {
                 home = Environment.ExpandEnvironmentVariables("%JAVA_HOME%");
                 if (home.StartsWith("%", StringComparison.Ordinal)) home = null;
@@ -108,14 +102,14 @@ namespace PluginCore.Helpers
 
         // Duplicated from 'PluginCore.PathHelper.ResolvePath()'
         // because JvmConfigHelper is used in external tool 'FDBuild'
-        private static string ResolvePath(String path, String relativeTo, Boolean checkResolvedPathExisting)
+        static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Boolean isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
-            Boolean isPathAbsSlashed = (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal)) && !isPathNetworked;
+            bool isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
+            bool isPathAbsSlashed = (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal)) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
-            String resolvedPath;
+            string resolvedPath;
             if (relativeTo != null)
             {
                 resolvedPath = Path.Combine(relativeTo, path);
@@ -126,14 +120,6 @@ namespace PluginCore.Helpers
             return null;
         }
 
-        private static String AppDir
-        {
-            get
-            {
-                return Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            }
-        }
-
+        static string AppDir => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
     }
-
 }

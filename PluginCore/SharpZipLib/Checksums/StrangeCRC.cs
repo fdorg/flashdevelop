@@ -45,7 +45,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
     /// </summary>
     public class StrangeCRC : IChecksum
     {
-        readonly static uint[] crc32Table = {
+        static readonly uint[] crc32Table = {
             0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9,
             0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
             0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
@@ -133,12 +133,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// <summary>
         /// Get the current Crc value.
         /// </summary>
-        public long Value {
-            get {
-                return ~globalCrc;
-            }
-        }
-        
+        public long Value => ~globalCrc;
+
         /// <summary>
         /// Update the Crc value.
         /// </summary>
@@ -158,8 +154,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// <param name="buffer">The buffer containing data to update the crc with.</param>
         public void Update(byte[] buffer)
         {
-            if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+            if (buffer is null) {
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             Update(buffer, 0, buffer.Length);
@@ -173,8 +169,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// <param name="count">number of bytes to use</param>
         public void Update(byte[] buffer, int offset, int count)
         {
-            if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+            if (buffer is null) {
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if ( offset < 0 )
@@ -182,7 +178,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "cannot be less than zero");
+                throw new ArgumentOutOfRangeException(nameof(offset), "cannot be less than zero");
 #endif              
             }
 
@@ -191,13 +187,13 @@ namespace ICSharpCode.SharpZipLib.Checksums
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "cannot be less than zero");
+                throw new ArgumentOutOfRangeException(nameof(count), "cannot be less than zero");
 #endif
             }
 
             if ( offset + count > buffer.Length )
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
             
             for (int i = 0; i < count; ++i) {

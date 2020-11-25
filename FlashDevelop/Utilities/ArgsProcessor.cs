@@ -10,7 +10,6 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using ScintillaNet;
 
 namespace FlashDevelop.Utilities
 {
@@ -19,263 +18,229 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Regexes for tab and var replacing
         /// </summary>
-        private static Regex reTabs = new Regex("^\\t+", RegexOptions.Multiline | RegexOptions.Compiled);
-        private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reTabs = new Regex("^\\t+", RegexOptions.Multiline | RegexOptions.Compiled);
+
+        static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
         /// Regexes and variables for enhanced arguments
         /// </summary>
-        private static Dictionary<String, String> userArgs;
-        private static Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-        private static Regex reSpecialArgs = new Regex("\\$\\$\\(\\#([a-z]+)\\#=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-        private static Regex reEnvArgs = new Regex("\\$\\$\\(\\%([a-z]+)\\%\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static Dictionary<string, string> userArgs;
+
+        static readonly Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reSpecialArgs = new Regex("\\$\\$\\(\\#([a-z]+)\\#=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reEnvArgs = new Regex("\\$\\$\\(\\%([a-z]+)\\%\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
         /// Previously selected text, if the selection canceled
         /// </summary>
-        public static String PrevSelText = String.Empty;
+        public static string PrevSelText = string.Empty;
 
         /// <summary>
         /// Previously selected word, some cases need this
         /// </summary>
-        public static String PrevSelWord = String.Empty;
+        public static string PrevSelWord = string.Empty;
 
         /// <summary>
         /// Gets the FlashDevelop root directory
         /// </summary>
-        public static String GetAppDir()
-        {
-            return PathHelper.AppDir;
-        }
+        public static string GetAppDir() => PathHelper.AppDir;
 
         /// <summary>
         /// Gets the user's FlashDevelop directory
         /// </summary>
-        public static String GetUserAppDir()
-        {
-            return PathHelper.UserAppDir;
-        }
+        public static string GetUserAppDir() => PathHelper.UserAppDir;
 
         /// <summary>
         /// Gets the data file directory
         /// </summary>
-        public static String GetBaseDir()
-        {
-            return PathHelper.BaseDir;
-        }
+        public static string GetBaseDir() => PathHelper.BaseDir;
 
         /// <summary>
         /// Gets the template file directory
         /// </summary>
-        public static String GetTemplateDir()
-        {
-            return PathHelper.TemplateDir;
-        }
+        public static string GetTemplateDir() => PathHelper.TemplateDir;
 
         /// <summary>
         /// Gets the selected text
         /// </summary>
-        public static String GetSelText()
+        public static string GetSelText()
         {
-            if (!Globals.CurrentDocument.IsEditable) return String.Empty;
-            if (Globals.SciControl.SelText.Length > 0) return Globals.SciControl.SelText;
-            else if (PrevSelText.Length > 0) return PrevSelText;
-            else return String.Empty;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return string.Empty;
+            if (sci.SelTextSize > 0) return sci.SelText;
+            if (PrevSelText.Length > 0) return PrevSelText;
+            return string.Empty;
         }
 
         /// <summary>
         /// Gets the current word
         /// </summary>
-        public static String GetCurWord()
+        public static string GetCurWord()
         {
-            if (!Globals.CurrentDocument.IsEditable) return String.Empty;
-            String curWord = Globals.SciControl.GetWordFromPosition(Globals.SciControl.CurrentPos);
-            if (!String.IsNullOrEmpty(curWord)) return curWord;
-            else if (PrevSelWord.Length > 0) return PrevSelWord;
-            else return String.Empty;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return string.Empty;
+            var word = sci.GetWordFromPosition(sci.CurrentPos);
+            if (!string.IsNullOrEmpty(word)) return word;
+            if (PrevSelWord.Length > 0) return PrevSelWord;
+            return string.Empty;
         }
 
         /// <summary>
         /// Gets the current file
         /// </summary>
-        public static String GetCurFile()
+        public static string GetCurFile()
         {
-            if (!Globals.CurrentDocument.IsEditable) return String.Empty;
-            else return Globals.CurrentDocument.FileName;
+            return PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                ? sci.FileName
+                : string.Empty;
         }
 
         /// <summary>
         /// Gets the current file's path or last active path
         /// </summary>
-        public static String GetCurDir()
+        public static string GetCurDir()
         {
-            if (!Globals.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
-            else return Path.GetDirectoryName(GetCurFile());
+            return PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable
+                ? Path.GetDirectoryName(GetCurFile())
+                : PluginBase.MainForm.WorkingDirectory;
         }
         
         /// <summary>
         /// Gets the name of the current file
         /// </summary>
-        public static String GetCurFilename()
+        public static string GetCurFilename()
         {
-            if (!Globals.CurrentDocument.IsEditable) return String.Empty;
-            else return Path.GetFileName(GetCurFile());
+            return PluginBase.MainForm.CurrentDocument is { } doc && doc.IsEditable
+                ? Path.GetFileName(GetCurFile())
+                : string.Empty;
         }
 
         /// <summary>
         /// Gets the name of the current file without extension
         /// </summary>
-        public static String GetCurFilenameNoExt()
+        public static string GetCurFilenameNoExt()
         {
-            if (!Globals.CurrentDocument.IsEditable) return String.Empty;
-            else return Path.GetFileNameWithoutExtension(GetCurFile());
+            return PluginBase.MainForm.CurrentDocument is { } doc && doc.IsEditable
+                ? Path.GetFileNameWithoutExtension(GetCurFile())
+                : string.Empty;
         }
 
         /// <summary>
         /// Gets the timestamp
         /// </summary>
-        public static String GetTimestamp()
-        {
-            return DateTime.Now.ToString("g");
-        }
-        
+        public static string GetTimestamp() => DateTime.Now.ToString("g");
+
         /// <summary>
         /// Gets the desktop path
         /// </summary>
-        public static String GetDesktopDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        }
-        
+        public static string GetDesktopDir() => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
         /// <summary>
         /// Gets the system path
         /// </summary>
-        public static String GetSystemDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.System);
-        }
-        
+        public static string GetSystemDir() => Environment.GetFolderPath(Environment.SpecialFolder.System);
+
         /// <summary>
         /// Gets the program files path
         /// </summary>
-        public static String GetProgramsDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-        }
-        
+        public static string GetProgramsDir() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
         /// <summary>
         /// Gets the users personal files path
         /// </summary>
-        public static String GetPersonalDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        }
-        
+        public static string GetPersonalDir() => Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
         /// <summary>
         /// Gets the working directory
         /// </summary>
-        public static String GetWorkingDir()
-        {
-            return Globals.MainForm.WorkingDirectory;
-        }
-        
+        public static string GetWorkingDir() => PluginBase.MainForm.WorkingDirectory;
+
         /// <summary>
         /// Gets the user selected file for opening
         /// </summary>
-        public static String GetOpenFile()
+        public static string GetOpenFile()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = GetCurDir();
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
-            else return String.Empty;
+            using var dialog = new OpenFileDialog {InitialDirectory = GetCurDir(), Multiselect = false};
+            return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
+                ? dialog.FileName
+                : string.Empty;
         }
         
         /// <summary>
         /// Gets the user selected file for saving
         /// </summary>
-        public static String GetSaveFile()
+        public static string GetSaveFile()
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.InitialDirectory = GetCurDir();
-            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
-            else return String.Empty;
+            using var dialog = new SaveFileDialog {InitialDirectory = GetCurDir()};
+            return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
+                ? dialog.FileName
+                : string.Empty;
         }
         
         /// <summary>
         /// Gets the user selected folder
         /// </summary>
-        public static String GetOpenDir()
+        public static string GetOpenDir()
         {
-            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
-            fbd.RootFolder = Environment.SpecialFolder.MyComputer;
-            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
-            else return String.Empty;
+            using var dialog = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
+            return dialog.ShowDialog(PluginBase.MainForm) == DialogResult.OK
+                ? dialog.SelectedPath
+                : string.Empty;
         }
         
         /// <summary>
         /// Gets the clipboard text
         /// </summary>
-        public static String GetClipboard()
+        public static string GetClipboard()
         {
-            IDataObject cbdata = Clipboard.GetDataObject();
-            if (cbdata.GetDataPresent("System.String", true)) 
-            {
-                return cbdata.GetData("System.String", true).ToString();
-            }
-            else return String.Empty;
+            var data = Clipboard.GetDataObject();
+            return data.GetDataPresent("System.String", true)
+                ? data.GetData("System.String", true).ToString()
+                : string.Empty;
         }
 
         /// <summary>
         /// Gets the comment block indent
         /// </summary>
-        public static String GetCBI()
-        {
-            CommentBlockStyle cbs = Globals.Settings.CommentBlockStyle;
-            if (cbs == CommentBlockStyle.Indented) return " ";
-            else return "";
-        }
+        public static string GetCBI() => PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
 
         /// <summary>
         /// Gets the space or tab character based on settings
         /// </summary>
-        public static String GetSTC()
-        {
-            if (Globals.Settings.UseTabs) return "\t";
-            else return " ";
-        }
+        public static string GetSTC() => PluginBase.Settings.UseTabs ? "\t" : " ";
 
         /// <summary>
         /// Gets the current syntax based on project or current file.
         /// </summary>
-        public static String GetCurSyntax()
+        public static string GetCurSyntax()
         {
             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language != "*")
             {
-                String syntax = PluginBase.CurrentProject.Language;
-                return syntax.ToLower();
+                return PluginBase.CurrentProject.Language.ToLower();
             }
-            else if (Globals.CurrentDocument.IsEditable)
+
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is {} sci)
             {
-                ScintillaControl sci = Globals.SciControl;
                 return sci.ConfigurationLanguage.ToLower();
             }
-            else return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>
         /// Gets the correct coding style line break chars
         /// </summary>
-        public static String ProcessCodeStyleLineBreaks(String text)
+        public static string ProcessCodeStyleLineBreaks(string text)
         {
-            String CSLB = "$(CSLB)";
-            Int32 nextIndex = text.IndexOfOrdinal(CSLB);
+            const string CSLB = "$(CSLB)";
+            var nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
-            CodingStyle cs = PluginBase.Settings.CodingStyle;
+            var cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
-            Int32 eolMode = (Int32)Globals.Settings.EOLMode;
-            String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            String result = ""; Int32 currentIndex = 0;
+            var eolMode = (int)PluginBase.Settings.EOLMode;
+            var lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
+            var result = "";
+            var currentIndex = 0;
             while (nextIndex >= 0)
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
@@ -288,20 +253,19 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the line intendation from the text
         /// </summary>
-        public static String GetLineIndentation(String text, Int32 position)
+        public static string GetLineIndentation(string text, int position)
         {
-            Char c;
-            Int32 startPos = position;
+            int startPos = position;
             while (startPos > 0)
             {
-                c = text[startPos];
+                var c = text[startPos];
                 if (c == 10 || c == 13) break;
                 startPos--;
             }
-            Int32 endPos = ++startPos;
+            int endPos = ++startPos;
             while (endPos < position)
             {
-                c = text[endPos];
+                var c = text[endPos];
                 if (c != '\t' && c != ' ') break;
                 endPos++;
             }
@@ -311,115 +275,107 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the current locale
         /// </summary>
-        private static String GetLocale()
-        {
-            return Globals.Settings.LocaleVersion.ToString();
-        }
+        static string GetLocale() => PluginBase.Settings.LocaleVersion.ToString();
 
         /// <summary>
         /// Processes the argument String variables
         /// </summary>
-        public static String ProcessString(String args, Boolean dispatch)
+        public static string ProcessString(string args, bool dispatch)
         {
             try
             {
-                String result = args;
-                if (result == null) return String.Empty;
+                var result = args;
+                if (result is null) return string.Empty;
                 result = ProcessCodeStyleLineBreaks(result);
-                if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, new MatchEvaluator(ReplaceTabs));
-                result = reArgs.Replace(result, new MatchEvaluator(ReplaceVars));
-                if (!dispatch || result.IndexOf('$') < 0) return result;
-                TextEvent te = new TextEvent(EventType.ProcessArgs, result);
-                EventManager.DispatchEvent(Globals.MainForm, te);
+                if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, ReplaceTabs);
+                result = reArgs.Replace(result, ReplaceVars);
+                if (!dispatch || !result.Contains('$')) return result;
+                var te = new TextEvent(EventType.ProcessArgs, result);
+                EventManager.DispatchEvent(PluginBase.MainForm, te);
                 result = ReplaceArgsWithGUI(te.Value);
-                PrevSelWord = String.Empty;
-                PrevSelText = String.Empty;
+                PrevSelWord = string.Empty;
+                PrevSelText = string.Empty;
                 return result;
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
-                return String.Empty;
+                return string.Empty;
             }
         }
 
         /// <summary>
         /// Match evaluator for tabs
         /// </summary>
-        public static String ReplaceTabs(Match match)
-        {
-            return new String(' ', match.Length * PluginBase.Settings.IndentSize);
-        }
-        
+        public static string ReplaceTabs(Match match) => new string(' ', match.Length * PluginBase.Settings.IndentSize);
+
         /// <summary>
         /// Match evaluator for vars
         /// </summary>
-        public static String ReplaceVars(Match match)
+        public static string ReplaceVars(Match match)
         {
-            if (match.Groups.Count > 0)
+            if (match.Groups.Count == 0) return match.Value;
+            var name = match.Groups[1].Value;
+            switch (name)
             {
-                string name = match.Groups[1].Value;
-                switch (name)
-                {
-                    case "Quote" : return "\"";
-                    case "CBI" : return GetCBI();
-                    case "STC" : return GetSTC();
-                    case "AppDir" : return GetAppDir();
-                    case "UserAppDir" : return GetUserAppDir();
-                    case "TemplateDir": return GetTemplateDir();
-                    case "BaseDir" : return GetBaseDir();
-                    case "SelText" : return GetSelText();
-                    case "CurFilename": return GetCurFilename();
-                    case "CurFilenameNoExt": return GetCurFilenameNoExt();
-                    case "CurFile" : return GetCurFile();
-                    case "CurDir" : return GetCurDir();
-                    case "CurWord" : return GetCurWord();
-                    case "CurSyntax": return GetCurSyntax();
-                    case "Timestamp" : return GetTimestamp();
-                    case "OpenFile" : return GetOpenFile();
-                    case "SaveFile" : return GetSaveFile();
-                    case "OpenDir" : return GetOpenDir();
-                    case "DesktopDir" : return GetDesktopDir();
-                    case "SystemDir" : return GetSystemDir();
-                    case "ProgramsDir" : return GetProgramsDir();
-                    case "PersonalDir" : return GetPersonalDir();
-                    case "WorkingDir" : return GetWorkingDir();
-                    case "Clipboard": return GetClipboard();
-                    case "Locale": return GetLocale();
-                    case "Dollar": return "$";
-                }
-                foreach (Argument arg in ArgumentDialog.CustomArguments)
-                {
-                    if (name == arg.Key) return arg.Value;
-                }
-                return "$(" + name + ")";
+                case "Quote" : return "\"";
+                case "CBI" : return GetCBI();
+                case "STC" : return GetSTC();
+                case "AppDir" : return GetAppDir();
+                case "UserAppDir" : return GetUserAppDir();
+                case "TemplateDir": return GetTemplateDir();
+                case "BaseDir" : return GetBaseDir();
+                case "SelText" : return GetSelText();
+                case "CurFilename": return GetCurFilename();
+                case "CurFilenameNoExt": return GetCurFilenameNoExt();
+                case "CurFile" : return GetCurFile();
+                case "CurDir" : return GetCurDir();
+                case "CurWord" : return GetCurWord();
+                case "CurSyntax": return GetCurSyntax();
+                case "Timestamp" : return GetTimestamp();
+                case "OpenFile" : return GetOpenFile();
+                case "SaveFile" : return GetSaveFile();
+                case "OpenDir" : return GetOpenDir();
+                case "DesktopDir" : return GetDesktopDir();
+                case "SystemDir" : return GetSystemDir();
+                case "ProgramsDir" : return GetProgramsDir();
+                case "PersonalDir" : return GetPersonalDir();
+                case "WorkingDir" : return GetWorkingDir();
+                case "Clipboard": return GetClipboard();
+                case "Locale": return GetLocale();
+                case "Dollar": return "$";
             }
-            else return match.Value;
+            foreach (var arg in ArgumentDialog.CustomArguments)
+            {
+                if (name == arg.Key) return arg.Value;
+            }
+            return "$(" + name + ")";
+
         }
         
         /// <summary>
         /// Replaces the enchanced arguments with gui
         /// </summary>
-        public static String ReplaceArgsWithGUI(String args)
+        public static string ReplaceArgsWithGUI(string args)
         {
-            if (args.IndexOfOrdinal("$$(") < 0) return args;
+            if (!args.Contains("$$(")) return args;
             if (reEnvArgs.IsMatch(args)) // Environmental arguments
             {
-                args = reEnvArgs.Replace(args, new MatchEvaluator(ReplaceEnvArgs));
+                args = reEnvArgs.Replace(args, ReplaceEnvArgs);
             }
             if (reSpecialArgs.IsMatch(args)) // Special arguments
             {
-                args = reSpecialArgs.Replace(args, new MatchEvaluator(ReplaceSpecialArgs));
+                args = reSpecialArgs.Replace(args, ReplaceSpecialArgs);
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
-                ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs);
-                userArgs = rvd.Dictionary; // Save dictionary temporarily...
-                if (rvd.ShowDialog() == DialogResult.OK)
+                using var dialog = new ArgReplaceDialog(args, reUserArgs);
+                userArgs = dialog.Dictionary; // Save dictionary temporarily...
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceUserArgs));
+                    args = reUserArgs.Replace(args, ReplaceUserArgs);
                 }
-                else args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceWithEmpty));
+                else args = reUserArgs.Replace(args, ReplaceWithEmpty);
             }
             return args;
         }
@@ -427,49 +383,44 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Match evaluator for to clear args
         /// </summary>
-        public static String ReplaceWithEmpty(Match match)
-        {
-            return String.Empty;
-        }
+        public static string ReplaceWithEmpty(Match match) => string.Empty;
 
         /// <summary>
         /// Match evaluator for User Arguments
         /// </summary>
-        public static String ReplaceUserArgs(Match match)
+        public static string ReplaceUserArgs(Match match)
         {
-            if (match.Groups.Count > 0) return userArgs[match.Groups[1].Value];
-            else return match.Value;
+            return match.Groups.Count > 0
+                ? userArgs[match.Groups[1].Value]
+                : match.Value;
         }
 
         /// <summary>
         /// Match evaluator for Environment Variables
         /// </summary>
-        public static String ReplaceEnvArgs(Match match)
+        public static string ReplaceEnvArgs(Match match)
         {
-            if (match.Groups.Count > 0) return Environment.GetEnvironmentVariable(match.Groups[1].Value);
-            else return match.Value;
+            return match.Groups.Count > 0
+                ? Environment.GetEnvironmentVariable(match.Groups[1].Value)
+                : match.Value;
         }
 
         /// <summary>
         /// Match evaluator for Special Arguments
         /// </summary>
-        public static String ReplaceSpecialArgs(Match match)
+        public static string ReplaceSpecialArgs(Match match)
         {
             if (match.Groups.Count > 0)
             {
                 switch (match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case "DATETIME":
-                    {
-                        String dateFormat = "";
+                        var dateFormat = "";
                         if (match.Groups.Count == 3) dateFormat = match.Groups[2].Value;
-                        return (DateTime.Now.ToString(dateFormat));
-                    }
+                        return DateTime.Now.ToString(dateFormat);
                 }
             }
             return match.Value;
         }
-
     }
-    
 }

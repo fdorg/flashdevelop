@@ -35,17 +35,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Ude.Core
 {
     public class EscCharsetProber : CharsetProber
     {
         private const int CHARSETS_NUM = 4;
         private string detectedCharset;
-        private CodingStateMachine[] codingSM; 
+        private readonly CodingStateMachine[] codingSM; 
         int activeSM;
 
         public EscCharsetProber()
@@ -81,7 +77,9 @@ namespace Ude.Core
                         if (activeSM == 0) {
                             state = ProbingState.NotMe;
                             return state;
-                        } else if (j != activeSM) {
+                        }
+
+                        if (j != activeSM) {
                             CodingStateMachine t = codingSM[activeSM];
                             codingSM[activeSM] = codingSM[j];
                             codingSM[j] = t;

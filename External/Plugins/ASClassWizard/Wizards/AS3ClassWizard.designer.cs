@@ -1,7 +1,4 @@
-﻿
-using ASClassWizard.Resources;
-
-namespace ASClassWizard.Wizards
+﻿namespace ASClassWizard.Wizards
 {
     partial class AS3ClassWizard
     {
@@ -32,39 +29,39 @@ namespace ASClassWizard.Wizards
         private void InitializeComponent()
         {
             this.flowLayoutPanel5 = new System.Windows.Forms.FlowLayoutPanel();
-            this.constructorCheck = new System.Windows.Forms.CheckBox();
-            this.superCheck = new System.Windows.Forms.CheckBox();
+            this.constructorCheck = new System.Windows.Forms.CheckBoxEx();
+            this.superCheck = new System.Windows.Forms.CheckBoxEx();
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
-            this.implementBrowse = new System.Windows.Forms.Button();
-            this.implementRemove = new System.Windows.Forms.Button();
-            this.baseBox = new System.Windows.Forms.TextBox();
-            this.classBox = new System.Windows.Forms.TextBox();
-            this.packageBox = new System.Windows.Forms.TextBox();
+            this.implementBrowse = new System.Windows.Forms.ButtonEx();
+            this.implementRemove = new System.Windows.Forms.ButtonEx();
+            this.baseBox = new System.Windows.Forms.TextBoxEx();
+            this.classBox = new System.Windows.Forms.TextBoxEx();
+            this.packageBox = new System.Windows.Forms.TextBoxEx();
             this.classLabel = new System.Windows.Forms.Label();
             this.accessLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.publicRadio = new System.Windows.Forms.RadioButton();
             this.internalRadio = new System.Windows.Forms.RadioButton();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-            this.dynamicCheck = new System.Windows.Forms.CheckBox();
-            this.finalCheck = new System.Windows.Forms.CheckBox();
+            this.dynamicCheck = new System.Windows.Forms.CheckBoxEx();
+            this.finalCheck = new System.Windows.Forms.CheckBoxEx();
             this.baseLabel = new System.Windows.Forms.Label();
             this.generationLabel = new System.Windows.Forms.Label();
             this.packageLabel = new System.Windows.Forms.Label();
-            this.packageBrowse = new System.Windows.Forms.Button();
-            this.baseBrowse = new System.Windows.Forms.Button();
+            this.packageBrowse = new System.Windows.Forms.ButtonEx();
+            this.baseBrowse = new System.Windows.Forms.ButtonEx();
             this.errorLabel = new System.Windows.Forms.Label();
             this.errorIcon = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel6 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel9 = new System.Windows.Forms.FlowLayoutPanel();
             this.titleLabel = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBoxEx();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.implementLabel = new System.Windows.Forms.Label();
-            this.implementList = new System.Windows.Forms.ListBox();
+            this.implementList = new System.Windows.Forms.ListBoxEx();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.okButton = new System.Windows.Forms.ButtonEx();
             this.flowLayoutPanel5.SuspendLayout();
             this.flowLayoutPanel4.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -432,7 +429,8 @@ namespace ASClassWizard.Wizards
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.cancelButton);
@@ -476,6 +474,8 @@ namespace ASClassWizard.Wizards
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.flowLayoutPanel9);
             this.ShowIcon = false;
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

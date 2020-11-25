@@ -1,5 +1,3 @@
-using System;
-
 namespace PluginCore.BBCode
 {
     public interface IPairTag
@@ -10,15 +8,15 @@ namespace PluginCore.BBCode
 
     public interface IPairTagMatch
     {
-        Boolean isTagOpener { get; }
+        bool isTagOpener { get; }
         int tagIndex { get; }
         uint tagLength { get; }
-        String tagValue { get; }
+        string tagValue { get; }
     }
 
     public interface IPairTagMatcher
     {
-        String input { get; set; }
+        string input { get; set; }
 
         IPairTagMatch searchOpener(uint startAt);
         IPairTagMatch searchOpenerAs(IPairTagMatch opener, uint startAt);
@@ -32,7 +30,7 @@ namespace PluginCore.BBCode
          * @param   tag
          * @return  true if tag has been handled.
          */
-        Boolean handleTag(IPairTagMatch tag);
-        Boolean isHandleable(IPairTagMatch tag);
+        bool handleTag(IPairTagMatch tag);
+        bool isHandleable(IPairTagMatch tag);
     }
 }

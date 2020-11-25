@@ -1,5 +1,3 @@
-using System;
-
 namespace PluginCore.BBCode
 {
     public class PairTag : IPairTag
@@ -11,25 +9,20 @@ namespace PluginCore.BBCode
         }
 
 
-        private IPairTagMatch _openerMatch;
-        private IPairTagMatch _closerMatch;
+        private readonly IPairTagMatch _openerMatch;
+        private readonly IPairTagMatch _closerMatch;
 
 
-        public IPairTagMatch openerMatch
-        {
-            get { return _openerMatch; }
-        }
-        public IPairTagMatch closerMatch
-        {
-            get { return _closerMatch; }
-        }
+        public IPairTagMatch openerMatch => _openerMatch;
+
+        public IPairTagMatch closerMatch => _closerMatch;
 
 
-        override public String ToString()
+        public override string ToString()
         {
             return "[pairTag"
-                   + " openerMatch='" + (_openerMatch == null ? "null" : _openerMatch.ToString()) + "'"
-                   + " closerMatch='" + (_closerMatch == null ? "null" : _closerMatch.ToString()) + "'"
+                   + " openerMatch='" + (_openerMatch is null ? "null" : _openerMatch.ToString()) + "'"
+                   + " closerMatch='" + (_closerMatch is null ? "null" : _closerMatch.ToString()) + "'"
                    + "]";
         }
     }
@@ -54,25 +47,14 @@ namespace PluginCore.BBCode
         private int _tagIndex;
 
 
-        public Boolean isTagOpener
-        {
-            get { return false; }
-        }
-        public int tagIndex
-        {
-            get { return _tagIndex; }
-        }
-        public uint tagLength
-        {
-            get { return 0; }
-        }
-        public String tagValue
-        {
-            get { return ""; }
-        }
-        public String tagName
-        {
-            get { return null; }
-        }
+        public bool isTagOpener => false;
+
+        public int tagIndex => _tagIndex;
+
+        public uint tagLength => 0;
+
+        public string tagValue => "";
+
+        public string tagName => null;
     }
 }

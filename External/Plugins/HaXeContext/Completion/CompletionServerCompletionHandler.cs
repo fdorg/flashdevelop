@@ -9,49 +9,41 @@ using System.Text.RegularExpressions;
 
 namespace HaXeContext
 {
-    delegate void FallbackNeededHandler(bool notSupported);
+    public delegate void FallbackNeededHandler(bool notSupported);
 
-    class CompletionServerCompletionHandler : IHaxeCompletionHandler
+    public class CompletionServerCompletionHandler : IHaxeCompletionHandler
     {
         public event FallbackNeededHandler FallbackNeeded;
 
-        private readonly Process haxeProcess;
-        private readonly int port;
-        private bool listening;
-        private bool failure;
+        readonly Process haxeProcess;
+        readonly int port;
+        readonly object lockObj = new object();
+        bool isRunning;
+        bool listening;
+        bool failure;
 
-        public CompletionServerCompletionHandler(Process haxeProcess, int port)
+        public CompletionServerCompletionHandler(ProcessStartInfo haxeProcessStartInfo, int port)
         {
-            this.haxeProcess = haxeProcess;
+            haxeProcess = new Process {StartInfo = haxeProcessStartInfo, EnableRaisingEvents = true};
             this.port = port;
             Environment.SetEnvironmentVariable("HAXE_SERVER_PORT", "" + port);
         }
 
-        public bool IsRunning()
-        {
-            try { return !haxeProcess.HasExited; } 
-            catch { return false; }
-        }
+        public bool IsRunning() => isRunning;
 
-        ~CompletionServerCompletionHandler()
-        {
-            Stop();
-        }
+        ~CompletionServerCompletionHandler() => Stop();
 
-        public string GetCompletion(string[] args)
-        {
-            return GetCompletion(args, null);
-        }
+        public string GetCompletion(string[] args) => GetCompletion(args, null);
+
         public string GetCompletion(string[] args, string fileContent)
         {
-            if (args == null || haxeProcess == null)
-                return string.Empty;
-            if (!IsRunning()) StartServer();
+            if (args is null || haxeProcess is null) return string.Empty;
+            if (!isRunning) StartServer();
             try
             {
                 var client = new TcpClient("127.0.0.1", port);
-                var writer = new StreamWriter(client.GetStream());
-                writer.WriteLine("--cwd " + (PluginBase.CurrentProject as HaxeProject).Directory);
+                using var writer = new StreamWriter(client.GetStream());
+                writer.WriteLine("--cwd " + ((HaxeProject) PluginBase.CurrentProject).Directory);
                 foreach (var arg in args)
                     writer.WriteLine(arg);
                 if (fileContent != null)
@@ -61,7 +53,7 @@ namespace HaXeContext
                 }
                 writer.Write("\0");
                 writer.Flush();
-                var reader = new StreamReader(client.GetStream());
+                using var reader = new StreamReader(client.GetStream());
                 var lines = reader.ReadToEnd();
                 client.Close();
                 return lines;
@@ -69,8 +61,8 @@ namespace HaXeContext
             catch(Exception ex)
             {
                 TraceManager.AddAsync(ex.Message);
-                if (!failure && FallbackNeeded != null)
-                    FallbackNeeded(false);
+                if (!failure)
+                    FallbackNeeded?.Invoke(false);
                 failure = true;
                 return string.Empty;
             }
@@ -78,38 +70,42 @@ namespace HaXeContext
 
         public void StartServer()
         {
-            if (haxeProcess == null || IsRunning()) return;
-            haxeProcess.Start();
-            if (!listening)
+            if (isRunning) return;
+            lock (lockObj)
             {
+                if (isRunning) return;
+                if (!(isRunning = haxeProcess.Start())) return;
+                if (listening) return;
                 listening = true;
                 haxeProcess.BeginOutputReadLine();
                 haxeProcess.BeginErrorReadLine();
-                haxeProcess.OutputDataReceived += new DataReceivedEventHandler(haxeProcess_OutputDataReceived);
-                haxeProcess.ErrorDataReceived += new DataReceivedEventHandler(haxeProcess_ErrorDataReceived);
+                haxeProcess.OutputDataReceived += OnOutputDataReceived;
+                haxeProcess.ErrorDataReceived += OnErrorDataReceived;
+                haxeProcess.Exited += HaxeProcess_Exited;
             }
         }
 
-        void haxeProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            TraceManager.AddAsync(e.Data, 2);
-        }
+        void OnOutputDataReceived(object sender, DataReceivedEventArgs e) => TraceManager.AddAsync(e.Data, 2);
 
-        void haxeProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (e.Data == null) return;
+            if (e.Data is null) return;
+            TraceManager.AddAsync(e.Data, 2);
             if (Regex.IsMatch(e.Data, "Error.*--wait"))
             {
-                if (!failure && FallbackNeeded != null) 
-                    FallbackNeeded(true);
+                if (!failure) 
+                    FallbackNeeded?.Invoke(true);
                 failure = true;
             }
         }
 
+        void HaxeProcess_Exited(object sender, EventArgs e) => isRunning = false;
+
         public void Stop()
         {
-            if (IsRunning())
-                haxeProcess.Kill();
+            if (!isRunning) return;
+            haxeProcess.Kill();
+            isRunning = false;
         }
     }
 }

@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Text;
-using System.Drawing;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace FlashDevelop.Controls
 {
     public class ArgEditor : UserControl
     {
-        private System.Windows.Forms.Label argLabel;
-        private System.Windows.Forms.ComboBox argValues;
+        Label argLabel;
+        ComboBox argValues;
 
-        public ArgEditor(String args, String[] values)
+        public ArgEditor(string args, string[] values)
         {
-            this.InitializeComponent();
-            this.argLabel.Text = args;
-            this.Font = PluginCore.PluginBase.Settings.DefaultFont;
+            InitializeComponent();
+            argLabel.Text = args;
+            Font = PluginCore.PluginBase.Settings.DefaultFont;
             if (values.Length > 0)
             {
-                this.argValues.Items.AddRange(values);
-                this.Value = values[0];
+                argValues.Items.AddRange(values);
+                Value = values[0];
             }
         }
 
@@ -30,41 +26,41 @@ namespace FlashDevelop.Controls
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.argLabel = new System.Windows.Forms.Label();
-            this.argValues = new System.Windows.Forms.ComboBox();
-            this.SuspendLayout();
+            argLabel = new Label();
+            argValues = new FlatCombo();
+            SuspendLayout();
             // 
             // argLabel
             //
-            this.argLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.argLabel.Location = new System.Drawing.Point(0, 3);
-            this.argLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.argLabel.Name = "argLabel";
-            this.argLabel.Size = new System.Drawing.Size(100, 22);
-            this.argLabel.TabIndex = 0;
-            this.argLabel.Text = "Argument";
-            this.argLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            argLabel.FlatStyle = FlatStyle.System;
+            argLabel.Location = new System.Drawing.Point(0, 3);
+            argLabel.Margin = new Padding(0);
+            argLabel.Name = "argLabel";
+            argLabel.Size = new System.Drawing.Size(100, 22);
+            argLabel.TabIndex = 0;
+            argLabel.Text = "Argument";
+            argLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // argValues
             //
-            this.argValues.FormattingEnabled = true;
-            this.argValues.Location = new System.Drawing.Point(105, 1);
-            this.argValues.Name = "argValues";
-            this.argValues.Size = new System.Drawing.Size(160, 22);
-            this.argValues.TabIndex = 1;
+            argValues.FormattingEnabled = true;
+            argValues.Location = new System.Drawing.Point(105, 1);
+            argValues.Name = "argValues";
+            argValues.Size = new System.Drawing.Size(160, 22);
+            argValues.TabIndex = 1;
             // 
             // ArgEditor
             // 
-            this.AutoSize = true;
-            this.Controls.Add(this.argValues);
-            this.Controls.Add(this.argLabel);
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "ArgEditor";
-            this.Size = new System.Drawing.Size(270, 25);
-            this.ResumeLayout(false);
+            AutoSize = true;
+            Controls.Add(argValues);
+            Controls.Add(argLabel);
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Name = "ArgEditor";
+            Size = new System.Drawing.Size(270, 25);
+            ResumeLayout(false);
 
         }
 
@@ -78,29 +74,27 @@ namespace FlashDevelop.Controls
         protected override void OnGotFocus(EventArgs e)
         {
             base.OnGotFocus(e);
-            this.argValues.Focus();
+            argValues.Focus();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String Argument
+        public string Argument
         {
-            get { return this.argLabel.Text; }
-            set { this.argLabel.Text = value; }
+            get => argLabel.Text;
+            set => argLabel.Text = value;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String Value
+        public string Value
         {
-            get { return this.argValues.Text; }
-            set { this.argValues.Text = value; }
+            get => argValues.Text;
+            set => argValues.Text = value;
         }
 
         #endregion
-
     }
-
 }

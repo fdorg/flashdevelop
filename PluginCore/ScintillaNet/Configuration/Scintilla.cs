@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class Scintilla : ConfigFile
     {
-        private Language[] _languages;
+        Language[] _languages;
         
         [XmlArrayItem("value")]
         [XmlArray("globals")]
@@ -32,18 +31,15 @@ namespace ScintillaNet.Configuration
         [XmlArray("character-classes")]
         public CharacterClass[] characterclasses;
 
-        protected override Scintilla ChildScintilla
-        {
-            get { return this; }
-        }
-        
+        protected override Scintilla ChildScintilla => this;
+
         public bool IsKnownFile(string file)
         {
-            string filemask = Path.GetExtension(file).ToLower().Substring(1);
-            foreach (Language lang in this.AllLanguages)
+            var filemask = Path.GetExtension(file).ToLower().Substring(1);
+            foreach (var lang in AllLanguages)
             {
-                string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOfOrdinal(","+filemask+",") >- 1)
+                var extensions = "," + lang.fileextensions + ",";
+                if (extensions.Contains("," + filemask + ","))
                 {
                     return true;
                 }
@@ -53,39 +49,33 @@ namespace ScintillaNet.Configuration
 
         public string GetLanguageFromFile(string file)
         {
-            string defaultLanguage = "text";
-            string filemask = Path.GetExtension(file);
-            if (filemask.Length == 0) return defaultLanguage;
+            var result = "text";
+            var filemask = Path.GetExtension(file);
+            if (filemask.Length == 0) return result;
             filemask = filemask.ToLower().Substring(1);
-            foreach (Language lang in this.AllLanguages)
+            foreach (var lang in AllLanguages)
             {
-                string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOfOrdinal(",*,") > -1)
-                {
-                    defaultLanguage = lang.name;
-                }
-                if (extensions.IndexOfOrdinal(","+filemask+",") > -1)
-                {
-                    return lang.name;
-                }
+                var extensions = "," + lang.fileextensions + ",";
+                if (extensions.Contains(",*,")) result = lang.name;
+                if (extensions.Contains(","+filemask+",")) return lang.name;
             }
-            return defaultLanguage;
+            return result;
         }
         
         public Language[] AllLanguages
         {
             get
             {
-                if (_languages == null)
+                if (_languages is null)
                 {
-                    Hashtable result = new Hashtable();
+                    var result = new Hashtable();
                     if (MasterScintilla == this)
                     {
                         // Check the children first (from the end)
                         for (int i = includedFiles.Length-1; i>-1; i--)
                         {
-                            Scintilla child = (Scintilla)(includedFiles[i]);
-                            Language[] kids = child.AllLanguages;
+                            var child = (Scintilla)(includedFiles[i]);
+                            var kids = child.AllLanguages;
                             foreach (Language k in kids)
                             {
                                 if (!result.ContainsKey(k.name )) result.Add(k.name, k);
@@ -112,7 +102,7 @@ namespace ScintillaNet.Configuration
                 // Check the children first (from the end)
                 for (int i = includedFiles.Length-1; i>-1; i--)
                 {
-                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    var child = (Scintilla)(includedFiles[i]);
                     result = child.GetValue(keyName);
                     if (result != null) return result;
                 }
@@ -189,10 +179,7 @@ namespace ScintillaNet.Configuration
             return result;  
         }
 
-        public Language GetLanguage(string languageName)
-        {
-            return GetLanguages().Find(language => language.name == languageName);
-        }
+        public Language GetLanguage(string languageName) => GetLanguages().Find(language => language.name == languageName);
 
         public List<Language> GetLanguages()
         {
@@ -217,33 +204,31 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (languages == null) languages = new Language[0];
-            if (styleclasses == null)  styleclasses = new StyleClass[0];
-            if (keywordclass == null) keywordclass = new KeywordClass[0];
-            if (globals == null) globals = new Value[0];
-            for (int i2 = 0; i2<languages.Length; i2++)
+            languages ??= Array.Empty<Language>();
+            styleclasses ??= Array.Empty<StyleClass>();
+            keywordclass ??= Array.Empty<KeywordClass>();
+            globals ??= Array.Empty<Value>();
+            foreach (var it in languages)
             {
-                languages[i2].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int k = 0; k<styleclasses.Length; k++)
+            foreach (var it in styleclasses)
             {
-                styleclasses[k].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int j = 0; j<keywordclass.Length; j++)
+            foreach (var it in keywordclass)
             {
-                keywordclass[j].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int i1 = 0; i1<globals.Length; i1++)
+            foreach (var it in globals)
             {
-                globals[i1].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            if (characterclasses == null) characterclasses = new CharacterClass[0];
-            for (int k = 0; k<characterclasses.Length; k++)
+            characterclasses ??= Array.Empty<CharacterClass>();
+            foreach (var it in characterclasses)
             {
-                characterclasses[k].init(utility, _parent);
+                it.init(utility, _parent);
             }
         }
-        
     }
-
 }

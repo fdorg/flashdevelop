@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -14,14 +13,14 @@ namespace AS3Context.Compiler
             if (ignoreMessage) return false;
             try
             {
-                if (debugger != null) debugger.Cleanup();
+                debugger?.Cleanup();
                 startMessage = message;
                 debugger = new FdbWrapper();
-                debugger.OnStarted += new LineEvent(debugger_OnStarted);
-                debugger.OnTrace += new LineEvent(debugger_OnTrace);
-                debugger.OnError += new LineEvent(debugger_OnError);
+                debugger.OnStarted += debugger_OnStarted;
+                debugger.OnTrace += debugger_OnTrace;
+                debugger.OnError += debugger_OnError;
                 if (PluginMain.Settings.VerboseFDB)
-                    debugger.OnOutput += new LineEvent(debugger_OnOutput);
+                    debugger.OnOutput += debugger_OnOutput;
                 debugger.Run(projectPath, flex2Path);
                 TraceManager.AddAsync(TextHelper.GetString("Info.CapturingTracesWithFDB"));
                 return true;
@@ -46,14 +45,13 @@ namespace AS3Context.Compiler
 
         #endregion
 
-        static private bool ignoreMessage;
-        static private FdbWrapper debugger;
-        static private DataEvent startMessage;
+        static bool ignoreMessage;
+        static FdbWrapper debugger;
+        static DataEvent startMessage;
 
         static void debugger_OnStarted(string line)
         {
-            if (startMessage == null) 
-                return;
+            if (startMessage is null) return;
             PluginBase.RunAsync(delegate
             {
                 // send message again
@@ -64,19 +62,10 @@ namespace AS3Context.Compiler
             });
         }
 
-        static void debugger_OnError(string line)
-        {
-            TraceManager.AddAsync(line, 3);
-        }
+        static void debugger_OnError(string line) => TraceManager.AddAsync(line, 3);
 
-        static void debugger_OnOutput(string line)
-        {
-            TraceManager.AddAsync(line, 1);
-        }
+        static void debugger_OnOutput(string line) => TraceManager.AddAsync(line, 1);
 
-        static void debugger_OnTrace(string line)
-        {
-            TraceManager.AddAsync(line, 1);
-        }
+        static void debugger_OnTrace(string line) => TraceManager.AddAsync(line, 1);
     }
 }

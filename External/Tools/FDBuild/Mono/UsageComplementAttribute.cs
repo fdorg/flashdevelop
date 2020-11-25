@@ -8,17 +8,13 @@ namespace Mono
         // Methods
         public UsageComplementAttribute(string details)
         {
-            this.Details = details;
+            Details = details;
         }
 
-        public override string ToString()
-        {
-            return this.Details;
-        }
+        public override string ToString() => Details;
 
 
         // Fields
         public string Details;
     }
 }
-

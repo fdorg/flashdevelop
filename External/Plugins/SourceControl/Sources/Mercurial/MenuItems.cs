@@ -12,36 +12,38 @@ namespace SourceControl.Sources.Mercurial
         TreeNode[] currentNodes;
         IVCManager currentManager;
 
-        ToolStripItem update;
-        ToolStripItem commit;
-        ToolStripItem push;
-        ToolStripItem showLog;
-        ToolStripItem midSeparator;
-        ToolStripItem diffChange;
-        ToolStripItem add;
-        ToolStripItem ignore;
-        ToolStripItem undoAdd;
-        ToolStripItem revert;
-        ToolStripItem editConflict;
+        readonly ToolStripItem update;
+        readonly ToolStripItem commit;
+        readonly ToolStripItem push;
+        readonly ToolStripItem showLog;
+        readonly ToolStripItem midSeparator;
+        readonly ToolStripItem annotate;
+        readonly ToolStripItem diffChange;
+        readonly ToolStripItem add;
+        readonly ToolStripItem ignore;
+        readonly ToolStripItem undoAdd;
+        readonly ToolStripItem revert;
+        readonly ToolStripItem editConflict;
 
-        public TreeNode[] CurrentNodes { set { currentNodes = value; } }
-        public IVCManager CurrentManager { set { currentManager = value; } }
+        public TreeNode[] CurrentNodes { set => currentNodes = value; }
+        public IVCManager CurrentManager { set => currentManager = value; }
 
-        public ToolStripItem Update { get { return update; } }
-        public ToolStripItem Commit { get { return commit; } }
-        public ToolStripItem Push { get { return push; } }
-        public ToolStripItem ShowLog { get { return showLog; } }
-        public ToolStripItem MidSeparator { get { return midSeparator; } }
-        public ToolStripItem Diff { get { return null; } }
-        public ToolStripItem DiffChange { get { return diffChange; } }
-        public ToolStripItem Add { get { return add; } }
-        public ToolStripItem Ignore { get { return ignore; } }
-        public ToolStripItem UndoAdd { get { return undoAdd; } }
-        public ToolStripItem Revert { get { return revert; } }
-        public ToolStripItem EditConflict { get { return editConflict; } }
+        public ToolStripItem Update => update;
+        public ToolStripItem Commit => commit;
+        public ToolStripItem Push => push;
+        public ToolStripItem ShowLog => showLog;
+        public ToolStripItem MidSeparator => midSeparator;
+        public ToolStripItem Annotate => annotate;
+        public ToolStripItem Diff => null;
+        public ToolStripItem DiffChange => diffChange;
+        public ToolStripItem Add => add;
+        public ToolStripItem Ignore => ignore;
+        public ToolStripItem UndoAdd => undoAdd;
+        public ToolStripItem Revert => revert;
+        public ToolStripItem EditConflict => editConflict;
 
-        private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
-        public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get { return items; } }
+        private readonly Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        public Dictionary<ToolStripItem, VCMenuItemProperties> Items => items;
 
         public MenuItems()
         {
@@ -50,6 +52,7 @@ namespace SourceControl.Sources.Mercurial
             push = new ToolStripMenuItem(TextHelper.GetString("Label.Push"), PluginBase.MainForm.FindImage("159|9|-3|3"), Push_Click);
             showLog = new ToolStripMenuItem(TextHelper.GetString("Label.ShowLog"), PluginBase.MainForm.FindImage("95"), ShowLog_Click);
             midSeparator = new ToolStripSeparator();
+            annotate = new ToolStripMenuItem("Annotate", PluginBase.MainForm.FindImage("45")) { Enabled = false };
             diffChange = new ToolStripMenuItem(TextHelper.GetString("Label.DiffWithPrevious"), PluginBase.MainForm.FindImage("251"), DiffChange_Click);
             add = new ToolStripMenuItem(TextHelper.GetString("Label.Add"), PluginBase.MainForm.FindImage("33"), Add_Click);
             ignore = new ToolStripMenuItem(TextHelper.GetString("Label.AddToIgnoreList"), PluginBase.MainForm.FindImage("166"), Ignore_Click);
@@ -60,7 +63,7 @@ namespace SourceControl.Sources.Mercurial
 
         private string GetPaths()
         {
-            return String.Join("*", GetPathsArray());
+            return string.Join("*", GetPathsArray());
         }
 
         private string[] GetPathsArray()

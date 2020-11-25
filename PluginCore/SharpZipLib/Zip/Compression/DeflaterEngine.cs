@@ -163,19 +163,19 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <param name="count">The number of bytes of data to use as input.</param>
         public void SetInput(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) 
+            if ( buffer is null ) 
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( offset < 0 ) 
             {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
             if ( count < 0 ) 
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             if (inputOff < inputEnd) 
@@ -190,7 +190,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
             */
             if ((offset > end) || (end > buffer.Length) ) 
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
             
             inputBuf = buffer;
@@ -279,31 +279,19 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// Get current value of Adler checksum
         /// </summary>      
-        public int Adler {
-            get {
-                return unchecked((int)adler.Value);
-            }
-        }
+        public int Adler => unchecked((int)adler.Value);
 
         /// <summary>
         /// Total data processed
         /// </summary>      
-        public long TotalIn {
-            get {
-                return totalIn;
-            }
-        }
+        public long TotalIn => totalIn;
 
         /// <summary>
         /// Get/set the <see cref="DeflateStrategy">deflate strategy</see>
         /// </summary>      
         public DeflateStrategy Strategy {
-            get {
-                return strategy;
-            }
-            set {
-                strategy = value;
-            }
+            get => strategy;
+            set => strategy = value;
         }
         
         /// <summary>
@@ -314,7 +302,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         {
             if ( (level < 0) || (level > 9) )
             {
-                throw new ArgumentOutOfRangeException("level");
+                throw new ArgumentOutOfRangeException(nameof(level));
             }
 
             goodLength = GOOD_LENGTH[level];
@@ -791,7 +779,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// Note that the array should really be unsigned short, so you need
         /// to and the values with 0xffff.
         /// </summary>
-        short[] head;
+        readonly short[] head;
 
         /// <summary>
         /// <code>prev[index &amp; WMASK]</code> points to the previous index that has the
@@ -800,7 +788,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// Note that the array should really be unsigned short, so you need
         /// to and the values with 0xffff.
         /// </summary>
-        short[] prev;
+        readonly short[] prev;
         
         int    matchStart;
         // Length of best match
@@ -826,7 +814,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// This array contains the part of the uncompressed stream that 
         /// is of relevance.  The current character is indexed by strstart.
         /// </summary>
-        byte[] window;
+        readonly byte[] window;
         
         DeflateStrategy strategy;
         int max_chain, max_lazy, niceLength, goodLength;
@@ -855,14 +843,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// The end offset of the input data.
         /// </summary>
         int inputEnd;
-        
-        DeflaterPending pending;
-        DeflaterHuffman huffman;
+
+        readonly DeflaterPending pending;
+        readonly DeflaterHuffman huffman;
         
         /// <summary>
         /// The adler checksum
         /// </summary>
-        Adler32 adler;
+        readonly Adler32 adler;
         #endregion
     }
 }

@@ -8,13 +8,12 @@ namespace PluginCore.Bridge
     public class WatcherEx
     {
         string path;
-        string filter;
-        bool isRemote;
+        readonly string filter;
         bool enabled;
         FileSystemWatcher watcher;
         BridgeClient bridge;
 
-        public bool IsRemote { get { return isRemote; } }
+        public bool IsRemote { get; }
 
         /// <summary>
         /// Either watch a single file (if specified) or an entire directory tree.
@@ -28,8 +27,8 @@ namespace PluginCore.Bridge
         {
             this.path = path;
             this.filter = file;
-            isRemote = BridgeManager.Active && path.ToUpper().StartsWithOrdinal(BridgeManager.Settings.SharedDrive);
-            if (!isRemote) SetupRegularWatcher();
+            IsRemote = BridgeManager.Active && path.ToUpper().StartsWithOrdinal(BridgeManager.Settings.SharedDrive);
+            if (!IsRemote) SetupRegularWatcher();
         }
 
         public void Dispose()
@@ -43,19 +42,19 @@ namespace PluginCore.Bridge
 
         #region Tracing
 
-        static bool errorDone = false;
+        static bool errorDone;
         public void TraceError()
         {
             if (errorDone) return;
-            else errorDone = true;
+            errorDone = true;
             TraceManager.AddAsync("Unable to connect to FlashDevelop Bridge.");
         }
 
-        static bool okDone = false;
+        static bool okDone;
         public void TraceOk()
         {
             if (okDone) return;
-            else okDone = true;
+            okDone = true;
             TraceManager.AddAsync("Connected successfully to FlashDevelop Bridge.");
         }
 
@@ -70,7 +69,7 @@ namespace PluginCore.Bridge
 
         public bool EnableRaisingEvents
         {
-            get { return enabled; }
+            get => enabled;
             set
             {
                 enabled = value;
@@ -87,8 +86,8 @@ namespace PluginCore.Bridge
                     else
                     {
                         if (Directory.Exists(path) && !path.EndsWith('\\')) path += "\\";
-                        bridge.DataReceived += new DataReceivedEventHandler(bridge_DataReceived);
-                        if (filter == null) bridge.Send("watch:" + path);
+                        bridge.DataReceived += bridge_DataReceived;
+                        if (filter is null) bridge.Send("watch:" + path);
                         else bridge.Send("watch:" + Path.Combine(path, filter));
                         TraceOk();
                     }
@@ -122,14 +121,14 @@ namespace PluginCore.Bridge
             if (fullPath.Length < 3) return;
             string folder = Path.GetDirectoryName(fullPath);
             string name = Path.GetFileName(fullPath);
-            if (Changed != null) Changed(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, folder, name));
+            Changed?.Invoke(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, folder, name));
         }
 
         #endregion
 
         #region regular watcher implementation
 
-        static private Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
+        private static readonly Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
         private void SetupRegularWatcher()
         {
@@ -154,22 +153,22 @@ namespace PluginCore.Bridge
         private void watcher_Created(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Created != null) Created(this, e);
+            Created?.Invoke(this, e);
         }
         private void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Changed != null) Changed(this, e);
+            Changed?.Invoke(this, e);
         }
         private void watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Deleted != null) Deleted(this, e);
+            Deleted?.Invoke(this, e);
         }
         private void watcher_Renamed(object sender, RenamedEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Renamed != null) Renamed(this, e);
+            Renamed?.Invoke(this, e);
         }
 
         #endregion

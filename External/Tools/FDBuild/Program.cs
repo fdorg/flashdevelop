@@ -34,7 +34,7 @@ namespace FDBuild
 
             // try and automagically figure out flashdevelop's library path
             // it should be at ..\..\Library
-            if (options.LibraryDir == null)
+            if (options.LibraryDir is null)
                 try
                 {
                     string libraryDir = Path.Combine(firstRunDir, "Library");
@@ -131,10 +131,10 @@ namespace FDBuild
         public static void BuildProject(string projectFile)
         {
             Project project = ProjectLoader.Load(projectFile);
-            Program.BuildOptions.Language = project.Language.ToUpper();
+            BuildOptions.Language = project.Language.ToUpper();
 
-            ProjectBuilder builder = ProjectBuilder.Create(project, Program.BuildOptions.IpcName, Program.BuildOptions.CompilerPath);
-            builder.BuildCommand(Program.BuildOptions.ExtraClasspaths, Program.BuildOptions.NoTrace);
+            ProjectBuilder builder = ProjectBuilder.Create(project, BuildOptions.IpcName, BuildOptions.CompilerPath);
+            builder.BuildCommand(BuildOptions.ExtraClasspaths, BuildOptions.NoTrace);
         }
 
         /// <summary>
@@ -142,24 +142,15 @@ namespace FDBuild
         /// </summary>
         /// <param name="workingdir">the working directory for fsch, to have full optimization make this the same for all calls </param>
         /// <param name="arguments">the mxmlc arguments</param>
-        public static void BuildMXMLC( string workingdir, string arguments )
+        public static void BuildMXMLC(string workingdir, string arguments)
         {
-            //Project project = ProjectLoader.Load(projectFile);
-            //Program.BuildOptions.Language = project.Language.ToUpper();
-
-            AS3ProjectBuilder builder = new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
-            builder.CompileWithMxmlc(workingdir, arguments, true);
-            
+            AS3ProjectBuilder builder = new AS3ProjectBuilder(null, BuildOptions.CompilerPath, BuildOptions.IpcName);
+            builder.CompileWithMxmlc(workingdir, arguments);
         }
 
         /// <summary>
         /// Build from pre/post command: compc
         /// </summary>
-        /// <param name="workingdir">the working directory for fsch, to have full optimization make this the same for all calls </param>
-        /// <param name="arguments">the compc arguments</param>
-        public static void BuildCOMPC( string workingdir, string arguments )
-        {
-            new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
-        }
+        public static void BuildCOMPC() => new AS3ProjectBuilder(null, BuildOptions.CompilerPath, BuildOptions.IpcName);
     }
 }

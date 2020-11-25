@@ -1,7 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.FRService;
 using ScintillaNet;
 
@@ -12,13 +13,14 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the dialog icon
         /// </summary>
-        public static Image GetImage(Int32 img)
+        public static Image GetImage(int img)
         {
-            Image image;
-            if (img == 1) image = Globals.MainForm.FindImage("196", false);
-            else if (img == 2) image = Globals.MainForm.FindImage("197", false);
-            else image = Globals.MainForm.FindImage("229", false);
-            return image;
+            return img switch
+            {
+                1 => PluginBase.MainForm.FindImage("196", false),
+                2 => PluginBase.MainForm.FindImage("197", false),
+                _ => PluginBase.MainForm.FindImage("229", false),
+            };
         }
 
         /// <summary>
@@ -26,19 +28,17 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void UpdateComboBoxItems(ComboBox comboBox)
         {
-            if (!comboBox.Items.Contains(comboBox.Text))
-            {
-                comboBox.Items.Insert(0, comboBox.Text);
-                comboBox.SelectedIndex = 0;
-            }
+            if (comboBox.Items.Contains(comboBox.Text)) return;
+            comboBox.Items.Insert(0, comboBox.Text);
+            comboBox.SelectedIndex = 0;
         }
 
         /// <summary>
         /// Gets an index of the search match
         /// </summary>
-        public static Int32 GetMatchIndex(SearchMatch match, List<SearchMatch> matches)
+        public static int GetMatchIndex(SearchMatch match, List<SearchMatch> matches)
         {
-            for (Int32 i = 0; i < matches.Count; i++)
+            for (var i = 0; i < matches.Count; i++)
             {
                 if (match == matches[i]) return i + 1;
             }
@@ -50,9 +50,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void SelectMatch(ScintillaControl sci, SearchMatch match)
         {
-            Int32 start = sci.MBSafePosition(match.Index); // wchar to byte position
-            Int32 end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
-            Int32 line = sci.LineFromPosition(start);
+            int start = sci.MBSafePosition(match.Index); // wchar to byte position
+            int end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
+            int line = sci.LineFromPosition(start);
             sci.EnsureVisibleEnforcePolicy(line);
             sci.SetSel(start, end);
         }
@@ -62,9 +62,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void SelectMatchInTarget(ScintillaControl sci, SearchMatch match)
         {
-            Int32 start = sci.MBSafePosition(match.Index); // wchar to byte position
-            Int32 end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
-            Int32 line = sci.LineFromPosition(start);
+            int start = sci.MBSafePosition(match.Index); // wchar to byte position
+            int end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
+            int line = sci.LineFromPosition(start);
             sci.EnsureVisible(line);
             sci.TargetStart = start;
             sci.TargetEnd = end;
@@ -75,9 +75,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)
         {
-            for (Int32 i = 0; i < matches.Count; i++)
+            foreach (var match in matches)
             {
-                Int32 line = matches[i].Line - 1;
+                int line = match.Line - 1;
                 sci.EnsureVisible(line);
                 sci.MarkerAdd(line, 0);
             }
@@ -86,43 +86,28 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Filters the matches based on the start and end positions
         /// </summary>
-        public static List<SearchMatch> FilterMatches(List<SearchMatch> matches, Int32 start, Int32 end)
-        {
-            List<SearchMatch> filtered = new List<SearchMatch>();
-            foreach (SearchMatch match in matches)
-            {
-                if (match.Index >= start && (match.Index + match.Length) <= end)
-                {
-                    filtered.Add(match);
-                }
-            }
-            return filtered;
-        }
+        public static List<SearchMatch> FilterMatches(List<SearchMatch> matches, int start, int end)
+            => matches.Where(match => match.Index >= start && (match.Index + match.Length) <= end).ToList();
 
         /// <summary>
         /// Gets the next valid match but fixes position with selected text's length
         /// </summary>
-        public static SearchMatch GetNextDocumentMatch(ScintillaControl sci, List<SearchMatch> matches, Boolean forward, Boolean fixedPosition)
+        public static SearchMatch GetNextDocumentMatch(ScintillaControl sci, List<SearchMatch> matches, bool forward, bool fixedPosition)
         {
-            SearchMatch nearestMatch = matches[0];
-            Int32 currentPosition = sci.MBSafeCharPosition(sci.CurrentPos);
+            var nearestMatch = matches[0];
+            var currentPosition = sci.MBSafeCharPosition(sci.CurrentPos);
             if (fixedPosition) currentPosition -= sci.MBSafeTextLength(sci.SelText);
-            for (Int32 i = 0; i < matches.Count; i++)
+            foreach (var match in matches)
             {
                 if (forward)
                 {
-                    if (currentPosition > matches[matches.Count - 1].Index)
-                    {
-                        return matches[0];
-                    }
-                    if (matches[i].Index >= currentPosition)
-                    {
-                        return matches[i];
-                    }
+                    if (currentPosition > matches[matches.Count - 1].Index) return matches[0];
+                    if (match.Index >= currentPosition) return match;
                 }
                 else
                 {
-                    if (sci.SelText.Length > 0 && currentPosition <= matches[0].Index + matches[0].Value.Length)
+                    var sciSelTextSize = sci.SelTextSize;
+                    if (sciSelTextSize > 0 && currentPosition <= matches[0].Index + matches[0].Value.Length)
                     {
                         return matches[matches.Count - 1];
                     }
@@ -130,19 +115,17 @@ namespace FlashDevelop.Utilities
                     {
                         return matches[matches.Count - 1];
                     }
-                    if (sci.SelText.Length == 0 && currentPosition == matches[i].Index + matches[i].Value.Length)
+                    if (sciSelTextSize == 0 && currentPosition == match.Index + match.Value.Length)
                     {
-                        return matches[i];
+                        return match;
                     }
-                    if (matches[i].Index > nearestMatch.Index && matches[i].Index + matches[i].Value.Length < currentPosition)
+                    if (match.Index > nearestMatch.Index && match.Index + match.Value.Length < currentPosition)
                     {
-                        nearestMatch = matches[i];
+                        nearestMatch = match;
                     }
                 }
             }
             return nearestMatch;
         }
-
     }
-
 }

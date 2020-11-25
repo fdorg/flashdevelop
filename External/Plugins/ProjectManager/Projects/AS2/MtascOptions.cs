@@ -30,26 +30,35 @@ namespace ProjectManager.Projects.AS2
         TraceMode traceMode = TraceMode.FlashConnectExtended;
         string traceFunction = "";
         string libraryPrefix = "";
-        string[] includePackages = new string[] { };
+        string[] includePackages = Array.Empty<string>();
         string excludeFile = "";
 
         [DisplayName("Strict Mode")]
         [LocalizedCategory("ProjectManager.Category.General")]
         [LocalizedDescription("ProjectManager.Description.Strict")]
         [DefaultValue(false)]
-        public bool Strict { get { return strict; } set { strict = value; } }
+        public bool Strict {
+            get => strict;
+            set => strict = value;
+        }
 
         [DisplayName("Infer Types")]
         [LocalizedCategory("ProjectManager.Category.General")]
         [LocalizedDescription("ProjectManager.Description.Infer")]
         [DefaultValue(false)]
-        public bool Infer { get { return infer; } set { infer = value; } }
+        public bool Infer {
+            get => infer;
+            set => infer = value;
+        }
 
         [DisplayName("Verbose Output")]
         [LocalizedCategory("ProjectManager.Category.General")]
         [LocalizedDescription("ProjectManager.Description.Verbose")]
         [DefaultValue(false)]
-        public bool Verbose { get { return verbose; } set { verbose = value; } }
+        public bool Verbose {
+            get => verbose;
+            set => verbose = value;
+        }
 
         [DisplayName("Warn on Unused Imports")]
         [LocalizedCategory("ProjectManager.Category.General")]
@@ -57,8 +66,8 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue(false)]
         public bool WarnUnusedImports
         {
-            get { return warnUnusedImports; }
-            set { warnUnusedImports = value; }
+            get => warnUnusedImports;
+            set => warnUnusedImports = value;
         }
 
         [DisplayName("Trace Mode")]
@@ -67,8 +76,8 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue(TraceMode.FlashConnectExtended)]
         public TraceMode TraceMode
         {
-            get { return traceMode; }
-            set { traceMode = value; }
+            get => traceMode;
+            set => traceMode = value;
         }
 
         [DisplayName("Custom Trace Function")]
@@ -77,8 +86,8 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue("")]
         public string TraceFunction
         {
-            get { return (traceMode == TraceMode.CustomFunction) ? traceFunction : ""; }
-            set { traceFunction = value; }
+            get => (traceMode == TraceMode.CustomFunction) ? traceFunction : "";
+            set => traceFunction = value;
         }
 
         [DisplayName("Library Prefix")]
@@ -87,15 +96,18 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue("")]
         public string LibraryPrefix
         {
-            get { return libraryPrefix; }
-            set { libraryPrefix = value; }
+            get => libraryPrefix;
+            set => libraryPrefix = value;
         }
 
         [DisplayName("Use Main Entry Point")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.UseMain")]
         [DefaultValue(true)]
-        public bool UseMain { get { return useMain; } set { useMain = value; } }
+        public bool UseMain {
+            get => useMain;
+            set => useMain = value;
+        }
 
         [DisplayName("Include Packages")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
@@ -103,8 +115,8 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue(new string[]{})]
         public string[] IncludePackages
         {
-            get { return includePackages; }
-            set { includePackages = value; }
+            get => includePackages;
+            set => includePackages = value;
         }
 
         [DisplayName("Excludes File")]
@@ -113,8 +125,8 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue("")]
         public string ExcludeFile
         {
-            get { return excludeFile; }
-            set { excludeFile = value; }
+            get => excludeFile;
+            set => excludeFile = value;
         }
 
         [DisplayName("Group Classes")]
@@ -123,15 +135,18 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue(false)]
         public bool GroupClasses
         {
-            get { return groupClasses; }
-            set { groupClasses = value; }
+            get => groupClasses;
+            set => groupClasses = value;
         }
 
         [DisplayName("Use MX Classes")]
         [LocalizedCategory("ProjectManager.Category.Advanced")]
         [LocalizedDescription("ProjectManager.Description.UseMX")]
         [DefaultValue(true)]
-        public bool UseMX { get { return useMX; } set { useMX = value; } }
+        public bool UseMX {
+            get => useMX;
+            set => useMX = value;
+        }
 
         [DisplayName("Injection Frame")]
         [LocalizedCategory("ProjectManager.Category.CodeInjection")]
@@ -139,7 +154,7 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue(1)]
         public int Frame
         {
-            get { return frame; }
+            get => frame;
             set
             {
                 if (frame < 1) throw new ArgumentException("The value for Frame must be greater than zero.");
@@ -153,8 +168,8 @@ namespace ProjectManager.Projects.AS2
         [DefaultValue(true)]
         public bool Keep
         {
-            get { return keep; }
-            set { keep = value; }
+            get => keep;
+            set => keep = value;
         }
     }
 }

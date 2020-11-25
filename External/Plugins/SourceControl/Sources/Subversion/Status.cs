@@ -39,7 +39,7 @@ namespace SourceControl.Sources.Subversion
 
         public bool SetPathDirty(string path)
         {
-            if (path == null) return false;
+            if (path is null) return false;
             if (string.IsNullOrEmpty(dirty))
             {
                 dirty = path;
@@ -61,20 +61,20 @@ namespace SourceControl.Sources.Subversion
             return true;
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
             {
-                String label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
+                string label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
                 TraceManager.AddAsync(label + " (" + exitCode + ")");
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
-        override protected void Runner_Output(object sender, string line)
+        protected override void Runner_Output(object sender, string line)
         {
             int fileIndex = 30;
             if (line.Length < fileIndex) return;
@@ -131,7 +131,7 @@ namespace SourceControl.Sources.Subversion
             {
                 StatusNode child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }
@@ -144,7 +144,7 @@ namespace SourceControl.Sources.Subversion
         {
             int p = path.IndexOf(Path.DirectorySeparatorChar);
             if (p < 0) return AddChild(path, status, true);
-            else return AddChild(path.Substring(0, p), status, false)
+            return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 

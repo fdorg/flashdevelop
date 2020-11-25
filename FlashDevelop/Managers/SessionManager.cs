@@ -9,17 +9,14 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace FlashDevelop.Managers
 {
-    class SessionManager
+    internal class SessionManager
     {
         /// <summary>
         /// Saves the current session to a file
         /// </summary>
-        public static void SaveSession(String file)
-        {
-            Session session = GetCurrentSession();
-            SaveSession(file, session);
-        }
-        public static void SaveSession(String file, Session session)
+        public static void SaveSession(string file) => SaveSession(file, GetCurrentSession());
+
+        public static void SaveSession(string file, Session session)
         {
             try
             {
@@ -34,13 +31,13 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Loads and restores the saved session 
         /// </summary>
-        public static void RestoreSession(String file, SessionType type)
+        public static void RestoreSession(string file, SessionType type)
         {
             try
             {
-                Session session = new Session();
-                session = (Session)ObjectSerializer.Deserialize(file, session);
-                if (session.Files == null) session.Files = new List<string>();
+                var session = new Session();
+                session = ObjectSerializer.Deserialize(file, session);
+                session.Files ??= new List<string>();
                 session.Type = type; // set the type here...
                 RestoreSession(file, session);
             }
@@ -49,7 +46,7 @@ namespace FlashDevelop.Managers
                 ErrorManager.ShowError(ex);
             }
         }
-        public static void RestoreSession(String file, Session session)
+        public static void RestoreSession(string file, Session session)
         {
             try
             {
@@ -57,20 +54,19 @@ namespace FlashDevelop.Managers
                 Globals.MainForm.CloseAllDocuments(false);
                 if (!Globals.MainForm.CloseAllCanceled)
                 {
-                    DataEvent te = new DataEvent(EventType.RestoreSession, file, session);
-                    EventManager.DispatchEvent(Globals.MainForm, te);
+                    var te = new DataEvent(EventType.RestoreSession, file, session);
+                    EventManager.DispatchEvent(PluginBase.MainForm, te);
                     if (!te.Handled)
                     {
-                        for (Int32 i = 0; i < session.Files.Count; i++)
+                        foreach (var fileToOpen in session.Files)
                         {
-                            String fileToOpen = session.Files[i];
-                            if (File.Exists(fileToOpen)) Globals.MainForm.OpenEditableDocument(fileToOpen);
+                            if (File.Exists(fileToOpen)) PluginBase.MainForm.OpenEditableDocument(fileToOpen);
                         }
                         RestoreDocks(session);
-                        if (Globals.MainForm.Documents.Length == 0)
+                        if (((MainForm) PluginBase.MainForm).DocumentsLength() == 0)
                         {
-                            NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
-                            EventManager.DispatchEvent(Globals.MainForm, ne);
+                            var ne = new NotifyEvent(EventType.FileEmpty);
+                            EventManager.DispatchEvent(PluginBase.MainForm, ne);
                             if (!ne.Handled) Globals.MainForm.SmartNew(null, null);
                         }
                         DocumentManager.ActivateDocument(session.Index);
@@ -87,17 +83,15 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Restores the previous document docks
         /// </summary>
-        private static void RestoreDocks(Session session)
+        static void RestoreDocks(Session session)
         {
             try
             {
-                DockPane prevPane;
-                for (Int32 i = 0; i < session.Nested.Count; i++)
+                foreach (var nestedDock in session.Nested)
                 {
-                    NestedDock nestedDock = session.Nested[i];
-                    DockContent dockContent = DocumentManager.FindDocument(nestedDock.FileName) as DockContent;
-                    if (dockContent != null && nestedDock.NestIndex > -1)
+                    if (DocumentManager.FindDocument(nestedDock.FileName) is DockContent dockContent && nestedDock.NestIndex > -1)
                     {
+                        DockPane prevPane;
                         if (dockContent.DockPanel.Panes.Count > nestedDock.PaneIndex)
                         {
                             prevPane = dockContent.DockPanel.Panes[nestedDock.PaneIndex];
@@ -105,11 +99,14 @@ namespace FlashDevelop.Managers
                         }
                         else if (dockContent.DockPanel.Panes.Count > nestedDock.NestIndex)
                         {
-                            DockStyle ds = DockStyle.Right;
                             prevPane = dockContent.DockPanel.Panes[nestedDock.NestIndex];
-                            if (nestedDock.Alignment == DockAlignment.Top) ds = DockStyle.Top;
-                            else if (nestedDock.Alignment == DockAlignment.Left) ds = DockStyle.Left;
-                            else if (nestedDock.Alignment == DockAlignment.Bottom) ds = DockStyle.Bottom;
+                            var ds = nestedDock.Alignment switch
+                            {
+                                DockAlignment.Top => DockStyle.Top,
+                                DockAlignment.Left => DockStyle.Left,
+                                DockAlignment.Bottom => DockStyle.Bottom,
+                                _ => DockStyle.Right
+                            };
                             dockContent.DockTo(prevPane, ds, -1, nestedDock.Proportion);
                         }
                     }
@@ -123,18 +120,18 @@ namespace FlashDevelop.Managers
         /// </summary> 
         public static Session GetCurrentSession()
         {
-            Session session = new Session();
-            ITabbedDocument[] documents = Globals.MainForm.Documents;
-            for (Int32 i = 0; i < documents.Length; i++)
+            var session = new Session();
+            var documents = PluginBase.MainForm.Documents;
+            for (int i = 0; i < documents.Length; i++)
             {
-                ITabbedDocument document = documents[i];
-                if (document.IsEditable && !document.IsUntitled)
+                var document = documents[i];
+                if (document.SciControl is { } sci && !document.IsUntitled)
                 {
-                    if (document == Globals.CurrentDocument)
+                    if (document == PluginBase.MainForm.CurrentDocument)
                     {
                         session.Index = i;
                     }
-                    session.Files.Add(document.FileName);
+                    session.Files.Add(sci.FileName);
                     AddDocumentDock(document, session);
                 }
                 else session.Files.Add(document.Text);
@@ -149,14 +146,14 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                DockContent content = document as DockContent;
-                double prop = content.Pane.NestedDockingStatus.Proportion;
-                DockAlignment align = content.Pane.NestedDockingStatus.Alignment;
-                Int32 paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);
-                Int32 nestIndex = content.DockPanel.Panes.IndexOf(content.Pane.NestedDockingStatus.PreviousPane);
+                var content = (DockContent) document;
+                var nestIndex = content.DockPanel.Panes.IndexOf(content.Pane.NestedDockingStatus.PreviousPane);
                 if (nestIndex > -1)
                 {
-                    NestedDock dock = new NestedDock(document.FileName, nestIndex, paneIndex, align, prop);
+                    var paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);
+                    var align = content.Pane.NestedDockingStatus.Alignment;
+                    var prop = content.Pane.NestedDockingStatus.Proportion;
+                    var dock = new NestedDock(document.FileName, nestIndex, paneIndex, align, prop);
                     session.Nested.Add(dock);
                 }
             }
@@ -167,42 +164,42 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class Session : ISession
     {
-        private Int32 index = 0;
-        private List<String> files = new List<String>();
-        private List<NestedDock> nested = new List<NestedDock>();
-        private SessionType type = SessionType.Startup;
+        int index = 0;
+        List<string> files = new List<string>();
+        List<NestedDock> nested = new List<NestedDock>();
+        SessionType type = SessionType.Startup;
 
         public Session() {}
-        public Session(Int32 index, List<String> files)
+        public Session(int index, List<string> files)
         {
             this.index = index;
             this.files = files;
         }
-        public Session(Int32 index, List<String> files, SessionType type)
+        public Session(int index, List<string> files, SessionType type)
         {
             this.index = index;
             this.files = files;
             this.type = type;
         }
-        public Int32 Index
+        public int Index
         {
-            get { return this.index; }
-            set { this.index = value; }
+            get => index;
+            set => index = value;
         }
         public SessionType Type
         {
-            get { return this.type; }
-            set { this.type = value; }
+            get => type;
+            set => type = value;
         }
-        public List<String> Files
+        public List<string> Files
         {
-            get { return this.files; }
-            set { this.files = value; }
+            get => files;
+            set => files = value;
         }
         public List<NestedDock> Nested
         {
-            get { return this.nested; }
-            set { this.nested = value; }
+            get => nested;
+            set => nested = value;
         }
 
     }
@@ -210,14 +207,14 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class NestedDock
     {
-        private Int32 nest = -1;
-        private Int32 index = -1;
-        private String file = "";
-        private double prop = 0.5;
-        private DockAlignment align = DockAlignment.Right;
+        int nest = -1;
+        int index = -1;
+        string file = "";
+        double prop = 0.5;
+        DockAlignment align = DockAlignment.Right;
 
         public NestedDock() { }
-        public NestedDock(String file, Int32 nest, Int32 index, DockAlignment align, double prop)
+        public NestedDock(string file, int nest, int index, DockAlignment align, double prop)
         {
             this.file = file;
             this.nest = nest;
@@ -225,33 +222,30 @@ namespace FlashDevelop.Managers
             this.align = align;
             this.prop = prop;
         }
-        public String FileName
+        public string FileName
         {
-            get { return this.file; }
-            set { this.file = value; }
+            get => file;
+            set => file = value;
         }
-        public Int32 PaneIndex
+        public int PaneIndex
         {
-            get { return this.index; }
-            set { this.index = value; }
+            get => index;
+            set => index = value;
         }
-        public Int32 NestIndex
+        public int NestIndex
         {
-            get { return this.nest; }
-            set { this.nest = value; }
+            get => nest;
+            set => nest = value;
         }
         public DockAlignment Alignment
         {
-            get { return this.align; }
-            set { this.align = value; }
+            get => align;
+            set => align = value;
         }
         public double Proportion
         {
-            get { return this.prop; }
-            set { this.prop = value; }
+            get => prop;
+            set => prop = value;
         }
-
     }
-
 }
-

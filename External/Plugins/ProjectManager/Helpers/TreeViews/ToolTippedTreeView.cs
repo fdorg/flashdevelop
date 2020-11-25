@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Drawing;
-using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
@@ -22,7 +19,7 @@ namespace System.Windows.Forms
             get 
             {
                 CreateParams p = base.CreateParams;
-                p.Style = p.Style | TVS_NOTOOLTIPS;
+                p.Style |= TVS_NOTOOLTIPS;
                 return p;
             }
         }
@@ -31,7 +28,7 @@ namespace System.Windows.Forms
         protected override void OnMouseMove(MouseEventArgs e)
         {
             // create tooltip
-            if (tip == null) 
+            if (tip is null) 
             {
                 tip = new ToolTip();
                 tip.ShowAlways = true;

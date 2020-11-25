@@ -9,131 +9,128 @@ namespace Mono.GetOptions
         // Methods
         static OptionDetails()
         {
-            OptionDetails.Verbose = false;
+            Verbose = false;
         }
 
-        public OptionDetails(System.Reflection.MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
+        public OptionDetails(MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
         {
-            this.paramName = null;
-            this.optionHelp = null;
-            this.ShortForm = ("" + option.ShortForm).Trim();
-            if (option.LongForm == null)
+            paramName = null;
+            optionHelp = null;
+            ShortForm = ("" + option.ShortForm).Trim();
+            if (option.LongForm is null)
             {
-                this.LongForm = string.Empty;
+                LongForm = string.Empty;
             }
             else
             {
-                this.LongForm = (option.LongForm != string.Empty) ? option.LongForm : memberInfo.Name;
+                LongForm = option.LongForm.Length != 0 ? option.LongForm : memberInfo.Name;
             }
-            this.AlternateForm = option.AlternateForm;
-            this.ShortDescription = this.ExtractParamName(option.ShortDescription);
-            this.Occurs = 0;
-            this.OptionBundle = optionBundle;
-            this.BooleanOption = false;
-            this.MemberInfo = memberInfo;
-            this.NeedsParameter = false;
-            this.Values = null;
-            this.MaxOccurs = 1;
-            this.VBCStyleBoolean = option.VBCStyleBoolean;
-            this.SecondLevelHelp = option.SecondLevelHelp;
-            this.ParameterType = OptionDetails.TypeOfMember(memberInfo);
-            if (this.ParameterType != null)
+            AlternateForm = option.AlternateForm;
+            ShortDescription = ExtractParamName(option.ShortDescription);
+            Occurs = 0;
+            OptionBundle = optionBundle;
+            BooleanOption = false;
+            MemberInfo = memberInfo;
+            NeedsParameter = false;
+            Values = null;
+            MaxOccurs = 1;
+            VBCStyleBoolean = option.VBCStyleBoolean;
+            SecondLevelHelp = option.SecondLevelHelp;
+            ParameterType = TypeOfMember(memberInfo);
+            if (ParameterType != null)
             {
-                if (this.ParameterType.FullName != "System.Boolean")
+                if (ParameterType.FullName != "System.Boolean")
                 {
-                    if (this.LongForm.IndexOf(':') >= 0)
+                    if (LongForm.IndexOf(':') >= 0)
                     {
-                        throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + this.MemberInfo.ToString() + " isn't]");
+                        throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + MemberInfo + " isn't]");
                     }
-                    this.NeedsParameter = true;
+                    NeedsParameter = true;
                     if (option.MaxOccurs == 1)
                     {
                         return;
                     }
-                    if (this.ParameterType.IsArray)
+                    if (ParameterType.IsArray)
                     {
-                        this.Values = new ArrayList();
-                        this.MaxOccurs = option.MaxOccurs;
+                        Values = new ArrayList();
+                        MaxOccurs = option.MaxOccurs;
                         return;
                     }
-                    if ((this.MemberInfo is MethodInfo) || (this.MemberInfo is PropertyInfo))
+                    if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
                     {
-                        this.MaxOccurs = option.MaxOccurs;
+                        MaxOccurs = option.MaxOccurs;
                         return;
                     }
-                    object[] objArray1 = new object[] { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", this.MemberInfo.ToString(), "] option" } ;
+                    object[] objArray1 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", MemberInfo.ToString(), "] option" } ;
                     throw new InvalidOperationException(string.Concat(objArray1));
                 }
-                this.BooleanOption = true;
+                BooleanOption = true;
                 if (option.MaxOccurs != 1)
                 {
-                    if ((this.MemberInfo is MethodInfo) || (this.MemberInfo is PropertyInfo))
+                    if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
                     {
-                        this.MaxOccurs = option.MaxOccurs;
+                        MaxOccurs = option.MaxOccurs;
                     }
                     else
                     {
-                        object[] objArray2 = new object[] { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", this.MemberInfo.ToString(), "] option" } ;
+                        object[] objArray2 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", MemberInfo.ToString(), "] option" } ;
                         throw new InvalidOperationException(string.Concat(objArray2));
                     }
                 }
             }
         }
 
-        private void DoIt(bool setValue)
+        void DoIt(bool setValue)
         {
-            if (!this.NeedsParameter)
+            if (!NeedsParameter)
             {
-                this.Occurred(1);
-                if (OptionDetails.Verbose)
+                Occurred(1);
+                if (Verbose)
                 {
-                    Console.WriteLine("<" + this.LongForm + "> set to [true]");
+                    Console.WriteLine("<" + LongForm + "> set to [true]");
                 }
-                if (this.MemberInfo is FieldInfo)
+                if (MemberInfo is FieldInfo info)
                 {
-                    ((FieldInfo) this.MemberInfo).SetValue(this.OptionBundle, setValue);
+                    info.SetValue(OptionBundle, setValue);
                 }
-                else if (this.MemberInfo is PropertyInfo)
+                else if (MemberInfo is PropertyInfo propertyInfo)
                 {
-                    ((PropertyInfo) this.MemberInfo).SetValue(this.OptionBundle, setValue, null);
+                    propertyInfo.SetValue(OptionBundle, setValue, null);
                 }
-                else if (((WhatToDoNext) ((MethodInfo) this.MemberInfo).Invoke(this.OptionBundle, null)) == WhatToDoNext.AbandonProgram)
+                else if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, null) == WhatToDoNext.AbandonProgram)
                 {
                     Environment.Exit(1);
                 }
             }
         }
 
-        private void DoIt(string parameterValue)
+        void DoIt(string parameterValue)
         {
-            if (parameterValue == null)
-            {
-                parameterValue = "";
-            }
-            char[] chArray1 = new char[] { ',' } ;
+            parameterValue ??= "";
+            char[] chArray1 = { ',' } ;
             string[] textArray1 = parameterValue.Split(chArray1);
-            this.Occurred(textArray1.Length);
+            Occurred(textArray1.Length);
             string[] textArray2 = textArray1;
-            for (int num1 = 0; num1 < textArray2.Length; num1++)
+            foreach (var text1 in textArray2)
             {
-                string text1 = textArray2[num1];
                 object obj1 = null;
-                if (OptionDetails.Verbose)
+                if (Verbose)
                 {
-                    string[] textArray3 = new string[] { "<", this.LongForm, "> set to [", text1, "]" } ;
+                    string[] textArray3 = { "<", LongForm, "> set to [", text1, "]" } ;
                     Console.WriteLine(string.Concat(textArray3));
                 }
-                if ((this.Values != null) && (text1 != null))
+                if (Values != null && text1 != null)
                 {
                     try
                     {
-                        obj1 = Convert.ChangeType(text1, this.ParameterType.GetElementType());
+                        obj1 = Convert.ChangeType(text1, ParameterType.GetElementType());
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine(string.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", text1, this.ParameterType.GetElementType().Name, this.DefaultForm));
+                        Console.WriteLine(
+                            $"The value '{text1}' is not convertible to the appropriate type '{ParameterType.GetElementType().Name}' for the {DefaultForm} option");
                     }
-                    this.Values.Add(obj1);
+                    Values.Add(obj1);
                 }
                 else
                 {
@@ -141,41 +138,42 @@ namespace Mono.GetOptions
                     {
                         try
                         {
-                            obj1 = Convert.ChangeType(text1, this.ParameterType);
+                            obj1 = Convert.ChangeType(text1, ParameterType);
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine(string.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", text1, this.ParameterType.Name, this.DefaultForm));
+                            Console.WriteLine(
+                                $"The value '{text1}' is not convertible to the appropriate type '{ParameterType.Name}' for the {DefaultForm} option");
                             goto Label_01B1;
                         }
                     }
-                    if (this.MemberInfo is FieldInfo)
+                    if (MemberInfo is FieldInfo fieldInfo)
                     {
-                        ((FieldInfo) this.MemberInfo).SetValue(this.OptionBundle, obj1);
+                        fieldInfo.SetValue(OptionBundle, obj1);
                     }
-                    else if (this.MemberInfo is PropertyInfo)
+                    else if (MemberInfo is PropertyInfo propertyInfo)
                     {
-                        ((PropertyInfo) this.MemberInfo).SetValue(this.OptionBundle, obj1, null);
+                        propertyInfo.SetValue(OptionBundle, obj1, null);
                     }
                     else
                     {
-                        object[] objArray1 = new object[] { obj1 } ;
-                        if (((WhatToDoNext) ((MethodInfo) this.MemberInfo).Invoke(this.OptionBundle, objArray1)) == WhatToDoNext.AbandonProgram)
+                        object[] objArray1 = { obj1 } ;
+                        if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, objArray1) == WhatToDoNext.AbandonProgram)
                         {
                             Environment.Exit(1);
                         }
                     }
                 }
-            Label_01B1:;
+                Label_01B1:;
             }
         }
 
-        private string ExtractParamName(string shortDescription)
+        string ExtractParamName(string shortDescription)
         {
             int num1 = shortDescription.IndexOf('{');
             if (num1 < 0)
             {
-                this.paramName = "PARAM";
+                paramName = "PARAM";
                 return shortDescription;
             }
             int num2 = shortDescription.IndexOf('}');
@@ -183,77 +181,71 @@ namespace Mono.GetOptions
             {
                 num2 = shortDescription.Length + 1;
             }
-            this.paramName = shortDescription.Substring(num1 + 1, (num2 - num1) - 1);
-            shortDescription = shortDescription.Substring(0, num1) + this.paramName + shortDescription.Substring(num2 + 1);
+            paramName = shortDescription.Substring(num1 + 1, num2 - num1 - 1);
+            shortDescription = shortDescription.Substring(0, num1) + paramName + shortDescription.Substring(num2 + 1);
             return shortDescription;
         }
 
-        private bool IsThisOption(string arg)
+        bool IsThisOption(string arg)
         {
-            if ((arg == null) || (arg == string.Empty))
-            {
-                return false;
-            }
-            char[] chArray1 = new char[] { '-', '/' } ;
+            if (string.IsNullOrEmpty(arg)) return false;
+            char[] chArray1 = { '-', '/' } ;
             arg = arg.TrimStart(chArray1);
-            if (this.VBCStyleBoolean)
+            if (VBCStyleBoolean)
             {
-                char[] chArray2 = new char[] { '-', '+' } ;
+                char[] chArray2 = { '-', '+' } ;
                 arg = arg.TrimEnd(chArray2);
             }
-            return (((arg == this.ShortForm) || (arg == this.LongForm)) || (arg == this.AlternateForm));
+            return arg == ShortForm || arg == LongForm || arg == AlternateForm;
         }
 
-        private void Occurred(int howMany)
+        void Occurred(int howMany)
         {
-            this.Occurs += howMany;
-            if ((this.MaxOccurs > 0) && (this.Occurs > this.MaxOccurs))
+            Occurs += howMany;
+            if (MaxOccurs > 0 && Occurs > MaxOccurs)
             {
-                object[] objArray1 = new object[] { "Option ", this.ShortForm, " can be used at most ", this.MaxOccurs, " times" } ;
+                object[] objArray1 = { "Option ", ShortForm, " can be used at most ", MaxOccurs, " times" } ;
                 throw new IndexOutOfRangeException(string.Concat(objArray1));
             }
         }
 
         public OptionProcessingResult ProcessArgument(string arg, string nextArg)
         {
-            if (this.IsThisOption(arg))
+            if (IsThisOption(arg))
             {
-                if (!this.NeedsParameter)
+                if (!NeedsParameter)
                 {
-                    if (this.VBCStyleBoolean && arg.EndsWith("-", StringComparison.Ordinal))
+                    if (VBCStyleBoolean && arg.EndsWith("-", StringComparison.Ordinal))
                     {
-                        this.DoIt(false);
+                        DoIt(false);
                     }
                     else
                     {
-                        this.DoIt(true);
+                        DoIt(true);
                     }
                     return OptionProcessingResult.OptionAlone;
                 }
-                this.DoIt(nextArg);
+                DoIt(nextArg);
                 return OptionProcessingResult.OptionConsumedParameter;
             }
-            if (this.IsThisOption(arg + ":" + nextArg))
+            if (IsThisOption(arg + ":" + nextArg))
             {
-                this.DoIt(true);
+                DoIt(true);
                 return OptionProcessingResult.OptionConsumedParameter;
             }
             return OptionProcessingResult.NotThisOption;
         }
 
-        int IComparable.CompareTo(object other)
-        {
-            return this.Key.CompareTo(((OptionDetails) other).Key);
-        }
+        int IComparable.CompareTo(object other) => Key.CompareTo(((OptionDetails) other).Key);
 
         public override string ToString()
         {
-            if (this.optionHelp == null)
+            if (optionHelp is null)
             {
                 string text1;
                 string text2;
-                bool flag1 = !string.IsNullOrEmpty(this.LongForm);
-                if (this.OptionBundle.ParsingMode == OptionsParsingMode.Windows)
+                bool flag1 = !string.IsNullOrEmpty(LongForm);
+                if (OptionBundle.ParsingMode == OptionsParsingMode.Windows)
                 {
                     text2 = "/";
                     text1 = "/";
@@ -261,81 +253,74 @@ namespace Mono.GetOptions
                 else
                 {
                     text2 = "-";
-                    text1 = this.linuxLongPrefix;
+                    text1 = linuxLongPrefix;
                 }
-                this.optionHelp = "  ";
-                this.optionHelp = this.optionHelp + ((this.ShortForm == string.Empty) ? "   " : (text2 + this.ShortForm + " "));
-                this.optionHelp = this.optionHelp + (!flag1 ? "" : (text1 + this.LongForm));
-                if (this.NeedsParameter)
+                optionHelp = "  ";
+                optionHelp += ShortForm == string.Empty ? "   " : text2 + ShortForm + " ";
+                optionHelp += !flag1 ? "" : text1 + LongForm;
+                if (NeedsParameter)
                 {
                     if (flag1)
                     {
-                        this.optionHelp = this.optionHelp + ":";
+                        optionHelp += ":";
                     }
-                    this.optionHelp = this.optionHelp + this.ParamName;
+                    optionHelp += ParamName;
                 }
-                else if (this.BooleanOption && this.VBCStyleBoolean)
+                else if (BooleanOption && VBCStyleBoolean)
                 {
-                    this.optionHelp = this.optionHelp + "[+|-]";
+                    optionHelp += "[+|-]";
                 }
-                this.optionHelp = this.optionHelp + ("\t" + this.ShortDescription);
-                if (!string.IsNullOrEmpty(this.AlternateForm))
+                optionHelp += "\t" + ShortDescription;
+                if (!string.IsNullOrEmpty(AlternateForm))
                 {
-                    this.optionHelp = this.optionHelp + (" [short form: " + text2 + this.AlternateForm + "]");
+                    optionHelp += " [short form: " + text2 + AlternateForm + "]";
                 }
             }
-            return this.optionHelp;
+            return optionHelp;
         }
 
         public void TransferValues()
         {
-            if (this.Values != null)
+            if (Values is null) return;
+            if (MemberInfo is FieldInfo fieldInfo)
             {
-                if (this.MemberInfo is FieldInfo)
+                fieldInfo.SetValue(OptionBundle, Values.ToArray(ParameterType.GetElementType()));
+            }
+            else if (MemberInfo is PropertyInfo propertyInfo)
+            {
+                propertyInfo.SetValue(OptionBundle, Values.ToArray(ParameterType.GetElementType()), null);
+            }
+            else
+            {
+                object[] objArray1 = { Values.ToArray(ParameterType.GetElementType()) } ;
+                if ((WhatToDoNext) ((MethodInfo) MemberInfo).Invoke(OptionBundle, objArray1) == WhatToDoNext.AbandonProgram)
                 {
-                    ((FieldInfo) this.MemberInfo).SetValue(this.OptionBundle, this.Values.ToArray(this.ParameterType.GetElementType()));
-                }
-                else if (this.MemberInfo is PropertyInfo)
-                {
-                    ((PropertyInfo) this.MemberInfo).SetValue(this.OptionBundle, this.Values.ToArray(this.ParameterType.GetElementType()), null);
-                }
-                else
-                {
-                    object[] objArray1 = new object[] { this.Values.ToArray(this.ParameterType.GetElementType()) } ;
-                    if (((WhatToDoNext) ((MethodInfo) this.MemberInfo).Invoke(this.OptionBundle, objArray1)) == WhatToDoNext.AbandonProgram)
-                    {
-                        Environment.Exit(1);
-                    }
+                    Environment.Exit(1);
                 }
             }
         }
 
-        private static Type TypeOfMember(System.Reflection.MemberInfo memberInfo)
+        static Type TypeOfMember(MemberInfo memberInfo)
         {
-            if ((memberInfo.MemberType == MemberTypes.Field) && (memberInfo is FieldInfo))
+            if (memberInfo.MemberType == MemberTypes.Field && memberInfo is FieldInfo fieldInfo)
             {
-                return ((FieldInfo) memberInfo).FieldType;
+                return fieldInfo.FieldType;
             }
-            if ((memberInfo.MemberType == MemberTypes.Property) && (memberInfo is PropertyInfo))
+            if (memberInfo.MemberType == MemberTypes.Property && memberInfo is PropertyInfo propertyInfo)
             {
-                return ((PropertyInfo) memberInfo).PropertyType;
+                return propertyInfo.PropertyType;
             }
-            if ((memberInfo.MemberType == MemberTypes.Method) && (memberInfo is MethodInfo))
+            if (memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo methodInfo)
             {
-                if (((MethodInfo) memberInfo).ReturnType.FullName != typeof(WhatToDoNext).FullName)
+                if (methodInfo.ReturnType.FullName != typeof(WhatToDoNext).FullName)
                 {
                     throw new NotSupportedException("Option method must return '" + typeof(WhatToDoNext).FullName + "'");
                 }
-                ParameterInfo[] infoArray1 = ((MethodInfo) memberInfo).GetParameters();
-                if ((infoArray1 != null) && (infoArray1.Length != 0))
-                {
-                    return infoArray1[0].ParameterType;
-                }
-                return null;
+                var infoArray1 = methodInfo.GetParameters();
+                return infoArray1.Length != 0 ? infoArray1[0].ParameterType : null;
             }
             throw new NotSupportedException("'" + memberInfo.MemberType + "' memberType is not supported");
         }
-
 
         // Properties
         public string DefaultForm
@@ -343,63 +328,38 @@ namespace Mono.GetOptions
             get
             {
                 string text1 = "-";
-                string text2 = this.linuxLongPrefix;
-                if (this.parsingMode == OptionsParsingMode.Windows)
+                string text2 = linuxLongPrefix;
+                if (parsingMode == OptionsParsingMode.Windows)
                 {
                     text1 = "/";
                     text2 = "/";
                 }
-                if (this.ShortForm != string.Empty)
+                if (ShortForm != string.Empty)
                 {
-                    return (text1 + this.ShortForm);
+                    return text1 + ShortForm;
                 }
-                return (text2 + this.LongForm);
+                return text2 + LongForm;
             }
         }
 
-        internal string Key
-        {
-            get
-            {
-                return (this.LongForm + " " + this.ShortForm);
-            }
-        }
+        internal string Key => LongForm + " " + ShortForm;
 
-        private string linuxLongPrefix
-        {
-            get
-            {
-                return (((this.parsingMode & OptionsParsingMode.GNU_DoubleDash) != OptionsParsingMode.GNU_DoubleDash) ? "-" : "--");
-            }
-        }
+        string linuxLongPrefix => (parsingMode & OptionsParsingMode.GNU_DoubleDash) != OptionsParsingMode.GNU_DoubleDash ? "-" : "--";
 
-        public string ParamName
-        {
-            get
-            {
-                return this.paramName;
-            }
-        }
+        public string ParamName => paramName;
 
-        private OptionsParsingMode parsingMode
-        {
-            get
-            {
-                return this.OptionBundle.ParsingMode;
-            }
-        }
-
+        OptionsParsingMode parsingMode => OptionBundle.ParsingMode;
 
         // Fields
         public string AlternateForm;
         public bool BooleanOption;
         public string LongForm;
         public int MaxOccurs;
-        public System.Reflection.MemberInfo MemberInfo;
+        public MemberInfo MemberInfo;
         public bool NeedsParameter;
         public int Occurs;
         public Options OptionBundle;
-        private string optionHelp;
+        string optionHelp;
         public Type ParameterType;
         public string paramName;
         public bool SecondLevelHelp;
@@ -410,4 +370,3 @@ namespace Mono.GetOptions
         public static bool Verbose;
     }
 }
-

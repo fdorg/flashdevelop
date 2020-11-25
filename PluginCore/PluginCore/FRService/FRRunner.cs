@@ -8,13 +8,13 @@ namespace PluginCore.FRService
     /// <summary>
     /// Event delegates of the service
     /// </summary> 
-    public delegate void FRProgressReportHandler(Int32 percentDone);
+    public delegate void FRProgressReportHandler(int percentDone);
     public delegate void FRFinishedHandler(FRResults results);
 
     /// <summary>
     /// "Alias" for: Dictionary<String, List<SearchMatch>>
     /// </summary>
-    public class FRResults : Dictionary<String, List<SearchMatch>>
+    public class FRResults : Dictionary<string, List<SearchMatch>>
     {
     }
 
@@ -27,7 +27,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Properties of the class
         /// </summary>
-        private BackgroundWorker backgroundWorker;
+        BackgroundWorker backgroundWorker;
 
         /// <summary>
         /// Events of the class
@@ -38,10 +38,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Creates a search/replace service instance
         /// </summary>
-        public FRRunner()
-        {
-            this.CreateWorker();
-        }
+        public FRRunner() => CreateWorker();
 
         /// <summary>
         /// Do a synchronous search
@@ -53,14 +50,14 @@ namespace PluginCore.FRService
         {
             try
             {
-                FRResults results = new FRResults();
-                List<String> files = configuration.GetFiles();
-                FRSearch search = configuration.GetSearch();
-                foreach (String file in files)
+                var results = new FRResults();
+                var files = configuration.GetFiles();
+                var search = configuration.GetSearch();
+                foreach (var file in files)
                 {
-                    String src = configuration.GetSource(file);
+                    var src = configuration.GetSource(file);
                     search.SourceFile = file;
-                    List<SearchMatch> matches = search.Matches(src);
+                    var matches = search.Matches(src);
                     FRSearch.ExtractResultsLineText(matches, src);
                     results[file] = matches;
                 }
@@ -68,7 +65,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception " + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception {ex.Message}\n{ex.StackTrace}");
                 return null;
             }
         }
@@ -83,30 +80,28 @@ namespace PluginCore.FRService
         {
             try
             {
-                FRResults results = new FRResults();
-                List<String> files = configuration.GetFiles();
-                FRSearch search = configuration.GetSearch();
-                string replacement = configuration.Replacement;
-                if (replacement == null) return results;
-                string src; 
-                List<SearchMatch> matches;
-                foreach (String file in files)
+                var results = new FRResults();
+                var files = configuration.GetFiles();
+                var search = configuration.GetSearch();
+                var replacement = configuration.Replacement;
+                if (replacement is null) return results;
+                foreach (var file in files)
                 {
-                    src = configuration.GetSource(file);
+                    var src = configuration.GetSource(file);
                     search.SourceFile = file;
-                    results[file] = matches = search.Matches(src);
-                    foreach (SearchMatch match in matches)
+                    var matches = search.Matches(src);
+                    results[file] = matches;
+                    foreach (var match in matches)
                     {
                         src = search.ReplaceAll(src, replacement, matches);
                         configuration.SetSource(file, src);
                     }
-                    matches = null;
                 }
                 return results;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception " + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception {ex.Message}\n{ex.StackTrace}");
                 return null;
             }
         }
@@ -118,9 +113,9 @@ namespace PluginCore.FRService
         /// <param name="configuration">Search operation parameters</param>
         public void SearchAsync(FRConfiguration configuration)
         {
-            if (this.backgroundWorker == null) this.CreateWorker();
+            if (backgroundWorker is null) CreateWorker();
             configuration.Replacement = null;
-            this.backgroundWorker.RunWorkerAsync(configuration);
+            backgroundWorker.RunWorkerAsync(configuration);
         }
 
         /// <summary>
@@ -130,118 +125,100 @@ namespace PluginCore.FRService
         /// <param name="configuration">Replace operation parameters</param>
         public void ReplaceAsync(FRConfiguration configuration)
         {
-            if (this.backgroundWorker == null) this.CreateWorker();
-            this.backgroundWorker.RunWorkerAsync(configuration);
+            if (backgroundWorker is null) CreateWorker();
+            backgroundWorker.RunWorkerAsync(configuration);
         }
 
         /// <summary>
         /// Cancel the background operation
         /// </summary>
-        public void CancelAsync()
-        {
-            if (this.backgroundWorker != null)
-            {
-                this.backgroundWorker.CancelAsync();
-            }
-        }
+        public void CancelAsync() => backgroundWorker?.CancelAsync();
 
         #region Background Work
 
         /// <summary>
         /// Initialize background thread
         /// </summary>
-        private void CreateWorker()
+        void CreateWorker()
         {
-            this.backgroundWorker = new BackgroundWorker();
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.DoWork += new DoWorkEventHandler(this.BackgroundWork);
-            this.backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(this.BackgroundReport);
-            this.backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundDone);
+            backgroundWorker = new BackgroundWorker {WorkerReportsProgress = true, WorkerSupportsCancellation = true};
+            backgroundWorker.DoWork += BackgroundWork;
+            backgroundWorker.ProgressChanged += BackgroundReport;
+            backgroundWorker.RunWorkerCompleted += BackgroundDone;
         }
 
         /// <summary>
         /// Event: background work finished or cancelled
         /// </summary>
-        private void BackgroundDone(Object sender, RunWorkerCompletedEventArgs e)
+        void BackgroundDone(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
-                if (Finished != null)
-                {
-                    Finished((e.Cancelled) ? null : (FRResults)e.Result);
-                }
+                Finished?.Invoke(e.Cancelled ? null : (FRResults)e.Result);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception while reporting end of background operation:\n" + ex + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception while reporting end of background operation:\n{ex}\n{ex.StackTrace}");
             }
         }
 
         /// <summary>
         /// Event: report background work status
         /// </summary>
-        private void BackgroundReport(Object sender, ProgressChangedEventArgs e)
+        void BackgroundReport(object sender, ProgressChangedEventArgs e)
         {
             try
             {
-                if (ProgressReport != null)
-                {
-                    ProgressReport(e.ProgressPercentage);
-                }
+                ProgressReport?.Invoke(e.ProgressPercentage);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception while reporting progress of background operation:\n" + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception while reporting progress of background operation:\n{ex.Message}\n{ex.StackTrace}");
             }
         }
 
         /// <summary>
         /// Background work main loop
         /// </summary>
-        private void BackgroundWork(Object sender, DoWorkEventArgs e)
+        void BackgroundWork(object sender, DoWorkEventArgs e)
         {
             try
             {
-                FRConfiguration configuration = e.Argument as FRConfiguration;
-                if (configuration == null)
+                if (!(e.Argument is FRConfiguration configuration))
                 {
                     e.Result = null;
                     return;
                 }
-                // get files
-                Int32 count = 0;
-                List<string> files = configuration.GetFiles();
-                if (files == null || files.Count == 0)
+                var files = configuration.GetFiles();
+                if (files.IsNullOrEmpty())
                 {
                     e.Result = new FRResults(); // empty results
                     return;
                 }
 
-                FRResults results = new FRResults();
-                FRSearch search = configuration.GetSearch();
-                string replacement = configuration.Replacement;
+                var results = new FRResults();
 
-                if (this.backgroundWorker.CancellationPending) e.Cancel = true;
+                if (backgroundWorker.CancellationPending) e.Cancel = true;
                 else
                 {
+                    var count = 0;
+                    var search = configuration.GetSearch();
+                    var replacement = configuration.Replacement;
                     // do search
-                    Int32 total = files.Count;
-                    Int32 lastPercent = 0;
-                    List<SearchMatch> matches;
-                    string src;
-                    foreach (String file in files)
+                    var total = files.Count;
+                    var lastPercent = 0;
+                    foreach (var file in files)
                     {
-                        if (this.backgroundWorker.CancellationPending) e.Cancel = true;
+                        if (backgroundWorker.CancellationPending) e.Cancel = true;
                         else
                         {
                             // work
-                            src = configuration.GetSource(file);
+                            var src = configuration.GetSource(file);
                             search.SourceFile = file;
-                            results[file] = matches = search.Matches(src);
-
+                            var matches = search.Matches(src);
                             if (matches.Count > 0)
                             {
+                                results[file] = matches;
                                 if (replacement != null)
                                 {
                                     // replace text
@@ -250,14 +227,13 @@ namespace PluginCore.FRService
                                 }
                                 else FRSearch.ExtractResultsLineText(matches, src);
                             }
-                            matches = null;
 
                             // progress
                             count++;
-                            Int32 percent = (100 * count) / total;
+                            int percent = (100 * count) / total;
                             if (lastPercent != percent)
                             {
-                                this.backgroundWorker.ReportProgress(percent);
+                                backgroundWorker.ReportProgress(percent);
                                 lastPercent = percent;
                             }
                         }
@@ -267,7 +243,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception during background operation:\n" + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception during background operation:\n{ex.Message}\n{ex.StackTrace}");
                 e.Result = null;
             }
         }
@@ -275,5 +251,4 @@ namespace PluginCore.FRService
         #endregion
 
     }
-
 }

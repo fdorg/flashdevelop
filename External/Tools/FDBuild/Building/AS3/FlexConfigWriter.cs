@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ProjectManager.Projects.AS3;
 using System.IO;
-using System.Collections;
-using ProjectManager.Projects;
+using System.Linq;
 
 
 namespace FDBuild.Building.AS3
@@ -18,7 +16,7 @@ namespace FDBuild.Building.AS3
 
         public FlexConfigWriter(string libraryPath): base(libraryPath, new UTF8Encoding(false))
         {
-            base.Formatting = Formatting.Indented;
+            Formatting = Formatting.Indented;
         }
 
         public void WriteConfig(AS3Project project, double sdkVersion, string[] extraClasspaths, bool debugMode, bool asc2Mode)
@@ -199,7 +197,7 @@ namespace FDBuild.Building.AS3
 
         private void AddNamespaces(MxmlcOptions options)
         {
-            if (options.Namespaces == null || options.Namespaces.Length == 0) return;
+            if (options.Namespaces is null || options.Namespaces.Length == 0) return;
 
             WriteStartElement("namespaces");
 
@@ -266,8 +264,7 @@ namespace FDBuild.Building.AS3
             WriteAttributeString("append", "true");
 
             // build classpaths
-            ArrayList classPaths = new ArrayList(project.AbsoluteClasspaths);
-
+            var classPaths = project.AbsoluteClasspaths.ToList();
             foreach (string extraClassPath in extraClasspaths)
                 if (Directory.Exists(extraClassPath))
                     classPaths.Add(extraClassPath);

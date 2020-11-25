@@ -37,7 +37,7 @@ namespace LitJson
     public class JsonWriter
     {
         #region Fields
-        private static NumberFormatInfo number_format;
+        private static readonly NumberFormatInfo number_format;
 
         private WriterContext        context;
         private Stack<WriterContext> ctx_stack;
@@ -45,16 +45,16 @@ namespace LitJson
         private char[]               hex_seq;
         private int                  indentation;
         private int                  indent_value;
-        private StringBuilder        inst_string_builder;
+        private readonly StringBuilder        inst_string_builder;
         private bool                 pretty_print;
         private bool                 validate;
-        private TextWriter           writer;
+        private readonly TextWriter           writer;
         #endregion
 
 
         #region Properties
         public int IndentValue {
-            get { return indent_value; }
+            get => indent_value;
             set {
                 indentation = (indentation / indent_value) * value;
                 indent_value = value;
@@ -62,17 +62,15 @@ namespace LitJson
         }
 
         public bool PrettyPrint {
-            get { return pretty_print; }
-            set { pretty_print = value; }
+            get => pretty_print;
+            set => pretty_print = value;
         }
 
-        public TextWriter TextWriter {
-            get { return writer; }
-        }
+        public TextWriter TextWriter => writer;
 
         public bool Validate {
-            get { return validate; }
-            set { validate = value; }
+            get => validate;
+            set => validate = value;
         }
         #endregion
 
@@ -98,8 +96,8 @@ namespace LitJson
 
         public JsonWriter (TextWriter writer)
         {
-            if (writer == null)
-                throw new ArgumentNullException ("writer");
+            if (writer is null)
+                throw new ArgumentNullException (nameof(writer));
 
             this.writer = writer;
 
@@ -219,7 +217,7 @@ namespace LitJson
 
         private void PutString (string str)
         {
-            Put (String.Empty);
+            Put (string.Empty);
 
             writer.Write ('"');
 
@@ -253,13 +251,13 @@ namespace LitJson
                     continue;
                 }
 
-                if ((int) str[i] >= 32 && (int) str[i] <= 126) {
+                if (str[i] >= 32 && str[i] <= 126) {
                     writer.Write (str[i]);
                     continue;
                 }
 
                 // Default, turn into a \uXXXX sequence
-                IntToHex ((int) str[i], hex_seq);
+                IntToHex (str[i], hex_seq);
                 writer.Write ("\\u");
                 writer.Write (hex_seq);
             }
@@ -277,8 +275,8 @@ namespace LitJson
 
         public override string ToString ()
         {
-            if (inst_string_builder == null)
-                return String.Empty;
+            if (inst_string_builder is null)
+                return string.Empty;
 
             return inst_string_builder.ToString ();
         }
@@ -291,8 +289,7 @@ namespace LitJson
             context = new WriterContext ();
             ctx_stack.Push (context);
 
-            if (inst_string_builder != null)
-                inst_string_builder.Remove (0, inst_string_builder.Length);
+            inst_string_builder?.Remove (0, inst_string_builder.Length);
         }
 
         public void Write (bool boolean)
@@ -355,7 +352,7 @@ namespace LitJson
             DoValidation (Condition.Value);
             PutNewline ();
 
-            if (str == null)
+            if (str is null)
                 Put ("null");
             else
                 PutString (str);

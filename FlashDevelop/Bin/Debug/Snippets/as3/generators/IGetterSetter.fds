@@ -1,0 +1,2 @@
+$(BlankLine)function get $(Name)():$(Type);
+function set $(Name)(value:$(Type)):$(Void);

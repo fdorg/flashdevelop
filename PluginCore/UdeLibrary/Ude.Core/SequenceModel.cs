@@ -36,8 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {   
     public abstract class SequenceModel
@@ -52,29 +50,23 @@ namespace Ude.Core
         // freqSeqs / totalSeqs
         protected float typicalPositiveRatio;
         
-        public float TypicalPositiveRatio {
-            get { return typicalPositiveRatio; }
-        }
-        
+        public float TypicalPositiveRatio => typicalPositiveRatio;
+
         // not used            
         protected bool keepEnglishLetter;
         
-        public bool KeepEnglishLetter {
-            get { return keepEnglishLetter; }
-        }
-        
-        protected String charsetName;
+        public bool KeepEnglishLetter => keepEnglishLetter;
 
-        public string CharsetName {
-            get { return charsetName; }
-        }
-        
+        protected string charsetName;
+
+        public string CharsetName => charsetName;
+
         public SequenceModel(
                 byte[] charToOrderMap,
                 byte[] precedenceMatrix,
                 float typicalPositiveRatio,
                 bool keepEnglishLetter,
-                String charsetName)
+                string charsetName)
         {
             this.charToOrderMap = charToOrderMap;
             this.precedenceMatrix = precedenceMatrix;

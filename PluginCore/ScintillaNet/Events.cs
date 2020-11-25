@@ -19,8 +19,8 @@ namespace ScintillaNet
     public delegate void NeedShownHandler(ScintillaControl sender, int position, int length);
     public delegate void UserListSelectionHandler(ScintillaControl sender, int listType, string text);
     public delegate void URIDroppedHandler(ScintillaControl sender, string text);
-    public delegate void DwellStartHandler(ScintillaControl sender, int position);
-    public delegate void DwellEndHandler(ScintillaControl sender ,int position);
+    public delegate void DwellStartHandler(ScintillaControl sender, int position, int x, int y);
+    public delegate void DwellEndHandler(ScintillaControl sender ,int position, int x, int y);
     public delegate void HotSpotClickHandler(ScintillaControl sender, int modifiers, int position);
     public delegate void HotSpotDoubleClickHandler(ScintillaControl sender, int modifiers, int position);
     public delegate void CallTipClickHandler(ScintillaControl sender, int position);

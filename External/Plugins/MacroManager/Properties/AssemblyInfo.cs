@@ -4,7 +4,7 @@ using PluginCore;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the information which is associated with the assembly you compile.
 [assembly: AssemblyTitle("MacroManager")]
-[assembly: AssemblyDescription("MacroManager Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
+[assembly: AssemblyDescription("Macro Manager Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("MacroManager")]

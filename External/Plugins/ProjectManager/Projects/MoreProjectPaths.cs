@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using PluginCore.Helpers;
@@ -9,33 +8,25 @@ namespace ProjectManager.Projects
     // This class is split off because FDBuild doesn't know what "PluginMain" is
     public partial class ProjectPaths
     {
-        public static string ProjectTemplatesDirectory
-        {
-            get { return PathHelper.ProjectsDir; }
-        }
+        public static string ProjectTemplatesDirectory => PathHelper.ProjectsDir;
 
-        public static string FileTemplatesDirectory
-        {
-            get { return Path.Combine(PathHelper.TemplateDir, "ProjectFiles"); }
-        }
+        public static string FileTemplatesDirectory => Path.Combine(PathHelper.TemplateDir, "ProjectFiles");
 
         /// <summary>
         /// 
         /// </summary>
-        public static List<String> GetAllProjectDirs()
+        public static List<string> GetAllProjectDirs()
         {
-            List<String> allDirs = new List<String>();
+            var result = new List<string>();
             if (Directory.Exists(ProjectTemplatesDirectory))
             {
-                allDirs.AddRange(Directory.GetDirectories(ProjectTemplatesDirectory));
+                result.AddRange(Directory.GetDirectories(ProjectTemplatesDirectory));
             }
             if (!PluginBase.MainForm.StandaloneMode && Directory.Exists(PathHelper.UserProjectsDir))
             {
-                allDirs.AddRange(Directory.GetDirectories(PathHelper.UserProjectsDir));
+                result.AddRange(Directory.GetDirectories(PathHelper.UserProjectsDir));
             }
-            return allDirs;
+            return result;
         }
-
     }
-
 }

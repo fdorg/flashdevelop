@@ -9,18 +9,9 @@
             Platform = TargetPlatforms[0];
         }
 
-        public override OutputType[] OutputTypes
-        {
-            get
-            {
-                return new OutputType[] { 
-                    OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application };
-            }
-        }
+        public override OutputType[] OutputTypes =>
+            new[] { OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application };
 
-        public override OutputType DefaultOutput(string platform)
-        {
-            return OutputType.Application;
-        }
+        public override OutputType DefaultOutput(string platform) => OutputType.Application;
     }
 }

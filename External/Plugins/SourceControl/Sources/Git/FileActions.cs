@@ -16,13 +16,13 @@
 
         public bool FileDelete(string[] paths, bool confirm)
         {
-            return false;
-            /*if (confirm)
+            if (confirm)
             {
                 new DeleteCommand(paths);
                 return true; // operation handled
             }
-            else return false; // let cut/paste files*/
+
+            return false; // let cut/paste files
         }
 
         public bool FileMove(string fromPath, string toPath)
@@ -32,13 +32,17 @@
             return true;*/
         }
 
-        public bool FileNew(string path) { return false; }
-        public bool FileOpen(string path) { return false; }
-        public bool FileReload(string path) { return false; }
-        public bool FileModifyRO(string path) { return false; }
+        public bool FileNew(string path)
+        {
+            new AddCommand(path);
+            return false;
+        }
+        public bool FileOpen(string path) => false;
+        public bool FileReload(string path) => false;
+        public bool FileModifyRO(string path) => false;
 
-        public bool BuildProject() { return false; }
-        public bool TestProject() { return false; }
-        public bool SaveProject() { return false; }
+        public bool BuildProject() => false;
+        public bool TestProject() => false;
+        public bool SaveProject() => false;
     }
 }

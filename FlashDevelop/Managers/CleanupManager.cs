@@ -8,44 +8,43 @@ using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
-    class CleanupManager
+    internal class CleanupManager
     {
-        private const String coloringStart = "<!-- COLORING_START -->";
-        private const String coloringEnd = "<!-- COLORING_END -->";
+        const string coloringStart = "<!-- COLORING_START -->";
+        const string coloringEnd = "<!-- COLORING_END -->";
 
         /// <summary>
         /// Reverts the language config files fully or keeping the coloring.
         /// </summary>
-        public static void RevertConfiguration(Boolean everything)
+        public static void RevertConfiguration(bool everything)
         {
-            String appSettingDir = Path.Combine(PathHelper.AppDir, "Settings");
-            String appLanguageDir = Path.Combine(appSettingDir, "Languages");
-            String userLanguageDir = Path.Combine(PathHelper.SettingDir, "Languages");
+            string appLanguageDir = Path.Combine(PathHelper.AppDir, "Settings", "Languages");
+            string userLanguageDir = Path.Combine(PathHelper.SettingDir, "Languages");
             if (everything) FolderHelper.CopyFolder(appLanguageDir, userLanguageDir);
             else
             {
-                String[] userFiles = Directory.GetFiles(userLanguageDir);
-                foreach (String userFile in userFiles)
+                var userFiles = Directory.GetFiles(userLanguageDir);
+                foreach (string userFile in userFiles)
                 {
-                    String appFile = Path.Combine(appLanguageDir, Path.GetFileName(userFile));
+                    var appFile = Path.Combine(appLanguageDir, Path.GetFileName(userFile));
                     if (File.Exists(appFile))
                     {
                         try
                         {
-                            String appFileContents = FileHelper.ReadFile(appFile);
-                            String userFileContents = FileHelper.ReadFile(userFile);
-                            Int32 appFileColoringStart = appFileContents.IndexOfOrdinal(coloringStart);
-                            Int32 appFileColoringEnd = appFileContents.IndexOfOrdinal(coloringEnd);
-                            Int32 userFileColoringStart = userFileContents.IndexOfOrdinal(coloringStart);
-                            Int32 userFileColoringEnd = userFileContents.IndexOfOrdinal(coloringEnd);
-                            String replaceTarget = appFileContents.Substring(appFileColoringStart, appFileColoringEnd - appFileColoringStart + coloringEnd.Length);
-                            String replaceContent = userFileContents.Substring(userFileColoringStart, userFileColoringEnd - userFileColoringStart + coloringEnd.Length);
-                            String finalContent = appFileContents.Replace(replaceTarget, replaceContent);
+                            string appFileContents = FileHelper.ReadFile(appFile);
+                            string userFileContents = FileHelper.ReadFile(userFile);
+                            int appFileColoringStart = appFileContents.IndexOfOrdinal(coloringStart);
+                            int appFileColoringEnd = appFileContents.IndexOfOrdinal(coloringEnd);
+                            int userFileColoringStart = userFileContents.IndexOfOrdinal(coloringStart);
+                            int userFileColoringEnd = userFileContents.IndexOfOrdinal(coloringEnd);
+                            string replaceTarget = appFileContents.Substring(appFileColoringStart, appFileColoringEnd - appFileColoringStart + coloringEnd.Length);
+                            string replaceContent = userFileContents.Substring(userFileColoringStart, userFileColoringEnd - userFileColoringStart + coloringEnd.Length);
+                            string finalContent = appFileContents.Replace(replaceTarget, replaceContent);
                             FileHelper.WriteFile(userFile, finalContent, Encoding.UTF8);
                         }
                         catch (Exception ex)
                         {
-                            String desc = TextHelper.GetString("Info.ColoringTagsMissing");
+                            string desc = TextHelper.GetString("Info.ColoringTagsMissing");
                             ErrorManager.ShowError(desc, ex);
                         }
                     }

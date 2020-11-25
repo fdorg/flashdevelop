@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PluginCore;
 using PluginCore.Controls;
@@ -13,9 +13,9 @@ namespace CssCompletion
 {
     public class Completion
     {
-        Regex reNavPrefix = new Regex("\\-[a-z]+\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        Settings settings;
-        Language lang;
+        readonly Regex reNavPrefix = new Regex("\\-[a-z]+\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        readonly Settings settings;
+        readonly Language lang;
         string wordChars;
         List<ICompletionListItem> htmlTags;
         List<ICompletionListItem> properties;
@@ -56,7 +56,7 @@ namespace CssCompletion
             bool autoInsert = false;
 
             char c = (char)value;
-            if (wordChars.IndexOf(c) < 0)
+            if (!wordChars.Contains(c))
             {
                 if (c == ':')
                 {
@@ -95,7 +95,7 @@ namespace CssCompletion
             var mode = CompleteMode.None;
 
             if (context.InComments) return;
-            else if (context.InBlock)
+            if (context.InBlock)
             {
                 if (context.Word == "-") mode = CompleteMode.Prefix;
                 else if (context.Word.Length >= 2 || (char)value == '-')
@@ -109,7 +109,7 @@ namespace CssCompletion
                     context.Position++;
                     mode = CompleteMode.Variable;
                 }
-                else if (context.Word.Length == 1 && "abcdefghijklmnopqrstuvwxyz".IndexOf(context.Word[0]) >= 0)
+                else if (context.Word.Length == 1 && "abcdefghijklmnopqrstuvwxyz".Contains(context.Word[0]))
                     mode = CompleteMode.Value;
             }
             else if (c == ':' && !context.IsVar) mode = CompleteMode.Pseudo;
@@ -150,32 +150,29 @@ namespace CssCompletion
             HandleCompletion(mode, context, false, false);
         }
 
-        private void HandleCompletion(CompleteMode mode, LocalContext context, bool autoInsert, bool autoHide)
+        void HandleCompletion(CompleteMode mode, LocalContext context, bool autoInsert, bool autoHide)
         {
-            List<ICompletionListItem> items = null;
-            switch (mode)
+            var items = mode switch
             {
-                case CompleteMode.Selector: items = HandleSelectorCompletion(context); break;
-                case CompleteMode.Pseudo: items = HandlePseudoCompletion(context); break;
-                case CompleteMode.Prefix: items = HandlePrefixCompletion(context); break;
-                case CompleteMode.Attribute: items = HandlePropertyCompletion(context); break;
-                case CompleteMode.Variable: items = HandleVariableCompletion(context); break;
-                case CompleteMode.Value: items = HandleValueCompletion(context); break;
-            }
-            if (items == null) return;
+                CompleteMode.Selector => HandleSelectorCompletion(context),
+                CompleteMode.Pseudo => HandlePseudoCompletion(context),
+                CompleteMode.Prefix => HandlePrefixCompletion(context),
+                CompleteMode.Attribute => HandlePropertyCompletion(context),
+                CompleteMode.Variable => HandleVariableCompletion(context),
+                CompleteMode.Value => HandleValueCompletion(context),
+                _ => null,
+            };
+            if (items is null) return;
 
             if (autoInsert && !string.IsNullOrEmpty(context.Word))
             {
-                var matches = new List<ICompletionListItem>();
-                foreach(var item in items)
-                    if (item.Label.StartsWithOrdinal(context.Word)) matches.Add(item);
+                var matches = items.Where(item => item.Label.StartsWithOrdinal(context.Word)).ToList();
                 if (matches.Count == 1)
                 {
-                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     sci.SetSel(context.Position, sci.CurrentPos);
                     sci.ReplaceSel(matches[0].Label);
                 }
-                //else 
             }
             else CompletionList.Show(items, autoHide, context.Word);
         }
@@ -183,7 +180,7 @@ namespace CssCompletion
         internal void OnInsert(ScintillaControl sci, int position, string text, char trigger, ICompletionListItem item)
         {
             if (!(item is CompletionItem)) return;
-            CompletionItem it = item as CompletionItem;
+            var it = (CompletionItem) item;
             if (trigger == ':')
             {
                 lastColonInsert = position + text.Length + 1;
@@ -201,7 +198,7 @@ namespace CssCompletion
 
         #region parsing
 
-        private LocalContext GetContext(ScintillaControl sci, int position)
+        LocalContext GetContext(ScintillaControl sci, int position)
         {
             var ctx = new LocalContext(sci);
             int i = position - 1;
@@ -227,7 +224,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     lastCharPos = i + 1;
                     if (inWord) word = c + word;
@@ -314,20 +311,17 @@ namespace CssCompletion
             return ctx;
         }
 
-        private bool IsVarDecl(ScintillaControl sci, int i)
+        bool IsVarDecl(ScintillaControl sci, int i)
         {
-            if (features.Pattern == null) return false;
+            if (features.Pattern is null) return false;
             int line = sci.LineFromPosition(i);
             string text = sci.GetLine(line);
             return features.Pattern.IsMatch(text);
         }
 
-        private bool IsTag(string word)
-        {
-            return Array.IndexOf<string>(tags, word) >= 0;
-        }
+        bool IsTag(string word) => tags.Contains(word);
 
-        private string ReadWordLeft(ScintillaControl sci, int i)
+        string ReadWordLeft(ScintillaControl sci, int i)
         {
             bool inWord = false;
             string word = "";
@@ -336,7 +330,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     inWord = true;
                     word = c + word;
@@ -346,7 +340,7 @@ namespace CssCompletion
             return word;
         }
 
-        private string ReadAttribute(ScintillaControl sci, int i)
+        string ReadAttribute(ScintillaControl sci, int i)
         {
             bool inWord = false;
             string word = "";
@@ -355,7 +349,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     inWord = true;
                     word = c + word;
@@ -371,13 +365,13 @@ namespace CssCompletion
             return word;
         }
 
-        private CssBlock FindBlock(ScintillaControl sci, bool parseIfDirty, int line, int col)
+        CssBlock FindBlock(ScintillaControl sci, bool parseIfDirty, int line, int col)
         {
             List<CssBlock> blocks = ParseBlocks(sci);
             return LookupBlock(blocks, null, line, col);
         }
 
-        private CssBlock LookupBlock(List<CssBlock> blocks, CssBlock parent, int line, int col)
+        CssBlock LookupBlock(List<CssBlock> blocks, CssBlock parent, int line, int col)
         {
             foreach (CssBlock block in blocks)
             {
@@ -387,7 +381,7 @@ namespace CssCompletion
             return parent;
         }
 
-        private bool CursorInBlock(CssBlock block, int line, int col)
+        bool CursorInBlock(CssBlock block, int line, int col)
         {
             if (line < block.LineFrom || line > block.LineTo) return false;
             if (line == block.LineFrom && col <= block.ColFrom) return false;
@@ -395,7 +389,7 @@ namespace CssCompletion
             return true;
         }
 
-        private List<CssBlock> ParseBlocks(ScintillaControl sci)
+        List<CssBlock> ParseBlocks(ScintillaControl sci)
         {
             List<CssBlock> blocks = new List<CssBlock>();
             blocks.Clear();
@@ -464,17 +458,11 @@ namespace CssCompletion
 
         #region completion
 
-        private List<ICompletionListItem> HandlePrefixCompletion(LocalContext context)
-        {
-            return prefixes;
-        }
+        List<ICompletionListItem> HandlePrefixCompletion(LocalContext context) => prefixes;
 
-        private List<ICompletionListItem> HandlePseudoCompletion(LocalContext context)
-        {
-            return pseudos;
-        }
+        List<ICompletionListItem> HandlePseudoCompletion(LocalContext context) => pseudos;
 
-        private List<ICompletionListItem> HandleValueCompletion(LocalContext context)
+        List<ICompletionListItem> HandleValueCompletion(LocalContext context)
         {
             var items = new List<ICompletionListItem>();
             AddProperties(items, context.Property);
@@ -483,12 +471,12 @@ namespace CssCompletion
             return items;
         }
 
-        private List<ICompletionListItem> HandleVariableCompletion(LocalContext context)
+        List<ICompletionListItem> HandleVariableCompletion(LocalContext context)
         {
             string src = context.Sci.Text;
             if (context.Sci.CurrentPos < src.Length)
                 src = src.Substring(0, context.Sci.CurrentPos);
-            MatchCollection matches = features.Pattern.Matches(src);
+            var matches = features.Pattern.Matches(src);
             if (matches.Count == 0) 
                 return null;
 
@@ -507,7 +495,7 @@ namespace CssCompletion
             return items;
         }
 
-        private string GetVariableValue(string src, Match m)
+        static string GetVariableValue(string src, Capture m)
         {
             // extract value
             int i = m.Index + m.Length;
@@ -538,7 +526,7 @@ namespace CssCompletion
                     {
                         prevLine = prevLine.Trim();
                         if (prevLine.StartsWithOrdinal("//")) break;
-                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.IndexOfOrdinal("/*") >= 0) break;
+                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.Contains("/*")) break;
                     }
                     prevLine = c + prevLine;
                 }
@@ -552,35 +540,27 @@ namespace CssCompletion
             return value.Trim();
         }
 
-        private List<ICompletionListItem> HandlePropertyCompletion(LocalContext context)
-        {
-            return blockLevel;
-        }
+        List<ICompletionListItem> HandlePropertyCompletion(LocalContext context) => blockLevel;
 
-        private List<ICompletionListItem> HandleSelectorCompletion(LocalContext context)
-        {
-            return htmlTags;
-        }
+        List<ICompletionListItem> HandleSelectorCompletion(LocalContext context) => htmlTags;
 
-        private void AddProperties(List<ICompletionListItem> items, string name)
+        void AddProperties(ICollection<ICompletionListItem> items, string name)
         {
-            if (values.ContainsKey(name))
+            if (!values.ContainsKey(name)) return;
+            var vals = values[name];
+            foreach (string val in vals)
             {
-                var vals = values[name];
-                foreach (string val in vals)
+                if (val[0] == '<')
                 {
-                    if (val[0] == '<')
-                    {
-                        string inherit = val.Substring(1, val.Length - 2);
-                        if (inherit != name)
-                            AddProperties(items, inherit);
-                    }
-                    else items.Add(new CompletionItem(val, ItemKind.Value));
+                    string inherit = val.Substring(1, val.Length - 2);
+                    if (inherit != name)
+                        AddProperties(items, inherit);
                 }
+                else items.Add(new CompletionItem(val, ItemKind.Value));
             }
         }
 
-        private void InitBlockLevel()
+        void InitBlockLevel()
         {
             if (features.Mode == "CSS") blockLevel = properties;
             else
@@ -591,7 +571,7 @@ namespace CssCompletion
             }
         }
 
-        private void InitProperties(Dictionary<string, string> section)
+        void InitProperties(Dictionary<string, string> section)
         {
             properties = new List<ICompletionListItem>();
             values = new Dictionary<string, string[]>();
@@ -607,7 +587,7 @@ namespace CssCompletion
             }
         }
 
-        private void InitLists(Dictionary<string, string> section)
+        void InitLists(IDictionary<string, string> section)
         {
             tags = Regex.Split(section["tags"], "\\s+");
             htmlTags = new List<ICompletionListItem>();
@@ -619,16 +599,14 @@ namespace CssCompletion
             prefixes = MakeList(section["prefixes"], ItemKind.Prefixes);
         }
 
-        private List<ICompletionListItem> MakeList(string raw, ItemKind kind)
+        static List<ICompletionListItem> MakeList(string raw, ItemKind kind)
         {
-            string[] defs = Regex.Split(raw, "\\s+");
-            var list = new List<ICompletionListItem>();
-            foreach (string def in defs)
-                list.Add(new CompletionItem(def, kind));
-            return list;
+            return Regex.Split(raw, "\\s+")
+                .Select(def => new CompletionItem(def, kind))
+                .ToList<ICompletionListItem>();
         }
 
-        private Dictionary<string, string> GetSection(SimpleIni config, string name)
+        static Dictionary<string, string> GetSection(SimpleIni config, string name)
         {
             foreach (var def in config)
                 if (def.Key == name) return def.Value;
@@ -639,78 +617,75 @@ namespace CssCompletion
         /// Add closing brace to a code block.
         /// If enabled, move the starting brace to a new line.
         /// </summary>
-        /// <param name="Sci"></param>
-        /// <param name="txt"></param>
+        /// <param name="sci"></param>
         /// <param name="line"></param>
-        public static void AutoCloseBrace(ScintillaControl Sci, int line)
+        public static void AutoCloseBrace(ScintillaControl sci, int line)
         {
             // find matching brace
-            int bracePos = Sci.LineEndPosition(line - 1) - 1;
-            while ((bracePos > 0) && (Sci.CharAt(bracePos) != '{')) bracePos--;
-            if (bracePos == 0 || Sci.BaseStyleAt(bracePos) != 5) return;
-            int match = Sci.SafeBraceMatch(bracePos);
+            int bracePos = sci.LineEndPosition(line - 1) - 1;
+            while ((bracePos > 0) && (sci.CharAt(bracePos) != '{')) bracePos--;
+            if (bracePos == 0 || sci.BaseStyleAt(bracePos) != 5) return;
+            int match = sci.SafeBraceMatch(bracePos);
             int start = line;
-            int indent = Sci.GetLineIndentation(start - 1);
+            int indent = sci.GetLineIndentation(start - 1);
             if (match > 0)
             {
-                int endIndent = Sci.GetLineIndentation(Sci.LineFromPosition(match));
-                if (endIndent + Sci.TabWidth > indent)
+                int endIndent = sci.GetLineIndentation(sci.LineFromPosition(match));
+                if (endIndent + sci.TabWidth > indent)
                     return;
             }
 
             // find where to include the closing brace
             int startIndent = indent;
-            int count = Sci.LineCount;
+            int count = sci.LineCount;
             int lastLine = line;
             int position;
-            string txt = Sci.GetLine(line).Trim();
+            string txt = sci.GetLine(line).Trim();
             line++;
-            int eolMode = Sci.EOLMode;
+            int eolMode = sci.EOLMode;
             string NL = LineEndDetector.GetNewLineMarker(eolMode);
 
-            if (txt.Length > 0 && ")]};,".IndexOf(txt[0]) >= 0)
+            if (txt.Length > 0 && ")]};,".Contains(txt[0]))
             {
-                Sci.BeginUndoAction();
+                sci.BeginUndoAction();
                 try
                 {
-                    position = Sci.CurrentPos;
-                    Sci.InsertText(position, NL + "}");
-                    Sci.SetLineIndentation(line, startIndent);
+                    position = sci.CurrentPos;
+                    sci.InsertText(position, NL + "}");
+                    sci.SetLineIndentation(line, startIndent);
                 }
                 finally
                 {
-                    Sci.EndUndoAction();
+                    sci.EndUndoAction();
                 }
                 return;
             }
-            else
+
+            while (line < count - 1)
             {
-                while (line < count - 1)
+                txt = sci.GetLine(line).TrimEnd();
+                if (txt.Length != 0)
                 {
-                    txt = Sci.GetLine(line).TrimEnd();
-                    if (txt.Length != 0)
-                    {
-                        indent = Sci.GetLineIndentation(line);
-                        if (indent <= startIndent) break;
-                        lastLine = line;
-                    }
-                    else break;
-                    line++;
+                    indent = sci.GetLineIndentation(line);
+                    if (indent <= startIndent) break;
+                    lastLine = line;
                 }
+                else break;
+                line++;
             }
             if (line >= count - 1) lastLine = start;
 
             // insert closing brace
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
-                position = Sci.LineEndPosition(lastLine);
-                Sci.InsertText(position, NL + "}");
-                Sci.SetLineIndentation(lastLine + 1, startIndent);
+                position = sci.LineEndPosition(lastLine);
+                sci.InsertText(position, NL + "}");
+                sci.SetLineIndentation(lastLine + 1, startIndent);
             }
             finally
             {
-                Sci.EndUndoAction();
+                sci.EndUndoAction();
             }
         }
 

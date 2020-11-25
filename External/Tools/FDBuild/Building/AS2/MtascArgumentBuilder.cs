@@ -1,14 +1,13 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Collections;
+using System.Linq;
 using ProjectManager.Projects.AS2;
 
 namespace ProjectManager.Building.AS2
 {
     class MtascArgumentBuilder : ArgumentBuilder
     {
-        AS2Project project;
+        readonly AS2Project project;
 
         public MtascArgumentBuilder(AS2Project project)
         {
@@ -18,11 +17,8 @@ namespace ProjectManager.Building.AS2
         public void AddClassPaths(params string[] extraClassPaths)
         {
             // build classpaths
-            ArrayList classPaths = new ArrayList(project.AbsoluteClasspaths);
-
-            foreach (string extraClassPath in extraClassPaths)
-                classPaths.Add(extraClassPath);
-
+            var classPaths = project.AbsoluteClasspaths.ToList();
+            classPaths.AddRange(extraClassPaths);
             foreach (string classPath in classPaths)
                 if (Directory.Exists(classPath)) Add("-cp", "\"" + classPath + "\""); // surround with quotes
         }
@@ -34,11 +30,8 @@ namespace ProjectManager.Building.AS2
             if (htmlColor.Length > 0)
                 htmlColor = ":" + htmlColor;
 
-            Add("-header", string.Format("{0}:{1}:{2}{3}",
-                project.MovieOptions.Width,
-                project.MovieOptions.Height,
-                project.MovieOptions.Fps,
-                htmlColor));
+            Add("-header",
+                $"{project.MovieOptions.Width}:{project.MovieOptions.Height}:{project.MovieOptions.Fps}{htmlColor}");
         }
 
         public void AddCompileTargets()
@@ -69,11 +62,8 @@ namespace ProjectManager.Building.AS2
                 Add("-swf", "\"" + path + "\"");
         }
 
-        public void AddFrame(int frame)
-        {
-            Add("-frame",frame.ToString());
-        }
-        
+        public void AddFrame(int frame) => Add("-frame",frame.ToString());
+
         public void AddKeep()
         {
             // always keep existing source - if you add .swf files to the library, expected
@@ -123,7 +113,7 @@ namespace ProjectManager.Building.AS2
                 {
                     string cp = project.Classpaths.GetClosestParent(target);
                     
-                    if (cp == null)
+                    if (cp is null)
                         throw new Exception("Could not determine the closest classpath off which to compile the directory '" + target + "'.");
                     
                     string relTarget = (cp == ".") ? target : target.Substring(cp.Length + 1);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Windows.Forms;
@@ -22,15 +24,18 @@ namespace PluginCore.Controls
             return form;
         }
 
-        protected override Type CreateCollectionItemType()
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            return typeof(T);
+            var list = new List<T>((T[]) value);
+            list = (List<T>) base.EditValue(context, provider, list);
+            return list.ToArray();
         }
+
+        protected override Type CreateCollectionItemType() => typeof(T);
 
         static void ShowDescription(Control control)
         {
-            var grid = control as PropertyGrid;
-            if (grid != null) grid.HelpVisible = true;
+            if (control is PropertyGrid grid) grid.HelpVisible = true;
             foreach (Control child in control.Controls) ShowDescription(child);
         }
     }

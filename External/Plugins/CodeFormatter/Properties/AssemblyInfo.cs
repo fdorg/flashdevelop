@@ -4,7 +4,7 @@ using PluginCore;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the information which is associated with the assembly you compile.
 [assembly: AssemblyTitle("CodeFormatter")]
-[assembly: AssemblyDescription("CodeFormatter Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
+[assembly: AssemblyDescription("Code Formatter Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("CodeFormatter")]

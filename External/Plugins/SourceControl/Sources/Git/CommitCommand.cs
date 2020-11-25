@@ -1,14 +1,48 @@
-﻿namespace SourceControl.Sources.Git
+﻿using System.Collections.Generic;
+using System.IO;
+
+namespace SourceControl.Sources.Git
 {
     class CommitCommand : BaseCommand
     {
-        public CommitCommand(string[] paths, string message)
+        readonly string workingDirectory;
+        string commitArgs;
+
+        public CommitCommand(string[] files, string message, string workingDir)
         {
-            if (paths.Length == 0) return;
+            if (workingDir is null) return;
+            workingDirectory = workingDir;
 
-            string args = "commit -m \"" + message.Replace("\"", "\\\"") + "\" .";
+            //add the files first to make sure untracked files can be committed
+            var fileArgs = "";
+            if (files != null)
+                foreach (var file in files)
+                    if(File.Exists(file) || Directory.Exists(file))
+                        fileArgs += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
 
-            Run(args, paths[0]);
+            commitArgs = "commit" + fileArgs + " -m \"" + VCHelper.EscapeCommandLine(message) + "\"";
+            if (!string.IsNullOrEmpty(fileArgs)) Run("add" + fileArgs, workingDir);
+            else Run(commitArgs, workingDir);
+        }
+
+        public CommitCommand(IList<string> paths, string message) : this(null, message, Path.GetDirectoryName(SafeGet(paths, 0)))
+        {
+        }
+
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
+        {
+            base.Runner_ProcessEnded(sender, exitCode);
+
+            if (commitArgs is null) return;
+
+            //now do the commit
+            Run(commitArgs, workingDirectory);
+            commitArgs = null;
+        }
+
+        static T SafeGet<T>(IList<T> a, int i) where T : class
+        {
+            return a != null && a.Count > i ? a[i] : null;
         }
     }
 }

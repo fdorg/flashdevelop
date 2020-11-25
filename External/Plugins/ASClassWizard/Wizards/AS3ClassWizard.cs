@@ -9,14 +9,14 @@ using PluginCore.Localization;
 using ProjectManager.Projects;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using System.Reflection;
 using System.Diagnostics;
+using System.Linq;
+using PluginCore.Controls;
 
 namespace ASClassWizard.Wizards
 {
-    public partial class AS3ClassWizard : Form
+    public partial class AS3ClassWizard : SmartForm, IThemeHandler, IWizard
     {
-        private string directoryPath;
         private Project project;
         public const string REG_IDENTIFIER_AS = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         // $ is not a valid char in haxe class names
@@ -27,8 +27,18 @@ namespace ASClassWizard.Wizards
             InitializeComponent();
             LocalizeText();
             CenterToParent();
+            this.FormGuid = "eb444130-58ea-47bd-9751-ad78a59c711f";
             this.Font = PluginBase.Settings.DefaultFont;
-            this.errorIcon.Image = PluginMain.MainForm.FindImage("197");
+            this.errorIcon.Image = PluginBase.MainForm.FindImage("197");
+        }
+
+        public void AfterTheming()
+        {
+            Color color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
+            Color color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
+            this.flowLayoutPanel1.BackColor = color1;
+            this.flowLayoutPanel9.BackColor = color;
+            this.titleLabel.BackColor = color;
         }
 
         private void LocalizeText()
@@ -49,25 +59,21 @@ namespace ASClassWizard.Wizards
             this.cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
         }
 
-        public String StartupPackage
+        public string StartupPackage
         {
-            set { packageBox.Text = value; }
+            set => packageBox.Text = value;
         }
 
-        public String StartupClassName
+        public string StartupClassName
         {
-            set { classBox.Text = value; }
+            set => classBox.Text = value;
         }
-        
-        public string Directory
-        {
-            get { return this.directoryPath; }
-            set { this.directoryPath = value; }
-        }
+
+        public string Directory { get; set; }
 
         public Project Project
         {
-            get { return project; }
+            get => project;
             set 
             { 
                 this.project = value;
@@ -77,35 +83,38 @@ namespace ASClassWizard.Wizards
                     this.publicRadio.Enabled = false;
                     this.internalRadio.Enabled = false;
                     this.finalCheck.Enabled = false;
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
+                    var label = TextHelper.GetString("Wizard.Label.NewAs2Class");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
                 if (project.Language == "haxe")
                 {
                     this.internalRadio.Text = "private";
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
+                    var label = TextHelper.GetString("Wizard.Label.NewHaxeClass");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
                 else
                 {
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs3Class");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewAs3Class");
+                    var label = TextHelper.GetString("Wizard.Label.NewAs3Class");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
             }
         }
 
         private void ValidateClass()
         {
-            string errorMessage = "";
-            string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
-            if (getClassName() == "")
+            var errorMessage = "";
+            var regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
+            if (GetName().Length == 0)
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
-            else if (!Regex.Match(getClassName(), regex, RegexOptions.Singleline).Success)
+            else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-            else if (project.Language == "haxe" && Char.IsLower(getClassName()[0]))
+            else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
 
-            if (errorMessage != "")
+            if (errorMessage.Length != 0)
             {
                 okButton.Enabled = false;
                 errorIcon.Visible = true;
@@ -125,8 +134,7 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void packageBrowse_Click(object sender, EventArgs e)
         {
-
-            PackageBrowser browser = new PackageBrowser();
+            using PackageBrowser browser = new PackageBrowser();
             browser.Project = this.Project;
 
             foreach (string item in Project.AbsoluteClasspaths)
@@ -140,14 +148,14 @@ namespace ASClassWizard.Wizards
                     string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
                     if (package != null)
                     {
-                        directoryPath = browser.Package;
+                        Directory = browser.Package;
                         package = package.Replace(Path.DirectorySeparatorChar, '.');
                         this.packageBox.Text = package;
                     }
                 }
                 else
                 {
-                    this.directoryPath = browser.Project.Directory;
+                    this.Directory = browser.Project.Directory;
                     this.packageBox.Text = "";
                 }
             }
@@ -161,22 +169,20 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            using (ClassBrowser browser = new ClassBrowser())
+            using ClassBrowser browser = new ClassBrowser();
+            IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            try
             {
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    browser.ClassList = context.GetAllProjectClasses();
-                }
-                catch { }
-                browser.ExcludeFlag = FlagType.Interface;
-                browser.IncludeFlag = FlagType.Class;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    this.baseBox.Text = browser.SelectedClass;
-                }
-                this.okButton.Focus();
+                browser.ClassList = context.GetAllProjectClasses();
             }
+            catch { }
+            browser.ExcludeFlag = FlagType.Interface;
+            browser.IncludeFlag = FlagType.Class;
+            if (browser.ShowDialog(this) == DialogResult.OK)
+            {
+                this.baseBox.Text = browser.SelectedClass;
+            }
+            this.okButton.Focus();
         }
 
         /// <summary>
@@ -184,37 +190,35 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void implementBrowse_Click(object sender, EventArgs e)
         {
-            using (ClassBrowser browser = new ClassBrowser())
+            using var browser = new ClassBrowser();
+            MemberList known = null;
+            browser.IncludeFlag = FlagType.Interface;
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            try
             {
-                MemberList known = null;
-                browser.IncludeFlag = FlagType.Interface;
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    known = context.GetAllProjectClasses();
-                    known.Merge(ASContext.Context.GetVisibleExternalElements());
-                }
-                catch (Exception error)
-                {
-                    Debug.WriteLine(error.StackTrace);
-                }
-                browser.ClassList = known;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    if (browser.SelectedClass != null)
-                    {
-                        foreach (string item in this.implementList.Items)
-                        {
-                            if (item == browser.SelectedClass) return;
-                        }
-                        this.implementList.Items.Add(browser.SelectedClass);
-                    }
-                }
-                this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-                this.superCheck.Enabled = this.implementList.Items.Count > 0;
-                ValidateClass();
+                known = context.GetAllProjectClasses();
+                known.Merge(ASContext.Context.GetVisibleExternalElements());
             }
+            catch (Exception error)
+            {
+                Debug.WriteLine(error.StackTrace);
+            }
+            browser.ClassList = known;
+            if (browser.ShowDialog(this) == DialogResult.OK)
+            {
+                if (browser.SelectedClass != null)
+                {
+                    foreach (string item in this.implementList.Items)
+                    {
+                        if (item == browser.SelectedClass) return;
+                    }
+                    this.implementList.Items.Add(browser.SelectedClass);
+                }
+            }
+            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
+            this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
+            this.superCheck.Enabled = this.implementList.Items.Count > 0;
+            ValidateClass();
         }
 
         /// <summary>
@@ -253,73 +257,32 @@ namespace ASClassWizard.Wizards
 
         #endregion
 
-        public static Image GetResource(string resourceID)
-        {
-            resourceID = "ASClassWizard." + resourceID;
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Image image = new Bitmap(assembly.GetManifestResourceStream(resourceID));
-            return image;
-        }
-
         #region user_options
 
-        public string getPackage()
+        public string GetPackage() => packageBox.Text;
+
+        public string GetName() => classBox.Text;
+
+        public bool IsDynamic() => dynamicCheck.Checked;
+
+        public bool IsFinal() => finalCheck.Checked;
+
+        public bool IsPublic() => publicRadio.Checked;
+
+        public string GetExtends() => baseBox.Text;
+
+        public List<string> GetInterfaces()
         {
-            return this.packageBox.Text;
+            return implementList.Items.Cast<string>().ToList();
         }
 
-        public string getClassName()
-        {
-            return this.classBox.Text;
-        }
+        public bool HasInterfaces() => implementList.Items.Count > 0;
 
-        public bool isDynamic()
-        {
-            return this.dynamicCheck.Checked;
-        }
+        public bool GetGenerateConstructor() => constructorCheck.Checked;
 
-        public bool isFinal()
-        {
-            return this.finalCheck.Checked;
-        }
-
-        public bool isPublic()
-        {
-            return this.publicRadio.Checked;
-        }
-
-        public string getSuperClass()
-        {
-            return this.baseBox.Text;
-        }
-
-        public List<string> getInterfaces()
-        {
-            List<string> _interfaces = new List<string>(this.implementList.Items.Count);
-            foreach (string item in this.implementList.Items)
-            {
-                _interfaces.Add(item);
-            }
-            return _interfaces;
-        }
-
-        public bool hasInterfaces()
-        {
-            return this.implementList.Items.Count > 0;
-        }
-
-        public bool getGenerateConstructor()
-        {
-            return this.constructorCheck.Checked;
-        }
-
-        public bool getGenerateInheritedMethods()
-        {
-            return this.superCheck.Checked;
-        }
+        public bool GetGenerateInheritedMethods() => superCheck.Checked;
 
         #endregion
-
 
     }
 }

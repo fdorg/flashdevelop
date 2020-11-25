@@ -3,37 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4EBF2653-9654-4E40-880E-0046B3D6210E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ASCompletion</RootNamespace>
     <AssemblyName>ASCompletion</AssemblyName>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +18,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -52,39 +28,43 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>false</DebugSymbols>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
   <ItemGroup>
     <Compile Include="Commands\CallFlashIDE.cs" />
     <Compile Include="Commands\CreateTrustFile.cs" />
     <Compile Include="Completion\ArgumentsProcessor.cs" />
     <Compile Include="Completion\ASComplete.cs" />
     <Compile Include="Completion\ASGenerator.cs" />
-    <Compile Include="Completion\Braces.cs" />
+    <Compile Include="Completion\Brace.cs" />
     <Compile Include="Completion\CodeUtils.cs" />
+    <Compile Include="Generators\CodeGeneratorDefaultBehavior.cs" />
+    <Compile Include="Generators\CodeGeneratorInterfaceBehavior.cs" />
+    <Compile Include="Generators\DocumenattionGenerator.cs" />
+    <Compile Include="Generators\ICodeGeneratorBehavior.cs" />
+    <Compile Include="Generators\IContextualGenerator.cs" />
     <Compile Include="Completion\Reformater.cs" />
     <Compile Include="Completion\TemplateUtils.cs" />
     <Compile Include="Context\ASContext.cs" />
     <Compile Include="Completion\ASDocumentation.cs" />
     <Compile Include="Completion\ContextFeatures.cs" />
     <Compile Include="Context\IASContext.cs" />
+    <Compile Include="Controls\AddClosingBracesRulesEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\ReferenceList.cs" />
     <Compile Include="CustomControls\StateSavingTreeView.cs" />
     <Compile Include="CustomControls\ModelsExplorer.cs">
       <SubType>UserControl</SubType>
@@ -92,9 +72,12 @@
     <Compile Include="CustomControls\ModelsExplorer.Designer.cs">
       <DependentUpon>ModelsExplorer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AddClosingBracesRulesEditor.cs" />
+    <Compile Include="Helpers\ASTCache.cs" />
     <Compile Include="Helpers\FlashErrorsWatcher.cs" />
     <Compile Include="Helpers\ModifierOrderEditor.cs" />
     <Compile Include="Model\ASFileParser.cs" />
+    <Compile Include="Model\ClassModelExtensions.cs" />
     <Compile Include="Model\MemberModel.cs" />
     <Compile Include="Model\ClassModel.cs" />
     <Compile Include="Model\Enums.cs" />
@@ -113,9 +96,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+      <Name>PluginCore</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Icons\CheckAS.png" />
-    <EmbeddedResource Include="Icons\Class.png">
-    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\Class.png" />
     <EmbeddedResource Include="Icons\FilePlain.png" />
     <EmbeddedResource Include="Icons\FolderClosed.png" />
     <EmbeddedResource Include="Icons\FolderOpen.png" />
@@ -129,44 +124,7 @@
     <EmbeddedResource Include="Icons\Template.png" />
     <EmbeddedResource Include="Icons\Variable.png" />
     <EmbeddedResource Include="Icons\VariablePrivate.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
-      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
-      <Name>PluginCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Icons\UpDownArrow.png" />
     <EmbeddedResource Include="Icons\Const.png" />
     <EmbeddedResource Include="Icons\ConstPrivate.png" />
     <EmbeddedResource Include="Icons\ConstProtected.png" />
@@ -185,4 +143,12 @@
     <EmbeddedResource Include="Icons\VariableStaticPrivate.png" />
     <EmbeddedResource Include="Icons\VariableStaticProtected.png" />
   </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

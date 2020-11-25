@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.2.1"
+!define VERSION "5.3.4"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"
@@ -122,7 +122,7 @@ Function GetDotNETVersion
 	
 	Push $0
 	ClearErrors
-	ReadRegStr $0 HKLM "Software\Microsoft\NET Framework Setup\NDP\v3.5" "Version"
+	ReadRegStr $0 HKLM "Software\Microsoft\NET Framework Setup\NDP\v4\Client" "Version"
 	IfErrors 0 +2
 	StrCpy $0 "not_found"
 	Exch $0
@@ -253,6 +253,9 @@ Section "${DIST_NAME}" Main
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
+
+	; Remove ProjectManager from inst dir...
+	Delete "$INSTDIR\ProjectManager.dll"
 	
 	; Patch CrossOver/Wine files, remove 64bit
 	SetOverwrite on
@@ -686,11 +689,11 @@ Function .onInit
 	Call GetDotNETVersion
 	Pop $0
 	${If} $0 == "not_found"
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing ${DIST_NAME}."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 4.8 runtime before installing ${DIST_NAME}."
 	${Else}
-	${VersionCompare} $0 "3.5" $1
+	${VersionCompare} $0 "4.8" $1
 	${If} $1 == 2
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing ${DIST_NAME}. You have $0."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 4.8 runtime before installing ${DIST_NAME}. You have $0."
 	${EndIf}
 	${EndIf}
 	

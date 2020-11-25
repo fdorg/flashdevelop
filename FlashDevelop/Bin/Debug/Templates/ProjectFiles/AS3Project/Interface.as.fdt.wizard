@@ -1,0 +1,10 @@
+package $(Package) $(CSLB){
+$(Import)	/**
+	$(CBI)* ...
+	$(CBI)* @author $(DefaultUser)
+	$(CBI)*/
+	public interface $(FileName)$(Extends) $(CSLB){
+		$(EntryPoint)
+	}
+	
+}

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Aga.Controls.Tree;
+﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore;
 using PluginCore.Helpers;
+using System.Drawing;
 
 namespace AS3Context.Controls
 {
     public class ObjectRefsGrid:TreeViewAdv
     {
-        NodeTextBox methodTB;
-        NodeTextBox fileTB;
-        NodeTextBox lineTB;
+        readonly NodeTextBox methodTB;
+        readonly NodeTextBox fileTB;
+        readonly NodeTextBox lineTB;
 
         public ObjectRefsGrid()
         {
-            BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            BorderStyle = System.Windows.Forms.BorderStyle.None;
             Dock = System.Windows.Forms.DockStyle.Fill;
             GridLineStyle = GridLineStyle.HorizontalAndVertical;
             Font = PluginBase.Settings.DefaultFont;
@@ -46,15 +44,25 @@ namespace AS3Context.Controls
             NodeControls.Add(methodTB);
             NodeControls.Add(fileTB);
             NodeControls.Add(lineTB);
+
+            this.CustomDrawHeaders = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor") != Color.Empty;
+            this.ColumnHeaderBackColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor", SystemColors.Control);
+            this.ColumnHeaderTextColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor", SystemColors.ControlText);
+            this.ColumnHeaderBorderColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor", SystemColors.ActiveBorder);
+            this.LineColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            this.LineColor2 = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            this.DragDropMarkColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
+            this.ForeColor = PluginBase.MainForm.GetThemeColor("TreeViewAdv.ForeColor", SystemColors.ControlText);
+            this.BackColor = PluginBase.MainForm.GetThemeColor("TreeViewAdv.BackColor", SystemColors.Control);
         }
     }
 
     public class ObjectRefsNode : Node
     {
-        string method;
-        string path;
-        string file;
-        string line;
+        readonly string method;
+        readonly string path;
+        readonly string file;
+        readonly string line;
 
         public ObjectRefsNode(string method, string file, string line)
         {
@@ -66,22 +74,13 @@ namespace AS3Context.Controls
             this.line = line;
         }
 
-        public String Method
-        {
-            get { return method; }
-        }
-        public String Path
-        {
-            get { return path; }
-        }
-        public String File
-        {
-            get { return file; }
-        }
-        public String Line
-        {
-            get { return line; }
-        }
+        public string Method => method;
+
+        public string Path => path;
+
+        public string File => file;
+
+        public string Line => line;
     }
 
     public class ObjectRefsModel : TreeModel

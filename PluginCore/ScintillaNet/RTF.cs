@@ -1,222 +1,287 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
+using PluginCore;
 using ScintillaNet.Configuration;
 
 namespace ScintillaNet
 {
-    class ColorData 
-    {
-        private Int32 index;
-        private Color color;
-
-        public ColorData(Int32 index, Color color) 
-        {
-            this.index = index;
-            this.color = color;
-        }
-
-        /// <summary>
-        /// The index of the color in the color table
-        /// </summary>
-        public Int32 ColorIndex 
-        {
-            get { return this.index; }
-        }
-
-        /// <summary>
-        /// The actual color of the data
-        /// </summary>
-        public Color Color 
-        {
-            get { return this.color; }
-        }
-
-    }
-
-    class FontData 
-    {
-        private Int32 index;
-        private String fontName;
-
-        public FontData(Int32 index, String fontName)
-        {
-            this.index = index;
-            this.fontName = fontName;
-        }
-
-        /// <summary>
-        /// The index of the font in the font table
-        /// </summary>
-        public Int32 FontIndex
-        {
-            get { return this.index; }
-        }
-
-        /// <summary>
-        /// The name of the font
-        /// </summary>
-        public String FontName 
-        {
-            get { return this.fontName; }
-        }
-    }
-
     /// <summary>
-    /// This class will handle conversions of the Scintilla text to RTF.
+    /// This class handles conversions of the Scintilla text to RTF.
     /// </summary>
-    public class RTF 
+    public static class RTF
     {
-        public static String RTF_HEADEROPEN = "{\\rtf1\\ansi\\ansicpg1252\\deff0";
-        public static String RTF_FONTDEFOPEN = "{\\fonttbl";
-        public static String RTF_COLORDEFOPEN = "{\\colortbl;";
-        public static String RTF_COLORDEFCLOSE = "}";
-        public static String RTF_HEADERCLOSE = "\n";
-        public static String RTF_BODYOPEN = "";
-        public static String RTF_BODYCLOSE = "}";
-        public static String RTF_SET_FORMAT = "\\f{0}\\fs{1}\\cb{2}\\cf{3}\\b{4}\\i{5} ";
-        public static String RTF_SET_COLOR = "\\red{0}\\green{1}\\blue{2};";
-        public static String RTF_SETFONTFACE = "\\f";
-        public static String RTF_SETFONTSIZE = "\\fs";
-        public static String RTF_SETCOLOR = "\\cf";
-        public static String RTF_SETBACKGROUND = "\\highlight";
-        public static String RTF_BOLD_ON = "\\b";
-        public static String RTF_BOLD_OFF = "\\b0";
-        public static String RTF_ITALIC_ON = "\\i";
-        public static String RTF_ITALIC_OFF = "\\i0";
-        public static String RTF_UNDERLINE_ON = "\\ul";
-        public static String RTF_UNDERLINE_OFF = "\\ulnone";
-        public static String RTF_STRIKE_ON = "\\i";
-        public static String RTF_STRIKE_OFF = "\\strike0";
-        public static String RTF_EOLN = "\\par\n";
-        public static String RTF_TAB = "\\tab ";
-        public static Int32 MAX_STYLEDEF = 128;
-        public static Int32 MAX_FONTDEF = 64;
-        public static Int32 MAX_COLORDEF = 8;
-        public static String RTF_FONTFACE = "Courier New";
-        public static String RTF_COLOR = "#000000";
-        public static Int32 STYLE_DEFAULT = 32;
+        public const string RTF_HEADEROPEN = @"{\rtf\ansi";
+        public const string RTF_HEADERCLOSE = @"}";
+        public const string RTF_FONTTABLEOPEN = @"{\fonttbl";
+        public const string RTF_FONTTABLECLOSE = @"}";
+        public const string RTF_COLORTABLEOPEN = @"{\colortbl";
+        public const string RTF_COLORTABLECLOSE = @"}";
+        public const string RTF_FONTDEFOPEN = @"{";
+        public const string RTF_FONTDEFCLOSE = @";}";
+        public const string RTF_COLORDEFDELIMITER = @";";
+        public const string RTF_SETFONTFACE = @"\f";
+        public const string RTF_SETFONTSIZE = @"\fs";
+        public const string RTF_SETCOLORFORE = @"\cf";
+        public const string RTF_SETCOLORBACK = @"\cb";
+        public const string RTF_SETHIGHLIGHT = @"\highlight";
+        public const string RTF_SETCOLORRED = @"\red";
+        public const string RTF_SETCOLORGREEN = @"\green";
+        public const string RTF_SETCOLORBLUE = @"\blue";
+        public const string RTF_BOLD_ON = @"\b ";
+        public const string RTF_BOLD_OFF = @"\b0 ";
+        public const string RTF_ITALIC_ON = @"\i ";
+        public const string RTF_ITALIC_OFF = @"\i0 ";
+        public const string RTF_UNDERLINE_ON = @"\ul ";
+        public const string RTF_UNDERLINE_OFF = @"\ul0 ";
+        public const string RTF_STRIKE_ON = @"\strike ";
+        public const string RTF_STRIKE_OFF = @"\strike0 ";
+        public const string RTF_TAB = @"\tab ";
+        public const string RTF_EOL = @"\par ";
+        public const string RTF_LINEBREAK = @"\line ";
+        public const string RTF_HEX = @"\'";
+        public const string RTF_UNICODE = @"\u";
+        public const string RTF_UNICODESUBSTITUTE = @"?";
+        public const int MAX_STYLEDEF = 40;
 
         /// <summary>
         /// Converts a string to RTF based on scintilla configuration
         /// </summary>
-        public static String GetConversion(Language lang, ScintillaControl sci, int start, int end) 
+        public static string GetConversion(Language lang, ScintillaControl sci, int start, int end)
         {
-            UseStyle[] useStyles = lang.usestyles;
-            Dictionary<uint, ColorData> StyleColors = new Dictionary<uint, ColorData>(MAX_COLORDEF);
-            Dictionary<string, FontData> StyleFonts = new Dictionary<string, FontData>(MAX_FONTDEF);
-            String text = sci.Text.Clone().ToString();
-            StringBuilder rtfHeader = new StringBuilder(RTF_HEADEROPEN);
-            StringBuilder rtfFont = new StringBuilder(RTF_FONTDEFOPEN);
-            StringBuilder rtfColor = new StringBuilder(RTF_COLORDEFOPEN);
-            StringBuilder rtf = new StringBuilder();
-            char[] chars = text.ToCharArray();
-            int lengthDoc = text.Length;
-            int lastStyleByte = -1;
-            string lastFontName = "";
-            int lastFontSize = -1;
-            bool lastBold = false;
-            bool lastItalic = false;
-            uint lastBack = 0;
-            uint lastFore = 0;
-            if (end < 0 || end > lengthDoc) 
+            int lengthDoc = sci.TextLength;
+            if (end < 0 || end > lengthDoc)
             {
                 end = lengthDoc;
             }
-            int totalColors = 1;
-            int totalFonts = 0;
-            //----------------------------------------------------
-            //  Grab all styles used based on the Style Byte. 
-            //  Then store the basic properties in a Dictionary.
-            //----------------------------------------------------
-            for (int istyle = start; istyle < end; istyle++) 
+
+            var useStyles = new UseStyle[MAX_STYLEDEF];
+            foreach (var useStyle in lang.usestyles)
             {
-                // Store Byte
-                int styleByte = sci.StyleAt(istyle);
-                // Check Difference
-                if (styleByte != lastStyleByte) 
+                if (useStyle.key >= MAX_STYLEDEF)
                 {
-                    // Store Style
-                    UseStyle sty = useStyles[styleByte];
-                    // Grab Properties
-                    string fontName = sty.FontName;
-                    int fontSize = sty.FontSize * 2;
-                    bool bold = sty.IsBold;
-                    bool italic = sty.IsItalics;
-                    uint back = (uint)sty.BackgroundColor;
-                    uint fore = (uint)(!string.IsNullOrEmpty(sty.fore) ? int.Parse(sty.fore.Substring(2, sty.fore.Length - 2), NumberStyles.HexNumber) : 0);
-                    if (lastFontName != fontName || lastFontSize != fontSize || lastBold != bold || lastItalic != italic || lastBack != back || lastFore != fore) 
-                    {
-                        // Check Colors
-                        ColorData backColorTest;
-                        ColorData foreColorTest;
-                        if (!StyleColors.TryGetValue(back, out backColorTest)) 
-                        {
-                            Color newColor = Color.FromArgb((int)back);
-                            backColorTest = new ColorData(totalColors++, newColor);
-                            StyleColors.Add(back, backColorTest);
-                            rtfColor.AppendFormat(RTF_SET_COLOR, newColor.R, newColor.G, newColor.B);
-                            Console.WriteLine(Color.FromArgb((int)back));
-                        }
-                        if (!StyleColors.TryGetValue(fore, out foreColorTest)) 
-                        {
-                            Color newColor = Color.FromArgb((int)fore);
-                            foreColorTest = new ColorData(totalColors++, newColor);
-                            StyleColors.Add(fore, foreColorTest);
-                            rtfColor.AppendFormat(RTF_SET_COLOR, newColor.R, newColor.G, newColor.B);
-                            Console.WriteLine(Color.FromArgb((int)fore));
-                        }
-                        // Check Fonts
-                        FontData fontTest;
-                        if (!StyleFonts.TryGetValue(fontName, out fontTest)) 
-                        {
-                            fontTest = new FontData(totalFonts, fontName);
-                            StyleFonts.Add(fontName, fontTest);
-                            rtfFont.Append(@"{" + RTF_SETFONTFACE + totalFonts + " " + fontName + ";}");
-                            totalFonts++;
-                            Console.WriteLine(fontName);
-                        }
-                        rtf.Append((lastStyleByte == -1 ? "{\\pard\\plain" : "}{\\pard\\plain"));
-                        // Write out RTF
-                        rtf.AppendFormat(RTF_SET_FORMAT, fontTest.FontIndex, fontSize, backColorTest.ColorIndex, foreColorTest.ColorIndex, (bold ? "" : "0"), (italic ? "" : "0"));
-                    }
-                    lastFontName = fontName;
-                    lastFontSize = fontSize;
-                    lastBold = bold;
-                    lastItalic = italic;
-                    lastBack = back;
-                    lastFore = fore;
+                    // highest style is STYLE_LASTPREDEFINED, which is 39
+                    // something is wrong if the code reaches here... throw an exception?
+                    continue;
                 }
-                lastStyleByte = styleByte;
-                char ch = chars[istyle];
-                String curr = "";
-                if (ch == '{') curr = "\\{";
-                else if (ch == '}') curr = "\\}";
-                else if (ch == '\\') curr = "\\\\";
-                else if (ch == '\t') 
-                {
-                    if (sci.IsUseTabs) curr = RTF_TAB;
-                    else curr = "".PadRight(sci.Indent, ' ');
-                } 
-                else if (ch == '\n') 
-                {
-                    if (istyle == 0 || chars[istyle - 1] != '\r') curr = "\\line\n";
-                } 
-                else if (ch == '\r') curr = "\\line\n";
-                else if (!(Char.IsLetterOrDigit(ch) || Char.IsWhiteSpace(ch))) curr = "\\'" + ((int)ch).ToString("x2");
-                else curr = ch.ToString();
-                rtf.Append(@curr);
+                useStyles[useStyle.key] = useStyle;
             }
-            // Close Headers
-            rtfColor.Append('}');
-            rtfFont.Append('}');
-            rtf.Append('}');
-            rtfHeader.AppendFormat("\n{0}\n{1}\n{2}\n{3}", rtfFont.ToString(), rtfColor.ToString(), rtf.ToString(), "}");
-            return rtfHeader.ToString();
+
+            var fontTable = new StringBuilder(RTF_FONTTABLEOPEN);
+            var colorTable = new StringBuilder(RTF_COLORTABLEOPEN);
+            var body = new StringBuilder();
+
+            var fontDef = new Dictionary<string, int>();
+            var colorDef = new Dictionary<int, int>();
+            int fontCount = 0;
+            int colorCount = 0;
+
+            int lastStyleByte = -1;
+            string lastFontName = null;
+            int lastFontSize = -1;
+            int lastForeColor = -1;
+            int lastBackColor = -1;
+            bool lastBold = false;
+            bool lastItalic = false;
+
+            // Add the 'default' style back colour without the colour definition
+            // so the RTF reader uses its own default colour - the 'auto' colour
+            colorDef.Add(GetBackColor(useStyles[0]), colorCount++);
+            colorTable.Append(RTF_COLORDEFDELIMITER);
+
+            string chars = sci.GetTextRange(start, end);
+            int length = end - start;
+            for (int i = 0; i < length; i++)
+            {
+                int styleByte = sci.StyleAt(start + i);
+
+                if (styleByte >= MAX_STYLEDEF)
+                {
+                    // highest style is STYLE_LASTPREDEFINED, which is 39
+                    // something is wrong if the code reaches here... throw an exception?
+                    styleByte = 0;
+                }
+
+                if (styleByte != lastStyleByte)
+                {
+                    var style = useStyles[styleByte];
+
+                    if (style is null)
+                    {
+                        // there shouldn't be any style that's not defined but present in the editor
+                        // something is wrong if the code reaches here... throw an exception?
+                        styleByte = 0;
+                        style = useStyles[styleByte];
+                    }
+
+                    string fontName = style.FontName;
+                    if (lastFontName != fontName)
+                    {
+                        int fontIndex;
+                        if (!fontDef.TryGetValue(fontName, out fontIndex))
+                        {
+                            fontIndex = fontCount++;
+                            fontDef.Add(fontName, fontIndex);
+                            fontTable.Append(RTF_FONTDEFOPEN + RTF_SETFONTFACE + fontIndex + " " + fontName + RTF_FONTDEFCLOSE);
+                        }
+                        body.Append(RTF_SETFONTFACE + fontIndex + " ");
+                        lastFontName = fontName;
+                    }
+
+                    int fontSize = style.FontSize << 1; // font size is stored in half-points in RTF
+                    if (lastFontSize != fontSize)
+                    {
+                        body.Append(RTF_SETFONTSIZE + fontSize + " ");
+                        lastFontSize = fontSize;
+                    }
+
+                    int foreColor = GetForeColor(style);
+                    if (lastForeColor != foreColor)
+                    {
+                        int colorIndex;
+                        if (!colorDef.TryGetValue(foreColor, out colorIndex))
+                        {
+                            var color = Color.FromArgb(foreColor);
+                            colorIndex = colorCount++;
+                            colorDef.Add(foreColor, colorIndex);
+                            colorTable.Append(RTF_SETCOLORRED + color.R + RTF_SETCOLORGREEN + color.G + RTF_SETCOLORBLUE + color.B + RTF_COLORDEFDELIMITER);
+                        }
+                        body.Append(RTF_SETCOLORFORE + colorIndex + " ");
+                        lastForeColor = foreColor;
+                    }
+
+                    int backColor = GetBackColor(style);
+                    if (lastBackColor != backColor)
+                    {
+                        if (!colorDef.TryGetValue(backColor, out var colorIndex))
+                        {
+                            var color = Color.FromArgb(backColor);
+                            colorIndex = colorCount++;
+                            colorDef.Add(backColor, colorIndex);
+                            colorTable.Append(RTF_SETCOLORRED + color.R + RTF_SETCOLORGREEN + color.G + RTF_SETCOLORBLUE + color.B + RTF_COLORDEFDELIMITER);
+                        }
+                        body.Append(RTF_SETCOLORBACK + colorIndex + " ");
+                        body.Append(RTF_SETHIGHLIGHT + colorIndex + " "); // set highlight colour as well
+                        lastBackColor = backColor;
+                    }
+
+                    bool bold = style.IsBold;
+                    if (lastBold != bold)
+                    {
+                        body.Append(bold ? RTF_BOLD_ON : RTF_BOLD_OFF);
+                        lastBold = bold;
+                    }
+
+                    bool italic = style.IsItalics;
+                    if (lastItalic != italic)
+                    {
+                        body.Append(italic ? RTF_ITALIC_ON : RTF_ITALIC_OFF);
+                        lastItalic = italic;
+                    }
+
+                    lastStyleByte = styleByte;
+                }
+
+                char c = chars[i];
+                switch (c)
+                {
+                    case '\0':
+                        break; // ignore NULL characters as they will cause the clipboard to truncate the string
+                    case '{':
+                        body.Append(@"\{");
+                        break;
+                    case '}':
+                        body.Append(@"\}");
+                        break;
+                    case '\\':
+                        body.Append(@"\\");
+                        break;
+                    case '\t':
+                        body.Append(RTF_TAB);
+                        break;
+                    case '\r':
+                        body.Append(RTF_EOL); // alternative: RTF_LINEBREAK
+                        break;
+                    case '\n':
+                        if (i == 0 || chars[i - 1] != '\r')
+                        {
+                            body.Append(RTF_EOL); // alternative: RTF_LINEBREAK
+                        }
+                        break;
+                    default:
+                        if (' ' <= c || c <= sbyte.MaxValue)
+                        {
+                            body.Append(c);
+                        }
+                        else if (c <= byte.MaxValue)
+                        {
+                            body.Append(RTF_HEX + ((byte) c).ToString("x2"));
+                        }
+                        else if (c <= ushort.MaxValue)
+                        {
+                            body.Append(RTF_UNICODE + ((short) c) + RTF_UNICODESUBSTITUTE);
+                        }
+                        break;
+                }
+            }
+
+            fontTable.Append(RTF_FONTTABLECLOSE);
+            colorTable.Append(RTF_COLORTABLECLOSE);
+
+            return RTF_HEADEROPEN + fontTable + colorTable + body + RTF_HEADERCLOSE;
         }
 
-    }
+        static int GetBackColor(StyleClass style)
+        {
+            while (true)
+            {
+                if (style.back != null)
+                {
+                    return GetRgbColor(style.back);
+                }
 
+                var parent = style.ParentClass;
+                if (parent != null)
+                {
+                    style = parent;
+                    continue;
+                }
+
+                return 0xFFFFFF;
+            }
+        }
+
+        static int GetForeColor(StyleClass style)
+        {
+            if (style.fore != null)
+            {
+                return GetRgbColor(style.fore);
+            }
+            var parent = style.ParentClass;
+            if (parent != null)
+            {
+                return GetForeColor(parent);
+            }
+            return 0x000000;
+        }
+
+        static int GetRgbColor(string value)
+        {
+            int color = Color.FromName(value).ToArgb();
+            if (color == 0x00000000)
+            {
+                if (value.StartsWithOrdinal("0x"))
+                {
+                    return int.Parse(value.Substring(2), NumberStyles.HexNumber);
+                }
+                try
+                {
+                    return int.Parse(value, NumberStyles.HexNumber);
+                }
+                catch { }
+            }
+            return color & 0x00FFFFFF;
+        }
+    }
 }

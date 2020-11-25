@@ -7,13 +7,14 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
-    class BaseCommand
+    internal class BaseCommand
     {
-        static private string resolvedCmd;
-        static private string qualifiedCmd;
+        private static string resolvedCmd;
+        private static string qualifiedCmd;
 
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -28,27 +29,26 @@ namespace SourceControl.Sources.Git
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
-                runner.Output += new LineOutputHandler(Runner_Output);
-                runner.Error += new LineOutputHandler(Runner_Error);
-                runner.ProcessEnded += new ProcessEndedHandler(Runner_ProcessEnded);
+                runner.Output += Runner_Output;
+                runner.Error += Runner_Error;
+                runner.ProcessEnded += Runner_ProcessEnded;
             }
             catch (Exception ex)
             {
                 runner = null;
-                String label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
 
         protected virtual string GetGitCmd()
         {
-            string cmd = PluginMain.SCSettings.GITPath;
-            if (cmd == null) cmd = "git";
+            string cmd = PluginMain.SCSettings.GITPath ?? "git";
             string resolve = PathHelper.ResolvePath(cmd);
             return resolve ?? ResolveGitPath(cmd);
         }
 
-        static private string ResolveGitPath(string cmd)
+        private static string ResolveGitPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;
@@ -73,16 +73,16 @@ namespace SourceControl.Sources.Git
         {
             runner = null;
             DisplayErrors();
+
+            ProjectWatcher.ForceRefresh();
         }
 
         protected virtual void DisplayErrors()
         {
             if (errors.Count > 0)
             {
-                (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
-                {
-                    ErrorManager.ShowInfo(String.Join("\n", errors.ToArray()));
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() =>
+                    ErrorManager.ShowInfo(string.Join("\n", errors))));
             }
         }
 

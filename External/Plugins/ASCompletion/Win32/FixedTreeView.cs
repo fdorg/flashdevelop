@@ -56,15 +56,15 @@ namespace System.Windows.Forms
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            if (clickedNode != null && NodeClicked != null)
-                NodeClicked(this, clickedNode);
+            if (clickedNode != null)
+                NodeClicked?.Invoke(this, clickedNode);
         }
 
         // custom tooltip
         /*protected override void OnMouseMove(MouseEventArgs e)
         {
             // create tooltip
-            if (tip == null) {
+            if (tip is null) {
                 tip = new ToolTip();
                 tip.ShowAlways = true;
                 tip.AutoPopDelay = 10000;

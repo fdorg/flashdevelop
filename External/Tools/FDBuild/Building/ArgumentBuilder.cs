@@ -1,37 +1,34 @@
 using System;
-using System.Collections;
-using System.Text;
-using ProjectManager.Projects;
+using System.Collections.Generic;
 
 namespace ProjectManager.Building
 {
     class ArgumentBuilder
     {
-        ArrayList args;
+        readonly List<string> args;
 
         public ArgumentBuilder()
         {
-            args = new ArrayList();
+            args = new List<string>();
         }
 
         public void Add(string[] arguments, bool releaseMode)
         {
-            foreach (string argument in arguments)
-                if (argument != null && argument.Length > 0)
+            foreach (var argument in arguments)
+                if (!string.IsNullOrEmpty(argument))
                 {
-                    string line = argument.Trim();
-                    if (line.Length == 0) 
-                        continue;
+                    var line = argument.Trim();
+                    if (line.Length == 0) continue;
                     // conditional arguments
                     if (line.StartsWith("DEBUG:", StringComparison.Ordinal))
                     {
                         if (releaseMode) continue;
-                        else line = line.Substring("DEBUG:".Length).Trim();
+                        line = line.Substring("DEBUG:".Length).Trim();
                     }
                     if (line.StartsWith("RELEASE:", StringComparison.Ordinal))
                     {
                         if (!releaseMode) continue;
-                        else line = line.Substring("RELEASE:".Length).Trim();
+                        line = line.Substring("RELEASE:".Length).Trim();
                     }
 
                     args.Add(line);
@@ -41,15 +38,10 @@ namespace ProjectManager.Building
         public void Add(string argument, params string[] values)
         {
             args.Add(argument);
-            foreach (string value in values)
-                if (value != null && value.Length > 0) args.Add(value);
+            foreach (var value in values)
+                if (!string.IsNullOrEmpty(value)) args.Add(value);
         }
 
-        public override string ToString()
-        {
-            string[] argArray = args.ToArray(typeof(string)) as string[];
-            string line = string.Join(" ", argArray);
-            return line;
-        }
+        public override string ToString() => string.Join(" ", args);
     }
 }

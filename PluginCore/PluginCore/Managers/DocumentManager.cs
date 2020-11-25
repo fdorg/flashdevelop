@@ -1,5 +1,5 @@
-using System;
 using System.IO;
+using System.Linq;
 using PluginCore.Localization;
 using ScintillaNet;
 
@@ -7,46 +7,40 @@ namespace PluginCore.Managers
 {
     public class DocumentManager
     {
-        private static Int32 DocumentCount;
+        static int DocumentCount;
         
-        static DocumentManager()
-        {
-            DocumentCount = 1;
-        }
+        static DocumentManager() => DocumentCount = 1;
 
         /// <summary>
         /// Creates a new name for new document 
         /// </summary>
-        public static String GetNewDocumentName(String extension)
+        public static string GetNewDocumentName(string extension)
         {
-            if (String.IsNullOrEmpty(extension))
+            if (string.IsNullOrEmpty(extension))
             {
-                String setting = PluginBase.MainForm.Settings.DefaultFileExtension;
-                if (setting.Trim() != String.Empty) extension = setting;
-                else extension = "as";
+                var setting = PluginBase.Settings.DefaultFileExtension;
+                extension = setting.Trim().Length > 0 ? setting : "as";
             }
-            Int32 count = DocumentCount++;
+            var count = DocumentCount++;
             if (!extension.StartsWith('.')) extension = "." + extension;
-            String untitled = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
+            var untitled = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             return untitled + count + extension;
         }
 
         /// <summary>
         /// Closes all open files inside the given path
         /// </summary>
-        public static void CloseDocuments(String path)
+        public static void CloseDocuments(string path)
         {
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+            foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable)
+                var sci = document.SciControl;
+                if (sci is null) continue;
+                path = Path.GetFullPath(path);
+                var filename = Path.GetFullPath(sci.FileName);
+                if (filename == path || filename.StartsWithOrdinal(path + Path.DirectorySeparatorChar))
                 {
-                    path = Path.GetFullPath(path);
-                    Char separator = Path.DirectorySeparatorChar;
-                    String filename = Path.GetFullPath(document.FileName);
-                    if (filename == path || filename.StartsWithOrdinal(path + separator))
-                    {
-                        document.Close();
-                    }
+                    document.Close();
                 }
             }
         }
@@ -55,41 +49,39 @@ namespace PluginCore.Managers
         /// Renames the found documents based on the specified path
         /// NOTE: Directory paths should be without the last separator
         /// </summary>
-        public static void MoveDocuments(String oldPath, String newPath)
+        public static void MoveDocuments(string oldPath, string newPath)
         {
-            Boolean reactivate = false;
+            var reactivate = false;
             oldPath = Path.GetFullPath(oldPath);
             newPath = Path.GetFullPath(newPath);
-            ITabbedDocument current = PluginBase.MainForm.CurrentDocument;
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+            var current = PluginBase.MainForm.CurrentDocument;
+            foreach (var document in PluginBase.MainForm.Documents)
             {
                 /* We need to check for virtual models, another more generic option would be 
                  * Path.GetFileName(document.FileName).IndexOfAny(Path.GetInvalidFileNameChars()) == -1
                  * But this one is used in more places */
-                if (document.IsEditable && !document.Text.StartsWithOrdinal("[model] "))
+                if (!document.IsEditable || document.Text.StartsWithOrdinal("[model] ")) continue;
+                var filename = Path.GetFullPath(document.FileName);
+                if (filename.StartsWithOrdinal(oldPath))
                 {
-                    String filename = Path.GetFullPath(document.FileName);
-                    if (filename.StartsWithOrdinal(oldPath))
+                    var ce = new TextEvent(EventType.FileClose, document.FileName);
+                    EventManager.DispatchEvent(PluginBase.MainForm, ce);
+                    document.SciControl.FileName = filename.Replace(oldPath, newPath);
+                    var oe = new TextEvent(EventType.FileOpen, document.FileName);
+                    EventManager.DispatchEvent(PluginBase.MainForm, oe);
+                    if (current != document)
                     {
-                        TextEvent ce = new TextEvent(EventType.FileClose, document.FileName);
-                        EventManager.DispatchEvent(PluginBase.MainForm, ce);
-                        document.SciControl.FileName = filename.Replace(oldPath, newPath);
-                        TextEvent oe = new TextEvent(EventType.FileOpen, document.FileName);
-                        EventManager.DispatchEvent(PluginBase.MainForm, oe);
-                        if (current != document)
-                        {
-                            document.Activate();
-                            reactivate = true;
-                        }
-                        else
-                        {
-                            TextEvent se = new TextEvent(EventType.FileSwitch, document.FileName);
-                            EventManager.DispatchEvent(PluginBase.MainForm, se);
-                        }
+                        document.Activate();
+                        reactivate = true;
                     }
-                    PluginBase.MainForm.ClearTemporaryFiles(filename);
-                    document.RefreshTexts();
+                    else
+                    {
+                        var se = new TextEvent(EventType.FileSwitch, document.FileName);
+                        EventManager.DispatchEvent(PluginBase.MainForm, se);
+                    }
                 }
+                PluginBase.MainForm.ClearTemporaryFiles(filename);
+                document.RefreshTexts();
             }
             PluginBase.MainForm.RefreshUI();
             if (reactivate) current.Activate();
@@ -98,48 +90,29 @@ namespace PluginCore.Managers
         /// <summary>
         /// Activates the document specified by document index
         /// </summary>
-        public static void ActivateDocument(Int32 index)
+        public static void ActivateDocument(int index)
         {
-            if (index < PluginBase.MainForm.Documents.Length && index >= 0)
+            var documents = PluginBase.MainForm.Documents;
+            if (index >= 0 && index < documents.Length)
             {
-                PluginBase.MainForm.Documents[index].Activate();
+                documents[index].Activate();
             }
-            else if (PluginBase.MainForm.Documents.Length > 0)
+            else if (documents.Length > 0)
             {
-                PluginBase.MainForm.Documents[0].Activate();
+                documents[0].Activate();
             }
         }
 
         /// <summary>
         /// Finds the document by the file name
         /// </summary>
-        public static ITabbedDocument FindDocument(String filename)
-        {
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
-            {
-                if (document.IsEditable && document.FileName == filename)
-                {
-                    return document;
-                }
-            }
-            return null;
-        }
+        public static ITabbedDocument FindDocument(string filename)
+            => PluginBase.MainForm.Documents.FirstOrDefault(document => document.FileName == filename);
 
         /// <summary>
         /// Finds the document by the ScintillaControl
         /// </summary>
         public static ITabbedDocument FindDocument(ScintillaControl sci)
-        {
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
-            {
-                if (document.IsEditable && document.SciControl == sci)
-                {
-                    return document;
-                }
-            }
-            return null;
-        }
-
+            => PluginBase.MainForm.Documents.FirstOrDefault(document => document.SciControl == sci);
     }
-
 }

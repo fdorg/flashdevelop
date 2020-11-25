@@ -10,10 +10,10 @@ namespace CodeFormatter.Handlers
 {
     public class ASPrettyPrinter
     {
-        private static int AddCRIfBeyondMaxCol=8;
-        private static int AddCR=9;
-        private static int AddCR_BlankLine=10;
-        private static int ADD_WS=11;
+        private static readonly int AddCRIfBeyondMaxCol=8;
+        private static readonly int AddCR=9;
+        private static readonly int AddCR_BlankLine=10;
+        private static readonly int ADD_WS=11;
     
         public static int INDENT_LIKE_SUBITEM=16;
         public static int INDENT_TO_WRAP_ELEMENT=32;
@@ -313,10 +313,10 @@ namespace CodeFormatter.Handlers
         }
         public String print(int startIndent)
         {
-            if (mSourceData.IndexOfOrdinal(mIgnoreFileProcessing)>=0)
+            if (mSourceData.Contains(mIgnoreFileProcessing))
             {
-                mParseErrors=new List<Exception>();
-                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> "+mIgnoreFileProcessing));
+                mParseErrors = new List<Exception>();
+                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> " + mIgnoreFileProcessing));
                 return null;
             }
         
@@ -454,7 +454,7 @@ namespace CodeFormatter.Handlers
                         });
                         */
 
-                        if (mReplaceMap==null)
+                        if (mReplaceMap is null)
                             mReplaceMap=new Dictionary<Int32, ReplacementRange>();
 
                         int addedChars=0;
@@ -511,7 +511,7 @@ namespace CodeFormatter.Handlers
                     String resultText=mOutputBuffer.ToString();
                     
                     mParseErrors=p2.getParseErrors();
-                    if (mParseErrors!=null || resultText==null)
+                    if (mParseErrors != null)
                         return null;
     
                     String oldString=mWorkingSource+mAdditionalTextAdded;
@@ -525,7 +525,7 @@ namespace CodeFormatter.Handlers
                             if (newEndLines>oldEndLines)
                             {
                                 resultText=resultText.Substring(0, resultText.Length-(newEndLines-oldEndLines));
-                                if (mOutputRange!=null && mOutputRange.Y>resultText.Length)
+                                if (mOutputRange != Point.Empty && mOutputRange.Y>resultText.Length)
                                 {
                                     mOutputRange.Y = resultText.Length;
                                 }
@@ -533,7 +533,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if we are trying to capture the output range but haven't captured it yet
-                        if (mOutputRange != null && mOutputRange.Y < 0)
+                        if (mOutputRange != Point.Empty && mOutputRange.Y < 0)
                         {
                             mOutputRange.Y = resultText.Length;
                             mReplaceRange.Y = mWorkingSource.Length;
@@ -548,7 +548,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if multiple passes are allowed and we would benefit from one and this is not a partial format
-                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange==null)
+                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange == Point.Empty)
                         {
                             mSourceData=resultText;
                             continue;
@@ -671,7 +671,7 @@ namespace CodeFormatter.Handlers
         //          throw new IllegalStateException("Bad tree type");
         //      
         //      Token t=((CommonTree)tree).getToken();
-        //      if (t==null)
+        //      if (t is null)
         //          throw new IllegalStateException("null token");
         //      
         //      if ((t instanceof CommonToken))
@@ -805,7 +805,7 @@ namespace CodeFormatter.Handlers
         {
             //TODO: it's pretty inefficient to split the buffer when I should only grab lines as I need them
             String[] lines=buffer.ToString().Split('\n');
-            if (lines!=null && lines.Length>0)
+            if (lines.Length>0)
             {
                 for (int i=lines.Length-1;i>=0;i--)
                 {
@@ -906,7 +906,7 @@ namespace CodeFormatter.Handlers
         {
             //This (the token having no text) might occur with an empty semicolon token (semic).  I think nothing needs to be done here and
             //no state needs to be saved.
-            if (tok.Text==null)
+            if (tok.Text is null)
                 return;
         
             //look at hidden tokens to see if the tag to turn off formatting is seen.  If so, then just emit all the hidden tokens and
@@ -994,9 +994,9 @@ namespace CodeFormatter.Handlers
             }
         
             //handle user selection range
-            if (mSelectedRange!=null && !mBindableMode)
+            if (mSelectedRange!= Point.Empty && !mBindableMode)
             {
-                if (mOutputRange==null)
+                if (mOutputRange == Point.Empty)
                 {
                     if (tok.Line>=mSelectedRange.X)
                     {
@@ -1099,11 +1099,11 @@ namespace CodeFormatter.Handlers
                     //be on a new line afterward
                 
                     /////////////////////// Handling of "exclude from formatting" tags //////////////////////
-                    if (t.Text.IndexOfOrdinal(mStartExcludeProcessing)>=0)
+                    if (t.Text.Contains(mStartExcludeProcessing))
                     {
                         pushFormatterOff();
                     }
-                    else if (t.Text.IndexOfOrdinal(mStopExcludeProcessing)>=0)
+                    else if (t.Text.Contains(mStopExcludeProcessing))
                     {
                         popFormatterOff();
                     }
@@ -1171,7 +1171,7 @@ namespace CodeFormatter.Handlers
                                     mOutputBuffer.Append(generateIndent(commentIndent));
                                     int replaceOffset=((CommonToken)t).StartIndex+line.mOriginalStartOffset;
                                     ReplacementRange range=new ReplacementRange(new Point(mOutputBuffer.Length, mOutputBuffer.Length+2), new Point(replaceOffset, replaceOffset));
-                                    if (mReplaceMap==null)
+                                    if (mReplaceMap is null)
                                         mReplaceMap=new Dictionary<Int32, ReplacementRange>();
                                     range.setChangedText("//", "");
                                     mReplaceMap[mOutputBuffer.Length] = range;
@@ -1335,7 +1335,7 @@ namespace CodeFormatter.Handlers
                             replaceRange.setChangedText(mOutputBuffer.ToString().Substring(replaceArea.X), t.Text);
                             if (!ASFormatter.validateNonWhitespaceIdentical(replaceRange.getAddedText(), replaceRange.getDeletedText()))
                             {
-                                if (mReplaceMap==null)
+                                if (mReplaceMap is null)
                                     mReplaceMap=new Dictionary<Int32, ReplacementRange>();
                                 mReplaceMap[replaceArea.X] = replaceRange;
                             }
@@ -1795,9 +1795,9 @@ namespace CodeFormatter.Handlers
             }
         }
 
-        private static int Nesting_Opposite=1; 
-        private static int Nesting_Unrelated=2; 
-        private static int Nesting_Deeper=3; 
+        private static readonly int Nesting_Opposite=1; 
+        private static readonly int Nesting_Unrelated=2; 
+        private static readonly int Nesting_Deeper=3; 
         /**
          * 
          * @param currentChar
@@ -2770,18 +2770,15 @@ namespace CodeFormatter.Handlers
                     String newIndentString=generateIndent(currentIndent);
                     int firstNonWS=0;
                     String originalString = mOutputBuffer.ToString().Substring(lastCR + 1);
-                    for (int i=0;i<originalString.Length;i++)
+                    for (int i = 0; i < originalString.Length; i++)
                     {
                         if (!Char.IsWhiteSpace(originalString[i]))
                         {
-                            firstNonWS=i;
+                            firstNonWS = i;
                             break;
                         }
                     }
-                    if (firstNonWS>=0)
-                    {
-                        mOutputBuffer.Remove(lastCR+1, lastCR+1+firstNonWS);
-                    }
+                    mOutputBuffer.Remove(lastCR+1, lastCR+1+firstNonWS);
                     mOutputBuffer.Insert(lastCR+1, newIndentString);
                 }
             }
@@ -3490,7 +3487,7 @@ namespace CodeFormatter.Handlers
                 if (removedWSCount>0)
                 {
                     lengthAtSplit=getColumnLength(0, restOfText, 0, (splitPoint-lineStart)-removedWSCount);
-                    splitPoint=splitPoint-removedWSCount;
+                    splitPoint -= removedWSCount;
                 }
             }
             else
@@ -4020,7 +4017,7 @@ namespace CodeFormatter.Handlers
     //  {
     //      if (getFormatMode()!=FORMAT_INDENT && isAddBraces(braceCode) && (nextToken instanceof CommonToken))
     //      {
-    //          if (mReplaceMap==null)
+    //          if (mReplaceMap is null)
     //              mReplaceMap=new Dictionary<Int32, ReplacementRange>();
     //          CommonToken token=(CommonToken)nextToken;
     //          //for the replacement point, I want the next non-whitespace location in the original document.  This might
@@ -4154,7 +4151,7 @@ namespace CodeFormatter.Handlers
                     if (braceCode==BraceAdd_Switch && braceInfo.isBracesCurrentlyExist())
                     {
                         IToken prevToken=mRawTokens.Get(nextToken.TokenIndex-1);
-                        while (prevToken.Channel!=AS3_exParser.DEFAULT_TOKEN_CHANNEL)
+                        while (prevToken.Channel!=BaseRecognizer.DEFAULT_TOKEN_CHANNEL)
                         {
                             if (prevToken.TokenIndex==0)
                                 break;
@@ -4229,7 +4226,7 @@ namespace CodeFormatter.Handlers
         }
 
         public void setKeepSpacesBeforeLineComments(bool keepSpaces) {
-            this.mKeepSpacesBeforeLineComments = keepSpaces;
+            mKeepSpacesBeforeLineComments = keepSpaces;
         }
 
         public int getAlignDeclMode() {
@@ -4271,10 +4268,7 @@ namespace CodeFormatter.Handlers
     
         public void popDeclEqualsBlock()
         {
-            if (mCurrentDeclEqualContext!=null)
-            {
-                mCurrentDeclEqualContext=mCurrentDeclEqualContext.getParent();
-            }
+            mCurrentDeclEqualContext=mCurrentDeclEqualContext?.getParent();
         }
 
         public void captureDeclEqualPosition()
@@ -4548,7 +4542,7 @@ namespace CodeFormatter.Handlers
 
     public class EditItem
     {
-        private int mLocation;
+        private readonly int mLocation;
         public EditItem(int location)
         {
             mLocation=location;
@@ -4560,8 +4554,8 @@ namespace CodeFormatter.Handlers
     
     public class InsertItem : EditItem
     {
-        private String mData;
-        private int mOriginalInsertLocation;
+        private readonly String mData;
+        private readonly int mOriginalInsertLocation;
         public InsertItem(int location, String insertString, int originalPos) : base(location)
         {
             mData=insertString;
@@ -4581,8 +4575,8 @@ namespace CodeFormatter.Handlers
 
     public class DeleteItem : EditItem
     {
-        private int mLength;
-        private int mOriginalDeleteLocation;
+        private readonly int mLength;
+        private readonly int mOriginalDeleteLocation;
         public DeleteItem(int location, int length, int originalLocation) : base(location)
         {
             mLength=length;
@@ -4607,7 +4601,7 @@ namespace CodeFormatter.Handlers
         private int mEndBracePos;
         private bool mBracesCurrentlyExist;
         private bool mHasComment;
-        private int mStatementType;
+        private readonly int mStatementType;
         private int mOriginalDocStartPosition;
         private int mOriginalDocEndPosition;
         private int mOriginalDocStatementStartPos;
@@ -4723,10 +4717,10 @@ namespace CodeFormatter.Handlers
 
     public class EqualContext
     {
-        List<EqualContext> mChildren;
+        readonly List<EqualContext> mChildren;
         int mMaxPosition;
-        EqualContext mParent;
-        String mPathCode;
+        readonly EqualContext mParent;
+        readonly String mPathCode;
         bool mNeedChanges;
         int mItemsSeen=0;
         public EqualContext(EqualContext parent, int index)
@@ -4803,9 +4797,9 @@ namespace CodeFormatter.Handlers
     public class WrapInfo
     {
         public List<WrapItem> mWrapItems = new List<WrapItem>();
-        private int mStartPos;
-        private bool mNewLevel; //if true, this is an important grouping level
-        private int mBaseLevel;
+        private readonly int mStartPos;
+        private readonly bool mNewLevel; //if true, this is an important grouping level
+        private readonly int mBaseLevel;
         public WrapInfo(bool newLevel, int start, int baseLevel)
         {
             mStartPos = start;
@@ -4851,10 +4845,10 @@ namespace CodeFormatter.Handlers
     public class WrapItem
     {
         public int mDepth;
-        private String mText;
+        private readonly String mText;
         public int mStartPos;
-        private int mBreakType;
-        private bool mBreakBefore;
+        private readonly int mBreakType;
+        private readonly bool mBreakBefore;
         private int mFirstParmPos;
         private int mIndent;
         private bool mBreakUsed;

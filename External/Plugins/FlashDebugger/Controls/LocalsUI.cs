@@ -7,51 +7,40 @@ using PluginCore;
 
 namespace FlashDebugger
 {
-    class LocalsUI : DockPanelControl
+    internal class LocalsUI : DockPanelControl
     {
-        private PluginMain pluginMain;
-        private DataTreeControl treeControl;
-        private static Char[] chTrims = { '.' };
-
-        public LocalsUI(PluginMain pluginMain)
+        public LocalsUI()
         {
-            this.AutoKeyHandling = true;
-            this.pluginMain = pluginMain;
-            this.treeControl = new DataTreeControl();
-            this.treeControl.Tree.BorderStyle = BorderStyle.None;
-            this.treeControl.Resize += new EventHandler(this.TreeControlResize);
-            this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
-            this.treeControl.Dock = DockStyle.Fill;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.treeControl);
+            AutoKeyHandling = true;
+            TreeControl = new DataTreeControl();
+            TreeControl.Tree.BorderStyle = BorderStyle.None;
+            TreeControl.Resize += TreeControlResize;
+            TreeControl.Tree.Font = PluginBase.Settings.DefaultFont;
+            TreeControl.Dock = DockStyle.Fill;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(TreeControl);
         }
 
-        private void TreeControlResize(Object sender, EventArgs e)
+        void TreeControlResize(object sender, EventArgs e)
         {
-            Int32 w = this.treeControl.Width / 2;
-            this.treeControl.Tree.Columns[0].Width = w;
-            this.treeControl.Tree.Columns[1].Width = w - 8;
+            int w = TreeControl.Width / 2;
+            TreeControl.Tree.Columns[0].Width = w;
+            TreeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        public DataTreeControl TreeControl 
-        {
-            get { return this.treeControl; }
-        }
+        public DataTreeControl TreeControl { get; }
 
-        public void Clear()
-        {
-            treeControl.Nodes.Clear();
-        }
+        public void Clear() => TreeControl.Nodes.Clear();
 
         public void SetData(Variable[] variables)
         {
-            treeControl.Tree.BeginUpdate();
+            TreeControl.Tree.BeginUpdate();
             try
             {
                 foreach (Variable item in variables)
                 {
-                    treeControl.AddNode(new VariableNode(item)
+                    TreeControl.AddNode(new VariableNode(item)
                                             {
                                                 HideClassId = PluginMain.settingObject.HideClassIds,
                                                 HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
@@ -60,11 +49,9 @@ namespace FlashDebugger
             }
             finally
             {
-                treeControl.Tree.EndUpdate();
+                TreeControl.Tree.EndUpdate();
             }
-            treeControl.Enabled = true;
+            TreeControl.Enabled = true;
         }
-
     }
-
 }

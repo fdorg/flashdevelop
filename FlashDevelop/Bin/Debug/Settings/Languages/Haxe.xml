@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="haxe-primary-keywords">
-			abstract break case catch class continue default do else enum extends for function if implements import in
+			abstract break case catch class continue default do else enum extends for in function if implements import
 			interface  new package return switch throw try typedef using var while $type 
 		</keyword-class>
 		<keyword-class name="haxe-secondary-keywords">
@@ -20,7 +20,7 @@
 			dynamic macro extern inline override private public static
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords4">
-			untyped cast trace __cpp__ __global__ __js__ __php__ __cs__ __java__ __new__
+			untyped cast trace __cpp__ __global__ __js__ __php__ __cs__ __java__ __new__ __lua__
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords5">
 			super this

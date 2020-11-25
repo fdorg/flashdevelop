@@ -7,18 +7,11 @@ namespace AirProperties.Forms
     static class WizardHelper
     {
 
-        public static void SetControlValue(string value, TextBox field)
-        {
-            if (value == null)
-                field.Text = string.Empty;
-            else
-                field.Text = value;
-        }
+        public static void SetControlValue(string value, TextBox field) => field.Text = value ?? string.Empty;
 
         public static void SetControlValue(string value, CheckBox field)
         {
-            if (string.IsNullOrEmpty(value))
-                field.CheckState = CheckState.Indeterminate;
+            if (string.IsNullOrEmpty(value)) field.CheckState = CheckState.Indeterminate;
             else
             {
                 value = value.ToLower();
@@ -28,17 +21,15 @@ namespace AirProperties.Forms
 
         public static void SetControlValue(bool? value, CheckBox field)
         {
-            if (value == null)
-                field.CheckState = CheckState.Indeterminate;
-            else
-                field.Checked = value.Value;
+            if (value is null) field.CheckState = CheckState.Indeterminate;
+            else field.Checked = value.Value;
         }
 
         public static void SetControlValue(string value, ComboBox field, int defaultIndex)
         {
-            bool foundListItem = false;
             if (value != null)
             {
+                var foundListItem = false;
                 foreach (ListItem listItem in field.Items)
                 {
                     if (listItem.Value == value.Trim())
@@ -64,7 +55,7 @@ namespace AirProperties.Forms
                     foreach (object item in value)
                     {
                         string val = item as string;
-                        if (item == null) continue;
+                        if (val is null) continue;
 
                         if (val.Trim() == listItem.Value)
                         {
