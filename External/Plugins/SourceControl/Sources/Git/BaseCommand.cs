@@ -13,8 +13,8 @@ namespace SourceControl.Sources.Git
 {
     internal abstract class BaseCommand : VCCommand
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static string resolvedCmd;
+        static string qualifiedCmd;
         
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -48,7 +48,7 @@ namespace SourceControl.Sources.Git
             return resolve ?? ResolveGitPath(cmd);
         }
 
-        private static string ResolveGitPath(string cmd)
+        static string ResolveGitPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

@@ -5,10 +5,10 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
-    static class TortoiseProc
+    internal static class TortoiseProc
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static string resolvedCmd;
+        static string qualifiedCmd;
 
         public static void Execute(string command, string path)
         {
@@ -54,7 +54,7 @@ namespace SourceControl.Sources.Git
             proc.Start();
         }
 
-        private static string GetTortoiseProc()
+        static string GetTortoiseProc()
         {
             var cmd = PluginMain.SCSettings.TortoiseGITProcPath;
             if (File.Exists(cmd)) return cmd;
@@ -62,7 +62,7 @@ namespace SourceControl.Sources.Git
             return ResolveTortoiseProcPath(cmd);
         }
 
-        private static string ResolveTortoiseProcPath(string cmd)
+        static string ResolveTortoiseProcPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

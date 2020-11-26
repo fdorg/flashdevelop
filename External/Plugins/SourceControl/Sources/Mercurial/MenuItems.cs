@@ -7,7 +7,7 @@ using ProjectManager.Controls.TreeView;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class MenuItems : IVCMenuItems
+    internal class MenuItems : IVCMenuItems
     {
         TreeNode[] currentNodes;
         IVCManager currentManager;
@@ -42,7 +42,7 @@ namespace SourceControl.Sources.Mercurial
         public ToolStripItem Revert => revert;
         public ToolStripItem EditConflict => editConflict;
 
-        private readonly Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        readonly Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
         public Dictionary<ToolStripItem, VCMenuItemProperties> Items => items;
 
         public MenuItems()
@@ -61,12 +61,12 @@ namespace SourceControl.Sources.Mercurial
             editConflict = new ToolStripMenuItem(TextHelper.GetString("Label.EditConflict"), PluginBase.MainForm.FindImage("196"), EditConflict_Click);
         }
 
-        private string GetPaths()
+        string GetPaths()
         {
             return string.Join("*", GetPathsArray());
         }
 
-        private string[] GetPathsArray()
+        string[] GetPathsArray()
         {
             List<string> paths = new List<string>();
             if (currentNodes != null)

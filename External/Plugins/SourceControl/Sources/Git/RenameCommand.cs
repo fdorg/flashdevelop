@@ -4,10 +4,10 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Git
 {
-    class RenameCommand : BaseCommand
+    internal class RenameCommand : BaseCommand
     {
-        private readonly string path;
-        private readonly string newName;
+        readonly string path;
+        readonly string newName;
 
         public RenameCommand(string path, string newName)
         {

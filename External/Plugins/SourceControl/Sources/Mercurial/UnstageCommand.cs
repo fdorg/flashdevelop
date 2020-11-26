@@ -3,7 +3,7 @@ using System.IO;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class UnstageCommand : BaseCommand
+    internal class UnstageCommand : BaseCommand
     {
         readonly string path;
 

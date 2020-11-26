@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Subversion
 {
-    class SubversionManager : IVCManager
+    internal class SubversionManager : IVCManager
     {
         public event VCManagerStatusChange OnChange;
 
@@ -35,7 +35,7 @@ namespace SourceControl.Sources.Subversion
             return VCItemStatus.Unknown;
         }
 
-        private StatusNode FindNode(string path, string rootPath)
+        StatusNode FindNode(string path, string rootPath)
         {
             if (statusCache.ContainsKey(rootPath))
             {
@@ -63,7 +63,7 @@ namespace SourceControl.Sources.Subversion
             return result;
         }
 
-        private string GetNodePath(StatusNode child, string rootPath)
+        string GetNodePath(StatusNode child, string rootPath)
         {
             char S = Path.DirectorySeparatorChar;
             string path = "";
@@ -75,7 +75,7 @@ namespace SourceControl.Sources.Subversion
             return rootPath + S + path;
         }
 
-        private void GetChildren(StatusNode node, List<StatusNode> result)
+        void GetChildren(StatusNode node, List<StatusNode> result)
         {
             if (node.Children is null) return;
             foreach (StatusNode child in node.Children.Values)

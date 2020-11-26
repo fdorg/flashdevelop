@@ -4,10 +4,10 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class MoveCommand : BaseCommand
+    internal class MoveCommand : BaseCommand
     {
-        private readonly string from;
-        private readonly string to;
+        readonly string from;
+        readonly string to;
 
         public MoveCommand(string fromPath, string toPath)
         {

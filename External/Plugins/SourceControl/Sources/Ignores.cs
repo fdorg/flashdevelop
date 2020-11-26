@@ -6,7 +6,7 @@ using PluginCore;
 
 namespace SourceControl.Sources
 {
-    class Ignores: List<IgnoreEntry>
+    internal class Ignores: List<IgnoreEntry>
     {
         readonly string root;
         readonly string ignoreFile;
@@ -50,7 +50,7 @@ namespace SourceControl.Sources
         }
     }
 
-    class IgnoreEntry
+    internal class IgnoreEntry
     {
         public string path;
         public Regex regex;

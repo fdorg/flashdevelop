@@ -2,7 +2,7 @@
 
 namespace SourceControl.Sources.Git
 {
-    class CommitCommand : BaseCommand
+    internal class CommitCommand : BaseCommand
     {
         readonly string workingDirectory;
         readonly string message;

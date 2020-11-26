@@ -8,7 +8,7 @@ using ProjectManager.Helpers;
 
 namespace SourceControl.Sources.Git
 {
-    class MenuItems : IVCMenuItems
+    internal class MenuItems : IVCMenuItems
     {
         TreeNode[] currentNodes;
         IVCManager currentManager;
@@ -44,7 +44,7 @@ namespace SourceControl.Sources.Git
         public ToolStripItem Revert { get { return revert; } }
         public ToolStripItem EditConflict { get { return editConflict; } }
 
-        private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
         public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get { return items; } }
 
         public MenuItems()
@@ -64,12 +64,12 @@ namespace SourceControl.Sources.Git
             editConflict = new ToolStripMenuItem(TextHelper.GetString("Label.EditConflict"), PluginBase.MainForm.FindImage("196"), EditConflict_Click);
         }
 
-        private string GetPaths()
+        string GetPaths()
         {
             return String.Join("*", GetPathsArray());
         }
 
-        private string[] GetPathsArray()
+        string[] GetPathsArray()
         {
             List<string> paths = new List<string>();
             if (currentNodes != null)

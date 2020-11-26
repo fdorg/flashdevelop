@@ -15,19 +15,19 @@ namespace SourceControl.Helpers
     {
         #region Fields
 
-        private static readonly List<AnnotatedDocument> documents;
+        static readonly List<AnnotatedDocument> documents;
 
-        private IBlameCommand command;
-        private string fileName;
-        private ITabbedDocument document;
-        private ScintillaControl sci;
-        private AnnotationData[] annotations;
-        private Dictionary<string, AnnotationData> commits;
-        private ToolTip tooltip;
-        private ContextMenuStrip contextMenu;
-        private ToolStripMenuItem showOnFileHistoryMenuItem;
-        private int MarginStart;
-        private int MarginEnd;
+        IBlameCommand command;
+        string fileName;
+        ITabbedDocument document;
+        ScintillaControl sci;
+        AnnotationData[] annotations;
+        Dictionary<string, AnnotationData> commits;
+        ToolTip tooltip;
+        ContextMenuStrip contextMenu;
+        ToolStripMenuItem showOnFileHistoryMenuItem;
+        int MarginStart;
+        int MarginEnd;
 
         #endregion
 
@@ -38,7 +38,7 @@ namespace SourceControl.Helpers
             documents = new List<AnnotatedDocument>();
         }
 
-        private AnnotatedDocument(IBlameCommand cmd, string file, ITabbedDocument doc)
+        AnnotatedDocument(IBlameCommand cmd, string file, ITabbedDocument doc)
         {
             documents.Add(this);
             command = cmd;
@@ -163,7 +163,7 @@ namespace SourceControl.Helpers
 
         #region Initialization
 
-        private void InitializeContextMenu()
+        void InitializeContextMenu()
         {
             showOnFileHistoryMenuItem = new ToolStripMenuItem("Show on File &History"); //TODO: Localisation
             showOnFileHistoryMenuItem.Click += ShowOnFileHistoryMenuItem_Click;
@@ -176,7 +176,7 @@ namespace SourceControl.Helpers
             });
         }
 
-        private void AddEventHandlers()
+        void AddEventHandlers()
         {
             ((Form) document).FormClosed += Document_FormClosed;
             contextMenu.Opening += ContextMenu_Opening;
@@ -186,7 +186,7 @@ namespace SourceControl.Helpers
 
         #region Private Functions
 
-        private void OrganizeAnnotations()
+        void OrganizeAnnotations()
         {
             Array.Sort(annotations, (x, y) => x.ResultLine.CompareTo(y.ResultLine));
             int i = 0;
@@ -211,7 +211,7 @@ namespace SourceControl.Helpers
             Array.Resize(ref annotations, annotations.Length - offset);
         }
 
-        private string ParseCommits()
+        string ParseCommits()
         {
             string longestInfo = string.Empty;
             foreach (var annotation in annotations)
@@ -255,7 +255,7 @@ namespace SourceControl.Helpers
             return longestInfo;
         }
 
-        private void ShowAnnotation(string longestInfo)
+        void ShowAnnotation(string longestInfo)
         {
             int width = longestInfo.Length;
             sci.SetMarginTypeN(4, (int) MarginType.Text);
@@ -274,7 +274,7 @@ namespace SourceControl.Helpers
             }
         }
 
-        private void UpdateTheme(bool applyingTheme)
+        void UpdateTheme(bool applyingTheme)
         {
             if (applyingTheme)
             {
@@ -297,13 +297,13 @@ namespace SourceControl.Helpers
             }
         }
 
-        private void GetMarginBounds()
+        void GetMarginBounds()
         {
             MarginStart = sci.GetMarginWidthN(0) + sci.GetMarginWidthN(1) + sci.GetMarginWidthN(2) + sci.GetMarginWidthN(3);
             MarginEnd = MarginStart + sci.GetMarginWidthN(4);
         }
 
-        private AnnotationData GetAnnotationData(int x, int y)
+        AnnotationData GetAnnotationData(int x, int y)
         {
             if (MarginStart <= x && x < MarginEnd)
             {
@@ -333,9 +333,9 @@ namespace SourceControl.Helpers
 
         #region Event Handlers
 
-        private void Document_FormClosed(object sender, FormClosedEventArgs e) => Dispose();
+        void Document_FormClosed(object sender, FormClosedEventArgs e) => Dispose();
 
-        private void ContextMenu_Opening(object sender, CancelEventArgs e)
+        void ContextMenu_Opening(object sender, CancelEventArgs e)
         {
             var mousePosition = sci.PointToClient(Control.MousePosition);
             if (!disposed)
@@ -351,7 +351,7 @@ namespace SourceControl.Helpers
             PluginBase.MainForm.EditorMenu.Show(sci, mousePosition);
         }
 
-        private void Sci_DwellStart(ScintillaControl sender, int position, int x, int y)
+        void Sci_DwellStart(ScintillaControl sender, int position, int x, int y)
         {
             if (!disposed)
             {
@@ -363,7 +363,7 @@ namespace SourceControl.Helpers
             }
         }
 
-        private void Sci_DwellEnd(ScintillaControl sender, int position, int x, int y)
+        void Sci_DwellEnd(ScintillaControl sender, int position, int x, int y)
         {
             if (!disposed)
             {
@@ -371,7 +371,7 @@ namespace SourceControl.Helpers
             }
         }
 
-        private void ShowOnFileHistoryMenuItem_Click(object sender, EventArgs e)
+        void ShowOnFileHistoryMenuItem_Click(object sender, EventArgs e)
         {
             command.ShowOnFileHistory(((AnnotationData) contextMenu.Tag).Hash);
         }
@@ -380,7 +380,7 @@ namespace SourceControl.Helpers
 
         #region IDisposable
 
-        private bool disposed;
+        bool disposed;
 
         public void Dispose() => Dispose(true);
 

@@ -5,7 +5,7 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
-    class DeleteCommand : BaseCommand
+    internal class DeleteCommand : BaseCommand
     {
         readonly string[] paths;
 

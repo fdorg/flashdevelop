@@ -50,7 +50,7 @@ namespace SourceControl.Managers
             }
         }
 
-        private void RefreshNodes(IEnumerable nodes)
+        void RefreshNodes(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
@@ -140,7 +140,7 @@ namespace SourceControl.Managers
 
     #region Overlay builder
 
-    class OverlayMap: Dictionary<int, int>
+    internal class OverlayMap: Dictionary<int, int>
     {
         static Image iconSkin;
         static readonly Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
@@ -160,7 +160,7 @@ namespace SourceControl.Managers
             AddOverlay(VCItemStatus.Unknown);
         }
 
-        private static Image GetSkin()
+        static Image GetSkin()
         {
             return PluginBase.MainForm.GetAutoAdjustedImage(ProjectWatcher.Skin); //can be changed by external SC-Plugin
         }
@@ -171,7 +171,7 @@ namespace SourceControl.Managers
                 map.Clear();
         }
 
-        private static void AddOverlay(VCItemStatus status)
+        static void AddOverlay(VCItemStatus status)
         {
             maps.Add(status, new OverlayMap());
         }

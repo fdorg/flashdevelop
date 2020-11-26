@@ -12,15 +12,16 @@ namespace SourceControl.Dialogs
     {
         #region Form Designer Components
 
-        private TextBox lineBox;
-        private Button btnYes;
-        private Button btnNo;
+        TextBox lineBox;
+        Button btnYes;
+        Button btnNo;
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private readonly Container components = null;
-        private Button btnNever;
-        private Label titleLabel;
+        readonly Container components = null;
+
+        Button btnNever;
+        Label titleLabel;
 
         #endregion
 
@@ -64,7 +65,7 @@ namespace SourceControl.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             titleLabel = new Label();
             lineBox = new TextBox();
@@ -146,7 +147,7 @@ namespace SourceControl.Dialogs
 
         #endregion
 
-        private void InititalizeLocalization()
+        void InititalizeLocalization()
         {
             btnYes.Text = TextHelper.GetString("Label.Yes");
             btnNo.Text = TextHelper.GetString("Label.No");
@@ -155,7 +156,7 @@ namespace SourceControl.Dialogs
             Text = " " + TextHelper.GetString("Title.EnterText");
         }
 
-        private void btnYes_Click(object sender, System.EventArgs e)
+        void btnYes_Click(object sender, System.EventArgs e)
         {
             Line = lineBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
@@ -167,13 +168,13 @@ namespace SourceControl.Dialogs
             }
         }
 
-        private void btnNo_Click(object sender, System.EventArgs e)
+        void btnNo_Click(object sender, System.EventArgs e)
         {
             DialogResult = DialogResult.No;
             Close();
         }
 
-        private void btnNever_Click(object sender, System.EventArgs e)
+        void btnNever_Click(object sender, System.EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();

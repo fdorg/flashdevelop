@@ -2,7 +2,7 @@
 
 namespace SourceControl.Sources.Git
 {
-    class ResetCommand : BaseCommand
+    internal class ResetCommand : BaseCommand
     {
         readonly string args;
         readonly string dir;

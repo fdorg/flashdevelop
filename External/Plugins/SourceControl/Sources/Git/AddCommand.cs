@@ -2,10 +2,10 @@
 
 namespace SourceControl.Sources.Git
 {
-    class AddCommand : BaseCommand
+    internal class AddCommand : BaseCommand
     {
-        private readonly string args;
-        private readonly string directory;
+        readonly string args;
+        readonly string directory;
 
         public AddCommand(string path)
         {

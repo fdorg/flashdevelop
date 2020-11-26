@@ -7,7 +7,7 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Git
 {
-    class Status : BaseCommand
+    internal class Status : BaseCommand
     {
         public event StatusResult OnResult;
 
@@ -124,9 +124,9 @@ namespace SourceControl.Sources.Git
         }
     }
 
-    delegate void StatusResult(Status sender);
+    internal delegate void StatusResult(Status sender);
 
-    class StatusNode
+    internal class StatusNode
     {
         static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
@@ -175,7 +175,7 @@ namespace SourceControl.Sources.Git
                 .MapPath(path.Substring(p + 1), status);
         }
 
-        private StatusNode AddChild(string name, VCItemStatus status, bool isLeaf)
+        StatusNode AddChild(string name, VCItemStatus status, bool isLeaf)
         {
             if (name == ".")
             {

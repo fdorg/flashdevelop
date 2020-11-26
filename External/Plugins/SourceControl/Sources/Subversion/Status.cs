@@ -6,7 +6,7 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Subversion
 {
-    class Status : BaseCommand
+    internal class Status : BaseCommand
     {
         public event StatusResult OnResult;
 
@@ -106,9 +106,9 @@ namespace SourceControl.Sources.Subversion
         }
     }
 
-    delegate void StatusResult(Status sender);
+    internal delegate void StatusResult(Status sender);
 
-    class StatusNode
+    internal class StatusNode
     {
         public bool HasChildren;
         public string Name;
@@ -153,7 +153,7 @@ namespace SourceControl.Sources.Subversion
                 .MapPath(path.Substring(p + 1), status);
         }
 
-        private StatusNode AddChild(string name, VCItemStatus status, bool isLeaf)
+        StatusNode AddChild(string name, VCItemStatus status, bool isLeaf)
         {
             if (name == ".")
             {

@@ -17,8 +17,8 @@ namespace SourceControl
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private bool ready;
+        string settingFilename;
+        bool ready;
 
         #region Required Properties
 
@@ -375,7 +375,7 @@ namespace SourceControl
         /// <summary>
         /// 
         /// </summary>
-        private void CheckPathExists(string path, string name)
+        void CheckPathExists(string path, string name)
         {
             if (string.IsNullOrEmpty(path)) return;
             if (!Path.IsPathRooted(path)) return;

@@ -11,10 +11,10 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
-    abstract class BaseCommand : VCCommand
+    internal abstract class BaseCommand : VCCommand
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static string resolvedCmd;
+        static string qualifiedCmd;
 
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -48,7 +48,7 @@ namespace SourceControl.Sources.Mercurial
             return resolve ?? ResolveHGPath(cmd);
         }
 
-        private static string ResolveHGPath(string cmd)
+        static string ResolveHGPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

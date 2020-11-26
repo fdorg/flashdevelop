@@ -10,7 +10,7 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Subversion
 {
-    abstract class BaseCommand : VCCommand
+    internal abstract class BaseCommand : VCCommand
     {
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();

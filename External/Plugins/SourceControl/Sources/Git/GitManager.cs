@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Git
 {
-    class GitManager : IVCManager
+    internal class GitManager : IVCManager
     {
         public event VCManagerStatusChange OnChange;
 
@@ -27,7 +27,7 @@ namespace SourceControl.Sources.Git
             return snode?.Status ?? VCItemStatus.Ignored;
         }
 
-        private StatusNode FindNode(string path, string rootPath)
+        StatusNode FindNode(string path, string rootPath)
         {
             if (statusCache.ContainsKey(rootPath))
             {
@@ -55,7 +55,7 @@ namespace SourceControl.Sources.Git
             return result;
         }
 
-        private string GetNodePath(StatusNode child, string rootPath)
+        string GetNodePath(StatusNode child, string rootPath)
         {
             char S = Path.DirectorySeparatorChar;
             string path = "";
@@ -67,7 +67,7 @@ namespace SourceControl.Sources.Git
             return rootPath + S + path;
         }
 
-        private void GetChildren(StatusNode node, ICollection<StatusNode> result)
+        void GetChildren(StatusNode node, ICollection<StatusNode> result)
         {
             if (node.Children is null) return;
             foreach (StatusNode child in node.Children.Values)

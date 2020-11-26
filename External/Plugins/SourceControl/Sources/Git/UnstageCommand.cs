@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SourceControl.Sources.Git
 {
-    class UnstageCommand : BaseCommand
+    internal class UnstageCommand : BaseCommand
     {
         readonly string path;
         public UnstageCommand(string path)

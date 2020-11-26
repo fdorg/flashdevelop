@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class MercurialManager : IVCManager
+    internal class MercurialManager : IVCManager
     {
         public event VCManagerStatusChange OnChange;
 
@@ -33,7 +33,7 @@ namespace SourceControl.Sources.Mercurial
             else return VCItemStatus.Unknown;
         }
 
-        private StatusNode FindNode(string path, string rootPath)
+        StatusNode FindNode(string path, string rootPath)
         {
             if (statusCache.ContainsKey(rootPath))
             {
@@ -61,7 +61,7 @@ namespace SourceControl.Sources.Mercurial
             return result;
         }
 
-        private string GetNodePath(StatusNode child, string rootPath)
+        string GetNodePath(StatusNode child, string rootPath)
         {
             char S = Path.DirectorySeparatorChar;
             string path = "";
@@ -73,7 +73,7 @@ namespace SourceControl.Sources.Mercurial
             return rootPath + S + path;
         }
 
-        private void GetChildren(StatusNode node, List<StatusNode> result)
+        void GetChildren(StatusNode node, List<StatusNode> result)
         {
             if (node.Children == null) return;
             foreach (StatusNode child in node.Children.Values)

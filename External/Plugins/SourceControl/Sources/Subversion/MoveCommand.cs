@@ -3,10 +3,10 @@ using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
-    class MoveCommand : BaseCommand
+    internal class MoveCommand : BaseCommand
     {
-        private readonly string args;
-        private readonly string directory;
+        readonly string args;
+        readonly string directory;
 
         public MoveCommand(string fromPath, string toPath)
         {

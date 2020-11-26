@@ -3,10 +3,10 @@ using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
-    class RenameCommand : BaseCommand
+    internal class RenameCommand : BaseCommand
     {
-        private readonly string args;
-        private readonly string path;
+        readonly string args;
+        readonly string path;
 
         public RenameCommand(string path, string newName)
         {

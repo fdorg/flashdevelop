@@ -3,7 +3,7 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Subversion
 {
-    class DeleteCommand : BaseCommand
+    internal class DeleteCommand : BaseCommand
     {
         readonly string[] paths;
 

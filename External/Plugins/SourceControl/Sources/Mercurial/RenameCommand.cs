@@ -4,7 +4,7 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class RenameCommand : BaseCommand
+    internal class RenameCommand : BaseCommand
     {
         readonly string path;
         readonly string newName;

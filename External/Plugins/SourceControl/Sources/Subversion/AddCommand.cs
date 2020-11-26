@@ -3,7 +3,7 @@ using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
-    class AddCommand : BaseCommand
+    internal class AddCommand : BaseCommand
     {
         readonly string path;
 

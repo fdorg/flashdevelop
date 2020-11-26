@@ -1,6 +1,6 @@
 ﻿namespace SourceControl.Sources.Subversion
 {
-    class FileActions:IVCFileActions
+    internal class FileActions:IVCFileActions
     {
         public bool FileBeforeRename(string path)
         {

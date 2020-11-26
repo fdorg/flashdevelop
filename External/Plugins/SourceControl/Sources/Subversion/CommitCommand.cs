@@ -3,7 +3,7 @@ using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
-    class CommitCommand : BaseCommand
+    internal class CommitCommand : BaseCommand
     {
         readonly string workingDirectory;
         readonly string message;
