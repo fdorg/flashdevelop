@@ -11,82 +11,51 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     internal class VS2005DockPaneStrip : DockPaneStripBase
     {
-        private class TabVS2005 : Tab
+        class TabVS2005 : Tab
         {
             public TabVS2005(IDockContent content)
                 : base(content)
             {
             }
 
-            private int m_tabX;
-            public int TabX
-            {
-                get { return m_tabX; }
-                set { m_tabX = value; }
-            }
-
-            private int m_tabWidth;
-            public int TabWidth
-            {
-                get { return m_tabWidth; }
-                set { m_tabWidth = value; }
-            }
-
-            private int m_maxWidth;
-            public int MaxWidth
-            {
-                get { return m_maxWidth; }
-                set { m_maxWidth = value; }
-            }
-
-            private bool m_flag;
-            protected internal bool Flag
-            {
-                get { return m_flag; }
-                set { m_flag = value; }
-            }
+            public int TabX { get; set; }
+            public int TabWidth { get; set; }
+            public int MaxWidth { get; set; }
+            protected internal bool Flag { get; set; }
         }
 
-        protected internal override DockPaneStripBase.Tab CreateTab(IDockContent content)
-        {
-            return new TabVS2005(content);
-        }
+        protected internal override Tab CreateTab(IDockContent content) => new TabVS2005(content);
 
-        private sealed class InertButton : InertButtonBase
+        sealed class InertButton : InertButtonBase
         {
-            private Bitmap m_image0, m_image1;
+            readonly Bitmap m_image0;
+            readonly Bitmap m_image1;
 
             public InertButton(Bitmap image0, Bitmap image1)
-                : base()
             {
                 m_image0 = image0;
                 m_image1 = image1;
             }
 
-            private int m_imageCategory = 0;
+            int m_imageCategory = 0;
             public int ImageCategory
             {
-                get { return m_imageCategory; }
+                get => m_imageCategory;
                 set
                 {
-                    if (m_imageCategory == value)
-                        return;
-
+                    if (value == m_imageCategory) return;
                     m_imageCategory = value;
                     Invalidate();
                 }
             }
 
-            public override Bitmap Image
-            {
-                get { return ImageCategory == 0 ? m_image0 : m_image1; }
-            }
+            public override Bitmap Image => ImageCategory == 0 ? m_image0 : m_image1;
 
             protected override void OnRefreshChanges()
             {
-                if (VS2005DockPaneStrip.ImageColor != ForeColor)
+                if (ImageColor != ForeColor)
                 {
-                    ForeColor = VS2005DockPaneStrip.ImageColor;
+                    ForeColor = ImageColor;
                     Invalidate();
                 }
             }
@@ -94,101 +63,78 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         #region consts
         // CHANGED - NICK
-        private const int _ToolWindowStripGapTop = 0;
-        private const int _ToolWindowStripGapBottom = 1;
-        private const int _ToolWindowStripGapLeft = 0;
-        private const int _ToolWindowStripGapRight = 0;
-        private const int _ToolWindowImageHeight = 16;
-        private const int _ToolWindowImageWidth = 16;
-        private const int _ToolWindowImageGapTop = 3;
-        private const int _ToolWindowImageGapBottom = 1;
-        private const int _ToolWindowImageGapLeft = 4;
-        private const int _ToolWindowImageGapRight = 0;
-        private const int _ToolWindowTextGapRight = 2;
-        private const int _ToolWindowTabSeperatorGapTop = 3;
-        private const int _ToolWindowTabSeperatorGapBottom = 3;
+        const int _ToolWindowStripGapTop = 0;
+        const int _ToolWindowStripGapBottom = 1;
+        const int _ToolWindowStripGapLeft = 0;
+        const int _ToolWindowStripGapRight = 0;
+        const int _ToolWindowImageHeight = 16;
+        const int _ToolWindowImageWidth = 16;
+        const int _ToolWindowImageGapTop = 3;
+        const int _ToolWindowImageGapBottom = 1;
+        const int _ToolWindowImageGapLeft = 4;
+        const int _ToolWindowImageGapRight = 0;
+        const int _ToolWindowTextGapRight = 2;
+        const int _ToolWindowTabSeperatorGapTop = 3;
+        const int _ToolWindowTabSeperatorGapBottom = 3;
 
-        private const int _DocumentStripGapTop = 0;
-        private const int _DocumentStripGapBottom = 0;
-        private const int _DocumentTabMaxWidth = 200;
-        private const int _DocumentButtonGapTop = 2;
-        private const int _DocumentButtonGapBottom = 3;
-        private const int _DocumentButtonGapBetween = 0;
-        private const int _DocumentButtonGapRight = 2;
-        private const int _DocumentTabGapTop = 2;
-        private const int _DocumentTabGapLeft = 0;
-        private const int _DocumentTabGapRight = 3;
-        private const int _DocumentIconGapBottom = 2;
-        private const int _DocumentIconGapLeft = 8;
-        private const int _DocumentIconGapRight = 0;
-        private const int _DocumentIconHeight = 16;
-        private const int _DocumentIconWidth = 16;
-        private const int _DocumentTextGapRight = 3;
+        const int _DocumentStripGapTop = 0;
+        const int _DocumentStripGapBottom = 0;
+        const int _DocumentTabMaxWidth = 200;
+        const int _DocumentButtonGapTop = 2;
+        const int _DocumentButtonGapBottom = 3;
+        const int _DocumentButtonGapBetween = 0;
+        const int _DocumentButtonGapRight = 2;
+        const int _DocumentTabGapTop = 2;
+        const int _DocumentTabGapLeft = 0;
+        const int _DocumentTabGapRight = 3;
+        const int _DocumentIconGapBottom = 2;
+        const int _DocumentIconGapLeft = 8;
+        const int _DocumentIconGapRight = 0;
+        const int _DocumentIconHeight = 16;
+        const int _DocumentIconWidth = 16;
+        const int _DocumentTextGapRight = 3;
         #endregion
 
-        private static Bitmap _imageButtonClose;
-        private static Bitmap ImageButtonClose
+        static Bitmap _imageButtonClose;
+
+        static Bitmap ImageButtonClose => _imageButtonClose ??= ScaleHelper.Scale(Resources.DockPane_Close);
+
+        InertButton m_buttonClose;
+
+        InertButton ButtonClose
         {
             get
             {
-                if (_imageButtonClose == null)
-                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Close);
-
-                return _imageButtonClose;
-            }
-        }
-
-        private InertButton m_buttonClose;
-        private InertButton ButtonClose
-        {
-            get
-            {
-                if (m_buttonClose == null)
+                if (m_buttonClose is null)
                 {
                     m_buttonClose = new InertButton(ImageButtonClose, ImageButtonClose);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
-                    m_buttonClose.Click += new EventHandler(Close_Click);
+                    m_buttonClose.Click += Close_Click;
                     Controls.Add(m_buttonClose);
                 }
-
                 return m_buttonClose;
             }
         }
 
-        private static Bitmap _imageButtonWindowList;
-        private static Bitmap ImageButtonWindowList
+        static Bitmap _imageButtonWindowList;
+
+        static Bitmap ImageButtonWindowList => _imageButtonWindowList ??= ScaleHelper.Scale(Resources.DockPane_Option);
+
+        static Bitmap _imageButtonWindowListOverflow;
+
+        static Bitmap ImageButtonWindowListOverflow => _imageButtonWindowListOverflow ??= ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
+
+        InertButton m_buttonWindowList;
+
+        InertButton ButtonWindowList
         {
             get
             {
-                if (_imageButtonWindowList == null)
-                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Option);
-
-                return _imageButtonWindowList;
-            }
-        }
-
-        private static Bitmap _imageButtonWindowListOverflow;
-        private static Bitmap ImageButtonWindowListOverflow
-        {
-            get
-            {
-                if (_imageButtonWindowListOverflow == null)
-                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
-
-                return _imageButtonWindowListOverflow;
-            }
-        }
-
-        private InertButton m_buttonWindowList;
-        private InertButton ButtonWindowList
-        {
-            get
-            {
-                if (m_buttonWindowList == null)
+                if (m_buttonWindowList is null)
                 {
                     m_buttonWindowList = new InertButton(ImageButtonWindowList, ImageButtonWindowListOverflow);
                     m_toolTip.SetToolTip(m_buttonWindowList, ToolTipSelect);
-                    m_buttonWindowList.Click += new EventHandler(WindowList_Click);
+                    m_buttonWindowList.Click += WindowList_Click;
                     Controls.Add(m_buttonWindowList);
                 }
 
@@ -196,356 +142,256 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static GraphicsPath GraphicsPath
-        {
-            get { return VS2005AutoHideStrip.GraphicsPath; }
-        }
+        static GraphicsPath GraphicsPath => VS2005AutoHideStrip.GraphicsPath;
 
-        private IContainer m_components;
-        private ToolTip m_toolTip;
-        private IContainer Components
-        {
-            get {   return m_components;    }
-        }
+        readonly ToolTip m_toolTip;
+        IContainer Components { get; }
 
         #region Customizable Properties
-        private static int ToolWindowStripGapTop
-        {
-            get { return ScaleHelper.Scale(_ToolWindowStripGapTop); }
-        }
-        
-        private static int ToolWindowStripGapBottom
-        {
-            get { return ScaleHelper.Scale(_ToolWindowStripGapBottom); }
-        }
 
-        private static int ToolWindowStripGapLeft
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowStripGapLeft);  }
-        }
+        static int ToolWindowStripGapTop => ScaleHelper.Scale(_ToolWindowStripGapTop);
 
-        private static int ToolWindowStripGapRight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowStripGapRight); }
-        }
+        static int ToolWindowStripGapBottom => ScaleHelper.Scale(_ToolWindowStripGapBottom);
 
-        private static int ToolWindowImageHeight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageHeight);   }
-        }
+        static int ToolWindowStripGapLeft => ScaleHelper.Scale(_ToolWindowStripGapLeft);
 
-        private static int ToolWindowImageWidth
-        {
-            get { return ScaleHelper.Scale(_ToolWindowImageWidth); }
-        }
+        static int ToolWindowStripGapRight => ScaleHelper.Scale(_ToolWindowStripGapRight);
 
-        private static int ToolWindowImageGapTop
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapTop);   }
-        }
+        static int ToolWindowImageHeight => ScaleHelper.Scale(_ToolWindowImageHeight);
 
-        private static int ToolWindowImageGapBottom
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapBottom);    }
-        }
+        static int ToolWindowImageWidth => ScaleHelper.Scale(_ToolWindowImageWidth);
 
-        private static int ToolWindowImageGapLeft
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapLeft);  }
-        }
+        static int ToolWindowImageGapTop => ScaleHelper.Scale(_ToolWindowImageGapTop);
 
-        private static int ToolWindowImageGapRight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapRight); }
-        }
+        static int ToolWindowImageGapBottom => ScaleHelper.Scale(_ToolWindowImageGapBottom);
 
-        private static int ToolWindowTextGapRight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowTextGapRight);  }
-        }
+        static int ToolWindowImageGapLeft => ScaleHelper.Scale(_ToolWindowImageGapLeft);
 
-        private static int ToolWindowTabSeperatorGapTop
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowTabSeperatorGapTop);    }
-        }
+        static int ToolWindowImageGapRight => ScaleHelper.Scale(_ToolWindowImageGapRight);
 
-        private static int ToolWindowTabSeperatorGapBottom
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowTabSeperatorGapBottom); }
-        }
+        static int ToolWindowTextGapRight => ScaleHelper.Scale(_ToolWindowTextGapRight);
 
-        private static string _toolTipClose;
-        private static string ToolTipClose
+        static int ToolWindowTabSeperatorGapTop => ScaleHelper.Scale(_ToolWindowTabSeperatorGapTop);
+
+        static int ToolWindowTabSeperatorGapBottom => ScaleHelper.Scale(_ToolWindowTabSeperatorGapBottom);
+
+        static string _toolTipClose;
+
+        static string ToolTipClose
         {
             get
             {   
-                if (_toolTipClose == null)
+                if (_toolTipClose is null)
                     // HACK: _toolTipClose = Strings.DockPaneStrip_ToolTipClose;
                     _toolTipClose = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipClose");
                 return _toolTipClose;
             }
         }
 
-        private static string _toolTipSelect;
-        private static string ToolTipSelect
+        static string _toolTipSelect;
+
+        static string ToolTipSelect
         {
             get
             {   
-                if (_toolTipSelect == null)
+                if (_toolTipSelect is null)
                     // HACK: _toolTipSelect = Strings.DockPaneStrip_ToolTipWindowList;
                     _toolTipSelect = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipWindowList");
                 return _toolTipSelect;
             }
         }
 
-        private TextFormatFlags ToolWindowTextFormat
+        TextFormatFlags ToolWindowTextFormat
         {
             get
             {   
-                TextFormatFlags textFormat = TextFormatFlags.EndEllipsis |
-                    TextFormatFlags.HorizontalCenter |
-                    TextFormatFlags.SingleLine |
-                    TextFormatFlags.VerticalCenter;
-                if (RightToLeft == RightToLeft.Yes)
-                    return textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
-                else
-                    return textFormat;
+                const TextFormatFlags textFormat = TextFormatFlags.EndEllipsis
+                                                   | TextFormatFlags.HorizontalCenter
+                                                   | TextFormatFlags.SingleLine
+                                                   | TextFormatFlags.VerticalCenter;
+                if (RightToLeft == RightToLeft.Yes) return textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
+                return textFormat;
             }
         }
 
-        private static int DocumentStripGapTop
-        {
-            get { return _DocumentStripGapTop; }
-        }
+        static int DocumentStripGapTop => _DocumentStripGapTop;
 
-        private static int DocumentStripGapBottom
-        {
-            get { return _DocumentStripGapBottom; }
-        }
+        static int DocumentStripGapBottom => _DocumentStripGapBottom;
 
-        private TextFormatFlags DocumentTextFormat
+        TextFormatFlags DocumentTextFormat
         {
             get
             {   
-                 TextFormatFlags textFormat = TextFormatFlags.SingleLine |
-                    TextFormatFlags.VerticalCenter |
-                    TextFormatFlags.PreserveGraphicsClipping |
-                    TextFormatFlags.HorizontalCenter;
-                 if (RightToLeft == RightToLeft.Yes)
-                     return textFormat | TextFormatFlags.RightToLeft;
-                 else
-                     return textFormat;
+                 const TextFormatFlags textFormat = TextFormatFlags.SingleLine
+                                                    | TextFormatFlags.VerticalCenter
+                                                    | TextFormatFlags.PreserveGraphicsClipping
+                                                    | TextFormatFlags.HorizontalCenter;
+                 if (RightToLeft == RightToLeft.Yes) return textFormat | TextFormatFlags.RightToLeft;
+                 return textFormat;
             }
         }
 
-        private static int DocumentTabMaxWidth
-        {
-            get {   return ScaleHelper.Scale(_DocumentTabMaxWidth); }
-        }
+        static int DocumentTabMaxWidth => ScaleHelper.Scale(_DocumentTabMaxWidth);
 
-        private static int DocumentButtonGapTop
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapTop);    }
-        }
+        static int DocumentButtonGapTop => ScaleHelper.Scale(_DocumentButtonGapTop);
 
-        private static int DocumentButtonGapBottom
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapBottom); }
-        }
+        static int DocumentButtonGapBottom => ScaleHelper.Scale(_DocumentButtonGapBottom);
 
-        private static int DocumentButtonGapBetween
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapBetween);    }
-        }
+        static int DocumentButtonGapBetween => ScaleHelper.Scale(_DocumentButtonGapBetween);
 
-        private static int DocumentButtonGapRight
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapRight);  }
-        }
+        static int DocumentButtonGapRight => ScaleHelper.Scale(_DocumentButtonGapRight);
 
         // HACK
-        private static int DocumentTabGapTop
-        {
-            get 
-            {
-                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
-                if (tabSize == "Large") return ScaleHelper.Scale(_DocumentTabGapTop - 2);
-                else return ScaleHelper.Scale(_DocumentTabGapTop);
-            }
-        }
-
-        private static int DocumentTabGapLeft
-        {
-            get {   return ScaleHelper.Scale(_DocumentTabGapLeft);  }
-        }
-
-        private static int DocumentTabGapRight
-        {
-            get {   return ScaleHelper.Scale(_DocumentTabGapRight); }
-        }
-
-        private static int DocumentIconGapBottom
-        {
-            get { return ScaleHelper.Scale(_DocumentIconGapBottom); }
-        }
-
-        // HACK
-        private static int DocumentIconGapLeft
-        {
-            get 
-            {
-                String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
-                if (tabStyle == "Rect") return ScaleHelper.Scale(_DocumentIconGapLeft - 4);
-                else return ScaleHelper.Scale(_DocumentIconGapLeft); 
-            }
-        }
-
-        private static int DocumentIconGapRight
-        {
-            get { return ScaleHelper.Scale(_DocumentIconGapRight); }
-        }
-
-        private static int DocumentIconWidth
-        {
-            get {   return ScaleHelper.Scale(_DocumentIconWidth);   }
-        }
-
-        private static int DocumentIconHeight
-        {
-            get {   return ScaleHelper.Scale(_DocumentIconHeight);  }
-        }
-
-        private static int DocumentTextGapRight
-        {
-            get { return ScaleHelper.Scale(_DocumentTextGapRight); }
-        }
-
-        private static Pen PenToolWindowTabActiveBorder
+        static int DocumentTabGapTop
         {
             get
             {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBorderColor");
-                if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
-            }
-        }
-
-        private static Pen PenToolWindowTabInactiveBorder
-        {
-            get 
-            {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
-                if (color != Color.Empty) return new Pen(color);
-                else return Pens.Transparent;
-            }
-        }
-
-        // HACK
-        private static Pen PenDocumentTabActiveBorder
-        {
-            get 
-            {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveBorder");
-                if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
-            }
-        }
-
-        // HACK
-        private static Pen PenDocumentTabInactiveBorder
-        {
-            get 
-            {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabInactiveBorder");
-                if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
-            }
-        }
-
-        // HACK
-        private static Brush BrushToolWindowActiveBackground
-        {
-            get 
-            {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBackColor");
-                if (color != Color.Empty) return new SolidBrush(color);
-                else if (PluginCore.PluginBase.Settings.UseSystemColors)
+                return PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize") switch
                 {
-                    return SystemBrushes.Control;
-                }
-                else return Brushes.White; 
+                    "Large" => ScaleHelper.Scale(_DocumentTabGapTop - 2),
+                    _ => ScaleHelper.Scale(_DocumentTabGapTop)
+                };
+            }
+        }
+
+        static int DocumentTabGapLeft => ScaleHelper.Scale(_DocumentTabGapLeft);
+
+        static int DocumentTabGapRight => ScaleHelper.Scale(_DocumentTabGapRight);
+
+        static int DocumentIconGapBottom => ScaleHelper.Scale(_DocumentIconGapBottom);
+
+        // HACK
+        static int DocumentIconGapLeft
+        {
+            get
+            {
+                return PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle") switch
+                {
+                    "Rect" => ScaleHelper.Scale(_DocumentIconGapLeft - 4),
+                    _ => ScaleHelper.Scale(_DocumentIconGapLeft)
+                };
+            }
+        }
+
+        static int DocumentIconGapRight => ScaleHelper.Scale(_DocumentIconGapRight);
+
+        static int DocumentIconWidth => ScaleHelper.Scale(_DocumentIconWidth);
+
+        static int DocumentIconHeight => ScaleHelper.Scale(_DocumentIconHeight);
+
+        static int DocumentTextGapRight => ScaleHelper.Scale(_DocumentTextGapRight);
+
+        static Pen PenToolWindowTabActiveBorder
+        {
+            get
+            {
+                var color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBorderColor");
+                return color != Color.Empty ? new Pen(color) : SystemPens.ControlDark;
+            }
+        }
+
+        static Pen PenToolWindowTabInactiveBorder
+        {
+            get 
+            {
+                var color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
+                return color != Color.Empty ? new Pen(color) : Pens.Transparent;
             }
         }
 
         // HACK
-        private static Brush BrushDocumentActiveBackground
+        static Pen PenDocumentTabActiveBorder
         {
             get 
             {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocActiveBackColor");
-                if (color != Color.Empty) return new SolidBrush(color);
-                else if (PluginCore.PluginBase.Settings.UseSystemColors)
-                {
-                    return SystemBrushes.ControlLightLight;
-                }
-                else return Brushes.White;  
+                var color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveBorder");
+                return color != Color.Empty ? new Pen(color) : SystemPens.ControlDark;
             }
         }
 
-        private static Brush BrushDocumentInactiveBackground
+        // HACK
+        static Pen PenDocumentTabInactiveBorder
         {
-            get { return SystemBrushes.ControlLight; }
+            get 
+            {
+                var color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabInactiveBorder");
+                return color != Color.Empty ? new Pen(color) : SystemPens.ControlDark;
+            }
         }
 
-        private static Color ColorToolWindowActiveText
+        // HACK
+        static Brush BrushToolWindowActiveBackground
+        {
+            get 
+            {
+                var color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBackColor");
+                if (color != Color.Empty) return new SolidBrush(color);
+                return PluginCore.PluginBase.Settings.UseSystemColors ? SystemBrushes.Control : Brushes.White;
+            }
+        }
+
+        // HACK
+        static Brush BrushDocumentActiveBackground
+        {
+            get 
+            {
+                var color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocActiveBackColor");
+                if (color != Color.Empty) return new SolidBrush(color);
+                return PluginCore.PluginBase.Settings.UseSystemColors ? SystemBrushes.ControlLightLight : Brushes.White;
+            }
+        }
+
+        static Brush BrushDocumentInactiveBackground => SystemBrushes.ControlLight;
+
+        static Color ColorToolWindowActiveText
         {
             get 
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveForeColor");
                 if (color == Color.Empty) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText; 
+                return SystemColors.ControlText;
             }
         }
 
-        private static Color ColorDocumentActiveText
+        static Color ColorDocumentActiveText
         {
             get 
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveForeColor");
                 if (color == Color.Empty) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText; 
+                return SystemColors.ControlText;
             }
         }
 
-        private static Color ColorToolWindowInactiveText
+        static Color ColorToolWindowInactiveText
         {
             get 
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlDarkDark; 
+                return SystemColors.ControlDarkDark;
             }
         }
 
-        private static Color ColorDocumentInactiveText
+        static Color ColorDocumentInactiveText
         {
             get 
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText; 
+                return SystemColors.ControlText;
             }
         }
 
-        private static Color ImageColor
+        static Color ImageColor
         {
             get
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ImageColor");
                 if (color != Color.Empty) return color;
-                else return ColorDocumentActiveText;
+                return ColorDocumentActiveText;
             }
         }
 
@@ -561,7 +407,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             Font = PluginCore.PluginBase.Settings.DefaultFont;
             
-            m_components = new Container();
+            Components = new Container();
             m_toolTip = new ToolTip(Components);
             m_selectMenu = new ContextMenuStrip(Components);
             m_selectMenu.Font = PluginCore.PluginBase.Settings.DefaultFont;
@@ -579,12 +425,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             base.Dispose (disposing);
         }
 
-        private Font m_boldFont;
-        private Font BoldFont
+        Font m_boldFont;
+
+        Font BoldFont
         {
             get
             {
-                if (m_boldFont == null)
+                if (m_boldFont is null)
                     m_boldFont = new Font(Font, FontStyle.Bold);
 
                 return m_boldFont;
@@ -601,17 +448,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private int m_firstDisplayingTab = 0;
-        private int FirstDisplayingTab
-        {
-            get { return m_firstDisplayingTab; }
-            set { m_firstDisplayingTab = value; }
-        }
+        int FirstDisplayingTab { get; set; } = 0;
 
-        private int m_startDisplayingTab = 0;
-        private int StartDisplayingTab
+        int m_startDisplayingTab = 0;
+
+        int StartDisplayingTab
         {
-            get { return m_startDisplayingTab; }
+            get => m_startDisplayingTab;
             set
             {
                 m_startDisplayingTab = value;
@@ -619,15 +462,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private int m_endDisplayingTab = 0;
-        private int EndDisplayingTab
-        {
-            get { return m_endDisplayingTab; }
-            set { m_endDisplayingTab = value; }
-        }
+        int EndDisplayingTab { get; set; } = 0;
 
-        private bool m_documentTabsOverflow = false;
-        private bool DocumentTabsOverflow
+        bool m_documentTabsOverflow = false;
+
+        bool DocumentTabsOverflow
         {
             set
             {
@@ -646,11 +485,10 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return MeasureHeight_ToolWindow();
-            else
-                return MeasureHeight_Document();
+            return MeasureHeight_Document();
         }
 
-        private int MeasureHeight_ToolWindow()
+        int MeasureHeight_ToolWindow()
         {
             if (DockPane.IsAutoHide || Tabs.Count <= 1)
                 return 0;
@@ -661,7 +499,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return height;
         }
 
-        private int MeasureHeight_Document()
+        int MeasureHeight_Document()
         {
             int height = Math.Max(Font.Height + DocumentTabGapTop,
                 ButtonClose.Height + DocumentButtonGapTop + DocumentButtonGapBottom)
@@ -717,12 +555,11 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (Appearance == DockPane.AppearanceStyle.Document)
                 return GetOutline_Document(index);
-            else
-                return GetOutline_ToolWindow(index);
+            return GetOutline_ToolWindow(index);
 
         }
 
-        private GraphicsPath GetOutline_Document(int index)
+        GraphicsPath GetOutline_Document(int index)
         {
             Rectangle rectTab = GetTabRectangle(index);
             rectTab.X -= rectTab.Height / 2;
@@ -741,7 +578,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return path;
         }
 
-        private GraphicsPath GetOutline_ToolWindow(int index)
+        GraphicsPath GetOutline_ToolWindow(int index)
         {
             Rectangle rectTab = GetTabRectangle(index);
             rectTab.Intersect(TabsRectangle);
@@ -759,7 +596,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return path;
         }
 
-        private void CalculateTabs()
+        void CalculateTabs()
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 CalculateTabs_ToolWindow();
@@ -767,7 +604,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 CalculateTabs_Document();
         }
 
-        private void CalculateTabs_ToolWindow()
+        void CalculateTabs_ToolWindow()
         {
             if (Tabs.Count <= 1 || DockPane.IsAutoHide)
                 return;
@@ -838,7 +675,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private bool CalculateDocumentTab(Rectangle rectTabStrip, ref int x, int index)
+        bool CalculateDocumentTab(Rectangle rectTabStrip, ref int x, int index)
         {
             bool overflow = false;
 
@@ -865,7 +702,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         /// <summary>
         /// Calculate which tabs are displayed and in what order.
         /// </summary>
-        private void CalculateTabs_Document()
+        void CalculateTabs_Document()
         {
             if (m_startDisplayingTab >= Tabs.Count)
                 m_startDisplayingTab = 0;
@@ -873,7 +710,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int x = 0;
             Rectangle rectTabStrip = TabsRectangle;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
 
             // HACK
             if (tabStyle == "Rect") x = rectTabStrip.X;
@@ -949,7 +786,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             EnsureDocumentTabVisible(content, true);
         }
 
-        private bool EnsureDocumentTabVisible(IDockContent content, bool repaint)
+        bool EnsureDocumentTabVisible(IDockContent content, bool repaint)
         {
             int index = Tabs.IndexOf(content);
             TabVS2005 tab = Tabs[index] as TabVS2005;
@@ -963,15 +800,14 @@ namespace WeifenLuo.WinFormsUI.Docking
             return true;
         }
 
-        private int GetMaxTabWidth(int index)
+        int GetMaxTabWidth(int index)
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetMaxTabWidth_ToolWindow(index);
-            else
-                return GetMaxTabWidth_Document(index);
+            return GetMaxTabWidth_Document(index);
         }
 
-        private int GetMaxTabWidth_ToolWindow(int index)
+        int GetMaxTabWidth_ToolWindow(int index)
         {
             IDockContent content = Tabs[index].Content;
             Size sizeString = TextRenderer.MeasureText(content.DockHandler.TabText, Font);
@@ -979,7 +815,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 + ToolWindowImageGapRight + ToolWindowTextGapRight;
         }
 
-        private int GetMaxTabWidth_Document(int index)
+        int GetMaxTabWidth_Document(int index)
         {
             IDockContent content = Tabs[index].Content;
 
@@ -989,11 +825,10 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (DockPane.DockPanel.ShowDocumentIcon)
                 return sizeText.Width + DocumentIconWidth + DocumentIconGapLeft + DocumentIconGapRight + DocumentTextGapRight;
-            else
-                return sizeText.Width + DocumentIconGapLeft + DocumentTextGapRight;
+            return sizeText.Width + DocumentIconGapLeft + DocumentTextGapRight;
         }
 
-        private void DrawTabStrip(Graphics g)
+        void DrawTabStrip(Graphics g)
         {
             if (Appearance == DockPane.AppearanceStyle.Document)
                 DrawTabStrip_Document(g);
@@ -1001,7 +836,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DrawTabStrip_ToolWindow(g);
         }
 
-        private void DrawTabStrip_Document(Graphics g)
+        void DrawTabStrip_Document(Graphics g)
         {
             int count = Tabs.Count;
             if (count == 0)
@@ -1038,7 +873,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private void DrawTabStrip_ToolWindow(Graphics g)
+        void DrawTabStrip_ToolWindow(Graphics g)
         {
             Rectangle rectTabStrip = TabStripRectangle;
 
@@ -1049,15 +884,14 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DrawTab(g, Tabs[i] as TabVS2005, GetTabRectangle(i));
         }
 
-        private Rectangle GetTabRectangle(int index)
+        Rectangle GetTabRectangle(int index)
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetTabRectangle_ToolWindow(index);
-            else
-                return GetTabRectangle_Document(index);
+            return GetTabRectangle_Document(index);
         }
 
-        private Rectangle GetTabRectangle_ToolWindow(int index)
+        Rectangle GetTabRectangle_ToolWindow(int index)
         {
             Rectangle rectTabStrip = TabStripRectangle;
 
@@ -1065,7 +899,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return new Rectangle(tab.TabX, rectTabStrip.Y, tab.TabWidth, rectTabStrip.Height);
         }
 
-        private Rectangle GetTabRectangle_Document(int index)
+        Rectangle GetTabRectangle_Document(int index)
         {
             Rectangle rectTabStrip = TabStripRectangle;
             TabVS2005 tab = (TabVS2005)Tabs[index];
@@ -1073,7 +907,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return new Rectangle(tab.TabX, rectTabStrip.Y + DocumentTabGapTop, tab.TabWidth, rectTabStrip.Height - DocumentTabGapTop);
         }
 
-        private void DrawTab(Graphics g, TabVS2005 tab, Rectangle rect)
+        void DrawTab(Graphics g, TabVS2005 tab, Rectangle rect)
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 DrawTab_ToolWindow(g, tab, rect);
@@ -1081,15 +915,14 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DrawTab_Document(g, tab, rect);
         }
 
-        private GraphicsPath GetTabOutline(Tab tab, bool rtlTransform, bool toScreen)
+        GraphicsPath GetTabOutline(Tab tab, bool rtlTransform, bool toScreen)
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetTabOutline_ToolWindow(tab, rtlTransform, toScreen);
-            else
-                return GetTabOutline_Document(tab, rtlTransform, toScreen, false);
+            return GetTabOutline_Document(tab, rtlTransform, toScreen, false);
         }
 
-        private GraphicsPath GetTabOutline_ToolWindow(Tab tab, bool rtlTransform, bool toScreen)
+        GraphicsPath GetTabOutline_ToolWindow(Tab tab, bool rtlTransform, bool toScreen)
         {
             Rectangle rect = GetTabRectangle(Tabs.IndexOf(tab));
             if (rtlTransform)
@@ -1101,11 +934,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             return GraphicsPath;
         }
 
-        private GraphicsPath GetTabOutline_Document(Tab tab, bool rtlTransform, bool toScreen, bool full)
+        GraphicsPath GetTabOutline_Document(Tab tab, bool rtlTransform, bool toScreen, bool full)
         {
             int curveSize = 6;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
             if (tabStyle == "Block")
             {
                 curveSize = 1;
@@ -1189,7 +1022,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             return GraphicsPath;
         }
 
-        private void DrawTab_ToolWindow(Graphics g, TabVS2005 tab, Rectangle rect)
+        void DrawTab_ToolWindow(Graphics g, TabVS2005 tab, Rectangle rect)
         {
             Rectangle rectIcon = new Rectangle(
                 rect.X + ToolWindowImageGapLeft,
@@ -1234,7 +1067,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 g.DrawIcon(tab.Content.DockHandler.Icon, rectIcon);
         }
 
-        private void DrawTab_Document(Graphics g, TabVS2005 tab, Rectangle rect)
+        void DrawTab_Document(Graphics g, TabVS2005 tab, Rectangle rect)
         {
             if (tab.TabWidth == 0)
                 return;
@@ -1245,13 +1078,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DocumentIconWidth, DocumentIconHeight);
             Rectangle rectText = rectIcon;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
 
             // Adjust text
             double scale = ScaleHelper.GetScale();
             if (scale >= 1.5)
             {
-                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
+                string tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
                 if (tabSize == "Default") rectText.Y += ScaleHelper.Scale(1);
             }
             else rectText.Y += ScaleHelper.Scale(2);
@@ -1363,18 +1196,17 @@ namespace WeifenLuo.WinFormsUI.Docking
                 g.DrawIcon(tab.Content.DockHandler.Icon, rectIcon);
         }
 
-        private Rectangle TabStripRectangle
+        Rectangle TabStripRectangle
         {
             get
             {
                 if (Appearance == DockPane.AppearanceStyle.Document)
                     return TabStripRectangle_Document;
-                else
-                    return TabStripRectangle_ToolWindow;
+                return TabStripRectangle_ToolWindow;
             }
         }
 
-        private Rectangle TabStripRectangle_ToolWindow
+        Rectangle TabStripRectangle_ToolWindow
         {
             get
             {
@@ -1383,7 +1215,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private Rectangle TabStripRectangle_Document
+        Rectangle TabStripRectangle_Document
         {
             get
             {
@@ -1393,7 +1225,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private Rectangle TabsRectangle
+        Rectangle TabsRectangle
         {
             get 
             {
@@ -1418,13 +1250,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private ContextMenuStrip m_selectMenu;
-        private ContextMenuStrip SelectMenu
-        {
-            get { return m_selectMenu; }
-        }
+        readonly ContextMenuStrip m_selectMenu;
+        ContextMenuStrip SelectMenu => m_selectMenu;
 
-        private void WindowList_Click(object sender, EventArgs e)
+        void WindowList_Click(object sender, EventArgs e)
         {
             int x = 0;
             int y = ButtonWindowList.Location.Y + ButtonWindowList.Height;
@@ -1438,24 +1267,24 @@ namespace WeifenLuo.WinFormsUI.Docking
                 IDockContent content = tab.Content;
                 ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
                 item.Tag = tab.Content;
-                item.MouseUp += new MouseEventHandler(ContextMenuItem_Up);
+                item.MouseUp += ContextMenuItem_Up;
             }
             SelectMenu.Show(ButtonWindowList, x, y);
         }
 
-        private static readonly Action<ToolStrip, int> ScrollInternal
+        static readonly Action<ToolStrip, int> ScrollInternal
             = (Action<ToolStrip, int>)Delegate.CreateDelegate(typeof(Action<ToolStrip, int>),
                 typeof(ToolStrip).GetMethod("ScrollInternal",
                     System.Reflection.BindingFlags.NonPublic
                     | System.Reflection.BindingFlags.Instance));
 
-        private static readonly Action<ToolStripDropDownMenu> UpdateScrollButtonStatus
+        static readonly Action<ToolStripDropDownMenu> UpdateScrollButtonStatus
             = (Action<ToolStripDropDownMenu>)Delegate.CreateDelegate(typeof(Action<ToolStripDropDownMenu>),
                 typeof(ToolStripDropDownMenu).GetMethod("UpdateScrollButtonStatus",
                     System.Reflection.BindingFlags.NonPublic
                     | System.Reflection.BindingFlags.Instance));
 
-        private void ContextMenu_MouseWheel(object sender, MouseEventArgs e)
+        void ContextMenu_MouseWheel(object sender, MouseEventArgs e)
         {
             /* Default size, can it be changed? if so we can get it with:
             ((ToolStripItem)typeof(ToolStripDropDownMenu).GetProperty ("DownScrollButton", 
@@ -1472,7 +1301,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             var lastItem = ts.Items[ts.Items.Count - 1];
             if (lastItem.Bounds.Bottom < ts.Height && firstItem.Bounds.Top > 0)
                 return;
-            delta = delta / -4;
+            delta /= -4;
             if (delta < 0 && firstItem.Bounds.Top - delta > scrollButtonHeight)
             {
                 delta = firstItem.Bounds.Top - scrollButtonHeight;
@@ -1488,19 +1317,19 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private void ContextMenuItem_Up(object sender, MouseEventArgs e)
+        void ContextMenuItem_Up(object sender, MouseEventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             if (item != null)
             {
                 IDockContent content = (IDockContent)item.Tag;
-                if (e.Button == System.Windows.Forms.MouseButtons.Middle) content.DockHandler.Close();
+                if (e.Button == MouseButtons.Middle) content.DockHandler.Close();
                 else DockPane.ActiveContent = content;
                 SelectMenu.Hide();
             }
         }
-    
-        private void SetInertButtons()
+
+        void SetInertButtons()
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
             {
@@ -1512,7 +1341,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             else
             {
-                bool showCloseButton = DockPane.ActiveContent == null ? true : DockPane.ActiveContent.DockHandler.CloseButton;
+                bool showCloseButton = DockPane.ActiveContent?.DockHandler.CloseButton ?? true;
                 ButtonClose.Enabled = showCloseButton;
                 ButtonClose.RefreshChanges();
                 ButtonWindowList.RefreshChanges();
@@ -1535,7 +1364,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int height = rectTabStrip.Height - DocumentButtonGapTop - DocumentButtonGapBottom;
             if (buttonHeight < height)
             {
-                buttonWidth = buttonWidth * (height / buttonHeight);
+                buttonWidth *= (height / buttonHeight);
                 buttonHeight = height;
             }
             Size buttonSize = new Size(buttonWidth, buttonHeight);
@@ -1555,7 +1384,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             base.OnLayout (levent);
         }
 
-        private void Close_Click(object sender, EventArgs e)
+        void Close_Click(object sender, EventArgs e)
         {
             DockPane.CloseActiveContent();
         }
@@ -1576,7 +1405,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected override void OnMouseHover(EventArgs e)
         {
-            int index = HitTest(PointToClient(Control.MousePosition));
+            int index = HitTest(PointToClient(MousePosition));
             string toolTip = string.Empty;
 
             base.OnMouseHover(e);
@@ -1584,7 +1413,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (index != -1)
             {
                 TabVS2005 tab = Tabs[index] as TabVS2005;
-                if (!String.IsNullOrEmpty(tab.Content.DockHandler.ToolTipText))
+                if (!string.IsNullOrEmpty(tab.Content.DockHandler.ToolTipText))
                     toolTip = tab.Content.DockHandler.ToolTipText;
                 else if (tab.MaxWidth > tab.TabWidth)
                     toolTip = tab.Content.DockHandler.TabText;
@@ -1612,7 +1441,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (m.Msg == (int)Win32.Msgs.WM_MBUTTONDOWN)
             {
-                int index = this.HitTest();
+                int index = HitTest();
                 if (index != -1)
                 {
                     if (Tabs[index].Content.DockHandler.Content.GetType().ToString() == "FlashDevelop.Docking.TabbedDocument")

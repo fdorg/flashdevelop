@@ -15,37 +15,36 @@ namespace FlashDevelop.Dialogs
 {
     public class ArgumentDialog : SmartForm
     {
-        private static List<Argument> arguments;
-        private System.Windows.Forms.Label keyLabel;
-        private System.Windows.Forms.Label infoLabel;
-        private System.Windows.Forms.Label valueLabel;
-        private System.Windows.Forms.TextBox keyTextBox;
-        private System.Windows.Forms.TextBox valueTextBox;
-        private System.Windows.Forms.ListView argsListView;
-        private System.Windows.Forms.ToolStripItem exportItem;
-        private System.Windows.Forms.ColumnHeader columnHeader;
-        private System.Windows.Forms.ListViewGroup argumentGroup;
-        private System.Windows.Forms.PictureBox infoPictureBox;
-        private System.Windows.Forms.GroupBox detailsGroupBox;
-        private System.Windows.Forms.Button deleteButton;
-        private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Button addButton;
+        Label keyLabel;
+        Label infoLabel;
+        Label valueLabel;
+        TextBox keyTextBox;
+        TextBox valueTextBox;
+        ListView argsListView;
+        ToolStripItem exportItem;
+        ColumnHeader columnHeader;
+        ListViewGroup argumentGroup;
+        PictureBox infoPictureBox;
+        GroupBox detailsGroupBox;
+        Button deleteButton;
+        Button closeButton;
+        Button addButton;
 
         static ArgumentDialog()
         {
-            arguments = new List<Argument>();
+            CustomArguments = new List<Argument>();
         }
 
         public ArgumentDialog()
         {
-            this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
-            this.FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
-            this.InitializeComponent();
-            this.InitializeItemGroups();
-            this.InitializeContextMenu();
-            this.InitializeGraphics();
-            this.ApplyLocalizedTexts();
+            Owner = Globals.MainForm;
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
+            InitializeComponent();
+            InitializeItemGroups();
+            InitializeContextMenu();
+            InitializeGraphics();
+            ApplyLocalizedTexts();
         }
 
         #region Windows Form Designer Generated Code
@@ -54,440 +53,414 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.keyTextBox = new System.Windows.Forms.TextBoxEx();
-            this.argsListView = new System.Windows.Forms.ListViewEx();
-            this.valueLabel = new System.Windows.Forms.Label();
-            this.detailsGroupBox = new System.Windows.Forms.GroupBoxEx();
-            this.keyLabel = new System.Windows.Forms.Label();
-            this.valueTextBox = new System.Windows.Forms.TextBoxEx();
-            this.infoLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.ButtonEx();
-            this.columnHeader = new System.Windows.Forms.ColumnHeader();
-            this.infoPictureBox = new System.Windows.Forms.PictureBox();
-            this.addButton = new System.Windows.Forms.ButtonEx();
-            this.deleteButton = new System.Windows.Forms.ButtonEx();
-            this.detailsGroupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
-            this.SuspendLayout();
+            keyTextBox = new TextBoxEx();
+            argsListView = new ListViewEx();
+            valueLabel = new Label();
+            detailsGroupBox = new GroupBoxEx();
+            keyLabel = new Label();
+            valueTextBox = new TextBoxEx();
+            infoLabel = new Label();
+            closeButton = new ButtonEx();
+            columnHeader = new ColumnHeader();
+            infoPictureBox = new PictureBox();
+            addButton = new ButtonEx();
+            deleteButton = new ButtonEx();
+            detailsGroupBox.SuspendLayout();
+            ((ISupportInitialize)(infoPictureBox)).BeginInit();
+            SuspendLayout();
             //
             // columnHeader
             //
-            this.columnHeader.Width = 182;
+            columnHeader.Width = 182;
             // 
             // keyTextBox
             // 
-            this.keyTextBox.Location = new System.Drawing.Point(14, 35);
-            this.keyTextBox.Name = "keyTextBox";
-            this.keyTextBox.Size = new System.Drawing.Size(308, 21);
-            this.keyTextBox.TabIndex = 2;
-            this.keyTextBox.TextChanged += new System.EventHandler(this.TextBoxTextChange);
+            keyTextBox.Location = new Point(14, 35);
+            keyTextBox.Name = "keyTextBox";
+            keyTextBox.Size = new Size(308, 21);
+            keyTextBox.TabIndex = 2;
+            keyTextBox.TextChanged += TextBoxTextChange;
             // 
             // argsListView
             // 
-            this.argsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.argsListView.HideSelection = false;
-            this.argsListView.Location = new System.Drawing.Point(12, 12);
-            this.argsListView.MultiSelect = true;
-            this.argsListView.Name = "argsListView";
-            this.argsListView.Size = new System.Drawing.Size(182, 277);
-            this.argsListView.TabIndex = 1;
-            this.argsListView.UseCompatibleStateImageBehavior = false;
-            this.argsListView.View = System.Windows.Forms.View.Details;
-            this.argsListView.Alignment = ListViewAlignment.Left;
-            this.argsListView.Columns.Add(this.columnHeader);
-            this.argsListView.SelectedIndexChanged += new System.EventHandler(this.ArgsListViewSelectedIndexChanged);
+            argsListView.HeaderStyle = ColumnHeaderStyle.None;
+            argsListView.HideSelection = false;
+            argsListView.Location = new Point(12, 12);
+            argsListView.MultiSelect = true;
+            argsListView.Name = "argsListView";
+            argsListView.Size = new Size(182, 277);
+            argsListView.TabIndex = 1;
+            argsListView.UseCompatibleStateImageBehavior = false;
+            argsListView.View = View.Details;
+            argsListView.Alignment = ListViewAlignment.Left;
+            argsListView.Columns.Add(columnHeader);
+            argsListView.SelectedIndexChanged += ArgsListViewSelectedIndexChanged;
             // 
             // valueLabel
             // 
-            this.valueLabel.AutoSize = true;
-            this.valueLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.valueLabel.Location = new System.Drawing.Point(14, 60);
-            this.valueLabel.Name = "valueLabel";
-            this.valueLabel.Size = new System.Drawing.Size(37, 13);
-            this.valueLabel.TabIndex = 3;
-            this.valueLabel.Text = "Value:";
+            valueLabel.AutoSize = true;
+            valueLabel.FlatStyle = FlatStyle.System;
+            valueLabel.Location = new Point(14, 60);
+            valueLabel.Name = "valueLabel";
+            valueLabel.Size = new Size(37, 13);
+            valueLabel.TabIndex = 3;
+            valueLabel.Text = "Value:";
             // 
             // detailsGroupBox
             //
-            this.detailsGroupBox.Controls.Add(this.keyLabel);
-            this.detailsGroupBox.Controls.Add(this.valueTextBox);
-            this.detailsGroupBox.Controls.Add(this.keyTextBox);
-            this.detailsGroupBox.Controls.Add(this.valueLabel);
-            this.detailsGroupBox.Location = new System.Drawing.Point(207, 6);
-            this.detailsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.detailsGroupBox.Name = "detailsGroupBox";
-            this.detailsGroupBox.Size = new System.Drawing.Size(335, 313);
-            this.detailsGroupBox.TabIndex = 4;
-            this.detailsGroupBox.TabStop = false;
-            this.detailsGroupBox.Text = " Details";
+            detailsGroupBox.Controls.Add(keyLabel);
+            detailsGroupBox.Controls.Add(valueTextBox);
+            detailsGroupBox.Controls.Add(keyTextBox);
+            detailsGroupBox.Controls.Add(valueLabel);
+            detailsGroupBox.Location = new Point(207, 6);
+            detailsGroupBox.FlatStyle = FlatStyle.System;
+            detailsGroupBox.Name = "detailsGroupBox";
+            detailsGroupBox.Size = new Size(335, 313);
+            detailsGroupBox.TabIndex = 4;
+            detailsGroupBox.TabStop = false;
+            detailsGroupBox.Text = " Details";
             // 
             // keyLabel
             // 
-            this.keyLabel.AutoSize = true;
-            this.keyLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.keyLabel.Location = new System.Drawing.Point(14, 17);
-            this.keyLabel.Name = "keyLabel";
-            this.keyLabel.Size = new System.Drawing.Size(29, 13);
-            this.keyLabel.TabIndex = 1;
-            this.keyLabel.Text = "Key:";
+            keyLabel.AutoSize = true;
+            keyLabel.FlatStyle = FlatStyle.System;
+            keyLabel.Location = new Point(14, 17);
+            keyLabel.Name = "keyLabel";
+            keyLabel.Size = new Size(29, 13);
+            keyLabel.TabIndex = 1;
+            keyLabel.Text = "Key:";
             // 
             // valueTextBox
             //
-            this.valueTextBox.AcceptsTab = true;
-            this.valueTextBox.AcceptsReturn = true;
-            this.valueTextBox.Font = Globals.Settings.ConsoleFont;
-            this.valueTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.valueTextBox.Location = new System.Drawing.Point(14, 77);
-            this.valueTextBox.Multiline = true;
-            this.valueTextBox.Name = "valueTextBox";
-            this.valueTextBox.Size = new System.Drawing.Size(308, 223);
-            this.valueTextBox.TabIndex = 4;
-            this.valueTextBox.TextChanged += new System.EventHandler(this.TextBoxTextChange);
+            valueTextBox.AcceptsTab = true;
+            valueTextBox.AcceptsReturn = true;
+            valueTextBox.Font = PluginBase.Settings.ConsoleFont;
+            valueTextBox.ScrollBars = ScrollBars.Vertical;
+            valueTextBox.Location = new Point(14, 77);
+            valueTextBox.Multiline = true;
+            valueTextBox.Name = "valueTextBox";
+            valueTextBox.Size = new Size(308, 223);
+            valueTextBox.TabIndex = 4;
+            valueTextBox.TextChanged += TextBoxTextChange;
             // 
             // infoLabel
             //
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.infoLabel.Location = new System.Drawing.Point(34, 331);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(357, 13);
-            this.infoLabel.TabIndex = 5;
-            this.infoLabel.Text = "Custom arguments will take effect as soon as you edit them successfully.";
+            infoLabel.AutoSize = true;
+            infoLabel.FlatStyle = FlatStyle.System;
+            infoLabel.Location = new Point(34, 331);
+            infoLabel.Name = "infoLabel";
+            infoLabel.Size = new Size(357, 13);
+            infoLabel.TabIndex = 5;
+            infoLabel.Text = "Custom arguments will take effect as soon as you edit them successfully.";
             // 
             // closeButton
             //
-            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.closeButton.Location = new System.Drawing.Point(443, 326);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(100, 23);
-            this.closeButton.TabIndex = 7;
-            this.closeButton.Text = "&Close";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            closeButton.FlatStyle = FlatStyle.System;
+            closeButton.Location = new Point(443, 326);
+            closeButton.Name = "closeButton";
+            closeButton.Size = new Size(100, 23);
+            closeButton.TabIndex = 7;
+            closeButton.Text = "&Close";
+            closeButton.UseVisualStyleBackColor = true;
+            closeButton.Click += CloseButtonClick;
             // 
             // infoPictureBox
             //
-            this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.infoPictureBox.Location = new System.Drawing.Point(13, 330);
-            this.infoPictureBox.Name = "infoPictureBox";
-            this.infoPictureBox.Size = new System.Drawing.Size(16, 16);
-            this.infoPictureBox.TabIndex = 7;
-            this.infoPictureBox.TabStop = false;
+            infoPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            infoPictureBox.Location = new Point(13, 330);
+            infoPictureBox.Name = "infoPictureBox";
+            infoPictureBox.Size = new Size(16, 16);
+            infoPictureBox.TabIndex = 7;
+            infoPictureBox.TabStop = false;
             // 
             // addButton
             //
-            this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.addButton.Location = new System.Drawing.Point(11, 296);
-            this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(87, 23);
-            this.addButton.TabIndex = 2;
-            this.addButton.Text = "&Add";
-            this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new System.EventHandler(this.AddButtonClick);
+            addButton.FlatStyle = FlatStyle.System;
+            addButton.Location = new Point(11, 296);
+            addButton.Name = "addButton";
+            addButton.Size = new Size(87, 23);
+            addButton.TabIndex = 2;
+            addButton.Text = "&Add";
+            addButton.UseVisualStyleBackColor = true;
+            addButton.Click += AddButtonClick;
             // 
             // deleteButton
             //
-            this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.deleteButton.Location = new System.Drawing.Point(108, 296);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(87, 23);
-            this.deleteButton.TabIndex = 3;
-            this.deleteButton.Text = "&Delete";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            deleteButton.FlatStyle = FlatStyle.System;
+            deleteButton.Location = new Point(108, 296);
+            deleteButton.Name = "deleteButton";
+            deleteButton.Size = new Size(87, 23);
+            deleteButton.TabIndex = 3;
+            deleteButton.Text = "&Delete";
+            deleteButton.UseVisualStyleBackColor = true;
+            deleteButton.Click += DeleteButtonClick;
             // 
             // ArgumentDialog
             //
-            this.CancelButton = this.closeButton;
-            this.AcceptButton = this.closeButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(554, 360);
-            this.Controls.Add(this.deleteButton);
-            this.Controls.Add(this.addButton);
-            this.Controls.Add(this.infoLabel);
-            this.Controls.Add(this.infoPictureBox);
-            this.Controls.Add(this.detailsGroupBox);
-            this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.argsListView);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ArgumentDialog";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = " Custom Arguments";
-            this.Load += new System.EventHandler(this.DialogLoad);
-            this.detailsGroupBox.ResumeLayout(false);
-            this.detailsGroupBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            CancelButton = closeButton;
+            AcceptButton = closeButton;
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(554, 360);
+            Controls.Add(deleteButton);
+            Controls.Add(addButton);
+            Controls.Add(infoLabel);
+            Controls.Add(infoPictureBox);
+            Controls.Add(detailsGroupBox);
+            Controls.Add(closeButton);
+            Controls.Add(argsListView);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ArgumentDialog";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = " Custom Arguments";
+            Load += DialogLoad;
+            detailsGroupBox.ResumeLayout(false);
+            detailsGroupBox.PerformLayout();
+            ((ISupportInitialize)(infoPictureBox)).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
         #endregion
 
         #region Methods And Event Handlers
-        
+
         /// <summary>
         /// List of all custom arguments
         /// </summary>
-        public static List<Argument> CustomArguments
-        {
-            get { return arguments; }
-        }
+        public static List<Argument> CustomArguments { get; private set; }
 
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(Globals.MainForm.FindImage("242", false));
-            this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
-            this.argsListView.SmallImageList = imageList;
-            this.argsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.columnHeader.Width = ScaleHelper.Scale(this.columnHeader.Width);
+            var imageList = new ImageList {ColorDepth = ColorDepth.Depth32Bit};
+            imageList.Images.Add(PluginBase.MainForm.FindImage("242", false));
+            infoPictureBox.Image = PluginBase.MainForm.FindImage("229", false);
+            argsListView.SmallImageList = imageList;
+            argsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            columnHeader.Width = ScaleHelper.Scale(columnHeader.Width);
         }
 
         /// <summary>
         /// Initializes the import/export context menu
         /// </summary>
-        private void InitializeContextMenu()
+        void InitializeContextMenu()
         {
-            ContextMenuStrip contextMenu = new ContextMenuStrip();
+            var contextMenu = new ContextMenuStrip();
             contextMenu.Font = PluginBase.Settings.DefaultFont;
             contextMenu.Renderer = new DockPanelStripRenderer(false, false);
-            contextMenu.Opening += new CancelEventHandler(this.ContextMenuOpening);
-            contextMenu.Items.Add(TextHelper.GetString("Label.ImportArguments"), null, this.ImportArguments);
-            this.exportItem = new ToolStripMenuItem(TextHelper.GetString("Label.ExportArguments"), null, this.ExportArguments);
-            contextMenu.Items.Add(this.exportItem); // Add export item
-            this.argsListView.ContextMenuStrip = contextMenu;
+            contextMenu.Opening += ContextMenuOpening;
+            contextMenu.Items.Add(TextHelper.GetString("Label.ImportArguments"), null, ImportArguments);
+            exportItem = new ToolStripMenuItem(TextHelper.GetString("Label.ExportArguments"), null, ExportArguments);
+            contextMenu.Items.Add(exportItem); // Add export item
+            argsListView.ContextMenuStrip = contextMenu;
         }
 
         /// <summary>
         /// Hides the export item if there are no items selected
         /// </summary>
-        private void ContextMenuOpening(Object sender, CancelEventArgs e)
-        {
-            if (this.argsListView.SelectedItems.Count == 0) this.exportItem.Visible = false;
-            else this.exportItem.Visible = true;
-        }
+        void ContextMenuOpening(object sender, CancelEventArgs e) => exportItem.Visible = argsListView.SelectedItems.Count != 0;
 
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        private void ApplyLocalizedTexts()
+        void ApplyLocalizedTexts()
         {
-            this.Text = " " + TextHelper.GetString("Title.ArgumentDialog");
-            this.infoLabel.Text = TextHelper.GetString("Info.ArgumentsTakeEffect");
-            this.detailsGroupBox.Text = TextHelper.GetString("Info.Details");
-            this.closeButton.Text = TextHelper.GetString("Label.Close");
-            this.deleteButton.Text = TextHelper.GetString("Label.Delete");
-            this.addButton.Text = TextHelper.GetString("Label.Add");
-            this.valueLabel.Text = TextHelper.GetString("Info.Value");
-            this.keyLabel.Text = TextHelper.GetString("Info.Key");
+            Text = " " + TextHelper.GetString("Title.ArgumentDialog");
+            infoLabel.Text = TextHelper.GetString("Info.ArgumentsTakeEffect");
+            detailsGroupBox.Text = TextHelper.GetString("Info.Details");
+            closeButton.Text = TextHelper.GetString("Label.Close");
+            deleteButton.Text = TextHelper.GetString("Label.Delete");
+            addButton.Text = TextHelper.GetString("Label.Add");
+            valueLabel.Text = TextHelper.GetString("Info.Value");
+            keyLabel.Text = TextHelper.GetString("Info.Key");
         }
 
         /// <summary>
         /// Initializes the list view item groups
         /// </summary>
-        private void InitializeItemGroups()
+        void InitializeItemGroups()
         {
-            String argumentHeader = TextHelper.GetString("Group.Arguments");
-            this.argumentGroup = new ListViewGroup(argumentHeader, HorizontalAlignment.Left);
-            this.argsListView.Groups.Add(this.argumentGroup);
+            var header = TextHelper.GetString("Group.Arguments");
+            argumentGroup = new ListViewGroup(header, HorizontalAlignment.Left);
+            argsListView.Groups.Add(argumentGroup);
         }
 
         /// <summary>
         /// Populates the argument list
         /// </summary>
-        private void PopulateArgumentList(List<Argument> arguments)
+        void PopulateArgumentList(IEnumerable<Argument> arguments)
         {
-            this.argsListView.BeginUpdate();
-            this.argsListView.Items.Clear();
-            String message = TextHelper.GetString("Info.Argument");
+            argsListView.BeginUpdate();
+            argsListView.Items.Clear();
+            string message = TextHelper.GetString("Info.Argument");
             foreach (Argument argument in arguments)
             {
-                ListViewItem item = new ListViewItem();
-                item.ImageIndex = 0; item.Tag = argument;
+                var item = new ListViewItem();
+                item.ImageIndex = 0;
+                item.Tag = argument;
                 item.Text = message + " $(" + argument.Key + ")";
-                this.argsListView.Items.Add(item);
-                this.argumentGroup.Items.Add(item);
+                argsListView.Items.Add(item);
+                argumentGroup.Items.Add(item);
             }
-            this.argsListView.EndUpdate();
-            if (this.argsListView.Items.Count > 0)
-            {
-                ListViewItem item = this.argsListView.Items[0];
-                item.Selected = true;
-            }
+            argsListView.EndUpdate();
+            if (argsListView.Items.Count > 0) argsListView.Items[0].Selected = true;
         }
 
         /// <summary>
         /// Adds a new empty argument
         /// </summary>
-        private void AddButtonClick(Object sender, EventArgs e)
+        void AddButtonClick(object sender, EventArgs e)
         {
-            Argument argument = new Argument();
-            ListViewItem item = new ListViewItem();
-            String message = TextHelper.GetString("Info.Argument");
-            String undefined = TextHelper.GetString("Info.Undefined");
+            var argument = new Argument();
+            var item = new ListViewItem();
+            var message = TextHelper.GetString("Info.Argument");
+            var undefined = TextHelper.GetString("Info.Undefined");
             item.ImageIndex = 0; argument.Key = undefined;
             item.Text = message + " $(" + undefined + ")";
-            this.argsListView.Items.Add(item);
-            this.argumentGroup.Items.Add(item);
-            foreach (ListViewItem other in this.argsListView.Items)
+            argsListView.Items.Add(item);
+            argumentGroup.Items.Add(item);
+            foreach (ListViewItem other in argsListView.Items)
             {
                 other.Selected = false;
             }
             item.Tag = argument; 
             item.Selected = true;
-            arguments.Add(argument);
+            CustomArguments.Add(argument);
         }
 
         /// <summary>
         /// Removes the selected arguments
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        void DeleteButtonClick(object sender, EventArgs e)
         {
-            Int32 selectedIndex = 0;
-            if (this.argsListView.SelectedIndices.Count > 0)
+            int selectedIndex = 0;
+            if (argsListView.SelectedIndices.Count > 0)
             {
-                selectedIndex = this.argsListView.SelectedIndices[0];
+                selectedIndex = argsListView.SelectedIndices[0];
             }
-            this.argsListView.BeginUpdate();
-            foreach (ListViewItem item in this.argsListView.SelectedItems)
+            argsListView.BeginUpdate();
+            foreach (ListViewItem item in argsListView.SelectedItems)
             {
-                this.argsListView.Items.Remove(item);
-                Argument argument = item.Tag as Argument;
-                arguments.Remove(argument);
+                argsListView.Items.Remove(item);
+                CustomArguments.Remove(item.Tag as Argument);
             }
-            this.argsListView.EndUpdate();
-            if (this.argsListView.Items.Count > 0)
+            argsListView.EndUpdate();
+            if (argsListView.Items.Count > 0)
             {
-                try { this.argsListView.Items[selectedIndex].Selected = true; }
+                try
+                {
+                    argsListView.Items[selectedIndex].Selected = true;
+                }
                 catch
                 {
-                    Int32 last = this.argsListView.Items.Count - 1;
-                    this.argsListView.Items[last].Selected = true;
+                    int last = argsListView.Items.Count - 1;
+                    argsListView.Items[last].Selected = true;
                 }
             }
-            else this.argsListView.Select();
+            else argsListView.Select();
         }
 
         /// <summary>
         /// Closes the dialog saving the arguments
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        void CloseButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Selected item has changed, updates the state
         /// </summary>
-        private void ArgsListViewSelectedIndexChanged(Object sender, EventArgs e)
+        void ArgsListViewSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.argsListView.SelectedItems.Count == 1)
+            if (argsListView.SelectedItems.Count == 1)
             {
-                this.keyTextBox.Enabled = true;
-                this.valueTextBox.Enabled = true;
-                ListViewItem item = this.argsListView.SelectedItems[0];
-                Argument argument = item.Tag as Argument;
-                this.valueTextBox.Text = argument.Value;
-                this.keyTextBox.Text = argument.Key;
-                if (argument.Key == "DefaultUser") this.keyTextBox.ReadOnly = true;
-                else this.keyTextBox.ReadOnly = false;
+                keyTextBox.Enabled = true;
+                valueTextBox.Enabled = true;
+                var item = argsListView.SelectedItems[0];
+                var argument = (Argument) item.Tag;
+                valueTextBox.Text = argument.Value;
+                keyTextBox.Text = argument.Key;
+                keyTextBox.ReadOnly = argument.Key == "DefaultUser";
             }
             else
             {
-                this.keyTextBox.Text = "";
-                this.valueTextBox.Text = "";
-                this.valueTextBox.Enabled = false;
-                this.keyTextBox.Enabled = false;
+                keyTextBox.Text = "";
+                valueTextBox.Text = "";
+                valueTextBox.Enabled = false;
+                keyTextBox.Enabled = false;
             }
-            if (this.argsListView.SelectedItems.Count == 0) this.deleteButton.Enabled = false;
-            else this.deleteButton.Enabled = true;
+            deleteButton.Enabled = argsListView.SelectedItems.Count != 0;
         }
 
         /// <summary>
         /// Updates the argument when text changes
         /// </summary>
-        private void TextBoxTextChange(Object sender, EventArgs e)
+        void TextBoxTextChange(object sender, EventArgs e)
         {
-            if (this.keyTextBox.Text == "") return;
-            String message = TextHelper.GetString("Info.Argument");
-            if (this.argsListView.SelectedItems.Count == 1)
-            {
-                ListViewItem item = this.argsListView.SelectedItems[0];
-                Argument argument = item.Tag as Argument;
-                argument.Value = this.valueTextBox.Text;
-                argument.Key = this.keyTextBox.Text;
-                item.Text = message + " $(" + argument.Key + ")";
-            }
+            if (keyTextBox.Text.Length == 0) return;
+            if (argsListView.SelectedItems.Count != 1) return;
+            var item = argsListView.SelectedItems[0];
+            var argument = (Argument) item.Tag;
+            argument.Value = valueTextBox.Text;
+            argument.Key = keyTextBox.Text;
+            item.Text = TextHelper.GetString("Info.Argument") + " $(" + argument.Key + ")";
         }
 
         /// <summary>
         /// Exports the current argument list into a file
         /// </summary>
-        private void ExportArguments(Object sender, EventArgs e)
+        void ExportArguments(object sender, EventArgs e)
         {
-            using (SaveFileDialog sfd = new SaveFileDialog())
+            using var dialog = new SaveFileDialog
             {
-                sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-                sfd.InitialDirectory = Globals.MainForm.WorkingDirectory;
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    List<Argument> args = new List<Argument>();
-                    foreach (ListViewItem item in this.argsListView.SelectedItems)
-                    {
-                        args.Add((Argument)item.Tag);
-                    }
-                    ObjectSerializer.Serialize(sfd.FileName, args);
-                }
+                Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
+                InitialDirectory = PluginBase.MainForm.WorkingDirectory
+            };
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            var args = new List<Argument>();
+            foreach (ListViewItem item in argsListView.SelectedItems)
+            {
+                args.Add((Argument)item.Tag);
             }
+            ObjectSerializer.Serialize(dialog.FileName, args);
         }
 
         /// <summary>
         /// Imports an argument list from a file
         /// </summary>
-        private void ImportArguments(Object sender, EventArgs e)
+        void ImportArguments(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            using var dialog = new OpenFileDialog
             {
-                ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-                ofd.InitialDirectory = Globals.MainForm.WorkingDirectory;
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    List<Argument> args = new List<Argument>();
-                    args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
-                    arguments.AddRange(args); // Append imported
-                    this.PopulateArgumentList(arguments);
-                }
-            }
+                Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
+                InitialDirectory = PluginBase.MainForm.WorkingDirectory
+            };
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            var args = new List<Argument>();
+            args = ObjectSerializer.Deserialize(dialog.FileName, args, false);
+            CustomArguments.AddRange(args); // Append imported
+            PopulateArgumentList(CustomArguments);
         }
 
         /// <summary>
         /// Loads the arguments from the settings
         /// </summary>
-        private void DialogLoad(Object sender, EventArgs e)
-        {
-            this.PopulateArgumentList(arguments);
-        }
+        void DialogLoad(object sender, EventArgs e) => PopulateArgumentList(CustomArguments);
 
         /// <summary>
         /// Shows the argument dialog
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
-            using (ArgumentDialog argumentDialog = new ArgumentDialog())
-            {
-                argumentDialog.ShowDialog();
-            }
+            using var dialog = new ArgumentDialog();
+            dialog.ShowDialog();
         }
 
         #endregion
@@ -499,29 +472,23 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void LoadCustomArguments()
         {
-            String file = FileNameHelper.UserArgData;
+            var file = FileNameHelper.UserArgData;
             if (File.Exists(file))
             {
-                Object data = ObjectSerializer.Deserialize(file, arguments, false);
-                arguments = (List<Argument>)data;
+                object data = ObjectSerializer.Deserialize(file, CustomArguments, false);
+                CustomArguments = (List<Argument>)data;
             }
-            if (!File.Exists(file) || arguments.Count == 0)
+            if (!File.Exists(file) || CustomArguments.Count == 0)
             {
-                arguments.Add(new Argument("DefaultUser", "..."));
+                CustomArguments.Add(new Argument("DefaultUser", "..."));
             }
         }
 
         /// <summary>
         /// Saves the argument list to file
         /// </summary>
-        public static void SaveCustomArguments()
-        {
-            String file = FileNameHelper.UserArgData;
-            ObjectSerializer.Serialize(file, arguments);
-        }
+        public static void SaveCustomArguments() => ObjectSerializer.Serialize(FileNameHelper.UserArgData, CustomArguments);
 
         #endregion
-
     }
-
 }

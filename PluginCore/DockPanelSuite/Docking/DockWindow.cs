@@ -7,10 +7,10 @@ namespace WeifenLuo.WinFormsUI.Docking
     [ToolboxItem(false)]
     public partial class DockWindow : Panel, INestedPanesContainer, ISplitterDragSource
     {
-        private DockPanel m_dockPanel;
-        private DockState m_dockState;
-        private SplitterControl m_splitter;
-        private NestedPaneCollection m_nestedPanes;
+        private readonly DockPanel m_dockPanel;
+        private readonly DockState m_dockState;
+        private readonly SplitterControl m_splitter;
+        private readonly NestedPaneCollection m_nestedPanes;
 
         internal DockWindow(DockPanel dockPanel, DockState dockState)
         {
@@ -56,35 +56,17 @@ namespace WeifenLuo.WinFormsUI.Docking
             ResumeLayout();
         }
 
-        public VisibleNestedPaneCollection VisibleNestedPanes
-        {
-            get {   return NestedPanes.VisibleNestedPanes;  }
-        }
+        public VisibleNestedPaneCollection VisibleNestedPanes => NestedPanes.VisibleNestedPanes;
 
-        public NestedPaneCollection NestedPanes
-        {
-            get {   return m_nestedPanes;   }
-        }
+        public NestedPaneCollection NestedPanes => m_nestedPanes;
 
-        public DockPanel DockPanel
-        {
-            get {   return m_dockPanel; }
-        }
+        public DockPanel DockPanel => m_dockPanel;
 
-        public DockState DockState
-        {
-            get {   return m_dockState; }
-        }
+        public DockState DockState => m_dockState;
 
-        public bool IsFloat
-        {
-            get {   return DockState == DockState.Float;    }
-        }
+        public bool IsFloat => DockState == DockState.Float;
 
-        internal DockPane DefaultPane
-        {
-            get {   return VisibleNestedPanes.Count == 0 ? null : VisibleNestedPanes[0];    }
-        }
+        internal DockPane DefaultPane => VisibleNestedPanes.Count == 0 ? null : VisibleNestedPanes[0];
 
         public virtual Rectangle DisplayingRectangle
         {
@@ -163,10 +145,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
         }
 
-        bool ISplitterDragSource.IsVertical
-        {
-            get { return (DockState == DockState.DockLeft || DockState == DockState.DockRight); }
-        }
+        bool ISplitterDragSource.IsVertical => (DockState == DockState.DockLeft || DockState == DockState.DockRight);
 
         Rectangle ISplitterDragSource.DragLimitBounds
         {
@@ -211,37 +190,34 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (DockPanel.DockLeftPortion > 1)
                     DockPanel.DockLeftPortion = Width + offset;
                 else
-                    DockPanel.DockLeftPortion += ((double)offset) / (double)rectDockArea.Width;
+                    DockPanel.DockLeftPortion += offset / (double)rectDockArea.Width;
             }
             else if (DockState == DockState.DockRight && rectDockArea.Width > 0)
             {
                 if (DockPanel.DockRightPortion > 1)
                     DockPanel.DockRightPortion = Width - offset;
                 else
-                    DockPanel.DockRightPortion -= ((double)offset) / (double)rectDockArea.Width;
+                    DockPanel.DockRightPortion -= offset / (double)rectDockArea.Width;
             }
             else if (DockState == DockState.DockBottom && rectDockArea.Height > 0)
             {
                 if (DockPanel.DockBottomPortion > 1)
                     DockPanel.DockBottomPortion = Height - offset;
                 else
-                    DockPanel.DockBottomPortion -= ((double)offset) / (double)rectDockArea.Height;
+                    DockPanel.DockBottomPortion -= offset / (double)rectDockArea.Height;
             }
             else if (DockState == DockState.DockTop && rectDockArea.Height > 0)
             {
                 if (DockPanel.DockTopPortion > 1)
                     DockPanel.DockTopPortion = Height + offset;
                 else
-                    DockPanel.DockTopPortion += ((double)offset) / (double)rectDockArea.Height;
+                    DockPanel.DockTopPortion += offset / (double)rectDockArea.Height;
             }
         }
 
         #region IDragSource Members
 
-        Control IDragSource.DragControl
-        {
-            get { return this; }
-        }
+        Control IDragSource.DragControl => this;
 
         #endregion
         #endregion

@@ -1,4 +1,3 @@
-using System;
 using flash.tools.debugger;
 using flash.tools.debugger.events;
 
@@ -14,73 +13,33 @@ namespace FlashDebugger
     {
         internal Variable m_var;
         internal long m_context;
-        internal String m_name;
-        internal String m_path;
+        internal string m_name;
+        internal string m_path;
 
-        public java.lang.String getQualifiedName()
-        {
-            return m_var.getQualifiedName();
-        }
+        public java.lang.String getQualifiedName() => m_var.getQualifiedName();
 
-        public java.lang.String getNamespace()
-        {
-            return m_var.getNamespace();
-        }
+        public java.lang.String getNamespace() => m_var.getNamespace();
 
-        public int getLevel()
-        {
-            return m_var.getLevel();
-        }
+        public int getLevel() => m_var.getLevel();
 
-        public int getScope()
-        {
-            return m_var.getScope();
-        }
+        public int getScope() => m_var.getScope();
 
-        virtual public String Path
+        public virtual string Path
         {
-            get
-            {
-                return m_path;
-            }
-            
-            set
-            {
-                m_path = value;
-            }
-            
+            get => m_path;
+            set => m_path = value;
         }
 
         /// <summary> Our lone get context (i.e. parent) interface </summary>
-        virtual public int Context
-        {
-            get
-            {
-                return (int) m_context;
-            }
-            
-        }
+        public virtual int Context => (int) m_context;
 
-        virtual public Variable Variable
-        {
-            get
-            {
-                return m_var;
-            }
-            
-        }
-        
-        public VariableFacade(Variable v, long context)
-        {
-            init(context, v, null);
-        }
+        public virtual Variable Variable => m_var;
 
-        public VariableFacade(long context, String name)
-        {
-            init(context, null, name);
-        }
-        
-        internal virtual void  init(long context, Variable v, String name)
+        public VariableFacade(Variable v, long context) => Init(context, v, null);
+
+        public VariableFacade(long context, string name) => Init(context, null, name);
+
+        internal virtual void Init(long context, Variable v, string name)
         {
             m_var = v;
             m_context = context;
@@ -88,60 +47,26 @@ namespace FlashDebugger
         }
         
         /// <summary> The variable interface </summary>
-        public virtual java.lang.String getName()
-        {
-            return (m_var == null)?m_name:(string)m_var.getName();
-        }
+        public virtual java.lang.String getName() => (m_var is null)?m_name:(string)m_var.getName();
 
-        public virtual java.lang.String getDefiningClass()
-        {
-            return m_var.getDefiningClass();
-        }
+        public virtual java.lang.String getDefiningClass() => m_var.getDefiningClass();
 
-        public virtual int getAttributes()
-        {
-            return m_var.getAttributes();
-        }
+        public virtual int getAttributes() => m_var.getAttributes();
 
-        public virtual bool isAttributeSet(int variableAttribute)
-        {
-            return m_var.isAttributeSet(variableAttribute);
-        }
+        public virtual bool isAttributeSet(int variableAttribute) => m_var.isAttributeSet(variableAttribute);
 
-        public virtual Value getValue()
-        {
-            return m_var.getValue();
-        }
+        public virtual Value getValue() => m_var.getValue();
 
-        public virtual bool hasValueChanged(Session session)
-        {
-            return m_var.hasValueChanged(session);
-        }
+        public virtual bool hasValueChanged(Session session) => m_var.hasValueChanged(session);
 
-        public virtual FaultEvent setValue(Session session, int type, java.lang.String value)
-        {
-            return m_var.setValue(session, type, value);
-        }
+        public virtual FaultEvent setValue(Session session, int type, java.lang.String value) => m_var.setValue(session, type, value);
 
-        public override String ToString()
-        {
-            return (m_var == null)?m_name:m_var.ToString();
-        }
+        public override string ToString() => m_var is null ? m_name : m_var.ToString();
 
-        public virtual bool needsToInvokeGetter()
-        {
-            return m_var.needsToInvokeGetter();
-        }
+        public virtual bool needsToInvokeGetter() => m_var.needsToInvokeGetter();
 
-        public virtual void  invokeGetter(Session session)
-        {
-            m_var.invokeGetter(session);
-        }
+        public virtual void  invokeGetter(Session session) => m_var.invokeGetter(session);
 
-        public int getIsolateId()
-        {
-            return this.getIsolateId();
-        }
+        public int getIsolateId() => getIsolateId();
     }
-
 }

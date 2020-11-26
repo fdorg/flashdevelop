@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using PluginCore;
 using PluginCore.Bridge;
@@ -11,72 +10,46 @@ namespace BridgeSettings
 {
     public class PluginMain: IPlugin
     {
-        private String pluginName = "BridgeSettings";
-        private String pluginGuid = "30727dde-3e23-4fb8-a8fb-9feb958402fc";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds virtualization bridge configuration to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String settingFilename;
-        private Settings settingObject;
+        string settingFilename;
+        Settings settingObject;
 
         #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(BridgeSettings);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "30727dde-3e23-4fb8-a8fb-9feb958402fc";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds virtualization bridge configuration to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => settingObject;
 
         #endregion
 
@@ -87,23 +60,20 @@ namespace BridgeSettings
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
+            InitBasics();
+            LoadSettings();
             BridgeManager.Settings = settingObject;
         }
 
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             // Nothing to do here..
         }
@@ -115,12 +85,12 @@ namespace BridgeSettings
         /// <summary>
         /// Sets up the basic stuff
         /// </summary> 
-        private void InitBasics()
+        void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "BridgeSettings");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(BridgeSettings));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -128,25 +98,16 @@ namespace BridgeSettings
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
-
     }
-
 }

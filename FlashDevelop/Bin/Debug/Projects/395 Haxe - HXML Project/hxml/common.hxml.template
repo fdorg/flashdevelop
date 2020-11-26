@@ -1,0 +1,4 @@
+-cp src
+-main $(PackageDot)Main
+
+-dce full

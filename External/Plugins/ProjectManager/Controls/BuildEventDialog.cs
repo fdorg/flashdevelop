@@ -10,7 +10,7 @@ namespace ProjectManager.Controls
     public class BuildEventDialog : SmartForm
     {
         Project project;
-        BuildEventVars vars;
+        readonly BuildEventVars vars;
 
         #region Windows Form Designer
 
@@ -71,7 +71,7 @@ namespace ProjectManager.Controls
             // 
             // insertButton
             // 
-            this.insertButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.insertButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.insertButton.Enabled = false;
             this.insertButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.insertButton.Location = new System.Drawing.Point(7, 288);
@@ -79,7 +79,7 @@ namespace ProjectManager.Controls
             this.insertButton.Size = new System.Drawing.Size(75, 23);
             this.insertButton.TabIndex = 4;
             this.insertButton.Text = "&Insert";
-            this.insertButton.Click += new System.EventHandler(this.insertButton_Click);
+            this.insertButton.Click += this.insertButton_Click;
             // 
             // textBox
             // 
@@ -91,7 +91,7 @@ namespace ProjectManager.Controls
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(368, 116);
             this.textBox.TabIndex = 0;
-            this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            this.textBox.TextChanged += this.textBox_TextChanged;
             // 
             // splitter1
             // 
@@ -104,7 +104,7 @@ namespace ProjectManager.Controls
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okButton.Enabled = false;
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -116,7 +116,7 @@ namespace ProjectManager.Controls
             // 
             // listView
             // 
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listView.Columns.AddRange(new[] {
             this.nameColumn,
             this.valueColumn});
             this.listView.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -131,9 +131,9 @@ namespace ProjectManager.Controls
             this.listView.TabIndex = 1;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += new System.EventHandler(this.listView_DoubleClick);
-            this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
-            this.listView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView_MouseMove);
+            this.listView.DoubleClick += this.listView_DoubleClick;
+            this.listView.SelectedIndexChanged += this.listView_SelectedIndexChanged;
+            this.listView.MouseMove += this.listView_MouseMove;
             // 
             // nameColumn
             // 
@@ -147,7 +147,7 @@ namespace ProjectManager.Controls
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(302, 288);
@@ -203,8 +203,8 @@ namespace ProjectManager.Controls
 
         public string CommandLine
         {
-            get { return textBox.Text; }
-            set { textBox.Text = value; }
+            get => textBox.Text;
+            set => textBox.Text = value;
         }
 
         private void Add(BuildEventInfo info)

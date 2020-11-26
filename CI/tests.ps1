@@ -16,22 +16,22 @@ If ($env:HAXEPATH -eq $null)
 {
 	# https://help.appveyor.com/discussions/problems/5616-not-able-to-build-due-to-problem-in-chocolateyinstallps1
 	Set-Service wuauserv -StartupType Manual
-	cinst.exe haxe --version 3.4.3 -y --no-progress
+	cinst.exe haxe --version 4.1.4 -y --no-progress
 	$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
 	RefreshEnv
 }
 
-If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
+If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
-    $testFiles = [System.IO.Directory]::GetFiles("FlashDevelop\Bin\Debug", "*.Tests.dll")
+    cd "FlashDevelop\Bin\Debug"
+    $testFiles = [System.IO.Directory]::GetFiles(".", "*.Tests.dll")
     IF ($testFiles.Count -eq 0)
     {
         Write-Output "No test assemblies found"
     }
     ELSE
     {
-        #Maybe in the future we want to set categories and priorities
-        nunit-console-x86.exe $testFiles
+        nunit3-console.exe $testFiles --result=myresults.xml;format=AppVeyor
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
         #{

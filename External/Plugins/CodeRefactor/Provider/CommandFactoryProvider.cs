@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ASCompletion.Completion;
+using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
 using PluginCore;
@@ -26,7 +26,8 @@ namespace CodeRefactor.Provider
         {
             DefaultFactory.RegisterValidator(typeof(Rename), expr =>
             {
-                if (expr == null || expr.IsNull()) return false;
+                if (PluginBase.MainForm.CurrentDocument.SciControl.SelTextSize != 0) return false;
+                if (expr is null || expr.IsNull()) return false;
                 var c = expr.Context.Value[0];
                 if (char.IsDigit(c)) return false;
                 var file = expr.InFile ?? expr.Type.InFile;
@@ -38,6 +39,13 @@ namespace CodeRefactor.Provider
                     || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
                     || expr.IsPackage;
             });
+            DefaultFactory.RegisterValidator(typeof(OrganizeImports), expr => expr.InFile.Imports.Count > 0);
+            DefaultFactory.RegisterValidator(typeof(DelegateMethods), expr => expr != null && !expr.IsNull() && expr.InFile != null && expr.InClass != null
+                                                                              && expr.Type is { } type && !type.IsVoid()
+                                                                              && expr.Member is { } member && member.Flags is FlagType flags
+                                                                              && flags.HasFlag(FlagType.Variable)
+                                                                              && !flags.HasFlag(FlagType.LocalVar) && !flags.HasFlag(FlagType.ParameterVar)
+                                                                              && expr.Type != ASContext.Context.CurrentClass);
         }
 
         public static void Register(string language, ICommandFactory factory)
@@ -46,25 +54,18 @@ namespace CodeRefactor.Provider
             LanguageToFactory.Add(language, factory);
         }
 
-        public static bool ContainsLanguage(string language)
-        {
-            return LanguageToFactory.ContainsKey(language);
-        }
+        public static bool ContainsLanguage(string language) => LanguageToFactory.ContainsKey(language);
 
         public static ICommandFactory GetFactoryForCurrentDocument()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return null;
-            return GetFactory(document);
+            return PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
+                ? GetFactory(sci)
+                : null;
         }
 
         public static ICommandFactory GetFactory(ASResult target) => GetFactory(target.InFile ?? target.Type.InFile);
 
-        public static ICommandFactory GetFactory(FileModel file)
-        {
-            var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName);
-            return GetFactory(language);
-        }
+        public static ICommandFactory GetFactory(FileModel file) => GetFactory(PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName));
 
         public static ICommandFactory GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
 
@@ -72,8 +73,7 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactory(string language)
         {
-            ICommandFactory factory;
-            LanguageToFactory.TryGetValue(language, out factory);
+            LanguageToFactory.TryGetValue(language, out var factory);
             return factory;
         }
     }

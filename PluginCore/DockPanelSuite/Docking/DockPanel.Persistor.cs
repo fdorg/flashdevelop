@@ -14,7 +14,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private static class Persistor
         {
             private const string ConfigFileVersion = "1.0";
-            private static string[] CompatibleConfigFileVersions = new string[] { };
+            private static readonly string[] CompatibleConfigFileVersions = Array.Empty<string>();
 
             private class DummyContent : DockContent
             {
@@ -25,43 +25,43 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private double m_dockLeftPortion;
                 public double DockLeftPortion
                 {
-                    get { return m_dockLeftPortion; }
-                    set { m_dockLeftPortion = value; }
+                    get => m_dockLeftPortion;
+                    set => m_dockLeftPortion = value;
                 }
 
                 private double m_dockRightPortion;
                 public double DockRightPortion
                 {
-                    get { return m_dockRightPortion; }
-                    set { m_dockRightPortion = value; }
+                    get => m_dockRightPortion;
+                    set => m_dockRightPortion = value;
                 }
 
                 private double m_dockTopPortion;
                 public double DockTopPortion
                 {
-                    get { return m_dockTopPortion; }
-                    set { m_dockTopPortion = value; }
+                    get => m_dockTopPortion;
+                    set => m_dockTopPortion = value;
                 }
 
                 private double m_dockBottomPortion;
                 public double DockBottomPortion
                 {
-                    get { return m_dockBottomPortion; }
-                    set { m_dockBottomPortion = value; }
+                    get => m_dockBottomPortion;
+                    set => m_dockBottomPortion = value;
                 }
 
                 private int m_indexActiveDocumentPane;
                 public int IndexActiveDocumentPane
                 {
-                    get { return m_indexActiveDocumentPane; }
-                    set { m_indexActiveDocumentPane = value; }
+                    get => m_indexActiveDocumentPane;
+                    set => m_indexActiveDocumentPane = value;
                 }
 
                 private int m_indexActivePane;
                 public int IndexActivePane
                 {
-                    get { return m_indexActivePane; }
-                    set { m_indexActivePane = value; }
+                    get => m_indexActivePane;
+                    set => m_indexActivePane = value;
                 }
             }
 
@@ -70,29 +70,29 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private string m_persistString;
                 public string PersistString
                 {
-                    get { return m_persistString; }
-                    set { m_persistString = value; }
+                    get => m_persistString;
+                    set => m_persistString = value;
                 }
 
                 private double m_autoHidePortion;
                 public double AutoHidePortion
                 {
-                    get { return m_autoHidePortion; }
-                    set { m_autoHidePortion = value; }
+                    get => m_autoHidePortion;
+                    set => m_autoHidePortion = value;
                 }
 
                 private bool m_isHidden;
                 public bool IsHidden
                 {
-                    get { return m_isHidden; }
-                    set { m_isHidden = value; }
+                    get => m_isHidden;
+                    set => m_isHidden = value;
                 }
 
                 private bool m_isFloat;
                 public bool IsFloat
                 {
-                    get { return m_isFloat; }
-                    set { m_isFloat = value; }
+                    get => m_isFloat;
+                    set => m_isFloat = value;
                 }
             }
 
@@ -101,29 +101,29 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private DockState m_dockState;
                 public DockState DockState
                 {
-                    get { return m_dockState; }
-                    set { m_dockState = value; }
+                    get => m_dockState;
+                    set => m_dockState = value;
                 }
 
                 private int m_indexActiveContent;
                 public int IndexActiveContent
                 {
-                    get { return m_indexActiveContent; }
-                    set { m_indexActiveContent = value; }
+                    get => m_indexActiveContent;
+                    set => m_indexActiveContent = value;
                 }
 
                 private int[] m_indexContents;
                 public int[] IndexContents
                 {
-                    get { return m_indexContents; }
-                    set { m_indexContents = value; }
+                    get => m_indexContents;
+                    set => m_indexContents = value;
                 }
 
                 private int m_zOrderIndex;
                 public int ZOrderIndex
                 {
-                    get { return m_zOrderIndex; }
-                    set { m_zOrderIndex = value; }
+                    get => m_zOrderIndex;
+                    set => m_zOrderIndex = value;
                 }
             }
 
@@ -132,29 +132,29 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private int m_indexPane;
                 public int IndexPane
                 {
-                    get { return m_indexPane; }
-                    set { m_indexPane = value; }
+                    get => m_indexPane;
+                    set => m_indexPane = value;
                 }
 
                 private int m_indexPrevPane;
                 public int IndexPrevPane
                 {
-                    get { return m_indexPrevPane; }
-                    set { m_indexPrevPane = value; }
+                    get => m_indexPrevPane;
+                    set => m_indexPrevPane = value;
                 }
 
                 private DockAlignment m_alignment;
                 public DockAlignment Alignment
                 {
-                    get { return m_alignment; }
-                    set { m_alignment = value; }
+                    get => m_alignment;
+                    set => m_alignment = value;
                 }
 
                 private double m_proportion;
                 public double Proportion
                 {
-                    get { return m_proportion; }
-                    set { m_proportion = value; }
+                    get => m_proportion;
+                    set => m_proportion = value;
                 }
             }
 
@@ -163,22 +163,22 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private DockState m_dockState;
                 public DockState DockState
                 {
-                    get { return m_dockState; }
-                    set { m_dockState = value; }
+                    get => m_dockState;
+                    set => m_dockState = value;
                 }
 
                 private int m_zOrderIndex;
                 public int ZOrderIndex
                 {
-                    get { return m_zOrderIndex; }
-                    set { m_zOrderIndex = value; }
+                    get => m_zOrderIndex;
+                    set => m_zOrderIndex = value;
                 }
 
                 private NestedPane[] m_nestedPanes;
                 public NestedPane[] NestedPanes
                 {
-                    get { return m_nestedPanes; }
-                    set { m_nestedPanes = value; }
+                    get => m_nestedPanes;
+                    set => m_nestedPanes = value;
                 }
             }
 
@@ -187,22 +187,22 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private Rectangle m_bounds;
                 public Rectangle Bounds
                 {
-                    get { return m_bounds; }
-                    set { m_bounds = value; }
+                    get => m_bounds;
+                    set => m_bounds = value;
                 }
 
                 private int m_zOrderIndex;
                 public int ZOrderIndex
                 {
-                    get { return m_zOrderIndex; }
-                    set { m_zOrderIndex = value; }
+                    get => m_zOrderIndex;
+                    set => m_zOrderIndex = value;
                 }
 
                 private NestedPane[] m_nestedPanes;
                 public NestedPane[] NestedPanes
                 {
-                    get { return m_nestedPanes; }
-                    set { m_nestedPanes = value; }
+                    get => m_nestedPanes;
+                    set => m_nestedPanes = value;
                 }
             }
 
@@ -589,7 +589,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 for (int i = 0; i < contents.Length; i++)
                 {
                     IDockContent content = deserializeContent(contents[i].PersistString);
-                    if (content == null)
+                    if (content is null)
                         content = new DummyContent();
                     content.DockHandler.DockPanel = dockPanel;
                     content.DockHandler.AutoHidePortion = contents[i].AutoHidePortion;
@@ -668,9 +668,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                         for (int j = i + 1; j < contents.Length; j++)
                         {
                             DockPane pane1 = dockPanel.Contents[sortedContents[i]].DockHandler.Pane;
-                            int ZOrderIndex1 = pane1 == null ? 0 : panes[dockPanel.Panes.IndexOf(pane1)].ZOrderIndex;
+                            int ZOrderIndex1 = pane1 is null ? 0 : panes[dockPanel.Panes.IndexOf(pane1)].ZOrderIndex;
                             DockPane pane2 = dockPanel.Contents[sortedContents[j]].DockHandler.Pane;
-                            int ZOrderIndex2 = pane2 == null ? 0 : panes[dockPanel.Panes.IndexOf(pane2)].ZOrderIndex;
+                            int ZOrderIndex2 = pane2 is null ? 0 : panes[dockPanel.Panes.IndexOf(pane2)].ZOrderIndex;
                             if (ZOrderIndex1 > ZOrderIndex2)
                             {
                                 int temp = sortedContents[i];

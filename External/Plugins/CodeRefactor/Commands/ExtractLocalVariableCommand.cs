@@ -55,10 +55,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override bool IsValid()
-        {
-            return true;
-        }
+        public override bool IsValid() => true;
 
         /// <summary>
         /// Entry point to execute renaming.
@@ -92,8 +89,8 @@ namespace CodeRefactor.Commands
             var newName = "newVar";
             var label = TextHelper.GetString("Label.NewName");
             var title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-            var askName = new LineEntryDialog(title, label, newName);
-            var choice = askName.ShowDialog();
+            using var dialog = new LineEntryDialog(title, label, newName);
+            var choice = dialog.ShowDialog();
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (choice != DialogResult.OK)
             {
@@ -101,7 +98,7 @@ namespace CodeRefactor.Commands
                 return null;
             }
             sci.DisableAllSciEvents = false;
-            var name = askName.Line.Trim();
+            var name = dialog.Line.Trim();
             if (name.Length > 0 && name != newName) newName = name;
             return newName;
         }
@@ -110,14 +107,25 @@ namespace CodeRefactor.Commands
         {
             if (string.IsNullOrEmpty(newName)) newName = GetNewName();
             if (string.IsNullOrEmpty(newName)) return;
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
+            var pos = sci.SelectionEnd;
+            var expr = ASComplete.GetExpressionType(sci, pos, false, true);
+            var type = !expr.IsNull() && expr.Type != null ? expr.Type.Name : string.Empty;
+            MemberModel import = null;
+            var ctx = ASContext.Context;
+            if (type != null && ctx.Settings.GenerateImports)
+            {
+                var model = expr.Type;
+                if (!string.IsNullOrEmpty(model?.InFile.Package) && !ctx.IsImported(model, sci.LineFromPosition(pos))) import = model;
+            }
             sci.BeginUndoAction();
             try
             {
-                var expression = sci.SelText.Trim(new char[] {'=', ' ', '\t', '\n', '\r', ';', '.'});
-                expression = expression.TrimEnd(new char[] {'(', '[', '{', '<'});
-                expression = expression.TrimStart(new char[] {')', ']', '}', '>'});
-                var insertPosition = sci.PositionFromLine(ASContext.Context.CurrentMember.LineTo);
+                var expression = sci.SelText.Trim('=', ' ', '\t', '\n', '\r', ';', '.');
+                expression = expression.TrimEnd('(', '[', '{', '<');
+                expression = expression.TrimStart(')', ']', '}', '>');
+                var insertPosition = sci.PositionFromLine(ctx.CurrentMember.LineTo);
                 foreach (var match in matches)
                 {
                     var position = sci.MBSafePosition(match.Index);
@@ -128,7 +136,7 @@ namespace CodeRefactor.Commands
                 insertPosition = sci.LineIndentPosition(insertPosition);
                 RefactoringHelper.ReplaceMatches(matches, sci, newName);
                 sci.SetSel(insertPosition, insertPosition);
-                var member = new MemberModel(newName, string.Empty, FlagType.LocalVar, 0) {Value = expression};
+                var member = new MemberModel(newName, type, FlagType.LocalVar, 0) {Value = expression};
                 var snippet = TemplateUtils.GetTemplate("Variable");
                 snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
                 snippet = TemplateUtils.ToDeclarationString(member, snippet);
@@ -139,6 +147,7 @@ namespace CodeRefactor.Commands
                     match.Line += 1;
                 }
                 Results = new Dictionary<string, List<SearchMatch>> {{sci.FileName, matches}};
+                if (import != null) ASGenerator.GenerateJob(GeneratorJobType.AddImport, import, null, null, null);
                 if (OutputResults) ReportResults();
             }
             finally
@@ -165,7 +174,7 @@ namespace CodeRefactor.Commands
                     var lineNumber = match.Line;
                     var changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
                     var offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
-                    column = column + offset;
+                    column += offset;
                     changedLine = changedLine.Substring(0, column) + newName + changedLine.Substring(column + match.Length);
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (newNameLength - match.Length);
@@ -209,7 +218,7 @@ namespace CodeRefactor.Commands
             Sci = sci;
         }
 
-        public string Label { get { return Text; } }
+        public string Label => Text;
 
         public string Value
         {
@@ -221,7 +230,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        string description;
+        readonly string description;
         public string Description
         {
             get
@@ -238,7 +247,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public Bitmap Icon { get; private set; }
+        public Bitmap Icon { get; }
 
         /// <summary>
         /// Modify the highlight indicator alpha and select current word.

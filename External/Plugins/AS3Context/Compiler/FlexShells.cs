@@ -24,12 +24,12 @@ namespace AS3Context.Compiler
     /// </summary>
     public class FlexShells
     {
-        static public event SyntaxErrorHandler SyntaxError;
+        public static event SyntaxErrorHandler SyntaxError;
 
-        static readonly public Regex re_SplitParams = 
+        public static readonly Regex re_SplitParams = 
             new Regex("[\\s](?<switch>[-+][A-z0-9\\-\\.]+)", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        static private readonly string[] PATH_SWITCHES = { 
+        static readonly string[] PATH_SWITCHES = { 
             "-compiler.context-root","-context-root",
             "-compiler.defaults-css-url","-defaults-css-url",
             "-compiler.external-library-path","-external-library-path","-el",
@@ -43,78 +43,59 @@ namespace AS3Context.Compiler
             "-link-report","-load-config","-load-externs","-size-report",
             "-output","-o","-runtime-shared-libraries","-rsl",
             "-namespace","-compiler.namespaces.namespace"};
-        
-        static private string ascPath;
-        static private string mxmlcPath;
-        static private string flexShellsJar = "Flex4Shells.jar";
-        static private string flexShellsPath;
-        static private bool running;
-        static private bool silentChecking;
-        static private string checkedSDK;
-        static private bool isFlex4SDK;
-        static private string currentSDK;
-        
-        static private string CheckResource(string resName, string fileName)
+
+        static string ascPath;
+        static string mxmlcPath;
+        static readonly string flexShellsJar = "Flex4Shells.jar";
+        static string flexShellsPath;
+        static bool running;
+        static bool silentChecking;
+        static string checkedSDK;
+        static bool isFlex4SDK;
+        static string currentSDK;
+
+        static string CheckResource(string resName, string fileName)
         {
-            string path = Path.Combine(PathHelper.DataDir, "AS3Context");
-            string fullPath = Path.Combine(path, fileName);
-            if (!File.Exists(fullPath))
+            var fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
+            if (File.Exists(fullPath)) return fullPath;
+            var id = "AS3Context.Resources." + resName;
+            var assembly = Assembly.GetExecutingAssembly();
+            using var br = new BinaryReader(assembly.GetManifestResourceStream(id));
+            using var bw = File.Create(fullPath);
+            var buffer = br.ReadBytes(1024);
+            while (buffer.Length > 0)
             {
-                string id = "AS3Context.Resources." + resName;
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                using (BinaryReader br = new BinaryReader(assembly.GetManifestResourceStream(id)))
-                {
-                    using (FileStream bw = File.Create(fullPath))
-                    {
-                        byte[] buffer = br.ReadBytes(1024);
-                        while (buffer.Length > 0)
-                        {
-                            bw.Write(buffer, 0, buffer.Length);
-                            buffer = br.ReadBytes(1024);
-                        }
-                        bw.Close();
-                    }
-                    br.Close();
-                }
+                bw.Write(buffer, 0, buffer.Length);
+                buffer = br.ReadBytes(1024);
             }
+            bw.Close();
+            br.Close();
             return fullPath;
         }
 
-        static public FlexShells Instance 
-        {
-            get {
-                if (instance == null) instance = new FlexShells();
-                return instance;
-            }
-        }
-        
-        static private FlexShells instance;
+        public static FlexShells Instance => instance ??= new FlexShells();
 
-        private FlexShells()
+        static FlexShells instance;
+
+        FlexShells()
         {
         }
 
-        private ProcessRunner ascRunner;
-        private ProcessRunner mxmlcRunner;
-        private string builtSWF;
-        private bool debugMode;
-        private Dictionary<string, string> jvmConfig;
+        ProcessRunner ascRunner;
+        ProcessRunner mxmlcRunner;
+        string builtSWF;
+        bool debugMode;
+        Dictionary<string, string> jvmConfig;
 
-        public void CheckAS3(string filename, string flexPath)
-        {
-            CheckAS3(filename, flexPath, null);
-        }
+        public void CheckAS3(string filename, string flexPath) => CheckAS3(filename, flexPath, null);
 
         public void CheckAS3(string filename, string flexPath, string src)
         {
             if (running) return;
 
             // let other plugins preprocess source/handle checking
-            Hashtable data = new Hashtable();
-            data["filename"] = filename;
-            data["src"] = src;
-            data["ext"] = Path.GetExtension(filename);
-            DataEvent de = new DataEvent(EventType.Command, "AS3Context.CheckSyntax", data);
+            var data = new Hashtable {["filename"] = filename, ["src"] = src, ["ext"] = Path.GetExtension(filename)};
+            var de = new DataEvent(EventType.Command, "AS3Context.CheckSyntax", data);
             EventManager.DispatchEvent(this, de);
             if (de.Handled) return;
 
@@ -124,29 +105,27 @@ namespace AS3Context.Compiler
                 return;
 
             string basePath = null;
-            if (PluginBase.CurrentProject != null)
-                basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            if (PluginBase.CurrentProject != null) basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             flexPath = PathHelper.ResolvePath(flexPath, basePath);
             // asc.jar in FlexSDK
             if (flexPath != null && Directory.Exists(Path.Combine(flexPath, "lib")))
                 ascPath = Path.Combine(flexPath, "lib\\asc.jar");
             // included asc.jar
-            if (ascPath == null || !File.Exists(ascPath)) 
-                ascPath = PathHelper.ResolvePath(Path.Combine(PathHelper.ToolDir, "flexlibs/lib/asc.jar"));
-
-            if (ascPath == null)
+            if (!File.Exists(ascPath)) ascPath = PathHelper.ResolvePath(Path.Combine(PathHelper.ToolDir, "flexlibs/lib/asc.jar"));
+            if (ascPath is null)
             {
                 if (src != null) return; // silent checking
-                DialogResult result = MessageBox.Show(TextHelper.GetString("Info.SetFlex2OrCS3Path"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.YesNoCancel);
-                if (result == DialogResult.Yes)
+                var result = MessageBox.Show(TextHelper.GetString("Info.SetFlex2OrCS3Path"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.YesNoCancel);
+                switch (result)
                 {
-                    IASContext context = ASContext.GetLanguageContext("as3");
-                    if (context == null) return;
-                    PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
-                }
-                else if (result == DialogResult.No)
-                {
-                    PluginBase.MainForm.ShowSettingsDialog("ASCompletion", "Flash");
+                    case DialogResult.Yes:
+                        var context = ASContext.GetLanguageContext("as3");
+                        if (context is null) return;
+                        PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
+                        break;
+                    case DialogResult.No:
+                        PluginBase.MainForm.ShowSettingsDialog("ASCompletion", "Flash");
+                        break;
                 }
                 return;
             }
@@ -164,12 +143,10 @@ namespace AS3Context.Compiler
             try
             {
                 running = true;
-                if (src == null) EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-                if (ascRunner == null || !ascRunner.IsRunning || currentSDK != flexPath)
-                    StartAscRunner(flexPath);
-
+                if (src is null) EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
+                if (ascRunner is null || !ascRunner.IsRunning || currentSDK != flexPath) StartAscRunner(flexPath);
                 notificationSent = false;
-                if (src == null)
+                if (src is null)
                 {
                     silentChecking = false;
                     //TraceManager.Add("Checking: " + filename, -1);
@@ -195,23 +172,17 @@ namespace AS3Context.Compiler
         {
             if (running) return;
             string basePath = null;
-            if (PluginBase.CurrentProject != null)
-                basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            if (PluginBase.CurrentProject != null) basePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             flexPath = PathHelper.ResolvePath(flexPath, basePath);
 
-            if (flexPath != null && Directory.Exists(flexPath))
+            if (Directory.Exists(flexPath)) mxmlcPath = Path.Combine(flexPath, "lib", "mxmlc.jar");
+            if (!File.Exists(mxmlcPath)) 
             {
-                mxmlcPath = Path.Combine(Path.Combine(flexPath, "lib"), "mxmlc.jar");
-            }
-            if (mxmlcPath == null || !File.Exists(mxmlcPath)) 
-            {
-                DialogResult result = MessageBox.Show(TextHelper.GetString("Info.OpenCompilerSettings"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OKCancel);
-                if (result == DialogResult.OK)
-                {
-                    IASContext context = ASContext.GetLanguageContext("as3");
-                    if (context == null) return;
-                    PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
-                }
+                var result = MessageBox.Show(TextHelper.GetString("Info.OpenCompilerSettings"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OKCancel);
+                if (result != DialogResult.OK) return;
+                var context = ASContext.GetLanguageContext("as3");
+                if (context is null) return;
+                PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
                 return;
             }
 
@@ -229,7 +200,7 @@ namespace AS3Context.Compiler
                 running = true;
                 EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
 
-                if (mxmlcRunner == null || !mxmlcRunner.IsRunning || currentSDK != flexPath) 
+                if (mxmlcRunner is null || !mxmlcRunner.IsRunning || currentSDK != flexPath) 
                     StartMxmlcRunner(flexPath);
                 
                 //cmd = mainForm.ProcessArgString(cmd);
@@ -261,30 +232,27 @@ namespace AS3Context.Compiler
             }
             // command
             debugMode = false;
-            bool hasOutput = false;
-            string cmd = "";
-            Match mCmd = Regex.Match(PluginBase.MainForm.CurrentDocument.SciControl.Text, "\\s@mxmlc\\s(?<cmd>.*)");
+            var hasOutput = false;
+            var cmd = "";
+            var mCmd = Regex.Match(PluginBase.MainForm.CurrentDocument?.SciControl.Text, "\\s@mxmlc\\s(?<cmd>.*)");
             if (mCmd.Success)
             {
                 try
                 {
-
                     // cleanup tag
-                    string tag = mCmd.Groups["cmd"].Value;
+                    var tag = mCmd.Groups["cmd"].Value;
                     if (tag.IndexOfOrdinal("-->") > 0) tag = tag.Substring(0, tag.IndexOfOrdinal("-->"));
                     if (tag.IndexOfOrdinal("]]>") > 0) tag = tag.Substring(0, tag.IndexOfOrdinal("]]>"));
                     tag = " " + tag.Trim() + " --";
 
                     // split
-                    MatchCollection mPar = re_SplitParams.Matches(tag);
+                    var mPar = re_SplitParams.Matches(tag);
                     if (mPar.Count > 0)
                     {
                         cmd = "";
-                        string op;
-                        string arg;
                         for (int i = 0; i < mPar.Count; i++)
                         {
-                            op = mPar[i].Groups["switch"].Value;
+                            var op = mPar[i].Groups["switch"].Value;
                             if (op == "--") break;
                             if (op == "-noplay")
                             {
@@ -298,7 +266,7 @@ namespace AS3Context.Compiler
                             if (end > start)
                             {
                                 string concat = ";";
-                                arg = tag.Substring(start, end - start).Trim();
+                                var arg = tag.Substring(start, end - start).Trim();
                                 if (arg.StartsWithOrdinal("+=") || arg.StartsWith('='))
                                 {
                                     concat = arg.Substring(0, arg.IndexOf('=') + 1);
@@ -347,13 +315,13 @@ namespace AS3Context.Compiler
             else if (requireTag) return;
 
             // Flex4 static linking
-            if (isFlex4SDK && cmd.IndexOfOrdinal("-static-link-runtime-shared-libraries") < 0)
+            if (isFlex4SDK && !cmd.Contains("-static-link-runtime-shared-libraries"))
                 cmd += ";-static-link-runtime-shared-libraries=true";
 
             // add current class sourcepath and global classpaths
             cmd += ";-sp+=" + theFile.BasePath;
-            if (Context.Context.Settings.UserClasspath != null)
-                foreach (string cp in Context.Context.Settings.UserClasspath)
+            if (ASContext.Context.Settings.UserClasspath != null)
+                foreach (string cp in ASContext.Context.Settings.UserClasspath)
                     cmd += ";-sp+=" + cp;
             // add output filename
             if (!hasOutput) 
@@ -373,7 +341,7 @@ namespace AS3Context.Compiler
             Environment.CurrentDirectory = currentPath;
         }
 
-        private void CheckIsFlex4SDK(string flexPath)
+        void CheckIsFlex4SDK(string flexPath)
         {
             if (checkedSDK == flexPath) return;
             checkedSDK = flexPath;
@@ -417,7 +385,7 @@ namespace AS3Context.Compiler
         /// <summary>
         /// Start background process
         /// </summary>
-        private void StartAscRunner(string flexPath)
+        void StartAscRunner(string flexPath)
         {
             currentSDK = flexPath;
             if (ascRunner != null && ascRunner.IsRunning) ascRunner.KillProcess();
@@ -440,7 +408,7 @@ namespace AS3Context.Compiler
         /// <summary>
         /// Start background process
         /// </summary>
-        private void StartMxmlcRunner(string flexPath)
+        void StartMxmlcRunner(string flexPath)
         {
             currentSDK = flexPath;
             if (mxmlcRunner != null && mxmlcRunner.IsRunning) mxmlcRunner.KillProcess();
@@ -467,11 +435,11 @@ namespace AS3Context.Compiler
 
         #region process output capture
 
-        private int errorState;
-        private string errorDesc;
-        private bool notificationSent;
+        int errorState;
+        string errorDesc;
+        bool notificationSent;
 
-        private void ascRunner_Error(object sender, string line)
+        void ascRunner_Error(object sender, string line)
         {
             if (line.StartsWithOrdinal("[Compiler] Error"))
             {
@@ -481,10 +449,10 @@ namespace AS3Context.Compiler
             else if (errorState == 1)
             {
                 line = line.Trim();
-                Match mErr = Regex.Match(line, @"(?<file>[^,]+), Ln (?<line>[0-9]+), Col (?<col>[0-9]+)");
+                var mErr = Regex.Match(line, @"(?<file>[^,]+), Ln (?<line>[0-9]+), Col (?<col>[0-9]+)");
                 if (mErr.Success)
                 {
-                    string filename = mErr.Groups["file"].Value;
+                    var filename = mErr.Groups["file"].Value;
                     try 
                     {
                         if (File.Exists(filename))
@@ -493,7 +461,7 @@ namespace AS3Context.Compiler
                         }
                     }
                     catch {}
-                    errorDesc = String.Format("{0}:{1}: col: {2}: {3}", filename, mErr.Groups["line"].Value, mErr.Groups["col"].Value, errorDesc);
+                    errorDesc = $"{filename}:{mErr.Groups["line"].Value}: col: {mErr.Groups["col"].Value}: {errorDesc}";
                     ascRunner_OutputError(sender, errorDesc);
                 }
                 errorState++;
@@ -504,10 +472,10 @@ namespace AS3Context.Compiler
             }
             else if (line.Trim().Length > 0) ascRunner_OutputError(sender, line);
         }
-        
-        private void ascRunner_OutputError(object sender, string line)
+
+        void ascRunner_OutputError(object sender, string line)
         {
-            if (line == null) return;
+            if (line is null) return;
             PluginBase.RunAsync(delegate
             {
                 if (line.StartsWithOrdinal("Exception "))
@@ -517,22 +485,20 @@ namespace AS3Context.Compiler
                 }
                 if (silentChecking)
                 {
-                    if (SyntaxError != null) SyntaxError(line);
+                    SyntaxError?.Invoke(line);
                     return;
                 }
                 TraceManager.Add(line, -3);
-                if (!notificationSent)
-                {
-                    notificationSent = true;
-                    TraceManager.Add("Done(1)", -2);
-                    EventManager.DispatchEvent(this, new TextEvent(EventType.ProcessEnd, "Done(1)"));
-                    ASContext.SetStatusText(TextHelper.GetString("Info.AscDone"));
-                    EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ResultsPanel.ShowResults", null));
-                }
+                if (notificationSent) return;
+                notificationSent = true;
+                TraceManager.Add("Done(1)", -2);
+                EventManager.DispatchEvent(this, new TextEvent(EventType.ProcessEnd, "Done(1)"));
+                ASContext.SetStatusText(TextHelper.GetString("Info.AscDone"));
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ResultsPanel.ShowResults", null));
             });
         }
 
-        private void ascRunner_Output(object sender, string line)
+        void ascRunner_Output(object sender, string line)
         {
             if (line.StartsWithOrdinal("(ash)"))
             {
@@ -551,17 +517,17 @@ namespace AS3Context.Compiler
             if (!silentChecking) TraceManager.AddAsync(line, 0);
         }
 
-        private void ascRunner_End()
+        static void ascRunner_End()
         {
             TraceManager.AddAsync("Done(0)", -2);
         }
-        
-        private void mxmlcRunner_Error(object sender, string line)
+
+        static void mxmlcRunner_Error(object sender, string line)
         {
             TraceManager.AddAsync(line, -3);
         }
 
-        private void mxmlcRunner_Output(object sender, string line)
+        void mxmlcRunner_Output(object sender, string line)
         {
             PluginBase.RunAsync(delegate
             {
@@ -581,10 +547,10 @@ namespace AS3Context.Compiler
                 else TraceManager.Add(line, 0);
             });
         }
-        
-        private void RunAfterBuild()
+
+        void RunAfterBuild()
         {
-            if (builtSWF == null || !File.Exists(builtSWF))
+            if (!File.Exists(builtSWF))
             {
                 debugMode = false;
                 return;

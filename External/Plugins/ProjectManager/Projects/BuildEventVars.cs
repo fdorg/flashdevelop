@@ -13,8 +13,8 @@ namespace ProjectManager.Projects
 
         public BuildEventInfo(string name, string value)
         {
-            this.Name = name;
-            this.Value = value;
+            Name = name;
+            Value = value;
         }
 
         // SendKeys requires brackets around certain characters which have meaning
@@ -24,22 +24,19 @@ namespace ProjectManager.Projects
 
     public class BuildEventVars
     {
-        Project project;
-        List<BuildEventInfo> additional = new List<BuildEventInfo>();
+        readonly Project project;
+        readonly List<BuildEventInfo> additional = new List<BuildEventInfo>();
 
         public BuildEventVars(Project project)
         {
             this.project = project;
         }
 
-        public void AddVar(string name, string value)
-        {
-            additional.Add(new BuildEventInfo(name, value));
-        }
+        public void AddVar(string name, string value) => additional.Add(new BuildEventInfo(name, value));
 
         public BuildEventInfo[] GetVars()
         {
-            List<BuildEventInfo> infos = new List<BuildEventInfo>
+            var infos = new List<BuildEventInfo>
             {
                 new BuildEventInfo("BaseDir", BaseDir),
                 new BuildEventInfo("FDBuild", FDBuild),
@@ -66,23 +63,21 @@ namespace ProjectManager.Projects
         }
 
         public string FDBuildDir => Path.GetDirectoryName(FDBuild);
+
         public string ToolsDir => Path.GetDirectoryName(FDBuildDir);
 
         public string BaseDir
         {
             get
             {
-                string localPath = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath;
-                string appDir = Path.GetDirectoryName(localPath);
+                var appDir = ProjectPaths.ApplicationDirectory;
 #if FDBUILD
-                string toolsDir = Path.GetDirectoryName(appDir);
+                var toolsDir = Path.GetDirectoryName(appDir);
                 appDir = Path.GetDirectoryName(toolsDir);
 #endif
-
-                string local = Path.Combine(appDir, ".local");
+                var local = Path.Combine(appDir, ".local");
                 if (File.Exists(local)) return appDir;
-
-                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 return Path.Combine(localAppData, DistroConfig.DISTRIBUTION_NAME);
             }
         }
@@ -91,19 +86,14 @@ namespace ProjectManager.Projects
         {
             get
             {
-                string localPath = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath;
-
+                var localPath = ProjectPaths.GetAssemblyPath(Assembly.GetEntryAssembly());
 #if !FDBUILD
                 string appDir = Path.GetDirectoryName(localPath);
-                string toolsDir = Path.Combine(appDir, "Tools");
-                string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
-                return Path.Combine(fdbuildDir, "fdbuild.exe");
+                return Path.Combine(appDir, "Tools", "fdbuild", "fdbuild.exe");
 #else
                 return localPath;
 #endif
             }
         }
-
     }
-
 }

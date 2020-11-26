@@ -7,33 +7,34 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Gets the correct EOL marker
         /// </summary>
-        public static String GetNewLineMarker(Int32 eolMode)
+        public static string GetNewLineMarker(int eolMode)
         {
-            if (eolMode == 1) return "\r";
-            else if (eolMode == 2) return "\n";
-            else return "\r\n";
+            return eolMode switch
+            {
+                1 => "\r",
+                2 => "\n",
+                _ => "\r\n",
+            };
         }
 
         /// <summary>
         /// Basic detection of text's EOL marker
         /// </summary>
-        public static Int32 DetectNewLineMarker(String text, Int32 defaultMarker)
+        [Obsolete("Please use LineEndDetector.DetectNewLineMarker(string text)")]
+        public static int DetectNewLineMarker(string text, int defaultMarker) => DetectNewLineMarker(text);
+
+        /// <summary>
+        /// Basic detection of text's EOL marker
+        /// </summary>
+        public static int DetectNewLineMarker(string text)
         {
-            Int32 cr = text.IndexOfOrdinal("\r");
-            Int32 lf = text.IndexOfOrdinal("\n");
-            if ((cr >= 0) && (lf >= 0))
-            {
-                if (cr < lf) return 0;
-                else return 2;
-            }
-            else if ((cr < 0) && (lf < 0))
-            {
-                return (Int32)PluginBase.MainForm.Settings.EOLMode;
-            }
-            else if (lf < 0) return 1;
-            else return 2;
+            var cr = text.IndexOf('\r');
+            var lf = text.IndexOf('\n');
+            if (cr >= 0 && lf >= 0) return cr >= lf ? 2 : 0;
+            if (cr < 0 && lf < 0) return (int) PluginBase.Settings.EOLMode;
+            return lf < 0
+                ? 1
+                : 2;
         }
-
     }
-
 }

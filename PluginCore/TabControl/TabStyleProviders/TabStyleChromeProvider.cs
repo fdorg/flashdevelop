@@ -43,46 +43,46 @@ namespace System.Windows.Forms
 			switch (this._TabControl.Alignment) {
 				case TabAlignment.Top:
 					
-					path.AddCurve(new Point[] {  new Point(tabBounds.X, tabBounds.Bottom)
+					path.AddCurve(new[] {  new Point(tabBounds.X, tabBounds.Bottom)
 					              		,new Point(tabBounds.X + sixth, tabBounds.Bottom - eigth)
 					              		,new Point(tabBounds.X + spread - quarter, tabBounds.Y + eigth)
 					              		,new Point(tabBounds.X + spread, tabBounds.Y)});
 					path.AddLine(tabBounds.X + spread, tabBounds.Y, tabBounds.Right - spread, tabBounds.Y);
-					path.AddCurve(new Point[] {  new Point(tabBounds.Right - spread, tabBounds.Y)
+					path.AddCurve(new[] {  new Point(tabBounds.Right - spread, tabBounds.Y)
 					              		,new Point(tabBounds.Right - spread + quarter, tabBounds.Y + eigth)
 					              		,new Point(tabBounds.Right - sixth, tabBounds.Bottom - eigth)
 					              		,new Point(tabBounds.Right, tabBounds.Bottom)});
 					break;
 				case TabAlignment.Bottom:
-					path.AddCurve(new Point[] {  new Point(tabBounds.Right, tabBounds.Y)
+					path.AddCurve(new[] {  new Point(tabBounds.Right, tabBounds.Y)
 					              		,new Point(tabBounds.Right - sixth, tabBounds.Y + eigth)
 					              		,new Point(tabBounds.Right - spread + quarter, tabBounds.Bottom - eigth)
 					              		,new Point(tabBounds.Right - spread, tabBounds.Bottom)});
 					path.AddLine(tabBounds.Right - spread, tabBounds.Bottom, tabBounds.X + spread, tabBounds.Bottom);
-					path.AddCurve(new Point[] {  new Point(tabBounds.X + spread, tabBounds.Bottom)
+					path.AddCurve(new[] {  new Point(tabBounds.X + spread, tabBounds.Bottom)
 					              		,new Point(tabBounds.X + spread - quarter, tabBounds.Bottom - eigth)
 					              		,new Point(tabBounds.X + sixth, tabBounds.Y + eigth)
 					              		,new Point(tabBounds.X, tabBounds.Y)});
 					break;
 				case TabAlignment.Left:
-					path.AddCurve(new Point[] {  new Point(tabBounds.Right, tabBounds.Bottom)
+					path.AddCurve(new[] {  new Point(tabBounds.Right, tabBounds.Bottom)
 					              		,new Point(tabBounds.Right - eigth, tabBounds.Bottom - sixth)
 					              		,new Point(tabBounds.X + eigth, tabBounds.Bottom - spread + quarter)
 					              		,new Point(tabBounds.X, tabBounds.Bottom - spread)});
 					path.AddLine(tabBounds.X, tabBounds.Bottom - spread, tabBounds.X ,tabBounds.Y + spread);
-					path.AddCurve(new Point[] {  new Point(tabBounds.X, tabBounds.Y + spread)
+					path.AddCurve(new[] {  new Point(tabBounds.X, tabBounds.Y + spread)
 					              		,new Point(tabBounds.X + eigth, tabBounds.Y + spread - quarter)
 					              		,new Point(tabBounds.Right - eigth, tabBounds.Y + sixth)
 					              		,new Point(tabBounds.Right, tabBounds.Y)});
 
 					break;
 				case TabAlignment.Right:
-					path.AddCurve(new Point[] {  new Point(tabBounds.X, tabBounds.Y)
+					path.AddCurve(new[] {  new Point(tabBounds.X, tabBounds.Y)
 					              		,new Point(tabBounds.X + eigth, tabBounds.Y + sixth)
 					              		,new Point(tabBounds.Right - eigth, tabBounds.Y + spread - quarter)
 					              		,new Point(tabBounds.Right, tabBounds.Y + spread)});
 					path.AddLine(tabBounds.Right, tabBounds.Y + spread, tabBounds.Right, tabBounds.Bottom - spread);
-					path.AddCurve(new Point[] {  new Point(tabBounds.Right, tabBounds.Bottom - spread)
+					path.AddCurve(new[] {  new Point(tabBounds.Right, tabBounds.Bottom - spread)
 					              		,new Point(tabBounds.Right - eigth, tabBounds.Bottom - spread + quarter)
 					              		,new Point(tabBounds.X + eigth, tabBounds.Bottom - sixth)
 					              		,new Point(tabBounds.X, tabBounds.Bottom)});
@@ -95,23 +95,22 @@ namespace System.Windows.Forms
 				Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
 				graphics.SmoothingMode = SmoothingMode.AntiAlias;
 				if (closerRect.Contains(this._TabControl.MousePosition)){
-					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect)){
-						using (SolidBrush closerBrush = new SolidBrush(Color.FromArgb(193, 53, 53))){
-							graphics.FillPath(closerBrush, closerPath);
-						}
-					}
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-				} else {
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColor)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-				}
+					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect))
+                    {
+                        using SolidBrush closerBrush = new SolidBrush(Color.FromArgb(193, 53, 53));
+                        graphics.FillPath(closerBrush, closerPath);
+                    }
+					using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using Pen closerPen = new Pen(this._CloserColorActive);
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+				} else
+                {
+                    using GraphicsPath closerPath = GetCloserPath(closerRect);
+                    using Pen closerPen = new Pen(this._CloserColor);
+                    graphics.DrawPath(closerPen, closerPath);
+                }
 
 				
 			}

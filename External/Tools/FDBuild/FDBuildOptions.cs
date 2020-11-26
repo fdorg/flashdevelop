@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using Mono.GetOptions;
 using System.IO;
 
@@ -6,7 +6,7 @@ namespace FDBuild
 {
     public class FDBuildOptions : Options
     {
-        ArrayList extraClasspaths;
+        readonly List<string> extraClasspaths;
         string language;
         public string ProjectFile;
 
@@ -14,15 +14,12 @@ namespace FDBuild
         {
             NoTrace = false;
             ProjectFile = "";
-            extraClasspaths = new ArrayList();
+            extraClasspaths = new List<string>();
             ProcessArgs(args);
         }
 
         [ArgumentProcessor]
-        public void SetProject(string file) 
-        {
-            ProjectFile = file;
-        }
+        public void SetProject(string file) => ProjectFile = file;
 
         [Option(99, "Add extra classpath", "cp")]
         public string ExtraClasspath
@@ -62,20 +59,17 @@ namespace FDBuild
 
         public string Language
         {
-            set {
-                if (LibraryDir == null) return;
-                if (language != null)
-                    extraClasspaths.Remove(Path.Combine(LibraryDir, Path.Combine(language, "classes")));
+            set
+            {
+                if (LibraryDir is null) return;
+                if (language != null) extraClasspaths.Remove(Path.Combine(LibraryDir, language, "classes"));
                 language = value;
+                var library = Path.Combine(LibraryDir, language, "classes");
                 // add the library classpath for the language
-                string library = Path.Combine(LibraryDir, Path.Combine(language, "classes"));
                 if (Directory.Exists(library) && language != "HAXE") extraClasspaths.Add(library);
             }
         }
 
-        public string[] ExtraClasspaths
-        {
-            get { return extraClasspaths.ToArray(typeof(string)) as string[]; }
-        }
+        public string[] ExtraClasspaths => extraClasspaths.ToArray();
     }
 }

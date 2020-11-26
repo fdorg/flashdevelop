@@ -28,7 +28,6 @@ namespace System.Windows.Forms
 		}
 	
 		protected override Brush GetTabBackgroundBrush(int index){
-			LinearGradientBrush fillBrush = null;
 
 			//	Capture the colours dependant on selection state of the tab
 			Color dark = Color.Transparent;
@@ -50,30 +49,23 @@ namespace System.Windows.Forms
 			tabBounds.Inflate(3,3);
 			tabBounds.X -= 1;
 			tabBounds.Y -= 1;
-			switch (this._TabControl.Alignment) {
-				case TabAlignment.Top:
-					fillBrush = new LinearGradientBrush(tabBounds, light, dark, LinearGradientMode.Vertical);
-					break;
-				case TabAlignment.Bottom:
-					fillBrush = new LinearGradientBrush(tabBounds, dark, light, LinearGradientMode.Vertical);
-					break;
-				case TabAlignment.Left:
-					fillBrush = new LinearGradientBrush(tabBounds, light, dark, LinearGradientMode.Horizontal);
-					break;
-				case TabAlignment.Right:
-					fillBrush = new LinearGradientBrush(tabBounds, dark, light, LinearGradientMode.Horizontal);
-					break;
-			}
-			
-			//	Add the blend
+            var fillBrush = _TabControl.Alignment switch
+            {
+                TabAlignment.Top => new LinearGradientBrush(tabBounds, light, dark, LinearGradientMode.Vertical),
+                TabAlignment.Bottom => new LinearGradientBrush(tabBounds, dark, light, LinearGradientMode.Vertical),
+                TabAlignment.Left => new LinearGradientBrush(tabBounds, light, dark, LinearGradientMode.Horizontal),
+                TabAlignment.Right => new LinearGradientBrush(tabBounds, dark, light, LinearGradientMode.Horizontal),
+            };
+
+            //	Add the blend
 			fillBrush.Blend = GetBackgroundBlend();
 			
 			return fillBrush;
 		}
 		
 		private static Blend GetBackgroundBlend(){
-			float[] relativeIntensities = new float[]{0f, 0.5f, 1f, 1f};
-			float[] relativePositions = new float[]{0f, 0.5f, 0.51f, 1f};
+			float[] relativeIntensities = {0f, 0.5f, 1f, 1f};
+			float[] relativePositions = {0f, 0.5f, 0.51f, 1f};
 
 
 			Blend blend = new Blend();
@@ -107,32 +99,29 @@ namespace System.Windows.Forms
 				if (closerRect.Contains(this._TabControl.MousePosition)){
 					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect)){
 						graphics.FillPath(Brushes.White, closerPath);
-						using (Pen closerPen = new Pen(Color.FromArgb(229, 195, 101))){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							closerPen.Width = 2;
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
+                        using Pen closerPen = new Pen(Color.FromArgb(229, 195, 101));
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+					using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using Pen closerPen = new Pen(this._CloserColorActive);
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
 				} else {
-					if (index == this._TabControl.SelectedIndex){
-						using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-							using (Pen closerPen = new Pen(this._CloserColor)){
-								closerPen.Width = 2;
-								graphics.DrawPath(closerPen, closerPath);
-							}
-						}
-					} else if (index == this._TabControl.ActiveIndex){
-						using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-							using (Pen closerPen = new Pen(Color.FromArgb(155, 167, 183))){
-								closerPen.Width = 2;
-								graphics.DrawPath(closerPen, closerPath);
-							}
-						}
-					}
+					if (index == this._TabControl.SelectedIndex)
+                    {
+                        using GraphicsPath closerPath = GetCloserPath(closerRect);
+                        using Pen closerPen = new Pen(this._CloserColor);
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    } else if (index == this._TabControl.ActiveIndex)
+                    {
+                        using GraphicsPath closerPath = GetCloserPath(closerRect);
+                        using Pen closerPen = new Pen(Color.FromArgb(155, 167, 183));
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
 				}
 
 			}

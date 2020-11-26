@@ -72,7 +72,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         because the number of elems to sort is
         usually small, typically <= 20.
         --*/
-        readonly int[] increments = new int[] { 
+        readonly int[] increments = { 
                                                   1, 4, 13, 40, 121, 364, 1093, 3280,
                                                   9841, 29524, 88573, 265720,
                                                   797161, 2391484 
@@ -134,8 +134,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner; }
-            set { isStreamOwner = value; }
+            get => isStreamOwner;
+            set => isStreamOwner = value;
         }
         
 
@@ -143,50 +143,29 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Gets a value indicating whether the current stream supports reading
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanRead => false;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports seeking
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanSeek => false;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports writing
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return baseStream.CanWrite;
-            }
-        }
-        
+        public override bool CanWrite => baseStream.CanWrite;
+
         /// <summary>
         /// Gets the length in bytes of the stream
         /// </summary>
-        public override long Length {
-            get {
-                return baseStream.Length;
-            }
-        }
-        
+        public override long Length => baseStream.Length;
+
         /// <summary>
         /// Gets or sets the current position of this stream.
         /// </summary>
         public override long Position {
-            get {
-                return baseStream.Position;
-            }
-            set {
-                throw new NotSupportedException("BZip2OutputStream position cannot be set");
-            }
+            get => baseStream.Position;
+            set => throw new NotSupportedException("BZip2OutputStream position cannot be set");
         }
         
         /// <summary>
@@ -240,18 +219,18 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <param name="count">The number of bytes to write.</param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+            if ( buffer is null ) {
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( offset < 0 )
             {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
             if ( count < 0 )
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             if ( buffer.Length - offset < count )
@@ -367,10 +346,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Get the number of bytes written to the output.
         /// </summary>
-        public int BytesWritten
-        {
-            get { return bytesOut; }
-        }
+        public int BytesWritten => bytesOut;
 
         /// <summary>
         /// Releases the unmanaged resources used by the <see cref="BZip2OutputStream"/> and optionally releases the managed resources.
@@ -379,7 +355,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 #if NET_1_0 || NET_1_1 || NETCF_1_0
         protected virtual void Dispose(bool disposing)
 #else       
-        override protected void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
 #endif          
         {
             try {
@@ -919,7 +895,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                     j = i;
                     while (FullGtU(zptr[j-h]+d, v+d)) {
                         zptr[j] = zptr[j-h];
-                        j = j - h;
+                        j -= h;
                         if (j <= (lo + h - 1))
                             break;
                     }
@@ -934,7 +910,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                     j = i;
                     while (FullGtU ( zptr[j-h]+d, v+d )) {
                         zptr[j] = zptr[j-h];
-                        j = j - h;
+                        j -= h;
                         if (j <= (lo + h - 1)) {
                             break;
                         }
@@ -950,7 +926,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                     j = i;
                     while (FullGtU ( zptr[j-h]+d, v+d)) {
                         zptr[j] = zptr[j-h];
-                        j = j - h;
+                        j -= h;
                         if (j <= (lo + h - 1)) {
                             break;
                         }
@@ -1022,7 +998,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                         if (unLo > unHi) {
                             break;
                         }
-                        n = ((int)block[zptr[unLo]+d + 1]) - med;
+                        n = block[zptr[unLo]+d + 1] - med;
                         if (n == 0) {
                             int temp = zptr[unLo];
                             zptr[unLo] = zptr[ltLo];
@@ -1041,7 +1017,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                         if (unLo > unHi) {
                             break;
                         }
-                        n = ((int)block[zptr[unHi]+d + 1]) - med;
+                        n = block[zptr[unHi]+d + 1] - med;
                         if (n == 0) {
                             int temp = zptr[unHi];
                             zptr[unHi] = zptr[gtHi];
@@ -1125,7 +1101,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                 quadrant[i] = 0;
             }
             
-            block[0] = (byte)(block[last + 1]);
+            block[0] = block[last + 1];
             
             if (last < 4000) {
                 /*--
@@ -1187,13 +1163,13 @@ namespace ICSharpCode.SharpZipLib.BZip2
                     h = 3 * h + 1;
                 } while (h <= 256);
                 do {
-                    h = h / 3;
+                    h /= 3;
                     for (i = h; i <= 255; i++) {
                         vv = runningOrder[i];
                         j = i;
                         while ((ftab[((runningOrder[j-h])+1) << 8] - ftab[(runningOrder[j-h]) << 8]) > (ftab[((vv)+1) << 8] - ftab[(vv) << 8])) {
                             runningOrder[j] = runningOrder[j-h];
-                            j = j - h;
+                            j -= h;
                             if (j <= (h - 1)) {
                                 break;
                             }
@@ -1302,7 +1278,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
             
             for (i = 0; i <= last; i++) {
                 if (rNToGo == 0) {
-                    rNToGo = (int)BZip2Constants.RandomNumbers[rTPos];
+                    rNToGo = BZip2Constants.RandomNumbers[rTPos];
                     rTPos++;
                     if (rTPos == 512) {
                         rTPos = 0;
@@ -1480,7 +1456,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
             zptr = new int[n];
             ftab = new int[65537];
             
-            if (block == null || quadrant == null || zptr == null  || ftab == null) {
+            if (block is null || quadrant is null || zptr is null  || ftab is null) {
                 //      int totalDraw = (n + 1 + NUM_OVERSHOOT_BYTES) + (n + NUM_OVERSHOOT_BYTES) + n + 65537;
                 //      compressOutOfMemory ( totalDraw, n );
             }
@@ -1548,12 +1524,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
                         while (true) {
                             switch (zPend % 2) {
                                 case 0:
-                                    szptr[wr] = (short)BZip2Constants.RunA;
+                                    szptr[wr] = BZip2Constants.RunA;
                                     wr++;
                                     mtfFreq[BZip2Constants.RunA]++;
                                     break;
                                 case 1:
-                                    szptr[wr] = (short)BZip2Constants.RunB;
+                                    szptr[wr] = BZip2Constants.RunB;
                                     wr++;
                                     mtfFreq[BZip2Constants.RunB]++;
                                     break;
@@ -1576,12 +1552,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
                 while (true) {
                     switch (zPend % 2) {
                         case 0:
-                            szptr[wr] = (short)BZip2Constants.RunA;
+                            szptr[wr] = BZip2Constants.RunA;
                             wr++;
                             mtfFreq[BZip2Constants.RunA]++;
                             break;
                         case 1:
-                            szptr[wr] = (short)BZip2Constants.RunB;
+                            szptr[wr] = BZip2Constants.RunB;
                             wr++;
                             mtfFreq[BZip2Constants.RunB]++;
                             break;
@@ -1709,7 +1685,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                     parent[n1] = parent[n2] = nNodes;
                     
                     weight[nNodes] = (int)((weight[n1] & 0xffffff00) + (weight[n2] & 0xffffff00)) | 
-                        (int)(1 + (((weight[n1] & 0x000000ff) > (weight[n2] & 0x000000ff)) ? (weight[n1] & 0x000000ff) : (weight[n2] & 0x000000ff)));
+                        1 + (((weight[n1] & 0x000000ff) > (weight[n2] & 0x000000ff)) ? (weight[n1] & 0x000000ff) : (weight[n2] & 0x000000ff));
                     
                     parent[nNodes] = -1;
                     nHeap++;
@@ -1824,23 +1800,23 @@ namespace ICSharpCode.SharpZipLib.BZip2
         always: in the range 0 .. 9.
         The current block size is 100000 * this number.
         --*/
-        int blockSize100k;
+        readonly int blockSize100k;
         
         bool blockRandomised;
         
         int bytesOut;
         int bsBuff;
         int bsLive;
-        IChecksum mCrc = new StrangeCRC();
-        
-        bool[] inUse = new bool[256];
+        readonly IChecksum mCrc = new StrangeCRC();
+
+        readonly bool[] inUse = new bool[256];
         int nInUse;
-        
-        char[] seqToUnseq = new char[256];
-        char[] unseqToSeq = new char[256];
-        
-        char[] selector = new char[BZip2Constants.MaximumSelectors];
-        char[] selectorMtf = new char[BZip2Constants.MaximumSelectors];
+
+        readonly char[] seqToUnseq = new char[256];
+        readonly char[] unseqToSeq = new char[256];
+
+        readonly char[] selector = new char[BZip2Constants.MaximumSelectors];
+        readonly char[] selectorMtf = new char[BZip2Constants.MaximumSelectors];
         
         byte[]  block;
         int[]   quadrant;
@@ -1849,15 +1825,15 @@ namespace ICSharpCode.SharpZipLib.BZip2
         int[]   ftab;
         
         int nMTF;
-        
-        int[] mtfFreq = new int[BZip2Constants.MaximumAlphaSize];
+
+        readonly int[] mtfFreq = new int[BZip2Constants.MaximumAlphaSize];
         
         /*
         * Used when sorting.  If too many long comparisons
         * happen, we stop sorting, randomise the block
         * slightly, and try again.
         */
-        int workFactor;
+        readonly int workFactor;
         int workDone;
         int workLimit;
         bool firstAttempt;

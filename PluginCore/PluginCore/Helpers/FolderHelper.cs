@@ -10,20 +10,16 @@ namespace PluginCore.Helpers
         /// <summary>
         /// List of illegal directory names
         /// </summary>
-        public static List<String> IllegalFolderNames = new List<String>(){ "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
+        public static List<string> IllegalFolderNames = new List<string> { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
 
         /// <summary>
         /// Checks if a directory is empty
         /// </summary>
-        public static Boolean IsDirectoryEmpty(String path)
+        public static bool IsDirectoryEmpty(string path)
         {
             try
             {
-                if (Directory.Exists(path))
-                {
-                    return Directory.GetFileSystemEntries(path).Length == 0;
-                }
-                else return false;
+                return Directory.Exists(path) && Directory.GetFileSystemEntries(path).Length == 0;
             }
             catch { return false; }
         }
@@ -31,41 +27,37 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks if the directory name is illegal
         /// </summary>
-        public static Boolean IsIllegalFolderName(String name)
-        {
-            return IllegalFolderNames.Contains(name.ToUpper());
-        }
+        public static bool IsIllegalFolderName(string name) => IllegalFolderNames.Contains(name.ToUpper());
 
         /// <summary>
         /// Gets a name of the folder 
         /// </summary> 
-        public static String GetFolderName(String path)
+        public static string GetFolderName(string path)
         {
             try
             {
-                String dir = Path.GetFullPath(path);
-                Char separator = Path.DirectorySeparatorChar;
-                String[] chunks = dir.Split(separator);
+                var dir = Path.GetFullPath(path);
+                var chunks = dir.Split(Path.DirectorySeparatorChar);
                 return chunks[chunks.Length - 1];
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
-                return String.Empty;
+                return string.Empty;
             }
         }
 
         /// <summary>
         /// Ensures that the folder name is unique by adding a number to it
         /// </summary>
-        public static String EnsureUniquePath(String original)
+        public static string EnsureUniquePath(string original)
         {
             try
             {
-                Int32 counter = 0;
-                String result = original;
-                String folder = Path.GetDirectoryName(result);
-                String folderName = GetFolderName(result);
+                int counter = 0;
+                string result = original;
+                string folder = Path.GetDirectoryName(result);
+                string folderName = GetFolderName(result);
                 while (Directory.Exists(result))
                 {
                     counter++;
@@ -76,20 +68,20 @@ namespace PluginCore.Helpers
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
-                return String.Empty;
+                return string.Empty;
             }
         }
 
         /// <summary>
         /// Copies the folder structure recursively
         /// </summary> 
-        public static void CopyFolder(String source, String destination)
+        public static void CopyFolder(string source, string destination)
         {
             try
             {
-                String[] files = Directory.GetFileSystemEntries(source);
                 if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
-                foreach (String file in files)
+                var files = Directory.GetFileSystemEntries(source);
+                foreach (var file in files)
                 {
                     if (Directory.Exists(file)) CopyFolder(file, Path.Combine(destination, Path.GetFileName(file)));
                     else File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), true);
@@ -100,7 +92,5 @@ namespace PluginCore.Helpers
                 ErrorManager.ShowError(ex);
             }
         }
-
     }
-
 }

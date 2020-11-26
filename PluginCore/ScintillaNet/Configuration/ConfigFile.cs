@@ -1,36 +1,29 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class ConfigFile : ConfigItem
     {
-        [NonSerialized()]
+        [NonSerialized]
         protected ConfigFile[] includedFiles;
 
         [XmlArray("includes")]
         [XmlArrayItem("include")]
         public include[] includes;
 
-        [NonSerialized()]
+        [NonSerialized]
         public string filename;
 
-        protected virtual Scintilla ChildScintilla
-        {
-            get { return null; }
-        }
+        protected virtual Scintilla ChildScintilla => null;
 
-        public virtual Scintilla MasterScintilla
-        {
-            get { return (_parent == this) ? ChildScintilla : _parent.MasterScintilla; }
-        }
+        public virtual Scintilla MasterScintilla => _parent == this ? ChildScintilla : _parent.MasterScintilla;
 
         public virtual void addIncludedFile(ConfigFile file)
         {
-            ConfigFile[] configFiles = null;
-            configFiles = new ConfigFile[includedFiles.Length + 1];
+            var configFiles = new ConfigFile[includedFiles.Length + 1];
             includedFiles.CopyTo(configFiles, 0);
             configFiles[includedFiles.Length] = file;
             includedFiles = configFiles;
@@ -38,37 +31,35 @@ namespace ScintillaNet.Configuration
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
-            ConfigFile configFile = null;
-            includedFiles = new ConfigFile[0];
+            includedFiles = Array.Empty<ConfigFile>();
             base.init(utility, theParent);
-            if (includes == null) includes = new include[0];
-            for (int j = 0; j<includes.Length; j++) includes[j].init(utility, _parent);
-            for (int i = 0; i<includes.Length; i++)
+            includes ??= Array.Empty<include>();
+            foreach (var include in includes) include.init(utility, _parent);
+            foreach (var include in includes)
             {
-                configFile = (ConfigFile)utility.LoadConfiguration(base.GetType(), includes[i].file, _parent);
+                var configFile = (ConfigFile)utility.LoadConfiguration(GetType(), include.file, _parent);
                 addIncludedFile(configFile);
             }
             CollectScintillaNodes(null);
         }
 
-        public virtual void CollectScintillaNodes(ArrayList list)
+        public virtual void CollectScintillaNodes(List<ConfigItem> list)
         {
             if (_parent == this)
             {
                 if (list != null) return;
-                list = new ArrayList();
-                if (ChildScintilla != null) ChildScintilla.CollectScintillaNodes(list);
+                list = new List<ConfigItem>();
+                ChildScintilla?.CollectScintillaNodes(list);
             }
-            else if (list == null) return;
-            ConfigFile cf;
+            else if (list is null) return;
+
             if (includedFiles != null)
             {
-                for (int i = 0 ; i<includedFiles.Length; i++)
+                foreach (var cf in includedFiles)
                 {
-                    cf = includedFiles[i];
-                    if (cf == null) continue;
+                    if (cf is null) continue;
                     if (cf.ChildScintilla != null) list.Add(cf.ChildScintilla);
-                    if( cf.ChildScintilla != null ) cf.ChildScintilla.CollectScintillaNodes(list);
+                    cf.ChildScintilla?.CollectScintillaNodes(list);
                     if( cf.includedFiles != null && cf.includedFiles.Length > 0) cf.CollectScintillaNodes(list);
                 }
             }
@@ -78,7 +69,5 @@ namespace ScintillaNet.Configuration
                 list.CopyTo(ChildScintilla.includedFiles);
             }
         }
-        
     }
-
 }

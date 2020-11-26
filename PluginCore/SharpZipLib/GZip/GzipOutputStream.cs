@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpZipLib.GZip
         public void SetLevel(int level)
         {
             if (level < Deflater.BEST_SPEED) {
-                throw new ArgumentOutOfRangeException("level");
+                throw new ArgumentOutOfRangeException(nameof(level));
             }
             deflater_.SetLevel(level);
         }
@@ -210,7 +210,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 
                 unchecked
                 {
-                    gzipFooter=new byte[] {
+                    gzipFooter=new[] {
                     (byte) crcval, (byte) (crcval >> 8),
                     (byte) (crcval >> 16), (byte) (crcval >> 24),
                     
@@ -234,10 +234,10 @@ namespace ICSharpCode.SharpZipLib.GZip
                 int mod_time = (int)((DateTime.Now.Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000L);  // Ticks give back 100ns intervals
                 byte[] gzipHeader = {
                     // The two magic bytes
-                    (byte) (GZipConstants.GZIP_MAGIC >> 8), (byte) (GZipConstants.GZIP_MAGIC & 0xff),
+                    GZipConstants.GZIP_MAGIC >> 8, GZipConstants.GZIP_MAGIC & 0xff,
 
                     // The compression type
-                    (byte) Deflater.DEFLATED,
+                    Deflater.DEFLATED,
 
                     // The flags (not set)
                     0,
@@ -250,7 +250,7 @@ namespace ICSharpCode.SharpZipLib.GZip
                     0,
 
                     // The OS type (unknown)
-                    (byte) 255
+                    255
                 };
                 baseOutputStream_.Write(gzipHeader, 0, gzipHeader.Length);
             }

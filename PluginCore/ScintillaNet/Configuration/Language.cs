@@ -8,12 +8,12 @@ using PluginCore.Helpers;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class Language : ConfigItem
     {
         public Lexer lexer;
         
-        [XmlAttribute()]
+        [XmlAttribute]
         public string name;
         
         [XmlElement("line-comment")]
@@ -42,91 +42,58 @@ namespace ScintillaNet.Configuration
         [XmlArrayItem("style")]
         public UseStyle[] usestyles;
 
-        public UseStyle GetUseStyle(int style)
-        {
-            foreach (UseStyle us in this.usestyles)
-            {
-                if (us.key == style)
-                {
-                    return us;
-                }
-            }
-            return null;
-        }
-        
-        public UseKeyword GetUseKeyword(int key)
-        {
-            foreach (UseKeyword uk in this.usekeywords)
-            {
-                if (uk.key == key)
-                {
-                    return uk;
-                }
-            }
-            return null;
-        }
-        
+        public UseStyle GetUseStyle(int style) => usestyles.FirstOrDefault(us => us.key == style);
+
+        public UseKeyword GetUseKeyword(int key) => usekeywords.FirstOrDefault(uk => uk.key == key);
+
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (usekeywords == null) usekeywords = new UseKeyword[0];
-            if (usestyles == null) usestyles = new UseStyle[0];
-            for (int j = 0; j<usekeywords.Length; j++)
+            usekeywords ??= Array.Empty<UseKeyword>();
+            usestyles ??= Array.Empty<UseStyle>();
+            foreach (var it in usekeywords)
             {
-                usekeywords[j].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int i = 0; i<usestyles.Length; i++)
+            foreach (var it in usestyles)
             {
-                usestyles[i].language = this;
-                usestyles[i].init(utility, _parent);
+                it.language = this;
+                it.init(utility, _parent);
             }
-            if (lexer != null) lexer.init(utility, _parent);
-            if (characterclass == null) characterclass = new CharacterClass();
+
+            lexer?.init(utility, _parent);
+            characterclass ??= new CharacterClass();
             characterclass.init(utility, _parent);
-            if (editorstyle != null) editorstyle.init(utility, _parent);
+            editorstyle?.init(utility, _parent);
         }
 
         public void AddExtension(string extension)
         {
-            if (!HasExtension(extension))
-            {
-                if (String.IsNullOrEmpty(fileextensions))
-                    fileextensions = extension;
-                else
-                    fileextensions += "," + extension;
-            }
+            if (HasExtension(extension)) return;
+            if (string.IsNullOrEmpty(fileextensions)) fileextensions = extension;
+            else fileextensions += "," + extension;
         }
 
         public bool RemoveExtension(string extension)
         {
             var extensions = new List<string>(fileextensions.Split(','));
-            bool anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
-            fileextensions = String.Join(",", extensions.ToArray());
+            var anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
+            fileextensions = string.Join(",", extensions);
             return anyRemoved;
         }
 
-        public bool HasExtension(string extension)
-        {
-            return fileextensions.Split(',').Contains(extension);
-        }
+        public bool HasExtension(string extension) => fileextensions.Split(',').Contains(extension);
 
-        public override string ToString()
-        {
-            return name;
-        }
+        public override string ToString() => name;
 
         public void SaveExtensions()
         {
-            string langPath = Path.Combine(PathHelper.SettingDir, "Languages");
-            string filePath = Path.Combine(langPath, name + ".xml");
+            var filePath = Path.Combine(PathHelper.SettingDir, "Languages", $"{name}.xml");
             var doc = new XmlDocument();
             doc.Load(filePath);
-            XmlNode node = doc.SelectSingleNode("/Scintilla/languages/language/file-extensions");
-            if (node != null)
-                node.InnerText = fileextensions;
+            var node = doc.SelectSingleNode("/Scintilla/languages/language/file-extensions");
+            if (node != null) node.InnerText = fileextensions;
             doc.Save(filePath);
         }
-
     }
-    
 }

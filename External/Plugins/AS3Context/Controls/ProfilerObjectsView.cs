@@ -4,83 +4,69 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
-using ScintillaNet;
 
 namespace AS3Context.Controls
 {
     class ProfilerObjectsView
     {
-        ObjectRefsGrid objectsGrid;
-        Regex reStep = new Regex("([^\\[]+)\\[(.*):([0-9]+)\\]");
-        ObjectRefsModel model = new ObjectRefsModel();
-        ToolStripMenuItem openItem;
+        readonly Regex reStep = new Regex("([^\\[]+)\\[(.*):([0-9]+)\\]");
+        readonly ObjectRefsModel model = new ObjectRefsModel();
         string fileToOpen;
         int lineToOpen;
-        Timer delayOpen;
+        readonly Timer delayOpen;
 
-        public ObjectRefsGrid ObjectsGrid
-        {
-            get { return objectsGrid; }
-        }
+        public ObjectRefsGrid ObjectsGrid { get; }
 
         public ProfilerObjectsView(ObjectRefsGrid grid)
         {
-            objectsGrid = grid;
+            ObjectsGrid = grid;
 
             delayOpen = new Timer();
             delayOpen.Interval = 100;
-            delayOpen.Tick += new EventHandler(delayOpen_Tick);
+            delayOpen.Tick += delayOpen_Tick;
 
             // action
-            openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
-            openItem.Click += new EventHandler(objectsGrid_Open);
+            var openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
+            openItem.Click += objectsGrid_Open;
 
-            objectsGrid.ContextMenuStrip = new ContextMenuStrip();
-            objectsGrid.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
-            objectsGrid.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
-            objectsGrid.ContextMenuStrip.Items.Add(openItem);
-            objectsGrid.DoubleClick += new EventHandler(objectsGrid_Open);
+            ObjectsGrid.ContextMenuStrip = new ContextMenuStrip();
+            ObjectsGrid.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
+            ObjectsGrid.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            ObjectsGrid.ContextMenuStrip.Items.Add(openItem);
+            ObjectsGrid.DoubleClick += objectsGrid_Open;
         }
 
         void delayOpen_Tick(object sender, EventArgs e)
         {
             delayOpen.Stop();
-            if (fileToOpen != null)
+            if (fileToOpen is null) return;
+            if (File.Exists(fileToOpen))
             {
-                if (File.Exists(fileToOpen))
+                PluginBase.MainForm.OpenEditableDocument(fileToOpen, false);
+                if (PluginBase.MainForm.CurrentDocument is {} doc
+                    && doc.IsEditable
+                    && doc.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase)
+                    && doc.SciControl is {} sci)
                 {
-                    PluginBase.MainForm.OpenEditableDocument(fileToOpen, false);
-                    if (PluginBase.MainForm.CurrentDocument.IsEditable
-                        && PluginBase.MainForm.CurrentDocument.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase))
-                    {
-                        ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                        int pos = sci.PositionFromLine(lineToOpen);
-                        sci.SetSel(pos, pos);
-                        sci.EnsureVisibleEnforcePolicy(lineToOpen);
-                    }
+                    var pos = sci.PositionFromLine(lineToOpen);
+                    sci.SetSel(pos, pos);
+                    sci.EnsureVisibleEnforcePolicy(lineToOpen);
                 }
-                fileToOpen = null;
             }
+            fileToOpen = null;
         }
 
         void objectsGrid_Open(object sender, EventArgs e)
         {
-            if (objectsGrid.SelectedNode != null)
+            if (ObjectsGrid.SelectedNode?.Tag is ObjectRefsNode node && node.Line.Length > 0)
             {
-                ObjectRefsNode node = objectsGrid.SelectedNode.Tag as ObjectRefsNode;
-                if (node != null && node.Line.Length > 0)
-                {
-                    fileToOpen = node.Path.Replace(';', Path.DirectorySeparatorChar);
-                    lineToOpen = int.Parse(node.Line) - 1;
-                    delayOpen.Start();
-                }
+                fileToOpen = node.Path.Replace(';', Path.DirectorySeparatorChar);
+                lineToOpen = int.Parse(node.Line) - 1;
+                delayOpen.Start();
             }
         }
 
-        public void Clear()
-        {
-            model.Root.Nodes.Clear();
-        }
+        public void Clear() => model.Root.Nodes.Clear();
 
         public void Display(string qname, string[] info)
         {
@@ -107,7 +93,7 @@ namespace AS3Context.Controls
                 model.Root.Nodes.Add(node);
             }
 
-            objectsGrid.Model = model;
+            ObjectsGrid.Model = model;
         }
     }
 }

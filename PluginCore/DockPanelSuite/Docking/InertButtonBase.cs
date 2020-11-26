@@ -23,7 +23,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private bool m_isMouseOver = false;
         protected bool IsMouseOver
         {
-            get { return m_isMouseOver; }
+            get => m_isMouseOver;
             private set
             {
                 if (m_isMouseOver == value)
@@ -34,10 +34,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        protected override Size DefaultSize
-        {
-            get { return Resources.DockPane_Close.Size; }
-        }
+        protected override Size DefaultSize => Resources.DockPane_Close.Size;
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
@@ -65,10 +62,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (IsMouseOver && Enabled)
             {
-                using (Pen pen = new Pen(ForeColor))
-                {
-                    e.Graphics.DrawRectangle(pen, Rectangle.Inflate(ClientRectangle, -1, -1));
-                }
+                using Pen pen = new Pen(ForeColor);
+                e.Graphics.DrawRectangle(pen, Rectangle.Inflate(ClientRectangle, -1, -1));
             }
 
             var quantizer = new RecolorQuantizer(ForeColor);

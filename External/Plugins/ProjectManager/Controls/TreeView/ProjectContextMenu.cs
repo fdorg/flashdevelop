@@ -1,6 +1,4 @@
-using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -21,8 +19,7 @@ namespace ProjectManager.Controls.TreeView
     public class ProjectContextMenu : ContextMenuStrip
     {
         Project project;
-        ProjectTreeView projectTree; 
-        static Image newFolderImg = Icons.Overlay(Icons.Folder.Img, Icons.BulletAdd.Img, 5, -3);
+        static readonly Image newFolderImg = Icons.Overlay(Icons.Folder.Img, Icons.BulletAdd.Img, 5, -3);
         public ToolStripMenuItem AddMenu = new ToolStripMenuItem(TextHelper.GetString("Label.Add"));
         public ToolStripMenuItem AddNewFolder = new ToolStripMenuItem(TextHelper.GetString("Label.NewFolder"), newFolderImg);
         public ToolStripMenuItem AddLibraryAsset = new ToolStripMenuItem(TextHelper.GetString("Label.LibraryAsset"), Icons.ImageResource.Img);
@@ -66,9 +63,9 @@ namespace ProjectManager.Controls.TreeView
 
         public ProjectContextMenu()
         {
-            this.Renderer = new DockPanelStripRenderer();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            Renderer = new DockPanelStripRenderer();
+            Font = PluginBase.Settings.DefaultFont;
+            ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             NothingToDo.Enabled = false;
             NoProjectOutput.Enabled = false;
             // Register menu items
@@ -81,40 +78,35 @@ namespace ProjectManager.Controls.TreeView
             // Set default key strings
             if (PluginBase.Settings.ViewShortcuts)
             {
-                this.Open.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
-                this.Cut.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control|Keys.X);
-                this.Copy.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
-                this.Paste.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.P);
-                this.Delete.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
+                Open.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
+                Cut.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control|Keys.X);
+                Copy.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
+                Paste.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.P);
+                Delete.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
             }
         }
 
-        public ProjectTreeView ProjectTree
+        public ProjectTreeView ProjectTree { get; set; }
+
+        public bool Contains(ToolStripMenuItem item)
         {
-            get { return projectTree; }
-            set { projectTree = value; }
+            return item != null && item.Enabled && FindItem(item, Items);
         }
 
-        public Boolean Contains(ToolStripMenuItem item)
-        {
-            return item != null && item.Enabled && findItem(item, Items);
-        }
-
-        private bool findItem(ToolStripMenuItem item, ToolStripItemCollection items)
+        static bool FindItem(ToolStripItem item, ToolStripItemCollection items)
         {
             foreach (ToolStripItem i in items)
                 if (i == item) return true;
-                else if (i is ToolStripMenuItem)
+                else if (i is ToolStripMenuItem mi)
                 {
-                    ToolStripMenuItem mi = i as ToolStripMenuItem;
-                    if (mi.DropDown.Items.Count > 0 && findItem(item, mi.DropDown.Items)) return true;
+                    if (mi.DropDown.Items.Count > 0 && FindItem(item, mi.DropDown.Items)) return true;
                 }
             return false;
         }
 
         #region File Templates
 
-        private ToolStripItem[] GetAddFileTemplates()
+        ToolStripItem[] GetAddFileTemplates()
         {
             List<ToolStripItem> items = new List<ToolStripItem>();
             // the custom project file templates are in a subdirectory named after the project class name
@@ -143,7 +135,7 @@ namespace ProjectManager.Controls.TreeView
             return items.ToArray();
         }
 
-        private ToolStripMenuItem GetCustomAddFileDirectory(string customDir)
+        ToolStripMenuItem GetCustomAddFileDirectory(string customDir)
         {
             List<ToolStripItem> items = new List<ToolStripItem>();
             List<string> excludedDirs = new List<string>(PluginMain.Settings.ExcludedDirectories);
@@ -162,7 +154,7 @@ namespace ProjectManager.Controls.TreeView
             return new ToolStripMenuItem((string)dirNames.GetValue(dirNames.Length - 1), null, items.ToArray());
         }
 
-        private ToolStripMenuItem GetCustomAddFile(string file)
+        ToolStripMenuItem GetCustomAddFile(string file)
         {
             string actualFile = Path.GetFileNameWithoutExtension(file); // strip .fdt
             string actualName = Path.GetFileNameWithoutExtension(actualFile); // strip ext
@@ -171,12 +163,12 @@ namespace ProjectManager.Controls.TreeView
             ToolStripMenuItem item = new ToolStripMenuItem("New " + actualName + "...", image);
             item.Click += delegate
             {
-                if (AddFileFromTemplate != null) AddFileFromTemplate(file, false);
+                AddFileFromTemplate?.Invoke(file, false);
             };
             return item;
         }
 
-        private ToolStripMenuItem GetGenericAddFile(string file)
+        ToolStripMenuItem GetGenericAddFile(string file)
         {
             string ext = string.Empty;
             string actual = Path.GetFileNameWithoutExtension(file);
@@ -189,12 +181,12 @@ namespace ProjectManager.Controls.TreeView
             else ext = "." + actual;
             Image image = Icons.GetImageForFile(ext).Img;
             image = Icons.Overlay(image, Icons.BulletAdd.Img, 5, 4);
-            String nlabel = TextHelper.GetString("Label.New");
-            String flabel = TextHelper.GetString("Label.File");
+            string nlabel = TextHelper.GetString("Label.New");
+            string flabel = TextHelper.GetString("Label.File");
             ToolStripMenuItem item = new ToolStripMenuItem(nlabel + " " + actual + " " + flabel + "...", image);
-            item.Click += delegate 
+            item.Click += delegate
             {
-                if (AddFileFromTemplate != null) AddFileFromTemplate(file, true);
+                AddFileFromTemplate?.Invoke(file, true);
             };
             return item;
         }
@@ -207,19 +199,19 @@ namespace ProjectManager.Controls.TreeView
         /// Configure ourself to be a menu relevant to the given Project with the
         /// given selected treeview nodes.
         /// </summary>
-        public void Configure(ArrayList nodes, Project inProject)
+        public void Configure(IList<TreeNode> nodes, Project inProject)
         {
             base.Items.Clear();
             project = inProject;
 
-            MergableMenu menu = new MergableMenu();
+            var menu = new MergableMenu();
             foreach (GenericNode node in nodes)
             {
-                MergableMenu newMenu = new MergableMenu();
+                var newMenu = new MergableMenu();
                 AddItems(newMenu, node);
                 menu = (menu.Count > 0) ? menu.Combine(newMenu) : newMenu;
             }
-            menu.Apply(this.Items);
+            menu.Apply(Items);
 
             // deal with special menu items that can't be applied to multiple paths
             bool singleFile = (nodes.Count == 1);
@@ -236,7 +228,7 @@ namespace ProjectManager.Controls.TreeView
 
             // deal with shortcuts
             AssignShortcuts();
-            if (this.Items.Contains(AddMenu) && AddMenu.Enabled) BuildAddMenu();
+            if (Items.Contains(AddMenu) && AddMenu.Enabled) BuildAddMenu();
             if (base.Items.Count == 0) base.Items.Add(NothingToDo);
         }
 
@@ -247,16 +239,13 @@ namespace ProjectManager.Controls.TreeView
             base.OnOpening(e);
         }
 
-        public void AssignShortcuts()
-        {
-            Rename.ShortcutKeys = (Rename.Enabled) ? Keys.F2 : Keys.None;
-        }
+        public void AssignShortcuts() => Rename.ShortcutKeys = (Rename.Enabled) ? Keys.F2 : Keys.None;
 
         #endregion
 
         #region Add Menu Items
 
-        private void BuildAddMenu()
+        void BuildAddMenu()
         {
             AddMenu.DropDownItems.Clear();
             AddMenu.DropDownItems.AddRange(GetAddFileTemplates());
@@ -267,7 +256,7 @@ namespace ProjectManager.Controls.TreeView
             AddMenu.DropDownItems.Add(AddExistingFile);
         }
 
-        private void AddItems(MergableMenu menu, GenericNode node)
+        void AddItems(MergableMenu menu, GenericNode node)
         {
             string path = node.BackingPath;
             if (node.IsInvalid)
@@ -283,23 +272,23 @@ namespace ProjectManager.Controls.TreeView
             if (node is ProjectNode) AddProjectItems(menu);
             else if (node is ClasspathNode) AddClasspathItems(menu, path);
             else if (node is DirectoryNode) AddFolderItems(menu, path);
-            else if (node is ProjectOutputNode) AddProjectOutputItems(menu, node as ProjectOutputNode);
-            else if (node is ExportNode) AddExportItems(menu, node as ExportNode);
+            else if (node is ProjectOutputNode outputNode) AddProjectOutputItems(menu, outputNode);
+            else if (node is ExportNode exportNode) AddExportItems(menu, exportNode);
             else if (node is FileNode)
             {
                 string ext = Path.GetExtension(path).ToLower();
-                if (FileInspector.IsActionScript(path, ext)) AddClassItems(menu, path);
-                else if (FileInspector.IsHaxeFile(path, ext)) AddClassItems(menu, path);
-                else if (FileInspector.IsMxml(path, ext)) AddClassItems(menu, path);
-                else if (FileInspector.IsCss(path, ext)) AddCssItems(menu, path);
-                else if (FileInspector.IsSwf(path, ext)) AddSwfItems(menu, path);
+                if (FileInspector.IsActionScript(ext)) AddClassItems(menu, path);
+                else if (FileInspector.IsHaxeFile(ext)) AddClassItems(menu, path);
+                else if (FileInspector.IsMxml(ext)) AddClassItems(menu, path);
+                else if (FileInspector.IsCss(ext)) AddCssItems(menu, path);
+                else if (FileInspector.IsSwf(ext)) AddSwfItems(menu, path);
                 else if (FileInspector.IsSwc(path, ext)) AddSwcItems(menu, path);
-                else if (FileInspector.IsResource(path, ext)) AddOtherResourceItems(menu, path);
+                else if (FileInspector.IsResource(ext)) AddOtherResourceItems(menu, path);
                 else AddGenericFileItems(menu, path);
             }
         }
 
-        private void AddExportItems(MergableMenu menu, ExportNode node)
+        void AddExportItems(MergableMenu menu, ExportNode node)
         {
             // it DOES make sense to allow insert of assets inside the injection target!
             if (project.UsesInjection && project.GetRelativePath(node.ContainingSwfPath) != project.InputPath) return;
@@ -307,7 +296,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Insert, 0);
         }
 
-        private void AddProjectItems(MergableMenu menu)
+        void AddProjectItems(MergableMenu menu)
         {
             bool showHidden = project.ShowHiddenPaths;
             menu.Add(TestMovie, 0);
@@ -328,7 +317,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Properties, 4);
         }
 
-        private void AddClasspathItems(MergableMenu menu, string path)
+        void AddClasspathItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
             menu.Add(Browse, 0);
@@ -340,12 +329,12 @@ namespace ProjectManager.Controls.TreeView
             AddHideItems(menu, path, 3);
         }
 
-        private void AddInvalidClassPathNodes(MergableMenu menu, string path)
+        void AddInvalidClassPathNodes(MergableMenu menu, string path)
         {
             menu.Add(RemoveSourcePath, 2, true);
         }
 
-        private void AddFolderItems(MergableMenu menu, string path)
+        void AddFolderItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
             menu.Add(Browse, 0);
@@ -358,11 +347,11 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(AddLibrary, 2, addLibrary);
             if (addLibrary) menu.Add(LibraryOptions, 2);
 
-            if (projectTree.SelectedPaths.Length == 1 && project.IsCompilable)
+            if (ProjectTree.SelectedNodes.Count == 1 && project.IsCompilable)
             {
-                DirectoryNode node = projectTree.SelectedNode as DirectoryNode;
+                var node = (DirectoryNode) ProjectTree.SelectedNode;
                 if (node.InsideClasspath == node) menu.Add(RemoveSourcePath, 2, true);
-                else if (node.InsideClasspath == null || node.InsideClasspath is ProjectNode)
+                else if (node.InsideClasspath is null || node.InsideClasspath is ProjectNode)
                 {
                     menu.Add(AddSourcePath, 2, false);
                 }
@@ -370,7 +359,7 @@ namespace ProjectManager.Controls.TreeView
             AddFileItems(menu, path, true);
         }
 
-        private void AddClassItems(MergableMenu menu, string path)
+        void AddClassItems(MergableMenu menu, string path)
         {
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
@@ -380,33 +369,31 @@ namespace ProjectManager.Controls.TreeView
             AddFileItems(menu, path);
         }
 
-        private void AddCompileTargetItems(MergableMenu menu, string path, bool isFolder)
+        void AddCompileTargetItems(MergableMenu menu, string path, bool isFolder)
         {
-            CompileTargetType result = project.AllowCompileTarget(path, isFolder);
-            if (result != CompileTargetType.None)
+            var result = project.AllowCompileTarget(path, isFolder);
+            if (result == CompileTargetType.None) return;
+            var isMain = false;
+            if ((result & CompileTargetType.DocumentClass) > 0)
             {
-                bool isMain = false;
-                if ((result & CompileTargetType.DocumentClass) > 0)
-                {
-                    isMain = project.IsDocumentClass(path);
-                    if (isMain) menu.Add(DocumentClass, 2, true);
-                    else menu.Add(SetDocumentClass, 2, false);
-                }
-                if (!isMain && (result & CompileTargetType.AlwaysCompile) > 0)
-                {
-                    menu.Add(AlwaysCompile, 2, project.IsCompileTarget(path));
-                }
-                if (!isFolder) menu.Add(CopyClassName, 2);
+                isMain = project.IsDocumentClass(path);
+                if (isMain) menu.Add(DocumentClass, 2, true);
+                else menu.Add(SetDocumentClass, 2, false);
             }
+            if (!isMain && (result & CompileTargetType.AlwaysCompile) > 0)
+            {
+                menu.Add(AlwaysCompile, 2, project.IsCompileTarget(path));
+            }
+            if (!isFolder) menu.Add(CopyClassName, 2);
         }
 
-        private void AddCssItems(MergableMenu menu, string path)
+        void AddCssItems(MergableMenu menu, string path)
         {
             if (project.Language == "as3") AddClassItems(menu, path);
             else AddGenericFileItems(menu, path);
         }
 
-        private void AddOtherResourceItems(MergableMenu menu, string path)
+        void AddOtherResourceItems(MergableMenu menu, string path)
         {
             bool addLibrary = project.HasLibraries && project.IsLibraryAsset(path);
             menu.Add(Open, 0);
@@ -418,16 +405,16 @@ namespace ProjectManager.Controls.TreeView
             AddFileItems(menu, path);
         }
 
-        private void AddSwfItems(MergableMenu menu, string path)
+        void AddSwfItems(MergableMenu menu, string path)
         {
-            bool addLibrary = project.HasLibraries && project.IsLibraryAsset(path);
+            var addLibrary = project.HasLibraries && project.IsLibraryAsset(path);
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
             if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(Insert, 0);
             if (addLibrary)
             {
-                LibraryAsset asset = project.GetAsset(path);
+                var asset = project.GetAsset(path);
                 if (asset.SwfMode == SwfAssetMode.Library) menu.Add(Insert, 0);
             }
             if (project.HasLibraries) menu.Add(AddLibrary, 2, addLibrary);
@@ -435,14 +422,14 @@ namespace ProjectManager.Controls.TreeView
             AddFileItems(menu, path);
         }
 
-        private void AddSwcItems(MergableMenu menu, string path)
+        void AddSwcItems(MergableMenu menu, string path)
         {
-            bool addLibrary = project.IsLibraryAsset(path);
+            var addLibrary = project.IsLibraryAsset(path);
             menu.Add(Execute, 0);
             if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(AddLibrary, 2, addLibrary);
             if (addLibrary) menu.Add(LibraryOptions, 2);
-            if (!this.IsExternalSwc(path)) AddFileItems(menu, path);
+            if (!IsExternalSwc(path)) AddFileItems(menu, path);
             else
             {
                 menu.Add(Copy, 1);
@@ -450,13 +437,13 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void AddInvalidSwcItems(MergableMenu menu, string path)
+        void AddInvalidSwcItems(MergableMenu menu, string path)
         {
-            bool addLibrary = project.IsLibraryAsset(path);
+            var addLibrary = project.IsLibraryAsset(path);
             if (addLibrary) menu.Add(LibraryOptions, 2);
         }
 
-        private void AddProjectOutputItems(MergableMenu menu, ProjectOutputNode node)
+        void AddProjectOutputItems(MergableMenu menu, SwfFileNode node)
         {
             if (node.FileExists)
             {
@@ -469,7 +456,7 @@ namespace ProjectManager.Controls.TreeView
             else menu.Add(NoProjectOutput, 0);
         }
 
-        private void AddFileItems(MergableMenu menu, string path, bool addPaste)
+        void AddFileItems(MergableMenu menu, string path, bool addPaste)
         {
             menu.Add(Cut, 1);
             menu.Add(Copy, 1);
@@ -479,7 +466,7 @@ namespace ProjectManager.Controls.TreeView
             AddHideItems(menu, path, 3);
         }
 
-        private void AddHideItems(MergableMenu menu, string path, int group)
+        void AddHideItems(MergableMenu menu, string path, int group)
         {
             bool hidden = project.IsPathHidden(path);
             bool showHidden = project.ShowHiddenPaths;
@@ -487,22 +474,20 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(HideItem, group, hidden);
         }
 
-        private void AddFileItems(MergableMenu menu, string path)
+        void AddFileItems(MergableMenu menu, string path)
         {
             AddFileItems(menu, path, true);
         }
 
         public bool DisabledForBuild
         {
-            get { return !TestMovie.Enabled; }
-            set
-            {
+            get => !TestMovie.Enabled;
+            set =>
                 TestMovie.Enabled = RunProject.Enabled = BuildProject.Enabled =
-                    TestMovie.Enabled = CleanProject.Enabled = CloseProject.Enabled = !value;
-            }
+                    CleanProject.Enabled = CloseProject.Enabled = !value;
         }
 
-        private void AddGenericFileItems(MergableMenu menu, string path)
+        void AddGenericFileItems(MergableMenu menu, string path)
         {
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
@@ -511,22 +496,21 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Insert, 0);
             if (IsBuildable(path))
             {
-                if (projectTree.SelectedPaths.Length == 1) menu.Add(BuildProjectFile, 2);
+                if (ProjectTree.SelectedNodes.Count == 1) menu.Add(BuildProjectFile, 2);
                 else menu.Add(BuildProjectFiles, 2);
             }
             AddFileItems(menu, path);
         }
 
-        private bool IsBuildable(String path)
+        static bool IsBuildable(string path)
         {
-            String ext = Path.GetExtension(path).ToLower();
-            if (FileInspector.IsAS2Project(path, ext)) return true;
-            else if (FileInspector.IsAS3Project(path, ext)) return true;
-            else if (FileInspector.IsHaxeProject(path, ext)) return true;
-            else return false;
+            var ext = Path.GetExtension(path).ToLower();
+            return FileInspector.IsAS2Project(ext)
+                   || FileInspector.IsAS3Project(path, ext)
+                   || FileInspector.IsHaxeProject(ext);
         }
 
-        private bool IsExternalSwc(string file)
+        bool IsExternalSwc(string file)
         {
             if (!Path.IsPathRooted(file))
             {
@@ -544,9 +528,9 @@ namespace ProjectManager.Controls.TreeView
             return true;
         }
 
-        private bool HasSubProjects()
+        bool HasSubProjects()
         {
-            foreach (GenericNode node in projectTree.SelectedNode.Nodes)
+            foreach (GenericNode node in ProjectTree.SelectedNode.Nodes)
             {
                 if (IsBuildable(node.BackingPath)) return true;
             }
@@ -554,7 +538,5 @@ namespace ProjectManager.Controls.TreeView
         }
 
         #endregion
-
     }
-
 }

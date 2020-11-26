@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PluginCore;
+using Array = System.Array;
 
 namespace ASCompletion.Completion
 {
@@ -9,47 +11,47 @@ namespace ASCompletion.Completion
     [Serializable]
     public sealed class Brace
     {
-        private string name;
-        private char open;
-        private char close;
-        private bool addSpace;
-        private bool ignoreWhitespace;
-        private Rule[] rules;
+        string name;
+        char open;
+        char close;
+        bool addSpace;
+        bool ignoreWhitespace;
+        Rule[] rules;
 
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get => name;
+            set => name = value;
         }
         
         public char Open
         {
-            get { return open; }
-            set { open = value; }
+            get => open;
+            set => open = value;
         }
         
         public char Close
         {
-            get { return close; }
-            set { close = value; }
+            get => close;
+            set => close = value;
         }
 
         public bool AddSpace
         {
-            get { return addSpace; }
-            set { addSpace = value; }
+            get => addSpace;
+            set => addSpace = value;
         }
 
         public bool IgnoreWhitespace
         {
-            get { return ignoreWhitespace; }
-            set { ignoreWhitespace = value; }
+            get => ignoreWhitespace;
+            set => ignoreWhitespace = value;
         }
 
         public Rule[] Rules
         {
-            get { return rules; }
-            set { rules = value ?? new Rule[0]; }
+            get => rules;
+            set => rules = value ?? Array.Empty<Rule>();
         }
         
         /// <summary>
@@ -70,9 +72,9 @@ namespace ASCompletion.Completion
         /// </summary>
         public bool ShouldOpen(char charBefore, byte styleBefore, char charAfter, byte styleAfter)
         {
-            for (int i = 0; i < rules.Length; i++)
+            foreach (var it in rules)
             {
-                if (rules[i].Matches(charBefore, styleBefore, charAfter, styleAfter))
+                if (it.Matches(charBefore, styleBefore, charAfter, styleAfter))
                 {
                     return true;
                 }
@@ -107,15 +109,15 @@ namespace ASCompletion.Completion
         [Serializable]
         public sealed class Rule
         {
-            private bool notAfterChars;
-            private Regex afterChars;
-            private bool notAfterStyles;
-            private Style[] afterStyles;
-            private bool notBeforeChars;
-            private Regex beforeChars;
-            private bool notBeforeStyles;
-            private Style[] beforeStyles;
-            private Logic logic;
+            bool notAfterChars;
+            Regex afterChars;
+            bool notAfterStyles;
+            Style[] afterStyles;
+            bool notBeforeChars;
+            Regex beforeChars;
+            bool notBeforeStyles;
+            Style[] beforeStyles;
+            Logic logic;
 
             public Rule()
             {
@@ -145,59 +147,59 @@ namespace ASCompletion.Completion
 
             public bool NotAfterChars
             {
-                get { return notAfterChars; }
-                set { notAfterChars = value; }
+                get => notAfterChars;
+                set => notAfterChars = value;
             }
 
             public string AfterChars
             {
-                get { return FromRegex(afterChars); }
-                set { afterChars = ToRegex(value); }
+                get => FromRegex(afterChars);
+                set => afterChars = ToRegex(value);
             }
 
             public bool NotAfterStyles
             {
-                get { return notAfterStyles; }
-                set { notAfterStyles = value; }
+                get => notAfterStyles;
+                set => notAfterStyles = value;
             }
 
             public Style[] AfterStyles
             {
-                get { return afterStyles ?? new Style[0]; }
-                set { afterStyles = value == null || value.Length == 0 ? null : value; }
+                get => afterStyles ?? Array.Empty<Style>();
+                set => afterStyles = value.IsNullOrEmpty() ? null : value;
             }
             
             public bool NotBeforeChars
             {
-                get { return notBeforeChars; }
-                set { notBeforeChars = value; }
+                get => notBeforeChars;
+                set => notBeforeChars = value;
             }
 
             public string BeforeChars
             {
-                get { return FromRegex(beforeChars); }
-                set { beforeChars = ToRegex(value); }
+                get => FromRegex(beforeChars);
+                set => beforeChars = ToRegex(value);
             }
             
             public bool NotBeforeStyles
             {
-                get { return notBeforeStyles; }
-                set { notBeforeStyles = value; }
+                get => notBeforeStyles;
+                set => notBeforeStyles = value;
             }
 
             public Style[] BeforeStyles
             {
-                get { return beforeStyles ?? new Style[0]; }
-                set { beforeStyles = value == null || value.Length == 0 ? null : value; }
+                get => beforeStyles ?? Array.Empty<Style>();
+                set => beforeStyles = value.IsNullOrEmpty() ? null : value;
             }
 
             public Logic Logic
             {
-                get { return logic; }
-                set { logic = value; }
+                get => logic;
+                set => logic = value;
             }
 
-            private static Regex ToRegex(string value)
+            static Regex ToRegex(string value)
             {
                 if (string.IsNullOrEmpty(value))
                 {
@@ -206,47 +208,37 @@ namespace ASCompletion.Completion
                 return new Regex("[" + Escape(value) + "]", RegexOptions.Compiled | RegexOptions.Singleline);
             }
 
-            private static string FromRegex(Regex value)
+            static string FromRegex(Regex value)
             {
-                if (value == null)
-                {
-                    return string.Empty;
-                }
+                if (value is null) return string.Empty;
                 string str = value.ToString();
                 return Unescape(str.Substring(1, str.Length - 2));
             }
 
-            private static string Escape(string value)
+            static string Escape(string value)
             {
                 return value.Replace("(", @"\(").Replace(")", @"\)").Replace("[", @"\[").Replace("]", @"\]").Replace("{", @"\{").Replace("}", @"\}");
             }
 
-            private static string Unescape(string value)
+            static string Unescape(string value)
             {
                 return value.Replace(@"\(", "(").Replace(@"\)", ")").Replace(@"\[", "[").Replace(@"\]", "]").Replace(@"\{", "{").Replace(@"\}", "}");
             }
 
-            private static bool RegexCheck(Regex regex, char c, bool exclude)
+            static bool RegexCheck(Regex regex, char c, bool exclude)
             {
-                if (regex == null)
-                {
-                    return exclude;
-                }
-                return regex.IsMatch(c.ToString()) ^ exclude;
+                return regex?.IsMatch(c.ToString()) ^ exclude ?? exclude;
             }
 
-            private static bool ArrayCheck(Style[] array, byte s, bool exclude)
+            static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
-                if (array == null)
-                {
-                    return exclude;
-                }
+                if (array is null) return exclude;
                 return Array.IndexOf(array, (Style) s) >= 0 ^ exclude;
             }
 
             public Rule Clone()
             {
-                return new Rule()
+                return new Rule
                 {
                     notAfterChars = notAfterChars,
                     afterChars = afterChars,
@@ -269,13 +261,11 @@ namespace ASCompletion.Completion
                         || RegexCheck(beforeChars, charAfter, notBeforeChars)
                         || ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
                 }
-                else /*if (logic == Logic.And)*/
-                {
-                    return RegexCheck(afterChars, charBefore, notAfterChars)
-                        && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
-                        && RegexCheck(beforeChars, charAfter, notBeforeChars)
-                        && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
-                }
+
+                return RegexCheck(afterChars, charBefore, notAfterChars)
+                       && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
+                       && RegexCheck(beforeChars, charAfter, notBeforeChars)
+                       && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
             }
         }
 

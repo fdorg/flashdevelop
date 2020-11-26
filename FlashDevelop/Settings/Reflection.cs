@@ -1,22 +1,21 @@
 using System;
 using System.Drawing;
 using System.Reflection;
-using PluginCore;
 using PluginCore.Managers;
 using ScintillaNet.Enums;
 
 namespace FlashDevelop.Settings
 {
-    public partial class SettingObject : ISettings
+    public partial class SettingObject
     {
         /// <summary>
         /// Sets a value of a setting
         /// </summary>
-        public void SetValue(String name, Object value)
+        public void SetValue(string name, object value)
         {
             try
             {
-                Type type = this.GetType();
+                Type type = GetType();
                 PropertyInfo info = type.GetProperty(name);
                 info.SetValue(this, value, null);
             }
@@ -29,11 +28,11 @@ namespace FlashDevelop.Settings
         /// <summary>
         /// Gets a value of a setting as an object
         /// </summary>
-        public Object GetValue(String name)
+        public object GetValue(string name)
         {
             try
             {
-                Type type = this.GetType();
+                Type type = GetType();
                 PropertyInfo info = type.GetProperty(name);
                 return info.GetValue(this, null);
             }
@@ -51,14 +50,14 @@ namespace FlashDevelop.Settings
         {
             try
             {
-                SettingObject defaults = GetDefaultSettings();
-                PropertyInfo[] properties = settings.GetType().GetProperties();
+                var defaults = GetDefaultSettings();
+                var properties = settings.GetType().GetProperties();
                 foreach (PropertyInfo property in properties)
                 {
-                    Object current = settings.GetValue(property.Name);
-                    if (current == null || (current is Color && (Color)current == Color.Empty))
+                    var current = settings.GetValue(property.Name);
+                    if (current is null || (current is Color color && color == Color.Empty))
                     {
-                        Object value = defaults.GetValue(property.Name);
+                        var value = defaults.GetValue(property.Name);
                         settings.SetValue(property.Name, value);
                     }
                 }
@@ -73,13 +72,10 @@ namespace FlashDevelop.Settings
         /// Gets a fresh copy of the settings
         /// </summary>
         public static SettingObject GetDefaultSettings()
-        {
-            SettingObject settings = new SettingObject();
-            settings.IndentView = IndentView.Real;
-            settings.DefaultFont = SystemFonts.MenuFont;
-            return settings;
-        }
-
+            => new SettingObject
+            {
+                IndentView = IndentView.Real,
+                DefaultFont = SystemFonts.MenuFont
+            };
     }
-
 }

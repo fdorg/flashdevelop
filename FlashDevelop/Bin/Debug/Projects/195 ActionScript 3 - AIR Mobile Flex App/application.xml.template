@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
-<application xmlns="http://ns.adobe.com/air/application/28.0">
+<application xmlns="http://ns.adobe.com/air/application/33.1">
 	
 	<id>air.$(PACKAGEDOT)$(PROJECTID)</id>
 	<versionNumber>0.1</versionNumber>
@@ -14,7 +14,7 @@
 		<manifestAdditions><![CDATA[
 			
 			<manifest android:installLocation="auto">
-			  <uses-sdk android:minSdkVersion="8"/>
+			  <uses-sdk android:minSdkVersion="14"/>
 				<uses-permission android:name="android.permission.INTERNET"/>
 				<uses-feature android:required="true" android:name="android.hardware.touchscreen.multitouch"/>
 			</manifest>

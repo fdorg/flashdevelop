@@ -12,8 +12,6 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class FlexCompilerShell : MarshalByRefObject
     {
-        public static string FcshPath;
-
         //C:\...\Main.as(17): col: 15 Warning: variable 'yc' has no type declaration.
         private static readonly Regex reWarning
             = new Regex("\\([0-9]+\\): col: [0-9]+ Warning:", RegexOptions.Compiled);
@@ -37,7 +35,7 @@ namespace ProjectManager.Helpers
             errorList = new List<string>();
             warningList = new List<string>();
 
-            if (jvmarg == null)
+            if (jvmarg is null)
             {
                 process = null;
                 return "Failed, no compiler configured";
@@ -72,25 +70,19 @@ namespace ProjectManager.Helpers
             return ReadUntilPrompt();
         }
 
-        void process_Exited(object sender, EventArgs e)
-        {
-            throw new Exception("Process Exited");
-        }
-
+        void process_Exited(object sender, EventArgs e) => throw new Exception("Process Exited");
 
         public void Compile(string projectPath,
-                            bool configChanged,
                             string arguments,
                             out string output,
                             out string[] errors,
                             out string[] warnings,
                             string jvmarg)
         {
-            Compile(projectPath, configChanged, arguments, out output, out errors, out warnings, jvmarg, "java.exe" /*or JvmConfigHelper.GetJavaEXE( null )*/ );
+            Compile(projectPath, arguments, out output, out errors, out warnings, jvmarg, "java.exe" /*or JvmConfigHelper.GetJavaEXE( null )*/ );
         }
 
         public void Compile(string projectPath,
-                            bool configChanged,
                             string arguments,
                             out string output,
                             out string[] errors,
@@ -105,7 +97,7 @@ namespace ProjectManager.Helpers
                 Cleanup();
 
             // start up fcsh if necessary
-            if (process == null || process.HasExited)
+            if (process is null || process.HasExited)
             {
                 o.AppendLine("Starting java as: " + javaExe + " " + jvmarg);
                 o.AppendLine("INITIALIZING: " + Initialize(jvmarg, projectPath, javaExe));
@@ -117,7 +109,7 @@ namespace ProjectManager.Helpers
             }
 
             // success?
-            if (process == null)
+            if (process is null)
             {
                 output = o.ToString();
                 errorList.Add("Could not compile because the fcsh process could not be started.");
@@ -157,7 +149,7 @@ namespace ProjectManager.Helpers
                 // force a fresh compile
                 lastCompileID = 0;
                 lastArguments = null;
-                Compile(projectPath, true, arguments, out output, out errors, out warnings, jvmarg, javaExe);
+                Compile(projectPath, arguments, out output, out errors, out warnings, jvmarg, javaExe);
                 return;
             }
 
@@ -238,7 +230,7 @@ namespace ProjectManager.Helpers
             lock (typeof(FlexCompilerShell))
                 line = process.StandardOutput.ReadLine();
 
-            if (line == null)
+            if (line is null)
                 return 0;
 
             // loop through all lines, regex matching phrase
@@ -248,22 +240,19 @@ namespace ProjectManager.Helpers
                 lock (typeof(FlexCompilerShell))
                     line = process.StandardOutput.ReadLine();
 
-                if (line == null) return 0;
-                else m = Regex.Match(line, "Assigned ([0-9]+) as the compile target id");
+                if (line is null) return 0;
+                m = Regex.Match(line, "Assigned ([0-9]+) as the compile target id");
             }
 
             if (m.Groups.Count == 2) return int.Parse(m.Groups[1].Value);
-            else throw new Exception("Couldn't find the compile ID assigned by fcsh!");
+            throw new Exception("Couldn't find the compile ID assigned by fcsh!");
         }
 
         /// <summary>
         /// Read until fcsh is in idle state, displaying its (fcsh) prompt
         /// </summary>
         /// <returns></returns>
-        private string ReadUntilPrompt()
-        {
-            return ReadUntilToken("(fcsh)");
-        }
+        private string ReadUntilPrompt() => ReadUntilToken("(fcsh)");
 
         private string ReadUntilToken(string token)
         {

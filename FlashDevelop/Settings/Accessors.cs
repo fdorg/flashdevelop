@@ -13,7 +13,7 @@ using ScintillaNet.Enums;
 
 namespace FlashDevelop.Settings
 {
-    public partial class SettingObject : ISettings
+    public partial class SettingObject
     {
         #region Folding
 
@@ -21,60 +21,60 @@ namespace FlashDevelop.Settings
         [DisplayName("Fold At Else")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
         [LocalizedDescription("FlashDevelop.Description.FoldAtElse")]
-        public Boolean FoldAtElse
+        public bool FoldAtElse
         {
-            get { return this.foldAtElse; }
-            set { this.foldAtElse = value; }
+            get => foldAtElse;
+            set => foldAtElse = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Fold At Comment")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
         [LocalizedDescription("FlashDevelop.Description.FoldComment")]
-        public Boolean FoldComment
+        public bool FoldComment
         {
-            get { return this.foldComment; }
-            set { this.foldComment = value; }
+            get => foldComment;
+            set => foldComment = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Use Compact Folding")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
         [LocalizedDescription("FlashDevelop.Description.FoldCompact")]
-        public Boolean FoldCompact
+        public bool FoldCompact
         {
-            get { return this.foldCompact; }
-            set { this.foldCompact = value; }
+            get => foldCompact;
+            set => foldCompact = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Fold At Html")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
         [LocalizedDescription("FlashDevelop.Description.FoldHtml")]
-        public Boolean FoldHtml
+        public bool FoldHtml
         {
-            get { return this.foldHtml; }
-            set { this.foldHtml = value; }
+            get => foldHtml;
+            set => foldHtml = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Fold At Preprocessor")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
         [LocalizedDescription("FlashDevelop.Description.FoldPreprocessor")]
-        public Boolean FoldPreprocessor
+        public bool FoldPreprocessor
         {
-            get { return this.foldPreprocessor; }
-            set { this.foldPreprocessor = value; }
+            get => foldPreprocessor;
+            set => foldPreprocessor = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Enable Folding")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
         [LocalizedDescription("FlashDevelop.Description.UseFolding")]
-        public Boolean UseFolding
+        public bool UseFolding
         {
-            get { return this.useFolding; }
-            set { this.useFolding = value; }
+            get => useFolding;
+            set => useFolding = value;
         }
 
         [DisplayName("Fold Flags")]
@@ -83,8 +83,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldFlags")]
         public FoldFlag FoldFlags
         {
-            get { return this.foldFlags; }
-            set { this.foldFlags = value; }
+            get => foldFlags;
+            set => foldFlags = value;
         }
 
         #endregion
@@ -95,90 +95,90 @@ namespace FlashDevelop.Settings
         [DisplayName("View EOL Characters")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewEOL")]
-        public Boolean ViewEOL
+        public bool ViewEOL
         {
-            get { return this.viewEOL; }
-            set { this.viewEOL = value; }
+            get => viewEOL;
+            set => viewEOL = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("View Shortcuts")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewShortcuts")]
-        public Boolean ViewShortcuts
+        public bool ViewShortcuts
         {
-            get { return this.viewShortcuts; }
-            set { this.viewShortcuts = value; }
+            get => viewShortcuts;
+            set => viewShortcuts = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("View Bookmarks")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewBookmarks")]
-        public Boolean ViewBookmarks
+        public bool ViewBookmarks
         {
-            get { return this.viewBookmarks; }
-            set { this.viewBookmarks = value; }
+            get => viewBookmarks;
+            set => viewBookmarks = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("View Line Numbers")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewLineNumbers")]
-        public Boolean ViewLineNumbers
+        public bool ViewLineNumbers
         {
-            get { return this.viewLineNumbers; }
-            set { this.viewLineNumbers = value; }
+            get => viewLineNumbers;
+            set => viewLineNumbers = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("View Indentation Guides")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewIndentationGuides")]
-        public Boolean ViewIndentationGuides
+        public bool ViewIndentationGuides
         {
-            get { return this.viewIndentationGuides; }
-            set { this.viewIndentationGuides = value; }
+            get => viewIndentationGuides;
+            set => viewIndentationGuides = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("View Whitespace Characters")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewWhitespace")]
-        public Boolean ViewWhitespace
+        public bool ViewWhitespace
         {
-            get { return this.viewWhitespace; }
-            set { this.viewWhitespace = value; }
+            get => viewWhitespace;
+            set => viewWhitespace = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("View ToolBar")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewToolBar")]
-        public Boolean ViewToolBar
+        public bool ViewToolBar
         {
-            get { return this.viewToolBar; }
-            set { this.viewToolBar = value; }
+            get => viewToolBar;
+            set => viewToolBar = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("View StatusBar")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewStatusBar")]
-        public Boolean ViewStatusBar
+        public bool ViewStatusBar
         {
-            get { return this.viewStatusBar; }
-            set { this.viewStatusBar = value; }
+            get => viewStatusBar;
+            set => viewStatusBar = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("View Modified Lines")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewModifiedLines")]
-        public Boolean ViewModifiedLines
+        public bool ViewModifiedLines
         {
-            get { return this.viewModifiedLines; }
-            set { this.viewModifiedLines = value; }
+            get => viewModifiedLines;
+            set => viewModifiedLines = value;
         }
 
         [XmlIgnore]
@@ -188,8 +188,8 @@ namespace FlashDevelop.Settings
         [DefaultValue(typeof(Font), "Courier New, 8.75pt")]
         public Font ConsoleFont
         {
-            get { return this.consoleFont; }
-            set { this.consoleFont = value; }
+            get => consoleFont;
+            set => consoleFont = value;
         }
 
         [XmlIgnore]
@@ -200,8 +200,8 @@ namespace FlashDevelop.Settings
         [RequiresRestart]
         public Font DefaultFont
         {
-            get { return this.defaultFont; }
-            set { this.defaultFont = value; }
+            get => defaultFont;
+            set => defaultFont = value;
         }
 
         #endregion
@@ -212,50 +212,50 @@ namespace FlashDevelop.Settings
         [DisplayName("Highlight Caret Line")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.CaretLineVisible")]
-        public Boolean CaretLineVisible
+        public bool CaretLineVisible
         {
-            get { return this.caretLineVisible; }
-            set { this.caretLineVisible = value; }
+            get => caretLineVisible;
+            set => caretLineVisible = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Keep Caret Centered")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.KeepCaretCentered")]
-        public Boolean KeepCaretCentered
+        public bool KeepCaretCentered
         {
-            get { return this.keepCaretCentered; }
-            set { this.keepCaretCentered = value; }
+            get => keepCaretCentered;
+            set => keepCaretCentered = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("End At Last Line")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.EndAtLastLine")]
-        public Boolean EndAtLastLine
+        public bool EndAtLastLine
         {
-            get { return this.endAtLastLine; }
-            set { this.endAtLastLine = value; }
+            get => endAtLastLine;
+            set => endAtLastLine = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Disable Highlight Guide")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.HighlightGuide")]
-        public Boolean HighlightGuide
+        public bool HighlightGuide
         {
-            get { return this.highlightGuide; }
-            set { this.highlightGuide = value; }
+            get => highlightGuide;
+            set => highlightGuide = value;
         }
 
         [DefaultValue(0)]
         [DisplayName("Print Margin Column")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.PrintMarginColumn")]
-        public Int32 PrintMarginColumn
+        public int PrintMarginColumn
         {
-            get { return this.printMarginColumn; }
-            set { this.printMarginColumn = value; }
+            get => printMarginColumn;
+            set => printMarginColumn = value;
         }
 
         [DisplayName("Virtual Space Mode")]
@@ -264,8 +264,8 @@ namespace FlashDevelop.Settings
         [DefaultValue(VirtualSpaceMode.RectangularSelection)]
         public VirtualSpaceMode VirtualSpaceMode
         {
-            get { return this.virtualSpaceMode; }
-            set { this.virtualSpaceMode = value; }
+            get => virtualSpaceMode;
+            set => virtualSpaceMode = value;
         }
 
         [DisplayName("End Of Line Mode")]
@@ -274,41 +274,41 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.EOLMode")]
         public EndOfLine EOLMode
         {
-            get { return this.eolMode; }
-            set { this.eolMode = value; }
+            get => eolMode;
+            set => eolMode = value;
         }
 
         [DefaultValue(500)]
         [DisplayName("Caret Period")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.CaretPeriod")]
-        public Int32 CaretPeriod
+        public int CaretPeriod
         {
-            get { return this.caretPeriod; }
-            set { this.caretPeriod = value; }
+            get => caretPeriod;
+            set => caretPeriod = value;
         }
 
         [DefaultValue(2)]
         [DisplayName("Caret Width")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.CaretWidth")]
-        public Int32 CaretWidth
+        public int CaretWidth
         {
-            get { return this.caretWidth; }
-            set { this.caretWidth = value; }
+            get => caretWidth;
+            set => caretWidth = value;
         }
 
         [DefaultValue(3000)]
         [DisplayName("Scroll Area Width")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.ScrollWidth")]
-        public Int32 ScrollWidth
+        public int ScrollWidth
         {
-            get { return this.scrollWidth; }
+            get => scrollWidth;
             set
             {
                 if (value < 0) throw new ArgumentOutOfRangeException();
-                this.scrollWidth = value;
+                scrollWidth = value;
             }
         }
 
@@ -316,30 +316,30 @@ namespace FlashDevelop.Settings
         [DisplayName("Default File Extension")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.DefaultFileExtension")]
-        public String DefaultFileExtension
+        public string DefaultFileExtension
         {
-            get { return this.defaultFileExtension; }
-            set { this.defaultFileExtension = value; }
+            get => defaultFileExtension;
+            set => defaultFileExtension = value;
         }
 
         [DefaultValue(15000)]
         [DisplayName("Backup Interval")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.BackupInterval")]
-        public Int32 BackupInterval
+        public int BackupInterval
         {
-            get { return this.backupInterval; }
-            set { this.backupInterval = value; }
+            get => backupInterval;
+            set => backupInterval = value;
         }
 
         [DefaultValue(3000)]
         [DisplayName("File Poll Interval")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.FilePollInterval")]
-        public Int32 FilePollInterval
+        public int FilePollInterval
         {
-            get { return this.filePollInterval; }
-            set { this.filePollInterval = value; }
+            get => filePollInterval;
+            set => filePollInterval = value;
         }
 
         [DefaultValue(HighlightMatchingWordsMode.SelectionOrPosition)]
@@ -348,39 +348,45 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsMode")]
         public HighlightMatchingWordsMode HighlightMatchingWordsMode
         {
-            get { return this.highlightMatchingWordsMode; }
-            set { this.highlightMatchingWordsMode = value; }
+            get => highlightMatchingWordsMode;
+            set => highlightMatchingWordsMode = value;
         }
+
+        [DefaultValue(false)]
+        [DisplayName("Highlight Matching Words Case-Sensitive")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsCaseSensitive")]
+        public bool HighlightMatchingWordsCaseSensitive { get; set; } = false;
 
         [DefaultValue(1200)]
         [DisplayName("Highlight Matching Words Delay")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsDelay")]
-        public Int32 HighlightMatchingWordsDelay
+        public int HighlightMatchingWordsDelay
         {
             get
             {
-                if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
-                return this.highlightMatchingWordsDelay;
+                if (highlightMatchingWordsDelay <= 0) highlightMatchingWordsDelay = 1200;
+                return highlightMatchingWordsDelay;
             }
-            set { this.highlightMatchingWordsDelay = value; }
+            set => highlightMatchingWordsDelay = value;
         }
 
         [DefaultValue(50)]
         [DisplayName("Clipboard History Size")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.ClipboardHistorySize")]
-        public Int32 ClipboardHistorySize
+        public int ClipboardHistorySize
         {
             get
             {
-                if (this.clipboardHistorySize <= 0) this.clipboardHistorySize = 50; // value was lost in the settings file, and was set via serialization.
-                return this.clipboardHistorySize;
+                if (clipboardHistorySize <= 0) clipboardHistorySize = 50; // value was lost in the settings file, and was set via serialization.
+                return clipboardHistorySize;
             }
             set
             {
                 if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
-                this.clipboardHistorySize = value;
+                clipboardHistorySize = value;
             }
         }
 
@@ -395,8 +401,8 @@ namespace FlashDevelop.Settings
         [RequiresRestart]
         public LocaleVersion LocaleVersion
         {
-            get { return this.localeVersion; }
-            set { this.localeVersion = value; }
+            get => localeVersion;
+            set => localeVersion = value;
         }
 
         [DefaultValue(CodePage.UTF8)]
@@ -405,18 +411,18 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DefaultCodePage")]
         public CodePage DefaultCodePage
         {
-            get { return this.defaultCodePage; }
-            set { this.defaultCodePage = value; }
+            get => defaultCodePage;
+            set => defaultCodePage = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Create Unicode With BOM")]
         [LocalizedCategory("FlashDevelop.Category.Locale")]
         [LocalizedDescription("FlashDevelop.Description.SaveUnicodeWithBOM")]
-        public Boolean SaveUnicodeWithBOM
+        public bool SaveUnicodeWithBOM
         {
-            get { return this.saveUnicodeWithBOM; }
-            set { this.saveUnicodeWithBOM = value; }
+            get => saveUnicodeWithBOM;
+            set => saveUnicodeWithBOM = value;
         }
 
         #endregion
@@ -427,20 +433,20 @@ namespace FlashDevelop.Settings
         [DisplayName("Use Backspace Unindents")]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.BackSpaceUnIndents")]
-        public Boolean BackSpaceUnIndents
+        public bool BackSpaceUnIndents
         {
-            get { return this.backSpaceUnIndents; }
-            set { this.backSpaceUnIndents = value; }
+            get => backSpaceUnIndents;
+            set => backSpaceUnIndents = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Use Tab Indents")]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.TabIndents")]
-        public Boolean TabIndents
+        public bool TabIndents
         {
-            get { return this.tabIndents; }
-            set { this.tabIndents = value; }
+            get => tabIndents;
+            set => tabIndents = value;
         }
 
         [DefaultValue(IndentView.Real)]
@@ -451,13 +457,10 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                if ((Int32)this.indentView == 0) this.indentView = IndentView.Real;
-                return this.indentView;
+                if ((int)indentView == 0) indentView = IndentView.Real;
+                return indentView;
             }
-            set
-            {
-                this.indentView = value;
-            }
+            set => indentView = value;
         }
 
         [DisplayName("Smart Indent Type")]
@@ -466,8 +469,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.SmartIndentType")]
         public SmartIndent SmartIndentType
         {
-            get { return this.smartIndentType; }
-            set { this.smartIndentType = value; }
+            get => smartIndentType;
+            set => smartIndentType = value;
         }
 
         [DisplayName("Coding Style Type")]
@@ -476,8 +479,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CodingStyle")]
         public CodingStyle CodingStyle
         {
-            get { return this.codingStyle; }
-            set { this.codingStyle = value; }
+            get => codingStyle;
+            set => codingStyle = value;
         }
 
         [DisplayName("Comment Block Indenting")]
@@ -486,38 +489,38 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CommentBlockStyle")]
         public CommentBlockStyle CommentBlockStyle
         {
-            get { return this.commentBlockStyle; }
-            set { this.commentBlockStyle = value; }
+            get => commentBlockStyle;
+            set => commentBlockStyle = value;
         }
 
         [DefaultValue(4)]
         [DisplayName("Indenting Size")]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.IndentSize")]
-        public Int32 IndentSize
+        public int IndentSize
         {
-            get { return this.indentSize; }
-            set { this.indentSize = value; }
+            get => indentSize;
+            set => indentSize = value;
         }
 
         [DefaultValue(4)]
         [DisplayName("Width Of Tab")]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.TabWidth")]
-        public Int32 TabWidth
+        public int TabWidth
         {
-            get { return this.tabWidth; }
-            set { this.tabWidth = value; }
+            get => tabWidth;
+            set => tabWidth = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Use Tab Characters")]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.UseTabs")]
-        public Boolean UseTabs
+        public bool UseTabs
         {
-            get { return this.useTabs; }
-            set { this.useTabs = value; }
+            get => useTabs;
+            set => useTabs = value;
         }
 
         #endregion
@@ -528,174 +531,188 @@ namespace FlashDevelop.Settings
         [DisplayName("Apply File Extension")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.ApplyFileExtension")]
-        public Boolean ApplyFileExtension
+        public bool ApplyFileExtension
         {
-            get { return this.applyFileExtension; }
-            set { this.applyFileExtension = value; }
+            get => applyFileExtension;
+            set => applyFileExtension = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Automatically Reload Modified Files")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.AutoReloadModifiedFiles")]
-        public Boolean AutoReloadModifiedFiles
+        public bool AutoReloadModifiedFiles
         {
-            get { return this.autoReloadModifiedFiles; }
-            set { this.autoReloadModifiedFiles = value; }
+            get => autoReloadModifiedFiles;
+            set => autoReloadModifiedFiles = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Use Sequential Tabbing")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.SequentialTabbing")]
-        public Boolean SequentialTabbing
+        public bool SequentialTabbing
         {
-            get { return this.sequentialTabbing; }
-            set { this.sequentialTabbing = value; }
+            get => sequentialTabbing;
+            set => sequentialTabbing = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Wrap Editor Text")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.WrapText")]
-        public Boolean WrapText
+        public bool WrapText
         {
-            get { return this.wrapText; }
-            set { this.wrapText = value; }
+            get => wrapText;
+            set => wrapText = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Use Brace Matching")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.BraceMatchingEnabled")]
-        public Boolean BraceMatchingEnabled
+        public bool BraceMatchingEnabled
         {
-            get { return this.braceMatchingEnabled; }
-            set { this.braceMatchingEnabled = value; }
+            get => braceMatchingEnabled;
+            set => braceMatchingEnabled = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Line Comments After Indent")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.LineCommentsAfterIndent")]
-        public Boolean LineCommentsAfterIndent
+        public bool LineCommentsAfterIndent
         {
-            get { return this.lineCommentsAfterIndent; }
-            set { this.lineCommentsAfterIndent = value; }
+            get => lineCommentsAfterIndent;
+            set => lineCommentsAfterIndent = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Move Cursor After Comment")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.MoveCursorAfterComment")]
-        public Boolean MoveCursorAfterComment
+        public bool MoveCursorAfterComment
         {
-            get { return this.moveCursorAfterComment; }
-            set { this.moveCursorAfterComment = value; }
+            get => moveCursorAfterComment;
+            set => moveCursorAfterComment = value;
         }
 
         [DefaultValue(15)]
         [DisplayName("Max Recent Files")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.MaxRecentFiles")]
-        public Int32 MaxRecentFiles
+        public int MaxRecentFiles
         {
             get
             {
-                if (this.maxRecentFiles <= 0) this.maxRecentFiles = 15;
-                return this.maxRecentFiles;
+                if (maxRecentFiles <= 0) maxRecentFiles = 15;
+                return maxRecentFiles;
             }
-            set { this.maxRecentFiles = value; }
+            set => maxRecentFiles = value;
+        }
+
+        [DefaultValue(1000)]
+        [DisplayName("Max Trace Lines")]
+        [LocalizedCategory("FlashDevelop.Category.Features")]
+        [LocalizedDescription("FlashDevelop.Description.MaxTraceLines")]
+        public int MaxTraceLines
+        {
+            get
+            {
+                if (uiMaxTraceLines <= 0) uiMaxTraceLines = 1000;
+                return uiMaxTraceLines;
+            }
+            set => uiMaxTraceLines = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Restore File States")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.RestoreFileStates")]
-        public Boolean RestoreFileStates
+        public bool RestoreFileStates
         {
-            get { return this.restoreFileStates; }
-            set { this.restoreFileStates = value; }
+            get => restoreFileStates;
+            set => restoreFileStates = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Restore File Session")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.RestoreFileSession")]
-        public Boolean RestoreFileSession
+        public bool RestoreFileSession
         {
-            get { return this.restoreFileSession; }
-            set { this.restoreFileSession = value; }
+            get => restoreFileSession;
+            set => restoreFileSession = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Confirm On Exit")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.ConfirmOnExit")]
-        public Boolean ConfirmOnExit
+        public bool ConfirmOnExit
         {
-            get { return this.confirmOnExit; }
-            set { this.confirmOnExit = value; }
+            get => confirmOnExit;
+            set => confirmOnExit = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Disable Replace In Files Confirm")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.DisableReplaceFilesConfirm")]
-        public Boolean DisableReplaceFilesConfirm
+        public bool DisableReplaceFilesConfirm
         {
-            get { return this.disableReplaceFilesConfirm; }
-            set { this.disableReplaceFilesConfirm = value; }
+            get => disableReplaceFilesConfirm;
+            set => disableReplaceFilesConfirm = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Redirect Find In Files Results")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.RedirectFilesResults")]
-        public Boolean RedirectFilesResults
+        public bool RedirectFilesResults
         {
-            get { return this.redirectFilesResults; }
-            set { this.redirectFilesResults = value; }
+            get => redirectFilesResults;
+            set => redirectFilesResults = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Disable Find Option Sync")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.DisableFindOptionSync")]
-        public Boolean DisableFindOptionSync
+        public bool DisableFindOptionSync
         {
-            get { return this.disableFindOptionSync; }
-            set { this.disableFindOptionSync = value; }
+            get => disableFindOptionSync;
+            set => disableFindOptionSync = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Disable Find Text Updating")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.DisableFindTextUpdating")]
-        public Boolean DisableFindTextUpdating
+        public bool DisableFindTextUpdating
         {
-            get { return this.disableFindTextUpdating; }
-            set { this.disableFindTextUpdating = value; }
+            get => disableFindTextUpdating;
+            set => disableFindTextUpdating = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Disable Simple Quick Find")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.DisableSimpleQuickFind")]
-        public Boolean DisableSimpleQuickFind
+        public bool DisableSimpleQuickFind
         {
-            get { return this.disableSimpleQuickFind; }
-            set { this.disableSimpleQuickFind = value; }
+            get => disableSimpleQuickFind;
+            set => disableSimpleQuickFind = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Disable Tab Differentiation")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.DisableTabDifferentiation")]
-        public Boolean DisableTabDifferentiation
+        public bool DisableTabDifferentiation
         {
-            get { return this.disableTabDifferentiation; }
-            set { this.disableTabDifferentiation = value; }
+            get => disableTabDifferentiation;
+            set => disableTabDifferentiation = value;
         }
 
         #endregion
@@ -706,40 +723,40 @@ namespace FlashDevelop.Settings
         [DisplayName("Keep Indent Tabs")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.KeepIndentTabs")]
-        public Boolean KeepIndentTabs
+        public bool KeepIndentTabs
         {
-            get { return this.keepIndentTabs; }
-            set { this.keepIndentTabs = value; }
+            get => keepIndentTabs;
+            set => keepIndentTabs = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Trim Trailing Whitespace")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.StripTrailingSpaces")]
-        public Boolean StripTrailingSpaces
+        public bool StripTrailingSpaces
         {
-            get { return this.stripTrailingSpaces; }
-            set { this.stripTrailingSpaces = value; }
+            get => stripTrailingSpaces;
+            set => stripTrailingSpaces = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Ensure Consistent Line Ends")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.EnsureConsistentLineEnds")]
-        public Boolean EnsureConsistentLineEnds
+        public bool EnsureConsistentLineEnds
         {
-            get { return this.ensureConsistentLineEnds; }
-            set { this.ensureConsistentLineEnds = value; }
+            get => ensureConsistentLineEnds;
+            set => ensureConsistentLineEnds = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Ensure Last Line End")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.EnsureLastLineEnd")]
-        public Boolean EnsureLastLineEnd
+        public bool EnsureLastLineEnd
         {
-            get { return this.ensureLastLineEnd; }
-            set { this.ensureLastLineEnd = value; }
+            get => ensureLastLineEnd;
+            set => ensureLastLineEnd = value;
         }
 
         #endregion
@@ -751,27 +768,27 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CheckForUpdates")]
         public UpdateInterval CheckForUpdates
         {
-            get { return this.checkForUpdates; }
-            set { this.checkForUpdates = value; }
+            get => checkForUpdates;
+            set => checkForUpdates = value;
         }
 
         [DisplayName("Latest Startup Command")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.LatestCommand")]
-        public Int32 LatestCommand
+        public int LatestCommand
         {
-            get { return this.latestCommand; }
-            set { this.latestCommand = value; }
+            get => latestCommand;
+            set => latestCommand = value;
         }
 
         [DisplayName("Last Active Path")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.LatestDialogPath")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String LatestDialogPath
+        public string LatestDialogPath
         {
-            get { return this.latestDialogPath; }
-            set { this.latestDialogPath = value; }
+            get => latestDialogPath;
+            set => latestDialogPath = value;
         }
 
         [DisplayName("Window Size")]
@@ -779,8 +796,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WindowSize")]
         public Size WindowSize
         {
-            get { return this.windowSize; }
-            set { this.windowSize = value; }
+            get => windowSize;
+            set => windowSize = value;
         }
 
         [DisplayName("Window State")]
@@ -788,8 +805,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WindowState")]
         public FormWindowState WindowState
         {
-            get { return this.windowState; }
-            set { this.windowState = value; }
+            get => windowState;
+            set => windowState = value;
         }
 
         [DisplayName("Window Position")]
@@ -797,28 +814,28 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WindowPosition")]
         public Point WindowPosition
         {
-            get { return this.windowPosition; }
-            set { this.windowPosition = value; }
+            get => windowPosition;
+            set => windowPosition = value;
         }
 
         [DisplayName("Previous Documents")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.PreviousDocuments")]
         [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor,System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-        public List<String> PreviousDocuments
+        public List<string> PreviousDocuments
         {
-            get { return this.previousDocuments; }
-            set { this.previousDocuments = value; }
+            get => previousDocuments;
+            set => previousDocuments = value;
         }
 
         [DisplayName("Disabled Plugins")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.DisabledPlugins")]
         [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor,System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-        public List<String> DisabledPlugins
+        public List<string> DisabledPlugins
         {
-            get { return this.disabledPlugins; }
-            set { this.disabledPlugins = value; }
+            get => disabledPlugins;
+            set => disabledPlugins = value;
         }
 
         #endregion
@@ -829,15 +846,15 @@ namespace FlashDevelop.Settings
         [DisplayName("Hover Delay")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.HoverDelay")]
-        public Int32 HoverDelay
+        public int HoverDelay
         {
-            get { return this.uiHoverDelay; }
+            get => uiHoverDelay;
             set
             {
-                this.uiHoverDelay = value;
-                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                uiHoverDelay = value;
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
-                    if (doc.IsEditable) doc.SciControl.MouseDwellTime = uiHoverDelay;
+                    if (doc.SciControl is { } sci) sci.MouseDwellTime = uiHoverDelay;
                 }
             }
         }
@@ -846,70 +863,70 @@ namespace FlashDevelop.Settings
         [DisplayName("Display Delay")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.DisplayDelay")]
-        public Int32 DisplayDelay
+        public int DisplayDelay
         {
-            get { return this.uiDisplayDelay; }
-            set { this.uiDisplayDelay = value; }
+            get => uiDisplayDelay;
+            set => uiDisplayDelay = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Show Details")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.ShowDetails")]
-        public Boolean ShowDetails
+        public bool ShowDetails
         {
-            get { return this.uiShowDetails; }
-            set { this.uiShowDetails = value; }
+            get => uiShowDetails;
+            set => uiShowDetails = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Auto Filter List")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.AutoFilterList")]
-        public Boolean AutoFilterList
+        public bool AutoFilterList
         {
-            get { return this.uiAutoFilterList; }
-            set { this.uiAutoFilterList = value; }
+            get => uiAutoFilterList;
+            set => uiAutoFilterList = value;
         }
 
         [DefaultValue(true)]
         [DisplayName("Enable AutoHide")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.EnableAutoHide")]
-        public Boolean EnableAutoHide
+        public bool EnableAutoHide
         {
-            get { return this.uiEnableAutoHide; }
-            set { this.uiEnableAutoHide = value; }
+            get => uiEnableAutoHide;
+            set => uiEnableAutoHide = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Wrap List")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.WrapList")]
-        public Boolean WrapList
+        public bool WrapList
         {
-            get { return this.uiWrapList; }
-            set { this.uiWrapList = value; }
+            get => uiWrapList;
+            set => uiWrapList = value;
         }
 
         [DefaultValue(false)]
         [DisplayName("Disable Smart Matching")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.DisableSmartMatch")]
-        public Boolean DisableSmartMatch
+        public bool DisableSmartMatch
         {
-            get { return this.uiDisableSmartMatch; }
-            set { this.uiDisableSmartMatch = value; }
+            get => uiDisableSmartMatch;
+            set => uiDisableSmartMatch = value;
         }
 
         [DefaultValue("")]
         [DisplayName("Completion List Insertion Triggers")]
         [LocalizedCategory("FlashDevelop.Category.Controls")]
         [LocalizedDescription("FlashDevelop.Description.InsertionTriggers")]
-        public String InsertionTriggers
+        public string InsertionTriggers
         {
-            get { return this.uiInsertionTriggers; }
-            set { this.uiInsertionTriggers = value; }
+            get => uiInsertionTriggers;
+            set => uiInsertionTriggers = value;
         }
 
         #endregion
@@ -921,10 +938,10 @@ namespace FlashDevelop.Settings
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomSnippetDir")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String CustomSnippetDir
+        public string CustomSnippetDir
         {
-            get { return this.customSnippetDir; }
-            set { this.customSnippetDir = value; }
+            get => customSnippetDir;
+            set => customSnippetDir = value;
         }
 
         [DefaultValue("")]
@@ -932,10 +949,10 @@ namespace FlashDevelop.Settings
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomTemplateDir")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String CustomTemplateDir
+        public string CustomTemplateDir
         {
-            get { return this.customTemplateDir; }
-            set { this.customTemplateDir = value; }
+            get => customTemplateDir;
+            set => customTemplateDir = value;
         }
 
         [DefaultValue("")]
@@ -943,10 +960,10 @@ namespace FlashDevelop.Settings
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomProjectsDir")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String CustomProjectsDir
+        public string CustomProjectsDir
         {
-            get { return this.customProjectsDir; }
-            set { this.customProjectsDir = value; }
+            get => customProjectsDir;
+            set => customProjectsDir = value;
         }
 
         [DefaultValue("")]
@@ -954,10 +971,10 @@ namespace FlashDevelop.Settings
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomCommandPrompt")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String CustomCommandPrompt
+        public string CustomCommandPrompt
         {
-            get { return this.customCommandPrompt; }
-            set { this.customCommandPrompt = value; }
+            get => customCommandPrompt;
+            set => customCommandPrompt = value;
         }
 
         #endregion
@@ -965,10 +982,10 @@ namespace FlashDevelop.Settings
         #region Hidden
 
         [Browsable(false)]
-        public Int64 LastUpdateCheck
+        public long LastUpdateCheck
         {
-            get { return this.lastUpdateCheck; }
-            set { this.lastUpdateCheck = value; }
+            get => lastUpdateCheck;
+            set => lastUpdateCheck = value;
         }
 
         #endregion
@@ -976,50 +993,43 @@ namespace FlashDevelop.Settings
         #region Legacy
 
         [Browsable(false)]
-        public Boolean UseListViewGrouping
+        public bool UseListViewGrouping
         {
-            get { return Globals.MainForm.GetThemeFlag("ListView.UseGrouping", true); }
+            get => PluginBase.MainForm.GetThemeFlag("ListView.UseGrouping", true);
             set {}
         }
 
         [Browsable(false)]
         public UiRenderMode RenderMode
         {
-            get
+            get => PluginBase.MainForm.GetThemeValue("Global.UiRenderMode", "Professional") switch
             {
-                String value = Globals.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
-                if (value == "System") return UiRenderMode.System;
-                else return UiRenderMode.Professional; 
-            }
+                "System" => UiRenderMode.System,
+                _ => UiRenderMode.Professional
+            };
             set {}
         }
 
         [Browsable(false)]
         public FlatStyle ComboBoxFlatStyle
         {
-            get
+            get => PluginBase.MainForm.GetThemeValue("ComboBox.FlatStyle", "Standard") switch
             {
-                String value = Globals.MainForm.GetThemeValue("ComboBox.FlatStyle", "Standard");
-                switch (value)
-                {
-                    case "Flat": return FlatStyle.Flat;
-                    case "Standard": return FlatStyle.Standard;
-                    case "System": return FlatStyle.System;
-                    default: return FlatStyle.Popup;
-                }
-            }
+                "Flat" => FlatStyle.Flat,
+                "Standard" => FlatStyle.Standard,
+                "System" => FlatStyle.System,
+                _ => FlatStyle.Popup,
+            };
             set {}
         }
 
         [Browsable(false)]
-        public Boolean UseSystemColors
+        public bool UseSystemColors
         {
-            get { return false; }
+            get => false;
             set {}
         }
 
         #endregion
-
     }
-
 }

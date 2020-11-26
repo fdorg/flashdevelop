@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -9,6 +10,7 @@ using FlashDevelop;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using ScintillaNet;
 using ScintillaNet.Enums;
@@ -18,13 +20,13 @@ namespace ASCompletion
     public class ASCompletionTests
     {
 #pragma warning disable CS0436 // Type conflicts with imported type
-        private MainForm mainForm;
+        MainForm mainForm;
 #pragma warning restore CS0436 // Type conflicts with imported type
-        private ISettings settings;
-        private ITabbedDocument doc;
+        ISettings settings;
+        ITabbedDocument doc;
         protected ScintillaControl sci;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureSetUp()
         {
 #pragma warning disable CS0436 // Type conflicts with imported type
@@ -36,6 +38,7 @@ namespace ASCompletion
             settings.SmartIndentType = SmartIndent.CPP;
             settings.TabIndents = true;
             settings.TabWidth = 4;
+            settings.DefaultFont.Returns(SystemFonts.DefaultFont);
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
@@ -54,9 +57,10 @@ namespace ASCompletion
 
             sci = GetBaseScintillaControl();
             doc.SciControl.Returns(sci);
+            CompletionList.CreateControl(PluginBase.MainForm);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;
@@ -65,7 +69,7 @@ namespace ASCompletion
             mainForm = null;
         }
 
-        private ScintillaControl GetBaseScintillaControl()
+        ScintillaControl GetBaseScintillaControl()
         {
             return new ScintillaControl
             {
@@ -102,12 +106,13 @@ namespace ASCompletion
         {
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
+            sci.Colourise(0, -1);
             var currentModel = ASContext.Context.CurrentModel;
             ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
-            var currentClass = currentModel.Classes.FirstOrDefault(line);
+            var currentClass = currentModel.Classes.FirstOrDefault(line) ?? ClassModel.VoidClass;
             ASContext.Context.CurrentClass.Returns(currentClass);
-            var currentMember = currentClass?.Members.FirstOrDefault(line);
+            var currentMember = currentClass.Members.FirstOrDefault(line);
             ASContext.Context.CurrentMember.Returns(currentMember);
             ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
         }
@@ -116,9 +121,7 @@ namespace ASCompletion
 
 public static class CollectionExtensions
 {
-    public static MemberModel FirstOrDefault(this MemberList list, int line) => list.Items.FirstOrDefault(line);
-
-    public static TSource FirstOrDefault<TSource>(this ICollection<TSource> items, int line) where TSource : MemberModel
+    public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> items, int line) where TSource : MemberModel
     {
         return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
     }

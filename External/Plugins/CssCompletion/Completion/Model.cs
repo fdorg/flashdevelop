@@ -19,7 +19,7 @@ namespace CssCompletion
         public bool AutoCompile;
         public bool AutoMinify;
 
-        public CssFeatures(string mode, Dictionary<string, string> config)
+        public CssFeatures(string mode, IDictionary<string, string> config)
         {
             Mode = mode;
             string compile = GetParam("compile", config);
@@ -44,14 +44,14 @@ namespace CssCompletion
                 Trigger = trigger[0];
         }
 
-        private string GetParam(string name, Dictionary<string, string> config)
+        static string GetParam(string name, IDictionary<string, string> config)
         {
             if (!config.ContainsKey(name)) return "";
             return config[name].Trim();
         }
     }
 
-    class LocalContext
+    internal class LocalContext
     {
         public ScintillaControl Sci;
         public char Separator;
@@ -70,7 +70,7 @@ namespace CssCompletion
         }
     }
 
-    class CssBlock
+    internal class CssBlock
     {
         public CssBlock Parent;
         public List<CssBlock> Children = new List<CssBlock>();
@@ -80,7 +80,7 @@ namespace CssCompletion
         public int ColTo;
     }
 
-    enum CompleteMode
+    internal enum CompleteMode
     {
         None,
         Selector,
@@ -106,47 +106,42 @@ namespace CssCompletion
     /// </summary>
     public class CompletionItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        static public Bitmap TagIcon;
-        static public Bitmap PropertyIcon;
-        static public Bitmap VariableIcon;
-        static public Bitmap ValueIcon;
-        static public Bitmap PseudoIcon;
-        static public Bitmap PrefixesIcon;
-
-        private string label;
-        private string description;
-        private ItemKind kind;
+        public static Bitmap TagIcon;
+        public static Bitmap PropertyIcon;
+        public static Bitmap VariableIcon;
+        public static Bitmap ValueIcon;
+        public static Bitmap PseudoIcon;
+        public static Bitmap PrefixesIcon;
+        readonly string description;
 
         public CompletionItem(string label, ItemKind kind)
         {
-            this.label = label;
-            this.kind = kind;
+            Label = label;
+            Kind = kind;
             description = "";
         }
         public CompletionItem(string label, ItemKind kind, string description)
         {
-            this.label = label;
-            this.kind = kind;
+            Label = label;
+            Kind = kind;
             this.description = description;
         }
-        public string Label
-        {
-            get { return label; }
-        }
+        public string Label { get; }
+
         public string Description
         {
-            get 
+            get
             {
-                string desc = "";
-                switch (kind)
+                var desc = Kind switch
                 {
-                    case ItemKind.Tag: desc = TextHelper.GetString("Info.CompletionTagDesc"); break;
-                    case ItemKind.Property: desc = TextHelper.GetString("Info.CompletionPropertyDesc"); break;
-                    case ItemKind.Variable: desc = TextHelper.GetString("Info.CompletionVariableDesc"); break;
-                    case ItemKind.Value: desc = TextHelper.GetString("Info.CompletionValueDesc"); break;
-                    case ItemKind.Pseudo: desc = TextHelper.GetString("Info.CompletionPseudoDesc"); break;
-                    case ItemKind.Prefixes: desc = TextHelper.GetString("Info.CompletionPrefixesDesc"); break;
-                }
+                    ItemKind.Tag => TextHelper.GetString("Info.CompletionTagDesc"),
+                    ItemKind.Property => TextHelper.GetString("Info.CompletionPropertyDesc"),
+                    ItemKind.Variable => TextHelper.GetString("Info.CompletionVariableDesc"),
+                    ItemKind.Value => TextHelper.GetString("Info.CompletionValueDesc"),
+                    ItemKind.Pseudo => TextHelper.GetString("Info.CompletionPseudoDesc"),
+                    ItemKind.Prefixes => TextHelper.GetString("Info.CompletionPrefixesDesc"),
+                    _ => string.Empty,
+                };
                 if (description.Length > 0)
                 {
                     int comment = description.IndexOfOrdinal("//");
@@ -160,34 +155,23 @@ namespace CssCompletion
                 return desc;
             }
         }
-        public ItemKind Kind { get { return kind; } }
-        public Bitmap Icon
+        public ItemKind Kind { get; }
+
+        public Bitmap Icon => Kind switch
         {
-            get 
-            {
-                switch (kind)
-                {
-                    case ItemKind.Tag: return TagIcon;
-                    case ItemKind.Property: return PropertyIcon;
-                    case ItemKind.Variable: return VariableIcon;
-                    case ItemKind.Value: return ValueIcon;
-                    case ItemKind.Pseudo: return PseudoIcon;
-                    case ItemKind.Prefixes: return PrefixesIcon;
-                }
-                return PropertyIcon;
-            }
-        }
-        public string Value
-        {
-            get { return label; }
-        }
-        Int32 IComparable.CompareTo(Object obj)
-        {
-            return String.Compare(Label, (obj as ICompletionListItem).Label, true);
-        }
-        Int32 IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
-        {
-            return String.Compare(Label, other.Label, true);
-        }
+            ItemKind.Tag => TagIcon,
+            ItemKind.Property => PropertyIcon,
+            ItemKind.Variable => VariableIcon,
+            ItemKind.Value => ValueIcon,
+            ItemKind.Pseudo => PseudoIcon,
+            ItemKind.Prefixes => PrefixesIcon,
+            _ => PropertyIcon,
+        };
+
+        public string Value => Label;
+
+        int IComparable.CompareTo(object obj) => string.Compare(Label, ((ICompletionListItem) obj).Label, true);
+
+        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other) => string.Compare(Label, other.Label, true);
     }
 }

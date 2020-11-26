@@ -103,14 +103,10 @@ namespace Ude
             base.Reset();
         }
         
-        public string Charset {
-            get { return charset; }
-        }
+        public string Charset => charset;
 
-        public float Confidence {
-            get { return confidence; }
-        }
-        
+        public float Confidence => confidence;
+
         protected override void Report(string charset, float confidence)
         {
             this.charset = charset;

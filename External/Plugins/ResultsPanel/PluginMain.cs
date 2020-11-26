@@ -17,77 +17,51 @@ namespace ResultsPanel
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "ResultsPanel";
-        private String pluginGuid = "24df7cd8-e5f0-4171-86eb-7b2a577703ba";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a results panel for console info to FlashDevelop";
-        private String pluginAuth = "FlashDevelop Team";
-        private Settings settingObject;
-        private String settingFilename;
+        Settings settingObject;
+        string settingFilename;
         internal PluginUI pluginUI;
         internal Image pluginImage;
         internal PanelContextMenu contextMenuStrip;
-        private ToolStripMenuItem viewItem;
-        private ToolStripMenuItem viewItemMainPanel;
-        private ToolStripSeparator viewItemSeparator;
+        ToolStripMenuItem viewItem;
+        ToolStripMenuItem viewItemMainPanel;
+        ToolStripSeparator viewItemSeparator;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(ResultsPanel);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "24df7cd8-e5f0-4171-86eb-7b2a577703ba";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a results panel for console info to FlashDevelop";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => settingObject;
 
         #endregion
 
@@ -98,25 +72,22 @@ namespace ResultsPanel
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreateMenuItem();
-            this.CreatePluginPanel();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreateMenuItem();
+            CreatePluginPanel();
         }
 
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -142,11 +113,11 @@ namespace ResultsPanel
                     break;
 
                 case EventType.ProcessStart:
-                    this.pluginUI.ClearOutput();
+                    pluginUI.ClearOutput();
                     break;
 
                 case EventType.ProcessEnd:
-                    this.pluginUI.DisplayOutput();
+                    pluginUI.DisplayOutput();
                     break;
 
                 case EventType.Trace:
@@ -158,7 +129,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Keys:
-                    KeyEvent ke = (KeyEvent) e;
+                    var ke = (KeyEvent) e;
                     switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
                     {
                         case null:
@@ -176,11 +147,14 @@ namespace ResultsPanel
                             ke.Handled = ResultsPanelHelper.ActiveUI.ClearIgnoredEntries();
                             break;
                         default:
-                            if (ke.Value == PanelContextMenu.CopyEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.CopyTextShortcut();
-                            else if (ke.Value == PanelContextMenu.IgnoreEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut();
+                            ke.Handled = ke.Value switch
+                            {
+                                PanelContextMenu.CopyEntryKeys => ResultsPanelHelper.ActiveUI.CopyTextShortcut(),
+                                PanelContextMenu.IgnoreEntryKeys => ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut(),
+                                _ => ke.Handled
+                            };
                             break;
                     }
-
                     break;
             }
         }
@@ -194,33 +168,26 @@ namespace ResultsPanel
         /// </summary>
         public void InitBasics()
         {
-            String dataDir = Path.Combine(PathHelper.DataDir, "ResultsPanel");
-            if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
-            this.settingFilename = Path.Combine(dataDir, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("127");
+            var path = Path.Combine(PathHelper.DataDir, nameof(ResultsPanel));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
+            pluginImage = PluginBase.MainForm.FindImage("127");
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
@@ -228,49 +195,42 @@ namespace ResultsPanel
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
-                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
+            const EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
+                                        | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
             EventManager.AddEventHandler(this, eventMask);
 
             UITools.Manager.OnMouseHover += Scintilla_OnMouseHover;
             UITools.Manager.OnMouseHoverEnd += Scintilla_OnMouseHoverEnd;
         }
 
-        private void Scintilla_OnMouseHover(ScintillaControl sender, int position)
+        static void Scintilla_OnMouseHover(ScintillaControl sender, int position)
         {
-            var document = DocumentManager.FindDocument(sender);
-            if (document == null)
-                return;
+            var sci = DocumentManager.FindDocument(sender)?.SciControl;
+            if (sci is null) return;
 
             var results = new List<string>();
             foreach (var ui in ResultsPanelHelper.PluginUIs)
             {
-                ui.GetResultsAt(results, document, position);
+                ui.GetResultsAt(results, sci, position);
             }
             //Main panel has to be handled specifically
-            ResultsPanelHelper.MainUI.GetResultsAt(results, document, position);
-
-            if (results.Count > 0)
-            {
-                var desc = string.Join(Environment.NewLine, results.ToArray());
-                UITools.ErrorTip.ShowAtMouseLocation(desc);
-            }
+            ResultsPanelHelper.MainUI.GetResultsAt(results, sci, position);
+            if (results.Count == 0) return;
+            var desc = string.Join(Environment.NewLine, results);
+            UITools.ErrorTip.ShowAtMouseLocation(desc);
         }
 
-        private void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position)
-        {
-            UITools.ErrorTip.Hide();
-        }
+        static void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position) => UITools.ErrorTip.Hide();
 
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
-            ResultsPanelHelper.Initialize(this, this.pluginUI);
+            pluginUI = new PluginUI(this);
+            pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
+            pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
+            ResultsPanelHelper.Initialize(this, pluginUI);
         }
 
         /// <summary>
@@ -289,49 +249,38 @@ namespace ResultsPanel
             var viewMenu = (ToolStripMenuItem) PluginBase.MainForm.FindMenuItem("ViewMenu");
             viewMenu.DropDownItems.Add(viewItem);
 
-            this.contextMenuStrip = new PanelContextMenu();
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.contextMenuStrip.NextEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.contextMenuStrip.PreviousEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.contextMenuStrip.ClearEntries);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.contextMenuStrip.ClearIgnoredEntries);
+            contextMenuStrip = new PanelContextMenu();
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", contextMenuStrip.NextEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", contextMenuStrip.PreviousEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", contextMenuStrip.ClearEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", contextMenuStrip.ClearIgnoredEntries);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItemMainPanel);
         }
 
-        private void ViewItem_DropDownOpening(object sender, EventArgs e)
+        void ViewItem_DropDownOpening(object sender, EventArgs e)
         {
             viewItem.DropDownItems.Clear();
             viewItem.DropDownItems.Add(viewItemMainPanel);
-
-            if (ResultsPanelHelper.PluginUIs.Count > 0)
+            if (ResultsPanelHelper.PluginUIs.Count == 0) return;
+            viewItem.DropDownItems.Add(viewItemSeparator);
+            foreach (var ui in ResultsPanelHelper.PluginUIs)
             {
-                viewItem.DropDownItems.Add(viewItemSeparator);
-                foreach (var ui in ResultsPanelHelper.PluginUIs)
-                {
-                    viewItem.DropDownItems.Add(new ToolStripMenuItem(ui.Text) { Tag = ui.GroupData });
-                }
+                viewItem.DropDownItems.Add(new ToolStripMenuItem(ui.Text) { Tag = ui.GroupData });
             }
         }
 
-        private void ViewItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void ViewItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            if (e.ClickedItem is ToolStripMenuItem)
+            if (!(e.ClickedItem is ToolStripMenuItem)) return;
+            var groupData = (string) e.ClickedItem.Tag;
+            if (groupData is null) pluginUI.ParentPanel.Show();
+            else
             {
-                string groupData = (string) e.ClickedItem.Tag;
-
-                if (groupData == null)
+                foreach (var ui in ResultsPanelHelper.PluginUIs)
                 {
-                    pluginUI.ParentPanel.Show();
-                }
-                else
-                {
-                    foreach (var ui in ResultsPanelHelper.PluginUIs)
-                    {
-                        if (ui.GroupData == groupData)
-                        {
-                            ui.ParentPanel.Show();
-                            break;
-                        }
-                    }
+                    if (ui.GroupData != groupData) continue;
+                    ui.ParentPanel.Show();
+                    break;
                 }
             }
         }

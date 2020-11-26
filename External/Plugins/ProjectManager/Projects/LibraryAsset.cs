@@ -1,6 +1,7 @@
 using System;
-using System.Collections;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS2;
 
@@ -18,7 +19,7 @@ namespace ProjectManager.Projects
         public string FontGlyphs;
         public string Sharepoint;
         public SwfAssetMode SwfMode;
-        public Boolean BitmapLinkage;
+        public bool BitmapLinkage;
 
         public LibraryAsset(Project project, string path)
         {
@@ -32,15 +33,15 @@ namespace ProjectManager.Projects
             SwfMode = SwfAssetMode.Library;
         }
 
-        public bool IsImage { get { return FileInspector.IsImage(Path, Extension); } }
-        public bool IsSound { get { return FileInspector.IsSound(Path, Extension); } }
-        public bool IsFont { get { return FileInspector.IsFont(Path, Extension); } }
-        public bool IsSwf { get { return FileInspector.IsSwf(Path, Extension); } }
-        public bool IsSwc { get { return FileInspector.IsSwc(Path, Extension); } }
+        public bool IsImage => FileInspector.IsImage(Extension);
+        public bool IsSound => FileInspector.IsSound(Extension);
+        public bool IsFont => FileInspector.IsFont(Extension);
+        public bool IsSwf => FileInspector.IsSwf(Extension);
+        public bool IsSwc => FileInspector.IsSwc(Path, Extension);
 
-        public string Extension { get { return System.IO.Path.GetExtension(Path).ToLower(); } }
-        
-        public string ID { get { return (ManualID != null) ? ManualID : GetAutoID(); } }
+        public string Extension => System.IO.Path.GetExtension(Path).ToLower();
+
+        public string ID => ManualID ?? GetAutoID();
 
         public string GetAutoID()
         {
@@ -48,14 +49,13 @@ namespace ProjectManager.Projects
             string autoID = Path.Replace(System.IO.Path.DirectorySeparatorChar,'.');
 
             // prefix with libraryprefix if this is an as2 project
-            AS2Project as2project = Project as AS2Project;
-            if (as2project != null && as2project.CompilerOptions.LibraryPrefix.Length > 0)
-                autoID = as2project.CompilerOptions.LibraryPrefix + "." + autoID;
+            if (Project is AS2Project project && project.CompilerOptions.LibraryPrefix.Length > 0)
+                autoID = project.CompilerOptions.LibraryPrefix + "." + autoID;
             
             return autoID;
         }
 
-        public bool HasManualID { get { return ManualID != null; } }
+        public bool HasManualID => ManualID != null;
     }
 
     public enum SwfAssetMode
@@ -70,48 +70,27 @@ namespace ProjectManager.Projects
 
     #region AssetCollection
 
-    public class AssetCollection : CollectionBase
+    public class AssetCollection : Collection<LibraryAsset>
     {
-        Project project;
+        readonly Project project;
 
         public AssetCollection(Project project)
         {
             this.project = project;
         }
 
-        public void Add(LibraryAsset asset)
-        {
-            List.Add(asset);
-        }
+        public void Add(string path) => Add(new LibraryAsset(project, path));
 
-        public void Add(string path)
-        {
-            Add(new LibraryAsset(project,path));
-        }
+        public bool Contains(string path) => this[path] != null;
 
-        public bool Contains(string path)
-        {
-            return this[path] != null;
-        }
-
-        public LibraryAsset this[string path]
-        {
-            get
-            {
-                foreach (LibraryAsset asset in List)
-                    if (asset.Path == path)
-                        return asset;
-                return null;
-            }
-        }
+        public LibraryAsset this[string path] => this.FirstOrDefault(asset => asset.Path == path);
 
         /// <summary>
         /// Removes any paths equal to or below the gives path.
         /// </summary>
         public void RemoveAtOrBelow(string path)
         {
-            if (List.Contains(path))
-                List.Remove(path);
+            Remove(path);
             RemoveBelow(path);
         }
 
@@ -120,29 +99,22 @@ namespace ProjectManager.Projects
         /// </summary>
         public void RemoveBelow(string path)
         {
-            for (int i = 0; i < List.Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                LibraryAsset asset = List[i] as LibraryAsset;
-
-                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
-                    asset.Path == path)
+                var asset = this[i];
+                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) || asset.Path == path)
                 {
-                    List.RemoveAt(i--); // search this index again
+                    RemoveAt(i--); // search this index again
                 }
             }
         }
 
-        public void Remove(LibraryAsset asset)
-        {
-            List.Remove(asset);
-        }
-
         public void Remove(string path)
         {
-            foreach (LibraryAsset asset in List)
+            foreach (var asset in this)
                 if (asset.Path == path)
                 {
-                    List.Remove(asset);
+                    Remove(asset);
                     return;
                 }
         }

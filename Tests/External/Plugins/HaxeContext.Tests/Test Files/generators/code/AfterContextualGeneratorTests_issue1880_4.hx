@@ -1,5 +1,5 @@
 ﻿package;
-class EFoo {
+class Issue1880_4 {
 	public function new() {
 		new Foo(~/regex/);
 	}

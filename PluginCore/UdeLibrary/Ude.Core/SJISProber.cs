@@ -46,10 +46,10 @@ namespace Ude.Core
     /// </summary>
     public class SJISProber : CharsetProber
     {
-        private CodingStateMachine codingSM;
-        private SJISContextAnalyser contextAnalyser;
-        private SJISDistributionAnalyser distributionAnalyser;
-        private byte[] lastChar = new byte[2];
+        private readonly CodingStateMachine codingSM;
+        private readonly SJISContextAnalyser contextAnalyser;
+        private readonly SJISDistributionAnalyser distributionAnalyser;
+        private readonly byte[] lastChar = new byte[2];
     
         public SJISProber()
         {

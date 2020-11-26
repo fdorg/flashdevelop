@@ -14,7 +14,7 @@ using ScintillaNet;
 
 namespace HaXeContext.Linters
 {
-    internal class DiagnosticsLinter : ILintProvider
+    class DiagnosticsLinter : ILintProvider
     {
         readonly ProcessingQueue fileQueue;
 
@@ -27,12 +27,12 @@ namespace HaXeContext.Linters
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
 
-            if (context == null || !(PluginBase.CurrentProject is ProjectManager.Projects.Haxe.HaxeProject) || !CanContinue(context)) return;
+            if (context is null || !(PluginBase.CurrentProject is ProjectManager.Projects.Haxe.HaxeProject) || !CanContinue(context)) return;
             
             var total = files.Count();
             var list = new List<LintingResult>();
 
-            String untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
+            string untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             foreach (var file in files)
             {
                 if (!File.Exists(file) || file.StartsWithOrdinal(untitledFileStart))
@@ -67,7 +67,7 @@ namespace HaXeContext.Linters
         public void LintProjectAsync(IProject project, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
-            if (context == null || !CanContinue(context)) return;
+            if (context is null || !CanContinue(context)) return;
 
             var list = new List<LintingResult>();
             var sci = GetStubSci();
@@ -100,62 +100,56 @@ namespace HaXeContext.Linters
             ConfigurationLanguage = "haxe"
         };
 
-        void AddDiagnosticsResults(List<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
+        static void AddDiagnosticsResults(ICollection<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
         {
-            if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
+            switch (status)
             {
-                foreach (var res in results)
-                {
-                    var range = res.Range ?? res.Args.Range;
-
-                    var result = new LintingResult
+                case HaxeCompleteStatus.DIAGNOSTICS when results != null:
+                    foreach (var res in results)
                     {
-                        File = range.Path,
-                        FirstChar = range.CharacterStart,
-                        Length = range.CharacterEnd - range.CharacterStart,
-                        Line = range.LineStart + 1,
-                    };
+                        var range = res.Range ?? res.Args.Range;
+                        var result = new LintingResult
+                        {
+                            File = range.Path,
+                            FirstChar = range.CharacterStart,
+                            Length = range.CharacterEnd - range.CharacterStart,
+                            Line = range.LineStart + 1,
+                        };
 
-                    switch (res.Severity)
-                    {
-                        case HaxeDiagnosticsSeverity.INFO:
-                            result.Severity = LintingSeverity.Info;
-                            break;
-                        case HaxeDiagnosticsSeverity.ERROR:
-                            result.Severity = LintingSeverity.Error;
-                            break;
-                        case HaxeDiagnosticsSeverity.WARNING:
-                            result.Severity = LintingSeverity.Warning;
-                            break;
-                        default:
-                            continue;
+                        switch (res.Severity)
+                        {
+                            case HaxeDiagnosticsSeverity.INFO:
+                                result.Severity = LintingSeverity.Info;
+                                break;
+                            case HaxeDiagnosticsSeverity.ERROR:
+                                result.Severity = LintingSeverity.Error;
+                                break;
+                            case HaxeDiagnosticsSeverity.WARNING:
+                                result.Severity = LintingSeverity.Warning;
+                                break;
+                            default: continue;
+                        }
+                        switch (res.Kind)
+                        {
+                            case HaxeDiagnosticsKind.UnusedImport:
+                                result.Description = TextHelper.GetString("Info.UnusedImport");
+                                break;
+                            case HaxeDiagnosticsKind.UnresolvedIdentifier:
+                                result.Description = TextHelper.GetString("Info.UnresolvedIdentifier");
+                                break;
+                            case HaxeDiagnosticsKind.CompilerError:
+                            case HaxeDiagnosticsKind.RemovableCode:
+                                result.Description = res.Args.Description;
+                                break;
+                            default: //in case new kinds are added in new compiler versions
+                                continue;
+                        }
+                        list.Add(result);
                     }
-
-                    switch (res.Kind)
-                    {
-                        case HaxeDiagnosticsKind.UnusedImport:
-                            result.Description = TextHelper.GetString("Info.UnusedImport");
-                            break;
-                        case HaxeDiagnosticsKind.UnresolvedIdentifier:
-                            result.Description = TextHelper.GetString("Info.UnresolvedIdentifier");
-                            break;
-                        case HaxeDiagnosticsKind.CompilerError:
-                        case HaxeDiagnosticsKind.RemovableCode:
-                            result.Description = res.Args.Description;
-                            break;
-                        default: //in case new kinds are added in new compiler versions
-                            continue;
-                    }
-                    
-                    list.Add(result);
-                }
-            }
-            else if (status == HaxeCompleteStatus.ERROR)
-            {
-                PluginBase.RunAsync(() =>
-                {
-                    TraceManager.Add(hc.Errors, (int)TraceType.Error);
-                });
+                    break;
+                case HaxeCompleteStatus.ERROR:
+                    PluginBase.RunAsync(() => TraceManager.Add(hc.Errors, (int)TraceType.Error));
+                    break;
             }
         }
     }
@@ -191,23 +185,17 @@ namespace HaXeContext.Linters
             lock (running)
                 running.Remove(task);
 
-            Action<Action> act;
-            if (queue.TryTake(out act))
-            {
-                Task t = CreateTask(act);
-
-                lock (running)
-                    running.Add(t);
-            }
+            if (!queue.TryTake(out var act)) return;
+            var t = CreateTask(act);
+            lock (running)
+                running.Add(t);
         }
 
         Task CreateTask(Action<Action> action)
         {
             Task task = null;
             task = Task.Factory.StartNew(() => action(() => TaskFinished(task)));
-
             return task;
         }
-
     }
 }

@@ -9,9 +9,9 @@ namespace FlashDebugger.Debugger
 {
     public class WatchManager
     {
-        private IProject m_Project;
-        private string m_SaveFileFullPath;
-        private List<string> m_WatchList = new List<string>();
+        IProject m_Project;
+        string m_SaveFileFullPath;
+        List<string> m_WatchList = new List<string>();
 
         public event EventHandler<WatchExpressionArgs> ExpressionAdded;
         public event EventHandler<WatchExpressionArgs> ExpressionRemoved;
@@ -19,31 +19,25 @@ namespace FlashDebugger.Debugger
         public event EventHandler ExpressionsCleared;
         public event EventHandler ExpressionsLoaded;
 
-        public IList<string> Watches
-        {
-            get { return m_WatchList.AsReadOnly(); }
-        }
+        public IList<string> Watches => m_WatchList.AsReadOnly();
 
         public IProject Project
         {
-            get { return m_Project; }
+            get => m_Project;
             set
             {
-                if (value != null)
-                {
-                    m_Project = value;
-                    this.ClearAll();
-                    m_SaveFileFullPath = GetWatchFile(m_Project.ProjectPath);
-                }
+                if (value is null) return;
+                m_Project = value;
+                ClearAll();
+                m_SaveFileFullPath = GetWatchFile(m_Project.ProjectPath);
             }
         }
 
-        private string GetWatchFile(string path)
+        static string GetWatchFile(string path)
         {
-            String dataDir = Path.Combine(PathHelper.DataDir, "FlashDebugger");
-            String cacheDir = Path.Combine(dataDir, "Watch");
+            var cacheDir = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger), "Watch");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-            String hashFileName = HashCalculator.CalculateSHA1(path);
+            var hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");
         }
 
@@ -69,14 +63,11 @@ namespace FlashDebugger.Debugger
 
         public bool Remove(string expr)
         {
-            int index = m_WatchList.IndexOf(expr);
-            if (index > -1)
-            {
-                m_WatchList.RemoveAt(index);
-                OnExpressionRemoved(expr, index);
-                return true;
-            }
-            return false;
+            var index = m_WatchList.IndexOf(expr);
+            if (index == -1) return false;
+            m_WatchList.RemoveAt(index);
+            OnExpressionRemoved(expr, index);
+            return true;
         }
 
         public bool RemoveAt(int index)
@@ -103,10 +94,7 @@ namespace FlashDebugger.Debugger
             return true;
         }
 
-        public void Save()
-        {
-            Save(m_SaveFileFullPath);
-        }
+        public void Save() => Save(m_SaveFileFullPath);
 
         public void Save(string filePath)
         {
@@ -116,63 +104,25 @@ namespace FlashDebugger.Debugger
             }
         }
 
-        public void Load()
-        {
-            Load(m_SaveFileFullPath);
-        }
+        public void Load() => Load(m_SaveFileFullPath);
 
         public void Load(string filePath)
         {
-            if (File.Exists(filePath))
-            {
-                m_WatchList = Util.SerializeXML<List<string>>.LoadFile(filePath);
-            }
-            else
-            {
-                m_WatchList = new List<string>();
-            }
+            m_WatchList = File.Exists(filePath)
+                ? Util.SerializeXML<List<string>>.LoadFile(filePath)
+                : new List<string>();
             OnExpressionsLoaded(EventArgs.Empty);
         }
 
-        protected void OnExpressionAdded(string expr, int index)
-        {
-            if (ExpressionAdded != null)
-            {
-                ExpressionAdded(this, new WatchExpressionArgs(expr, index));
-            }
-        }
+        protected void OnExpressionAdded(string expr, int index) => ExpressionAdded?.Invoke(this, new WatchExpressionArgs(expr, index));
 
-        protected void OnExpressionRemoved(string expr, int index)
-        {
-            if (ExpressionRemoved != null)
-            {
-                ExpressionRemoved(this, new WatchExpressionArgs(expr, index));
-            }
-        }
+        protected void OnExpressionRemoved(string expr, int index) => ExpressionRemoved?.Invoke(this, new WatchExpressionArgs(expr, index));
 
-        protected void OnExpressionReplaced(string oldExpr, string newExpr, int index)
-        {
-            if (ExpressionReplaced != null)
-            {
-                ExpressionReplaced(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
-            }
-        }
+        protected void OnExpressionReplaced(string oldExpr, string newExpr, int index) => ExpressionReplaced?.Invoke(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
 
-        protected void OnExpressionsCleared(EventArgs e)
-        {
-            if (ExpressionsCleared != null)
-            {
-                ExpressionsCleared(this, e);
-            }
-        }
+        protected void OnExpressionsCleared(EventArgs e) => ExpressionsCleared?.Invoke(this, e);
 
-        protected void OnExpressionsLoaded(EventArgs e)
-        {
-            if (ExpressionsLoaded != null)
-            {
-                ExpressionsLoaded(this, e);
-            }
-        }
+        protected void OnExpressionsLoaded(EventArgs e) => ExpressionsLoaded?.Invoke(this, e);
     }
 
     public class WatchExpressionArgs : EventArgs
@@ -183,8 +133,8 @@ namespace FlashDebugger.Debugger
 
         public WatchExpressionArgs(string expression, int position)
         {
-            this.Expression = expression;
-            this.Position = position;
+            Expression = expression;
+            Position = position;
         }
     }
 
@@ -198,9 +148,9 @@ namespace FlashDebugger.Debugger
 
         public WatchExpressionReplaceArgs(string oldExpression, string newExpression, int position)
         {
-            this.OldExpression = oldExpression;
-            this.NewExpression = newExpression;
-            this.Position = position;
+            OldExpression = oldExpression;
+            NewExpression = newExpression;
+            Position = position;
         }
     }
 }

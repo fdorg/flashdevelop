@@ -6,10 +6,10 @@ namespace SevenZip.Buffer
 {
     public class InBuffer
     {
-        byte[] m_Buffer;
+        readonly byte[] m_Buffer;
         uint m_Pos;
         uint m_Limit;
-        uint m_BufferSize;
+        readonly uint m_BufferSize;
         Stream m_Stream;
         bool m_StreamWasExhausted;
         ulong m_ProcessedSize;

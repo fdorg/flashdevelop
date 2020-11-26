@@ -9,10 +9,10 @@ namespace FlashViewer.Controls
 {
     public class FlashView : UserControl
     {
-        private String moviePath;
-        private AxShockwaveFlash flashMovie;
+        string moviePath;
+        AxShockwaveFlash flashMovie;
 
-        public FlashView(String file)
+        public FlashView(string file)
         {
             this.moviePath = file;
             this.InitializeComponent();
@@ -24,7 +24,7 @@ namespace FlashViewer.Controls
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FlashView));
             this.flashMovie = new AxShockwaveFlashObjects.AxShockwaveFlash();
@@ -47,7 +47,7 @@ namespace FlashViewer.Controls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flashMovie);
             this.Name = "FlashView";
-            this.Load += new EventHandler(this.FlashViewLoad);
+            this.Load += this.FlashViewLoad;
             this.Size = new System.Drawing.Size(571, 367);
             ((System.ComponentModel.ISupportInitialize)(this.flashMovie)).EndInit();
             this.ResumeLayout(false);
@@ -61,9 +61,9 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Accessor for the movie file path
         /// </summary>
-        public String MoviePath
+        public string MoviePath
         {
-            get { return this.moviePath; }
+            get => this.moviePath;
             set 
             { 
                 this.moviePath = value;
@@ -74,15 +74,12 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Accessor for the flash movie
         /// </summary>
-        public AxShockwaveFlash FlashMovie
-        {
-            get { return this.flashMovie; }
-        }
+        public AxShockwaveFlash FlashMovie => this.flashMovie;
 
         /// <summary>
         /// Initializes the control
         /// </summary>
-        private void FlashViewLoad(object sender, EventArgs e)
+        void FlashViewLoad(object sender, EventArgs e)
         {
             this.flashMovie.FSCommand += this.FlashMovieFSCommand;
             this.flashMovie.FlashCall += this.FlashMovieFlashCall;
@@ -95,15 +92,15 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Handles the FSCommand event
         /// </summary>
-        private void FlashMovieFSCommand(Object sender, _IShockwaveFlashEvents_FSCommandEvent e)
+        void FlashMovieFSCommand(object sender, _IShockwaveFlashEvents_FSCommandEvent e)
         {
             try
             {
                 if (e.command == "trace")
                 {
-                    Int32 state = 1;
-                    String message = e.args;
-                    if (message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                    int state = 1;
+                    string message = e.args;
+                    if (message.Length > 2 && message[1] == ':' && char.IsDigit(message[0]))
                     {
                         if (int.TryParse(message[0].ToString(), out state))
                         {
@@ -122,7 +119,7 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Handles the FlashCall event
         /// </summary>
-        private void FlashMovieFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        void FlashMovieFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
         {
             try
             {
@@ -138,9 +135,9 @@ namespace FlashViewer.Controls
                         if (reader.Name == "string")
                         {
                             reader.Read();
-                            Int32 state = 1;
-                            String message = reader.Value;
-                            if (message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                            int state = 1;
+                            string message = reader.Value;
+                            if (message.Length > 2 && message[1] == ':' && char.IsDigit(message[0]))
                             {
                                 if (int.TryParse(message[0].ToString(), out state))
                                 {

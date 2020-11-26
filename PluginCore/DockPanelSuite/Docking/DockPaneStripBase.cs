@@ -17,7 +17,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]        
         protected internal class Tab : IDisposable
         {
-            private IDockContent m_content;
+            private readonly IDockContent m_content;
 
             public Tab(IDockContent content)
             {
@@ -29,15 +29,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Dispose(false);
             }
 
-            public IDockContent Content
-            {
-                get { return m_content; }
-            }
+            public IDockContent Content => m_content;
 
-            public Form ContentForm
-            {
-                get { return m_content as Form; }
-            }
+            public Form ContentForm => m_content as Form;
 
             public void Dispose()
             {
@@ -72,24 +66,18 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_dockPane = pane;
             }
 
-            private DockPane m_dockPane;
-            public DockPane DockPane
-            {
-                get { return m_dockPane; }
-            }
+            private readonly DockPane m_dockPane;
+            public DockPane DockPane => m_dockPane;
 
-            public int Count
-            {
-                get { return DockPane.DisplayingContents.Count; }
-            }
+            public int Count => DockPane.DisplayingContents.Count;
 
             public Tab this[int index]
             {
                 get
                 {
                     IDockContent content = DockPane.DisplayingContents[index];
-                    if (content == null)
-                        throw (new ArgumentOutOfRangeException("index"));
+                    if (content is null)
+                        throw (new ArgumentOutOfRangeException(nameof(index)));
                     return content.DockHandler.GetTab(DockPane.TabStripControl);
                 }
             }
@@ -106,7 +94,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public int IndexOf(Tab tab)
             {
-                if (tab == null)
+                if (tab is null)
                     return -1;
 
                 return DockPane.DisplayingContents.IndexOf(tab.Content);
@@ -127,23 +115,17 @@ namespace WeifenLuo.WinFormsUI.Docking
             AllowDrop = true;
         }
 
-        private DockPane m_dockPane;
-        protected DockPane DockPane
-        {
-            get {   return m_dockPane;  }
-        }
+        private readonly DockPane m_dockPane;
+        protected DockPane DockPane => m_dockPane;
 
-        protected DockPane.AppearanceStyle Appearance
-        {
-            get {   return DockPane.Appearance; }
-        }
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
         private TabCollection m_tabs = null;
         protected TabCollection Tabs
         {
             get
             {
-                if (m_tabs == null)
+                if (m_tabs is null)
                     m_tabs = new TabCollection(DockPane);
 
                 return m_tabs;
@@ -214,10 +196,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 || Math.Abs(p1.Y - p2.Y) > (SystemInformation.DragSize.Height / 2);
         }
 
-        protected bool HasTabPageContextMenu
-        {
-            get { return DockPane.HasTabPageContextMenu; }
-        }
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
 
         protected void ShowTabPageContextMenu(Point position)
         {

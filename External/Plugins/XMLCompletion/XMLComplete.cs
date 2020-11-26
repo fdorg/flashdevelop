@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -19,7 +20,7 @@ namespace XMLCompletion
     {
         #region Properties
 
-        public static bool Active { get { return cType != XMLType.Invalid; } }
+        public static bool Active => cType != XMLType.Invalid;
 
         public static Bitmap HtmlAttributeIcon;
         public static Bitmap StyleAttributeIcon;
@@ -28,39 +29,37 @@ namespace XMLCompletion
         public static Bitmap HtmlTagIcon;
         public static Bitmap NamespaceTagIcon;
 
-        private static String cFile;
-        private static XMLType cType;
-        private static List<HTMLTag> knownTags;
-        private static List<string> namespaces;
-        private static string defaultNS;
-        private static Dictionary<string, LanguageDef> languageTags;
-        private static List<ICompletionListItem> xmlBlocks;
-        private static int justInsertedQuotesAt;
+        static string cFile;
+        static XMLType cType;
+        static List<HTMLTag> knownTags;
+        static List<string> namespaces;
+        static string defaultNS;
+        static Dictionary<string, LanguageDef> languageTags;
+        static List<ICompletionListItem> xmlBlocks;
+        static int justInsertedQuotesAt;
 
         /// <summary>
         /// Gets or sets the current editable file
         /// </summary> 
-        public static String CurrentFile
+        public static string CurrentFile
         {
-            get { return cFile; }
+            get => cFile;
             set
             {
                 cFile = value;
                 cType = XMLType.Invalid;
-
-                if (cFile == null) return;
-
-                String lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage;
-                String ext = Path.GetExtension(value);
+                if (cFile is null) return;
+                var ext = Path.GetExtension(value);
                 if (ext.Length == 0) return;
                 ext = ext.Substring(1);
+                var lang = PluginBase.MainForm.CurrentDocument?.SciControl.ConfigurationLanguage;
                 if (lang == "html") ext = "html";
-                if (languageTags == null) languageTags = new Dictionary<string, LanguageDef>();
+                languageTags ??= new Dictionary<string, LanguageDef>();
                 if (!languageTags.ContainsKey(ext)) TryLoadDeclaration(ext);
                 if (languageTags[ext] != null)
                 {
                     cType = XMLType.Known;
-                    LanguageDef def = languageTags[ext];
+                    var def = languageTags[ext];
                     knownTags = def.KnownTags;
                     namespaces = def.Namespaces;
                     defaultNS = def.DefaultNS;
@@ -73,10 +72,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets an instance of the settings class
         /// </summary> 
-        private static Settings PluginSettings
-        {
-            get { return Settings.Instance; }
-        }
+        static Settings PluginSettings => Settings.Instance;
 
         #endregion
 
@@ -85,13 +81,8 @@ namespace XMLCompletion
         /**
         * Extract the tag name
         */
-        private static readonly Regex tagName = new Regex("^<[/]?(?<name>[a-z][-a-z0-9_:.]*)[\\s/>]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
-        /**
-        * Check if the text ends with a closing tag
-        */
-        private static readonly Regex closingTag = new Regex("\\</[a-z][-a-z0-9_:]*\\>$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
-        
+        static readonly Regex tagName = new Regex("^<[/]?(?<name>[a-z][-a-z0-9_:.]*)[\\s/>]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         #endregion
         
         #region Initialization
@@ -110,19 +101,19 @@ namespace XMLCompletion
             HtmlAttributeIcon = new Bitmap(PluginBase.MainForm.FindImage("272"));
             HtmlTagIcon = new Bitmap(PluginBase.MainForm.FindImage("417"));
             NamespaceTagIcon = new Bitmap(PluginBase.MainForm.FindImage("98"));
-            UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(OnChar);
+            UITools.Manager.OnCharAdded += OnChar;
         }
         
         /// <summary>
         /// Loads the tag and attribute definitions
         /// </summary>
-        private static void TryLoadDeclaration(string ext)
+        static void TryLoadDeclaration(string ext)
         {
             try
             {
-                XmlDocument document = null;
-                String path = Path.Combine(PathHelper.DataDir, "XMLCompletion");
-                String file = Path.Combine(path, ext + ".xml");
+                XmlDocument document;
+                string path = Path.Combine(PathHelper.DataDir, "XMLCompletion");
+                string file = Path.Combine(path, ext + ".xml");
                 try
                 {
                     if (!File.Exists(file) && !WriteDefaultDeclarations(ext, file))
@@ -139,12 +130,12 @@ namespace XMLCompletion
                     ErrorManager.ShowError(ex);
                     return;
                 }
-                if (document != null && document.FirstChild.Name == "declarations")
+                if (document.FirstChild.Name == "declarations")
                 {
                     bool toUpper = (ext == "html" && PluginSettings.UpperCaseHtmlTags);
-                    Char[] coma = {','};
+                    char[] coma = {','};
                     XmlNode language = document.FirstChild;
-                    Int32 index = 0;
+                    int index = 0;
                     knownTags = new List<HTMLTag>();
                     namespaces = new List<string>();
                     Dictionary<string, string> groups = new Dictionary<string, string>();
@@ -152,59 +143,54 @@ namespace XMLCompletion
                     if (defs.Name == "groups")
                     {
                         foreach(XmlNode group in defs.ChildNodes)
-                        if (group.Name == "group") 
-                        {
-                            groups.Add(group.Attributes["id"].Value, group.Attributes["at"].Value);
-                        }
+                            if (group.Name == "group") 
+                            {
+                                groups.Add(group.Attributes["id"].Value, group.Attributes["at"].Value);
+                            }
                         index++;
                     }
-                    
-                    HTMLTag htag;
-                    String temp; String[] attributes;
-                    XmlAttribute isLeaf; XmlAttribute ns;
-                    defs = language.ChildNodes[index];
-                    if (defs.Name != "tags") 
-                        return;
-                    if (defs.Attributes["defaultNS"] == null) defaultNS = null;
-                    else defaultNS = defs.Attributes["defaultNS"].Value;
 
+                    defs = language.ChildNodes[index];
+                    if (defs.Name != "tags") return;
+                    defaultNS = defs.Attributes["defaultNS"]?.Value;
                     foreach(XmlNode tag in defs.ChildNodes)
-                    if (!string.IsNullOrEmpty(tag.Name) && tag.Name[0] != '#')
-                    {
-                        isLeaf = tag.Attributes["leaf"];
-                        ns = tag.Attributes["ns"];
-                        htag = new HTMLTag(
-                            (toUpper) ? tag.Name.ToUpper() : tag.Name, 
-                            (ns != null) ? ns.Value : null, isLeaf != null && isLeaf.Value == "yes");
-                        if (!string.IsNullOrEmpty(htag.NS) && !namespaces.Contains(htag.NS))
-                            namespaces.Add(htag.NS);
-                        htag.Attributes = new List<string>();
-                        temp = tag.Attributes["at"].Value;
-                        if (temp.IndexOf('@') >= 0)
+                        if (!string.IsNullOrEmpty(tag.Name) && tag.Name[0] != '#')
                         {
-                            attributes = temp.Split(coma);
-                            temp = "";
-                            foreach (String attribute in attributes)
+                            var isLeaf = tag.Attributes["leaf"];
+                            var ns = tag.Attributes["ns"];
+                            var htag = new HTMLTag(
+                                (toUpper) ? tag.Name.ToUpper() : tag.Name, 
+                                ns?.Value, isLeaf != null && isLeaf.Value == "yes");
+                            if (!string.IsNullOrEmpty(htag.NS) && !namespaces.Contains(htag.NS))
+                                namespaces.Add(htag.NS);
+                            htag.Attributes = new List<string>();
+                            var temp = tag.Attributes["at"].Value;
+                            string[] attributes;
+                            if (temp.Contains('@'))
                             {
-                                if (attribute.StartsWith('@'))
+                                attributes = temp.Split(coma);
+                                temp = "";
+                                foreach (string attribute in attributes)
                                 {
-                                    if (groups.ContainsKey(attribute))
-                                        temp += "," + groups[attribute];
-                                    continue;
+                                    if (attribute.StartsWith('@'))
+                                    {
+                                        if (groups.ContainsKey(attribute))
+                                            temp += "," + groups[attribute];
+                                        continue;
+                                    }
+                                    temp += "," + attribute;
                                 }
-                                temp += "," + attribute;
+                                temp = temp.Substring(1);
                             }
-                            temp = temp.Substring(1);
+                            attributes = temp.Split(coma);
+                            foreach (string attribute in attributes)
+                            {
+                                string aname = attribute.Trim();
+                                if (aname.Length > 0) htag.Attributes.Add(aname);
+                            }
+                            htag.Attributes.Sort();
+                            knownTags.Add(htag);
                         }
-                        attributes = temp.Split(coma);
-                        foreach (String attribute in attributes)
-                        {
-                            string aname = attribute.Trim();
-                            if (aname.Length > 0) htag.Attributes.Add(aname);
-                        }
-                        htag.Attributes.Sort();
-                        knownTags.Add(htag);
-                    }
                     knownTags.Sort();
                     namespaces.Sort();
                     languageTags[ext] = new LanguageDef(knownTags, namespaces, defaultNS);
@@ -219,26 +205,20 @@ namespace XMLCompletion
         /// <summary>
         /// Copies the default declarations to the disk
         /// </summary> 
-        private static bool WriteDefaultDeclarations(String ext, String file)
+        static bool WriteDefaultDeclarations(string ext, string file)
         {
             try
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
-                if (src == null) return false;
-
-                String content;
-                using (StreamReader sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                var assembly = Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
+                if (src is null) return false;
+                using var reader = new StreamReader(src);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
-                using (StreamWriter sw = File.CreateText(file))
-                {
-                    sw.Write(content);
-                    sw.Close();
-                }
+                using var writer = File.CreateText(file);
+                writer.Write(content);
+                writer.Close();
                 return true;
             }
             catch
@@ -254,26 +234,25 @@ namespace XMLCompletion
         /// <summary>
         /// Handles the incoming character
         /// </summary> 
-        public static void OnChar(ScintillaControl sci, Int32 value)
+        public static void OnChar(ScintillaControl sci, int value)
         {
             if (cType == XMLType.Invalid || (sci.ConfigurationLanguage != "xml" && sci.ConfigurationLanguage != "html")) 
                 return;
-            XMLContextTag ctag;
-            Int32 position = sci.CurrentPos;
+            var position = sci.CurrentPos;
             if (sci.BaseStyleAt(position) == 6 && value != '"')
                 return; // in XML attribute
-
-            Char c = ' ';
+            XMLContextTag ctag;
+            char c;
             DataEvent de;
             switch (value)
             {
                 case 10:
                     // Shift+Enter to insert <BR/>
-                    Int32 line = sci.LineFromPosition(position);
+                    int line = sci.LineFromPosition(position);
                     if (Control.ModifierKeys == Keys.Shift)
                     {
                         ctag = GetXMLContextTag(sci, position);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
+                        if (ctag.Tag is null || ctag.Tag.EndsWith('>'))
                         {
                             int start = sci.PositionFromLine(line)-((sci.EOLMode == 0)? 2:1);
                             sci.SetSel(start, position);
@@ -286,8 +265,8 @@ namespace XMLCompletion
                     {
                         // There is no standard for XML formatting, although most IDEs have similarities. We are mostly going with Visual Studio style with slight differences.
                         // Get last non-empty line.
-                        String text = "";
-                        Int32 line2 = line - 1;
+                        string text = "";
+                        int line2 = line - 1;
                         while (line2 >= 0 && text.Length == 0)
                         {
                             text = sci.GetLine(line2).TrimEnd();
@@ -299,14 +278,14 @@ namespace XMLCompletion
                             do
                             {
                                 position--;
-                                c = (Char)sci.CharAt(position);
+                                c = (char)sci.CharAt(position);
                             }
                             while (position > 0 && c != '>');
                             ctag = GetXMLContextTag(sci, c == '>' ? position + 1 : position);
                             // Line indentation.
-                            Int32 indent = sci.GetLineIndentation(line2 + 1);
+                            int indent = sci.GetLineIndentation(line2 + 1);
 
-                            String checkStart = null;
+                            string checkStart = null;
                             bool subIndent = true;
                             if (text.EndsWithOrdinal("<!--")) { checkStart = "-->"; subIndent = false; }
                             else if (text.EndsWithOrdinal("<![CDATA[")) { checkStart = "]]>"; subIndent = false; }
@@ -327,7 +306,7 @@ namespace XMLCompletion
                                         {
                                             if (tmpTag.Closed) 
                                                 continue;
-                                            else if (tmpTag.Closing)
+                                            if (tmpTag.Closing)
                                             {
                                                 tmpTags.Push(tmpTag);
                                             }
@@ -383,10 +362,11 @@ namespace XMLCompletion
                             finally { sci.EndUndoAction(); }
                             return;
                         }
-                        else if (!text.EndsWith('>'))
+
+                        if (!text.EndsWith('>'))
                         {
                             ctag = GetXMLContextTag(sci, sci.CurrentPos);
-                            if (ctag.Tag == null || ctag.Name == null) return;
+                            if (ctag.Tag is null || ctag.Name is null) return;
                             // We're inside a tag. Visual Studio indents with regards to the first line, other IDEs indent using the indentation of the last line with text.
                             int indent;
                             string tag = (ctag.Tag.IndexOf('\r') > 0 || ctag.Tag.IndexOf('\n') > 0) ? ctag.Tag.Substring(0, ctag.Tag.IndexOfAny(new[] {'\r', '\n'})).TrimEnd() : ctag.Tag.TrimEnd();
@@ -418,10 +398,8 @@ namespace XMLCompletion
                 case '/':
                     if (value == '/')
                     {
-                        if ((position < 2) || ((Char)sci.CharAt(position-2) != '<')) return;
-                        ctag = new XMLContextTag();
-                        ctag.Position = position - 2;
-                        ctag.Closing = true;
+                        if ((position < 2) || ((char)sci.CharAt(position-2) != '<')) return;
+                        ctag = new XMLContextTag {Position = position - 2, Closing = true};
                     }
                     else 
                     {
@@ -436,12 +414,8 @@ namespace XMLCompletion
                     // New tag
                     if (PluginSettings.EnableXMLCompletion && cType == XMLType.Known)
                     {
-                        List<ICompletionListItem> items = new List<ICompletionListItem>();
-                        String previous = null;
-                        foreach (string ns in namespaces)
-                        {
-                            items.Add(new NamespaceItem(ns));
-                        }
+                        string previous = null;
+                        var items = namespaces.Select(ns => new NamespaceItem(ns)).ToList<ICompletionListItem>();
                         foreach (HTMLTag tag in knownTags) 
                             if (tag.Name != previous && (tag.NS == "" || tag.NS == defaultNS)) 
                             {
@@ -455,7 +429,7 @@ namespace XMLCompletion
 
                 case ':':
                     ctag = GetXMLContextTag(sci, position);
-                    if (ctag.NameSpace == null || position - ctag.Position > ctag.Name.Length + 2) return;
+                    if (ctag.NameSpace is null || position - ctag.Position > ctag.Name.Length + 2) return;
                     // Allow another plugin to handle this
                     de = new DataEvent(EventType.Command, "XMLCompletion.Namespace", ctag);
                     EventManager.DispatchEvent(PluginBase.MainForm, de);
@@ -464,8 +438,8 @@ namespace XMLCompletion
                     // Show namespace's tags
                     if (PluginSettings.EnableXMLCompletion && cType == XMLType.Known)
                     {
-                        List<ICompletionListItem> items = new List<ICompletionListItem>();
-                        String previous = null;
+                        var items = new List<ICompletionListItem>();
+                        string previous = null;
                         foreach (HTMLTag tag in knownTags)
                             if (tag.Name != previous && tag.NS == ctag.NameSpace)
                             {
@@ -489,16 +463,16 @@ namespace XMLCompletion
 
                             if (ctag.Closing) return;
 
-                            Boolean isLeaf = false;
+                            bool isLeaf = false;
                             if (cType == XMLType.Known)
-                            foreach(HTMLTag tag in knownTags)
-                            {
-                                if (String.Compare(tag.Tag, ctag.Name, true) == 0)
+                                foreach(HTMLTag tag in knownTags)
                                 {
-                                    isLeaf = tag.IsLeaf;
-                                    break;
+                                    if (string.Compare(tag.Tag, ctag.Name, true) == 0)
+                                    {
+                                        isLeaf = tag.IsLeaf;
+                                        break;
+                                    }
                                 }
-                            }
                             if (isLeaf)
                             {
                                 sci.SetSel(position-1,position);
@@ -507,7 +481,7 @@ namespace XMLCompletion
                             }
                             else
                             {
-                                String closeTag = "</"+ctag.Name+">";
+                                string closeTag = "</"+ctag.Name+">";
                                 sci.ReplaceSel(closeTag);
                                 sci.SetSel(position, position);
                             }
@@ -523,7 +497,7 @@ namespace XMLCompletion
                     {
                         if (InQuotes(ctag.Tag) || ctag.Tag.LastIndexOf('"') < ctag.Tag.LastIndexOf('=')) return;
                         // Allow another plugin to handle this
-                        Object[] obj = new Object[] { ctag, "" };
+                        object[] obj = { ctag, "" };
                         de = new DataEvent(EventType.Command, "XMLCompletion.Attribute", obj);
                         EventManager.DispatchEvent(PluginBase.MainForm, de);
                         if (de.Handled) return;
@@ -531,11 +505,11 @@ namespace XMLCompletion
                         if (PluginSettings.EnableXMLCompletion && cType == XMLType.Known)
                         {
                             foreach (HTMLTag tag in knownTags)
-                                if (String.Compare(tag.Tag, ctag.Name, true) == 0)
+                                if (string.Compare(tag.Tag, ctag.Name, true) == 0)
                                 {
-                                    List<ICompletionListItem> items = new List<ICompletionListItem>();
-                                    String previous = null;
-                                    foreach (String attr in tag.Attributes)
+                                    var items = new List<ICompletionListItem>();
+                                    string previous = null;
+                                    foreach (string attr in tag.Attributes)
                                         if (attr != previous)
                                         {
                                             items.Add(new HtmlAttributeItem(attr));
@@ -546,14 +520,6 @@ namespace XMLCompletion
                                 }
                         }
                     }
-                    /*else
-                    {
-                        if (Control.ModifierKeys == Keys.Shift)
-                        {
-                            sci.SetSel(position - 1, position);
-                            sci.ReplaceSel("&nbsp;");
-                        }
-                    }*/
                     return;
                 
                 case '=':
@@ -561,17 +527,17 @@ namespace XMLCompletion
                     {
                         ctag = GetXMLContextTag(sci, position);
                         position = sci.CurrentPos-2;
-                        if (ctag.Tag != null && !String.IsNullOrEmpty(ctag.Name) && Char.IsLetter(ctag.Name[0]) 
+                        if (ctag.Tag != null && !string.IsNullOrEmpty(ctag.Name) && char.IsLetter(ctag.Name[0]) 
                             && !InQuotes(ctag.Tag) && (GetWordLeft(sci, ref position).Length > 0))
                         {
                             position = sci.CurrentPos;
-                            c = (Char)sci.CharAt(position);
+                            c = (char)sci.CharAt(position);
                             if (c > 32 && c != '>') sci.ReplaceSel("\"\" ");
                             else sci.ReplaceSel("\"\"");
                             sci.SetSel(position+1, position+1);
                             justInsertedQuotesAt = position+1;
                             // Allow another plugin to handle this
-                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new Object[] { ctag, string.Empty });
+                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new object[] { ctag, string.Empty });
                             EventManager.DispatchEvent(PluginBase.MainForm, de);
                         }
                     }
@@ -585,20 +551,20 @@ namespace XMLCompletion
                         if (justInsertedQuotesAt == position - 1)
                         {
                             justInsertedQuotesAt = -1;
-                            c = (Char)sci.CharAt(position - 2);
-                            if (c == '"' && (Char)sci.CharAt(position-2) == '"')
+                            c = (char)sci.CharAt(position - 2);
+                            if (c == '"' && (char)sci.CharAt(position-2) == '"')
                             {
                                 sci.SetSel(position - 2, position);
                                 sci.ReplaceSel("\"");
                             }
                             // Allow another plugin to handle this
-                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new Object[] {ctag, string.Empty});
+                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new object[] {ctag, string.Empty});
                             EventManager.DispatchEvent(PluginBase.MainForm, de);
                         }
                         else
                         {
-                            c = (Char)sci.CharAt(position - 1);
-                            if (c == '"' && (Char)sci.CharAt(position) == '"')
+                            c = (char)sci.CharAt(position - 1);
+                            if (c == '"' && (char)sci.CharAt(position) == '"')
                             {
                                 sci.SetSel(position - 1, position + 1);
                                 sci.ReplaceSel("\"");
@@ -612,11 +578,11 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
+                        if (ctag.Tag is null || ctag.Tag.EndsWith('>'))
                         {
-                            if ((Char)sci.CharAt(position-2) == '<')
+                            if ((char)sci.CharAt(position-2) == '<')
                             {
-                                sci.ReplaceSel((Char)value + ">");
+                                sci.ReplaceSel((char)value + ">");
                                 sci.SetSel(position, position);
                             }
                         }
@@ -627,9 +593,9 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
+                        if (ctag.Tag is null || ctag.Tag.EndsWith('>'))
                         {
-                            if ((Char)sci.CharAt(position-2) == '<')
+                            if ((char)sci.CharAt(position-2) == '<')
                             {
                                 CompletionList.Show(xmlBlocks, true);
                             }
@@ -642,19 +608,18 @@ namespace XMLCompletion
         /// <summary>
         /// Handles the incoming keys object
         /// </summary> 
-        public static Boolean OnShortCut(Keys keys)
+        public static bool OnShortCut(Keys keys)
         {
             if (cType == XMLType.Invalid) return false;
             if (keys == (Keys.Control | Keys.Space))
             {
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (!document.IsEditable) return false;
-                ScintillaControl sci = document.SciControl;
-                XMLContextTag ctag = GetXMLContextTag(sci, sci.CurrentPos);
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is null) return false;
+                var ctag = GetXMLContextTag(sci, sci.CurrentPos);
                 // Starting tag
-                if (ctag.Tag == null)
+                if (ctag.Tag is null)
                 {
-                    if (sci.CurrentPos > 0 && (Char)sci.CharAt(sci.CurrentPos - 1) == '<')
+                    if (sci.CurrentPos > 0 && (char)sci.CharAt(sci.CurrentPos - 1) == '<')
                     {
                         ctag.Tag = "<";
                         ctag.Name = "";
@@ -666,7 +631,7 @@ namespace XMLCompletion
                     return false;
                 }
                 // Closing tag
-                else if (ctag.Tag.StartsWithOrdinal("</") && (ctag.Tag.IndexOf(' ') < 0))
+                else if (ctag.Tag.StartsWithOrdinal("</") && !ctag.Tag.Contains(' '))
                 {
                     ctag.Name = ctag.Tag.Substring(2);
                     ctag.Tag = "<"+ctag.Name;
@@ -676,29 +641,29 @@ namespace XMLCompletion
                 if (ctag.Name != null && (ctag.Tag.Length == ctag.Name.Length+1))
                 {
                     // Allow another plugin to handle this
-                    DataEvent de = new DataEvent(EventType.Command, "XMLCompletion.Element", ctag);
+                    var de = new DataEvent(EventType.Command, "XMLCompletion.Element", ctag);
                     EventManager.DispatchEvent(PluginBase.MainForm, de);
                     if (de.Handled) return true;
 
                     if (cType == XMLType.Known)
                     {
-                        List<ICompletionListItem> items = new List<ICompletionListItem>();
-                        String previous = null;
+                        var items = new List<ICompletionListItem>();
+                        string previous = null;
                         foreach (HTMLTag tag in knownTags) 
-                        if (tag.Name != previous) 
-                        {
-                            items.Add( new HtmlTagItem(tag.Name, tag.Tag) );
-                            previous = tag.Name;
-                        }
+                            if (tag.Name != previous) 
+                            {
+                                items.Add( new HtmlTagItem(tag.Name, tag.Tag) );
+                                previous = tag.Name;
+                            }
                         CompletionList.Show(items, false, ctag.Name);
                     }
                 }
                 // Attribute completion
                 else
                 {
-                    Int32 position;
-                    String word;
-                    Object[] obj;
+                    int position;
+                    string word;
+                    object[] obj;
                     DataEvent de;
 
                     if (InQuotes(ctag.Tag))
@@ -706,7 +671,7 @@ namespace XMLCompletion
                         position = sci.CurrentPos - 1;
                         word = GetWordLeft(sci, ref position);
 
-                        obj = new Object[] { ctag, word };
+                        obj = new object[] {ctag, word};
                         de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", obj);
                         EventManager.DispatchEvent(PluginBase.MainForm, de);
 
@@ -718,7 +683,7 @@ namespace XMLCompletion
                     word = GetWordLeft(sci, ref position);
 
                     // Allow another plugin to handle this
-                    obj = new Object[]{ctag,word};
+                    obj = new object[] {ctag, word};
                     de = new DataEvent(EventType.Command, "XMLCompletion.Attribute", obj);
                     EventManager.DispatchEvent(PluginBase.MainForm, de);
                     if (de.Handled) return true;
@@ -726,19 +691,19 @@ namespace XMLCompletion
                     if (cType == XMLType.Known)
                     {
                         foreach (HTMLTag tag in knownTags)
-                        if (String.Compare(tag.Tag, ctag.Name, true) == 0)
-                        {
-                            List<ICompletionListItem> items = new List<ICompletionListItem>();
-                            String previous = null;
-                            foreach (String attr in tag.Attributes)
-                            if (attr != previous) 
+                            if (string.Compare(tag.Tag, ctag.Name, true) == 0)
                             {
-                                items.Add( new HtmlAttributeItem(attr) );
-                                previous = attr;
+                                var items = new List<ICompletionListItem>();
+                                string previous = null;
+                                foreach (string attr in tag.Attributes)
+                                    if (attr != previous) 
+                                    {
+                                        items.Add( new HtmlAttributeItem(attr) );
+                                        previous = attr;
+                                    }
+                                CompletionList.Show(items, true, word.Trim());
+                                return true;
                             }
-                            CompletionList.Show(items, true, word.Trim());
-                            return true;
-                        }
                     }
                 }
                 return true;
@@ -753,22 +718,20 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the xml context tag
         /// </summary> 
-        public static XMLContextTag GetXMLContextTag(ScintillaControl sci, Int32 position)
+        public static XMLContextTag GetXMLContextTag(ScintillaControl sci, int position)
         {
-            XMLContextTag xtag = new XMLContextTag();
-            if ((position == 0) || (sci == null)) return xtag;
-            string tag = "";
-            //Char c = (Char)sci.CharAt(position);
-            //tag += c;
+            var xtag = new XMLContextTag();
+            if ((position == 0) || (sci is null)) return xtag;
             position--;
-            Char c = (Char)sci.CharAt(position);
+            var tag = "";
+            char c = (char)sci.CharAt(position);
             tag = c + tag;
             bool inComment = false;
             bool inCDATA = false;
             while (position > 0)
             {
                 position--;
-                c = (Char)sci.CharAt(position);
+                c = (char)sci.CharAt(position);
                 tag = c + tag;
 
                 if (tag == "]]>") inCDATA = true;
@@ -788,7 +751,8 @@ namespace XMLCompletion
                     xtag.Position = position + 1;
                     return xtag;
                 }
-                else if (c == '{' && sci.BaseStyleAt(position) != 6 /*XML attribute value*/)
+
+                if (c == '{' && sci.BaseStyleAt(position) != 6 /*XML attribute value*/)
                 {
                     // code probably not inside a tag: most likely style or script tag without CDATA or comment
                     return xtag;
@@ -796,15 +760,15 @@ namespace XMLCompletion
             }
             xtag.Position = position;
             xtag.Tag = tag;
-            Match mTag = tagName.Match(tag + " ");
+            var mTag = tagName.Match(tag + " ");
             if (mTag.Success)
             {
                 xtag.Name = mTag.Groups["name"].Value;
                 xtag.Closing = tag[1] == '/';
                 xtag.Closed = tag.EndsWithOrdinal("/>") || tag.EndsWithOrdinal("-->");
-                if (xtag.Name.IndexOf(':') > 0)
+                if (xtag.Name.Contains(':', out var p) && p > 0)
                 {
-                    xtag.NameSpace = xtag.Name.Substring(0, xtag.Name.IndexOf(':'));
+                    xtag.NameSpace = xtag.Name.Substring(0, p);
                 }
             }
             else if (tag.StartsWithOrdinal("<!--"))
@@ -827,58 +791,55 @@ namespace XMLCompletion
         {
             int pos = tag.Position + 1;
             if (pos <= 0) pos = sci.CurrentPos;
-            XMLContextTag parent;
-            Stack<string> stack = new Stack<string>();
+            XMLContextTag result;
+            var stack = new Stack<string>();
             do
             {
-                parent = GetXMLContextTag(sci, pos);
-                pos = parent.Position;
-                if (parent.Name != null && parent.Tag != null)
+                result = GetXMLContextTag(sci, pos);
+                pos = result.Position;
+                if (result.Name != null && result.Tag != null)
                 {
-                    if (parent.Closing) stack.Push(parent.Name);
-                    else if (!parent.Closed && (stack.Count == 0 || stack.Pop() != parent.Name))
+                    if (result.Closing) stack.Push(result.Name);
+                    else if (!result.Closed && (stack.Count == 0 || stack.Pop() != result.Name))
                         break;
                 }
             }
             while (pos > 0);
-            return parent;
+            return result;
         }
 
         /// <summary>
         /// Gets the word from the specified position
         /// </summary> 
-        private static string GetWordLeft(ScintillaControl sci, ref Int32 position)
+        static string GetWordLeft(ScintillaControl sci, ref int position)
         {
-            Char c; String word = "";
-            String exclude = "(){};,+///\\=:.%\"<>";
+            var result = "";
+            const string exclude = "(){};,+///\\=:.%\"<>";
             while (position >= 0) 
             {
-                c = (Char)sci.CharAt(position);
-                if (c <= ' ') break;
-                else if (exclude.IndexOf(c) >= 0) break;
-                else word = c + word;
+                var c = (char)sci.CharAt(position);
+                if (c <= ' ' || exclude.Contains(c)) break;
+                result = c + result;
                 position--;
             }
-            return word;
+            return result;
         }
 
         /// <summary>
         /// Validates the if the tag is in quotes
         /// </summary> 
-        private static Boolean InQuotes(String tag)
+        static bool InQuotes(string tag)
         {
-            if (tag == null) return false;
-            Int32 n = tag.Length;
-            Boolean inQuotes = false;
-            for (Int32 i = 0; i < n; i++)
+            if (tag is null) return false;
+            int n = tag.Length;
+            bool inQuotes = false;
+            for (int i = 0; i < n; i++)
             {
                 if (tag[i] == '"') inQuotes = !inQuotes;
             }
             return inQuotes;
         }
-
         #endregion
-
     }
 
     public class LanguageDef

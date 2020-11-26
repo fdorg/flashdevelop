@@ -37,7 +37,7 @@
 //  2010-03-03  Z-1654  Fixed bug where escape characters were excluded in SplitQuoted()
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -67,8 +67,8 @@ namespace ICSharpCode.SharpZipLib.Core
         public NameFilter(string filter)
         {
             filter_ = filter;
-            inclusions_ = new ArrayList();
-            exclusions_ = new ArrayList();
+            inclusions_ = new List<Regex>();
+            exclusions_ = new List<Regex>();
             Compile();
         }
         #endregion
@@ -97,8 +97,8 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <returns>True if the expression is valid, false otherwise.</returns>
         public static bool IsValidFilterExpression(string toTest)
         {
-            if ( toTest == null ) {
-                throw new ArgumentNullException("toTest");
+            if ( toTest is null ) {
+                throw new ArgumentNullException(nameof(toTest));
             }
 
             bool result = true;
@@ -141,7 +141,7 @@ namespace ICSharpCode.SharpZipLib.Core
             char escape = '\\';
             char[] separators = { ';' };
 
-            ArrayList result = new ArrayList();
+            var result = new List<string>();
 
             if (!string.IsNullOrEmpty(original)) {
                 int endIndex = -1;
@@ -158,7 +158,7 @@ namespace ICSharpCode.SharpZipLib.Core
 #if NETCF_1_0
                             throw new ArgumentException("Missing terminating escape character");
 #else
-                            throw new ArgumentException("Missing terminating escape character", "original");
+                            throw new ArgumentException("Missing terminating escape character", nameof(original));
 #endif
                         }
                         // include escape if this is not an escaped separator
@@ -179,7 +179,7 @@ namespace ICSharpCode.SharpZipLib.Core
                 }
             }
 
-            return (string[])result.ToArray(typeof(string));
+            return result.ToArray();
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace ICSharpCode.SharpZipLib.Core
         {
             // TODO: Check to see if combining RE's makes it faster/smaller.
             // simple scheme would be to have one RE for inclusion and one for exclusion.
-            if ( filter_ == null ) {
+            if ( filter_ is null ) {
                 return;
             }
 
@@ -285,9 +285,9 @@ namespace ICSharpCode.SharpZipLib.Core
         }
 
         #region Instance Fields
-        string filter_;
-        ArrayList inclusions_;
-        ArrayList exclusions_;
+        readonly string filter_;
+        readonly List<Regex> inclusions_;
+        readonly List<Regex> exclusions_;
         #endregion
     }
 }

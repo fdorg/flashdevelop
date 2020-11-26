@@ -61,10 +61,7 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Gets the linters for a given <paramref name="language"/>.
         /// </summary>
-        public static List<ILintProvider> GetLinters(string language)
-        {
-            return linters.GetOrCreate(language);
-        }
+        public static List<ILintProvider> GetLinters(string language) => linters.GetOrCreate(language);
 
         /// <summary>
         /// Lint <paramref name="files"/> without trying to autodetect the language
@@ -128,8 +125,9 @@ namespace LintingHelper.Managers
 
         public static void LintDocument(ITabbedDocument doc)
         {
-            var files = new [] { doc.FileName };
-            var language = doc.SciControl.ConfigurationLanguage;
+            var sci = doc.SciControl;
+            var files = new [] { sci.FileName };
+            var language = sci.ConfigurationLanguage;
 
             LintFiles(files, language);
         }
@@ -137,10 +135,7 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Runs all applicable linters on the current document
         /// </summary>
-        public static void LintCurrentDocument()
-        {
-            LintDocument(PluginBase.MainForm.CurrentDocument);
-        }
+        public static void LintCurrentDocument() => LintDocument(PluginBase.MainForm.CurrentDocument);
 
         public static void UnLintFile(string file)
         {
@@ -159,11 +154,8 @@ namespace LintingHelper.Managers
         /// </summary>
         static void ApplyLint(List<LintingResult> results)
         {
-            if (results == null)
-                return;
-
+            if (results is null) return;
             Cache.AddResults(results);
-
             UpdateLinterPanel();
         }
 
@@ -182,14 +174,9 @@ namespace LintingHelper.Managers
                 else
                 {
                     var sci = DocumentManager.FindDocument(result.File)?.SciControl;
-                    if (sci != null)
-                    {
-                        chars = $"chars {result.FirstChar}-{sci.LineLength(result.Line - 1)}";
-                    }
-                    else
-                    {
-                        chars = $"char {result.FirstChar}";
-                    }
+                    chars = sci != null
+                        ? $"chars {result.FirstChar}-{sci.LineLength(result.Line - 1)}"
+                        : $"char {result.FirstChar}";
                 }
                 string message = $"{result.File}:{result.Line}: {chars} : {result.Severity}: {result.Description}";
                 int state;

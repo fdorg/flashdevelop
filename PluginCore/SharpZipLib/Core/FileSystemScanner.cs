@@ -59,22 +59,20 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// The file or directory name for this event.
         /// </summary>
-        public string Name
-        {
-            get { return name_; }
-        }
-        
+        public string Name => name_;
+
         /// <summary>
         /// Get set a value indicating if scanning should continue or not.
         /// </summary>
         public bool ContinueRunning
         {
-            get { return continueRunning_; }
-            set { continueRunning_ = value; }
+            get => continueRunning_;
+            set => continueRunning_ = value;
         }
         
         #region Instance Fields
-        string name_;
+
+        readonly string name_;
         bool continueRunning_ = true;
         #endregion
     }
@@ -102,18 +100,15 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// The name for this event if known.
         /// </summary>
-        public string Name
-        {
-            get { return name_; }
-        }
-        
+        public string Name => name_;
+
         /// <summary>
         /// Get set a value indicating wether scanning should continue or not.
         /// </summary>
         public bool ContinueRunning
         {
-            get { return continueRunning_; }
-            set { continueRunning_ = value; }
+            get => continueRunning_;
+            set => continueRunning_ = value;
         }
 
         /// <summary>
@@ -131,7 +126,7 @@ namespace ICSharpCode.SharpZipLib.Core
                 }
                 else
                 {
-                    result = ((float)processed_ / (float)target_) * 100.0f;
+                    result = (processed_ / (float)target_) * 100.0f;
                 }
                 return result;
             }
@@ -140,24 +135,19 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// The number of bytes processed so far
         /// </summary>
-        public long Processed
-        {
-            get { return processed_; }
-        }
+        public long Processed => processed_;
 
         /// <summary>
         /// The number of bytes to process.
         /// </summary>
         /// <remarks>Target may be 0 or negative if the value isnt known.</remarks>
-        public long Target
-        {
-            get { return target_; }
-        }
-        
+        public long Target => target_;
+
         #region Instance Fields
-        string name_;
-        long processed_;
-        long target_;
+
+        readonly string name_;
+        readonly long processed_;
+        readonly long target_;
         bool continueRunning_ = true;
         #endregion
     }
@@ -183,13 +173,11 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// Get a value indicating if the directory contains any matching files or not.
         /// </summary>
-        public bool HasMatchingFiles
-        {
-            get { return hasMatchingFiles_; }
-        }
-        
+        public bool HasMatchingFiles => hasMatchingFiles_;
+
         #region Instance Fields
-        bool hasMatchingFiles_;
+
+        readonly bool hasMatchingFiles_;
         #endregion
     }
     
@@ -215,31 +203,26 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// The applicable name.
         /// </summary>
-        public string Name
-        {
-            get { return name_; }
-        }
-        
+        public string Name => name_;
+
         /// <summary>
         /// The applicable exception.
         /// </summary>
-        public Exception Exception
-        {
-            get { return exception_; }
-        }
-        
+        public Exception Exception => exception_;
+
         /// <summary>
         /// Get / set a value indicating wether scanning should continue.
         /// </summary>
         public bool ContinueRunning
         {
-            get { return continueRunning_; }
-            set { continueRunning_ = value; }
+            get => continueRunning_;
+            set => continueRunning_ = value;
         }
         
         #region Instance Fields
-        string name_;
-        Exception exception_;
+
+        readonly string name_;
+        readonly Exception exception_;
         bool continueRunning_;
         #endregion
     }
@@ -500,7 +483,7 @@ namespace ICSharpCode.SharpZipLib.Core
                 try {
                     string[] names = Directory.GetDirectories(directory);
                     foreach (string fulldir in names) {
-                        if ((directoryFilter_ == null) || (directoryFilter_.IsMatch(fulldir))) {
+                        if ((directoryFilter_ is null) || (directoryFilter_.IsMatch(fulldir))) {
                             ScanDir(fulldir, true);
                             if ( !alive_ ) {
                                 break;
@@ -520,11 +503,11 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <summary>
         /// The file filter currently in use.
         /// </summary>
-        IScanFilter fileFilter_;
+        readonly IScanFilter fileFilter_;
         /// <summary>
         /// The directory filter currently in use.
         /// </summary>
-        IScanFilter directoryFilter_;
+        readonly IScanFilter directoryFilter_;
         /// <summary>
         /// Flag indicating if scanning should continue running.
         /// </summary>

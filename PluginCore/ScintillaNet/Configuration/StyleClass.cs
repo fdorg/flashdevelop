@@ -6,31 +6,31 @@ using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class StyleClass : ConfigItem
     {
-        [XmlAttribute()]
+        [XmlAttribute]
         public string name;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string fore;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string back;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string size;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string font;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string bold;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string eolfilled;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public string italics;
 
         [XmlAttribute("inherit-style")]
@@ -51,16 +51,9 @@ namespace ScintillaNet.Configuration
                 }
                 // Get the parent class. It should be either language's own default or global default
                 // Caution: It is not programmatically guaranteed that there is a default.
-                if (!name.Equals("default"))
-                {
-                    if (language != null)
-                    {
-                        StyleClass defaultCls = language.usestyles[0]; // First should be default...
-                        if (defaultCls != null) return defaultCls;
-                    }
-                    return _parent.MasterScintilla.GetStyleClass("default");
-                }
-                return null;
+                if (name.Equals("default")) return null;
+                StyleClass defaultCls = language?.usestyles[0]; // First should be default...
+                return defaultCls ?? _parent.MasterScintilla.GetStyleClass("default");
             }
         }
 
@@ -69,9 +62,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (italics != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasItalics;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasItalics;
             }
         }
 
@@ -80,9 +72,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (bold != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasBold;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasBold;
             }
         }
 
@@ -91,9 +82,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (eolfilled != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasEolFilled;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasEolFilled;
             }
         }
 
@@ -102,9 +92,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (font != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasFontName;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasFontName;
             }
         }
 
@@ -113,9 +102,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (size != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasFontSize;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasFontSize;
             }
         }
 
@@ -124,9 +112,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (back != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasBackgroundColor;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasBackgroundColor;
             }
         }
 
@@ -135,9 +122,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (fore  != null) return true;
-                StyleClass p = ParentClass;
-                if (p != null) return p.HasForegroundColor;
-                return false;
+                var p = ParentClass;
+                return p != null && p.HasForegroundColor;
             }
         }
 
@@ -146,9 +132,7 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (font != null) return ResolveFont(font);
-                StyleClass p = ParentClass;
-                if (p != null) return p.FontName;
-                return "Courier New";
+                return ParentClass?.FontName ?? "Courier New";
             }
         }
 
@@ -157,9 +141,7 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (size != null) return ResolveNumber(size);
-                StyleClass p = ParentClass;
-                if (p != null) return p.FontSize;
-                return 9;
+                return ParentClass?.FontSize ?? 9;
             }
         }
 
@@ -168,9 +150,7 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (back != null) return ResolveColor(back);
-                StyleClass p = ParentClass;
-                if (p != null) return p.BackgroundColor;
-                return 0x000000;
+                return ParentClass?.BackgroundColor ?? 0x000000;
             }
         }
 
@@ -179,9 +159,7 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (fore != null) return ResolveColor(fore);
-                StyleClass p = ParentClass;
-                if (p  != null) return p.ForegroundColor;
-                return 0x000000;
+                return ParentClass?.ForegroundColor ?? 0x000000;
             }
         }
 
@@ -190,9 +168,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (italics!= null) return italics.Equals("true");
-                StyleClass p = ParentClass;
-                if (p != null) return p.IsItalics;
-                return false;
+                var p = ParentClass;
+                return p != null && p.IsItalics;
             }
         }
 
@@ -201,9 +178,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (bold != null) return bold.Equals("true");
-                StyleClass p = ParentClass;
-                if (p != null) return p.IsBold;
-                return false;
+                var p = ParentClass;
+                return p != null && p.IsBold;
             }
         }
 
@@ -212,9 +188,8 @@ namespace ScintillaNet.Configuration
             get
             {
                 if (eolfilled != null) return eolfilled.Equals("true");
-                StyleClass p = ParentClass;
-                if (p  != null) return p.IsEolFilled;
-                return false;
+                var p = ParentClass;
+                return p  != null && p.IsEolFilled;
             }
         }
 
@@ -222,7 +197,7 @@ namespace ScintillaNet.Configuration
         {
             if (aColor != null)
             {
-                Value v = _parent.MasterScintilla.GetValue(aColor);
+                var v = _parent.MasterScintilla.GetValue(aColor);
                 while (v!= null)
                 {
                     aColor = v.val;
@@ -231,54 +206,51 @@ namespace ScintillaNet.Configuration
                 Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0)
                 {
-                    if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
-                    else 
+                    if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(int.Parse(aColor.Substring(2), NumberStyles.HexNumber));
+                    try
                     {
-                        try
-                        {
-                            return TO_COLORREF(Int32.Parse(aColor));
-                        }
-                        catch(Exception){}
+                        return TO_COLORREF(int.Parse(aColor));
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
                 return TO_COLORREF(c.ToArgb() & 0x00ffffff);
             }
             return 0;
         }
-        private int TO_COLORREF(int c)
-        {
-            return (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00) );
-        }
-        
+
+        int TO_COLORREF(int c) => ((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00);
+
         public int ResolveNumber(string number)
         {
             if (number != null)
             {
-                Value v = _parent.MasterScintilla.GetValue(number);
+                var v = _parent.MasterScintilla.GetValue(number);
                 while (v != null)
                 {
                     number = v.val;
                     v = _parent.MasterScintilla.GetValue(number);
                 }
-                if (number.IndexOfOrdinal("0x") == 0) return Int32.Parse(number.Substring(2), NumberStyles.HexNumber);
-                else
+                if (number.IndexOfOrdinal("0x") == 0) return int.Parse(number.Substring(2), NumberStyles.HexNumber);
+                try
                 {
-                    try
-                    {
-                        return Int32.Parse(number);
-                    }
-                    catch(Exception){}
+                    return int.Parse(number);
+                }
+                catch
+                {
+                    // ignored
                 }
             }
             return 0;
-
         }
 
         public string ResolveString(string number)
         {
-            Value value = null;
             if (number != null)
             {
+                Value value;
                 for (value = _parent.MasterScintilla.GetValue(number); value != null; value = _parent.MasterScintilla.GetValue(number))
                 {
                     number = value.val;
@@ -289,9 +261,9 @@ namespace ScintillaNet.Configuration
 
         public string ResolveFont(string name)
         {
-            Value value = null;
             if (name != null)
             {
+                Value value;
                 for (value = _parent.MasterScintilla.GetValue(name); value != null; value = _parent.MasterScintilla.GetValue(name))
                 {
                     name = value.val;
@@ -299,8 +271,8 @@ namespace ScintillaNet.Configuration
             }
             try  // Choose first font that is found...
             {
-                String[] fonts = name.Split(',');
-                foreach (String font in fonts)
+                var fonts = name.Split(',');
+                foreach (string font in fonts)
                 {
                     if (IsFontInstalled(font)) return font;
                 }
@@ -309,14 +281,10 @@ namespace ScintillaNet.Configuration
             return name;
         }
 
-        private static bool IsFontInstalled(string fontName)
+        static bool IsFontInstalled(string fontName)
         {
-            using (var testFont = new Font(fontName, 9))
-            {
-                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
-            }
+            using var font = new Font(fontName, 9);
+            return fontName.Equals(font.Name, StringComparison.InvariantCultureIgnoreCase);
         }
-        
     }
-
 }

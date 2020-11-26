@@ -4,18 +4,17 @@ using System.IO;
 
 namespace PluginCore.Helpers
 {
-    public class SimpleIni 
-        : Dictionary<string, Dictionary<string, string>>
+    public class SimpleIni : Dictionary<string, Dictionary<string, string>>
     {
         public Dictionary<string, string> Flatten()
         {
-            var flat = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
             foreach (var section in this)
             {
                 foreach (var entry in section.Value)
-                    flat[entry.Key] = entry.Value;
+                    result[entry.Key] = entry.Value;
             }
-            return flat;
+            return result;
         }
     }
 
@@ -30,34 +29,34 @@ namespace PluginCore.Helpers
         {
             if (cache && Cache.ContainsKey(configPath)) return Cache[configPath];
 
-            SimpleIni ini = new SimpleIni();
-            Dictionary<string, string> config = new Dictionary<string, string>();
-            string currentSection = "Default";
+            var result = new SimpleIni();
+            var config = new Dictionary<string, string>();
+            var currentSection = "Default";
             if (File.Exists(configPath))
             {
-                string[] lines = File.ReadAllLines(configPath);
-                foreach (string rawLine in lines)
+                var lines = File.ReadAllLines(configPath);
+                foreach (var rawLine in lines)
                 {
-                    string line = rawLine.Trim();
+                    var line = rawLine.Trim();
                     if (line.Length < 2 || line.StartsWith("#", StringComparison.Ordinal) || line.StartsWith(";", StringComparison.Ordinal)) continue;
                     if (line.StartsWith("[", StringComparison.Ordinal))
                     {
-                        if (currentSection != null) ini.Add(currentSection, config);
+                        result.Add(currentSection, config);
                         config = new Dictionary<string, string>();
                         currentSection = line.Substring(1, line.Length - 2);
                     }
                     else
                     {
-                        string[] entry = line.Split(new char[] { '=' }, 2);
+                        var entry = line.Split(new[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         config[entry[0].Trim()] = entry[1].Trim();
                     }
                 }
             }
-            ini.Add(currentSection, config);
+            result.Add(currentSection, config);
 
-            if (cache) Cache[configPath] = ini;
-            return ini;
+            if (cache) Cache[configPath] = result;
+            return result;
         }
     }
 }

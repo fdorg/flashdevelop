@@ -45,7 +45,7 @@ namespace Ude.Core
     public class CodingStateMachine
     {
         private int currentState;
-        private SMModel model;
+        private readonly SMModel model;
         private int currentCharLen;
         private int currentBytePos;
         
@@ -77,14 +77,8 @@ namespace Ude.Core
             currentState = SMModel.START; 
         }
 
-        public int CurrentCharLen 
-        { 
-            get { return currentCharLen; } 
-        }
+        public int CurrentCharLen => currentCharLen;
 
-        public string ModelName 
-        { 
-            get { return model.Name; } 
-        }
+        public string ModelName => model.Name;
     }
 }

@@ -9,53 +9,44 @@ using PluginCore.Localization;
 
 namespace FlashDebugger
 {
-    public delegate void PathChangedEventHandler(String path);
-    
     [Serializable]
     [DefaultProperty("Path")]
     public class Folder
     {
-        private String m_Value;
+        string path;
 
-        public Folder()
+        public Folder() : this(string.Empty)
         {
-            m_Value = "";
         }
 
-        public Folder(String value)
-        {
-            m_Value = value;
-        }
+        public Folder(string value) => path = value;
 
-        public override String ToString()
-        {
-            return m_Value;
-        }
+        public override string ToString() => path;
 
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String Path
+        public string Path
         {
-            get { return m_Value; }
-            set { m_Value = value; }
+            get => path;
+            set => path = value;
         }
     }
 
     [Serializable]
     public class Settings
     {
-        private Folder[] m_SourcePaths = new Folder[] {};
-        private Boolean m_SaveBreakPoints = true;
-        private Boolean m_DisablePanelsAutoshow;
-        private Boolean m_VerboseOutput;
-        private Boolean m_StartDebuggerOnTestMovie = true;
-        private Boolean m_BreakOnThrow;
-        private String  m_SwitchToLayout;
-        private Boolean m_CombineInherited;
-        private Boolean m_HideStaticMembers;
-        private Boolean m_HideFullClassPaths;
-        private Boolean m_HideClassIds;
-        private Int32 m_CopyTreeMaxRecursion = 10;
-        private Int32 m_CopyTreeMaxChars = 1000000;
+        Folder[] m_SourcePaths = Array.Empty<Folder>();
+        bool m_SaveBreakPoints = true;
+        bool m_DisablePanelsAutoshow;
+        bool m_VerboseOutput;
+        bool m_StartDebuggerOnTestMovie = true;
+        bool m_BreakOnThrow;
+        string  m_SwitchToLayout;
+        bool m_CombineInherited;
+        bool m_HideStaticMembers;
+        bool m_HideFullClassPaths;
+        bool m_HideClassIds;
+        int m_CopyTreeMaxRecursion = 10;
+        int m_CopyTreeMaxChars = 1000000;
 
         [field: NonSerialized]
         public event EventHandler BreakOnThrowChanged;
@@ -69,8 +60,8 @@ namespace FlashDebugger
         [DefaultValue(true)]
         public bool SaveBreakPoints
         {
-            get { return m_SaveBreakPoints; }
-            set { m_SaveBreakPoints = value; }
+            get => m_SaveBreakPoints;
+            set => m_SaveBreakPoints = value;
         }
 
         [DisplayName("Disable Panel Auto Show")]
@@ -79,8 +70,8 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool DisablePanelsAutoshow
         {
-            get { return m_DisablePanelsAutoshow; }
-            set { m_DisablePanelsAutoshow = value; }
+            get => m_DisablePanelsAutoshow;
+            set => m_DisablePanelsAutoshow = value;
         }
 
         [DisplayName("Switch To Layout On Debugger Start")]
@@ -88,10 +79,10 @@ namespace FlashDebugger
         [LocalizedDescription("FlashDebugger.Description.SwitchToLayout")]
         [DefaultValue(null)]
         [Editor(typeof(LayoutSelectorEditor), typeof(UITypeEditor))]
-        public String SwitchToLayout
+        public string SwitchToLayout
         {
-            get { return m_SwitchToLayout; }
-            set { m_SwitchToLayout = value; }
+            get => m_SwitchToLayout;
+            set => m_SwitchToLayout = value;
         }
 
         [DisplayName("Verbose Output")]
@@ -100,8 +91,8 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool VerboseOutput
         {
-            get { return m_VerboseOutput; }
-            set { m_VerboseOutput = value; }
+            get => m_VerboseOutput;
+            set => m_VerboseOutput = value;
         }
 
         [DisplayName("Source Paths")]
@@ -110,15 +101,8 @@ namespace FlashDebugger
         [Editor(typeof(ArrayEditor), typeof(UITypeEditor))]
         public Folder[] SourcePaths
         {
-            get
-            {
-                if (m_SourcePaths == null || m_SourcePaths.Length == 0)
-                {
-                    m_SourcePaths = new Folder[] {};
-                }
-                return m_SourcePaths;
-            }
-            set { m_SourcePaths = value; }
+            get => m_SourcePaths ??= Array.Empty<Folder>();
+            set => m_SourcePaths = value;
         }
 
         [DisplayName("Start Debugger On Test Movie")]
@@ -127,8 +111,8 @@ namespace FlashDebugger
         [DefaultValue(true)]
         public bool StartDebuggerOnTestMovie
         {
-            get { return m_StartDebuggerOnTestMovie; }
-            set { m_StartDebuggerOnTestMovie = value; }
+            get => m_StartDebuggerOnTestMovie;
+            set => m_StartDebuggerOnTestMovie = value;
         }
 
         [DisplayName("Break When Error Is Thrown")]
@@ -137,17 +121,26 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool BreakOnThrow
         {
-            get { return m_BreakOnThrow; }
+            get => m_BreakOnThrow;
             set
             {
-                if (m_BreakOnThrow == value)
-                    return;
-
+                if (value == m_BreakOnThrow) return;
                 m_BreakOnThrow = value;
-
-                if (BreakOnThrowChanged != null)
-                    BreakOnThrowChanged(this, EventArgs.Empty);
+                BreakOnThrowChanged?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        public static readonly string DefaultJavaHome = "JAVA_HOME";
+        string javaHome = DefaultJavaHome;
+
+        [DisplayName("Java Home Directory")]
+        [LocalizedCategory("FlashDebugger.Category.Misc")]
+        [Description("The JDK software is installed on your computer, for example, at C:\\Program Files (x86)\\Java\\jdk1.8.0_202 for FlashDevelop.exe or C:\\Program Files\\Java\\jdk1.8.0_202 for FlashDevelop64.exe")]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
+        public string JavaHome
+        {
+            get => string.IsNullOrEmpty(javaHome) ? DefaultJavaHome : javaHome;
+            set => javaHome = value;
         }
 
         [DisplayName("Combine Inherited Members")]
@@ -156,16 +149,12 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool CombineInherited
         {
-            get { return m_CombineInherited; }
+            get => m_CombineInherited;
             set
             {
-                if (m_CombineInherited == value)
-                    return;
-
+                if (value == m_CombineInherited) return;
                 m_CombineInherited = value;
-
-                if (DataTreeDisplayChanged != null)
-                    DataTreeDisplayChanged(this, EventArgs.Empty);
+                DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -175,16 +164,12 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool HideStaticMembers
         {
-            get { return m_HideStaticMembers; }
+            get => m_HideStaticMembers;
             set
             {
-                if (m_HideStaticMembers == value)
-                    return;
-
+                if (value == m_HideStaticMembers) return;
                 m_HideStaticMembers = value;
-
-                if (DataTreeDisplayChanged != null)
-                    DataTreeDisplayChanged(this, EventArgs.Empty);
+                DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -194,16 +179,12 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool HideFullClasspaths
         {
-            get { return m_HideFullClassPaths; }
+            get => m_HideFullClassPaths;
             set
             {
-                if (m_HideFullClassPaths == value)
-                    return;
-
+                if (value == m_HideFullClassPaths) return;
                 m_HideFullClassPaths = value;
-
-                if (DataTreeDisplayChanged != null)
-                    DataTreeDisplayChanged(this, EventArgs.Empty);
+                DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -213,16 +194,12 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool HideClassIds
         {
-            get { return m_HideClassIds; }
+            get => m_HideClassIds;
             set
             {
-                if (m_HideClassIds == value)
-                    return;
-
+                if (value == m_HideClassIds) return;
                 m_HideClassIds = value;
-
-                if (DataTreeDisplayChanged != null)
-                    DataTreeDisplayChanged(this, EventArgs.Empty);
+                DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -232,7 +209,7 @@ namespace FlashDebugger
         [DefaultValue(10)]
         public int CopyTreeMaxRecursion
         {
-            get { return m_CopyTreeMaxRecursion; }
+            get => m_CopyTreeMaxRecursion;
             set
             {
                 if (value < 1) value = 1;
@@ -246,7 +223,7 @@ namespace FlashDebugger
         [DefaultValue(1000000)]
         public int CopyTreeMaxChars
         {
-            get { return m_CopyTreeMaxChars; }
+            get => m_CopyTreeMaxChars;
             set
             {
                 if (value < 10) value = 10;
@@ -255,7 +232,7 @@ namespace FlashDebugger
         }
 
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        void OnDeserialized(StreamingContext context)
         {
             if (m_CopyTreeMaxChars == 0)
                 m_CopyTreeMaxChars = 1000000;
@@ -263,7 +240,5 @@ namespace FlashDebugger
             if (m_CopyTreeMaxRecursion == 0)
                 m_CopyTreeMaxRecursion = 10;
         }
-
     }
-
 }

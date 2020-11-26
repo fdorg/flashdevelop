@@ -135,7 +135,7 @@ namespace Ude.Core
         };
         
         // category counters, each integer counts sequence in its category
-        int[] relSample = new int[CATEGORIES_NUM];
+        readonly int[] relSample = new int[CATEGORIES_NUM];
 
         // total sequence received
         int totalRel;
@@ -161,8 +161,7 @@ namespace Ude.Core
             // This is just one way to calculate confidence. It works well for me.
             if (totalRel > MINIMUM_DATA_THRESHOLD)
                 return ((float)(totalRel - relSample[0]))/totalRel;
-            else 
-                return DONT_KNOW;
+            return DONT_KNOW;
         }
 
         public void HandleData(byte[] buf, int offset, int len)

@@ -8,20 +8,20 @@ namespace ProjectManager.Building
     /// </summary>
     public class BuildEventRunner
     {
-        Project project;
-        BuildEventVars vars;
+        readonly Project project;
+        readonly BuildEventVars vars;
 
         public BuildEventRunner(Project project, string compilerPath)
         {
             this.project = project;
             project.CurrentSDK = compilerPath;
-            this.vars = new BuildEventVars(project);
+            vars = new BuildEventVars(project);
         }
 
         //parse line into command/argument pair
-        private string[] tokenize(string line)
+        private string[] Tokenize(string line)
         {
-            string[] result = new String[2];
+            string[] result = new string[2];
 
             if (line.StartsWith("\"", StringComparison.Ordinal))
             {
@@ -42,9 +42,7 @@ namespace ProjectManager.Building
         public void Run(string buildEvents, bool noTrace)
         {
             string[] events = buildEvents.Split('\n');
-            if (events.Length == 0)
-                return;
-
+            if (events.Length == 0) return;
             BuildEventInfo[] infos = vars.GetVars();
             foreach (string buildEvent in events)
             {
@@ -52,19 +50,19 @@ namespace ProjectManager.Building
 
                 string line = buildEvent.Trim();
 
-                if (line.Length <= 0)
+                if (line.Length == 0)
                     continue; // nothing to do
 
                 // conditional execution
                 if (line.StartsWith("DEBUG:", StringComparison.Ordinal))
                 {
                     if (noTrace) continue;
-                    else line = line.Substring("DEBUG:".Length).Trim();
+                    line = line.Substring("DEBUG:".Length).Trim();
                 }
                 if (line.StartsWith("RELEASE:", StringComparison.Ordinal))
                 {
                     if (!noTrace) continue;
-                    else line = line.Substring("RELEASE:".Length).Trim();
+                    line = line.Substring("RELEASE:".Length).Trim();
                 }
                 // expand variables
                 foreach (BuildEventInfo info in infos)
@@ -73,7 +71,7 @@ namespace ProjectManager.Building
                 line = project.FixDebugReleasePath(line);
 
                 Console.WriteLine("cmd: " + line);
-                string[] tokens = tokenize(line);
+                string[] tokens = Tokenize(line);
                 string command = tokens[0];
                 string args = tokens[1];
 
@@ -85,13 +83,12 @@ namespace ProjectManager.Building
                         break;
 
                     case "RunMxmlc":
-                        string[] mxmlctokens = tokenize(args);
+                        string[] mxmlctokens = Tokenize(args);
                         FDBuild.Program.BuildMXMLC(mxmlctokens[0], mxmlctokens[1]);
                         break;
 
-                    case "RunCompc": 
-                        string[] compctokens = tokenize(args);
-                        FDBuild.Program.BuildCOMPC(compctokens[0], compctokens[1]);
+                    case "RunCompc":
+                        FDBuild.Program.BuildCOMPC();
                         break;
 
                     default:

@@ -13,6 +13,8 @@ namespace ASClassWizard.Resources
         public bool isDynamic;
         public bool isFinal;
         public string Language;
+        // TODO slavara: move to HaxeClassOptions
+        public string Template;
 
         public AS3ClassOptions(
             string language,

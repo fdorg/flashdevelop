@@ -18,11 +18,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DragForm.Show(false);
                 }
 
-                DragForm m_dragForm;
-                private DragForm DragForm
-                {
-                    get { return m_dragForm; }
-                }
+                readonly DragForm m_dragForm;
+                private DragForm DragForm => m_dragForm;
 
                 public void Show(Rectangle rect)
                 {
@@ -51,22 +48,22 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public new ISplitterDragSource DragSource
             {
-                get { return base.DragSource as ISplitterDragSource; }
-                private set { base.DragSource = value; }
+                get => base.DragSource as ISplitterDragSource;
+                private set => base.DragSource = value;
             }
 
             private SplitterOutline m_outline;
             private SplitterOutline Outline
             {
-                get { return m_outline; }
-                set { m_outline = value; }
+                get => m_outline;
+                set => m_outline = value;
             }
 
             private Rectangle m_rectSplitter;
             private Rectangle RectSplitter
             {
-                get { return m_rectSplitter; }
-                set { m_rectSplitter = value; }
+                get => m_rectSplitter;
+                set => m_rectSplitter = value;
             }
 
             public void BeginDrag(ISplitterDragSource dragSource, Rectangle rectSplitter)
@@ -108,8 +105,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Rectangle rect = GetSplitterOutlineBounds(ptMouse);
                 if (DragSource.IsVertical)
                     return rect.X - RectSplitter.X;
-                else
-                    return rect.Y - RectSplitter.Y;
+                return rect.Y - RectSplitter.Y;
             }
 
             private Rectangle GetSplitterOutlineBounds(Point ptMouse)
@@ -147,7 +143,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private SplitterDragHandler m_splitterDragHandler = null;
         private SplitterDragHandler GetSplitterDragHandler()
         {
-            if (m_splitterDragHandler == null)
+            if (m_splitterDragHandler is null)
                 m_splitterDragHandler = new SplitterDragHandler(this);
             return m_splitterDragHandler;
         }

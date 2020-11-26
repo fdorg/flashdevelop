@@ -23,7 +23,7 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class ProjectCreator
     {
-        private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         string projectName;
         string projectId;
         string packageName;
@@ -33,19 +33,18 @@ namespace ProjectManager.Helpers
         string defaultFlexSDK;
         Argument[] arguments;
 
-        private static Hashtable projectTypes = new Hashtable();
-        private static List<String> projectExt = new List<string>();
-        private static bool projectTypesSet = false;
+        static readonly Hashtable projectTypes = new Hashtable();
+        static readonly List<string> projectExt = new List<string>();
+        static bool projectTypesSet;
 
-        private static bool isRunning;
-        public static bool IsRunning { get { return isRunning; } }
+        public static bool IsRunning { get; private set; }
 
         /// <summary>
         /// Creates a new project based on the specified template directory.
         /// </summary>
         public Project CreateProject(string templateDirectory, string projectLocation, string projectName, string packageName)
         {
-            isRunning = true;
+            IsRunning = true;
             if (!projectTypesSet) SetInitialProjectHash();
             SetContext(projectName, packageName);
             string projectTemplate = FindProjectTemplate(templateDirectory);
@@ -67,7 +66,7 @@ namespace ProjectManager.Helpers
                 CopyFile(projectTemplate, projectPath);
                 CopyProjectFiles(templateDirectory, projectLocation, true);
             }
-            isRunning = false;
+            IsRunning = false;
             if (File.Exists(projectPath))
             {
                 projectPath = PathHelper.GetPhysicalPathName(projectPath);
@@ -83,22 +82,22 @@ namespace ProjectManager.Helpers
                     return null;
                 }
             }
-            else return null;
+
+            return null;
         }
 
         public static string FindProjectTemplate(string templateDirectory)
         {
-            string path = "";
             if (!projectTypesSet) SetInitialProjectHash();
             foreach (string key in projectTypes.Keys)
             {
-                path = Path.Combine(templateDirectory, key);
+                var path = Path.Combine(templateDirectory, key);
                 if (File.Exists(path)) return path;
             }
             return null;
         }
 
-        private void CopyProjectFiles(string sourceDir, string destDir, bool filter)
+        void CopyProjectFiles(string sourceDir, string destDir, bool filter)
         {
             Directory.CreateDirectory(destDir);
 
@@ -134,12 +133,12 @@ namespace ProjectManager.Helpers
         {
             dest = ReplaceKeywords(dest); // you can use keywords in filenames too
             string ext = Path.GetExtension(source).ToLower();
-            if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(source, ext))
+            if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(ext))
             {
-                if (FileInspector.IsTemplate(source, ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
+                if (FileInspector.IsTemplate(ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
 
-                Boolean saveBOM = PluginBase.MainForm.Settings.SaveUnicodeWithBOM;
-                Encoding encoding = Encoding.GetEncoding((Int32)PluginBase.MainForm.Settings.DefaultCodePage);
+                bool saveBOM = PluginBase.Settings.SaveUnicodeWithBOM;
+                Encoding encoding = Encoding.GetEncoding((int)PluginBase.Settings.DefaultCodePage);
                 // batch files must be encoded in ASCII
                 ext = Path.GetExtension(dest).ToLower();
                 if (ext == ".bat" || ext == ".cmd" || ext.StartsWithOrdinal(".php")) encoding = Encoding.ASCII;
@@ -151,14 +150,14 @@ namespace ProjectManager.Helpers
             else File.Copy(source, dest);
         }
 
-        private string ReplaceKeywords(string line)
+        string ReplaceKeywords(string line)
         {
-            if (line.IndexOfOrdinal("$") < 0) return line;
+            if (!line.Contains('$')) return line;
             if (packageName == "") line = line.Replace(" $(PackageName)", "");
-            return line = reArgs.Replace(line, new MatchEvaluator(ReplaceVars));
+            return reArgs.Replace(line, ReplaceVars);
         }
 
-        private string ReplaceVars(Match match)
+        string ReplaceVars(Match match)
         {
             if (match.Groups.Count > 0)
             {
@@ -182,13 +181,11 @@ namespace ProjectManager.Helpers
                     case "PACKAGESLASHALT": return packageSlash.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     case "DOLLAR": return "$";
                     case "FLEXSDK":
-                        if (defaultFlexSDK == null)
-                            defaultFlexSDK = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
-                        return defaultFlexSDK;
+                        return defaultFlexSDK ??= PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
                     case "APPDIR": return PathHelper.AppDir;
                     default:
-                        if (arguments == null) arguments = PluginBase.MainForm.CustomArguments.ToArray();
-                        foreach (Argument arg in arguments)
+                        arguments ??= PluginBase.MainForm.CustomArguments.ToArray();
+                        foreach (var arg in arguments)
                             if (arg.Key.ToUpper() == name) return arg.Value;
                         break;
                 }
@@ -212,17 +209,18 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the clipboard text
         /// </summary>
-        public static String GetClipboard()
+        public static string GetClipboard()
         {
             IDataObject cbdata = Clipboard.GetDataObject();
             if (cbdata.GetDataPresent("System.String", true))
             {
                 return cbdata.GetData("System.String", true).ToString();
             }
-            else return String.Empty;
+
+            return string.Empty;
         }
 
-        private bool ShouldSkip(string path, bool isProjectRoot)
+        bool ShouldSkip(string path, bool isProjectRoot)
         {
             string filename = Path.GetFileName(path).ToLower();
             if (isProjectRoot)
@@ -232,7 +230,7 @@ namespace ProjectManager.Helpers
             return filename == "dummy";
         }
 
-        private static void SetInitialProjectHash()
+        static void SetInitialProjectHash()
         {
             projectTypes["project.fdproj"] = typeof(GenericProject);
             projectTypes["project.fdp"] = typeof(AS2Project);
@@ -279,7 +277,7 @@ namespace ProjectManager.Helpers
         public static string GetProjectFilters()
         {
             string[] exts = projectExt.ToArray();
-            string filters = "FlashDevelop Projects|" + String.Join(";", exts)
+            string filters = "FlashDevelop Projects|" + string.Join(";", exts)
                 + "|Adobe Flex Builder Project|.actionScriptProperties";
             return filters;
         }
@@ -288,16 +286,16 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the correct coding style line break chars
         /// </summary>
-        public static String ProcessCodeStyleLineBreaks(String text)
+        public static string ProcessCodeStyleLineBreaks(string text)
         {
-            String CSLB = "$(CSLB)";
-            Int32 nextIndex = text.IndexOfOrdinal(CSLB);
+            const string CSLB = "$(CSLB)";
+            int nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
             CodingStyle cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
-            Int32 eolMode = (Int32)PluginBase.Settings.EOLMode;
-            String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            String result = ""; Int32 currentIndex = 0;
+            int eolMode = (int)PluginBase.Settings.EOLMode;
+            string lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
+            string result = ""; int currentIndex = 0;
             while (nextIndex >= 0)
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
@@ -310,17 +308,17 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the line intendation from the text
         /// </summary>
-        private static String GetLineIndentation(String text, Int32 position)
+        static string GetLineIndentation(string text, int position)
         {
-            Char c;
-            Int32 startPos = position;
+            char c;
+            int startPos = position;
             while (startPos > 0)
             {
                 c = text[startPos];
                 if (c == 10 || c == 13) break;
                 startPos--;
             }
-            Int32 endPos = ++startPos;
+            int endPos = ++startPos;
             while (endPos < position)
             {
                 c = text[endPos];

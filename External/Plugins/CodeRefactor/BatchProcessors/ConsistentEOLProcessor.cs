@@ -15,7 +15,7 @@ namespace CodeRefactor.BatchProcessors
         {
             foreach (var file in files)
             {
-                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
                 document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
             }
         }
@@ -23,7 +23,7 @@ namespace CodeRefactor.BatchProcessors
         public void ProcessProject(IProject project)
         {
             var files = BatchProcessManager.GetAllProjectFiles(project);
-            Process(files);
+            if (files != null) Process(files);
         }
     }
 }

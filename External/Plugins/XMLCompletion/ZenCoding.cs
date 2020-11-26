@@ -9,7 +9,6 @@ using LitJson;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using ScintillaNet;
 
 namespace XMLCompletion
 {
@@ -22,16 +21,16 @@ namespace XMLCompletion
 
         public ZenElementTypes(Hashtable def)
         {
-            if (def == null) return;
+            if (def is null) return;
             if (def.ContainsKey("empty")) ParseSet(empty, (string)def["empty"]);
             if (def.ContainsKey("block_level")) ParseSet(block_level, (string)def["block_level"]);
             if (def.ContainsKey("inline_level")) ParseSet(inline_level, (string)def["inline_level"]);
         }
 
-        private void ParseSet(Hashtable set, string def)
+        static void ParseSet(IDictionary set, string def)
         {
-            string[] tokens = def.Split(',');
-            foreach (string token in tokens) set[token] = true;
+            var tokens = def.Split(',');
+            foreach (var token in tokens) set[token] = true;
         }
     }
 
@@ -51,13 +50,13 @@ namespace XMLCompletion
 
         public static ZenSettings Read(string filePath)
         {
-            string src = File.ReadAllText(filePath);
+            var src = File.ReadAllText(filePath);
             src = SanitizeJSon(src);
-            JsonReader reader = new JsonReader(src);
+            var reader = new JsonReader(src);
             return ReadZenSettings(reader);
         }
 
-        private static ZenSettings ReadZenSettings(JsonReader reader)
+        static ZenSettings ReadZenSettings(JsonReader reader)
         {
             ZenSettings settings = new ZenSettings();
 
@@ -98,11 +97,11 @@ namespace XMLCompletion
             return settings;
         }
 
-        private static void ExtendLang(ZenLang lang, ZenLang lang2)
+        static void ExtendLang(ZenLang lang, ZenLang lang2)
         {
             MergeHashtable(ref lang.abbreviations, ref lang2.abbreviations);
             MergeHashtable(ref lang.snippets, ref lang2.snippets);
-            if (lang.element_types == null) lang.element_types = lang2.element_types;
+            if (lang.element_types is null) lang.element_types = lang2.element_types;
             else if (lang2.element_types != null)
             {
                 MergeHashtable(ref lang.element_types.empty, ref lang2.element_types.empty);
@@ -111,15 +110,15 @@ namespace XMLCompletion
             }
         }
 
-        private static void MergeHashtable(ref Hashtable t1, ref Hashtable t2)
+        static void MergeHashtable(ref Hashtable t1, ref Hashtable t2)
         {
-            if (t1 == null) t1 = t2.Clone() as Hashtable;
+            if (t1 is null) t1 = t2.Clone() as Hashtable;
             else if (t2 != null)
                 foreach (string key in t2.Keys)
                     if (!t1.ContainsKey(key)) t1[key] = t2[key];
         }
 
-        private static Hashtable ReadHashtable(JsonReader reader)
+        static Hashtable ReadHashtable(JsonReader reader)
         {
             Hashtable table = new Hashtable();
             string currentKey = null;
@@ -132,7 +131,7 @@ namespace XMLCompletion
             return table;
         }
 
-        private static ZenLang ReadZenLang(JsonReader reader)
+        static ZenLang ReadZenLang(JsonReader reader)
         {
             ZenLang lang = new ZenLang();
             Type objType = lang.GetType();
@@ -165,7 +164,7 @@ namespace XMLCompletion
             return lang;
         }
 
-        private static string SanitizeJSon(string src)
+        static string SanitizeJSon(string src)
         {
             src = src.Substring(src.IndexOf('{'));
             src = src.Substring(0, src.LastIndexOf('}') + 1);
@@ -178,15 +177,16 @@ namespace XMLCompletion
 
     public class ZenCoding
     {
-        static private ZenLang lang;
-        static private bool inited;
-        static private ZenSettings settings;
-        static private Timer delayOpenConfig;
-        static private FileSystemWatcher watcherConfig;
-        static private Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
+        static ZenLang lang;
+        static bool inited;
+        static ZenSettings settings;
+        static Timer delayOpenConfig;
+        static FileSystemWatcher watcherConfig;
+        static readonly Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
 
         #region initialization
-        static private void init()
+
+        static void init()
         {
             if (!inited)
             {
@@ -194,46 +194,38 @@ namespace XMLCompletion
 
                 LoadResource("zen_settings.js");
 
-                if (delayOpenConfig == null) // timer for opening config files
+                if (delayOpenConfig is null) // timer for opening config files
                 {
                     delayOpenConfig = new Timer();
                     delayOpenConfig.Interval = 100;
-                    delayOpenConfig.Tick += new EventHandler(delayOpenConfig_Tick);
+                    delayOpenConfig.Tick += DelayOpenConfig_Tick;
                 }
-                if (watcherConfig == null) // watching config files changes
+                if (watcherConfig is null) // watching config files changes
                 {
                     watcherConfig = new FileSystemWatcher(Path.Combine(PathHelper.DataDir, "XMLCompletion"), "zen*");
-                    watcherConfig.Changed += new FileSystemEventHandler(watcherConfig_Changed);
-                    watcherConfig.Created += new FileSystemEventHandler(watcherConfig_Changed);
+                    watcherConfig.Changed += watcherConfig_Changed;
+                    watcherConfig.Created += watcherConfig_Changed;
                     watcherConfig.EnableRaisingEvents = true;
                 }
             }
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            string docType = sci != null ? sci.ConfigurationLanguage.ToLower() : null;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var docType = sci?.ConfigurationLanguage.ToLower();
             lang = null;
-            if (docType != null)
-            {
-                if (settings.langs.ContainsKey(docType))
-                    lang = settings.langs[docType];
-            }
+            if (docType != null && settings.langs.ContainsKey(docType)) lang = settings.langs[docType];
         }
 
-        static void watcherConfig_Changed(object sender, FileSystemEventArgs e)
-        {
-            inited = false;
-        }
+        static void watcherConfig_Changed(object sender, FileSystemEventArgs e) => inited = false;
 
-        static void delayOpenConfig_Tick(object sender, EventArgs e)
+        static void DelayOpenConfig_Tick(object sender, EventArgs e)
         {
             delayOpenConfig.Stop();
             string path = Path.Combine(PathHelper.DataDir, "XMLCompletion");
             PluginBase.MainForm.OpenEditableDocument(Path.Combine(path, "zen_settings.js"));
         }
 
-        private static void LoadResource(string file)
+        static void LoadResource(string file)
         {
-            string path = Path.Combine(PathHelper.DataDir, "XMLCompletion");
-            string filePath = Path.Combine(path, file);
+            string filePath = Path.Combine(PathHelper.DataDir, "XMLCompletion", file);
             try
             {
                 if (!File.Exists(filePath) && !WriteResource(file, filePath))
@@ -246,27 +238,21 @@ namespace XMLCompletion
             }
         }
 
-        private static bool WriteResource(string file, string filePath)
+        static bool WriteResource(string file, string filePath)
         {
             try
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
-                if (src == null)
-                    return false;
+                var assembly = Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
+                if (src is null) return false;
 
-                String content;
-                using (StreamReader sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                using var reader = new StreamReader(src);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                using (StreamWriter sw = File.CreateText(filePath))
-                {
-                    sw.Write(content);
-                    sw.Close();
-                }
+                using var writer = File.CreateText(filePath);
+                writer.Write(content);
+                writer.Close();
                 return true;
             }
             catch
@@ -277,19 +263,18 @@ namespace XMLCompletion
         #endregion
 
         #region expansion
-        static public bool expandSnippet(Hashtable data)
+        public static bool expandSnippet(Hashtable data)
         {
-            if (data["snippet"] == null)
+            if (data["snippet"] is null)
             {
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (sci == null) return false;
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is null) return false;
                 // extract zen expression
-                int pos = sci.CurrentPos - 1;
-                int lastValid = sci.CurrentPos;
-                char c = ' ';
+                var pos = sci.CurrentPos - 1;
+                var lastValid = sci.CurrentPos;
                 while (pos >= 0)
                 {
-                    c = (char)sci.CharAt(pos);
+                    var c = (char)sci.CharAt(pos);
                     if (c <= 32)
                     {
                         lastValid = pos + 1;
@@ -300,7 +285,7 @@ namespace XMLCompletion
                         if (lastValid - 1 <= pos) break;
                         lastValid = pos + 1;
                     }
-                    else if (!Char.IsLetterOrDigit(c) && "+*$.#:-".IndexOf(c) < 0) break;
+                    else if (!char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
                     pos--;
                     if (pos < 0) lastValid = 0;
                 }
@@ -311,8 +296,8 @@ namespace XMLCompletion
                     try
                     {
                         string expr = expandExpression(sci.SelText);
-                        if (expr == null) return false;
-                        if (expr.IndexOfOrdinal("$(EntryPoint)") < 0) expr += "$(EntryPoint)";
+                        if (expr is null) return false;
+                        if (!expr.Contains("$(EntryPoint)")) expr += "$(EntryPoint)";
                         data["snippet"] = expr;
                     }
                     catch (ZenExpandException zex)
@@ -328,17 +313,18 @@ namespace XMLCompletion
             return false;
         }
 
-        static public string expandExpression(string expr)
+        public static string expandExpression(string expr)
         {
             init(); // load config
-            if (lang == null) return null;
+            if (lang is null) return null;
 
             if (expr == "zen") // show config
             {
                 delayOpenConfig.Start();
                 return "";
             }
-            else if (expr.EndsWith('+'))
+
+            if (expr.EndsWith('+'))
             {
                 if (lang.abbreviations.ContainsKey(expr))
                     expr = (string)lang.abbreviations[expr]; // expandos
@@ -351,10 +337,10 @@ namespace XMLCompletion
             int p = src.IndexOf('|');
             src = src.Replace("|", "");
             if (p < 0) return src;
-            else return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
+            return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
         }
 
-        private static string expandZen(string expr)
+        static string expandZen(string expr)
         {
             if (expr.Length == 0) 
                 throw new ZenExpandException("Empty expression found");
@@ -363,7 +349,6 @@ namespace XMLCompletion
             string[] parts = expr.Split('>');
             Array.Reverse(parts);
             bool inline = true;
-            int index = 1;
             foreach (string part in parts)
             {
                 if (part.Length == 0)
@@ -436,12 +421,12 @@ namespace XMLCompletion
                                     tag = tagStart;
                                     if (atId.Length > 0)
                                     {
-                                        if (tagEnd.IndexOfOrdinal(" id=") < 0) tag += atId;
+                                        if (!tagEnd.Contains(" id=")) tag += atId;
                                         else tagEnd = tagEnd.Replace(" id=\"\"", atId);
                                     }
                                     if (atClass.Length > 0)
                                     {
-                                        if (tagEnd.IndexOfOrdinal(" class=") < 0) tag += atClass;
+                                        if (!tagEnd.Contains(" class=")) tag += atClass;
                                         else tagEnd = tagEnd.Replace(" class=\"\"", atClass);
                                     }
                                     tag += tagEnd;
@@ -453,10 +438,10 @@ namespace XMLCompletion
 
                     if (customExpand)
                     {
-                        if (tag.IndexOfOrdinal("${") >= 0) tag = ProcessVars(tag);
+                        if (tag.Contains("${")) tag = ProcessVars(tag);
 
                         tag = tag.Replace("\\n", "\n").Replace("\\t", "\t");
-                        if (tag.IndexOf('|') < 0) tag = tag.Replace("\"\"", "\"|\"");
+                        if (!tag.Contains('|')) tag = tag.Replace("\"\"", "\"|\"");
 
                         int child = tag.IndexOfOrdinal("${child}");
                         if (child >= 0)
@@ -516,7 +501,7 @@ namespace XMLCompletion
                     {
                         if (multiply > 1)
                         {
-                            index = i;
+                            var index = i;
                             src += master.Replace("$", index.ToString());
                         }
                         else src += master;
@@ -527,20 +512,17 @@ namespace XMLCompletion
             return src;
         }
 
-        private static string ProcessVars(string tag)
-        {
-            return reVariable.Replace(tag, VarReplacer);
-        }
+        static string ProcessVars(string tag) => reVariable.Replace(tag, VarReplacer);
 
-        private static string VarReplacer(Match m)
+        static string VarReplacer(Match m)
         {
             string name = m.Groups[1].Value;
             if (name != "child" && settings.variables.ContainsKey(name)) 
                 return (string)settings.variables[name];
-            else return m.Value;
+            return m.Value;
         }
 
-        private static string addIndent(string res)
+        static string addIndent(string res)
         {
             string[] lines = res.Split('\n');
             res = "";
@@ -548,22 +530,19 @@ namespace XMLCompletion
             return res.Trim();
         }
 
-        private static bool isBlock(string tag)
-        {
-            return lang.element_types.block_level.ContainsKey(tag);
-        }
+        static bool isBlock(string tag) => lang.element_types.block_level.ContainsKey(tag);
 
-        private static bool isInline(string tag)
+        static bool isInline(string tag)
         {
             if (tag.Length > 3 && tag[0] == '<') 
             {
                 // extract tag name
-                tag = tag.Substring(1).Split(new char[] { ' ', '"', '\'', '/', '|', '>' }, 2)[0];
+                tag = tag.Substring(1).Split(new[] { ' ', '"', '\'', '/', '|', '>' }, 2)[0];
             }
             return lang.element_types.inline_level.ContainsKey(tag);
         }
 
-        private static string extractEnd(char sep, ref string part)
+        static string extractEnd(char sep, ref string part)
         {
             int p = part.LastIndexOf(sep);
             if (p == 0)

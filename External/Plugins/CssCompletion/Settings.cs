@@ -18,48 +18,48 @@ namespace CssCompletion
         [LocalizedDescription("CssCompletion.Description.DisableAutoCloseBraces")]
         public bool DisableAutoCloseBraces
         {
-            get { return disableAutoCloseBraces; }
-            set { disableAutoCloseBraces = value; }
+            get => disableAutoCloseBraces;
+            set => disableAutoCloseBraces = value;
         }
 
         [DisplayName("Disable Auto Completion"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableAutoCompletion")]
-        public Boolean DisableAutoCompletion
+        public bool DisableAutoCompletion
         {
-            get { return this.disableAutoCompletion; }
-            set { this.disableAutoCompletion = value; }
+            get => disableAutoCompletion;
+            set => disableAutoCompletion = value;
         }
 
         [DisplayName("Disable Insert Colon"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableInsertColon")]
-        public Boolean DisableInsertColon
+        public bool DisableInsertColon
         {
-            get { return this.disableInsertColon; }
-            set { this.disableInsertColon = value; }
+            get => disableInsertColon;
+            set => disableInsertColon = value;
         }
 
         [DisplayName("Disable Compile To CSS On Save"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableCompileOnSave")]
-        public Boolean DisableCompileOnSave
+        public bool DisableCompileOnSave
         {
-            get { return this.disableCompileOnSave; }
-            set { this.disableCompileOnSave = value; }
+            get => disableCompileOnSave;
+            set => disableCompileOnSave = value;
         }
 
         [DisplayName("Disable Minify CSS On Save"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableMinifyOnSave")]
-        public Boolean DisableMinifyOnSave
+        public bool DisableMinifyOnSave
         {
-            get { return this.disableMinifyOnSave; }
-            set { this.disableMinifyOnSave = value; }
+            get => disableMinifyOnSave;
+            set => disableMinifyOnSave = value;
         }
 
         [DisplayName("Enable Verbose Compilation"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.EnableVerboseCompilation")]
-        public Boolean EnableVerboseCompilation
+        public bool EnableVerboseCompilation
         {
-            get { return this.enableVerboseCompilation; }
-            set { this.enableVerboseCompilation = value; }
+            get => enableVerboseCompilation;
+            set => enableVerboseCompilation = value;
         }
     }
 

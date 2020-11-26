@@ -11,18 +11,18 @@ namespace FlashDevelop.Dialogs
 {
     public class RecoveryDialog : SmartForm
     {
-        private System.Windows.Forms.Label infoLabel;
-        private System.Windows.Forms.Button deleteButton;
-        private System.Windows.Forms.Button notifyButton;
-        private System.Windows.Forms.Button openButton;
+        Label infoLabel;
+        Button deleteButton;
+        Button notifyButton;
+        Button openButton;
 
         public RecoveryDialog()
         {
-            this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
-            this.FormGuid = "54452519-b993-47f6-9d27-22d31bced4ff";
-            this.InitializeComponent();
-            this.ApplyLocalizedTexts();
+            Owner = Globals.MainForm;
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "54452519-b993-47f6-9d27-22d31bced4ff";
+            InitializeComponent();
+            ApplyLocalizedTexts();
         }
 
         #region Windows Form Designer Generated Code
@@ -31,76 +31,76 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.deleteButton = new System.Windows.Forms.ButtonEx();
-            this.openButton = new System.Windows.Forms.ButtonEx();
-            this.notifyButton = new System.Windows.Forms.ButtonEx();
-            this.infoLabel = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            deleteButton = new ButtonEx();
+            openButton = new ButtonEx();
+            notifyButton = new ButtonEx();
+            infoLabel = new Label();
+            SuspendLayout();
             // 
             // deleteButton
             // 
-            this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.deleteButton.Location = new System.Drawing.Point(133, 88);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(85, 23);
-            this.deleteButton.TabIndex = 2;
-            this.deleteButton.Text = "&Delete Files";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            deleteButton.FlatStyle = FlatStyle.System;
+            deleteButton.Location = new System.Drawing.Point(133, 88);
+            deleteButton.Name = "deleteButton";
+            deleteButton.Size = new System.Drawing.Size(85, 23);
+            deleteButton.TabIndex = 2;
+            deleteButton.Text = "&Delete Files";
+            deleteButton.UseVisualStyleBackColor = true;
+            deleteButton.Click += DeleteButtonClick;
             // 
             // openButton
             // 
-            this.openButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.openButton.Location = new System.Drawing.Point(42, 88);
-            this.openButton.Name = "openButton";
-            this.openButton.Size = new System.Drawing.Size(85, 23);
-            this.openButton.TabIndex = 3;
-            this.openButton.Text = "&Open Files";
-            this.openButton.UseVisualStyleBackColor = true;
-            this.openButton.Click += new System.EventHandler(this.OpenButtonClick);
+            openButton.FlatStyle = FlatStyle.System;
+            openButton.Location = new System.Drawing.Point(42, 88);
+            openButton.Name = "openButton";
+            openButton.Size = new System.Drawing.Size(85, 23);
+            openButton.TabIndex = 3;
+            openButton.Text = "&Open Files";
+            openButton.UseVisualStyleBackColor = true;
+            openButton.Click += OpenButtonClick;
             // 
             // notifyButton
             // 
-            this.notifyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.notifyButton.Location = new System.Drawing.Point(224, 88);
-            this.notifyButton.Name = "notifyButton";
-            this.notifyButton.Size = new System.Drawing.Size(85, 23);
-            this.notifyButton.TabIndex = 1;
-            this.notifyButton.Text = "&Notify Later";
-            this.notifyButton.UseVisualStyleBackColor = true;
-            this.notifyButton.Click += new System.EventHandler(this.NotifyButtonClick);
+            notifyButton.FlatStyle = FlatStyle.System;
+            notifyButton.Location = new System.Drawing.Point(224, 88);
+            notifyButton.Name = "notifyButton";
+            notifyButton.Size = new System.Drawing.Size(85, 23);
+            notifyButton.TabIndex = 1;
+            notifyButton.Text = "&Notify Later";
+            notifyButton.UseVisualStyleBackColor = true;
+            notifyButton.Click += NotifyButtonClick;
             // 
             // infoLabel
             //
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.infoLabel.Location = new System.Drawing.Point(13, 13);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(331, 66);
-            this.infoLabel.TabIndex = 4;
-            this.infoLabel.Text = "The recovery folder contains temporary backup files and this possibly means that your previous coding session was interrupted. \r\n\r\nWhat do you want to do to these files?";
-            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            infoLabel.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+            infoLabel.FlatStyle = FlatStyle.System;
+            infoLabel.Location = new System.Drawing.Point(13, 13);
+            infoLabel.Name = "infoLabel";
+            infoLabel.Size = new System.Drawing.Size(331, 66);
+            infoLabel.TabIndex = 4;
+            infoLabel.Text = "The recovery folder contains temporary backup files and this possibly means that your previous coding session was interrupted. \r\n\r\nWhat do you want to do to these files?";
+            infoLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // RecoveryDialog
             // 
-            this.AcceptButton = this.openButton;
-            this.CancelButton = this.notifyButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 124);
-            this.Controls.Add(this.notifyButton);
-            this.Controls.Add(this.openButton);
-            this.Controls.Add(this.deleteButton);
-            this.Controls.Add(this.infoLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "RecoveryDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = " Recovery File Notification";
-            this.ResumeLayout(false);
+            AcceptButton = openButton;
+            CancelButton = notifyButton;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(356, 124);
+            Controls.Add(notifyButton);
+            Controls.Add(openButton);
+            Controls.Add(deleteButton);
+            Controls.Add(infoLabel);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "RecoveryDialog";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = " Recovery File Notification";
+            ResumeLayout(false);
 
         }
 
@@ -111,84 +111,75 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        private void ApplyLocalizedTexts()
+        void ApplyLocalizedTexts()
         {
-            this.openButton.Text = TextHelper.GetString("Label.OpenFiles");
-            this.notifyButton.Text = TextHelper.GetString("Label.NotifyLater");
-            this.deleteButton.Text = TextHelper.GetString("Label.DeleteFiles");
-            this.Text = " " + TextHelper.GetString("Title.RecoveryDialog");
-            String info = TextHelper.GetString("Info.RecoveryInfo");
-            this.infoLabel.Text = String.Format(info, "\n\n");
+            openButton.Text = TextHelper.GetString("Label.OpenFiles");
+            notifyButton.Text = TextHelper.GetString("Label.NotifyLater");
+            deleteButton.Text = TextHelper.GetString("Label.DeleteFiles");
+            Text = " " + TextHelper.GetString("Title.RecoveryDialog");
+            string info = TextHelper.GetString("Info.RecoveryInfo");
+            infoLabel.Text = string.Format(info, "\n\n");
         }
 
         /// <summary>
         /// Notifies the user next time with the same info
         /// </summary>
-        private void NotifyButtonClick(Object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        void NotifyButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Opens the files from the recovery files folder
         /// </summary>
-        private void OpenButtonClick(Object sender, EventArgs e)
+        void OpenButtonClick(object sender, EventArgs e)
         {
-            String[] files = GetRecoveryFiles();
-            foreach (String file in files)
+            string[] files = GetRecoveryFiles();
+            foreach (string file in files)
             {
-                String arguments = "bak;" + file;
+                string arguments = "bak;" + file;
                 PluginBase.MainForm.CallCommand("NewFromTemplate", arguments);
             }
-            String message = TextHelper.GetString("Info.DeleteFilesAlso");
-            String caption = " " + TextHelper.GetString("Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.DeleteFilesAlso");
+            string caption = " " + TextHelper.GetString("Title.ConfirmDialog");
             if (MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                this.DeleteButtonClick(null, null);
+                DeleteButtonClick(null, null);
             }
-            else this.Close();
+            else Close();
         }
 
         /// <summary>
         /// Deletes the files from the recovery files folder
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        void DeleteButtonClick(object sender, EventArgs e)
         {
-            String[] files = GetRecoveryFiles();
-            foreach (String file in files) FileHelper.Recycle(file);
-            this.Close();
+            var files = GetRecoveryFiles();
+            foreach (string file in files) FileHelper.Recycle(file);
+            Close();
         }
 
         /// <summary>
         /// Gets the files from the recovery folder
         /// </summary>
-        private static String[] GetRecoveryFiles()
+        static string[] GetRecoveryFiles()
         {
-            String folder = Path.Combine(PathHelper.SettingDir, "Recovery");
-            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-            return Directory.GetFiles(folder);
+            var path = Path.Combine(PathHelper.SettingDir, "Recovery");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            return Directory.GetFiles(path);
         }
 
         /// <summary>
         /// Checks whether we should show the dialog
         /// </summary>
-        public static Boolean ShouldShowDialog()
-        {
-            if (!SingleInstanceApp.AlreadyExists && GetRecoveryFiles().Length > 0) return true;
-            else return false;
-        }
+        public static bool ShouldShowDialog() => !SingleInstanceApp.AlreadyExists && GetRecoveryFiles().Length > 0;
 
         /// <summary>
         /// Shows the recovery dialog
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
-            using (RecoveryDialog recoveryDialog = new RecoveryDialog())
-                recoveryDialog.ShowDialog();
+            using var dialog = new RecoveryDialog();
+            dialog.ShowDialog();
         }
 
         #endregion
-
     }
-
 }

@@ -111,10 +111,7 @@ namespace ASCompletion.Controls
 
         #region Event Listeners
 
-        static void ListView_LostFocus(object sender, EventArgs e)
-        {
-            HideList();
-        }
+        static void ListView_LostFocus(object sender, EventArgs e) => HideList();
 
         static void ListView_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -129,15 +126,9 @@ namespace ASCompletion.Controls
 
         }
 
-        static void ListView_MouseLeave(object sender, EventArgs e)
-        {
-            fadingTimer.Start();
-        }
+        static void ListView_MouseLeave(object sender, EventArgs e) => fadingTimer.Start();
 
-        static void ListView_MouseEnter(object sender, EventArgs e)
-        {
-            fadingTimer.Stop();
-        }
+        static void ListView_MouseEnter(object sender, EventArgs e) => fadingTimer.Stop();
 
         static void FadingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -151,10 +142,10 @@ namespace ASCompletion.Controls
             var reference = (Reference)selection.Tag;
 
             HideList();
-            if (PluginBase.MainForm.CurrentDocument.SciControl != null)
-                ASComplete.SaveLastLookupPosition(PluginBase.MainForm.CurrentDocument.SciControl);
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci)
+                ASComplete.SaveLastLookupPosition(sci);
             PluginBase.MainForm.OpenEditableDocument(reference.File, false);
-            PluginBase.MainForm.CurrentDocument.SciControl.GotoLine(reference.Line);
+            PluginBase.MainForm.CurrentDocument?.SciControl.GotoLine(reference.Line);
         }
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using flash.tools.debugger;
 using Double = java.lang.Double;
 using System.Text;
@@ -8,18 +9,18 @@ namespace FlashDebugger.Controls.DataTree
 {
     public class ValueNode : DataNode
     {
-        private int m_ChildrenShowLimit = 500;
+        int m_ChildrenShowLimit = 500;
         public int ChildrenShowLimit
         {
-            get { return m_ChildrenShowLimit; }
-            set { m_ChildrenShowLimit = value; }
+            get => m_ChildrenShowLimit;
+            set => m_ChildrenShowLimit = value;
         }
 
         public bool HideFullClasspath { get; set; }
         public bool HideClassId { get; set; }
 
         protected Value m_Value;
-        private bool m_bEditing = false;
+        bool m_bEditing = false;
 
         /// <summary>
         /// Get the display value based on user's preferences
@@ -28,12 +29,8 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value == null)
-                {
-                    return string.Empty;
-                }
+                if (m_Value is null) return string.Empty;
                 int type = m_Value.getType();
-                string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
                     string typeStr = m_Value.getTypeName().ToString();
@@ -61,20 +58,22 @@ namespace FlashDebugger.Controls.DataTree
 
                     return typeStr;
                 }
-                else if (type == VariableType_.NUMBER)
+
+                if (type == VariableType_.NUMBER)
                 {
                     double number = ((Double)m_Value.getValueAsObject()).doubleValue();
-                    if (!System.Double.IsNaN(number) && (double)(long)number == number)
+                    if (!double.IsNaN(number) && (long)number == number)
                     {
                         if (!m_bEditing)
                         {
-                            if (number < 0 && number >= Int32.MinValue)
+                            if (number < 0 && number >= int.MinValue)
                             {
-                                return number + " [0x" + ((Int32)number).ToString("x") + "]";
+                                return number + " [0x" + ((int)number).ToString("x") + "]";
                             }
-                            else if (number < 0 || number > 9)
+
+                            if (number < 0 || number > 9)
                             {
-                                return number + " [0x" + ((Int64)number).ToString("x") + "]";
+                                return number + " [0x" + ((long)number).ToString("x") + "]";
                             }
                         }
                         else return number.ToString();
@@ -91,25 +90,13 @@ namespace FlashDebugger.Controls.DataTree
                         return "\"" + Escape(m_Value.ToString()) + "\"";
                     }
                 }
-                else if (type == VariableType_.NULL)
-                {
-                    return "null";
-                }
-                else if (type == VariableType_.FUNCTION)
-                {
-                    return "Function @" + m_Value.ToString();
-                }
-                temp = m_Value.ToString();
-                if (!m_bEditing)
-                {
-                    temp = Escape(temp);
-                }
+                else if (type == VariableType_.NULL) return "null";
+                else if (type == VariableType_.FUNCTION) return "Function @" + m_Value;
+                var temp = m_Value.ToString();
+                if (!m_bEditing) temp = Escape(temp);
                 return temp;
             }
-            set
-            {
-                throw new NotSupportedException();
-            }
+            set => throw new NotSupportedException();
         }
 
         /// <summary>
@@ -119,43 +106,19 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-
-                if (m_Value == null)
-                {
-                    return null;
-                }
+                if (m_Value is null) return null;
                 int type = m_Value.getType();
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
                     string typeStr = m_Value.getTypeName().replaceAll("::", ".").ToString().Before("@");
+                    return typeStr == "[]" ? "Array" : typeStr;
+                }
 
-                    if (typeStr == "[]")
-                    {
-                        return "Array";
-                    }
-                    return typeStr;
-
-                }
-                else if (type == VariableType_.NUMBER)
-                {
-                    return "Number";
-                }
-                else if (type == VariableType_.BOOLEAN)
-                {
-                    return "Boolean";
-                }
-                else if (type == VariableType_.STRING)
-                {
-                    return "String";
-                }
-                else if (type == VariableType_.NULL)
-                {
-                    return "null";
-                }
-                else if (type == VariableType_.FUNCTION)
-                {
-                    return "Function";
-                }
+                if (type == VariableType_.NUMBER) return "Number";
+                if (type == VariableType_.BOOLEAN) return "Boolean";
+                if (type == VariableType_.STRING) return "String";
+                if (type == VariableType_.NULL) return "null";
+                if (type == VariableType_.FUNCTION) return "Function";
                 return null;
             }
         }
@@ -167,17 +130,16 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value != null)
+                if (m_Value is null) return "";
+                int type = m_Value.getType();
+                if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    int type = m_Value.getType();
-                    if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
-                    {
-                        return m_Value.getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
-                    }
-                    else if (type == VariableType_.FUNCTION)
-                    {
-                        return "Function - " + m_Value.ToString();
-                    }
+                    return m_Value.getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
+                }
+
+                if (type == VariableType_.FUNCTION)
+                {
+                    return "Function - " + m_Value;
                 }
                 return "";
             }
@@ -190,25 +152,21 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value == null)
-                {
-                    return false;
-                }
+                if (m_Value is null) return false;
                 int type = m_Value.getType();
-                return type == VariableType_.NUMBER || type == VariableType_.BOOLEAN ||
-                       type == VariableType_.STRING || type == VariableType_.NULL;
+                return type == VariableType_.NUMBER 
+                       || type == VariableType_.BOOLEAN
+                       || type == VariableType_.STRING
+                       || type == VariableType_.NULL;
             }
         }
 
         public Value PlayerValue
         {
-            get
-            {
-                return m_Value;
-            }
+            get => m_Value;
             set
             {
-                if (m_Value == value) return;
+                if (value == m_Value) return;
 
                 m_Value = value;
                 //this.NotifyModel();
@@ -219,24 +177,15 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value == null)
-                {
-                    return (this.Nodes.Count == 0);
-                }
+                if (m_Value is null) return Nodes.Count == 0;
                 return m_Value.getType() != VariableType_.MOVIECLIP && m_Value.getType() != VariableType_.OBJECT;
             }
         }
 
         public bool IsEditing
         {
-            get
-            {
-                return m_bEditing;
-            }
-            set
-            {
-                m_bEditing = value;
-            }
+            get => m_bEditing;
+            set => m_bEditing = value;
         }
 
         public ValueNode(string text)
@@ -244,11 +193,7 @@ namespace FlashDebugger.Controls.DataTree
         {
         }
 
-        public ValueNode(string text, Value value)
-            : base(text)
-        {
-            m_Value = value;
-        }
+        public ValueNode(string text, Value value) : base(text) => m_Value = value;
 
         internal static string Escape(string text)
         {
@@ -262,8 +207,7 @@ namespace FlashDebugger.Controls.DataTree
             text = text.Replace("\r", "\\r");
             text = text.Replace("\t", "\\t");
             text = text.Replace("\v", "\\v");
-            if (text.Length > 65533)
-                text = text.Substring(0, 65533 - 5) + "[...]";
+            if (text.Length > 65533) text = text.Substring(0, 65533 - 5) + "[...]";
             return text;
         }
 
@@ -274,7 +218,7 @@ namespace FlashDebugger.Controls.DataTree
         /// <returns>The class name with no class paths</returns>
         internal static string CleanTypeClassPaths(string qualifiedName)
         {
-            char[] delims = { ',', ' ', '<', '>' };
+            var delims = new HashSet<char> { ',', ' ', '<', '>' };
             var buffer = new StringBuilder();
             bool inPackage = false;
 
@@ -289,15 +233,12 @@ namespace FlashDebugger.Controls.DataTree
                In resume, with this method we could support without much problem even complex cases like:
                  Collections.Generic.Dictionary<Collections.Generic.Dictionary<String, Test.CustomClassKey>, Collections.Generic.List<Test.CustomClass>>
             */
-            for (int i = qualifiedName.Length - 1; i >= 0; i--)
+            for (var i = qualifiedName.Length - 1; i >= 0; i--)
             {
-                char c = qualifiedName[i];
-
+                var c = qualifiedName[i];
                 if (inPackage)
                 {
-                    if (Array.IndexOf(delims, c) < 0)
-                        continue;
-
+                    if (!delims.Contains(c)) continue;
                     inPackage = false;
                 }
                 else if ((c == '.' && qualifiedName[i + 1] != '<') || c == ':')
@@ -305,12 +246,9 @@ namespace FlashDebugger.Controls.DataTree
                     inPackage = true;
                     continue;
                 }
-
                 buffer.Insert(0, c);
             }
-
             return buffer.ToString();
         }
     }
-
 }

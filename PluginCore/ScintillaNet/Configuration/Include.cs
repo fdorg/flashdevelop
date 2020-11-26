@@ -3,12 +3,10 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class include : ConfigItem
     {
-        [XmlAttribute()]
+        [XmlAttribute]
         public string file;
-        
     }
-    
 }

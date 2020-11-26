@@ -56,17 +56,17 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// </summary>
         /// <param name="seed">The seed value to initialise keys with.</param>
         /// <returns>A new key value.</returns>
-        static public byte[] GenerateKeys(byte[] seed)
+        public static byte[] GenerateKeys(byte[] seed)
         {
-            if ( seed == null ) {
-                throw new ArgumentNullException("seed");
+            if ( seed is null ) {
+                throw new ArgumentNullException(nameof(seed));
             }
 
             if ( seed.Length == 0 ) {
-                throw new ArgumentException("Length is zero", "seed");
+                throw new ArgumentException("Length is zero", nameof(seed));
             }
 
-            uint[] newKeys = new uint[] {
+            uint[] newKeys = {
                 0x12345678,
                 0x23456789,
                 0x34567890
@@ -120,8 +120,8 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <param name="keyData">The data use to set the keys from.</param>
         protected void SetKeys(byte[] keyData)
         {
-            if ( keyData == null ) {
-                throw new ArgumentNullException("keyData");
+            if ( keyData is null ) {
+                throw new ArgumentNullException(nameof(keyData));
             }
         
             if ( keyData.Length != 12 ) {
@@ -213,42 +213,22 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <summary>
         /// Gets a value indicating whether the current transform can be reused.
         /// </summary>
-        public bool CanReuseTransform
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanReuseTransform => true;
 
         /// <summary>
         /// Gets the size of the input data blocks in bytes.
         /// </summary>
-        public int InputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int InputBlockSize => 1;
 
         /// <summary>
         /// Gets the size of the output data blocks in bytes.
         /// </summary>
-        public int OutputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int OutputBlockSize => 1;
 
         /// <summary>
         /// Gets a value indicating whether multiple blocks can be transformed.
         /// </summary>
-        public bool CanTransformMultipleBlocks
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanTransformMultipleBlocks => true;
 
         #endregion
 
@@ -319,42 +299,22 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <summary>
         /// Gets a value indicating whether the current transform can be reused.
         /// </summary>
-        public bool CanReuseTransform
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanReuseTransform => true;
 
         /// <summary>
         /// Gets the size of the input data blocks in bytes.
         /// </summary>
-        public int InputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int InputBlockSize => 1;
 
         /// <summary>
         /// Gets the size of the output data blocks in bytes.
         /// </summary>
-        public int OutputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int OutputBlockSize => 1;
 
         /// <summary>
         /// Gets a value indicating whether multiple blocks can be transformed.
         /// </summary>
-        public bool CanTransformMultipleBlocks
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanTransformMultipleBlocks => true;
 
         #endregion
 
@@ -383,9 +343,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <remarks>The only valid block size is 8.</remarks>
         public override int BlockSize 
         {
-            get { 
-                return 8; 
-            }
+            get => 8;
 
             set {
                 if (value != 8) {
@@ -432,7 +390,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
         public override byte[] Key
         {
             get {
-                if ( key_ == null ) {
+                if ( key_ is null ) {
                     GenerateKey();
                 }
                 
@@ -440,8 +398,8 @@ namespace ICSharpCode.SharpZipLib.Encryption
             }
         
             set {
-                if ( value == null ) {
-                    throw new ArgumentNullException("value");
+                if ( value is null ) {
+                    throw new ArgumentNullException(nameof(value));
                 }
                 
                 if ( value.Length != 12 ) {

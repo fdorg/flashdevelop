@@ -21,17 +21,18 @@ namespace AS3Context.Compiler
         public void Run(string projectPath, string flexSDKPath)
         {
             flexSDKPath = PathHelper.ResolvePath(flexSDKPath, projectPath);
-            if (flexSDKPath != null && Directory.Exists(flexSDKPath))
+            if (Directory.Exists(flexSDKPath))
             {
                 if (flexSDKPath.EndsWith("bin", StringComparison.OrdinalIgnoreCase))
                     flexSDKPath = Path.GetDirectoryName(flexSDKPath);
             }
             else return;
 
-            Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
-
-            if (process == null || process.HasExited)
+            if (process is null || process.HasExited)
+            {
+                var jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
                 Initialize(flexSDKPath, jvmConfig, projectPath);
+            }
         }
 
         public void PushCommand(string cmd)
@@ -64,7 +65,7 @@ namespace AS3Context.Compiler
         {
             cmdQueue = new Queue<string>();
 
-            string fdbPath = Path.Combine(flexSDKPath, "lib\\fdb.jar");
+            var fdbPath = Path.Combine(flexSDKPath, "lib\\fdb.jar");
             if (!File.Exists(fdbPath)) fdbPath = Path.Combine(flexSDKPath, "lib\\legacy\\fdb.jar");
             if (!File.Exists(fdbPath))
             {
@@ -102,7 +103,7 @@ namespace AS3Context.Compiler
         {
             keepAlive = false;
             Cleanup();
-            if (OnOutput != null) OnOutput("[FDB halted]");
+            OnOutput?.Invoke("[FDB halted]");
         }
 
         public void Cleanup()
@@ -111,7 +112,7 @@ namespace AS3Context.Compiler
             if (process != null && !process.HasExited && keepAlive)
             {
                 keepAlive = false;
-                if (OnOutput != null) OnOutput("[Shutting down FDB]");
+                OnOutput?.Invoke("[Shutting down FDB]");
                 try
                 {
                     if (!process.HasExited) process.Kill();
@@ -146,7 +147,7 @@ namespace AS3Context.Compiler
                         running = true;
                         WriteToPrompt("run");
                         Thread.Sleep(200);
-                        if (OnStarted != null) OnStarted(null);
+                        OnStarted?.Invoke(null);
                     }
                     // send commands queue
                     else if (cmdQueue.Count > 0) WriteToPrompt(cmdQueue.Dequeue());
@@ -161,7 +162,7 @@ namespace AS3Context.Compiler
             }
             if (process != null && !process.HasExited)
             {
-                if (OnOutput != null) OnOutput("[Shutting down FDB]");
+                OnOutput?.Invoke("[Shutting down FDB]");
                 try
                 {
                     if (!process.HasExited) process.Kill();
@@ -175,16 +176,15 @@ namespace AS3Context.Compiler
             while (keepAlive && !process.StandardError.EndOfStream)
             {
                 string line = process.StandardError.ReadLine();
-                if (OnError != null) OnError(line);
+                OnError?.Invoke(line);
             }
         }
 
         void WriteToPrompt(string line)
         {
             interactive = false;
-            if (process != null) 
-                process.StandardInput.WriteLine(line);
-            if (OnOutput != null) OnOutput("(fdb) "+line);
+            process?.StandardInput.WriteLine(line);
+            OnOutput?.Invoke("(fdb) "+line);
         }
 
         /// <summary>
@@ -199,14 +199,12 @@ namespace AS3Context.Compiler
 
         void ReadUntilToken(string token)
         {
-            StringBuilder output = new StringBuilder();
-            Queue<char> queue = new Queue<char>();
-
-            bool keepProcessing = true;
+            var output = new StringBuilder();
+            var queue = new Queue<char>();
+            var keepProcessing = true;
             while (keepProcessing && keepAlive)
             {
-                if (process == null || process.HasExited)
-                    keepProcessing = false;
+                if (process is null || process.HasExited) keepProcessing = false;
                 else
                 {
                     char c = (char)process.StandardOutput.Read();
@@ -233,12 +231,12 @@ namespace AS3Context.Compiler
 
         #region Understanding
 
-        static Regex reTrace = new Regex(@"^?\[trace\]", RegexOptions.Compiled);
-        static Regex reFault = new Regex(@"^(\[Fault\]|Fault,) ", RegexOptions.Compiled);
-        static Regex reLoad = new Regex(@"^\[SWF\] ", RegexOptions.Compiled);
-        static Regex reUnload = new Regex(@"^\[UnloadSWF\] ", RegexOptions.Compiled);
-        static Regex reDisconnect = new Regex(@"^Player session terminated", RegexOptions.Compiled);
-        static Regex reContinue = new Regex(@"'continue'", RegexOptions.Compiled);
+        static readonly Regex reTrace = new Regex(@"^?\[trace\]", RegexOptions.Compiled);
+        static readonly Regex reFault = new Regex(@"^(\[Fault\]|Fault,) ", RegexOptions.Compiled);
+        static readonly Regex reLoad = new Regex(@"^\[SWF\] ", RegexOptions.Compiled);
+        static readonly Regex reUnload = new Regex(@"^\[UnloadSWF\] ", RegexOptions.Compiled);
+        static readonly Regex reDisconnect = new Regex(@"^Player session terminated", RegexOptions.Compiled);
+        static readonly Regex reContinue = new Regex(@"'continue'", RegexOptions.Compiled);
 
         void MatchLine(string line)
         {
@@ -253,11 +251,11 @@ namespace AS3Context.Compiler
             // [trace] Hello World!
             else if (reTrace.IsMatch(line))
             {
-                if (OnTrace != null)
+                if (OnTrace is { } onTrace)
                 {
-                    string trace = line.Substring(line.IndexOf(']') + 1);
-                    if (trace.Length > 0 && Char.IsWhiteSpace(trace[0])) OnTrace(trace.Substring(1));
-                    else OnTrace(trace);
+                    var trace = line.Substring(line.IndexOf(']') + 1);
+                    if (trace.Length > 0 && char.IsWhiteSpace(trace[0])) onTrace(trace.Substring(1));
+                    else onTrace(trace);
                     return;
                 }
             }
@@ -266,9 +264,9 @@ namespace AS3Context.Compiler
             // 20 <code extract>
             else if (reFault.IsMatch(line))
             {
-                if (OnError != null)
+                if (OnError is { } onError)
                 {
-                    OnError(line);
+                    onError(line);
                     return;
                 }
             }
@@ -290,7 +288,7 @@ namespace AS3Context.Compiler
                 keepAlive = false;
             }
 
-            if (OnOutput != null) OnOutput(line);
+            OnOutput?.Invoke(line);
         }
         #endregion
     }

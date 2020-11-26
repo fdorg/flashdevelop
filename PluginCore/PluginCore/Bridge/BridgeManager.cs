@@ -5,27 +5,19 @@ namespace PluginCore.Bridge
 {
     public class BridgeManager
     {
-        static private IBridgeSettings settings;
-        static private BridgeClient remoteClient;
+        static BridgeClient remoteClient;
 
         #region Properties
 
         /// <summary>
         /// Enable delegation to host system
         /// </summary>
-        static public bool Active
-        {
-            get { return settings != null ? settings.Active : false; }
-        }
+        public static bool Active => Settings?.Active ?? false;
 
         /// <summary>
         /// Bridge configuration is externalized in a plugin
         /// </summary>
-        static public IBridgeSettings Settings
-        {
-            get { return settings; }
-            set { settings = value; }
-        }
+        public static IBridgeSettings Settings { get; set; }
 
         #endregion
 
@@ -34,11 +26,11 @@ namespace PluginCore.Bridge
         /// <summary>
         /// Check if the provided file type should always be executed under Windows
         /// </summary>
-        static public bool AlwaysOpenLocal(string path)
+        public static bool AlwaysOpenLocal(string path)
         {
             if (!Active) return true;
             string ext = Path.GetExtension(path).ToLower();
-            foreach (string item in settings.AlwaysOpenLocal)
+            foreach (string item in Settings.AlwaysOpenLocal)
                 if (ext == item) return true;
             return false;
         }
@@ -46,9 +38,9 @@ namespace PluginCore.Bridge
         /// <summary>
         /// Open a shared document by the associated application of the host
         /// </summary>
-        static public void RemoteOpen(string shared)
+        public static void RemoteOpen(string shared)
         {
-            if (remoteClient == null || !remoteClient.Connected)
+            if (remoteClient is null || !remoteClient.Connected)
                 remoteClient = new BridgeClient();
             if (remoteClient.Connected)
             {
@@ -63,7 +55,7 @@ namespace PluginCore.Bridge
         /// </summary>
         /*static public void RemoteConsole(string shared)
         {
-            if (remoteClient == null || !remoteClient.Connected)
+            if (remoteClient is null || !remoteClient.Connected)
                 remoteClient = new BridgeClient();
             if (remoteClient != null && remoteClient.Connected)
             {

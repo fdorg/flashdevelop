@@ -1,4 +1,3 @@
-using System;
 using PluginCore.Controls;
 using ScintillaNet;
 
@@ -9,20 +8,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Mask value for all availables markers
         /// </summary>
-        public static Int32 MARKERS = 1 << 0;
+        public static int MARKERS = 1;
 
         /// <summary>
         /// Gets the mask of the marker
         /// </summary>
-        public static Int32 GetMarkerMask(Int32 marker)
-        {
-            return 1 << marker;
-        }
+        public static int GetMarkerMask(int marker) => 1 << marker;
 
         /// <summary>
         /// Adds or removes a marker
         /// </summary>
-        public static void ToggleMarker(ScintillaControl sci, Int32 marker, Int32 line)
+        public static void ToggleMarker(ScintillaControl sci, int marker, int line)
         {
             if (!HasMarker(sci, marker, line)) sci.MarkerAdd(line, marker);
             else sci.MarkerDelete(line, marker);
@@ -32,22 +28,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Whether a certain line has a certain marker.
         /// </summary>
-        public static bool HasMarker(ScintillaControl sci, Int32 marker, Int32 line)
-        {
-            Int32 lineMask = sci.MarkerGet(line);
-            return (lineMask & GetMarkerMask(marker)) > 0;
-        }
+        public static bool HasMarker(ScintillaControl sci, int marker, int line) => (sci.MarkerGet(line) & GetMarkerMask(marker)) > 0;
 
         /// <summary>
         /// Moves the cursor to the next marker
         /// </summary>
-        public static void NextMarker(ScintillaControl sci, Int32 marker, Int32 line)
+        public static void NextMarker(ScintillaControl sci, int marker, int line)
         {
-            Int32 next = 0;
-            Int32 lineMask = sci.MarkerGet(line);
+            int lineMask = sci.MarkerGet(line);
             if ((lineMask & GetMarkerMask(marker)) != 0)
             {
-                next = sci.MarkerNext(line + 1, GetMarkerMask(marker));
+                int next = sci.MarkerNext(line + 1, GetMarkerMask(marker));
                 if (next != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(next);
@@ -58,7 +49,6 @@ namespace FlashDevelop.Managers
                     next = sci.MarkerNext(0, GetMarkerMask(marker));
                     if (next != -1)
                     {
-
                         sci.EnsureVisibleEnforcePolicy(next);
                         sci.GotoLineIndent(next);
                     }
@@ -66,7 +56,7 @@ namespace FlashDevelop.Managers
             }
             else
             {
-                next = sci.MarkerNext(line, GetMarkerMask(marker));
+                int next = sci.MarkerNext(line, GetMarkerMask(marker));
                 if (next != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(next);
@@ -87,13 +77,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Moves the cursor to the previous marker
         /// </summary>
-        public static void PreviousMarker(ScintillaControl sci, Int32 marker, Int32 line)
+        public static void PreviousMarker(ScintillaControl sci, int marker, int line)
         {
-            Int32 prev = 0; Int32 count = 0;
-            Int32 lineMask = sci.MarkerGet(line);
+            int lineMask = sci.MarkerGet(line);
             if ((lineMask & GetMarkerMask(marker)) != 0)
             {
-                prev = sci.MarkerPrevious(line - 1, GetMarkerMask(marker));
+                int prev = sci.MarkerPrevious(line - 1, GetMarkerMask(marker));
                 if (prev != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(prev);
@@ -101,7 +90,7 @@ namespace FlashDevelop.Managers
                 }
                 else
                 {
-                    count = sci.LineCount;
+                    int count = sci.LineCount;
                     prev = sci.MarkerPrevious(count, GetMarkerMask(marker));
                     if (prev != -1)
                     {
@@ -112,7 +101,7 @@ namespace FlashDevelop.Managers
             }
             else
             {
-                prev = sci.MarkerPrevious(line, GetMarkerMask(marker));
+                int prev = sci.MarkerPrevious(line, GetMarkerMask(marker));
                 if (prev != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(prev);
@@ -120,7 +109,7 @@ namespace FlashDevelop.Managers
                 }
                 else
                 {
-                    count = sci.LineCount;
+                    int count = sci.LineCount;
                     prev = sci.MarkerPrevious(count, GetMarkerMask(marker));
                     if (prev != -1)
                     {
@@ -130,7 +119,5 @@ namespace FlashDevelop.Managers
                 }
             }
         }
-
     }
-
 }

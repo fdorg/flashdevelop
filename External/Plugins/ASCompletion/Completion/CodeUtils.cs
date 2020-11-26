@@ -7,7 +7,6 @@
         /// </summary>
         public static bool IsTypeDecl(string line, string[] typesKeywords)
         {
-            var max = line.Length - 1;
             foreach (string keyword in typesKeywords)
             {
                 var p = line.IndexOf(keyword);
@@ -33,8 +32,7 @@
         /// </summary>
         public static bool IsSpaceAt(string line, int index)
         {
-            if (index < 0 || index >= line.Length) return true;
-            else return line[index] <= 32;
+            return index < 0 || index >= line.Length || line[index] <= 32;
         }
     }
 }

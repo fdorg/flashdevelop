@@ -16,7 +16,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         /// <param name="result"></param>
         /// <param name="selectedMembers"></param>
-        DelegateMethodsCommand CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers);
+        DelegateMethods CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers);
 
         /// <summary>
         /// Create a new Command refactoring command.

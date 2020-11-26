@@ -38,7 +38,7 @@ namespace PluginCore.Controls
         /// <summary>Default constructor</summary>
         public ShellContextMenu()
         {
-            this.CreateHandle(new CreateParams());
+            CreateHandle(new CreateParams());
         }
         #endregion
 
@@ -55,7 +55,7 @@ namespace PluginCore.Controls
         /// <param name="oParentFolder">Parent folder</param>
         /// <param name="arrPIDLs">PIDLs</param>
         /// <returns>true if it got the interfaces, otherwise false</returns>
-        private bool GetContextMenuInterfaces(IShellFolder oParentFolder, IntPtr[] arrPIDLs, out IntPtr ctxMenuPtr)
+        bool GetContextMenuInterfaces(IShellFolder oParentFolder, IntPtr[] arrPIDLs, out IntPtr ctxMenuPtr)
         {
             int nResult = oParentFolder.GetUIObjectOf(
                 IntPtr.Zero,
@@ -71,12 +71,10 @@ namespace PluginCore.Controls
 
                 return true;
             }
-            else
-            {
-                ctxMenuPtr = IntPtr.Zero;
-                _oContextMenu = null;
-                return false;
-            }
+
+            ctxMenuPtr = IntPtr.Zero;
+            _oContextMenu = null;
+            return false;
         }
         #endregion
 
@@ -142,7 +140,8 @@ namespace PluginCore.Controls
         #endregion
 
         #region InvokeCommand
-        private void InvokeCommand(IContextMenu oContextMenu, uint nCmd, string strFolder, Point pointInvoke)
+
+        void InvokeCommand(IContextMenu oContextMenu, uint nCmd, string strFolder, Point pointInvoke)
         {
             CMINVOKECOMMANDINFOEX invoke = new CMINVOKECOMMANDINFOEX();
             invoke.cbSize = cbInvokeCommand;
@@ -164,7 +163,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Release all allocated interfaces, PIDLs 
         /// </summary>
-        private void ReleaseAll()
+        void ReleaseAll()
         {
             if (null != _oContextMenu)
             {
@@ -204,14 +203,12 @@ namespace PluginCore.Controls
         /// Gets the desktop folder
         /// </summary>
         /// <returns>IShellFolder for desktop folder</returns>
-        private IShellFolder GetDesktopFolder()
+        IShellFolder GetDesktopFolder()
         {
-            IntPtr pUnkownDesktopFolder = IntPtr.Zero;
-
-            if (null == _oDesktopFolder)
+            if (_oDesktopFolder is null)
             {
                 // Get desktop IShellFolder
-                int nResult = SHGetDesktopFolder(out pUnkownDesktopFolder);
+                int nResult = SHGetDesktopFolder(out var pUnkownDesktopFolder);
                 if (S_OK != nResult)
                 {
                     throw new ShellContextMenuException("Failed to get the desktop shell folder");
@@ -229,44 +226,31 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="folderName">Folder path</param>
         /// <returns>IShellFolder for the folder (relative from the desktop)</returns>
-        private IShellFolder GetParentFolder(string folderName)
+        IShellFolder GetParentFolder(string folderName)
         {
-            if (null == _oParentFolder)
+            if (_oParentFolder is null)
             {
                 IShellFolder oDesktopFolder = GetDesktopFolder();
-                if (null == oDesktopFolder)
-                {
-                    return null;
-                }
+                if (oDesktopFolder is null) return null;
 
-                // Get the PIDL for the folder file is in
-                IntPtr pPIDL = IntPtr.Zero;
                 uint pchEaten = 0;
                 SFGAO pdwAttributes = 0;
-                int nResult = oDesktopFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, folderName, ref pchEaten, out pPIDL, ref pdwAttributes);
-                if (S_OK != nResult)
-                {
-                    return null;
-                }
+                int nResult = oDesktopFolder.ParseDisplayName(IntPtr.Zero, IntPtr.Zero, folderName, ref pchEaten, out var pPIDL, ref pdwAttributes);
+                if (S_OK != nResult) return null;
 
                 IntPtr pStrRet = Marshal.AllocCoTaskMem(MAX_PATH * 2 + 4);
                 Marshal.WriteInt32(pStrRet, 0, 0);
-                nResult = _oDesktopFolder.GetDisplayNameOf(pPIDL, SHGNO.FORPARSING, pStrRet);
+                _oDesktopFolder.GetDisplayNameOf(pPIDL, SHGNO.FORPARSING, pStrRet);
                 StringBuilder strFolder = new StringBuilder(MAX_PATH);
                 StrRetToBuf(pStrRet, pPIDL, strFolder, MAX_PATH);
                 Marshal.FreeCoTaskMem(pStrRet);
-                pStrRet = IntPtr.Zero;
                 _strParentFolder = strFolder.ToString();
 
                 // Get the IShellFolder for folder
-                IntPtr pUnknownParentFolder = IntPtr.Zero;
-                nResult = oDesktopFolder.BindToObject(pPIDL, IntPtr.Zero, ref IID_IShellFolder, out pUnknownParentFolder);
+                nResult = oDesktopFolder.BindToObject(pPIDL, IntPtr.Zero, ref IID_IShellFolder, out var pUnknownParentFolder);
                 // Free the PIDL first
                 Marshal.FreeCoTaskMem(pPIDL);
-                if (S_OK != nResult)
-                {
-                    return null;
-                }
+                if (S_OK != nResult) return null;
                 _oParentFolder = (IShellFolder)Marshal.GetTypedObjectForIUnknown(pUnknownParentFolder, typeof(IShellFolder));
             }
 
@@ -282,16 +266,10 @@ namespace PluginCore.Controls
         /// <returns>Array of PIDLs</returns>
         protected IntPtr[] GetPIDLs(FileInfo[] arrFI)
         {
-            if (null == arrFI || 0 == arrFI.Length)
-            {
-                return null;
-            }
+            if (arrFI is null || arrFI.Length == 0) return null;
 
-            IShellFolder oParentFolder = GetParentFolder(arrFI[0].DirectoryName);
-            if (null == oParentFolder)
-            {
-                return null;
-            }
+            var oParentFolder = GetParentFolder(arrFI[0].DirectoryName);
+            if (oParentFolder is null) return null;
 
             IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
             int n = 0;
@@ -321,16 +299,10 @@ namespace PluginCore.Controls
         /// <returns>Array of PIDLs</returns>
         protected IntPtr[] GetPIDLs(DirectoryInfo[] arrFI)
         {
-            if (null == arrFI || 0 == arrFI.Length)
-            {
-                return null;
-            }
+            if (arrFI is null || arrFI.Length == 0) return null;
 
-            IShellFolder oParentFolder = GetParentFolder(arrFI[0].Parent.FullName);
-            if (null == oParentFolder)
-            {
-                return null;
-            }
+            var oParentFolder = GetParentFolder(arrFI[0].Parent.FullName);
+            if (oParentFolder is null) return null;
 
             IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
             int n = 0;
@@ -376,24 +348,24 @@ namespace PluginCore.Controls
         #endregion
 
         #region InvokeContextMenuDefault
-        private void InvokeContextMenuDefault(FileInfo[] arrFI)
+
+        void InvokeContextMenuDefault(FileInfo[] arrFI)
         {
             // Release all resources first.
             ReleaseAll();
 
-            IntPtr pMenu = IntPtr.Zero,
-                iContextMenuPtr = IntPtr.Zero;
+            var pMenu = IntPtr.Zero;
 
             try
             {
                 _arrPIDLs = GetPIDLs(arrFI);
-                if (null == _arrPIDLs)
+                if (_arrPIDLs is null)
                 {
                     ReleaseAll();
                     return;
                 }
 
-                if (!GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out iContextMenuPtr))
+                if (!GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out _))
                 {
                     ReleaseAll();
                     return;
@@ -445,7 +417,7 @@ namespace PluginCore.Controls
             // Release all resources first.
             ReleaseAll();
             _arrPIDLs = GetPIDLs(files);
-            this.ShowContextMenu(pointScreen);
+            ShowContextMenu(pointScreen);
         }
 
         /// <summary>
@@ -458,7 +430,7 @@ namespace PluginCore.Controls
             // Release all resources first.
             ReleaseAll();
             _arrPIDLs = GetPIDLs(dirs);
-            this.ShowContextMenu(pointScreen);
+            ShowContextMenu(pointScreen);
         }
 
         /// <summary>
@@ -466,7 +438,7 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="arrFI">FileInfos (should all be in same directory)</param>
         /// <param name="pointScreen">Where to show the menu</param>
-        private void ShowContextMenu(Point pointScreen)
+        void ShowContextMenu(Point pointScreen)
         {
             IntPtr pMenu = IntPtr.Zero,
                 iContextMenuPtr = IntPtr.Zero,
@@ -475,7 +447,7 @@ namespace PluginCore.Controls
 
             try
             {
-                if (null == _arrPIDLs)
+                if (_arrPIDLs is null)
                 {
                     ReleaseAll();
                     return;
@@ -509,7 +481,7 @@ namespace PluginCore.Controls
                     TPM.RETURNCMD,
                     pointScreen.X,
                     pointScreen.Y,
-                    this.Handle,
+                    Handle,
                     IntPtr.Zero);
 
                 DestroyMenu(pMenu);
@@ -547,26 +519,27 @@ namespace PluginCore.Controls
         #endregion
 
         #region Local variabled
-        private IContextMenu _oContextMenu;
-        private IContextMenu2 _oContextMenu2;
-        private IContextMenu3 _oContextMenu3;
-        private IShellFolder _oDesktopFolder;
-        private IShellFolder _oParentFolder;
-        private IntPtr[] _arrPIDLs;
-        private string _strParentFolder;
+
+        IContextMenu _oContextMenu;
+        IContextMenu2 _oContextMenu2;
+        IContextMenu3 _oContextMenu3;
+        IShellFolder _oDesktopFolder;
+        IShellFolder _oParentFolder;
+        IntPtr[] _arrPIDLs;
+        string _strParentFolder;
         #endregion
 
         #region Variables and Constants
 
-        private const int MAX_PATH = 260;
-        private const uint CMD_FIRST = 1;
-        private const uint CMD_LAST = 30000;
+        const int MAX_PATH = 260;
+        const uint CMD_FIRST = 1;
+        const uint CMD_LAST = 30000;
 
-        private const int S_OK = 0;
-        private const int S_FALSE = 1;
+        const int S_OK = 0;
+        const int S_FALSE = 1;
 
-        private static int cbMenuItemInfo = Marshal.SizeOf(typeof(MENUITEMINFO));
-        private static int cbInvokeCommand = Marshal.SizeOf(typeof(CMINVOKECOMMANDINFOEX));
+        static readonly int cbMenuItemInfo = Marshal.SizeOf(typeof(MENUITEMINFO));
+        static readonly int cbInvokeCommand = Marshal.SizeOf(typeof(CMINVOKECOMMANDINFOEX));
 
         #endregion
 
@@ -574,80 +547,80 @@ namespace PluginCore.Controls
 
         // Retrieves the IShellFolder interface for the desktop folder, which is the root of the Shell's namespace.
         [DllImport("shell32.dll")]
-        private static extern Int32 SHGetDesktopFolder(out IntPtr ppshf);
+        static extern int SHGetDesktopFolder(out IntPtr ppshf);
 
         // Takes a STRRET structure returned by IShellFolder::GetDisplayNameOf, converts it to a string, and places the result in a buffer. 
         [DllImport("shlwapi.dll", EntryPoint = "StrRetToBuf", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern Int32 StrRetToBuf(IntPtr pstr, IntPtr pidl, StringBuilder pszBuf, int cchBuf);
+        static extern int StrRetToBuf(IntPtr pstr, IntPtr pidl, StringBuilder pszBuf, int cchBuf);
 
         // The TrackPopupMenuEx function displays a shortcut menu at the specified location and tracks the selection of items on the shortcut menu. The shortcut menu can appear anywhere on the screen.
         [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-        private static extern uint TrackPopupMenuEx(IntPtr hmenu, TPM flags, int x, int y, IntPtr hwnd, IntPtr lptpm);
+        static extern uint TrackPopupMenuEx(IntPtr hmenu, TPM flags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 
         // The CreatePopupMenu function creates a drop-down menu, submenu, or shortcut menu. The menu is initially empty. You can insert or append menu items by using the InsertMenuItem function. You can also use the InsertMenu function to insert menu items and the AppendMenu function to append menu items.
         [DllImport("user32", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern IntPtr CreatePopupMenu();
+        static extern IntPtr CreatePopupMenu();
 
         // The DestroyMenu function destroys the specified menu and frees any memory that the menu occupies.
         [DllImport("user32", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern bool DestroyMenu(IntPtr hMenu);
+        static extern bool DestroyMenu(IntPtr hMenu);
 
         // Determines the default menu item on the specified menu
         [DllImport("user32", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern int GetMenuDefaultItem(IntPtr hMenu, bool fByPos, uint gmdiFlags);
+        static extern int GetMenuDefaultItem(IntPtr hMenu, bool fByPos, uint gmdiFlags);
 
         #endregion
 
         #region Shell GUIDs
 
-        private static Guid IID_IShellFolder = new Guid("{000214E6-0000-0000-C000-000000000046}");
-        private static Guid IID_IContextMenu = new Guid("{000214e4-0000-0000-c000-000000000046}");
-        private static Guid IID_IContextMenu2 = new Guid("{000214f4-0000-0000-c000-000000000046}");
-        private static Guid IID_IContextMenu3 = new Guid("{bcfce0a0-ec17-11d0-8d10-00a0c90f2719}");
+        static Guid IID_IShellFolder = new Guid("{000214E6-0000-0000-C000-000000000046}");
+        static Guid IID_IContextMenu = new Guid("{000214e4-0000-0000-c000-000000000046}");
+        static Guid IID_IContextMenu2 = new Guid("{000214f4-0000-0000-c000-000000000046}");
+        static Guid IID_IContextMenu3 = new Guid("{bcfce0a0-ec17-11d0-8d10-00a0c90f2719}");
 
         #endregion
 
         #region Structs
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct CWPSTRUCT
+        struct CWPSTRUCT
         {
-            public IntPtr lparam;
-            public IntPtr wparam;
-            public int message;
-            public IntPtr hwnd;
+            public readonly IntPtr lparam;
+            public readonly IntPtr wparam;
+            public readonly int message;
+            public readonly IntPtr hwnd;
         }
 
         // Contains extended information about a shortcut menu command
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct CMINVOKECOMMANDINFOEX
+        struct CMINVOKECOMMANDINFOEX
         {
             public int cbSize;
             public CMIC fMask;
-            public IntPtr hwnd;
+            public readonly IntPtr hwnd;
             public IntPtr lpVerb;
             [MarshalAs(UnmanagedType.LPStr)]
-            public string lpParameters;
+            public readonly string lpParameters;
             [MarshalAs(UnmanagedType.LPStr)]
             public string lpDirectory;
             public SW nShow;
-            public int dwHotKey;
-            public IntPtr hIcon;
+            public readonly int dwHotKey;
+            public readonly IntPtr hIcon;
             [MarshalAs(UnmanagedType.LPStr)]
-            public string lpTitle;
+            public readonly string lpTitle;
             public IntPtr lpVerbW;
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string lpParametersW;
+            public readonly string lpParametersW;
             [MarshalAs(UnmanagedType.LPWStr)]
             public string lpDirectoryW;
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string lpTitleW;
+            public readonly string lpTitleW;
             public POINT ptInvoke;
         }
 
         // Contains information about a menu item
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct MENUITEMINFO
+        struct MENUITEMINFO
         {
             public MENUITEMINFO(string text)
             {
@@ -665,40 +638,40 @@ namespace PluginCore.Controls
                 hbmpItem = IntPtr.Zero;
             }
 
-            public int cbSize;
-            public MIIM fMask;
-            public MFT fType;
-            public MFS fState;
-            public uint wID;
-            public IntPtr hSubMenu;
-            public IntPtr hbmpChecked;
-            public IntPtr hbmpUnchecked;
-            public IntPtr dwItemData;
+            public readonly int cbSize;
+            public readonly MIIM fMask;
+            public readonly MFT fType;
+            public readonly MFS fState;
+            public readonly uint wID;
+            public readonly IntPtr hSubMenu;
+            public readonly IntPtr hbmpChecked;
+            public readonly IntPtr hbmpUnchecked;
+            public readonly IntPtr dwItemData;
             [MarshalAs(UnmanagedType.LPTStr)]
-            public string dwTypeData;
-            public int cch;
-            public IntPtr hbmpItem;
+            public readonly string dwTypeData;
+            public readonly int cch;
+            public readonly IntPtr hbmpItem;
         }
 
         // A generalized global memory handle used for data transfer operations by the 
         // IAdviseSink, IDataObject, and IOleCache interfaces
         [StructLayout(LayoutKind.Sequential)]
-        private struct STGMEDIUM
+        struct STGMEDIUM
         {
-            public TYMED tymed;
-            public IntPtr hBitmap;
-            public IntPtr hMetaFilePict;
-            public IntPtr hEnhMetaFile;
-            public IntPtr hGlobal;
-            public IntPtr lpszFileName;
-            public IntPtr pstm;
-            public IntPtr pstg;
-            public IntPtr pUnkForRelease;
+            public readonly TYMED tymed;
+            public readonly IntPtr hBitmap;
+            public readonly IntPtr hMetaFilePict;
+            public readonly IntPtr hEnhMetaFile;
+            public readonly IntPtr hGlobal;
+            public readonly IntPtr lpszFileName;
+            public readonly IntPtr pstm;
+            public readonly IntPtr pstg;
+            public readonly IntPtr pUnkForRelease;
         }
 
         // Defines the x- and y-coordinates of a point
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct POINT
+        struct POINT
         {
             public POINT(int x, int y)
             {
@@ -706,8 +679,8 @@ namespace PluginCore.Controls
                 this.y = y;
             }
 
-            public int x;
-            public int y;
+            public readonly int x;
+            public readonly int y;
         }
 
         #endregion
@@ -717,7 +690,7 @@ namespace PluginCore.Controls
         // Defines the values used with the IShellFolder::GetDisplayNameOf and IShellFolder::SetNameOf 
         // methods to specify the type of file or folder names used by those methods
         [Flags]
-        private enum SHGNO
+        enum SHGNO
         {
             NORMAL = 0x0000,
             INFOLDER = 0x0001,
@@ -728,7 +701,7 @@ namespace PluginCore.Controls
 
         // The attributes that the caller is requesting, when calling IShellFolder::GetAttributesOf
         [Flags]
-        private enum SFGAO : uint
+        enum SFGAO : uint
         {
             BROWSABLE = 0x8000000,
             CANCOPY = 1,
@@ -768,7 +741,7 @@ namespace PluginCore.Controls
         // Determines the type of items included in an enumeration. 
         // These values are used with the IShellFolder::EnumObjects method
         [Flags]
-        private enum SHCONTF
+        enum SHCONTF
         {
             FOLDERS = 0x0020,
             NONFOLDERS = 0x0040,
@@ -781,7 +754,7 @@ namespace PluginCore.Controls
 
         // Specifies how the shortcut menu can be changed when calling IContextMenu::QueryContextMenu
         [Flags]
-        private enum CMF : uint
+        enum CMF : uint
         {
             NORMAL = 0x00000000,
             DEFAULTONLY = 0x00000001,
@@ -797,7 +770,7 @@ namespace PluginCore.Controls
 
         // Flags specifying the information to return when calling IContextMenu::GetCommandString
         [Flags]
-        private enum GCS : uint
+        enum GCS : uint
         {
             VERBA = 0,
             HELPTEXTA = 1,
@@ -809,7 +782,7 @@ namespace PluginCore.Controls
 
         // Specifies how TrackPopupMenuEx positions the shortcut menu horizontally
         [Flags]
-        private enum TPM : uint
+        enum TPM : uint
         {
             LEFTBUTTON = 0x0000,
             RIGHTBUTTON = 0x0002,
@@ -833,14 +806,14 @@ namespace PluginCore.Controls
         }
 
         // The cmd for a custom added menu item
-        private enum CMD_CUSTOM
+        enum CMD_CUSTOM
         {
             ExpandCollapse = (int)CMD_LAST + 1
         }
 
         // Flags used with the CMINVOKECOMMANDINFOEX structure
         [Flags]
-        private enum CMIC : uint
+        enum CMIC : uint
         {
             HOTKEY = 0x00000020,
             ICON = 0x00000010,
@@ -857,7 +830,7 @@ namespace PluginCore.Controls
 
         // Specifies how the window is to be shown
         [Flags]
-        private enum SW
+        enum SW
         {
             HIDE = 0,
             SHOWNORMAL = 1,
@@ -876,7 +849,7 @@ namespace PluginCore.Controls
 
         // Window message flags
         [Flags]
-        private enum WM : uint
+        enum WM : uint
         {
             ACTIVATE = 0x6,
             ACTIVATEAPP = 0x1C,
@@ -1091,7 +1064,7 @@ namespace PluginCore.Controls
 
         // Specifies the content of the new menu item
         [Flags]
-        private enum MFT : uint
+        enum MFT : uint
         {
             GRAYED = 0x00000003,
             DISABLED = 0x00000003,
@@ -1110,7 +1083,7 @@ namespace PluginCore.Controls
 
         // Specifies the state of the new menu item
         [Flags]
-        private enum MFS : uint
+        enum MFS : uint
         {
             GRAYED = 0x00000003,
             DISABLED = 0x00000003,
@@ -1124,7 +1097,7 @@ namespace PluginCore.Controls
 
         // Specifies the content of the new menu item
         [Flags]
-        private enum MIIM : uint
+        enum MIIM : uint
         {
             BITMAP = 0x80,
             CHECKMARKS = 0x08,
@@ -1139,7 +1112,7 @@ namespace PluginCore.Controls
 
         // Indicates the type of storage medium being used in a data transfer
         [Flags]
-        private enum TYMED
+        enum TYMED
         {
             ENHMF = 0x40,
             FILE = 2,
@@ -1157,12 +1130,12 @@ namespace PluginCore.Controls
         [ComImport]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         [Guid("000214E6-0000-0000-C000-000000000046")]
-        private interface IShellFolder
+        interface IShellFolder
         {
             // Translates a file object's or folder's display name into an item identifier list.
             // Return value: error code, if any
             [PreserveSig]
-            Int32 ParseDisplayName(
+            int ParseDisplayName(
                 IntPtr hwnd,
                 IntPtr pbc,
                 [MarshalAs(UnmanagedType.LPWStr)] 
@@ -1175,7 +1148,7 @@ namespace PluginCore.Controls
             // identifier enumeration object and returning its IEnumIDList interface.
             // Return value: error code, if any
             [PreserveSig]
-            Int32 EnumObjects(
+            int EnumObjects(
                 IntPtr hwnd,
                 SHCONTF grfFlags,
                 out IntPtr enumIDList);
@@ -1183,7 +1156,7 @@ namespace PluginCore.Controls
             // Retrieves an IShellFolder object for a subfolder.
             // Return value: error code, if any
             [PreserveSig]
-            Int32 BindToObject(
+            int BindToObject(
                 IntPtr pidl,
                 IntPtr pbc,
                 ref Guid riid,
@@ -1192,7 +1165,7 @@ namespace PluginCore.Controls
             // Requests a pointer to an object's storage interface. 
             // Return value: error code, if any
             [PreserveSig]
-            Int32 BindToStorage(
+            int BindToStorage(
                 IntPtr pidl,
                 IntPtr pbc,
                 ref Guid riid,
@@ -1209,7 +1182,7 @@ namespace PluginCore.Controls
             // follow the second (pidl1 > pidl2).  Zero A return value of zero
             // indicates that the two items are the same (pidl1 = pidl2). 
             [PreserveSig]
-            Int32 CompareIDs(
+            int CompareIDs(
                 IntPtr lParam,
                 IntPtr pidl1,
                 IntPtr pidl2);
@@ -1218,7 +1191,7 @@ namespace PluginCore.Controls
             // with a folder object.
             // Return value: error code, if any
             [PreserveSig]
-            Int32 CreateViewObject(
+            int CreateViewObject(
                 IntPtr hwndOwner,
                 Guid riid,
                 out IntPtr ppv);
@@ -1226,7 +1199,7 @@ namespace PluginCore.Controls
             // Retrieves the attributes of one or more file objects or subfolders. 
             // Return value: error code, if any
             [PreserveSig]
-            Int32 GetAttributesOf(
+            int GetAttributesOf(
                 uint cidl,
                 [MarshalAs(UnmanagedType.LPArray)]
             IntPtr[] apidl,
@@ -1236,7 +1209,7 @@ namespace PluginCore.Controls
             // specified file objects or folders.
             // Return value: error code, if any
             [PreserveSig]
-            Int32 GetUIObjectOf(
+            int GetUIObjectOf(
                 IntPtr hwndOwner,
                 uint cidl,
                 [MarshalAs(UnmanagedType.LPArray)]
@@ -1248,7 +1221,7 @@ namespace PluginCore.Controls
             // Retrieves the display name for the specified file object or subfolder. 
             // Return value: error code, if any
             [PreserveSig()]
-            Int32 GetDisplayNameOf(
+            int GetDisplayNameOf(
                 IntPtr pidl,
                 SHGNO uFlags,
                 IntPtr lpName);
@@ -1257,7 +1230,7 @@ namespace PluginCore.Controls
             // identifier in the process.
             // Return value: error code, if any
             [PreserveSig]
-            Int32 SetNameOf(
+            int SetNameOf(
                 IntPtr hwnd,
                 IntPtr pidl,
                 [MarshalAs(UnmanagedType.LPWStr)] 
@@ -1271,11 +1244,11 @@ namespace PluginCore.Controls
         [ComImport()]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         [Guid("000214e4-0000-0000-c000-000000000046")]
-        private interface IContextMenu
+        interface IContextMenu
         {
             // Adds commands to a shortcut menu
             [PreserveSig()]
-            Int32 QueryContextMenu(
+            int QueryContextMenu(
                 IntPtr hmenu,
                 uint iMenu,
                 uint idCmdFirst,
@@ -1284,14 +1257,14 @@ namespace PluginCore.Controls
 
             // Carries out the command associated with a shortcut menu item
             [PreserveSig()]
-            Int32 InvokeCommand(
+            int InvokeCommand(
                 ref CMINVOKECOMMANDINFOEX info);
 
             // Retrieves information about a shortcut menu command, 
             // including the help string and the language-independent, 
             // or canonical, name for the command
             [PreserveSig()]
-            Int32 GetCommandString(
+            int GetCommandString(
                 uint idcmd,
                 GCS uflags,
                 uint reserved,
@@ -1302,11 +1275,11 @@ namespace PluginCore.Controls
 
         [ComImport, Guid("000214f4-0000-0000-c000-000000000046")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        private interface IContextMenu2
+        interface IContextMenu2
         {
             // Adds commands to a shortcut menu
             [PreserveSig()]
-            Int32 QueryContextMenu(
+            int QueryContextMenu(
                 IntPtr hmenu,
                 uint iMenu,
                 uint idCmdFirst,
@@ -1315,14 +1288,14 @@ namespace PluginCore.Controls
 
             // Carries out the command associated with a shortcut menu item
             [PreserveSig()]
-            Int32 InvokeCommand(
+            int InvokeCommand(
                 ref CMINVOKECOMMANDINFOEX info);
 
             // Retrieves information about a shortcut menu command, 
             // including the help string and the language-independent, 
             // or canonical, name for the command
             [PreserveSig()]
-            Int32 GetCommandString(
+            int GetCommandString(
                 uint idcmd,
                 GCS uflags,
                 uint reserved,
@@ -1333,7 +1306,7 @@ namespace PluginCore.Controls
             // Allows client objects of the IContextMenu interface to 
             // handle messages associated with owner-drawn menu items
             [PreserveSig]
-            Int32 HandleMenuMsg(
+            int HandleMenuMsg(
                 uint uMsg,
                 IntPtr wParam,
                 IntPtr lParam);
@@ -1341,11 +1314,11 @@ namespace PluginCore.Controls
 
         [ComImport, Guid("bcfce0a0-ec17-11d0-8d10-00a0c90f2719")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        private interface IContextMenu3
+        interface IContextMenu3
         {
             // Adds commands to a shortcut menu
             [PreserveSig()]
-            Int32 QueryContextMenu(
+            int QueryContextMenu(
                 IntPtr hmenu,
                 uint iMenu,
                 uint idCmdFirst,
@@ -1354,14 +1327,14 @@ namespace PluginCore.Controls
 
             // Carries out the command associated with a shortcut menu item
             [PreserveSig()]
-            Int32 InvokeCommand(
+            int InvokeCommand(
                 ref CMINVOKECOMMANDINFOEX info);
 
             // Retrieves information about a shortcut menu command, 
             // including the help string and the language-independent, 
             // or canonical, name for the command
             [PreserveSig()]
-            Int32 GetCommandString(
+            int GetCommandString(
                 uint idcmd,
                 GCS uflags,
                 uint reserved,
@@ -1372,7 +1345,7 @@ namespace PluginCore.Controls
             // Allows client objects of the IContextMenu interface to 
             // handle messages associated with owner-drawn menu items
             [PreserveSig]
-            Int32 HandleMenuMsg(
+            int HandleMenuMsg(
                 uint uMsg,
                 IntPtr wParam,
                 IntPtr lParam);
@@ -1380,7 +1353,7 @@ namespace PluginCore.Controls
             // Allows client objects of the IContextMenu3 interface to 
             // handle messages associated with owner-drawn menu items
             [PreserveSig]
-            Int32 HandleMenuMsg2(
+            int HandleMenuMsg2(
                 uint uMsg,
                 IntPtr wParam,
                 IntPtr lParam,
@@ -1448,7 +1421,7 @@ namespace PluginCore.Controls
         // ************************************************************************
         // Internal properties
         protected IntPtr m_hhook = IntPtr.Zero;
-        protected HookProc m_filterFunc = null;
+        protected HookProc m_filterFunc;
         protected HookType m_hookType;
         // ************************************************************************
 
@@ -1471,7 +1444,7 @@ namespace PluginCore.Controls
         public LocalWindowsHook(HookType hook)
         {
             m_hookType = hook;
-            m_filterFunc = new HookProc(this.CoreHookProc);
+            m_filterFunc = CoreHookProc;
         }
         public LocalWindowsHook(HookType hook, HookProc func)
         {
@@ -1561,8 +1534,7 @@ namespace PluginCore.Controls
         {
             if (((uint)ptr & 0x80000000) == 0x80000000)
                 return ((uint)ptr >> 16);
-            else
-                return ((uint)ptr >> 16) & 0xffff;
+            return ((uint)ptr >> 16) & 0xffff;
         }
 
         /// <summary>
@@ -1570,10 +1542,7 @@ namespace PluginCore.Controls
         /// </summary>
         /// <param name="ptr">The pointer to the WParam</param>
         /// <returns>The unsigned integer for the Low Word</returns>
-        public static uint LoWord(IntPtr ptr)
-        {
-            return (uint)ptr & 0xffff;
-        }
+        public static uint LoWord(IntPtr ptr) => (uint)ptr & 0xffff;
 
         #endregion
     }

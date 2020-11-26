@@ -1,10 +1,10 @@
-<platform name="Lime" targets="html5,flash,windows,neko,android,tizen,blackberry,webos" debugger="flash" 
+<platform name="Lime" targets="html5,air,air-android,air-ios,flash,windows,neko,android,tizen,blackberry,webos" debugger="air,air-android,air-ios,flash"
   external="haxelib" external-capture="windows,neko,android,tizen,blackberry,webos" default-project="project.xml,application.xml">
   <versions>
     <version value="1.0">
       <command name="display" value="lime display &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
       <command name="build" value="lime build &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig) -Dfdb"/>
-      <command name="run" value="lime run &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
+      <command name="run" value="lime run &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig) -notrace"/>
       <command name="clean" value="lime clean &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
     </version>
   </versions>

@@ -1,0 +1,3 @@
+hxml/common.hxml
+-swf bin/flash/$(ProjectID).swf
+-swf-version 10

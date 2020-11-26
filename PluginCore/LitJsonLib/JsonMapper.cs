@@ -33,24 +33,18 @@ namespace LitJson
 
 
         public Type ElementType {
-            get {
-                if (element_type == null)
-                    return typeof (JsonData);
-
-                return element_type;
-            }
-
-            set { element_type = value; }
+            get => element_type ?? typeof (JsonData);
+            set => element_type = value;
         }
 
         public bool IsArray {
-            get { return is_array; }
-            set { is_array = value; }
+            get => is_array;
+            set => is_array = value;
         }
 
         public bool IsList {
-            get { return is_list; }
-            set { is_list = value; }
+            get => is_list;
+            set => is_list = value;
         }
     }
 
@@ -64,24 +58,18 @@ namespace LitJson
 
 
         public Type ElementType {
-            get {
-                if (element_type == null)
-                    return typeof (JsonData);
-
-                return element_type;
-            }
-
-            set { element_type = value; }
+            get => element_type ?? typeof (JsonData);
+            set => element_type = value;
         }
 
         public bool IsDictionary {
-            get { return is_dictionary; }
-            set { is_dictionary = value; }
+            get => is_dictionary;
+            set => is_dictionary = value;
         }
 
         public IDictionary<string, PropertyMetadata> Properties {
-            get { return properties; }
-            set { properties = value; }
+            get => properties;
+            set => properties = value;
         }
     }
 
@@ -98,34 +86,34 @@ namespace LitJson
     public class JsonMapper
     {
         #region Fields
-        private static int max_nesting_depth;
+        private static readonly int max_nesting_depth;
 
-        private static IFormatProvider datetime_format;
+        private static readonly IFormatProvider datetime_format;
 
-        private static IDictionary<Type, ExporterFunc> base_exporters_table;
-        private static IDictionary<Type, ExporterFunc> custom_exporters_table;
+        private static readonly IDictionary<Type, ExporterFunc> base_exporters_table;
+        private static readonly IDictionary<Type, ExporterFunc> custom_exporters_table;
 
-        private static IDictionary<Type,
+        private static readonly IDictionary<Type,
                 IDictionary<Type, ImporterFunc>> base_importers_table;
-        private static IDictionary<Type,
+        private static readonly IDictionary<Type,
                 IDictionary<Type, ImporterFunc>> custom_importers_table;
 
-        private static IDictionary<Type, ArrayMetadata> array_metadata;
-        private static readonly object array_metadata_lock = new Object ();
+        private static readonly IDictionary<Type, ArrayMetadata> array_metadata;
+        private static readonly object array_metadata_lock = new object ();
 
-        private static IDictionary<Type,
+        private static readonly IDictionary<Type,
                 IDictionary<Type, MethodInfo>> conv_ops;
-        private static readonly object conv_ops_lock = new Object ();
+        private static readonly object conv_ops_lock = new object ();
 
-        private static IDictionary<Type, ObjectMetadata> object_metadata;
-        private static readonly object object_metadata_lock = new Object ();
+        private static readonly IDictionary<Type, ObjectMetadata> object_metadata;
+        private static readonly object object_metadata_lock = new object ();
 
-        private static IDictionary<Type,
+        private static readonly IDictionary<Type,
                 IList<PropertyMetadata>> type_properties;
-        private static readonly object type_properties_lock = new Object ();
+        private static readonly object type_properties_lock = new object ();
 
-        private static JsonWriter      static_writer;
-        private static readonly object static_writer_lock = new Object ();
+        private static readonly JsonWriter      static_writer;
+        private static readonly object static_writer_lock = new object ();
         #endregion
 
 
@@ -288,7 +276,7 @@ namespace LitJson
                 return conv_ops[t1][t2];
 
             MethodInfo op = t1.GetMethod (
-                "op_Implicit", new Type[] { t2 });
+                "op_Implicit", new[] { t2 });
 
             lock (conv_ops_lock) {
                 try {
@@ -311,9 +299,7 @@ namespace LitJson
             if (reader.Token == JsonToken.Null) {
 
                 if (! inst_type.IsClass)
-                    throw new JsonException (String.Format (
-                            "Can't assign null to an instance of type {0}",
-                            inst_type));
+                    throw new JsonException ($"Can't assign null to an instance of type {inst_type}");
 
                 return null;
             }
@@ -360,12 +346,10 @@ namespace LitJson
 
                 if (conv_op != null)
                     return conv_op.Invoke (null,
-                                           new object[] { reader.Value });
+                                           new[] { reader.Value });
 
                 // No luck
-                throw new JsonException (String.Format (
-                        "Can't assign value '{0}' (type {1}) to type {2}",
-                        reader.Value, json_type, inst_type));
+                throw new JsonException ($"Can't assign value '{reader.Value}' (type {json_type}) to type {inst_type}");
             }
 
             object instance = null;
@@ -376,9 +360,7 @@ namespace LitJson
                 ArrayMetadata t_data = array_metadata[inst_type];
 
                 if (! t_data.IsArray && ! t_data.IsList)
-                    throw new JsonException (String.Format (
-                            "Type {0} can't act as an array",
-                            inst_type));
+                    throw new JsonException ($"Type {inst_type} can't act as an array");
 
                 IList list;
                 Type elem_type;
@@ -387,7 +369,7 @@ namespace LitJson
                     list = (IList) Activator.CreateInstance (inst_type);
                     elem_type = t_data.ElementType;
                 } else {
-                    list = new ArrayList ();
+                    list = new List<object>();
                     elem_type = inst_type.GetElementType ();
                 }
 
@@ -445,9 +427,8 @@ namespace LitJson
 
                     } else {
                         if (! t_data.IsDictionary)
-                            throw new JsonException (String.Format (
-                                    "The type {0} doesn't have the " +
-                                    "property '{1}'", inst_type, property));
+                            throw new JsonException ($"The type {inst_type} doesn't have the " +
+                                                     $"property '{property}'");
 
                         ((IDictionary) instance).Add (
                             property, ReadValue (
@@ -671,11 +652,9 @@ namespace LitJson
         {
             if (depth > max_nesting_depth)
                 throw new JsonException (
-                    String.Format ("Max allowed object depth reached while " +
-                                   "trying to export from type {0}",
-                                   obj.GetType ()));
+                    "Max allowed object depth reached while " + $"trying to export from type {obj.GetType()}");
 
-            if (obj == null) {
+            if (obj is null) {
                 writer.Write (null);
                 return;
             }
@@ -689,27 +668,27 @@ namespace LitJson
                 return;
             }
 
-            if (obj is String) {
+            if (obj is string) {
                 writer.Write ((string) obj);
                 return;
             }
 
-            if (obj is Double) {
+            if (obj is double) {
                 writer.Write ((double) obj);
                 return;
             }
 
-            if (obj is Int32) {
+            if (obj is int) {
                 writer.Write ((int) obj);
                 return;
             }
 
-            if (obj is Boolean) {
+            if (obj is bool) {
                 writer.Write ((bool) obj);
                 return;
             }
 
-            if (obj is Int64) {
+            if (obj is long) {
                 writer.Write ((long) obj);
                 return;
             }

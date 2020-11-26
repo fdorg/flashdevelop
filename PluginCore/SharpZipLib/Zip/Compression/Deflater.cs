@@ -173,7 +173,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
             if (level == DEFAULT_COMPRESSION) {
                 level = 6;
             } else if (level < NO_COMPRESSION || level > BEST_COMPRESSION) {
-                throw new ArgumentOutOfRangeException("level");
+                throw new ArgumentOutOfRangeException(nameof(level));
             }
             
             pending = new DeflaterPending();
@@ -201,30 +201,18 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// Gets the current adler checksum of the data that was processed so far.
         /// </summary>
-        public int Adler {
-            get {
-                return engine.Adler;
-            }
-        }
-        
+        public int Adler => engine.Adler;
+
         /// <summary>
         /// Gets the number of input bytes processed so far.
         /// </summary>
-        public long TotalIn {
-            get {
-                return engine.TotalIn;
-            }
-        }
-        
+        public long TotalIn => engine.TotalIn;
+
         /// <summary>
         /// Gets the number of output bytes so far.
         /// </summary>
-        public long TotalOut {
-            get {
-                return totalOut;
-            }
-        }
-        
+        public long TotalOut => totalOut;
+
         /// <summary>
         /// Flushes the current input block.  Further calls to deflate() will
         /// produce enough output to inflate everything in the current input
@@ -251,24 +239,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// Returns true if the stream was finished and no more output bytes
         /// are available.
         /// </summary>
-        public bool IsFinished {
-            get {
-                return (state == FINISHED_STATE) && pending.IsFlushed;
-            }
-        }
-        
+        public bool IsFinished => (state == FINISHED_STATE) && pending.IsFlushed;
+
         /// <summary>
         /// Returns true, if the input buffer is empty.
         /// You should then call setInput(). 
         /// NOTE: This method can also return true when the stream
         /// was finished.
         /// </summary>
-        public bool IsNeedingInput {
-            get {
-                return engine.NeedsInput();
-            }
-        }
-        
+        public bool IsNeedingInput => engine.NeedsInput();
+
         /// <summary>
         /// Sets the data which should be compressed next.  This should be only
         /// called when needsInput indicates that more input is needed.
@@ -329,7 +309,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
             if (level == DEFAULT_COMPRESSION) {
                 level = 6;
             } else if (level < NO_COMPRESSION || level > BEST_COMPRESSION) {
-                throw new ArgumentOutOfRangeException("level");
+                throw new ArgumentOutOfRangeException(nameof(level));
             }
             
             if (this.level != level) {
@@ -441,11 +421,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                     break;
                 }
                 
-                if (!engine.Deflate((state & IS_FLUSHING) != 0, (state & IS_FINISHING) != 0)) {
+                if (!engine.Deflate((state & IS_FLUSHING) != 0, (state & IS_FINISHING) != 0))
+                {
                     if (state == BUSY_STATE) {
                         // We need more input now
                         return origLength - length;
-                    } else if (state == FLUSHING_STATE) {
+                    }
+
+                    if (state == FLUSHING_STATE) {
                         if (level != NO_COMPRESSION) {
                             /* We have to supply some lookahead.  8 bit lookahead
                              * is needed by the zlib inflater, and we must fill
@@ -531,7 +514,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// If true no Zlib/RFC1950 headers or footers are generated
         /// </summary>
-        bool noZlibHeaderOrFooter;
+        readonly bool noZlibHeaderOrFooter;
         
         /// <summary>
         /// The current state.
@@ -546,12 +529,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// The pending output.
         /// </summary>
-        DeflaterPending pending;
+        readonly DeflaterPending pending;
         
         /// <summary>
         /// The deflater engine.
         /// </summary>
-        DeflaterEngine engine;
+        readonly DeflaterEngine engine;
         #endregion
     }
 }

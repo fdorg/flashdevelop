@@ -23,7 +23,7 @@ namespace ASCompletion.Context
 
         /// <summary>
         /// Update the class/member context for the given line number.
-        /// Be carefull to restore the context after calling it with a custom line number
+        /// Be careful to restore the context after calling it with a custom line number
         /// </summary>
         /// <param name="line"></param>
         void UpdateContext(int line);
@@ -121,6 +121,13 @@ namespace ASCompletion.Context
         FileModel GetCodeModel(string src, bool scriptMode);
 
         /// <summary>
+        /// Rebuild a file model
+        /// </summary>
+        /// <param name="result">File model</param>
+        /// <returns></returns>
+        FileModel GetCodeModel(FileModel result);
+
+        /// <summary>
         /// Rebuild a file model with the source provided
         /// </summary>
         /// <param name="result">File model</param>
@@ -144,7 +151,7 @@ namespace ASCompletion.Context
         /// <param name="cname"></param>
         /// <param name="inPackage">Package reference for resolution</param>
         /// <returns></returns>
-        ClassModel GetModel(string package, string cname, string inPackage);
+        ClassModel GetModel(string package, string cname, string? inPackage);
 
         /// <summary>
         /// Confirms that the FileModel should be added to the PathModel
@@ -335,6 +342,14 @@ namespace ASCompletion.Context
         MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         /// <summary>
+        /// Let contexts handle code completion
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="expression">Completion context</param>
+        /// <param name="result">Response structure</param>
+        void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result);
+
+        /// <summary>
         /// Let contexts resolve function at give position
         /// </summary>
         /// <param name="sci">Scintilla control</param>
@@ -408,5 +423,13 @@ namespace ASCompletion.Context
 
         #endregion
 
+        #region Custom behavior of Scintilla
+
+        /// <summary>
+        /// Provides the support for '<' and '>' matching
+        /// </summary>
+        void OnBraceMatch(ScintillaControl sci);
+
+        #endregion
     }
 }

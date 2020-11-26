@@ -5,52 +5,40 @@ using PluginCore.Controls;
 
 namespace FlashDebugger
 {
-    class ThreadsUI : DockPanelControl
+    internal class ThreadsUI : DockPanelControl
     {
-        private ListViewEx lv;
-        private ColumnHeader imageColumnHeader;
-        private ColumnHeader frameColumnHeader;
-        private PluginMain pluginMain;
-        private int runningImageIndex;
-        private int suspendedImageIndex;
+        readonly ListViewEx lv;
+        readonly ColumnHeader imageColumnHeader;
+        readonly ColumnHeader frameColumnHeader;
+        readonly int runningImageIndex;
+        readonly int suspendedImageIndex;
 
-        public ThreadsUI(PluginMain pluginMain, ImageList imageList)
+        public ThreadsUI(ImageList imageList)
         {
-            this.AutoKeyHandling = true;
-            this.pluginMain = pluginMain;
-            lv = new ListViewEx();
-            lv.ShowItemToolTips = true;
-            this.imageColumnHeader = new ColumnHeader();
-            this.imageColumnHeader.Text = string.Empty;
-            this.imageColumnHeader.Width = 20;
-            this.frameColumnHeader = new ColumnHeader();
-            this.frameColumnHeader.Text = string.Empty;
-            lv.Columns.AddRange(new ColumnHeader[] {
-            this.imageColumnHeader,
-            this.frameColumnHeader});
+            AutoKeyHandling = true;
+            lv = new ListViewEx {ShowItemToolTips = true};
+            imageColumnHeader = new ColumnHeader {Text = string.Empty, Width = 20};
+            frameColumnHeader = new ColumnHeader {Text = string.Empty};
+            lv.Columns.AddRange(new[] {
+            imageColumnHeader,
+            frameColumnHeader});
             lv.FullRowSelect = true;
             lv.BorderStyle = BorderStyle.None;
-            lv.Dock = System.Windows.Forms.DockStyle.Fill;
+            lv.Dock = DockStyle.Fill;
             lv.SmallImageList = imageList;
             runningImageIndex = imageList.Images.IndexOfKey("StartContinue");
             suspendedImageIndex = imageList.Images.IndexOfKey("Pause");
-            lv.View = System.Windows.Forms.View.Details;
-            lv.MouseDoubleClick += new MouseEventHandler(lv_MouseDoubleClick);
-            lv.KeyDown += new KeyEventHandler(lv_KeyDown);
-            lv.SizeChanged += new EventHandler(lv_SizeChanged);
-            this.Controls.Add(lv);
+            lv.View = View.Details;
+            lv.MouseDoubleClick += lv_MouseDoubleClick;
+            lv.KeyDown += lv_KeyDown;
+            lv.SizeChanged += lv_SizeChanged;
+            Controls.Add(lv);
             ScrollBarEx.Attach(lv);
         }
 
-        void lv_SizeChanged(object sender, EventArgs e)
-        {
-            this.frameColumnHeader.Width = lv.Width - this.imageColumnHeader.Width;
-        }
+        void lv_SizeChanged(object sender, EventArgs e) => frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
 
-        public void ClearItem()
-        {
-            lv.Items.Clear();
-        }
+        public void ClearItem() => lv.Items.Clear();
 
         public void ActiveItem()
         {
@@ -67,25 +55,22 @@ namespace FlashDebugger
             }
         }
 
-        public void SetThreads(Dictionary<int, FlashDebugger.FlashInterface.IsolateInfo> isolates)
+        public void SetThreads(Dictionary<int, FlashInterface.IsolateInfo> isolates)
         {
             lv.Items.Clear();
-            if (PluginMain.debugManager.FlashInterface.Session == null)
-            {
-                return;
-            }
+            if (PluginMain.debugManager.FlashInterface.Session is null) return;
             // add primary -- flash specific
-            String title = "Main thread";
+            string title = "Main thread";
             int image = PluginMain.debugManager.FlashInterface.Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
-            lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
+            lv.Items.Add(new ListViewItem(new[] { "", title }, image));
             lv.Items[lv.Items.Count - 1].Tag = 1;
-            foreach (KeyValuePair<int, FlashDebugger.FlashInterface.IsolateInfo> ii_pair in isolates)
+            foreach (var ii_pair in isolates)
             {
                 int i_id = ii_pair.Key;
-                FlashDebugger.FlashInterface.IsolateInfo ii = ii_pair.Value;
+                FlashInterface.IsolateInfo ii = ii_pair.Value;
                 title = "Worker " + i_id;
                 image = ii.i_Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
-                lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
+                lv.Items.Add(new ListViewItem(new[] { "", title }, image));
                 lv.Items[lv.Items.Count - 1].Tag = i_id;
             }
             ActiveItem();
@@ -93,13 +78,10 @@ namespace FlashDebugger
 
         void lv_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Return)
+            if (e.KeyCode == Keys.Return && lv.SelectedIndices.Count > 0)
             {
-                if (lv.SelectedIndices.Count > 0)
-                {
-                    PluginMain.debugManager.FlashInterface.ActiveSession = (int)lv.SelectedItems[0].Tag;
-                    ActiveItem();
-                }
+                PluginMain.debugManager.FlashInterface.ActiveSession = (int)lv.SelectedItems[0].Tag;
+                ActiveItem();
             }
         }
 
@@ -111,7 +93,5 @@ namespace FlashDebugger
                 ActiveItem();
             }
         }
-
     }
-
 }

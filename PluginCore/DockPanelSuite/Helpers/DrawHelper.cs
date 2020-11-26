@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -12,28 +11,26 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (control.RightToLeft != RightToLeft.Yes)
                 return point;
-            else
-                return new Point(control.Right - point.X, point.Y);
+            return new Point(control.Right - point.X, point.Y);
         }
 
         public static Rectangle RtlTransform(Control control, Rectangle rectangle)
         {
             if (control.RightToLeft != RightToLeft.Yes)
                 return rectangle;
-            else
-                return new Rectangle(control.ClientRectangle.Right - rectangle.Right, rectangle.Y, rectangle.Width, rectangle.Height);
+            return new Rectangle(control.ClientRectangle.Right - rectangle.Right, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
         public static GraphicsPath GetRoundedCornerTab(GraphicsPath graphicsPath, Rectangle rect, bool upCorner)
         {
-            if (graphicsPath == null)
+            if (graphicsPath is null)
                 graphicsPath = new GraphicsPath();
             else
                 graphicsPath.Reset();
             
             int curveSize = 6;
 
-            String tabStyle = PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
             if (tabStyle == "Rect" || tabStyle == "Block")
             {
                 curveSize = 1;

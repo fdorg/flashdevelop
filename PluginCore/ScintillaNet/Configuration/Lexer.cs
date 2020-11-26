@@ -14,7 +14,5 @@ namespace ScintillaNet.Configuration
 
         [XmlAttribute("style-bits")]
         public int stylebits;
-        
     }
-    
 }

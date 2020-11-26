@@ -30,10 +30,6 @@
 
         public LintingSeverity Severity;
 
-        public LintingResult()
-        {
-        }
-
         public bool Equals(LintingResult other)
         {
             return string.Equals(File, other.File) && Line == other.Line && FirstChar == other.FirstChar && Length == other.Length

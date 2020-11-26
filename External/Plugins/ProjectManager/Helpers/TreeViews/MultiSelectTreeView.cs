@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace System.Windows.Forms
@@ -14,14 +15,14 @@ namespace System.Windows.Forms
         bool multiSelect;
         bool ignoreNextMultiSelect;
 
-        ArrayList selectedNodes;
-        Hashtable originalColor;
+        readonly List<TreeNode> selectedNodes;
+        readonly Hashtable originalColor;
         TreeNode beginRange;
-        Timer labelEditTimer;
+        readonly Timer labelEditTimer;
 
         public MultiSelectTreeView()
         {
-            selectedNodes = new ArrayList();
+            selectedNodes = new List<TreeNode>();
             originalColor = new Hashtable();
             labelEditTimer = new Timer();
             labelEditTimer.Interval = 1500;
@@ -30,13 +31,12 @@ namespace System.Windows.Forms
 
         public bool MultiSelect
         {
-            get { return multiSelect; }
+            get => multiSelect;
             set
             {
                 multiSelect = value;
-                
                 if (!multiSelect)
-                    foreach (TreeNode node in selectedNodes)
+                    foreach (var node in selectedNodes)
                         UnpaintNode(node);
             }
         }
@@ -50,13 +50,13 @@ namespace System.Windows.Forms
             }
         }
 
-        private void IgnoreNextLabelEdit()
+        void IgnoreNextLabelEdit()
         {
             labelEditTimer.Enabled = false;
             labelEditTimer.Enabled = true;
         }
 
-        private void labelEditTimer_Tick(object sender, EventArgs e)
+        void labelEditTimer_Tick(object sender, EventArgs e)
         {
             labelEditTimer.Enabled = false;
         }
@@ -67,7 +67,7 @@ namespace System.Windows.Forms
             switch (m.Msg)
             {
                 case 0x0014: // Stop erase background message
-                    m.Msg = (int)0x0000; // Set to null
+                    m.Msg = 0x0000; // Set to null
                     break;
                 case 0xf: // WM_PAINT
                     OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
@@ -77,29 +77,23 @@ namespace System.Windows.Forms
         }
 
         /// <summary>
-        /// Gets or sets an ArrayList containing the current selected TreeNodes.
+        /// Gets or sets an List containing the current selected TreeNodes.
         /// </summary>
-        public ArrayList SelectedNodes
+        public IList<TreeNode> SelectedNodes
         {
-            get
-            {
-                if (multiSelect)
-                    return selectedNodes;
-                else
-                    return new ArrayList(new object[]{base.SelectedNode});
-            }
+            get => multiSelect ? selectedNodes : new List<TreeNode> {SelectedNode};
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     SelectedNode = null;
                     UnselectAllExcept(null);
                 }
                 else if (value.Count > 0)
                 {
-                    SelectedNode = value[0] as TreeNode;
+                    SelectedNode = value[0];
                     UnselectAllExcept(SelectedNode);
-                    foreach (TreeNode node in value)
+                    foreach (var node in value)
                         SelectNode(node);
                 }
                 else SelectedNode = null;
@@ -110,8 +104,7 @@ namespace System.Windows.Forms
         // mouse UP which causes stupid focus rectangle drawing and flickering.
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            TreeNode clickedNode = base.GetNodeAt(e.X, e.Y);
-
+            var clickedNode = GetNodeAt(e.X, e.Y);
             if (clickedNode != null)
             {
                 // if you clicked on an already-selected group of nodes, don't unselect
@@ -119,15 +112,14 @@ namespace System.Windows.Forms
                 if (clickedNode != SelectedNode && SelectedNodes.Contains(clickedNode))
                     ignoreNextMultiSelect = true;
 
-                if (e.Button == MouseButtons.Left &&
-                    clickedNode != base.SelectedNode)
+                if (e.Button == MouseButtons.Left && clickedNode != SelectedNode)
                     IgnoreNextLabelEdit(); // workaround for treeview drawing bug
 
                 // unpaint this node now for less flicker
                 if (multiSelect && IsCtrlDown && !IsShiftDown && selectedNodes.Contains(clickedNode))
                     UnpaintNode(clickedNode);
                 else
-                    base.SelectedNode = clickedNode;
+                    SelectedNode = clickedNode;
             }
 
             base.OnMouseDown (e);
@@ -135,8 +127,7 @@ namespace System.Windows.Forms
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            TreeNode clickedNode = base.GetNodeAt(e.X, e.Y);
-
+            var clickedNode = GetNodeAt(e.X, e.Y);
             if (clickedNode != null)
             {
                 if (multiSelect && e.Button == MouseButtons.Left && 
@@ -150,7 +141,7 @@ namespace System.Windows.Forms
                 }
             }
 
-            base.OnMouseUp (e);
+            base.OnMouseUp(e);
         }
 
         protected override void OnBeforeLabelEdit(NodeLabelEditEventArgs e)
@@ -163,8 +154,8 @@ namespace System.Windows.Forms
 
         #region MultiSelect
 
-        private bool IsCtrlDown { get { return (ModifierKeys & Keys.Control) > 0; } }
-        private bool IsShiftDown { get { return (ModifierKeys & Keys.Shift) > 0; } }
+        bool IsCtrlDown => (ModifierKeys & Keys.Control) > 0;
+        bool IsShiftDown => (ModifierKeys & Keys.Shift) > 0;
 
         protected override void OnBeforeSelect(TreeViewCancelEventArgs e)
         {
@@ -212,8 +203,8 @@ namespace System.Windows.Forms
             
             base.OnAfterSelect (e);
         }
-        
-        private TreeNode FindSelectedNode(TreeNode excludeNode)
+
+        TreeNode FindSelectedNode(TreeNode excludeNode)
         {
             foreach (TreeNode node in selectedNodes)
                 if (node != excludeNode)
@@ -221,7 +212,7 @@ namespace System.Windows.Forms
             return null;
         }
 
-        private void SelectSingle(TreeNode node)
+        void SelectSingle(TreeNode node)
         {
             // unselect all nodes
             foreach (TreeNode selectedNode in selectedNodes)
@@ -232,17 +223,16 @@ namespace System.Windows.Forms
             beginRange = node;
         }
 
-        private void SelectRange(TreeNode node1, TreeNode node2)
+        void SelectRange(TreeNode node1, TreeNode node2)
         {
             // just walk the whole damn tree looking for these nodes
             if (node1 == node2) return; // nice try
             bool found = false;
             bool finished = false;
-            SelectRange(base.Nodes,node1,node2,ref found,ref finished);
+            SelectRange(base.Nodes, node1, node2, ref found, ref finished);
         }
 
-        private void SelectRange(TreeNodeCollection nodes, TreeNode node1, 
-            TreeNode node2, ref bool found, ref bool finished)
+        void SelectRange(IEnumerable nodes, TreeNode node1, TreeNode node2, ref bool found, ref bool finished)
         {
             foreach (TreeNode node in nodes)
             {
@@ -262,14 +252,14 @@ namespace System.Windows.Forms
             }
         }
 
-        private void UnselectAllExcept(TreeNode node)
+        void UnselectAllExcept(TreeNode node)
         {
-            foreach (TreeNode selectedNode in selectedNodes.Clone() as ArrayList)
+            foreach (var selectedNode in selectedNodes.ToArray())
                 if (selectedNode != node)
                     UnselectNode(selectedNode);
         }
 
-        private void SelectNode(TreeNode node)
+        void SelectNode(TreeNode node)
         {
             if (!selectedNodes.Contains(node))
             {
@@ -278,7 +268,7 @@ namespace System.Windows.Forms
             }
         }
 
-        private void UnselectNode(TreeNode node)
+        void UnselectNode(TreeNode node)
         {
             if (selectedNodes.Contains(node))
             {
@@ -287,19 +277,18 @@ namespace System.Windows.Forms
             }
         }
 
-        private void PaintNode(TreeNode node)
+        void PaintNode(TreeNode node)
         {
             if (!originalColor.Contains(node))
             {
                 originalColor[node] = node.ForeColor;
                 node.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
                 node.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
-                MultiSelectTreeNode mNode = node as MultiSelectTreeNode;
-                if (mNode != null) mNode.Painted = true;
+                if (node is MultiSelectTreeNode mNode) mNode.Painted = true;
             }
         }
 
-        private void UnpaintNode(TreeNode node)
+        void UnpaintNode(TreeNode node)
         {
             if (originalColor.Contains(node))
             {
@@ -352,7 +341,7 @@ namespace System.Windows.Forms
 
         public Color ForeColorRequest
         {
-            get { return foreColorRequest; }
+            get => foreColorRequest;
             set
             {
                 foreColorRequest = value;

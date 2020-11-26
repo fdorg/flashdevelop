@@ -32,4 +32,11 @@ Thumbs.db
 **/NSubstitute.xml
 **/nunit.framework.dll
 **/nunit.framework.xml
+**/Castle.Core.*
+**/System.Threading.Tasks.Extensions.*
+**/System.Runtime.CompilerServices.Unsafe.*
+**/System.Diagnostics.DiagnosticSource.*
 .vs/
+**/System.Buffers.*
+**/System.Memory.*
+**/System.Numerics.Vectors.*

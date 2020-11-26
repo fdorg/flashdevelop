@@ -3,13 +3,13 @@ using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [Serializable()]
+    [Serializable]
     public class UseStyle : StyleClass
     {
         [XmlAttribute("class")]
         public string cls;
 
-        [XmlAttribute()]
+        [XmlAttribute]
         public int key;
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
@@ -17,7 +17,5 @@ namespace ScintillaNet.Configuration
             base.init(utility, theParent);
             if (!string.IsNullOrEmpty(cls)) inheritstyle = cls;
         }
-        
     }
-    
 }

@@ -1,0 +1,39 @@
+## Neko
+-cmd echo Building Neko
+--next hxml/neko.hxml
+
+## SWF
+-cmd echo Building SWF
+--next hxml/flash.hxml
+
+## ActionScript 3
+#-cmd echo Building ActionScript 3
+#--next hxml/as3.hxml
+
+## JavaScript
+-cmd echo Building JavaScript
+--next hxml/js.hxml
+
+## Python
+-cmd echo Building Python
+--next hxml/python.hxml
+
+## PHP
+-cmd echo Building PHP
+--next hxml/php.hxml
+
+## C++
+-cmd echo Building C++
+--next hxml/cpp.hxml
+
+## C#
+-cmd echo Building C#
+--next hxml/cs.hxml
+
+## Java
+-cmd echo Building Java
+--next hxml/java.hxml
+
+## HashLink
+-cmd echo Building HashLink
+--next hxml/hl.hxml

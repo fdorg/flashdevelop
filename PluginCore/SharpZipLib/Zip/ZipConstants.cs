@@ -484,12 +484,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// European users, however be careful about compatability.
         /// </summary>
         public static int DefaultCodePage {
-            get {
-                return defaultCodePage; 
-            }
-            set {
-                defaultCodePage = value; 
-            }
+            get => defaultCodePage;
+            set => defaultCodePage = value;
         }
 
         /// <summary>
@@ -506,7 +502,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public static string ConvertToString(byte[] data, int count)
         {
-            if ( data == null ) {
+            if ( data is null ) {
                 return string.Empty;    
             }
             
@@ -524,7 +520,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public static string ConvertToString(byte[] data)
         {
-            if ( data == null ) {
+            if ( data is null ) {
                 return string.Empty;    
             }
             return ConvertToString(data, data.Length);
@@ -543,16 +539,15 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public static string ConvertToStringExt(int flags, byte[] data, int count)
         {
-            if ( data == null ) {
+            if ( data is null ) {
                 return string.Empty;    
             }
             
             if ( (flags & (int)GeneralBitFlags.UnicodeText) != 0 ) {
                 return Encoding.UTF8.GetString(data, 0, count);
             }
-            else {
-                return ConvertToString(data, count);
-            }
+
+            return ConvertToString(data, count);
         }
         
         /// <summary>
@@ -567,16 +562,15 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public static string ConvertToStringExt(int flags, byte[] data)
         {
-            if ( data == null ) {
+            if ( data is null ) {
                 return string.Empty;    
             }
             
             if ( (flags & (int)GeneralBitFlags.UnicodeText) != 0 ) {
                 return Encoding.UTF8.GetString(data, 0, data.Length);
             }
-            else {
-                return ConvertToString(data, data.Length);
-            }
+
+            return ConvertToString(data, data.Length);
         }
 
         /// <summary>
@@ -588,7 +582,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>Converted array</returns>
         public static byte[] ConvertToArray(string str)
         {
-            if ( str == null ) {
+            if ( str is null ) {
                 return new byte[0];
             }
             
@@ -605,16 +599,15 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>Converted array</returns>
         public static byte[] ConvertToArray(int flags, string str)
         {
-            if (str == null) {
+            if (str is null) {
                 return new byte[0];
             }
 
             if ((flags & (int)GeneralBitFlags.UnicodeText) != 0) {
                 return Encoding.UTF8.GetBytes(str);
             }
-            else {
-                return ConvertToArray(str);
-            }
+
+            return ConvertToArray(str);
         }
 
         

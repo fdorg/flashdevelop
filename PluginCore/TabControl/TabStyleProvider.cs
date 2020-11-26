@@ -291,14 +291,14 @@ namespace System.Windows.Forms
 
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TabStyle DisplayStyle {
-			get { return this._Style; }
-			set { this._Style = value; }
-		}
+			get => this._Style;
+            set => this._Style = value;
+        }
 
 		[Category("Appearance")]
 		public ContentAlignment ImageAlign {
-			get { return this._ImageAlign; }
-			set {
+			get => this._ImageAlign;
+            set {
 				this._ImageAlign = value;
 				this._TabControl.Invalidate();
 			}
@@ -306,21 +306,21 @@ namespace System.Windows.Forms
 		
 		[Category("Appearance")]
 		public Point Padding {
-			get { return this._Padding; }
-			set {
+			get => this._Padding;
+            set {
 				this._Padding = value;
 				//	This line will trigger the handle to recreate, therefore invalidating the control
 				if (this._ShowTabCloser){
-					if (value.X + (int)(this._Radius/2) < -6){
+					if (value.X + this._Radius/2 < -6){
 						((TabControl)this._TabControl).Padding = new Point(0, value.Y);
 					} else {
-						((TabControl)this._TabControl).Padding = new Point(value.X + (int)(this._Radius/2) + 6, value.Y);
+						((TabControl)this._TabControl).Padding = new Point(value.X + this._Radius/2 + 6, value.Y);
 					}
 				} else {
-					if (value.X + (int)(this._Radius/2) < 1){
+					if (value.X + this._Radius/2 < 1){
 						((TabControl)this._TabControl).Padding = new Point(0, value.Y);
 					} else {
-						((TabControl)this._TabControl).Padding = new Point(value.X + (int)(this._Radius/2) -1, value.Y);
+						((TabControl)this._TabControl).Padding = new Point(value.X + this._Radius/2 -1, value.Y);
 					}
 				}
 			}
@@ -329,10 +329,10 @@ namespace System.Windows.Forms
 
 		[Category("Appearance"), DefaultValue(1), Browsable(true)]
 		public int Radius {
-			get { return this._Radius; }
-			set {
+			get => this._Radius;
+            set {
 				if (value < 1){
-					throw new ArgumentException("The radius must be greater than 1", "value");
+					throw new ArgumentException("The radius must be greater than 1", nameof(value));
 				}
 				this._Radius = value;
 				//	Adjust padding
@@ -342,10 +342,10 @@ namespace System.Windows.Forms
 
 		[Category("Appearance")]
 		public int Overlap {
-			get { return this._Overlap; }
-			set {
+			get => this._Overlap;
+            set {
 				if (value < 0){
-					throw new ArgumentException("The tabs cannot have a negative overlap", "value");
+					throw new ArgumentException("The tabs cannot have a negative overlap", nameof(value));
 				}
 				this._Overlap = value;
 				
@@ -355,8 +355,8 @@ namespace System.Windows.Forms
 		
 		[Category("Appearance")]
 		public bool FocusTrack {
-			get { return this._FocusTrack; }
-			set {
+			get => this._FocusTrack;
+            set {
 				this._FocusTrack = value;
 				this._TabControl.Invalidate();
 			}
@@ -364,8 +364,8 @@ namespace System.Windows.Forms
 		
 		[Category("Appearance")]
 		public bool HotTrack {
-			get { return this._HotTrack; }
-			set {
+			get => this._HotTrack;
+            set {
 				this._HotTrack = value;
 				((TabControl)this._TabControl).HotTrack = value;
 			}
@@ -373,8 +373,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance")]
 		public bool ShowTabCloser {
-			get { return this._ShowTabCloser; }
-			set {
+			get => this._ShowTabCloser;
+            set {
 				this._ShowTabCloser = value;
 				//	Adjust padding
 				this.Padding = this._Padding;
@@ -383,13 +383,13 @@ namespace System.Windows.Forms
 
 		[Category("Appearance")]
 		public float Opacity {
-			get { return this._Opacity; }
-			set {
+			get => this._Opacity;
+            set {
 				if (value < 0){
-					throw new ArgumentException("The opacity must be between 0 and 1", "value");
+					throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
 				}
 				if (value > 1){
-					throw new ArgumentException("The opacity must be between 0 and 1", "value");
+					throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
 				}
 				this._Opacity = value;
 				this._TabControl.Invalidate();
@@ -399,13 +399,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColorSelected
 		{
-			get {
-				if (this._BorderColorSelected.IsEmpty){
+			get
+            {
+                if (this._BorderColorSelected.IsEmpty){
 					return ThemedColors.ToolBorder;
-				} else {
-					return this._BorderColorSelected;
 				}
-			}
+
+                return this._BorderColorSelected;
+            }
 			set {
 				if (value.Equals(ThemedColors.ToolBorder)){
 					this._BorderColorSelected = Color.Empty;
@@ -419,13 +420,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColorHot
 		{
-			get {
-				if (this._BorderColorHot.IsEmpty){
+			get
+            {
+                if (this._BorderColorHot.IsEmpty){
 					return SystemColors.ControlDark;
-				} else {
-					return this._BorderColorHot;
 				}
-			}
+
+                return this._BorderColorHot;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlDark)){
 					this._BorderColorHot = Color.Empty;
@@ -439,13 +441,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColor
 		{
-			get {
-				if (this._BorderColor.IsEmpty){
+			get
+            {
+                if (this._BorderColor.IsEmpty){
 					return SystemColors.ControlDark;
-				} else {
-					return this._BorderColor;
 				}
-			}
+
+                return this._BorderColor;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlDark)){
 					this._BorderColor = Color.Empty;
@@ -459,13 +462,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColor
 		{
-			get {
-				if (this._TextColor.IsEmpty){
+			get
+            {
+                if (this._TextColor.IsEmpty){
 					return SystemColors.ControlText;
-				} else {
-					return this._TextColor;
 				}
-			}
+
+                return this._TextColor;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlText)){
 					this._TextColor = Color.Empty;
@@ -479,13 +483,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColorSelected
 		{
-			get {
-				if (this._TextColorSelected.IsEmpty){
+			get
+            {
+                if (this._TextColorSelected.IsEmpty){
 					return SystemColors.ControlText;
-				} else {
-					return this._TextColorSelected;
 				}
-			}
+
+                return this._TextColorSelected;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlText)){
 					this._TextColorSelected = Color.Empty;
@@ -499,13 +504,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColorDisabled
 		{
-			get {
-				if (this._TextColor.IsEmpty){
+			get
+            {
+                if (this._TextColor.IsEmpty){
 					return SystemColors.ControlDark;
-				} else {
-					return this._TextColorDisabled;
 				}
-			}
+
+                return this._TextColorDisabled;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlDark)){
 					this._TextColorDisabled = Color.Empty;
@@ -520,8 +526,8 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "Orange")]
 		public Color FocusColor
 		{
-			get { return this._FocusColor; }
-			set { this._FocusColor = value;
+			get => this._FocusColor;
+            set { this._FocusColor = value;
 				this._TabControl.Invalidate();
 			}
 		}
@@ -529,8 +535,8 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "Black")]
 		public Color CloserColorActive
 		{
-			get { return this._CloserColorActive; }
-			set { this._CloserColorActive = value;
+			get => this._CloserColorActive;
+            set { this._CloserColorActive = value;
 				this._TabControl.Invalidate();
 			}
 		}
@@ -538,8 +544,8 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "DarkGrey")]
 		public Color CloserColor
 		{
-			get { return this._CloserColor; }
-			set { this._CloserColor = value;
+			get => this._CloserColor;
+            set { this._CloserColor = value;
 				this._TabControl.Invalidate();
 			}
 		}
@@ -549,41 +555,37 @@ namespace System.Windows.Forms
 		#region Painting
 		
         // HACK: Allow override
-		public virtual void PaintTab(int index, Graphics graphics){
-			using (GraphicsPath tabpath = this.GetTabBorder(index)) {
-				using (Brush fillBrush = this.GetTabBackgroundBrush(index)) {
-					//	Paint the background
-					graphics.FillPath(fillBrush, tabpath);
+		public virtual void PaintTab(int index, Graphics graphics)
+        {
+            using GraphicsPath tabpath = this.GetTabBorder(index);
+            using Brush fillBrush = this.GetTabBackgroundBrush(index);
+            //	Paint the background
+            graphics.FillPath(fillBrush, tabpath);
 					
-					//	Paint a focus indication
-					if (this._TabControl.Focused){
-						this.DrawTabFocusIndicator(tabpath, index, graphics);
-					}
+            //	Paint a focus indication
+            if (this._TabControl.Focused){
+                this.DrawTabFocusIndicator(tabpath, index, graphics);
+            }
 
-					//	Paint the closer
-					this.DrawTabCloser(index, graphics);
-
-				}
-			}
-		}
+            //	Paint the closer
+            this.DrawTabCloser(index, graphics);
+        }
 		
 		protected virtual void DrawTabCloser(int index, Graphics graphics){
 			if (this._ShowTabCloser){
 				Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
 				graphics.SmoothingMode = SmoothingMode.AntiAlias;
-				using (GraphicsPath closerPath = TabStyleProvider.GetCloserPath(closerRect)){
-					if (closerRect.Contains(this._TabControl.MousePosition)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					} else {
-						using (Pen closerPen = new Pen(this._CloserColor)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-					
-				}
-			}
+                using GraphicsPath closerPath = TabStyleProvider.GetCloserPath(closerRect);
+                if (closerRect.Contains(this._TabControl.MousePosition))
+                {
+                    using Pen closerPen = new Pen(this._CloserColorActive);
+                    graphics.DrawPath(closerPen, closerPath);
+                } else
+                {
+                    using Pen closerPen = new Pen(this._CloserColor);
+                    graphics.DrawPath(closerPen, closerPath);
+                }
+            }
 		}
 		
 		protected static GraphicsPath GetCloserPath(Rectangle closerRect){
@@ -636,13 +638,13 @@ namespace System.Windows.Forms
 		#region Background brushes
 
 		private Blend GetBackgroundBlend(){
-			float[] relativeIntensities = new float[]{0f, 0.7f, 1f};
-			float[] relativePositions = new float[]{0f, 0.6f, 1f};
+			float[] relativeIntensities = {0f, 0.7f, 1f};
+			float[] relativePositions = {0f, 0.6f, 1f};
 
 			//	Glass look to top aligned tabs
 			if (this._TabControl.Alignment == TabAlignment.Top){
-				relativeIntensities = new float[]{0f, 0.5f, 1f, 1f};
-				relativePositions = new float[]{0f, 0.5f, 0.51f, 1f};
+				relativeIntensities = new[]{0f, 0.5f, 1f, 1f};
+				relativePositions = new[]{0f, 0.5f, 0.51f, 1f};
 			}
 			
 			Blend blend = new Blend();

@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ASCompletion</RootNamespace>
     <AssemblyName>ASCompletion.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -29,6 +28,8 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,6 +48,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -62,6 +65,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
@@ -78,38 +82,188 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NSubstitute.2.0.3\lib\net40\NSubstitute.dll</HintPath>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Castle.Core.4.4.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NSubstitute, Version=4.2.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NSubstitute.4.2.2\lib\net46\NSubstitute.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Console, Version=4.0.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Console.4.3.1\lib\net46\System.Console.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Diagnostics.DiagnosticSource.5.0.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Linq, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Linq.4.3.0\lib\net463\System.Linq.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Linq.Expressions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Linq.Expressions.4.3.0\lib\net463\System.Linq.Expressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Net.Sockets.4.3.0\lib\net46\System.Net.Sockets.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Extensions, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.Extensions.4.3.1\lib\net462\System.Runtime.Extensions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.InteropServices.4.3.0\lib\net463\System.Runtime.InteropServices.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Text.RegularExpressions.4.3.1\lib\net463\System.Text.RegularExpressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Xml.ReaderWriter.4.3.1\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASCompletionTests.cs" />
     <Compile Include="Completion\ASCompleteTests.cs" />
     <Compile Include="Completion\ASGeneratorTests.cs" />
+    <Compile Include="Completion\CodeCompleteTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Model\ASFileParserTests.cs" />
+    <Compile Include="Model\FileParserTests.cs" />
     <Compile Include="Model\ClassModelTests.cs" />
     <Compile Include="PluginUIMock.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterMethodWithNoType.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateExtractVariableGeneric.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateExtractVariableGeneric.hx" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -121,46 +275,15 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Test Files\parser\as3\OverrideFunctionTest.as" />
-    <EmbeddedResource Include="Test Files\parser\as3\SimpleClassTest.as" />
-    <EmbeddedResource Include="Test Files\parser\haxe\AbstractsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\CommentsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\ComplexClassTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\EnumsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\EscapedStringsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesWithSubTypesTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\GenericsObjectConstraintTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\GenericsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\ImplementClassTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\ImportAliasTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\ImportTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\InterfaceTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\MultiLineStringsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\OverrideFunctionTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\PrivateClassTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\RegExTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\RegionsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\SimpleClassTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\SpecialClassesCommentsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\TypeDefsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\OverrideFunctionTest.as" />
+    <EmbeddedResource Include="Test Files\parser\SimpleClassTest.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfaceNoMembers.as" />
-    <EmbeddedResource Include="Test Files\parser\haxe\IdentifiersWithUnicodeCharsTest.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfacePublicMemberBehindPrivate.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfacePublicMemberBehindPrivate.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceNoPublicMember.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfaceNoPublicMember.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterfaceNoPublicMember.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterfacePublicMemberBehindPrivate.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoMembers.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoPublicMember.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfacePublicMemberBehindPrivate.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\SimpleTest.as" />
-    <EmbeddedResource Include="Test Files\parser\haxe\AnonymousStructuresTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\MultipleVarsAtOnceTest.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoMembersInsertSingleProperty.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\NotGenericTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\as3\CompletionErrorTest.as" />
+    <EmbeddedResource Include="Test Files\parser\CompletionErrorTest.as" />
     <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterEmptyBody.as" />
     <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithBody.as" />
     <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithOtherVars.as" />
@@ -169,64 +292,32 @@
     <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithWrongSuperConstructor.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithSuperConstructorMultiLine.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithWrongSuperConstructor.as" />
-    <EmbeddedResource Include="Test Files\parser\as3\IdentifiersWithUnicodeCharsTest.as" />
-    <EmbeddedResource Include="Test Files\parser\haxe\MetadataTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\MethodAfterGenericReturnTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
+    <EmbeddedResource Include="Test Files\parser\IdentifiersWithUnicodeCharsTest.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_fromString.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_fromNumber.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_fromNumber.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_fromNumber.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_fromString.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromString.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
-    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesAsArgumentsTest.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\KeywordAndUnderscoreInNameTest.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterPromoteLocal_generateExplicitScopeIsFalse.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforePromoteLocal.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterPromoteLocal_generateExplicitScopeIsTrue.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforePromoteLocal.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocal_generateExplicitScopeIsFalse.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocal_generateExplicitScopeIsTrue.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicFunction_generateExplicitScopeIsFalse.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicFunction_generateExplicitScopeIsTrue.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicFunction_generateExplicitScopeIsTrue.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicFunction_generateExplicitScopeIsFalse.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicVariable_generateExplicitScopeIsTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicVariable_generateExplicitScopeIsFalse.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicVariable_generateExplicitScopeIsTrue.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicVariable_generateExplicitScopeIsFalse.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withoutAutoRemove.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withAutoRemove.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withoutAutoRemove.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateEventHandler.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue221.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue221.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPrivateField.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPrivateField.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicField.as" />
@@ -245,11 +336,6 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVariable_forSomeObj3.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateStaticVariable.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forSomeType.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forSomeType.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forCurrentType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticVariable_forCurrentType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forSomeType.as" />
@@ -260,44 +346,11 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forCurrentType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forSomeType.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_forSomeType.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forCurrentType.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forCurrentType.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetNull.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetNull.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideNullSet.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSet.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useTabs.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideIssue793.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideIssue793.hx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateVariableWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticVariableWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticVariable.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateStaticVariabeWithDefaultModifier.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateFunctionWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticFunctionWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateStaticFunction.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateEventHandlerWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePrivateStaticEventHandler.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticEventHandlerWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateGetterSetterWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePrivateStaticGetterSetter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticGetterSetterWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetNullWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSetWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSetWithDefaultModifier.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverridePublicFunction.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverridePublicFunction.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverridePrivateFunction.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverridePrivateFunction.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverridePrivateFunctionWithDefaultModifier.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeOverridePublicFunction.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideProtectedFunction.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideInternalFunction.as" />
@@ -310,7 +363,6 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterOverridePublicGetSet.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideInternalGetSet.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideInternalGetSet.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocalWithDefaultModifier.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateProtectedVariable.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateProtectedFunction.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfFunction.as" />
@@ -324,18 +376,6 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfLocalObjectValue.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfConstructor.as" />
     <EmbeddedResource Include="Test Files\completion\as3\ExpressionEndPosition_TypeOfVariable.as" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfConstructor.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfConstructorParameter.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunction.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunctionParameter.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunctionParameter2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunctionWithParameter.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfLocalDynamicKey.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfLocalDynamicValue.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfLocalVar.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfPropertySetter.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfPropertyGetter.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfVariable.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfStringInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfObjectInitializer.as" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfArrayInitializer.as" />
@@ -390,30 +430,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_Function.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_ArrayAccess.as" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfArrayAccess.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFIeldOfItemOfVector.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFIeldOfItemOfVector.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_String.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Boolean.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Digit.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Array.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_ArrayInitializer.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_ObjectInitializer.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_TypedArray.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_ArrayAccess.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Function.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromFieldOfItemOfArray.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromFieldOfItemOfArray.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_String.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_String.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_String2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_String2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_Digit.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_Digit.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_Boolean.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_Boolean.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useTabs.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFieldOfItemOfVector.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFieldOfItemOfVector.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
@@ -464,138 +482,33 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewVector.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromCallback_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromCallback_useSpaces.as" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfMapInitializer.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfRegex.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfEmptyStringInitializerSingleQuotes.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromStringInitializer_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromStringInitializer_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromStringInitializer2_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromStringInitializer2_useSpaces.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback2_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback2_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback3_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback3_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap3.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromClass_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromClass_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromPrivateField.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromPrivateField.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromClass_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromClass_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap4.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewArray.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewArray2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewArray3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray2_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray2_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray3_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray3_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunctionWithTypeParams.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunctionWithTypeParams.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewVar.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewVar.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_Dynamic.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_Dynamic.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromDynamic_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromDynamic_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_7.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_7.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_8.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_8.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_9.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_9.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_10.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_10.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_11.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_11.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_12.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_12.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable2_generateExplicitScopeIsTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction2_generateExplicitScopeIsTrue.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_13.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_13.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_14.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_14.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_15.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_15.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_16.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_16.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_issue1460_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_issue1460_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_issue1460_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_issue1460_2.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable_issue1460_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable_issue1460_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable_issue1460_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateVariable_issue1460_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateVariable_issue1460_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateVariable_issue1460_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_17.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_17.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_18.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_18.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_19.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_19.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_20.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_20.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_21.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_21.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromUnsafeCastExpr.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromUnsafeCastExpr.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromParameter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromParameter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalParameter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalUntypedParameter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalUntypedParameter.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalParameter2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromXML.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromXML.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArrayAccess.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArrayAccess.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayAccess.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayAccess.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayAccess2.as" />
@@ -604,10 +517,6 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1645.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1645_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1645_2.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1645.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1645.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1645_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1645_2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_3.as" />
@@ -616,8 +525,6 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_5.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_22.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_22.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_6.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_6.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103.as" />
@@ -627,52 +534,13 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_5.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_18.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_19.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_20.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_21.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfNewObject.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_6.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConstant.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConstant.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateConstant_issue1460.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateConstant_issue1460.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstant.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstant.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstant_issue1460.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstant_issue1460.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1696_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1696_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1696_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1696_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1696_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1696_2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1704_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1704_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1704_2.as" />
@@ -681,93 +549,17 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1704_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1704_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1704_4.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1704_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1704_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1704_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1704_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1704_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1704_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1704_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1704_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_issue1712_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_issue1712_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_issue1712_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_issue1712_2.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer.charCodeAt0.toString.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer2.charCodeAt0.toString.as" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfStringInterpolation.charAt.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Boolean_false.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Boolean_false.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateDelegateMethod.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateDelegateMethod.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1731_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1731_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicFunction_issue1735_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicFunction_issue1735_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicVariable_issue1734_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicVariable_issue1734_1.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGeneratePublicVariable_issue1734_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicVariable_issue1734_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicVariable_issue1734_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGeneratePublicVariable_issue1734_2.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1747_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1747_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1747_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1747_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue1762_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1767_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1767_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Math.random.1.5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1780_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1780_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1780_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1780_2.as" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case1.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case2.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case3.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case4.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case5.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case6.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case7.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case8.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case9.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case10.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case11.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case12.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case13.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case14.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case15.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case16.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1836.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1836.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case17.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case18.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case19.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case20.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_5.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunction_Issue1867_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_plus.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_minus.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_mul.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_division.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_plus.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_minus.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_mul.as" />
@@ -782,8 +574,6 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1749_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1749_5.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1749_5.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1749.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1749.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_issue_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_issue_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_issue_3.as" />
@@ -794,33 +584,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_issue_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_issue_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_issue_5.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_5.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1749_6.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1749_6.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1749_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1749_6.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1921_case1.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1921_case2.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1921_case3.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment3.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment4.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment5.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement3.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement4.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement5.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_increment.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_increment2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_increment3.as" />
@@ -841,26 +606,10 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_decrement7.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_increment4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_increment4.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_7.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_7.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_8.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_8.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_9.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_9.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1766.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1766.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_operator_is.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_operator_is.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1908_unsafecast.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1908_unsafecast.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1908_untyped.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1908_untyped.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_delete.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_delete.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_typeof.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_typeof.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_typeof1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_typeof1.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1908_typeof.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1908_delete.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_operator_is.as" />
@@ -878,82 +627,17 @@
     <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_methodDetails_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_none.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_none.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_ObjectInitializer_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_ObjectInitializer_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_ArrayInitializer_2.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1954.as" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1954.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_String_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_TypedArray_2.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer3.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfVariable.as" />
-    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as.as" />
-    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_is.as" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_is.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_cast.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck_2.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_cast_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_is_1.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_arrayInitializer.as" />
-    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_1.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_objectInitializer.as" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_arrayInitializer.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_mapInitializer.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_stringInitializer.hx" />
-    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_stringInitializer_2.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\Issue1964_package_test.extern.hx" />
-    <EmbeddedResource Include="Test Files\parser\haxe\AbstractsTest2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1696_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1696_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_7.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_8.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_9.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_10.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1992_typecheck.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1992_typecheck.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1992_typecheck_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1992_typecheck_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_2.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_3.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_4.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_5.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_6.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_7.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1995_8.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_issue2029_1.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue1976_1.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue1976_2.as" />
@@ -980,8 +664,295 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1880_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1880_5.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1880_5.as" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1880_1.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1880_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_uint.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_XML.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVariable_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_8.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_9.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnChar_10.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_9.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_9.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_10.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_10.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_11.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_11.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_12.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_12.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_is_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_is_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_is_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_issue2029_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_issue2029_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_issue2029_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_issue2029_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_SafeCast_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_SafeCast_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_SafeCast_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_SafeCast_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_XMLInitializer_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_XMLInitializer_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_XMLInitializer_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_13.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_13.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_14.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_14.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_15.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_15.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_16.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_16.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_17.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_17.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_18.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_18.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_19.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_19.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_20.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_20.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_21.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_21.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_22.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_22.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_23.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_23.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_24.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_24.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_arrayInitializer_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_arrayInitializer_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_return_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_return_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_9.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_25.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_25.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2134_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2134_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2151_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2151_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2153_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2153_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2153_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler_issue164_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_issue164_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler_issue164_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_issue164_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetToolTipText_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetToolTipText_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetToolTipText_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetToolTipText_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameter_varargs.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterFieldFromParameter_varargs.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameter_varargs_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterFieldFromParameter_varargs_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeDeclareVariable_issue2271_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterDeclareVariable_issue2271_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeDeclareVariable_issue2273_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterDeclareVariable_issue2273_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeDeclareVariable_issue2273_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterDeclareVariable_issue2273_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeDeclareVariable_issue2271_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterDeclareVariable_issue2271_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2275_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2275_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2278_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2278_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2278_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2278_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2278_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2278_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2280_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2280_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2280_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2280_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharAndReplaceTextIssue2282_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharAndReplaceTextIssue2282_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharAndReplaceTextIssue2282_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharAndReplaceTextIssue2282_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharAndReplaceTextIssue2282_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharAndReplaceTextIssue2282_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2297_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2297_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler_issue2421_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_issue2421_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfDigit_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Digit_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_Digit_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_Digit_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2429_9.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorGetterSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorGetterSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorGetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorGetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorFunction_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorFunction_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorAutoImport_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_8.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_9.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateInterface_issue2481_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateInterface_issue2481_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateInterface_issue2481_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_10.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_11.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGenerator_issue2473_11.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue1756_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue1756_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2624_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_issue2624_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2628_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2628_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2955_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharAndReplaceTextIssue2980_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharAndReplaceTextIssue2980_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharAndReplaceTextIssue2980_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharAndReplaceTextIssue2980_2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
@@ -1042,6 +1013,14 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

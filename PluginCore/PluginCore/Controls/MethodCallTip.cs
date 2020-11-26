@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Utilities;
@@ -19,7 +20,6 @@ namespace PluginCore.Controls
         public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
         public static string HLBgStyleEnd = "[/BGCOLOR]";
 
-
         // state
         protected string currentText;
         protected int currentHLStart;
@@ -33,9 +33,9 @@ namespace PluginCore.Controls
 
         public MethodCallTip(IMainForm mainForm): base(mainForm)
         {
-            Color color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
-            Color fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
+            var color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
             if (color != Color.Empty) HLBgStyleBeg = "[BGCOLOR=" + DataConverter.ColorToHex(color).Replace("0x", "#") + "]";
+            var fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
             if (fore != Color.Empty)
             {
                 HLTextStyleBeg = "[B][COLOR=" + DataConverter.ColorToHex(fore).Replace("0x", "#") + "]";
@@ -43,15 +43,9 @@ namespace PluginCore.Controls
             }
         }
 
-        public bool CallTipActive
-        {
-            get { return isActive; }
-        }
+        public bool CallTipActive => isActive;
 
-        public bool Focused
-        {
-            get { return toolTipRTB.Focused; }
-        }
+        public bool Focused => toolTipRTB.Focused;
 
         public override void Hide()
         {
@@ -67,19 +61,11 @@ namespace PluginCore.Controls
             base.Hide();
         }
 
-        public bool CheckPosition(int position)
-        {
-            return position == currentPos;
-        }
+        public bool CheckPosition(int position) => position == currentPos;
 
         public void CallTipShow(ScintillaControl sci, int position, string text)
         {
-            CallTipShow(sci, position, text, true);
-        }
-        public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
-        {
-            if (toolTip.Visible && position == memberPos && text == currentText)
-                return;
+            if (toolTip.Visible && position == memberPos && text == currentText) return;
 
             toolTip.Visible = false;
             currentText = text;
@@ -115,21 +101,17 @@ namespace PluginCore.Controls
             toolTip.BringToFront();
         }
 
-        public void CallTipSetHlt(int start, int end)
-        {
-            CallTipSetHlt(start, end, true);
-        }
+        public void CallTipSetHlt(int start, int end) => CallTipSetHlt(start, end, true);
+
         public void CallTipSetHlt(int start, int end, bool forceRedraw)
         {
-            if (currentHLStart == start && currentHLEnd == end)
-                return;
+            if (!forceRedraw && currentHLStart == start && currentHLEnd == end) return;
 
             currentHLStart = start;
             currentHLEnd = end;
             if (start != end)
             {
                 string savedRawText = rawText;
-
                 try
                 {
                     rawText = rawText.Substring(0, start)
@@ -152,16 +134,16 @@ namespace PluginCore.Controls
 
         #region Keys handling
 
-        public void OnChar(ScintillaControl sci, int value)
+        [Obsolete("Please use MethodCallTip.OnChar(ScintillaControl sci)")]
+        public void OnChar(ScintillaControl sci, int value) => OnChar(sci);
+
+        public void OnChar(ScintillaControl sci)
         {
             currentPos++;
             UpdateTip(sci);
         }
 
-        public new void UpdateTip(ScintillaControl sci)
-        {
-            if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
-        }
+        public new void UpdateTip(ScintillaControl sci) => OnUpdateCallTip?.Invoke(sci, currentPos);
 
         public bool HandleKeys(ScintillaControl sci, Keys key)
         {
@@ -199,7 +181,7 @@ namespace PluginCore.Controls
                         sci.CharRight();
                         currentPos = sci.CurrentPos;
                         if (sci.CurrentLine != currentLine) Hide();
-                        else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+                        else OnUpdateCallTip?.Invoke(sci, currentPos);
                     }
                     return true;
 
@@ -209,20 +191,15 @@ namespace PluginCore.Controls
                         sci.CharLeft();
                         currentPos = sci.CurrentPos;
                         if (currentPos < startPos) Hide();
-                        else
-                        {
-                            if (sci.CurrentLine != currentLine) Hide();
-                            else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
-                        }
+                        else if (sci.CurrentLine != currentLine) Hide();
+                        else OnUpdateCallTip?.Invoke(sci, currentPos);
                     }
                     return true;
 
                 case Keys.Back:
                     currentPos = sci.CurrentPos - 1;
-                    if (currentPos + deltaPos <= startPos)
-                        Hide();
-                    else if (OnUpdateCallTip != null)
-                        OnUpdateCallTip.Invoke(sci, currentPos);
+                    if (currentPos + deltaPos <= startPos) Hide();
+                    else OnUpdateCallTip?.Invoke(sci, currentPos);
                     return false;
 
                 case Keys.Tab:
@@ -238,7 +215,8 @@ namespace PluginCore.Controls
         #endregion
 
         #region Controls fading on Control key
-        private static bool faded;
+
+        static bool faded;
 
         internal void FadeOut()
         {

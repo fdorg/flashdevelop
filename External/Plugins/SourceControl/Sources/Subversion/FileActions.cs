@@ -20,7 +20,8 @@
                 new DeleteCommand(paths).Run();
                 return true; // operation handled
             }
-            else return false; // let cut/paste files
+
+            return false; // let cut/paste files
         }
 
         public bool FileMove(string fromPath, string toPath)

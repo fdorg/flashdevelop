@@ -5,7 +5,7 @@ namespace SourceControl.Sources.Subversion
 {
     class DeleteCommand : BaseCommand
     {
-        string[] paths;
+        readonly string[] paths;
 
         public DeleteCommand(string[] paths)
         {
@@ -21,7 +21,7 @@ namespace SourceControl.Sources.Subversion
             Run(args, Path.GetDirectoryName(paths[0]));
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             base.Runner_ProcessEnded(sender, exitCode);
 

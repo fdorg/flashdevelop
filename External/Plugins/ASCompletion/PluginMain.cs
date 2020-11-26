@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Timers;
@@ -30,19 +29,12 @@ namespace ASCompletion
 {
     public class PluginMain: IPlugin
     {
-        private string pluginName = "ASCompletion";
-        private string pluginGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
-        private string pluginAuth = "FlashDevelop Team";
-        private string pluginHelp = "www.flashdevelop.org/community/";
-        private string pluginDesc = "Code completion engine for FlashDevelop.";
-
-        private string dataPath;
-        private string settingsFile;
-        private GeneralSettings settingObject;
-        private DockContent pluginPanel;
-        private PluginUI pluginUI;
-        private Image pluginIcon;
-        private EventType eventMask =
+        string dataPath;
+        string settingsFile;
+        GeneralSettings settingObject;
+        PluginUI pluginUI;
+        Image pluginIcon;
+        const EventType eventMask =
             EventType.FileOpen |
             EventType.FileSave |
             EventType.FileSwitch |
@@ -56,19 +48,20 @@ namespace ASCompletion
             EventType.ProcessEnd |
             EventType.ApplySettings |
             EventType.ProcessArgs;
-        private List<ToolStripItem> menuItems;
-        private ToolStripItem quickBuildItem;
-        private int currentPos;
-        private string currentDoc;
-        private bool started;
-        private FlashErrorsWatcher flashErrorsWatcher;
-        private bool checking = false;
-        private Timer timerPosition;
-        private int lastHoverPosition;
 
-        private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
-        private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
-        private Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
+        List<ToolStripItem> menuItems;
+        ToolStripItem quickBuildItem;
+        int currentPos;
+        string currentDoc;
+        bool started;
+        FlashErrorsWatcher flashErrorsWatcher;
+        bool checking;
+        Timer timerPosition;
+        int lastHoverPosition;
+
+        readonly Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
+        readonly Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
+        readonly Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
 
         const int Margin = 1;
         const int MarkerDown = 16;
@@ -86,64 +79,35 @@ namespace ASCompletion
 
         #region Required Properties
 
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
-        public string Name
-        {
-            get { return pluginName; }
-        }
+        public string Name { get; } = nameof(ASCompletion);
 
-        public string Guid
-        {
-            get { return pluginGuid; }
-        }
+        public string Guid { get; } = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
 
-        public string Author
-        {
-            get { return pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
-        public string Description
-        {
-            get { return pluginDesc; }
-        }
+        public string Description { get; set; } = "Code completion engine for FlashDevelop.";
 
-        public string Help
-        {
-            get { return pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         [Browsable(false)]
-        public virtual Object Settings
-        {
-            get { return settingObject; }
-        }
+        public virtual object Settings => settingObject;
+
         #endregion
 
         #region Plugin Properties
 
         [Browsable(false)]
-        public virtual PluginUI Panel
-        {
-            get { return pluginUI; }
-        }
-
-        [Browsable(false)]
-        public virtual string DataPath
-        {
-            get { return dataPath; }
-        }
+        public virtual PluginUI Panel => pluginUI;
 
         #endregion
 
         #region Required Methods
 
-        /**
-        * Initializes the plugin
-        */
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
         public virtual void Initialize()
         {
             try
@@ -162,9 +126,9 @@ namespace ASCompletion
             }
         }
 
-        /**
-        * Disposes the plugin
-        */
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
         public void Dispose()
         {
             timerPosition.Enabled = false;
@@ -173,10 +137,10 @@ namespace ASCompletion
             SaveSettings();
         }
 
-        /**
-        * Handles the incoming events
-        */
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             try
             {
@@ -190,14 +154,14 @@ namespace ASCompletion
                     PathExplorer.OnUIStarted();
                     // associate context to initial document
                     e = new NotifyEvent(EventType.SyntaxChange);
-                    this.pluginUI.UpdateAfterTheme();
+                    pluginUI.UpdateAfterTheme();
                 }
 
                 // current active document
-                ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+                var doc = PluginBase.MainForm.CurrentDocument;
                 // editor ready?
-                if (doc == null) return;
-                ScintillaControl sci = doc.IsEditable ? doc.SciControl : null;
+                if (doc is null) return;
+                var sci = doc.SciControl;
 
                 //
                 //  Events always handled
@@ -207,26 +171,32 @@ namespace ASCompletion
                 {
                     // caret position in editor
                     case EventType.UIRefresh:
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
+                        ASContext.Context.OnBraceMatch(sci);
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
                         return;
 
                     // key combinations
                     case EventType.Keys:
-                        Keys key = (e as KeyEvent).Value;
+                        var keys = ((KeyEvent) e).Value;
                         if (ModelsExplorer.HasFocus)
                         {
-                            e.Handled = ModelsExplorer.Instance.OnShortcut(key);
+                            e.Handled = ModelsExplorer.Instance.OnShortcut(keys);
                             return;
                         }
-                        if (!doc.IsEditable) return;
-                        e.Handled = ASComplete.OnShortcut(key, sci);
+                        if (pluginUI.OnShortcut(keys))
+                        {
+                            e.Handled = true;
+                            return;
+                        }
+                        if (sci is null) return;
+                        e.Handled = ASComplete.OnShortcut(keys, sci);
                         return;
 
                     // user-customized shortcuts
                     case EventType.Shortcut:
-                        de = e as DataEvent;
+                        de = (DataEvent) e;
                         if (de.Action == "Completion.ShowHelp")
                         {
                             ASComplete.HelpKeys = (Keys)de.Data;
@@ -243,7 +213,7 @@ namespace ASCompletion
                         break;
 
                     case EventType.FileSave:
-                        if (!doc.IsEditable) return;
+                        if (sci is null) return;
                         ASContext.Context.CheckModel(false);
                         // toolbar
                         var isValid = ASContext.Context.IsFileValid;
@@ -256,11 +226,11 @@ namespace ASCompletion
 
                     case EventType.SyntaxDetect:
                         // detect Actionscript language version
-                        if (!doc.IsEditable) return;
-                        if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
+                        if (sci is null) return;
+                        if (sci.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
-                            (e as TextEvent).Value = settingObject.LastASVersion;
+                            ((TextEvent) e).Value = settingObject.LastASVersion;
                             e.Handled = true;
                         }
                         break;
@@ -283,17 +253,15 @@ namespace ASCompletion
                         goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
-                        if (!doc.IsEditable)
+                        if (sci is null)
                         {
                             ASContext.SetCurrentFile(null, true);
                             ContextChanged();
                             return;
                         }
-                        currentDoc = doc.FileName;
+                        currentDoc = sci.FileName;
                         currentPos = sci.CurrentPos;
-                        // check file
-                        bool ignoreFile = !doc.IsEditable;
-                        ASContext.SetCurrentFile(doc, ignoreFile);
+                        ASContext.SetCurrentFile(doc, false);
                         // UI
                         ContextChanged();
                         return;
@@ -304,20 +272,19 @@ namespace ASCompletion
 
                     // some commands work all the time
                     case EventType.Command:
-                        de = e as DataEvent;
-                        string command = de.Action ?? "";
+                        de = (DataEvent) e;
+                        var command = de.Action ?? "";
 
                         if (command.StartsWithOrdinal("ASCompletion."))
                         {
-                            string cmdData = de.Data as string;
+                            var cmdData = de.Data as string;
 
                             // add a custom classpath
                             if (command == "ASCompletion.ClassPath")
                             {
-                                Hashtable info = de.Data as Hashtable;
-                                if (info != null)
+                                if (de.Data is Hashtable info)
                                 {
-                                    ContextSetupInfos setup = new ContextSetupInfos();
+                                    var setup = new ContextSetupInfos();
                                     setup.Platform = (string)info["platform"];
                                     setup.Lang = (string)info["lang"];
                                     setup.Version = (string)info["version"];
@@ -333,12 +300,10 @@ namespace ASCompletion
                             // send a UserClasspath
                             else if (command == "ASCompletion.GetUserClasspath")
                             {
-                                Hashtable info = de.Data as Hashtable;
-                                if (info != null && info.ContainsKey("language"))
+                                if (de.Data is Hashtable info && info.ContainsKey("language"))
                                 {
-                                    IASContext context = ASContext.GetLanguageContext(info["language"] as string);
-                                    if (context != null && context.Settings != null 
-                                        && context.Settings.UserClasspath != null)
+                                    var context = ASContext.GetLanguageContext(info["language"] as string);
+                                    if (context?.Settings?.UserClasspath != null)
                                         info["cp"] = new List<string>(context.Settings.UserClasspath);
                                 }
                                 e.Handled = true;
@@ -346,14 +311,12 @@ namespace ASCompletion
                             // update a UserClasspath
                             else if (command == "ASCompletion.SetUserClasspath")
                             {
-                                Hashtable info = de.Data as Hashtable;
-                                if (info != null && info.ContainsKey("language") && info.ContainsKey("cp"))
+                                if (de.Data is Hashtable info && info.ContainsKey("language") && info.ContainsKey("cp"))
                                 {
-                                    IASContext context = ASContext.GetLanguageContext(info["language"] as string);
-                                    List<string> cp = info["cp"] as List<string>;
-                                    if (cp != null && context != null && context.Settings != null)
+                                    var context = ASContext.GetLanguageContext(info["language"] as string);
+                                    if (info["cp"] is List<string> cp && context?.Settings != null)
                                     {
-                                        string[] pathes = new string[cp.Count];
+                                        var pathes = new string[cp.Count];
                                         cp.CopyTo(pathes);
                                         context.Settings.UserClasspath = pathes;
                                     }
@@ -363,10 +326,9 @@ namespace ASCompletion
                             // send the language's default compiler path
                             else if (command == "ASCompletion.GetCompilerPath")
                             {
-                                Hashtable info = de.Data as Hashtable;
-                                if (info != null && info.ContainsKey("language"))
+                                if (de.Data is Hashtable info && info.ContainsKey("language"))
                                 {
-                                    IASContext context = ASContext.GetLanguageContext(info["language"] as string);
+                                    var context = ASContext.GetLanguageContext(info["language"] as string);
                                     if (context != null)
                                         info["compiler"] = context.GetCompilerPath();
                                 }
@@ -376,18 +338,15 @@ namespace ASCompletion
                             else if (command == "ASCompletion.ShowSettings")
                             {
                                 e.Handled = true;
-                                IASContext context = ASContext.GetLanguageContext(cmdData);
-                                if (context == null) return;
-                                string filter = "SDK";
-                                string name = "";
-                                switch (cmdData.ToUpper())
+                                var context = ASContext.GetLanguageContext(cmdData);
+                                if (context is null) return;
+                                const string filter = "SDK";
+                                var name = cmdData.ToUpper() switch
                                 {
-                                    case "AS2": name = "AS2Context"; break;
-                                    case "AS3": name = "AS3Context"; break;
-                                    default: 
-                                        name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
-                                        break;
-                                }
+                                    "AS2" => "AS2Context",
+                                    "AS3" => "AS3Context",
+                                    _ => cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context",
+                                };
                                 PluginBase.MainForm.ShowSettingsDialog(name, filter);
                             }
                             // Open types explorer dialog
@@ -398,7 +357,7 @@ namespace ASCompletion
                             // call the Flash IDE
                             else if (command == "ASCompletion.CallFlashIDE")
                             {
-                                if (flashErrorsWatcher == null) flashErrorsWatcher = new FlashErrorsWatcher();
+                                if (flashErrorsWatcher is null) flashErrorsWatcher = new FlashErrorsWatcher();
                                 e.Handled = CallFlashIDE.Run(settingObject.PathToFlashIDE, cmdData);
                             }
                             // create Flash 8+ trust file
@@ -406,7 +365,7 @@ namespace ASCompletion
                             {
                                 if (cmdData != null)
                                 {
-                                    string[] args = cmdData.Split(';');
+                                    var args = cmdData.Split(';');
                                     if (args.Length == 2)
                                         e.Handled = CreateTrustFile.Run(args[0], args[1]);
                                 }
@@ -415,11 +374,11 @@ namespace ASCompletion
                             {
                                 if (cmdData != null)
                                 {
-                                    string[] args = cmdData.Split(';');
+                                    var args = cmdData.Split(';');
                                     if (args.Length == 1)
                                     {
-                                        FileModel model = ASContext.Context.GetFileModel(args[0]);
-                                        ClassModel aClass = model.GetPublicClass();
+                                        var model = ASContext.Context.GetFileModel(args[0]);
+                                        var aClass = model.GetPublicClass();
                                         if (!aClass.IsVoid())
                                         {
                                             Clipboard.SetText(aClass.QualifiedName);
@@ -430,7 +389,7 @@ namespace ASCompletion
                             }
                             else if (command == "ProjectManager.FileActions.DisableWatchers")
                             {
-                                foreach (PathModel cp in ASContext.Context.Classpath)
+                                foreach (var cp in ASContext.Context.Classpath)
                                     cp.DisableWatcher();
                             }
                             else if (command == "ProjectManager.FileActions.EnableWatchers")
@@ -438,16 +397,15 @@ namespace ASCompletion
                                 // classpaths could be invalid now - remove those, BuildClassPath() is too expensive
                                 ASContext.Context.Classpath.RemoveAll(cp => !Directory.Exists(cp.Path));
 
-                                foreach (PathModel cp in ASContext.Context.Classpath)
+                                foreach (var cp in ASContext.Context.Classpath)
                                     cp.EnableWatcher();
                             }
                             // Return requested language SDK list
                             else if (command == "ASCompletion.InstalledSDKs")
                             {
-                                Hashtable info = de.Data as Hashtable;
-                                if (info != null && info.ContainsKey("language"))
+                                if (de.Data is Hashtable info && info.ContainsKey("language"))
                                 {
-                                    IASContext context = ASContext.GetLanguageContext(info["language"] as string);
+                                    var context = ASContext.GetLanguageContext(info["language"] as string);
                                     if (context != null)
                                         info["sdks"] = context.Settings.InstalledSDKs;
                                 }
@@ -463,13 +421,13 @@ namespace ASCompletion
                         // Create a fake document from a FileModel
                         else if (command == "ProjectManager.OpenVirtualFile")
                         {
-                            string cmdData = de.Data as string;
+                            var cmdData = de.Data as string;
                             if (reVirtualFile.IsMatch(cmdData))
                             {
-                                string[] path = Regex.Split(cmdData, "::");
-                                string fileName = path[0] + Path.DirectorySeparatorChar
+                                var path = Regex.Split(cmdData, "::");
+                                var fileName = path[0] + Path.DirectorySeparatorChar
                                     + path[1].Replace('.', Path.DirectorySeparatorChar).Replace("::", Path.DirectorySeparatorChar.ToString());
-                                FileModel found = ModelsExplorer.Instance.OpenFile(fileName);
+                                var found = ModelsExplorer.Instance.OpenFile(fileName);
                                 if (found != null) e.Handled = true;
                             }
                         }
@@ -503,16 +461,16 @@ namespace ASCompletion
                     switch (e.Type)
                     {
                         case EventType.ProcessArgs:
-                            TextEvent te = (TextEvent) e;
+                            var te = (TextEvent) e;
                             if (reArgs.IsMatch(te.Value))
                             {
                                 // resolve current element
-                                Hashtable details = ASComplete.ResolveElement(sci, null);
+                                var details = ASComplete.ResolveElement(sci, null);
                                 te.Value = ArgumentsProcessor.Process(te.Value, details);
 
-                                if (te.Value.IndexOf('$') >= 0 && reCostlyArgs.IsMatch(te.Value))
+                                if (te.Value.Contains('$') && reCostlyArgs.IsMatch(te.Value))
                                 {
-                                    ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
+                                    var result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
                                     details = new Hashtable();
                                     // Get closest list (Array or Vector)
                                     string closestListName = "", closestListItemType = "";
@@ -520,7 +478,7 @@ namespace ASCompletion
                                     details.Add("TypClosestListName", closestListName);
                                     details.Add("TypClosestListItemType", closestListItemType);
                                     // get free iterator index
-                                    string iterator = ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, result.Context);
+                                    var iterator = ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, result.Context);
                                     details.Add("ItmUniqueVar", iterator);
                                     te.Value = ArgumentsProcessor.Process(te.Value, details);
                                 }
@@ -529,17 +487,16 @@ namespace ASCompletion
 
                         // menu commands
                         case EventType.Command:
-                            de = e as DataEvent;
-                            string command = de.Action ?? "";
-                            if (command.StartsWith("ASCompletion.", StringComparison.Ordinal))
+                            de = (DataEvent) e;
+                            var command = de.Action ?? "";
+                            if (command.StartsWithOrdinal("ASCompletion."))
                             {
-                                string cmdData = de.Data as string;
+                                var cmdData = de.Data as string;
                                 switch (command)
                                 {
                                     // run MTASC
                                     case "ASCompletion.CustomBuild":
-                                        if (cmdData != null) ASContext.Context.RunCMD(cmdData);
-                                        else ASContext.Context.RunCMD("");
+                                        ASContext.Context.RunCMD(cmdData ?? "");
                                         e.Handled = true;
                                         break;
 
@@ -568,17 +525,17 @@ namespace ASCompletion
 
                                     // alternative to default shortcuts
                                     case "ASCompletion.CtrlSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlShiftSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlAltSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, sci);
                                         e.Handled = true;
                                         break;
 
@@ -586,7 +543,7 @@ namespace ASCompletion
                                         if (ASContext.HasContext)
                                         {
                                             var options = new List<ICompletionListItem>();
-                                            ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);
+                                            ASGenerator.ContextualGenerator(sci, options);
                                             EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
                                             if (options.Count == 0)
                                             {
@@ -600,8 +557,7 @@ namespace ASCompletion
                             return;
 
                         case EventType.ProcessEnd:
-                            string procResult = (e as TextEvent).Value;
-                            ASContext.Context.OnProcessEnd(procResult);
+                            ASContext.Context.OnProcessEnd(((TextEvent) e).Value);
                             break;
                     }
                 }
@@ -616,40 +572,31 @@ namespace ASCompletion
 
         #region Custom Properties
 
-        /**
-        * Gets the PluginPanel
-        */
+        /// <summary>
+        /// Gets the PluginPanel
+        /// </summary>
         [Browsable(false)]
-        public DockContent PluginPanel
-        {
-            get { return pluginPanel; }
-        }
+        public DockContent PluginPanel { get; set; }
 
-        /**
-        * Gets the PluginSettings
-        */
+        /// <summary>
+        /// Gets the PluginSettings
+        /// </summary>
         [Browsable(false)]
-        public virtual GeneralSettings PluginSettings
-        {
-            get { return settingObject; }
-        }
+        public virtual GeneralSettings PluginSettings => settingObject;
 
         [Browsable(false)]
-        public virtual List<ToolStripItem> MenuItems
-        {
-            get { return menuItems; }
-        }
+        public virtual List<ToolStripItem> MenuItems => menuItems;
 
         #endregion
 
         #region Initialization
 
-        private void InitSettings()
+        void InitSettings()
         {
-            pluginDesc = TextHelper.GetString("Info.Description");
-            dataPath = Path.Combine(PathHelper.DataDir, "ASCompletion");
+            Description = TextHelper.GetString("Info.Description");
+            dataPath = Path.Combine(PathHelper.DataDir, nameof(ASCompletion));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            else if (PluginBase.MainForm.RefreshConfig) CleanData(dataPath);
+            else if (PluginBase.MainForm.RefreshConfig) PathExplorer.ClearPersistentCache();
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
@@ -661,27 +608,15 @@ namespace ASCompletion
             }
             else
             {
-                Object obj = ObjectSerializer.Deserialize(settingsFile, settingObject);
-                settingObject = (GeneralSettings)obj;
+                settingObject = ObjectSerializer.Deserialize(settingsFile, settingObject);
             }
         }
 
-        /// <summary>
-        /// FD has been updated, clean some app data
-        /// </summary>
-        private void CleanData(string dataPath)
-        {
-            PathExplorer.ClearPersistentCache();
-        }
-
-        private void SaveSettings()
-        {
-            ObjectSerializer.Serialize(settingsFile, this.settingObject);
-        }
+        void SaveSettings() => ObjectSerializer.Serialize(settingsFile, settingObject);
 
         void LoadBitmaps()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream("ASCompletion.Icons.UpDownArrow.png");
 
             upDownArrow = new Bitmap(PluginBase.MainForm.ImageSetAdjust(Image.FromStream(stream)));
@@ -689,23 +624,22 @@ namespace ASCompletion
             upArrow = new Bitmap(PluginBase.MainForm.FindImage16("8"));
         }
 
-        private void CreatePanel()
+        void CreatePanel()
         {
             pluginIcon = PluginBase.MainForm.FindImage("99");
-            pluginUI = new PluginUI(this);
-            pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, pluginGuid, pluginIcon, DockState.DockRight);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            PluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginIcon, DockState.DockRight);
         }
 
-        private void CreateMenuItems()
+        void CreateMenuItems()
         {
-            IMainForm mainForm = PluginBase.MainForm;
+            var mainForm = PluginBase.MainForm;
             menuItems = new List<ToolStripItem>();
             ToolStripMenuItem item;
-            ToolStripMenuItem menu = (ToolStripMenuItem)mainForm.FindMenuItem("ViewMenu");
+            var menu = (ToolStripMenuItem)mainForm.FindMenuItem("ViewMenu");
             if (menu != null)
             {
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, OpenPanel);
                 PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowOutline", item);
                 menu.DropDownItems.Add(item);
             }
@@ -719,14 +653,14 @@ namespace ASCompletion
 
                 // check actionscript
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.CheckSyntax"), image, new EventHandler(CheckSyntax), Keys.F7);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.CheckSyntax"), image, CheckSyntax, Keys.F7);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.CheckSyntax", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
                 // quick build
                 image = pluginUI.GetIcon(PluginUI.ICON_QUICK_BUILD);
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.QuickBuild"), image, new EventHandler(QuickBuild), Keys.Control | Keys.F8);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.QuickBuild"), image, QuickBuild, Keys.Control | Keys.F8);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.QuickBuild", item);
                 menu.DropDownItems.Add(item);
                 //menuItems.Add(item);
@@ -736,29 +670,28 @@ namespace ASCompletion
 
                 // model cleanup
                 image = mainForm.FindImage("153");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.RebuildClasspathCache"), image, new EventHandler(RebuildClasspath));
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.RebuildClasspathCache"), image, RebuildClasspath);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.RebuildClasspathCache", item);
                 menu.DropDownItems.Add(item);
 
                 // convert to intrinsic
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.ConvertToIntrinsic"), null, new EventHandler(MakeIntrinsic));
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.ConvertToIntrinsic"), null, MakeIntrinsic);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.ConvertToIntrinsic", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
             }
 
             // toolbar items
-            ToolStrip toolStrip = mainForm.ToolStrip;
-            ToolStripButton button;
+            var toolStrip = mainForm.ToolStrip;
             if (toolStrip != null)
             {
                 toolStrip.Items.Add(new ToolStripSeparator());
                 // check
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
-                button = new ToolStripButton(image);
+                var button = new ToolStripButton(image);
                 button.Name = "CheckSyntax";
                 button.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.CheckSyntax");
-                button.Click += new EventHandler(CheckSyntax);
+                button.Click += CheckSyntax;
                 PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.CheckSyntax", button);
                 toolStrip.Items.Add(button);
                 menuItems.Add(button);
@@ -770,9 +703,16 @@ namespace ASCompletion
             {
                 menu.DropDownItems.Add(new ToolStripSeparator());
 
+                // peek definition
+                image = mainForm.FindImage("99|9|3|-3");
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.PeekDefinition"), image, PeekDefinition);
+                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.PeekDefinition", item);
+                menu.DropDownItems.Add(item);
+                menuItems.Add(item);
+
                 // goto declaration
                 image = mainForm.FindImage("99|9|3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration), Keys.F4);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, GotoDeclaration, Keys.F4);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.GotoDeclaration", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
@@ -786,41 +726,51 @@ namespace ASCompletion
 
                 // goto back from declaration
                 image = mainForm.FindImage("99|1|-3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, BackDeclaration, Keys.Shift | Keys.F4);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromDeclaration", item);
                 menu.DropDownItems.Add(item);
                 pluginUI.LookupMenuItem = item;
                 item.Enabled = false;
 
                 // editor items
-                ContextMenuStrip emenu = mainForm.EditorMenu;
+                var emenu = mainForm.EditorMenu;
                 if (emenu != null)
                 {
+                    // peek definition
                     image = mainForm.FindImage("99|9|3|-3");
-                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
-                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
+                    item = new ToolStripMenuItem(TextHelper.GetString("Label.PeekDefinition"), image, PeekDefinition);
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.PeekDefinition", item);
+                    item.Enabled = false;
                     emenu.Items.Insert(4, item);
                     menuItems.Add(item);
 
+                    // goto declaration
+                    image = mainForm.FindImage("99|9|3|-3");
+                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, GotoDeclaration);
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
+                    emenu.Items.Insert(5, item);
+                    menuItems.Add(item);
+
+                    // goto type declaration
                     image = mainForm.FindImage("99|9|3|-3");
                     item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
                     PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoTypeDeclaration", item);
-                    emenu.Items.Insert(5, item);
-                    emenu.Items.Insert(6, new ToolStripSeparator());
+                    emenu.Items.Insert(6, item);
+                    emenu.Items.Insert(7, new ToolStripSeparator());
                     menuItems.Add(item);
                 }
             }
         }
 
-        private void AddEventHandlers()
+        void AddEventHandlers()
         {
             // scintilla controls listeners
-            UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(OnChar);
-            UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(OnMouseHover);
-            UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(OnTextChanged);
-            UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
-            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
-            CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
+            UITools.Manager.OnCharAdded += OnChar;
+            UITools.Manager.OnMouseHover += OnMouseHover;
+            UITools.Manager.OnTextChanged += OnTextChanged;
+            UITools.CallTip.OnUpdateCallTip += OnUpdateCallTip;
+            UITools.Tip.OnUpdateSimpleTip += OnUpdateSimpleTip;
+            CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
             FileModel.OnFileUpdate += OnFileUpdate;
             PathModel.OnFileRemove += OnFileRemove;
             PathModel.OnFileAdded += OnFileUpdate;
@@ -839,7 +789,7 @@ namespace ASCompletion
             timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
+            timerPosition.Elapsed += TimerPosition_Elapsed;
 
             //Cache update
             astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
@@ -858,8 +808,7 @@ namespace ASCompletion
 
         void UpdateCompleteCache()
         {
-            if (PluginBase.CurrentProject == null) return;
-
+            if (PluginBase.CurrentProject is null) return;
             astCache.UpdateCompleteCache();
         }
 
@@ -867,8 +816,7 @@ namespace ASCompletion
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if (!document.IsEditable) continue;
-
+                if (document.SciControl is null) continue;
                 UpdateMarkersFromCache(document.SplitSci1);
                 UpdateMarkersFromCache(document.SplitSci2);
             }
@@ -876,26 +824,23 @@ namespace ASCompletion
 
         void ApplyMarkers(ScintillaControl sci)
         {
-            if (settingObject.DisableInheritanceNavigation || sci == null) return;
-            
+            if (settingObject.DisableInheritanceNavigation || sci is null) return;
             //Register marker
             sci.MarkerDefineRGBAImage(MarkerDown, downArrow);
             sci.MarkerDefineRGBAImage(MarkerUp, upArrow);
             sci.MarkerDefineRGBAImage(MarkerUpDown, upDownArrow);
             //Setup margin
-            var mask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+            const int mask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
             sci.SetMarginMaskN(Margin, mask);
             sci.MarginSensitiveN(Margin, true);
-
             sci.MarginClick -= Sci_MarginClick;
             sci.MarginClick += Sci_MarginClick;
-
             UpdateMarkersFromCache(sci);
         }
 
         void UpdateMarkersFromCache(ScintillaControl sci)
         {
-            var marginWidth = 16;
+            const int marginWidth = 16;
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarkerDeleteAll(MarkerUp);
@@ -904,55 +849,59 @@ namespace ASCompletion
 
             if (settingObject.DisableInheritanceNavigation) return;
 
-            if (PluginBase.CurrentProject == null) return;
+            if (PluginBase.CurrentProject is null) return;
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
-            if (context == null) return;
+            if (context is null) return;
 
             var fileModel = context.GetCachedFileModel(sci.FileName);
 
-            foreach (var clas in fileModel.Classes)
+            for (var index = 0; index < fileModel.Classes.Count; index++)
             {
-                var cls = astCache.GetCachedModel(clas);
-                if (cls == null) return;
+                var @class = fileModel.Classes[index];
+                var model = astCache.GetCachedModel(@class);
+                if (model is null) return;
 
-                if (cls.ChildClassModels.Count > 0 || cls.ImplementorClassModels.Count > 0)
+                if (model.ChildClassModels.Count > 0 || model.ImplementorClassModels.Count > 0)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
-                    sci.MarkerAdd(clas.LineFrom, MarkerDown);
+                    sci.MarkerAdd(@class.LineFrom, MarkerDown);
                 }
 
-                foreach (var implementing in cls.Implementing)
+                foreach (var implementing in model.Implementing)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
                 }
-                foreach (var implementor in cls.Implementors)
+
+                foreach (var implementor in model.Implementors)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
                 }
-                foreach (var overriders in cls.Overriders)
+
+                foreach (var overriders in model.Overriders)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
                 }
-                foreach (var overrides in cls.Overriding)
+
+                foreach (var overrides in model.Overriding)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
                 }
 
-                for (var i = 0; i < sci.LineCount; ++i)
+                var lineCount = sci.LineCount;
+                for (var i = 0; i < lineCount; ++i)
                 {
                     var mask = sci.MarkerGet(i);
-                    var searchMask = (1 << MarkerDown) | (1 << MarkerUp);
+                    const int searchMask = (1 << MarkerDown) | (1 << MarkerUp);
                     if ((mask & searchMask) == searchMask)
                     {
                         sci.MarkerDelete(i, MarkerUp);
                         sci.MarkerDelete(i, MarkerDown);
-                        sci.MarkerDelete(i, MarkerUp);      //this needs to be done twice,
-                        sci.MarkerDelete(i, MarkerDown);    //because a member could for example implement and override at the same time
-
+                        sci.MarkerDelete(i, MarkerUp); //this needs to be done twice,
+                        sci.MarkerDelete(i, MarkerDown); //because a member could for example implement and override at the same time
                         sci.MarkerAdd(i, MarkerUpDown);
                     }
                 }
@@ -964,38 +913,37 @@ namespace ASCompletion
         /// </summary>
         /// <param name="doc">Document to check</param>
         /// <returns>Detected language</returns>
-        private string DetectActionscriptVersion(ITabbedDocument doc)
+        string DetectActionscriptVersion(ITabbedDocument doc)
         {
-            ASFileParser parser = new ASFileParser();
-            FileModel model = new FileModel(doc.FileName);
-            parser.ParseSrc(model, doc.SciControl.Text);
+            var parser = new ASFileParser();
+            var sci = doc.SciControl;
+            var model = new FileModel(sci.FileName);
+            parser.ParseSrc(model, sci.Text);
             if (model.Version == 1 && PluginBase.CurrentProject != null)
             {
-                String lang = PluginBase.CurrentProject.Language;
-                if (lang == "*") return "as2";
-                else return lang;
+                var lang = PluginBase.CurrentProject.Language;
+                return lang == "*"
+                    ? "as2"
+                    : lang;
             }
-            else if (model.Version > 2) return "as3";
-            else if (model.Version > 1) return "as2";
-            else if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWithOrdinal("as"))
+            if (model.Version > 2) return "as3";
+            if (model.Version > 1) return "as2";
+            if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWithOrdinal("as"))
             {
                 return settingObject.LastASVersion;
             }
-            else return "as2";
+            return "as2";
         }
 
         /// <summary>
         /// Clear and rebuild classpath models cache
         /// </summary>
-        private void RebuildClasspath(object sender, EventArgs e)
-        {
-            ASContext.RebuildClasspath();
-        }
+        static void RebuildClasspath(object sender, EventArgs e) => ASContext.RebuildClasspath();
 
         /// <summary>
         /// Open de types explorer dialog
         /// </summary>
-        private void TypesExplorer(object sender, EventArgs e)
+        static void TypesExplorer(object sender, EventArgs e)
         {
             ModelsExplorer.Instance.UpdateTree();
             ModelsExplorer.Open();
@@ -1004,31 +952,23 @@ namespace ASCompletion
         /// <summary>
         /// Opens the plugin panel again if closed
         /// </summary>
-        public void OpenPanel(object sender, EventArgs e)
-        {
-            pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => PluginPanel.Show();
 
         /// <summary>
         /// Menu item command: Check ActionScript
         /// </summary>
         public void CheckSyntax(object sender, EventArgs e)
         {
-            if (!checking && !PluginBase.MainForm.SavingMultiple)
-            {
-                checking = true;
-                ASContext.Context.CheckSyntax();
-                checking = false;
-            }
+            if (checking || PluginBase.MainForm.SavingMultiple) return;
+            checking = true;
+            ASContext.Context.CheckSyntax();
+            checking = false;
         }
 
         /// <summary>
         /// Menu item command: Quick Build
         /// </summary>
-        public void QuickBuild(object sender, EventArgs e)
-        {
-            ASContext.Context.BuildCMD(false);
-        }
+        public void QuickBuild(object sender, EventArgs e) => ASContext.Context.BuildCMD(false);
 
         /// <summary>
         /// Menu item command: Convert To Intrinsic
@@ -1040,37 +980,40 @@ namespace ASCompletion
         }
 
         /// <summary>
+        /// Menu item command: Peek Definition
+        /// </summary>
+        static void PeekDefinition(object sender, EventArgs e)
+        {
+            if (ASComplete.CurrentResolvedContext?.Result is { } result && !result.IsNull())
+            {
+                var code = ASComplete.GetCodeTipCode(result);
+                if (code is null) return;
+                UITools.CodeTip.Show(PluginBase.MainForm.CurrentDocument?.SciControl, result.Context.PositionExpression, code);
+            }
+        }
+
+        /// <summary>
         /// Menu item command: Goto Declaration
         /// </summary>
-        public void GotoDeclaration(object sender, EventArgs e)
-        {
-            ASComplete.DeclarationLookup(ASContext.CurSciControl);
-        }
+        public void GotoDeclaration(object sender, EventArgs e) => ASComplete.DeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
-        void GotoTypeDeclaration(object sender, EventArgs e)
-        {
-            ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
-        }
+        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Back From Declaration or Type Declaration
         /// </summary>
-        public void BackDeclaration(object sender, EventArgs e)
-        {
-            pluginUI.RestoreLastLookupPosition();
-        }
-
+        public void BackDeclaration(object sender, EventArgs e) => pluginUI.RestoreLastLookupPosition();
 
         /// <summary>
         /// Sets the IsEnabled value of all the CommandBarItems
         /// </summary>
         /// <param name="enabled">Is the item enabled?</param>
-        private void SetItemsEnabled(bool enabled, bool canBuild)
+        void SetItemsEnabled(bool enabled, bool canBuild)
         {
-            foreach (ToolStripItem item in menuItems) item.Enabled = enabled;
+            foreach (var item in menuItems) item.Enabled = enabled;
             quickBuildItem.Enabled = canBuild;
         }
 
@@ -1129,7 +1072,7 @@ namespace ASCompletion
         {
             PluginBase.RunAsync(() =>
             {
-                if (PluginBase.CurrentProject == null) return;
+                if (PluginBase.CurrentProject is null) return;
 
                 foreach (var cls in obj.Classes)
                 {
@@ -1143,10 +1086,7 @@ namespace ASCompletion
             });
         }
 
-        void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            astCache.UpdateOutdatedModels();
-        }
+        void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e) => astCache.UpdateOutdatedModels();
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
         {
@@ -1158,40 +1098,30 @@ namespace ASCompletion
             {
                 var declaration = ASContext.Context.GetDeclarationAtLine(line); //this could be problematic if there are multiple declarations in one line
                 var cached = astCache.GetCachedModel(declaration.InClass);
-
-                if (cached == null) return;
-
-                
+                if (cached is null) return;
                 if (declaration.InClass.LineFrom == line)
                 {
                     ReferenceList.Show(
-                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToList(),
+                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels),
                         new List<Reference>(0), 
-                        ReferenceList.ConvertClassCache(cached.ChildClassModels).ToList(),
+                        ReferenceList.ConvertClassCache(cached.ChildClassModels),
                         new List<Reference>(0)
                     );
                     return;
                 }
 
-                if (declaration.Member == null) return;
+                if (declaration.Member is null) return;
 
-                HashSet<ClassModel> implementing;
-                cached.Implementing.TryGetValue(declaration.Member, out implementing);
-
-                HashSet<ClassModel> implementors;
-                cached.Implementors.TryGetValue(declaration.Member, out implementors);
-
-                HashSet<ClassModel> overriders;
-                cached.Overriders.TryGetValue(declaration.Member, out overriders);
-
-                HashSet<ClassModel> overridden;
-                cached.Overriding.TryGetValue(declaration.Member, out overridden);
+                cached.Implementing.TryGetValue(declaration.Member, out var implementing);
+                cached.Implementors.TryGetValue(declaration.Member, out var implementors);
+                cached.Overriders.TryGetValue(declaration.Member, out var overriders);
+                cached.Overriding.TryGetValue(declaration.Member, out var overridden);
 
                 ReferenceList.Show(
-                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()).ToList(),
-                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()).ToList(),
-                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()).ToList(),
-                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>()).ToList()
+                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()),
+                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()),
+                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()),
+                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>())
                 );
             }
         }
@@ -1199,47 +1129,32 @@ namespace ASCompletion
         /// <summary>
         /// Display completion list or calltip info
         /// </summary>
-        private void OnChar(ScintillaControl Sci, int Value)
+        static void OnChar(ScintillaControl sci, int value)
         {
-            if (Sci.Lexer == 3 || Sci.Lexer == 4)
-                ASComplete.OnChar(Sci, Value, true);
+            if (sci.Lexer == 3 || sci.Lexer == 4)
+                ASComplete.OnChar(sci, value, true);
         }
 
-        private void OnMouseHover(ScintillaControl sci, int position)
+        void OnMouseHover(ScintillaControl sci, int position)
         {
-            if (!ASContext.Context.IsFileValid)
-                return;
-
+            var ctx = ASContext.Context;
+            if (!ctx.IsFileValid) return;
             lastHoverPosition = position;
-
-            // get word at mouse position
-            int style = sci.BaseStyleAt(position);
-            if (!ASComplete.IsTextStyle(style)) return;
+            if (!ctx.CodeComplete.IsAvailableForToolTip(sci, position)) return;
             position = ASComplete.ExpressionEndPosition(sci, position);
-            var result = ASComplete.GetExpressionType(sci, position, false, true);
-
-            // set tooltip
-            if (!result.IsNull())
+            var expr = ASComplete.GetExpressionType(sci, position, false, true);
+            if (Control.ModifierKeys == Keys.Control)
             {
-                if (Control.ModifierKeys == Keys.Control)
-                {
-                    var code = ASComplete.GetCodeTipCode(result);
-                    if (code == null) return;
-                    UITools.CodeTip.Show(sci, position - result.Path.Length, code);
-                }
-                else
-                {
-                    string text = ASComplete.GetToolTipText(result);
-                    if (text == null) return;
-                    // show tooltip
-                    UITools.Tip.ShowAtMouseLocation(text);
-                }
+                if (ASComplete.GetCodeTipCode(expr) is { } text) UITools.CodeTip.Show(sci, position - expr.Path.Length, text);
+            }
+            else
+            {
+                if (ASComplete.GetToolTipText(expr) is { } text) UITools.Tip.ShowAtMouseLocation(text);
             }
         }
 
-        private void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
 
             if (settingObject.DisableInheritanceNavigation) return;
@@ -1250,7 +1165,7 @@ namespace ASCompletion
             for (var i = start; i <= end; ++i)
             {
                 var mask = sender.MarkerGet(i);
-                var searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+                const int searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
                 if ((mask & searchMask) > 0)
                 {
                     sender.MarkerDelete(i, MarkerUp);
@@ -1261,50 +1176,44 @@ namespace ASCompletion
                     sender.MarkerDelete(i, MarkerUpDown);
                 }
             }
-            
         }
 
-        private void OnUpdateCallTip(ScintillaControl sci, int position)
+        static void OnUpdateCallTip(ScintillaControl sci, int position)
         {
-            if (ASComplete.HasCalltip())
-            {
-                int pos = sci.CurrentPos - 1;
-                char c = (char)sci.CharAt(pos);
-                if ((c == ',' || c == '(') && sci.BaseStyleAt(pos) == 0)
-                    sci.Colourise(0, -1);
-                ASComplete.HandleFunctionCompletion(sci, false, true);
-            }
+            if (!ASComplete.HasCalltip()) return;
+            var pos = sci.CurrentPos - 1;
+            var c = (char)sci.CharAt(pos);
+            if ((c == ',' || c == '(') && sci.BaseStyleAt(pos) == 0)
+                sci.Colourise(0, -1);
+            ASComplete.HandleFunctionCompletion(sci, false);
         }
 
-        private void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
+        void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
         {
             if (UITools.Tip.Visible)
                 OnMouseHover(sci, lastHoverPosition);
         }
 
-        void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
+        void TimerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
-            ScintillaControl sci = ASContext.CurSciControl;
-            if (sci == null) return;
-            int position = sci.CurrentPos;
-            if (position != currentPos)
-            {
-                currentPos = position;
-                ContextChanged();
-            }
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
+            var position = sci.CurrentPos;
+            if (position == currentPos) return;
+            currentPos = position;
+            ContextChanged();
         }
 
-        private void ContextChanged()
+        void ContextChanged()
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            bool isValid = false;
+            var doc = PluginBase.MainForm.CurrentDocument;
+            var isValid = false;
 
-            if (doc.IsEditable)
+            if (doc.SciControl is { } sci)
             {
-                ScintillaControl sci = ASContext.CurSciControl;
-                if (currentDoc == doc.FileName && sci != null)
+                if (currentDoc == sci.FileName)
                 {
-                    int line = sci.LineFromPosition(currentPos);
+                    var line = sci.LineFromPosition(currentPos);
                     ASContext.SetCurrentLine(line);
                 }
                 else ASComplete.CurrentResolvedContext = null; // force update
@@ -1314,11 +1223,10 @@ namespace ASCompletion
             }
             else ASComplete.ResolveContext(null);
             
-            bool enableItems = isValid && !doc.IsUntitled;
+            var enableItems = isValid && !doc.IsUntitled;
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);
         }
         #endregion
     }
-
 }

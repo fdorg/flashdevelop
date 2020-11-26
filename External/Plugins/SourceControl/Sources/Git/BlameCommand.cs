@@ -86,7 +86,7 @@ namespace SourceControl.Sources.Git
                     }
                     if (errors.Count > 0)
                     {
-                        document.ShowError(string.Join("\n", errors.ToArray()));
+                        document.ShowError(string.Join("\n", errors));
                     }
                 }
                 catch (Exception e)
@@ -180,12 +180,9 @@ namespace SourceControl.Sources.Git
 
         #region IBlameCommand
 
-        private bool disposed = false;
+        private bool disposed;
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
 
         protected virtual void Dispose(bool disposing)
         {

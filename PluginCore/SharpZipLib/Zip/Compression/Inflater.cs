@@ -171,13 +171,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// True means, that the inflated stream doesn't contain a Zlib header or 
         /// footer.
         /// </summary>
-        bool noHeader;
-        
-        StreamManipulator input;
-        OutputWindow outputWindow;
+        readonly bool noHeader;
+
+        readonly StreamManipulator input;
+        readonly OutputWindow outputWindow;
         InflaterDynHeader dynHeader;
         InflaterHuffmanTree litlenTree, distTree;
-        Adler32 adler;
+        readonly Adler32 adler;
         #endregion
         
         #region Constructors
@@ -326,15 +326,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                             if (symbol < 0) 
                             {
                                 return false;
-                            } 
-                            else 
-                            {
-                                // symbol == 256: end of block
-                                distTree = null;
-                                litlenTree = null;
-                                mode = DECODE_BLOCKS;
-                                return true;
                             }
+
+                            // symbol == 256: end of block
+                            distTree = null;
+                            litlenTree = null;
+                            mode = DECODE_BLOCKS;
+                            return true;
                         }
                         
                         try 
@@ -462,12 +460,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                         if (noHeader) {
                             mode = FINISHED;
                             return false;
-                        } else {
-                            input.SkipToByteBoundary();
-                            neededBits = 32;
-                            mode = DECODE_CHKSUM;
-                            return true;
                         }
+
+                        input.SkipToByteBoundary();
+                        neededBits = 32;
+                        mode = DECODE_CHKSUM;
+                        return true;
                     }
                     
                     int type = input.PeekBits(3);
@@ -594,16 +592,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// </exception>
         public void SetDictionary(byte[] buffer, int index, int count)
         {
-            if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+            if ( buffer is null ) {
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( index < 0 ) {
-                throw new ArgumentOutOfRangeException("index");
+                throw new ArgumentOutOfRangeException(nameof(index));
             }
 
             if ( count < 0 ) {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             if (!IsNeedingDictionary) {
@@ -654,7 +652,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         public void SetInput(byte[] buffer, int index, int count)
         {
             input.SetInput(buffer, index, count);
-            totalIn += (long)count;
+            totalIn += count;
         }
         
         /// <summary>
@@ -678,9 +676,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// </exception>
         public int Inflate(byte[] buffer)
         {
-            if ( buffer == null )
+            if ( buffer is null )
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             return Inflate(buffer, 0, buffer.Length);
@@ -715,16 +713,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// </exception>
         public int Inflate(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null )
+            if ( buffer is null )
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( count < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "count cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "count cannot be negative");
 #endif
             }
 
@@ -732,7 +730,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "offset cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "offset cannot be negative");
 #endif
             }
 
@@ -765,7 +763,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                         adler.Update(buffer, offset, more);
                         offset += more;
                         bytesCopied += more;
-                        totalOut += (long)more;
+                        totalOut += more;
                         count -= more;
                         if (count == 0) {
                             return bytesCopied;
@@ -781,31 +779,19 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// You should then call setInput(). 
         /// NOTE: This method also returns true when the stream is finished.
         /// </summary>
-        public bool IsNeedingInput {
-            get {
-                return input.IsNeedingInput;
-            }
-        }
-        
+        public bool IsNeedingInput => input.IsNeedingInput;
+
         /// <summary>
         /// Returns true, if a preset dictionary is needed to inflate the input.
         /// </summary>
-        public bool IsNeedingDictionary {
-            get {
-                return mode == DECODE_DICT && neededBits == 0;
-            }
-        }
-        
+        public bool IsNeedingDictionary => mode == DECODE_DICT && neededBits == 0;
+
         /// <summary>
         /// Returns true, if the inflater has finished.  This means, that no
         /// input is needed and no output can be produced.
         /// </summary>
-        public bool IsFinished {
-            get {
-                return mode == FINISHED && outputWindow.GetAvailable() == 0;
-            }
-        }
-        
+        public bool IsFinished => mode == FINISHED && outputWindow.GetAvailable() == 0;
+
         /// <summary>
         /// Gets the adler checksum.  This is either the checksum of all
         /// uncompressed bytes returned by inflate(), or if needsDictionary()
@@ -815,36 +801,24 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <returns>
         /// the adler checksum.
         /// </returns>
-        public int Adler {
-            get {
-                return IsNeedingDictionary ? readAdler : (int) adler.Value;
-            }
-        }
-        
+        public int Adler => IsNeedingDictionary ? readAdler : (int) adler.Value;
+
         /// <summary>
         /// Gets the total number of output bytes returned by Inflate().
         /// </summary>
         /// <returns>
         /// the total number of output bytes.
         /// </returns>
-        public long TotalOut {
-            get {
-                return totalOut;
-            }
-        }
-        
+        public long TotalOut => totalOut;
+
         /// <summary>
         /// Gets the total number of processed compressed input bytes.
         /// </summary>
         /// <returns>
         /// The total number of bytes of processed input bytes.
         /// </returns>
-        public long TotalIn {
-            get {
-                return totalIn - (long)RemainingInput;
-            }
-        }
-        
+        public long TotalIn => totalIn - RemainingInput;
+
         /// <summary>
         /// Gets the number of unprocessed input bytes.  Useful, if the end of the
         /// stream is reached and you want to further process the bytes after
@@ -853,11 +827,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <returns>
         /// The number of bytes of the input which have not been processed.
         /// </returns>
-        public int RemainingInput {
-            // TODO: This should be a long?
-            get {
-                return input.AvailableBytes;
-            }
-        }
+        public int RemainingInput => input.AvailableBytes;
     }
 }

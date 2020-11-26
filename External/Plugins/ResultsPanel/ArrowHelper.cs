@@ -15,7 +15,7 @@ namespace ResultsPanel
         public int fmt;
     }
 
-    static class ArrowHelper
+    internal static class ArrowHelper
     {
         const int HDI_FORMAT = 0x0004;
 
@@ -31,10 +31,10 @@ namespace ResultsPanel
         const int HDM_SETITEM = HDM_FIRST + 12;
 
         [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
-        private static extern IntPtr SendMessageLVCOLUMN(IntPtr hWnd, int Msg, IntPtr wParam, ref LVCOLUMN lPLVCOLUMN);
+        static extern IntPtr SendMessageLVCOLUMN(IntPtr hWnd, int Msg, IntPtr wParam, ref LVCOLUMN lPLVCOLUMN);
 
         public static void SetSortIcon(this ListView listView, int columnIndex, SortOrder order)
         {
@@ -42,9 +42,8 @@ namespace ResultsPanel
 
             for (int columnNumber = 0; columnNumber < listView.Columns.Count; columnNumber++)
             {
-                IntPtr columnPtr = new IntPtr(columnNumber);
-                LVCOLUMN lvColumn = new LVCOLUMN();
-                lvColumn.mask = HDI_FORMAT;
+                var columnPtr = new IntPtr(columnNumber);
+                var lvColumn = new LVCOLUMN {mask = HDI_FORMAT};
 
                 SendMessageLVCOLUMN(columnHeader, HDM_GETITEM, columnPtr, ref lvColumn);
 
@@ -52,11 +51,11 @@ namespace ResultsPanel
                 {
                     switch (order)
                     {
-                        case System.Windows.Forms.SortOrder.Ascending:
+                        case SortOrder.Ascending:
                             lvColumn.fmt &= ~HDF_SORTDOWN;
                             lvColumn.fmt |= HDF_SORTUP;
                             break;
-                        case System.Windows.Forms.SortOrder.Descending:
+                        case SortOrder.Descending:
                             lvColumn.fmt &= ~HDF_SORTUP;
                             lvColumn.fmt |= HDF_SORTDOWN;
                             break;

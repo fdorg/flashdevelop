@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -17,31 +17,29 @@ namespace BookmarkPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListViewEx listView;
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ColumnHeader columnLine;
-        private System.Windows.Forms.ColumnHeader columnText;
-        private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.ToolStripButton searchButton;
-        private System.Windows.Forms.ToolStripSpringComboBox searchBox;
-        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
-        private System.Windows.Forms.ToolStripMenuItem removeBookmarksItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private ImageListManager imageList;
-        private System.Windows.Forms.Timer updateTimer;
-        private TimeoutManager timeoutManager;
-        private PluginMain pluginMain;
-        
-        public PluginUI(PluginMain pluginMain)
+        ListViewEx listView;
+        ToolStrip toolStrip;
+        ColumnHeader columnLine;
+        ColumnHeader columnText;
+        StatusStrip statusStrip;
+        ToolStripButton searchButton;
+        ToolStripSpringComboBox searchBox;
+        ToolStripStatusLabel statusLabel;
+        ToolStripMenuItem removeBookmarksItem;
+        ContextMenuStrip contextMenuStrip;
+        ImageListManager imageList;
+        Timer updateTimer;
+        TimeoutManager timeoutManager;
+
+        public PluginUI()
         {
-            this.AutoKeyHandling = true;
-            this.InitializeComponent();
-            this.pluginMain = pluginMain;
-            this.InitializeTimers();
-            this.InitializeGraphics();
-            this.InitializeLayout();
-            this.InitializeTexts();
-            this.UpdateSettings();
+            AutoKeyHandling = true;
+            InitializeComponent();
+            InitializeTimers();
+            InitializeGraphics();
+            InitializeLayout();
+            InitializeTexts();
+            UpdateSettings();
             ScrollBarEx.Attach(listView);
         }
 
@@ -52,136 +50,135 @@ namespace BookmarkPanel
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent() 
+        void InitializeComponent() 
         {
-            this.listView = new System.Windows.Forms.ListViewEx();
-            this.columnLine = new System.Windows.Forms.ColumnHeader();
-            this.columnText = new System.Windows.Forms.ColumnHeader();
-            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            this.removeBookmarksItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip = new PluginCore.Controls.ToolStripEx();
-            this.searchButton = new System.Windows.Forms.ToolStripButton();
-            this.searchBox = new System.Windows.Forms.ToolStripSpringComboBox();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.contextMenuStrip.SuspendLayout();
-            this.toolStrip.SuspendLayout();
-            this.statusStrip.SuspendLayout();
-            this.SuspendLayout();
+            listView = new ListViewEx();
+            columnLine = new ColumnHeader();
+            columnText = new ColumnHeader();
+            contextMenuStrip = new ContextMenuStrip();
+            removeBookmarksItem = new ToolStripMenuItem();
+            toolStrip = new ToolStripEx();
+            searchButton = new ToolStripButton();
+            searchBox = new ToolStripSpringComboBox();
+            statusStrip = new StatusStrip();
+            statusLabel = new ToolStripStatusLabel();
+            contextMenuStrip.SuspendLayout();
+            toolStrip.SuspendLayout();
+            statusStrip.SuspendLayout();
+            SuspendLayout();
             // 
             // listView
             // 
-            this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnLine,
-            this.columnText});
-            this.listView.LabelWrap = false;
-            this.listView.GridLines = true;
-            this.listView.ShowItemToolTips = true;
-            this.listView.ContextMenuStrip = this.contextMenuStrip;
-            this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView.FullRowSelect = true;
-            this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
-            this.listView.HideSelection = false;
-            this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(298, 324);
-            this.listView.TabIndex = 0;
-            this.listView.UseCompatibleStateImageBehavior = false;
-            this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += new System.EventHandler(this.ListViewDoubleClick);
-            this.listView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ListViewKeyUp);
+            listView.BorderStyle = BorderStyle.None;
+            listView.Columns.AddRange(new[] {
+            columnLine,
+            columnText});
+            listView.LabelWrap = false;
+            listView.GridLines = true;
+            listView.ShowItemToolTips = true;
+            listView.ContextMenuStrip = contextMenuStrip;
+            listView.Dock = DockStyle.Fill;
+            listView.FullRowSelect = true;
+            listView.HeaderStyle = ColumnHeaderStyle.Clickable;
+            listView.HideSelection = false;
+            listView.Name = "listView";
+            listView.Size = new Size(298, 324);
+            listView.TabIndex = 0;
+            listView.UseCompatibleStateImageBehavior = false;
+            listView.View = View.Details;
+            listView.DoubleClick += ListViewDoubleClick;
+            listView.KeyUp += ListViewKeyUp;
             // 
             // columnLine
             // 
-            this.columnLine.Text = "Line";
-            this.columnLine.Width = 55;
+            columnLine.Text = "Line";
+            columnLine.Width = 55;
             // 
             // columnText
             // 
-            this.columnText.Text = "Text";
-            this.columnText.Width = 250;
+            columnText.Text = "Text";
+            columnText.Width = 250;
             // 
             // contextMenuStrip
             // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeBookmarksItem});
-            this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(176, 26);
-            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStripOpening);
+            contextMenuStrip.Items.AddRange(new ToolStripItem[] {
+            removeBookmarksItem});
+            contextMenuStrip.Name = "contextMenuStrip";
+            contextMenuStrip.Size = new Size(176, 26);
+            contextMenuStrip.Opening += ContextMenuStripOpening;
             // 
             // removeBookmarksItem
             //
-            this.removeBookmarksItem.Name = "removeBookmarksItem";
-            this.removeBookmarksItem.Size = new System.Drawing.Size(175, 22);
-            this.removeBookmarksItem.Text = "Remove Bookmarks";
-            this.removeBookmarksItem.Click += new System.EventHandler(this.RemoveBookmarksItemClick);
+            removeBookmarksItem.Name = "removeBookmarksItem";
+            removeBookmarksItem.Size = new Size(175, 22);
+            removeBookmarksItem.Text = "Remove Bookmarks";
+            removeBookmarksItem.Click += RemoveBookmarksItemClick;
             // 
             // toolStrip
             // 
-            this.toolStrip.CanOverflow = false;
-            this.toolStrip.Dock = System.Windows.Forms.DockStyle.Top;
-            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.searchButton,
-            this.searchBox});
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(1, 1, 2, 2);
-            this.toolStrip.Size = new System.Drawing.Size(298, 26);
-            this.toolStrip.Stretch = true;
-            this.toolStrip.TabIndex = 1;
+            toolStrip.CanOverflow = false;
+            toolStrip.Dock = DockStyle.Top;
+            toolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip.Items.AddRange(new ToolStripItem[] {
+            searchButton,
+            searchBox});
+            toolStrip.Name = "toolStrip";
+            toolStrip.Padding = new Padding(1, 1, 2, 2);
+            toolStrip.Size = new Size(298, 26);
+            toolStrip.Stretch = true;
+            toolStrip.TabIndex = 1;
             // 
             // searchButton
             //
-            this.searchButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.searchButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.searchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.searchButton.Name = "searchButton";
-            this.searchButton.Size = new System.Drawing.Size(23, 22);
-            this.searchButton.ToolTipText = "Search And Add Bookmarks";
-            this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
+            searchButton.Margin = new Padding(0, 1, 0, 1);
+            searchButton.Alignment = ToolStripItemAlignment.Right;
+            searchButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            searchButton.Name = "searchButton";
+            searchButton.Size = new Size(23, 22);
+            searchButton.ToolTipText = "Search And Add Bookmarks";
+            searchButton.Click += SearchButtonClick;
             // 
             // searchBox
             //
-            this.searchBox.FlatCombo.MaxLength = 200;
-            this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(200, 22);
-            this.searchBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.searchBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SearchBoxKeyUp);
+            searchBox.FlatCombo.MaxLength = 200;
+            searchBox.Name = "searchBox";
+            searchBox.Size = new Size(200, 22);
+            searchBox.Padding = new Padding(0, 0, 1, 0);
+            searchBox.KeyUp += SearchBoxKeyUp;
             // 
             // statusStrip
             // 
-            this.statusStrip.BackColor = System.Drawing.SystemColors.Info;
-            this.statusStrip.Dock = System.Windows.Forms.DockStyle.Top;
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 25);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(300, 22);
-            this.statusStrip.SizingGrip = false;
-            this.statusStrip.TabIndex = 2;
-            this.statusStrip.Visible = false;
+            statusStrip.BackColor = SystemColors.Info;
+            statusStrip.Dock = DockStyle.Top;
+            statusStrip.Items.AddRange(new ToolStripItem[] {
+            statusLabel});
+            statusStrip.Location = new Point(0, 25);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(300, 22);
+            statusStrip.SizingGrip = false;
+            statusStrip.TabIndex = 2;
+            statusStrip.Visible = false;
             // 
             // statusLabel
             // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(0, 17);
-            this.statusLabel.Padding = new Padding(0, 2, 0, 0);
+            statusLabel.Name = "statusLabel";
+            statusLabel.Size = new Size(0, 17);
+            statusLabel.Padding = new Padding(0, 2, 0, 0);
             // 
             // PluginUI
             //
-            this.Name = "PluginUI";
-            this.Controls.Add(this.listView);
-            this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.toolStrip);
-            this.Size = new System.Drawing.Size(300, 350);
-            this.contextMenuStrip.ResumeLayout(false);
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            Name = "PluginUI";
+            Controls.Add(listView);
+            Controls.Add(statusStrip);
+            Controls.Add(toolStrip);
+            Size = new Size(300, 350);
+            contextMenuStrip.ResumeLayout(false);
+            toolStrip.ResumeLayout(false);
+            toolStrip.PerformLayout();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -191,55 +188,53 @@ namespace BookmarkPanel
         /// <summary>
         /// Accessor for MainForm
         /// </summary>
-        public static IMainForm MainForm
-        {
-            get { return PluginBase.MainForm; }
-        }
+        [Obsolete("Use PluginBase.MainForm")]
+        public static IMainForm MainForm => PluginBase.MainForm;
 
         /// <summary>
         /// Initializes the timers
         /// </summary>
-        private void InitializeTimers()
+        void InitializeTimers()
         {
-            this.timeoutManager = new TimeoutManager();
-            this.updateTimer = new System.Windows.Forms.Timer();
-            this.updateTimer.Interval = 500;
-            this.updateTimer.Tick += new EventHandler(this.UpdateTimerTick);
-            UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(this.ManagerOnTextChanged);
-            UITools.Manager.OnMarkerChanged += new UITools.LineEventHandler(this.ManagerOnMarkerChanged);
+            timeoutManager = new TimeoutManager();
+            updateTimer = new Timer();
+            updateTimer.Interval = 500;
+            updateTimer.Tick += UpdateTimerTick;
+            UITools.Manager.OnTextChanged += ManagerOnTextChanged;
+            UITools.Manager.OnMarkerChanged += ManagerOnMarkerChanged;
         }
 
         /// <summary>
         /// Initializes the localized texts
         /// </summary>
-        private void InitializeTexts()
+        void InitializeTexts()
         {
-            this.columnLine.Text = TextHelper.GetString("ColumnHeader.Line");
-            this.columnText.Text = TextHelper.GetString("ColumnHeader.Text");
-            this.searchButton.ToolTipText = TextHelper.GetString("ToolTip.SearchBookmarks");
-            this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
-            this.statusLabel.Font = PluginBase.Settings.DefaultFont;
+            columnLine.Text = TextHelper.GetString("ColumnHeader.Line");
+            columnText.Text = TextHelper.GetString("ColumnHeader.Text");
+            searchButton.ToolTipText = TextHelper.GetString("ToolTip.SearchBookmarks");
+            contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
+            statusLabel.Font = PluginBase.Settings.DefaultFont;
         }
 
         /// <summary>
         /// Initializes the external graphics
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
-            this.imageList = new ImageListManager();
-            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.Initialize(ImageList_Populate);
-            this.listView.SmallImageList = this.imageList;
-            this.removeBookmarksItem.Image = PluginBase.MainForm.FindImage("402|4|4|4");
-            this.searchButton.Image = PluginBase.MainForm.FindImage("484|26|-4|4");
+            imageList = new ImageListManager();
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.Initialize(ImageList_Populate);
+            listView.SmallImageList = imageList;
+            removeBookmarksItem.Image = PluginBase.MainForm.FindImage("402|4|4|4");
+            searchButton.Image = PluginBase.MainForm.FindImage("484|26|-4|4");
         }
 
-        private void ImageList_Populate(object sender, EventArgs e)
+        void ImageList_Populate(object sender, EventArgs e)
         {
-            this.imageList.Images.Add("Bookmark", PluginBase.MainForm.FindImageAndSetAdjust("559|26|0|1"));
-            this.imageList.Images.Add("Info", PluginBase.MainForm.FindImageAndSetAdjust("229"));
-            this.imageList.Images.Add("Error", PluginBase.MainForm.FindImageAndSetAdjust("197"));
+            imageList.Images.Add("Bookmark", PluginBase.MainForm.FindImageAndSetAdjust("559|26|0|1"));
+            imageList.Images.Add("Info", PluginBase.MainForm.FindImageAndSetAdjust("229"));
+            imageList.Images.Add("Error", PluginBase.MainForm.FindImageAndSetAdjust("197"));
         }
 
         /// <summary>
@@ -247,26 +242,26 @@ namespace BookmarkPanel
         /// </summary>
         public void UpdateSettings()
         {
-            Boolean useGrouping = PluginBase.Settings.UseListViewGrouping;
-            this.listView.ShowGroups = useGrouping;
-            this.listView.GridLines = !useGrouping;
+            bool useGrouping = PluginBase.Settings.UseListViewGrouping;
+            listView.ShowGroups = useGrouping;
+            listView.GridLines = !useGrouping;
         }
 
         /// <summary>
         /// Initializes the custom rendering
         /// </summary>
-        private void InitializeLayout()
+        void InitializeLayout()
         {
-            this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-            this.toolStrip.Font = PluginBase.Settings.DefaultFont;
-            this.toolStrip.Renderer = new DockPanelStripRenderer();
-            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.statusStrip.Font = PluginBase.Settings.DefaultFont;
-            this.statusStrip.Renderer = new DockPanelStripRenderer();
-            this.statusStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
-            this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
-            this.contextMenuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            toolStrip.Font = PluginBase.Settings.DefaultFont;
+            toolStrip.Renderer = new DockPanelStripRenderer();
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            statusStrip.Font = PluginBase.Settings.DefaultFont;
+            statusStrip.Renderer = new DockPanelStripRenderer();
+            statusStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
+            contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            contextMenuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             foreach (ColumnHeader column in listView.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
@@ -276,150 +271,134 @@ namespace BookmarkPanel
         /// <summary>
         /// Removes bookmarks on context menu item clicking
         /// </summary>
-        private void RemoveBookmarksItemClick(Object sender, EventArgs e)
-        {
-            this.DeleteMarkers(false);
-        }
+        void RemoveBookmarksItemClick(object sender, EventArgs e) => DeleteMarkers(false);
 
         /// <summary>
-        /// Starts bookmarks searching on search button ckicking
+        /// Starts bookmarks searching on search button clicking
         /// </summary>
-        private void SearchButtonClick(Object sender, EventArgs e)
-        {
-            this.SearchBookmarks();
-        }
+        void SearchButtonClick(object sender, EventArgs e) => SearchBookmarks();
 
         /// <summary>
         /// Removes bookmarks on Delete key
         /// </summary>
-        private void ListViewKeyUp(Object sender, KeyEventArgs e)
+        void ListViewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
-                this.DeleteMarkers(true);
+                DeleteMarkers(true);
             }
         }
 
         /// <summary>
         /// Starts bookmarks searching on Enter key
         /// </summary>
-        private void SearchBoxKeyUp(Object sender, KeyEventArgs e)
+        void SearchBoxKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                this.SearchBookmarks();
+                SearchBookmarks();
             }
         }
 
         /// <summary>
         /// Double click on an item in the list view
         /// </summary>
-        private void ListViewDoubleClick(Object sender, EventArgs e)
+        void ListViewDoubleClick(object sender, EventArgs e)
         {
-            if (this.listView.SelectedItems.Count > 0)
+            if (listView.SelectedItems.Count <= 0) return;
+            var item = listView.SelectedItems[0];
+            var filename = item.Group.Name;
+            var line = (int)item.Tag;
+            var document = DocumentManager.FindDocument(filename);
+            if (document != null && document.SciControl is { } sci)
             {
-                ListViewItem item = this.listView.SelectedItems[0];
-                String filename = item.Group.Name;
-                Int32 line = (Int32)item.Tag;
-                ITabbedDocument document = DocumentManager.FindDocument(filename);
-                if (document != null && document.IsEditable)
-                {
-                    document.Activate();
-                    document.SciControl.GotoLineIndent(line);
-                }
+                document.Activate();
+                sci.GotoLineIndent(line);
             }
         }
 
         /// <summary>
         /// Updates context menu on opening
         /// </summary>
-        private void ContextMenuStripOpening(Object sender, CancelEventArgs e)
+        void ContextMenuStripOpening(object sender, CancelEventArgs e)
         {
-            Int32 count = this.listView.SelectedItems.Count;
-            if (count > 0) this.removeBookmarksItem.Text = TextHelper.GetString((count > 1) ? "Label.RemoveBookmarks" : "Label.RemoveBookmark");
+            int count = listView.SelectedItems.Count;
+            if (count > 0) removeBookmarksItem.Text = TextHelper.GetString((count > 1) ? "Label.RemoveBookmarks" : "Label.RemoveBookmark");
             else e.Cancel = true;
         }
 
         /// <summary>
         /// Searches bookmarks by pattern and shows status
         /// </summary>
-        private void SearchBookmarks()
+        void SearchBookmarks()
         {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable)
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
+            var matches = GetResults(sci);
+            if (!matches.IsNullOrEmpty())
             {
-                ScintillaControl sci = document.SciControl;
-                List<SearchMatch> matches = this.GetResults(sci);
-                if (matches != null && matches.Count != 0)
-                {
-                    this.BookmarkMatches(sci, matches);
-                    UITools.Manager.MarkerChanged(sci, -1);
-                    this.SetStatus(null);
-                }
-                else
-                {
-                    String message = TextHelper.GetString("Info.NothingToBookmark");
-                    this.SetStatus(message);
-                }
+                BookmarkMatches(sci, matches);
+                UITools.Manager.MarkerChanged(sci, -1);
+                SetStatus(null);
+            }
+            else
+            {
+                var message = TextHelper.GetString("Info.NothingToBookmark");
+                SetStatus(message);
             }
         }
 
         /// <summary>
         /// Shows or hides status strip message
         /// </summary>
-        private void SetStatus(String message)
+        void SetStatus(string message)
         {
             if (message != null)
             {
-                this.statusStrip.Visible = true;
-                this.statusLabel.Text = message;
-                this.statusLabel.Image = this.imageList.Images["Info"];
-                this.timeoutManager.SetTimeout(this.ClearStatusTimeout, null, 5000);
+                statusStrip.Visible = true;
+                statusLabel.Text = message;
+                statusLabel.Image = imageList.Images["Info"];
+                timeoutManager.SetTimeout(ClearStatusTimeout, null, 5000);
             }
             else
             {
-                this.statusLabel.Image = null;
-                this.statusStrip.Visible = false;
-                this.statusLabel.Text = String.Empty;
+                statusLabel.Image = null;
+                statusStrip.Visible = false;
+                statusLabel.Text = string.Empty;
             }
         }
 
         /// <summary>
         /// Clear status on timeout
         /// </summary>
-        private void ClearStatusTimeout(Object tag)
-        {
-            this.SetStatus(null);
-        }
+        void ClearStatusTimeout(object tag) => SetStatus(null);
 
         /// <summary>
         /// Gets search results for a document
         /// </summary>
-        private List<SearchMatch> GetResults(ScintillaControl sci)
+        List<SearchMatch> GetResults(ScintillaControl sci)
         {
-            if (this.searchBox.Text != String.Empty)
+            if (searchBox.Text.Length == 0) return null;
+            var search = new FRSearch(searchBox.Text)
             {
-                String pattern = this.searchBox.Text;
-                FRSearch search = new FRSearch(pattern);
-                search.IsEscaped = false;
-                search.WholeWord = false;
-                search.NoCase = true;
-                search.IsRegex = true;
-                search.Filter = SearchFilter.None;
-                search.SourceFile = sci.FileName;
-                return search.Matches(sci.Text);
-            }
-            return null;
+                IsEscaped = false,
+                WholeWord = false,
+                NoCase = true,
+                IsRegex = true,
+                Filter = SearchFilter.None,
+                SourceFile = sci.FileName
+            };
+            return search.Matches(sci.Text);
         }
 
         /// <summary>
         /// Bookmarks a search match
         /// </summary>
-        private void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)
+        static void BookmarkMatches(ScintillaControl sci, IEnumerable<SearchMatch> matches)
         {
-            for (Int32 i = 0; i < matches.Count; i++)
+            foreach (var it in matches)
             {
-                Int32 line = matches[i].Line - 1;
+                int line = it.Line - 1;
                 sci.EnsureVisible(line);
                 sci.MarkerAdd(line, 0);
             }
@@ -432,10 +411,10 @@ namespace BookmarkPanel
         /// <summary>
         /// Document text changed
         /// </summary>
-        private void ManagerOnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        void ManagerOnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            ListViewGroup group = this.FindGroup(sender.FileName);
-            if (group == null) return;
+            var group = FindGroup(sender.FileName);
+            if (group is null) return;
             group.Tag = null; // bookmarks list may be dirty
             updateTimer.Stop();
             updateTimer.Start();
@@ -444,10 +423,10 @@ namespace BookmarkPanel
         /// <summary>
         /// Document markers changed
         /// </summary>
-        private void ManagerOnMarkerChanged(ScintillaControl sender, int line)
+        void ManagerOnMarkerChanged(ScintillaControl sender, int line)
         {
-            ListViewGroup group = this.FindGroup(sender.FileName);
-            if (group == null) return;
+            var group = FindGroup(sender.FileName);
+            if (group is null) return;
             group.Tag = null; // bookmarks list may be dirty
             updateTimer.Stop();
             updateTimer.Start();
@@ -456,15 +435,15 @@ namespace BookmarkPanel
         /// <summary>
         /// Check all documents markers
         /// </summary>
-        private void UpdateTimerTick(object sender, EventArgs e)
+        void UpdateTimerTick(object sender, EventArgs e)
         {
             updateTimer.Stop();
-            List<ListViewGroup> groups = new List<ListViewGroup>();
-            foreach (ListViewGroup group in this.listView.Groups)
+            var groups = new List<ListViewGroup>();
+            foreach (ListViewGroup group in listView.Groups)
             {
-                if (group.Tag == null) groups.Add(group);
+                if (group.Tag is null) groups.Add(group);
             }
-            foreach (ListViewGroup group in groups)
+            foreach (var group in groups)
             {
                 UpdateMarkers(group.Name);
             }
@@ -473,47 +452,43 @@ namespace BookmarkPanel
         /// <summary>
         /// Update document bookmarks
         /// </summary>
-        private void UpdateMarkers(String filename)
+        void UpdateMarkers(string filename)
         {
-            ITabbedDocument document = DocumentManager.FindDocument(filename);
-            if (document == null || !document.IsEditable) return;
-            ScintillaControl sci = document.SciControl;
-            ListViewGroup group = this.FindGroup(document.FileName);
-            if (group == null) return;
-            List<Int32> markers = this.GetMarkers(document.SciControl);
-            if (this.NeedRefresh(document.SciControl, markers, group.Items))
+            var sci = DocumentManager.FindDocument(filename)?.SciControl;
+            if (sci is null) return;
+            var group = FindGroup(sci.FileName);
+            if (group is null) return;
+            var markers = GetMarkers(sci);
+            if (!NeedRefresh(sci, markers, group.Items)) return;
+            var index = 0;
+            listView.BeginUpdate();
+            RemoveItemsFromGroup(group);
+            var items = new ListViewItem[markers.Count];
+            foreach (int marker in markers)
             {
-                Int32 index = 0;
-                ListViewItem item;
-                this.listView.BeginUpdate();
-                this.RemoveItemsFromGroup(group);
-                ListViewItem[] items = new ListViewItem[markers.Count];
-                foreach (Int32 marker in markers)
-                {
-                    item = new ListViewItem(new String[]{(marker + 1).ToString(), sci.GetLine(marker).Trim()}, 0);
-                    item.ToolTipText = sci.GetLine(marker).Trim();
-                    item.Name = group.Name;
-                    item.Group = group;
-                    item.Tag = marker;
-                    items[index] = item;
-                    index++;
-                }
-                this.listView.Items.AddRange(items);
-                group.Tag = markers;
-                this.columnText.Width = -2; // Extend last column
-                this.listView.EndUpdate();
+                var item = new ListViewItem(new[]{(marker + 1).ToString(), sci.GetLine(marker).Trim()}, 0);
+                item.ToolTipText = sci.GetLine(marker).Trim();
+                item.Name = group.Name;
+                item.Group = group;
+                item.Tag = marker;
+                items[index] = item;
+                index++;
             }
+            listView.Items.AddRange(items);
+            group.Tag = markers;
+            columnText.Width = -2; // Extend last column
+            listView.EndUpdate();
         }
 
         /// <summary>
         /// Checks if bookmark list view needs updating
         /// </summary>
-        private Boolean NeedRefresh(ScintillaControl sci, List<Int32> markers, ListView.ListViewItemCollection items)
+        static bool NeedRefresh(ScintillaControl sci, ICollection<int> markers, ICollection items)
         {
             if (items.Count != markers.Count) return true;
             foreach (ListViewItem item in items)
             {
-                Int32 marker = (Int32)item.Tag;
+                var marker = (int)item.Tag;
                 if (!markers.Contains(marker)) return true;
                 if (sci.GetLine(marker).Trim() != item.SubItems[1].Text) return true;
             }
@@ -523,95 +498,93 @@ namespace BookmarkPanel
         /// <summary>
         /// Return all the bookmark markers from a scintilla document
         /// </summary>
-        private List<Int32> GetMarkers(ScintillaControl sci)
+        static List<int> GetMarkers(ScintillaControl sci)
         {
-            Int32 line = -1;
-            List<Int32> markerLines = new List<Int32>();
+            var line = -1;
+            var result = new List<int>();
             while (line < sci.LineCount)
             {
                 line = sci.MarkerNext(line + 1, 1);
                 if (line < 0) break;
-                markerLines.Add(line);
+                result.Add(line);
             }
-            return markerLines;
+            return result;
         }
 
         /// <summary>
         /// Remove from the ListView all the items contained in a ListViewGroup
         /// </summary>
-        private void RemoveItemsFromGroup(ListViewGroup group)
+        static void RemoveItemsFromGroup(ListViewGroup group)
         {
-            ListViewItem[] items = new ListViewItem[group.Items.Count];
+            var items = new ListViewItem[group.Items.Count];
             group.Items.CopyTo(items, 0);
-            foreach (ListViewItem item in items) item.Remove();
+            foreach (var item in items) item.Remove();
         }
 
         /// <summary>
         /// Remove selected bookmarks from opened documents
         /// </summary>
-        private void DeleteMarkers(Boolean confirm)
+        void DeleteMarkers(bool confirm)
         {
-            String message = TextHelper.GetString("Info.RemoveBookmarks");
-            String title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-            if (confirm && (MessageBox.Show(title, message, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK))
+            var message = TextHelper.GetString("Info.RemoveBookmarks");
+            var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+            if (confirm && MessageBox.Show(title, message, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
             {
                 return;
             }
-            ArrayList deleteItems = new ArrayList();
-            foreach (ListViewItem item in this.listView.SelectedItems)
+            var deleteItems = new List<KeyValuePair<string, int>>();
+            foreach (ListViewItem item in listView.SelectedItems)
             {
-                deleteItems.Add(new KeyValuePair<String,Int32>(item.Group.Name, (Int32)item.Tag));
+                deleteItems.Add(new KeyValuePair<string,int>(item.Group.Name, (int)item.Tag));
                 item.Group.Tag = null; // dirty
             }
-            foreach (KeyValuePair<String,Int32> entry in deleteItems)
+            foreach (var entry in deleteItems)
             {
-                foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+                foreach (var document in PluginBase.MainForm.Documents)
                 {
-                    if (document.IsEditable && document.FileName == entry.Key)
+                    if (document.SciControl is { } sci && sci.FileName == entry.Key)
                     {
-                        document.SciControl.MarkerDelete(entry.Value, 0);
+                        sci.MarkerDelete(entry.Value, 0);
                     }
                 }
             }
-            this.updateTimer.Stop();
-            this.updateTimer.Start();
+            updateTimer.Stop();
+            updateTimer.Start();
         }
 
         /// <summary>
         /// Create a new ListViewGroup and assign to the current listview
         /// </summary>
-        public void CreateDocument(String filename)
+        public void CreateDocument(string filename)
         {
-            ListViewGroup group = new ListViewGroup();
+            var group = new ListViewGroup();
             group.Header = Path.GetFileName(filename);
             group.Name = filename;
-            this.listView.BeginUpdate();
-            this.listView.Groups.Add(group);
-            this.listView.EndUpdate();
-            this.timeoutManager.SetTimeout(UpdateMarkers, filename);
+            listView.BeginUpdate();
+            listView.Groups.Add(group);
+            listView.EndUpdate();
+            timeoutManager.SetTimeout(UpdateMarkers, filename);
         }
 
         /// <summary>
         /// Remove the group and all associated subitems
         /// </summary>
-        public void CloseDocument(String filename)
+        public void CloseDocument(string filename)
         {
-            ListViewGroup group = FindGroup(filename);
-            if (group != null)
-            {
-                this.listView.BeginUpdate();
-                this.RemoveItemsFromGroup(group);
-                this.listView.Groups.Remove(group);
-                this.listView.EndUpdate();
-            }
+            var group = FindGroup(filename);
+            if (group is null) return;
+            listView.BeginUpdate();
+            RemoveItemsFromGroup(group);
+            listView.Groups.Remove(group);
+            listView.EndUpdate();
         }
 
         /// <summary>
         /// Find a group from a given ITabbedDocument
         /// </summary>
-        public ListViewGroup FindGroup(String filename)
+        public ListViewGroup FindGroup(string filename)
         {
-            foreach (ListViewGroup group in this.listView.Groups)
+            foreach (ListViewGroup group in listView.Groups)
             {
                 if (group.Name == filename) return group;
             }
@@ -623,10 +596,10 @@ namespace BookmarkPanel
         /// </summary>
         public void CloseAll()
         {
-            this.listView.BeginUpdate();
-            this.listView.Groups.Clear();
-            this.listView.Items.Clear();
-            this.listView.EndUpdate();
+            listView.BeginUpdate();
+            listView.Groups.Clear();
+            listView.Items.Clear();
+            listView.EndUpdate();
         }
 
         #endregion
@@ -639,24 +612,20 @@ namespace BookmarkPanel
         /// <summary>
         /// Method to call on timeout
         /// </summary>
-        public delegate void TimeoutDelegate(String tag);
+        public delegate void TimeoutDelegate(string tag);
 
         /// <summary>
         /// Sets the specified timeout
         /// </summary>
-        public void SetTimeout(TimeoutDelegate timeoutHandler, String tag)
-        {
-            this.SetTimeout(timeoutHandler, tag, 200);
-        }
+        public void SetTimeout(TimeoutDelegate timeoutHandler, string tag) => SetTimeout(timeoutHandler, tag, 200);
 
         /// <summary>
         /// Waits for timeout and calls method
         /// </summary>
-        public void SetTimeout(TimeoutDelegate timeoutHandler, String tag, Int32 timeout)
+        public void SetTimeout(TimeoutDelegate timeoutHandler, string tag, int timeout)
         {
-            TagTimer timer = new TagTimer();
-            timer.Interval = timeout;
-            timer.Tick += this.TimerElapsed;
+            var timer = new TagTimer {Interval = timeout};
+            timer.Tick += TimerElapsed;
             timer.Tag = tag;
             timer.TimeoutHandler = timeoutHandler;
             timer.Start();
@@ -665,15 +634,15 @@ namespace BookmarkPanel
         /// <summary>
         /// Handles the elapsed event
         /// </summary>
-        private void TimerElapsed(Object sender, EventArgs e)
+        static void TimerElapsed(object sender, EventArgs e)
         {
-            TagTimer timer = ((TagTimer)sender);
+            var timer = ((TagTimer)sender);
             timer.Enabled = false;
             timer.Stop();
-            timer.TimeoutHandler(timer.Tag as String);
+            timer.TimeoutHandler(timer.Tag as string);
         }
 
-        private class TagTimer : System.Windows.Forms.Timer
+        class TagTimer : Timer
         {
             public TimeoutDelegate TimeoutHandler;
         }
@@ -681,5 +650,4 @@ namespace BookmarkPanel
     }
 
     #endregion
-
 }

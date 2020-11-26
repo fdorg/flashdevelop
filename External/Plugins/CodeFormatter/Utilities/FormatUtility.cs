@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using CodeFormatter.Handlers;
 using CodeFormatter.Preferences;
 using PluginCore;
@@ -10,10 +10,10 @@ namespace CodeFormatter.Utilities
     {
         public static void configureMXMLPrinter(MXMLPrettyPrinter printer, Settings settings)
         {
-            Boolean useTabs = PluginBase.Settings.UseTabs;
-            Int32 tabSize = PluginBase.Settings.TabWidth;
-            Int32 spaceSize = PluginBase.Settings.IndentSize;
-            printer.setAttrSortMode((Int32)settings.Pref_MXML_SortAttrMode);
+            bool useTabs = PluginBase.Settings.UseTabs;
+            int tabSize = PluginBase.Settings.TabWidth;
+            int spaceSize = PluginBase.Settings.IndentSize;
+            printer.setAttrSortMode((int)settings.Pref_MXML_SortAttrMode);
             printer.setIndentAmount(spaceSize);
             printer.setUseTabs(useTabs);
             printer.setTabSize(tabSize);
@@ -30,7 +30,7 @@ namespace CodeFormatter.Utilities
             printer.setSpacesBetweenSiblingTags(settings.Pref_MXML_BlankLinesBetweenSiblingTags);
             printer.setSpacesAfterParentTags(settings.Pref_MXML_BlankLinesAfterParentTags);
             printer.setBlankLinesBeforeCloseTags(settings.Pref_MXML_BlankLinesBeforeClosingTags);
-            printer.setWrapStyle((Int32)settings.Pref_MXML_WrapIndentStyle);
+            printer.setWrapStyle((int)settings.Pref_MXML_WrapIndentStyle);
             printer.setHangingIndentTabs(settings.Pref_MXML_TabsInHangingIndent);
             printer.setUseSpacesInsideAttrBraces(settings.Pref_MXML_UseSpacesInsideAttributeBraces);
             printer.setFormatBoundAttributes(settings.Pref_MXML_UseFormattingOfBoundAttributes);
@@ -41,7 +41,7 @@ namespace CodeFormatter.Utilities
             printer.setBlankLinesAtCDataEnd(settings.Pref_MXML_BlankLinesAtCDataStart);
             printer.setKeepCDataOnSameLine(settings.Pref_MXML_KeepScriptCDataOnSameLine);
             printer.setMaxLineLength(settings.Pref_MXML_MaxLineLength);
-            printer.setWrapMode((Int32)settings.Pref_MXML_AttrWrapMode);
+            printer.setWrapMode((int)settings.Pref_MXML_AttrWrapMode);
             printer.setAttrsPerLine(settings.Pref_MXML_AttrsPerLine);
             printer.setAddNewlineAfterLastAttr(settings.Pref_MXML_AddNewlineAfterLastAttr);
             printer.setIndentCloseTag(settings.Pref_MXML_IndentTagClose);
@@ -49,75 +49,33 @@ namespace CodeFormatter.Utilities
             printer.setRequireCDATAForASContent(settings.Pref_MXML_RequireCDATAForASFormatting);
             printer.setAttrsToKeepOnSameLine(settings.Pref_MXML_AttrsToKeepOnSameLine);
             printer.setObeyMaxLineLength(settings.Pref_MXML_AlwaysUseMaxLineLength);
-            String[] tags=settings.Pref_MXML_TagsCannotFormat.Split(',');
-            List<String> tagSet=new List<String>();
-            foreach (String tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            var tags=settings.Pref_MXML_TagsCannotFormat.Split(',');
+            var tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setTagsThatCannotBeFormatted(tagSet);       
             tags=settings.Pref_MXML_TagsCanFormat.Split(',');
-            tagSet=new List<String>();
-            foreach (String tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setTagsThatCanBeFormatted(tagSet);
             tags = settings.Pref_MXML_TagsWithBlankLinesBefore.Split(',');
-            tagSet=new List<String>();
-            foreach (String tag in tags)
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setTagsWithBlankLinesBeforeThem(tagSet);
             tags = settings.Pref_MXML_ParentTagsWithBlankLinesAfter.Split(',');
-            tagSet=new List<String>();
-            foreach (String tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setParentTagsWithBlankLinesAfterThem(tagSet);
             tags = settings.Pref_MXML_TagsWithASContent.Split(',');
-            tagSet=new List<String>();
-            foreach (String tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagSet.Add(tag);
-                }
-            }
+            tagSet= tags.Where(tag => tag.Length > 0).ToList();
             printer.setASScriptTags(tagSet);
             List<AttrGroup> attrGroups=new List<AttrGroup>();
-            String groupData=settings.Pref_MXML_AttrGroups;
-            String[] groups = groupData.Split(Settings.LineSplitter);
-            foreach (String g in groups) 
+            string groupData=settings.Pref_MXML_AttrGroups;
+            string[] groups = groupData.Split(Settings.LineSplitter);
+            foreach (string g in groups) 
             {
-                AttrGroup group=AttrGroup.load(g);
+                var group=AttrGroup.load(g);
                 if (group!=null) attrGroups.Add(group);
             }
             printer.setAttrGroups(attrGroups);      
             printer.setUsePrivateTags(settings.Pref_MXML_UseTagsDoNotFormatInside);
             tags = settings.Pref_MXML_TagsDoNotFormatInside.Split(',');
-            List<String> tagList=new List<String>();
-            foreach (String tag in tags) 
-            {
-                if (tag.Length>0)
-                {
-                    tagList.Add(tag);
-                }
-            }
+            var tagList= tags.Where(tag => tag.Length > 0).ToList();
             printer.setPrivateTags(tagList);
             configureASPrinter(printer.getASPrinter(), settings);
             printer.getASPrinter().setBlankLinesBeforeImports(0); //special case: we only want blank lines before imports in .as files
@@ -125,10 +83,10 @@ namespace CodeFormatter.Utilities
 
         public static void configureASPrinter(ASPrettyPrinter printer, Settings settings)
         {
-            Boolean useTabs = PluginBase.Settings.UseTabs;
-            Int32 tabSize = PluginBase.Settings.TabWidth;
-            Int32 spaceSize = PluginBase.Settings.IndentSize;
-            Int32 braceStyle = PluginBase.Settings.CodingStyle == CodingStyle.BracesOnLine ? 4 : 5;
+            bool useTabs = PluginBase.Settings.UseTabs;
+            int tabSize = PluginBase.Settings.TabWidth;
+            int spaceSize = PluginBase.Settings.IndentSize;
+            int braceStyle = PluginBase.Settings.CodingStyle == CodingStyle.BracesOnLine ? 4 : 5;
             printer.setIndentMultilineComments(settings.Pref_AS_IndentMultilineComments);
             printer.setBlankLinesBeforeFunction(settings.Pref_AS_BlankLinesBeforeFunctions);
             printer.setBlankLinesBeforeClass(settings.Pref_AS_BlankLinesBeforeClasses);
@@ -170,7 +128,7 @@ namespace CodeFormatter.Utilities
             printer.setMLCommentCollapseLines(settings.Pref_AS_MLCommentReflow);
             printer.setDocCommentCollapseLines(settings.Pref_AS_DocCommentReflow);
             printer.setMLTextOnNewLines(settings.Pref_AS_MLCommentHeaderOnSeparateLine);
-            printer.setMLAsteriskMode((Int32)settings.Pref_AS_MLCommentAsteriskMode);
+            printer.setMLAsteriskMode((int)settings.Pref_AS_MLCommentAsteriskMode);
             printer.setUseDocCommentWrapping(settings.Pref_AS_UseDocCommentWrapping);
             printer.setDocCommentHangingIndentTabs(settings.Pref_AS_DocCommentHangingIndentTabs);
             printer.setDocCommentKeepBlankLines(settings.Pref_AS_DocCommentKeepBlankLines);
@@ -207,7 +165,7 @@ namespace CodeFormatter.Utilities
             printer.setIndentSwitchCases(!settings.Pref_AS_DontIndentSwitchCases);
             printer.setKeepingExcessDeclWhitespace(settings.Pref_AS_LeaveExtraWhitespaceAroundVarDecls);
             printer.setAlignDeclEquals(settings.Pref_AS_AlignDeclEquals);
-            printer.setAlignDeclMode((Int32)settings.Pref_AS_AlignDeclMode);
+            printer.setAlignDeclMode((int)settings.Pref_AS_AlignDeclMode);
             printer.setKeepSpacesBeforeLineComments(settings.Pref_AS_KeepSpacesBeforeLineComments);
             printer.setLineCommentColumn(settings.Pref_AS_AlignLineCommentsAtColumn);
             printer.setUseGlobalNewlineBeforeBraceSetting(settings.Pref_AS_UseGlobalCRBeforeBrace);
@@ -216,7 +174,7 @@ namespace CodeFormatter.Utilities
             //printer.setNewlineAfterBindable(settings.Pref_AS_NewlineAfterBindable);
             printer.setNewlineBeforeBindableFunction(settings.Pref_AS_NewlineBeforeBindableFunction);
             printer.setNewlineBeforeBindableProperty(settings.Pref_AS_NewlineBeforeBindableProperty);
-            List<String> tags = new List<String>();
+            List<string> tags = new List<string>();
             tags.AddRange(settings.Pref_AS_MetaTagsOnSameLineAsTargetFunction.Split(','));
             printer.setMetaTagsToKeepOnSameLineAsFunction(tags);
             tags.Clear();
@@ -244,33 +202,33 @@ namespace CodeFormatter.Utilities
             bool breakBeforeArithmetic = settings.Pref_AS_BreakLinesBeforeArithmetic;
             bool breakBeforeLogical = settings.Pref_AS_BreakLinesBeforeLogical;
             bool breakBeforeAssign = settings.Pref_AS_BreakLinesBeforeAssignment;
-            int wrapIndentStyle = (Int32)settings.Pref_AS_WrapIndentStyle;
-            WrapOptions options = new WrapOptions((Int32)settings.Pref_AS_WrapArrayDeclMode);
+            int wrapIndentStyle = (int)settings.Pref_AS_WrapIndentStyle;
+            WrapOptions options = new WrapOptions((int)settings.Pref_AS_WrapArrayDeclMode);
             options.setBeforeSeparator(breakBeforeComma);
             options.setBeforeArithmeticOperator(breakBeforeArithmetic);
             options.setBeforeLogicalOperator(breakBeforeLogical);
             options.setBeforeAssignmentOperator(breakBeforeAssign);
             options.setIndentStyle(wrapIndentStyle);
             printer.setArrayInitWrapOptions(options);
-            options = new WrapOptions((Int32)settings.Pref_AS_WrapMethodCallMode);
+            options = new WrapOptions((int)settings.Pref_AS_WrapMethodCallMode);
             options.setBeforeSeparator(breakBeforeComma);
             options.setBeforeArithmeticOperator(breakBeforeArithmetic);
             options.setBeforeLogicalOperator(breakBeforeLogical);
             options.setBeforeAssignmentOperator(breakBeforeAssign);
             options.setIndentStyle(wrapIndentStyle);
             printer.setMethodCallWrapOptions(options);
-            options = new WrapOptions((Int32)settings.Pref_AS_WrapMethodDeclMode);
+            options = new WrapOptions((int)settings.Pref_AS_WrapMethodDeclMode);
             options.setBeforeSeparator(breakBeforeComma);
             options.setIndentStyle(wrapIndentStyle);
             printer.setMethodDeclWrapOptions(options);
-            options = new WrapOptions((Int32)settings.Pref_AS_WrapExpressionMode);
+            options = new WrapOptions((int)settings.Pref_AS_WrapExpressionMode);
             options.setBeforeSeparator(breakBeforeComma);
             options.setBeforeArithmeticOperator(breakBeforeArithmetic);
             options.setBeforeLogicalOperator(breakBeforeLogical);
             options.setBeforeAssignmentOperator(breakBeforeAssign);
             options.setIndentStyle(wrapIndentStyle);
             printer.setExpressionWrapOptions(options);
-            options = new WrapOptions((Int32)settings.Pref_AS_WrapXMLMode);
+            options = new WrapOptions((int)settings.Pref_AS_WrapXMLMode);
             options.setBeforeSeparator(breakBeforeComma);
             options.setBeforeArithmeticOperator(breakBeforeArithmetic);
             options.setBeforeLogicalOperator(breakBeforeLogical);
@@ -278,7 +236,5 @@ namespace CodeFormatter.Utilities
             options.setIndentStyle(wrapIndentStyle);
             printer.setXMLWrapOptions(options);
         }
-
     }
-
 }

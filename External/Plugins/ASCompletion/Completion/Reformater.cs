@@ -13,7 +13,7 @@ namespace ASCompletion.Completion
         public bool SpaceBeforeFunctionCall = false;
         public string CompactChars = "";
         public string SpacedChars = "";
-        public string[] AddSpaceAfter = new string[] {};
+        public string[] AddSpaceAfter = Array.Empty<string>();
         public string Operators = "=+-*/%<>&|^";
         public bool IsPhp = false;
         public bool IsHaXe = false;
@@ -35,7 +35,6 @@ namespace ASCompletion.Completion
             StringBuilder sb = new StringBuilder(txt.Length);
             int i = 0;
             int n = txt.Length;
-            char c = ' ';
             char c2 = ' ';
 
             // copy indentation
@@ -45,10 +44,10 @@ namespace ASCompletion.Completion
             // first char
             if (i < n && txt[i] != '/' && txt[i] != '"' && txt[i] != '\'' && txt[i] != '<' && txt[i] != ']' && txt[i] != '?') 
             {
-                c = c2 = txt[i++];
+                var c = c2 = txt[i++];
                 sb.Append(c);
-                if (options.SpacedChars.IndexOf(c) >= 0)
-                    while (i < n && options.SpacedChars.IndexOf(txt[i]) >= 0) sb.Append(txt[i++]);
+                if (options.SpacedChars.Contains(c))
+                    while (i < n && options.SpacedChars.Contains(txt[i])) sb.Append(txt[i++]);
             }
 
             // reformat line
@@ -63,7 +62,7 @@ namespace ASCompletion.Completion
                     fixedOffset = true;
                     offset = sb.Length + 1;
                 }
-                c = txt[i++];
+                char c = txt[i++];
                 if (c == '\r') 
                 {
                     sb.Append(c);
@@ -111,14 +110,16 @@ namespace ASCompletion.Completion
                     }
                     continue;
                 }
-                else if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
+
+                if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
                 {
                     if (txt[i] == '/')
                     {
                         sb.Append(txt.Substring(i - 1));
                         break;
                     }
-                    else if (txt[i] == '*')
+
+                    if (txt[i] == '*')
                     {
                         inComments = true;
                         sb.Append(c);
@@ -127,10 +128,10 @@ namespace ASCompletion.Completion
                 }
 
                 // generic type
-                if (c == '<' && (c2 == '.' || (options.IsHaXe && (Char.IsLetterOrDigit(c2) || c2 == '{'))))
+                if (c == '<' && (c2 == '.' || (options.IsHaXe && (char.IsLetterOrDigit(c2) || c2 == '{'))))
                 {
                     int i2 = i;
-                    if (lookupGeneric(options,txt, ref i))
+                    if (LookupGeneric(options,txt, ref i))
                     {
                         sb.Append(c).Append(txt.Substring(i2, i - i2));
                         c2 = '$';
@@ -182,25 +183,25 @@ namespace ASCompletion.Completion
                 }
 
                 // is a white space needed?
-                if (options.CompactChars.IndexOf(c) >= 0)
+                if (options.CompactChars.Contains(c))
                 {
                     if (c2 == '}' && (c == ';' || c == ','))
                         needSpace = false;
-                    else if (options.SpaceBeforeFunctionCall && Char.IsLetterOrDigit(c2) && c == '(')
+                    else if (options.SpaceBeforeFunctionCall && char.IsLetterOrDigit(c2) && c == '(')
                         needSpace = true;
                     else
                     {
                         string word = GetLastWord(sb, options.WordCharacters);
                         if (word.Length > 0)
-                        foreach (string token in options.AddSpaceAfter)
-                            if (token == word)
-                            {
-                                needSpace = true;
-                                break;
-                            }
+                            foreach (string token in options.AddSpaceAfter)
+                                if (token == word)
+                                {
+                                    needSpace = true;
+                                    break;
+                                }
                     }
                 }
-                else if (options.SpacedChars.IndexOf(c) >= 0)
+                else if (options.SpacedChars.Contains(c))
                 {
                     if (c == '*')
                     {
@@ -211,7 +212,8 @@ namespace ASCompletion.Completion
                             c2 = ' ';
                             continue;
                         }
-                        else needSpace = true;
+
+                        needSpace = true;
                     }
                     else if (i < n && (c == '+' || c == '-') && txt[i] == c) // unary operators
                     {
@@ -237,7 +239,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c != '!' || (c2 != '(' && c2 != '[')) 
                     {
-                        if (options.Operators.IndexOf(c2) >= 0 && options.Operators.IndexOf(c) >= 0) needSpace = false;
+                        if (options.Operators.Contains(c2) && options.Operators.Contains(c)) needSpace = false;
                         else needSpace = (c != '!' || (c2 != '(' && c2 != '['));
                     }
 
@@ -251,7 +253,8 @@ namespace ASCompletion.Completion
                             i++;
                             continue;
                         }
-                        else if (c2 == '.' && c == '=') // php concat operator
+
+                        if (c2 == '.' && c == '=') // php concat operator
                         {
                             needSpace = false;
                         }
@@ -268,7 +271,7 @@ namespace ASCompletion.Completion
                         string end = txt.Substring(i).Trim();
                         if (end.Length == 0)
                         {
-                            if (Char.IsLetterOrDigit(prevC) || prevC == ')')
+                            if (char.IsLetterOrDigit(prevC) || prevC == ')')
                             {
                                 sb.Append(options.Newline).Append(indentation).Append('{');
                                 needSpace = false;
@@ -287,13 +290,13 @@ namespace ASCompletion.Completion
                         needSpace = false;
                     }
                     sb.Append(c);
-                    if (options.SpacedChars.IndexOf(c) >= 0)
+                    if (options.SpacedChars.Contains(c))
                     {
-                        if ((c == '-' || c == '+') && (i >= n || options.Operators.IndexOf(txt[i]) < 0)) // unary sign
+                        if ((c == '-' || c == '+') && (i >= n || !options.Operators.Contains(txt[i]))) // unary sign
                         {
-                            needSpace = (c2 == ')' || c2 == ']' || c2 == '\'' || c2 == '"' || Char.IsLetterOrDigit(c2));
+                            needSpace = (c2 == ')' || c2 == ']' || c2 == '\'' || c2 == '"' || char.IsLetterOrDigit(c2));
                         }
-                        else if (c != '!' || (i < n && options.Operators.IndexOf(txt[i]) >= 0)) // operator
+                        else if (c != '!' || (i < n && options.Operators.Contains(txt[i]))) // operator
                         {
                             while (i < n && (txt[i] == '=' || txt[i] == c))
                             {
@@ -303,7 +306,7 @@ namespace ASCompletion.Completion
                             needSpace = true;
                         }
                     }
-                    if (c == ')' && i < n && Char.IsLetter(txt[i]))
+                    if (c == ')' && i < n && char.IsLetter(txt[i]))
                         sb.Append(' ');
                     c2 = c;
                 }
@@ -322,7 +325,7 @@ namespace ASCompletion.Completion
             return sb.ToString();
         }
 
-        private static bool lookupGeneric(ReformatOptions options, string txt, ref int index)
+        static bool LookupGeneric(ReformatOptions options, string txt, ref int index)
         {
             int i = index;
             int n = txt.Length;
@@ -332,7 +335,7 @@ namespace ASCompletion.Completion
             {
                 if (c != ' ') prev = c;
                 c = txt[i++];
-                if (Char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
+                if (char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
                 if (c == '<') sub++;
                 else if (c == '>')
                 {
@@ -348,20 +351,17 @@ namespace ASCompletion.Completion
                 else if (psub > 0)
                 {
                     if (c == '}') psub--;
-                    continue;
                 }
                 else if (c == '(' && prev == ':')
                     bsub++;
                 else if (bsub > 0)
                 {
                     if (c == ')') bsub--;
-                    continue;
                 }
                 // haxe function notation (Type->Type)
                 else if (options.IsHaXe && c == '-' && (i < n && txt[i] == '>'))
                 {
                     sub++;
-                    continue;
                 }
                 else break;
             }
@@ -380,17 +380,16 @@ namespace ASCompletion.Completion
 
             int i = index;
             int n = txt.Length;
-            char c = '<';
             char c2 = '<';
             while (i < n)
             {
-                c = txt[i++];
+                var c = txt[i++];
 
                 // AS expression
                 if (inExpr)
                 {
                     if (c == '{') return false;
-                    else if (c != '}') continue;
+                    if (c != '}') continue;
                 }
                 // comments
                 if (inComments > 0)
@@ -402,14 +401,16 @@ namespace ASCompletion.Completion
                     }
                     continue;
                 }
-                else if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
+
+                if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
                 {
                     if (txt[i] == '/')
                     {
                         inComments = 1;
                         break;
                     }
-                    else if (txt[i] == '*')
+
+                    if (txt[i] == '*')
                     {
                         inComments = 2;
                         continue;
@@ -467,7 +468,8 @@ namespace ASCompletion.Completion
                         inExpr = true;
                         continue;
                     }
-                    else return false;
+
+                    return false;
                 }
 
                 // new tag
@@ -480,7 +482,8 @@ namespace ASCompletion.Completion
                         c2 = '<';
                         continue;
                     }
-                    else return false;
+
+                    return false;
                 }
                 if (c == '>')
                 {
@@ -491,7 +494,8 @@ namespace ASCompletion.Completion
                         c2 = '>';
                         continue;
                     }
-                    else return false;
+
+                    return false;
                 }
 
                 // CDATA, HTML comments
@@ -503,7 +507,8 @@ namespace ASCompletion.Completion
                         inCData = true;
                         continue;
                     }
-                    else if (txt[i] == '-' && txt[i + 1] == '-')
+
+                    if (txt[i] == '-' && txt[i + 1] == '-')
                     {
                         i += 2;
                         inComment = true;
@@ -525,26 +530,26 @@ namespace ASCompletion.Completion
                 index = i;
                 return true;
             }
-            else return false;
+
+            return false;
         }
 
         public static bool lookupRegex(string txt, ref int index)
         {
             int n = txt.Length;
             int i = index - 2;
-            char c = '/';
             while (i > 0)
             {
-                c = txt[i--];
+                var c = txt[i--];
                 if (c == ' ' || c == '\t') continue;
                 if (c == '\r' || c == '\n') break;
-                if (Char.IsLetterOrDigit(c) || "_$])".IndexOf(c) >= 0) return false;
+                if (char.IsLetterOrDigit(c) || "_$])".Contains(c)) return false;
                 break;
             }
             i = index;
             while (i < n)
             {
-                c = txt[i++];
+                var c = txt[i++];
                 if (c == '\\')
                 {
                     i++;
@@ -560,12 +565,12 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static string GetLastWord(StringBuilder sb, string wordChars)
+        static string GetLastWord(StringBuilder sb, string wordChars)
         {
-            string word = "";
+            string result = "";
             int i = sb.Length - 1;
-            while (i > 0 && wordChars.IndexOf(sb[i]) >= 0) word = sb[i--] + word;
-            return word;
+            while (i > 0 && wordChars.Contains(sb[i])) result = sb[i--] + result;
+            return result;
         }
     }
 }
