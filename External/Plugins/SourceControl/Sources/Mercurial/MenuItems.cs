@@ -68,9 +68,9 @@ namespace SourceControl.Sources.Mercurial
 
         string[] GetPathsArray()
         {
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
             if (currentNodes != null)
-                foreach (TreeNode node in currentNodes)
+                foreach (var node in currentNodes)
                     if (node is GenericNode) paths.Add((node as GenericNode).BackingPath);
 
             return paths.ToArray();

@@ -28,7 +28,7 @@ namespace SourceControl.Sources.Mercurial
                 return;
             }
 
-            string args = $"mv \"{Path.GetFileName(@from)}\" \"{toPath}\"";
+            var args = $"mv \"{Path.GetFileName(@from)}\" \"{toPath}\"";
 
             Run(args, Path.GetDirectoryName(from));
         }

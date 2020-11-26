@@ -25,7 +25,7 @@ namespace SourceControl.Sources.Git
             {
                 if (!args.StartsWithOrdinal("status")) TraceManager.AddAsync("git " + args);
 
-                string cmd = GetGitCmd();
+                var cmd = GetGitCmd();
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
@@ -36,15 +36,15 @@ namespace SourceControl.Sources.Git
             catch (Exception ex)
             {
                 runner = null;
-                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                var label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
 
         protected virtual string GetGitCmd()
         {
-            string cmd = PluginMain.SCSettings.GITPath ?? "git";
-            string resolve = PathHelper.ResolvePath(cmd);
+            var cmd = PluginMain.SCSettings.GITPath ?? "git";
+            var resolve = PathHelper.ResolvePath(cmd);
             return resolve ?? ResolveGitPath(cmd);
         }
 
@@ -55,12 +55,12 @@ namespace SourceControl.Sources.Git
             
             resolvedCmd = cmd;
             qualifiedCmd = cmd;
-            string cp = Environment.GetEnvironmentVariable("PATH");
-            foreach (string path in cp.Split(';'))
+            var cp = Environment.GetEnvironmentVariable("PATH");
+            foreach (var path in cp.Split(';'))
             {
                 if (path.IndexOf("git", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(path))
                 {
-                    string test = Path.Combine(path, cmd + ".cmd");
+                    var test = Path.Combine(path, cmd + ".cmd");
                     if (File.Exists(test)) { qualifiedCmd = test; break; }
                     test = Path.Combine(path, cmd + ".exe");
                     if (File.Exists(test)) { qualifiedCmd = test; break; }

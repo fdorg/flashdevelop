@@ -25,7 +25,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 if (!args.StartsWithOrdinal("status")) TraceManager.AddAsync("hg " + args);
 
-                string cmd = GetHGCmd();
+                var cmd = GetHGCmd();
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
@@ -36,7 +36,7 @@ namespace SourceControl.Sources.Mercurial
             catch (Exception ex)
             {
                 runner = null;
-                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                var label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
@@ -55,12 +55,12 @@ namespace SourceControl.Sources.Mercurial
             
             resolvedCmd = cmd;
             qualifiedCmd = cmd;
-            string cp = Environment.GetEnvironmentVariable("PATH");
-            foreach (string path in cp.Split(';'))
+            var cp = Environment.GetEnvironmentVariable("PATH");
+            foreach (var path in cp.Split(';'))
             {
                 if (path.IndexOf("hg", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(path))
                 {
-                    string test = Path.Combine(path, cmd + ".cmd");
+                    var test = Path.Combine(path, cmd + ".cmd");
                     if (File.Exists(test)) { qualifiedCmd = test; break; }
                     test = Path.Combine(path, cmd + ".exe");
                     if (File.Exists(test)) { qualifiedCmd = test; break; }

@@ -16,9 +16,9 @@ namespace SourceControl.Sources.Mercurial
 
         public override void Run()
         {
-            string args = "rm -f";
-            int count = 0;
-            foreach (string path in paths)
+            var args = "rm -f";
+            var count = 0;
+            foreach (var path in paths)
             {
                 if (Directory.Exists(path))
                 {

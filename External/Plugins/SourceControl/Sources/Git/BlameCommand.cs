@@ -111,7 +111,7 @@ namespace SourceControl.Sources.Git
         AnnotationData ParseAnnotation()
         {
             var data = new AnnotationData();
-            string[] firstLine = GetNextOutputLine().Split(' ');
+            var firstLine = GetNextOutputLine().Split(' ');
             data.Hash = firstLine[0];
             data.SourceLine = int.Parse(firstLine[1]) - 1;
             data.ResultLine = int.Parse(firstLine[2]) - 1;
@@ -119,13 +119,13 @@ namespace SourceControl.Sources.Git
 
             while (true)
             {
-                string line = GetNextOutputLine();
+                var line = GetNextOutputLine();
 
-                int separator = line.IndexOf(' ');
+                var separator = line.IndexOf(' ');
                 if (separator == -1) continue;
 
-                string key = line.Substring(0, separator);
-                string value = line.Substring(separator + 1);
+                var key = line.Substring(0, separator);
+                var value = line.Substring(separator + 1);
 
                 switch (key)
                 {
@@ -173,7 +173,7 @@ namespace SourceControl.Sources.Git
 
         string GetNextOutputLine()
         {
-            string value = outputLines.First.Value;
+            var value = outputLines.First.Value;
             outputLines.RemoveFirst();
             return value;
         }

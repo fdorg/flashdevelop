@@ -96,8 +96,8 @@ namespace SourceControl
                 // Catches Project change event and display the active project path
                 case EventType.Command:
                     if (!ready) return;
-                    DataEvent de = (DataEvent) e;
-                    string cmd = de.Action;
+                    var de = (DataEvent) e;
+                    var cmd = de.Action;
                     if (!cmd.StartsWithOrdinal("ProjectManager.")) return;
                     switch (cmd)
                     {
@@ -329,7 +329,7 @@ namespace SourceControl
             // Try to find TortoiseProc path from program files
             if (SCSettings.TortoiseGITProcPath == "TortoiseGitProc.exe")
             {
-                string torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
+                var torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
                 if (File.Exists(torProcPath)) SCSettings.TortoiseGITProcPath = torProcPath;
             }
 
@@ -340,25 +340,25 @@ namespace SourceControl
             // Try to find svn path from: Tools/sliksvn/
             if (SCSettings.SVNPath == "svn.exe")
             {
-                string svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
+                var svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
                 if (PathHelper.ResolvePath(svnCmdPath) != null) SCSettings.SVNPath = svnCmdPath;
             }
             // Try to find sliksvn path from program files
             if (SCSettings.SVNPath == "svn.exe")
             {
-                string slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
+                var slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
                 if (File.Exists(slSvnPath)) SCSettings.SVNPath = slSvnPath;
             }
             // Try to find svn from TortoiseSVN
             if (SCSettings.SVNPath == "svn.exe")
             {
-                string torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
+                var torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
                 if (File.Exists(torSvnPath)) SCSettings.SVNPath = torSvnPath;
             }
             // Try to find TortoiseProc path from program files
             if (SCSettings.TortoiseSVNProcPath == "TortoiseProc.exe")
             {
-                string torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
+                var torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
                 if (File.Exists(torProcPath)) SCSettings.TortoiseSVNProcPath = torProcPath;
             }
 

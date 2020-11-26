@@ -36,7 +36,7 @@ namespace SourceControl.Actions
             {
                 try
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    var assembly = Assembly.GetExecutingAssembly();
                     Skin = new Bitmap(assembly.GetManifestResourceStream(ScaleHelper.GetScale() > 1.5 ? "SourceControl.Resources.icons32.png" : "SourceControl.Resources.icons.png"));
                 }
                 catch
@@ -102,13 +102,13 @@ namespace SourceControl.Actions
             var result = fsWatchers.ResolveVC(Path.GetDirectoryName(paths[0]));
             if (result is null) return false;
 
-            List<string> svnRemove = new List<string>();
-            List<string> regularRemove = new List<string>();
-            List<string> hasModification = new List<string>();
-            List<string> hasUnknown = new List<string>();
+            var svnRemove = new List<string>();
+            var regularRemove = new List<string>();
+            var hasModification = new List<string>();
+            var hasUnknown = new List<string>();
             try
             {
-                foreach (string path in paths)
+                foreach (var path in paths)
                 {
                     result = fsWatchers.ResolveVC(path, true);
                     if (result is null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
@@ -117,17 +117,17 @@ namespace SourceControl.Actions
                     }
                     else
                     {
-                        IVCManager manager = result.Manager;
-                        string root = result.Watcher.Path;
-                        int p = root.Length + 1;
+                        var manager = result.Manager;
+                        var root = result.Watcher.Path;
+                        var p = root.Length + 1;
 
                         if (Directory.Exists(path))
                         {
-                            List<string> files = new List<string>();
+                            var files = new List<string>();
                             GetAllFiles(path, files);
-                            foreach (string file in files)
+                            foreach (var file in files)
                             {
-                                VCItemStatus status = manager.GetOverlay(file, root);
+                                var status = manager.GetOverlay(file, root);
                                 if (status == VCItemStatus.Unknown || status == VCItemStatus.Ignored)
                                     hasUnknown.Add(file.Substring(p));
                                 else if (status > VCItemStatus.UpToDate)
@@ -159,15 +159,15 @@ namespace SourceControl.Actions
 
             if (hasUnknown.Count > 0 && confirm) //this never happens (at least on git), because it is always handled by the "regular deletion" part above
             {
-                string title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string msg = TextHelper.GetString("SourceControl.Info.ConfirmUnversionedDelete") + "\n\n" + GetSomeFiles(hasUnknown);
+                var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                var msg = TextHelper.GetString("SourceControl.Info.ConfirmUnversionedDelete") + "\n\n" + GetSomeFiles(hasUnknown);
                 if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
             }
 
             if (hasModification.Count > 0 && confirm)
             {
-                string title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string msg = TextHelper.GetString("SourceControl.Info.ConfirmLocalModsDelete") + "\n\n" + GetSomeFiles(hasModification);
+                var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                var msg = TextHelper.GetString("SourceControl.Info.ConfirmLocalModsDelete") + "\n\n" + GetSomeFiles(hasModification);
                 if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
             }
             else if (svnRemove.Count > 0) //there are versioned files
@@ -213,19 +213,19 @@ namespace SourceControl.Actions
         static void GetAllFiles(string path, ICollection<string> files)
         {
             var search = Directory.GetFiles(path);
-            foreach (string file in search)
+            foreach (var file in search)
             {
-                string name = Path.GetFileName(file);
+                var name = Path.GetFileName(file);
                 if (name[0] == '.') continue;
                 files.Add(file);
             }
 
-            string[] dirs = Directory.GetDirectories(path);
-            foreach (string dir in dirs)
+            var dirs = Directory.GetDirectories(path);
+            foreach (var dir in dirs)
             {
-                string name = Path.GetFileName(dir);
+                var name = Path.GetFileName(dir);
                 if (name[0] == '.') continue;
-                FileInfo info = new FileInfo(dir);
+                var info = new FileInfo(dir);
                 if ((info.Attributes & FileAttributes.Hidden) > 0) continue;
                 GetAllFiles(dir, files);
             }
@@ -233,8 +233,8 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileMove(string[] paths)
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(paths[0], true);
-            WatcherVCResult result2 = fsWatchers.ResolveVC(paths[1], true);
+            var result = fsWatchers.ResolveVC(paths[0], true);
+            var result2 = fsWatchers.ResolveVC(paths[1], true);
 
             var fromVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
             var toVCed = result2 != null && result2.Status >= VCItemStatus.UpToDate && result2.Status != VCItemStatus.Added;

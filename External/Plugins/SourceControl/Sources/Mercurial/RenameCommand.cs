@@ -20,7 +20,7 @@ namespace SourceControl.Sources.Mercurial
             // directly rename empty dirs
             if (Directory.Exists(path) && Directory.GetFiles(path).Length == 0)
             {
-                string newPath = Path.Combine(Path.GetDirectoryName(path), newName);
+                var newPath = Path.Combine(Path.GetDirectoryName(path), newName);
                 if (Directory.Exists(newPath)) return;
                 try { Directory.Move(path, newPath); }
                 catch (Exception ex) { ErrorManager.ShowInfo(ex.Message); }

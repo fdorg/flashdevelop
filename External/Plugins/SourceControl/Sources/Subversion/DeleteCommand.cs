@@ -14,8 +14,8 @@ namespace SourceControl.Sources.Subversion
 
         public override void Run()
         {
-            string args = "delete --force";
-            foreach (string path in paths)
+            var args = "delete --force";
+            foreach (var path in paths)
                 args += " \"" + Path.GetFileName(path) + "\"";
 
             Run(args, Path.GetDirectoryName(paths[0]));

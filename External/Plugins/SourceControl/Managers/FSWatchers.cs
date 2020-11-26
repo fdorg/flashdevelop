@@ -78,11 +78,11 @@ namespace SourceControl.Managers
             CreateWatchers(project.Directory);
 
             if (project.Classpaths != null)
-                foreach (string path in project.AbsoluteClasspaths)
+                foreach (var path in project.AbsoluteClasspaths)
                     CreateWatchers(path);
 
             if (ProjectManager.PluginMain.Settings.ShowGlobalClasspaths)
-                foreach (string path in ProjectManager.PluginMain.Settings.GlobalClasspaths)
+                foreach (var path in ProjectManager.PluginMain.Settings.GlobalClasspaths)
                     CreateWatchers(path);
 
             updateTimer.Interval = 4000;
@@ -95,7 +95,7 @@ namespace SourceControl.Managers
             {
                 if (!Directory.Exists(path)) return;
 
-                foreach (FileSystemWatcher watcher in watchers.Keys)
+                foreach (var watcher in watchers.Keys)
                     if (path.StartsWith(watcher.Path, StringComparison.OrdinalIgnoreCase))
                         return;
 
@@ -106,7 +106,7 @@ namespace SourceControl.Managers
 
         void ExploreDirectory(string path, bool rootDir, int depth)
         {
-            foreach (IVCManager manager in ProjectWatcher.VCManagers)
+            foreach (var manager in ProjectWatcher.VCManagers)
                 if (manager.IsPathUnderVC(path))
                 {
                     CreateWatcher(path, manager);
@@ -117,9 +117,9 @@ namespace SourceControl.Managers
                 return;
 
             if (depth < 3)
-                foreach (string dir in Directory.GetDirectories(path))
+                foreach (var dir in Directory.GetDirectories(path))
                 {
-                    FileInfo info = new FileInfo(dir);
+                    var info = new FileInfo(dir);
                     if ((info.Attributes & FileAttributes.Hidden) == 0)
                         ExploreDirectory(dir, false, depth++);
                 }
@@ -142,16 +142,16 @@ namespace SourceControl.Managers
         {
             try
             {
-                DirectoryInfo info = new DirectoryInfo(path);
+                var info = new DirectoryInfo(path);
                 do
                 {
                     info = info.Parent;
 
-                    foreach (FileSystemWatcher watcher in watchers.Keys)
+                    foreach (var watcher in watchers.Keys)
                         if (info.FullName.StartsWith(watcher.Path, StringComparison.OrdinalIgnoreCase))
                             return true;
 
-                    foreach (IVCManager manager in ProjectWatcher.VCManagers)
+                    foreach (var manager in ProjectWatcher.VCManagers)
                         if (manager.IsPathUnderVC(info.FullName))
                         {
                             CreateWatcher(path, manager);
@@ -170,8 +170,8 @@ namespace SourceControl.Managers
                 return;
             lastDirtyPath = e.FullPath;
             
-            FileSystemWatcher watcher = (FileSystemWatcher)sender;
-            IVCManager manager = watchers[watcher];
+            var watcher = (FileSystemWatcher)sender;
+            var manager = watchers[watcher];
             if (manager.SetPathDirty(e.FullPath, watcher.Path))
                 Changed(manager);
         }
@@ -199,9 +199,9 @@ namespace SourceControl.Managers
 
             lock (dirtyVC)
             {
-                foreach (FileSystemWatcher watcher in watchers.Keys)
+                foreach (var watcher in watchers.Keys)
                 {
-                    IVCManager manager = watchers[watcher];
+                    var manager = watchers[watcher];
                     if (dirtyVC.Contains(manager))
                         manager.GetStatus(watcher.Path);
                 }
@@ -213,9 +213,9 @@ namespace SourceControl.Managers
         {
             lock (dirtyVC)
             {
-                foreach (FileSystemWatcher watcher in watchers.Keys)
+                foreach (var watcher in watchers.Keys)
                 {
-                    IVCManager manager = watchers[watcher];
+                    var manager = watchers[watcher];
                     dirtyVC.Add(manager);
                 }
             }

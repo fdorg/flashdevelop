@@ -71,9 +71,9 @@ namespace SourceControl.Sources.Git
 
         string[] GetPathsArray()
         {
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
             if (currentNodes != null)
-                foreach (TreeNode node in currentNodes)
+                foreach (var node in currentNodes)
                     if (node is GenericNode) paths.Add((node as GenericNode).BackingPath);
 
             return paths.ToArray();
@@ -121,8 +121,8 @@ namespace SourceControl.Sources.Git
         {
             if (currentNodes == null || currentNodes.Length != 2)
                 return;
-            string path1 = (currentNodes[0] as GenericNode).BackingPath;
-            string path2 = (currentNodes[1] as GenericNode).BackingPath;
+            var path1 = (currentNodes[0] as GenericNode).BackingPath;
+            var path2 = (currentNodes[1] as GenericNode).BackingPath;
             TortoiseProc.Execute("diff", path1, path2);
         }
 
@@ -138,9 +138,9 @@ namespace SourceControl.Sources.Git
 
         void Commit_Click(object sender, EventArgs e)
         {
-            String title = TextHelper.GetString("Label.Commit");
-            String msg = TextHelper.GetString("Info.EnterMessage");
-            using (LineEntryDialog led = new LineEntryDialog(title, msg, ""))
+            var title = TextHelper.GetString("Label.Commit");
+            var msg = TextHelper.GetString("Info.EnterMessage");
+            using (var led = new LineEntryDialog(title, msg, ""))
             {
                 if (led.ShowDialog() != DialogResult.OK || led.Line == "")
                     return;

@@ -65,7 +65,7 @@ namespace SourceControl.Helpers
         /// <param name="fileName">The path of the target file to annotate.</param>
         public static AnnotatedDocument CreateAnnotatedDocument(IBlameCommand command, string fileName)
         {
-            string title = Path.Combine(Path.GetDirectoryName(fileName), "[Annotated] " + Path.GetFileName(fileName));
+            var title = Path.Combine(Path.GetDirectoryName(fileName), "[Annotated] " + Path.GetFileName(fileName));
             var doc = PluginBase.MainForm.CreateEditableDocument(title, string.Empty, Encoding.UTF8.CodePage) as ITabbedDocument;
             return doc is null ? null : new AnnotatedDocument(command, fileName, doc);
         }
@@ -131,7 +131,7 @@ namespace SourceControl.Helpers
 
                 annotations = annotationData;
                 OrganizeAnnotations();
-                string longestInfo = ParseCommits();
+                var longestInfo = ParseCommits();
                 ShowAnnotation(longestInfo);
                 UpdateTheme(false);
                 GetMarginBounds();
@@ -189,9 +189,9 @@ namespace SourceControl.Helpers
         void OrganizeAnnotations()
         {
             Array.Sort(annotations, (x, y) => x.ResultLine.CompareTo(y.ResultLine));
-            int i = 0;
-            int offset = 0;
-            int length = annotations.Length - 1;
+            var i = 0;
+            var offset = 0;
+            var length = annotations.Length - 1;
             while (i < length)
             {
                 var current = annotations[i++ - offset];
@@ -213,7 +213,7 @@ namespace SourceControl.Helpers
 
         string ParseCommits()
         {
-            string longestInfo = string.Empty;
+            var longestInfo = string.Empty;
             foreach (var annotation in annotations)
             {
                 if (commits.ContainsKey(annotation.Hash))
@@ -235,7 +235,7 @@ namespace SourceControl.Helpers
                 else
                 {
                     commits.Add(annotation.Hash, annotation);
-                    int style = 0x80 + commits.Count % 0x80;
+                    var style = 0x80 + commits.Count % 0x80;
                     sci.StyleSetFont(style, sci.StyleGetFont(0));
                     sci.StyleSetSize(style, sci.StyleGetSize(0));
                     sci.StyleSetFore(style, sci.StyleGetFore(0));
@@ -245,7 +245,7 @@ namespace SourceControl.Helpers
                     annotation.MarginStyle = style;
                 }
 
-                string info = annotation.GetInfo();
+                var info = annotation.GetInfo();
                 if (info.Length > longestInfo.Length)
                 {
                     longestInfo = info;
@@ -257,7 +257,7 @@ namespace SourceControl.Helpers
 
         void ShowAnnotation(string longestInfo)
         {
-            int width = longestInfo.Length;
+            var width = longestInfo.Length;
             sci.SetMarginTypeN(4, (int) MarginType.Text);
             sci.SetMarginWidthN(4, sci.TextWidth(0, longestInfo));
             sci.MarginSensitiveN(4, true);
@@ -265,9 +265,9 @@ namespace SourceControl.Helpers
 
             foreach (var annotation in annotations)
             {
-                int line = annotation.ResultLine;
+                var line = annotation.ResultLine;
                 sci.SetMarginText(line, annotation.GetInfo(width));
-                for (int i = 0; i < annotation.LineCount; i++)
+                for (var i = 0; i < annotation.LineCount; i++)
                 {
                     sci.SetMarginStyle(line + i, annotation.MarginStyle);
                 }
@@ -282,16 +282,16 @@ namespace SourceControl.Helpers
                 return;
             }
             var random = new Random();
-            int fore = sci.StyleGetFore(0);
-            int back = sci.StyleGetBack(0);
-            int r = back >> 16 & 0xFF;
-            int g = back >> 8 & 0xFF;
-            int b = back & 0xFF;
+            var fore = sci.StyleGetFore(0);
+            var back = sci.StyleGetBack(0);
+            var r = back >> 16 & 0xFF;
+            var g = back >> 8 & 0xFF;
+            var b = back & 0xFF;
             foreach (var annotation in commits.Values)
             {
-                int newR = r + random.Next(0xFF) >> 1;
-                int newG = g + random.Next(0xFF) >> 1;
-                int newB = b + random.Next(0xFF) >> 1;
+                var newR = r + random.Next(0xFF) >> 1;
+                var newG = g + random.Next(0xFF) >> 1;
+                var newB = b + random.Next(0xFF) >> 1;
                 sci.StyleSetFore(annotation.MarginStyle, fore);
                 sci.StyleSetBack(annotation.MarginStyle, newR << 16 | newG << 8 | newB);
             }
@@ -307,13 +307,13 @@ namespace SourceControl.Helpers
         {
             if (MarginStart <= x && x < MarginEnd)
             {
-                int line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
+                var line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
                 // Binary search
-                int low = 0;
-                int high = annotations.Length - 1;
+                var low = 0;
+                var high = annotations.Length - 1;
                 while (low <= high)
                 {
-                    int i = low + (high - low >> 1);
+                    var i = low + (high - low >> 1);
                     var annotationData = annotations[i];
                     if (line < annotationData.ResultLine)
                     {
@@ -435,8 +435,8 @@ namespace SourceControl.Helpers
         /// <param name="width">The minimum total width of characters.</param>
         public string GetInfo(int width = 0)
         {
-            string commit = Hash.Substring(0, 8);
-            string authorTime = AuthorTime.ToShortDateString();
+            var commit = Hash.Substring(0, 8);
+            var authorTime = AuthorTime.ToShortDateString();
 
             if (commit == "00000000")
             {

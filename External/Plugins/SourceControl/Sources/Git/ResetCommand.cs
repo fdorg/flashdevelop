@@ -10,7 +10,7 @@ namespace SourceControl.Sources.Git
         public ResetCommand(string[] paths)
         {
             args = "reset ";
-            foreach (string path in paths)
+            foreach (var path in paths)
                 args += " \"" + Path.GetFileName(path) + "\"";
 
             dir = Path.GetDirectoryName(paths[0]);

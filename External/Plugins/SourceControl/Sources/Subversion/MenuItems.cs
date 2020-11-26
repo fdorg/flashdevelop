@@ -109,8 +109,8 @@ namespace SourceControl.Sources.Subversion
         {
             if (currentNodes is null || currentNodes.Length != 2)
                 return;
-            string path1 = (currentNodes[0] as GenericNode).BackingPath;
-            string path2 = (currentNodes[1] as GenericNode).BackingPath;
+            var path1 = (currentNodes[0] as GenericNode).BackingPath;
+            var path2 = (currentNodes[1] as GenericNode).BackingPath;
             TortoiseProc.Execute("diff", path1, path2);
         }
 

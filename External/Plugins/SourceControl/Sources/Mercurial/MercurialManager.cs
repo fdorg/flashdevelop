@@ -28,7 +28,7 @@ namespace SourceControl.Sources.Mercurial
 
         public VCItemStatus GetOverlay(string path, string rootPath)
         {
-            StatusNode snode = FindNode(path, rootPath);
+            var snode = FindNode(path, rootPath);
             if (snode != null) return snode.Status;
             else return VCItemStatus.Unknown;
         }
@@ -37,9 +37,9 @@ namespace SourceControl.Sources.Mercurial
         {
             if (statusCache.ContainsKey(rootPath))
             {
-                Status status = statusCache[rootPath];
-                int len = path.Length;
-                int rlen = rootPath.Length + 1;
+                var status = statusCache[rootPath];
+                var len = path.Length;
+                var rlen = rootPath.Length + 1;
                 if (len < rlen) path = ".";
                 else path = path.Substring(rlen);
 
@@ -50,21 +50,21 @@ namespace SourceControl.Sources.Mercurial
 
         public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
         {
-            StatusNode root = FindNode(path, rootPath);
+            var root = FindNode(path, rootPath);
             if (root is null) return null;
 
-            List<StatusNode> children = new List<StatusNode>();
+            var children = new List<StatusNode>();
             GetChildren(root, children);
-            List<VCStatusReport> result = new List<VCStatusReport>();
-            foreach (StatusNode child in children)
+            var result = new List<VCStatusReport>();
+            foreach (var child in children)
                 result.Add(new VCStatusReport(GetNodePath(child, rootPath), child.Status));
             return result;
         }
 
         string GetNodePath(StatusNode child, string rootPath)
         {
-            char S = Path.DirectorySeparatorChar;
-            string path = "";
+            var S = Path.DirectorySeparatorChar;
+            var path = "";
             while (child != null && child.Name != ".")
             {
                 path = S + child.Name + path;
@@ -76,7 +76,7 @@ namespace SourceControl.Sources.Mercurial
         void GetChildren(StatusNode node, List<StatusNode> result)
         {
             if (node.Children is null) return;
-            foreach (StatusNode child in node.Children.Values)
+            foreach (var child in node.Children.Values)
             {
                 result.Add(child);
                 GetChildren(child, result);
