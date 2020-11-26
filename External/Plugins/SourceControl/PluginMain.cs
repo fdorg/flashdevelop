@@ -375,7 +375,7 @@ namespace SourceControl
         /// <summary>
         /// 
         /// </summary>
-        void CheckPathExists(string path, string name)
+        static void CheckPathExists(string path, string name)
         {
             if (string.IsNullOrEmpty(path)) return;
             if (!Path.IsPathRooted(path)) return;

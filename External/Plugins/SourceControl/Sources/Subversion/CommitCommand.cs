@@ -1,5 +1,4 @@
-﻿
-using System.IO;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
@@ -20,10 +19,7 @@ namespace SourceControl.Sources.Subversion
         {
         }
 
-        static T SafeGet<T>(T[] a, int i) where T : class
-        {
-            return a != null && a.Length > i ? a[i] : null;
-        }
+        static T SafeGet<T>(T[] a, int i) where T : class => a != null && a.Length > i ? a[i] : null;
 
         public override void Run()
         {

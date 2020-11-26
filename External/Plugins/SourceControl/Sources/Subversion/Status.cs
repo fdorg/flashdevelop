@@ -17,15 +17,9 @@ namespace SourceControl.Sources.Subversion
         string dirty;
         string updatingPath;
 
-        public Status(string path)
-        {
-            RootPath = path;
-        }
+        public Status(string path) => RootPath = path;
 
-        public StatusNode Get(string path)
-        {
-            return root.FindPath(path);
-        }
+        public StatusNode Get(string path) => root.FindPath(path);
 
         public void Update()
         {
@@ -61,12 +55,9 @@ namespace SourceControl.Sources.Subversion
             return true;
         }
 
-        public override void Run()
-        {
-            throw new NotImplementedException();
-        }
+        public override void Run() => throw new NotImplementedException();
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -79,7 +70,7 @@ namespace SourceControl.Sources.Subversion
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void Runner_Output(object sender, string line)
+        protected override void Runner_Output(object sender, string line)
         {
             int fileIndex = 30;
             if (line.Length < fileIndex) return;
@@ -149,7 +140,7 @@ namespace SourceControl.Sources.Subversion
         {
             int p = path.IndexOf(Path.DirectorySeparatorChar);
             if (p < 0) return AddChild(path, status, true);
-            else return AddChild(path.Substring(0, p), status, false)
+            return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 

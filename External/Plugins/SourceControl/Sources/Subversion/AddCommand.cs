@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
@@ -7,10 +6,7 @@ namespace SourceControl.Sources.Subversion
     {
         readonly string path;
 
-        public AddCommand(string path)
-        {
-            this.path = path;
-        }
+        public AddCommand(string path) => this.path = path;
 
         public override void Run()
         {

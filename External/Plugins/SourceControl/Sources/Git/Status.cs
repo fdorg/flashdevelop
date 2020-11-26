@@ -84,7 +84,7 @@ namespace SourceControl.Sources.Git
             throw new NotImplementedException();
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -97,7 +97,7 @@ namespace SourceControl.Sources.Git
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void Runner_Output(object sender, string line)
+        protected override void Runner_Output(object sender, string line)
         {
             int fileIndex = 3;
             if (line.Length < fileIndex) return;
@@ -128,7 +128,7 @@ namespace SourceControl.Sources.Git
 
     internal class StatusNode
     {
-        static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
+        public static StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
         public bool HasChildren;
         public string Name;
