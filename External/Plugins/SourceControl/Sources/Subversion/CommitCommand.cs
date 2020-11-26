@@ -27,7 +27,7 @@ namespace SourceControl.Sources.Subversion
 
         public override void Run()
         {
-            if (workingDirectory == null) return;
+            if (workingDirectory is null) return;
 
             var args = "commit";
 

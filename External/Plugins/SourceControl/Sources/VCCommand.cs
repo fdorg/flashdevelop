@@ -11,7 +11,7 @@ namespace SourceControl.Sources
 
         public VCCommand ContinueWith(VCCommand command)
         {
-            if (nextCommand == null)
+            if (nextCommand is null)
                 nextCommand = command;
             else
                 nextCommand.ContinueWith(command);

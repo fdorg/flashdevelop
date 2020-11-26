@@ -22,7 +22,7 @@ namespace SourceControl.Sources.Git
 
         public override void Run()
         {
-            if (workingDirectory == null) return;
+            if (workingDirectory is null) return;
 
             //add the files first to make sure untracked files can be committed
             var fileArgs = "";
@@ -40,7 +40,7 @@ namespace SourceControl.Sources.Git
         {
             base.Runner_ProcessEnded(sender, exitCode);
 
-            if (commitArgs == null) return;
+            if (commitArgs is null) return;
 
             //now do the commit
             Run(commitArgs, workingDirectory);

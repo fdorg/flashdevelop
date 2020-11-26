@@ -247,7 +247,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void AddressComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (addressComboBox.SelectedItem == null) return;
+            if (addressComboBox.SelectedItem is null) return;
             var url = addressComboBox.SelectedItem.ToString();
             webBrowser.Navigate(url);
         }

@@ -51,7 +51,7 @@ namespace SourceControl.Sources.Mercurial
         public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
         {
             StatusNode root = FindNode(path, rootPath);
-            if (root == null) return null;
+            if (root is null) return null;
 
             List<StatusNode> children = new List<StatusNode>();
             GetChildren(root, children);
@@ -75,7 +75,7 @@ namespace SourceControl.Sources.Mercurial
 
         void GetChildren(StatusNode node, List<StatusNode> result)
         {
-            if (node.Children == null) return;
+            if (node.Children is null) return;
             foreach (StatusNode child in node.Children.Values)
             {
                 result.Add(child);
