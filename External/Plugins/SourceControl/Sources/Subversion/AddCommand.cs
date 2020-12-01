@@ -2,11 +2,15 @@
 
 namespace SourceControl.Sources.Subversion
 {
-    class AddCommand : BaseCommand
+    internal class AddCommand : BaseCommand
     {
-        public AddCommand(string path)
+        readonly string path;
+
+        public AddCommand(string path) => this.path = path;
+
+        public override void Run()
         {
-            string args = $"add \"{Path.GetFileName(path)}\"";
+            var args = $"add \"{Path.GetFileName(path)}\"";
             Run(args, Path.GetDirectoryName(path));
         }
     }

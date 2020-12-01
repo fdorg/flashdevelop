@@ -10,7 +10,7 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Subversion
 {
-    class BaseCommand
+    internal abstract class BaseCommand : VCCommand
     {
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -38,16 +38,16 @@ namespace SourceControl.Sources.Subversion
             catch (Exception ex)
             {
                 runner = null;
-                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                var label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
 
         protected virtual string GetSvnCmd()
         {
-            string cmd = PluginMain.SCSettings.SVNPath;
+            var cmd = PluginMain.SCSettings.SVNPath;
             if (cmd == "null") cmd = "svn";
-            string resolve = PathHelper.ResolvePath(cmd);
+            var resolve = PathHelper.ResolvePath(cmd);
             return resolve ?? cmd;
         }
 
@@ -55,6 +55,8 @@ namespace SourceControl.Sources.Subversion
         {
             runner = null;
             DisplayErrors();
+
+            nextCommand?.Run();
 
             ProjectWatcher.ForceRefresh();
         }

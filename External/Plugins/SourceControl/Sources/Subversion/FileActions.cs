@@ -1,6 +1,6 @@
 ﻿namespace SourceControl.Sources.Subversion
 {
-    class FileActions:IVCFileActions
+    internal class FileActions:IVCFileActions
     {
         public bool FileBeforeRename(string path)
         {
@@ -9,7 +9,7 @@
 
         public bool FileRename(string path, string newName)
         {
-            new RenameCommand(path, newName);
+            new RenameCommand(path, newName).Run();
             return true; // operation handled
         }
 
@@ -17,7 +17,7 @@
         {
             if (confirm)
             {
-                new DeleteCommand(paths);
+                new DeleteCommand(paths).Run();
                 return true; // operation handled
             }
 
@@ -26,20 +26,21 @@
 
         public bool FileMove(string fromPath, string toPath)
         {
-            new MoveCommand(fromPath, toPath);
+            new MoveCommand(fromPath, toPath).Run();
             return true;
         }
 
-        public bool FileNew(string path)
+        public void FileAfterMove(string fromPath, VCItemStatus status, string toPath)
         {
-            return false;
+            new AddCommand(toPath).ContinueWith(new DeleteCommand(new []{fromPath})).Run();
         }
-        public bool FileOpen(string path) { return false; }
-        public bool FileReload(string path) { return false; }
-        public bool FileModifyRO(string path) { return false; }
 
-        public bool BuildProject() { return false; }
-        public bool TestProject() { return false; }
-        public bool SaveProject() { return false; }
+        public bool FileNew(string path) => false;
+        public bool FileOpen(string path) => false;
+        public bool FileReload(string path) => false;
+        public bool FileModifyRO(string path) => false;
+        public bool BuildProject() => false;
+        public bool TestProject() => false;
+        public bool SaveProject() => false;
     }
 }

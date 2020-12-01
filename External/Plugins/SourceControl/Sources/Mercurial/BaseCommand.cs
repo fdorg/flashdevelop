@@ -11,10 +11,10 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class BaseCommand
+    internal abstract class BaseCommand : VCCommand
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static string resolvedCmd;
+        static string qualifiedCmd;
 
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -25,7 +25,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 if (!args.StartsWithOrdinal("status")) TraceManager.AddAsync("hg " + args);
 
-                string cmd = GetHGCmd();
+                var cmd = GetHGCmd();
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
@@ -36,7 +36,7 @@ namespace SourceControl.Sources.Mercurial
             catch (Exception ex)
             {
                 runner = null;
-                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                var label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
@@ -48,19 +48,19 @@ namespace SourceControl.Sources.Mercurial
             return resolve ?? ResolveHGPath(cmd);
         }
 
-        private static string ResolveHGPath(string cmd)
+        static string ResolveHGPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;
             
             resolvedCmd = cmd;
             qualifiedCmd = cmd;
-            string cp = Environment.GetEnvironmentVariable("PATH");
-            foreach (string path in cp.Split(';'))
+            var cp = Environment.GetEnvironmentVariable("PATH");
+            foreach (var path in cp.Split(';'))
             {
                 if (path.IndexOf("hg", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(path))
                 {
-                    string test = Path.Combine(path, cmd + ".cmd");
+                    var test = Path.Combine(path, cmd + ".cmd");
                     if (File.Exists(test)) { qualifiedCmd = test; break; }
                     test = Path.Combine(path, cmd + ".exe");
                     if (File.Exists(test)) { qualifiedCmd = test; break; }
@@ -74,6 +74,8 @@ namespace SourceControl.Sources.Mercurial
             runner = null;
             DisplayErrors();
 
+            nextCommand?.Run();
+
             ProjectWatcher.ForceRefresh();
         }
 
@@ -81,10 +83,8 @@ namespace SourceControl.Sources.Mercurial
         {
             if (errors.Count > 0)
             {
-                (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
-                {
-                    ErrorManager.ShowInfo(string.Join("\n", errors));
-                });
+                (PluginBase.MainForm as Form)?.BeginInvoke((MethodInvoker)(() =>
+                    ErrorManager.ShowInfo(string.Join("\n", errors))));
             }
         }
 

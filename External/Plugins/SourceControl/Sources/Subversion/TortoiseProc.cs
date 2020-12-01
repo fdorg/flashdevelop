@@ -12,8 +12,8 @@ namespace SourceControl.Sources.Subversion
 
         public static void Execute(string command, string path)
         {
-            string args = $"/command:{command} /path:\"{path}\"";
-            ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
+            var args = $"/command:{command} /path:\"{path}\"";
+            var info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
 
             var proc = new Process
@@ -27,8 +27,8 @@ namespace SourceControl.Sources.Subversion
 
         public static void Execute(string command, string path1, string path2)
         {
-            string args = $"/command:{command} /path:\"{path1}\" /path2:\"{path2}\"";
-            ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
+            var args = $"/command:{command} /path:\"{path1}\" /path2:\"{path2}\"";
+            var info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
 
             var proc = new Process
@@ -55,12 +55,12 @@ namespace SourceControl.Sources.Subversion
 
             resolvedCmd = cmd;
             qualifiedCmd = cmd;
-            string cp = Environment.GetEnvironmentVariable("PATH");
-            foreach (string path in cp.Split(';'))
+            var cp = Environment.GetEnvironmentVariable("PATH");
+            foreach (var path in cp.Split(';'))
             {
                 if (path.IndexOf("svn", StringComparison.OrdinalIgnoreCase) > 0 && Directory.Exists(path))
                 {
-                    string test = Path.Combine(path, cmd);
+                    var test = Path.Combine(path, cmd);
                     if (File.Exists(test)) { qualifiedCmd = test; break; }
                 }
             }

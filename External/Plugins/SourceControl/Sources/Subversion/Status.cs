@@ -6,7 +6,7 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Subversion
 {
-    class Status : BaseCommand
+    internal class Status : BaseCommand
     {
         public event StatusResult OnResult;
 
@@ -17,15 +17,9 @@ namespace SourceControl.Sources.Subversion
         string dirty;
         string updatingPath;
 
-        public Status(string path)
-        {
-            RootPath = path;
-        }
+        public Status(string path) => RootPath = path;
 
-        public StatusNode Get(string path)
-        {
-            return root.FindPath(path);
-        }
+        public StatusNode Get(string path) => root.FindPath(path);
 
         public void Update()
         {
@@ -46,13 +40,13 @@ namespace SourceControl.Sources.Subversion
                 return true;
             }
 
-            char sep = Path.DirectorySeparatorChar;
-            string[] p1 = dirty.Split(sep);
-            string[] p2 = path.Split(sep);
+            var sep = Path.DirectorySeparatorChar;
+            var p1 = dirty.Split(sep);
+            var p2 = path.Split(sep);
 
-            int len = Math.Min(p1.Length, p2.Length);
+            var len = Math.Min(p1.Length, p2.Length);
             path = "";
-            for (int i = 0; i < len; i++)
+            for (var i = 0; i < len; i++)
             {
                 if (p1[i] == p2[i]) path += sep + p1[i];
                 else break;
@@ -61,12 +55,14 @@ namespace SourceControl.Sources.Subversion
             return true;
         }
 
+        public override void Run() => throw new NotImplementedException();
+
         protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
             {
-                string label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
+                var label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
                 TraceManager.AddAsync(label + " (" + exitCode + ")");
             }
 
@@ -76,22 +72,27 @@ namespace SourceControl.Sources.Subversion
 
         protected override void Runner_Output(object sender, string line)
         {
-            int fileIndex = 30;
+            var fileIndex = 30;
             if (line.Length < fileIndex) return;
-            char c0 = line[0];
-            char c1 = line[1];
+            var c0 = line[0];
+            var c1 = line[1];
 
-            VCItemStatus s = VCItemStatus.Unknown;
+            var s = VCItemStatus.Unknown;
             if (c0 == '?') return;
             if (c0 == 'M' || c1 == 'M') s = VCItemStatus.Modified;
-            else if (c0 == 'I') s = VCItemStatus.Ignored;
-            else if (c0 == ' ') s = VCItemStatus.UpToDate;
-            else if (c0 == 'A') s = VCItemStatus.Added;
-            else if (c0 == 'D') s = VCItemStatus.Deleted;
-            else if (c0 == 'C') s = VCItemStatus.Conflicted;
-            else if (c0 == 'R') s = VCItemStatus.Replaced;
-            else if (c0 == 'X') s = VCItemStatus.External;
-            else if (c0 == '!') s = VCItemStatus.Missing;
+            else
+                s = c0 switch
+                {
+                    'I' => VCItemStatus.Ignored,
+                    ' ' => VCItemStatus.UpToDate,
+                    'A' => VCItemStatus.Added,
+                    'D' => VCItemStatus.Deleted,
+                    'C' => VCItemStatus.Conflicted,
+                    'R' => VCItemStatus.Replaced,
+                    'X' => VCItemStatus.External,
+                    '!' => VCItemStatus.Missing,
+                    _ => s
+                };
 
             if (s != VCItemStatus.Unknown)
             {
@@ -101,9 +102,9 @@ namespace SourceControl.Sources.Subversion
         }
     }
 
-    delegate void StatusResult(Status sender);
+    internal delegate void StatusResult(Status sender);
 
-    class StatusNode
+    internal class StatusNode
     {
         public bool HasChildren;
         public string Name;
@@ -125,13 +126,13 @@ namespace SourceControl.Sources.Subversion
         {
             if (path == ".") return this;
 
-            int p = path.IndexOf(Path.DirectorySeparatorChar);
-            string childName = p < 0 ? path : path.Substring(0, p);
+            var p = path.IndexOf(Path.DirectorySeparatorChar);
+            var childName = p < 0 ? path : path.Substring(0, p);
             if (HasChildren && Children.ContainsKey(childName))
             {
-                StatusNode child = Children[childName];
+                var child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                return child;
+                else return child;
             }
             return null;
         }
@@ -142,13 +143,13 @@ namespace SourceControl.Sources.Subversion
         /// <returns>Last node of the path</returns>
         public StatusNode MapPath(string path, VCItemStatus status)
         {
-            int p = path.IndexOf(Path.DirectorySeparatorChar);
+            var p = path.IndexOf(Path.DirectorySeparatorChar);
             if (p < 0) return AddChild(path, status, true);
             return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 
-        private StatusNode AddChild(string name, VCItemStatus status, bool isLeaf)
+        StatusNode AddChild(string name, VCItemStatus status, bool isLeaf)
         {
             if (name == ".")
             {
@@ -164,7 +165,7 @@ namespace SourceControl.Sources.Subversion
             if (!isLeaf && status > VCItemStatus.UpToDate && status != VCItemStatus.Conflicted)
                 status = VCItemStatus.Modified;
 
-            StatusNode node = new StatusNode(name, status);
+            var node = new StatusNode(name, status);
             node.Parent = this;
             if (!HasChildren)
             {

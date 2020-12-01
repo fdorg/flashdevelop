@@ -12,15 +12,16 @@ namespace SourceControl.Dialogs
     {
         #region Form Designer Components
 
-        private TextBox lineBox;
-        private Button btnYes;
-        private Button btnNo;
+        TextBox lineBox;
+        Button btnYes;
+        Button btnNo;
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private readonly Container components = null;
-        private Button btnNever;
-        private Label titleLabel;
+        readonly Container components = null;
+
+        Button btnNever;
+        Label titleLabel;
 
         #endregion
 
@@ -64,7 +65,7 @@ namespace SourceControl.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             titleLabel = new Label();
             lineBox = new TextBox();
@@ -146,7 +147,7 @@ namespace SourceControl.Dialogs
 
         #endregion
 
-        private void InititalizeLocalization()
+        void InititalizeLocalization()
         {
             btnYes.Text = TextHelper.GetString("Label.Yes");
             btnNo.Text = TextHelper.GetString("Label.No");
@@ -155,10 +156,10 @@ namespace SourceControl.Dialogs
             Text = " " + TextHelper.GetString("Title.EnterText");
         }
 
-        private void btnYes_Click(object sender, System.EventArgs e)
+        void btnYes_Click(object sender, System.EventArgs e)
         {
             Line = lineBox.Text;
-            CancelEventArgs cancelArgs = new CancelEventArgs(false);
+            var cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)
             {
@@ -167,13 +168,13 @@ namespace SourceControl.Dialogs
             }
         }
 
-        private void btnNo_Click(object sender, System.EventArgs e)
+        void btnNo_Click(object sender, System.EventArgs e)
         {
             DialogResult = DialogResult.No;
             Close();
         }
 
-        private void btnNever_Click(object sender, System.EventArgs e)
+        void btnNever_Click(object sender, System.EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
@@ -181,28 +182,24 @@ namespace SourceControl.Dialogs
 
         void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
         {
-            string shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
+            var shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
             if (string.IsNullOrEmpty(shortcutId)) return;
 
             switch (shortcutId)
             {
                 case "EditMenu.ToLowercase":
                 case "EditMenu.ToUppercase":
-                    string selectedText = lineBox.SelectedText;
+                    var selectedText = lineBox.SelectedText;
                     if (string.IsNullOrEmpty(selectedText)) break;
                     selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
-                    int selectionStart = lineBox.SelectionStart;
-                    int selectionLength = lineBox.SelectionLength;
+                    var selectionStart = lineBox.SelectionStart;
+                    var selectionLength = lineBox.SelectionLength;
                     lineBox.Paste(selectedText);
                     SelectRange(selectionStart, selectionLength);
                     break;
             }
         }
 
-        public void SelectRange(int start, int length)
-        {
-            lineBox.Select(start, length);
-        }
+        public void SelectRange(int start, int length) => lineBox.Select(start, length);
     }
-
 }

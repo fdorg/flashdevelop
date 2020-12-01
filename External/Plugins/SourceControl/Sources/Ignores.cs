@@ -6,7 +6,7 @@ using PluginCore;
 
 namespace SourceControl.Sources
 {
-    class Ignores: List<IgnoreEntry>
+    internal class Ignores: List<IgnoreEntry>
     {
         readonly string root;
         readonly string ignoreFile;
@@ -21,7 +21,7 @@ namespace SourceControl.Sources
         public void Update()
         {
             // TODO ignore files should be explored in each sub directory
-            FileInfo info = new FileInfo(Path.Combine(root, ignoreFile));
+            var info = new FileInfo(Path.Combine(root, ignoreFile));
             if (!info.Exists)
             {
                 Clear();
@@ -34,10 +34,10 @@ namespace SourceControl.Sources
 
             try
             {
-                string[] lines = File.ReadAllLines(info.FullName);
-                foreach (string line in lines)
+                var lines = File.ReadAllLines(info.FullName);
+                foreach (var line in lines)
                 {
-                    string entry = line.Trim();
+                    var entry = line.Trim();
                     if (entry.StartsWith('#') || entry.Length == 0) continue;
                     entry = Regex.Escape(entry);
                     if (entry.StartsWith('/')) entry = "^" + entry.Substring(1);
@@ -50,7 +50,7 @@ namespace SourceControl.Sources
         }
     }
 
-    class IgnoreEntry
+    internal class IgnoreEntry
     {
         public string path;
         public Regex regex;

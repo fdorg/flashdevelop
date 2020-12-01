@@ -8,20 +8,18 @@ namespace SourceControl.Sources.Git
 {
     internal class BlameCommand : BaseCommand, IBlameCommand
     {
-        private string fileName;
-        private AnnotatedDocument document;
-        private LinkedList<string> outputLines;
-        private bool running;
+        string fileName;
+        AnnotatedDocument document;
+        LinkedList<string> outputLines;
+        bool running;
 
-        public BlameCommand(string file)
+        public BlameCommand(string file) => fileName = file;
+
+        public override void Run()
         {
-            if (string.IsNullOrEmpty(file))
-            {
-                Dispose();
-            }
+            if (string.IsNullOrEmpty(fileName)) Dispose();
             else
             {
-                fileName = file;
                 running = false;
                 CheckExisting();
                 OpenAnnotatedDocument();
@@ -29,7 +27,7 @@ namespace SourceControl.Sources.Git
             }
         }
 
-        private void CheckExisting()
+        void CheckExisting()
         {
             if (AnnotatedDocument.CheckExisting(fileName))
             {
@@ -37,7 +35,7 @@ namespace SourceControl.Sources.Git
             }
         }
 
-        private void OpenAnnotatedDocument()
+        void OpenAnnotatedDocument()
         {
             if (!disposed)
             {
@@ -104,10 +102,10 @@ namespace SourceControl.Sources.Git
             }
         }
 
-        private AnnotationData ParseAnnotation()
+        AnnotationData ParseAnnotation()
         {
             var data = new AnnotationData();
-            string[] firstLine = GetNextOutputLine().Split(' ');
+            var firstLine = GetNextOutputLine().Split(' ');
             data.Hash = firstLine[0];
             data.SourceLine = int.Parse(firstLine[1]) - 1;
             data.ResultLine = int.Parse(firstLine[2]) - 1;
@@ -115,13 +113,13 @@ namespace SourceControl.Sources.Git
 
             while (true)
             {
-                string line = GetNextOutputLine();
+                var line = GetNextOutputLine();
 
-                int separator = line.IndexOf(' ');
+                var separator = line.IndexOf(' ');
                 if (separator == -1) continue;
 
-                string key = line.Substring(0, separator);
-                string value = line.Substring(separator + 1);
+                var key = line.Substring(0, separator);
+                var value = line.Substring(separator + 1);
 
                 switch (key)
                 {
@@ -162,21 +160,21 @@ namespace SourceControl.Sources.Git
             }
         }
 
-        private static DateTime ParseDateTime(string value)
+        static DateTime ParseDateTime(string value)
         {
             return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(int.Parse(value));
         }
 
-        private string GetNextOutputLine()
+        string GetNextOutputLine()
         {
-            string value = outputLines.First.Value;
+            var value = outputLines.First.Value;
             outputLines.RemoveFirst();
             return value;
         }
 
         #region IBlameCommand
 
-        private bool disposed;
+        bool disposed;
 
         public void Dispose() => Dispose(true);
 

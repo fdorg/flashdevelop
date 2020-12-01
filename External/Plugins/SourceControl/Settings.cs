@@ -9,15 +9,15 @@ namespace SourceControl
     [Serializable]
     public class Settings
     {
-        private string gitPath;
-        private string svnPath;
-        private string hgPath;
-        private string tortoiseSVNProcPath;
-        private string tortoiseGitProcPath;
-        private string tortoiseHGProcPath;
-        private bool enableSVN;
-        private bool enableGIT;
-        private bool enableHG;
+        string gitPath;
+        string svnPath;
+        string hgPath;
+        string tortoiseSVNProcPath;
+        string tortoiseGitProcPath;
+        string tortoiseHGProcPath;
+        bool enableSVN;
+        bool enableGIT;
+        bool enableHG;
 
 
         [DefaultValue(false)]

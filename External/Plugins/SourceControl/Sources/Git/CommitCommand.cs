@@ -1,32 +1,39 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Git
 {
-    class CommitCommand : BaseCommand
+    internal class CommitCommand : BaseCommand
     {
         readonly string workingDirectory;
+        readonly string message;
+        readonly string[] files;
         string commitArgs;
 
         public CommitCommand(string[] files, string message, string workingDir)
         {
-            if (workingDir is null) return;
+            this.files = files;
+            this.message = message;
             workingDirectory = workingDir;
+        }
+
+        public CommitCommand(string[] paths, string message) : this(null, message, Path.GetDirectoryName(SafeGet(paths, 0)))
+        {
+        }
+
+        public override void Run()
+        {
+            if (workingDirectory is null) return;
 
             //add the files first to make sure untracked files can be committed
             var fileArgs = "";
             if (files != null)
                 foreach (var file in files)
-                    if(File.Exists(file) || Directory.Exists(file))
-                        fileArgs += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
+                    if (File.Exists(file) || Directory.Exists(file))
+                        fileArgs += " \"" + VCHelper.GetRelativePath(file, workingDirectory) + "\"";
 
             commitArgs = "commit" + fileArgs + " -m \"" + VCHelper.EscapeCommandLine(message) + "\"";
-            if (!string.IsNullOrEmpty(fileArgs)) Run("add" + fileArgs, workingDir);
-            else Run(commitArgs, workingDir);
-        }
-
-        public CommitCommand(IList<string> paths, string message) : this(null, message, Path.GetDirectoryName(SafeGet(paths, 0)))
-        {
+            if (!string.IsNullOrEmpty(fileArgs)) Run("add" + fileArgs, workingDirectory);
+            else Run(commitArgs, workingDirectory);
         }
 
         protected override void Runner_ProcessEnded(object sender, int exitCode)
@@ -40,9 +47,6 @@ namespace SourceControl.Sources.Git
             commitArgs = null;
         }
 
-        static T SafeGet<T>(IList<T> a, int i) where T : class
-        {
-            return a != null && a.Count > i ? a[i] : null;
-        }
+        static T? SafeGet<T>(T[] a, int i) where T : class => a != null && a.Length > i ? a[i] : null;
     }
 }

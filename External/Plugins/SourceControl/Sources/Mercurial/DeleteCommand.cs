@@ -5,15 +5,17 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class DeleteCommand : BaseCommand
+    internal class DeleteCommand : BaseCommand
     {
         readonly string[] paths;
 
-        public DeleteCommand(string[] paths)
+        public DeleteCommand(string[] paths) => this.paths = paths;
+
+        public override void Run()
         {
-            string args = "rm -f";
-            int count = 0;
-            foreach (string path in paths)
+            var args = "rm -f";
+            var count = 0;
+            foreach (var path in paths)
             {
                 if (Directory.Exists(path))
                 {
@@ -29,7 +31,7 @@ namespace SourceControl.Sources.Mercurial
                 args += " \"" + Path.GetFileName(path) + "\"";
                 count++;
             }
-            this.paths = paths;
+
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
         }
 

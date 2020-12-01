@@ -4,42 +4,37 @@ using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Mercurial
 {
-    class MercurialManager : IVCManager
+    internal class MercurialManager : IVCManager
     {
         public event VCManagerStatusChange OnChange;
 
         readonly Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        readonly IVCMenuItems menuItems = new MenuItems();
-        readonly IVCFileActions fileActions = new FileActions();
         readonly Regex reIgnore = new Regex("([/\\\\]\\.hg[/\\\\]|hg-checkexec)");
         bool ignoreDirty = false;
 
-        public IVCMenuItems MenuItems => menuItems;
-        public IVCFileActions FileActions => fileActions;
+        public IVCMenuItems MenuItems { get; } = new MenuItems();
+
+        public IVCFileActions FileActions { get; } = new FileActions();
 
         public MercurialManager()
         {
         }
 
-        public bool IsPathUnderVC(string path)
-        {
-            return Directory.Exists(Path.Combine(path, ".hg"));
-        }
+        public bool IsPathUnderVC(string path) => Directory.Exists(Path.Combine(path, ".hg"));
 
         public VCItemStatus GetOverlay(string path, string rootPath)
         {
-            StatusNode snode = FindNode(path, rootPath);
-            if (snode != null) return snode.Status;
-            return VCItemStatus.Unknown;
+            var snode = FindNode(path, rootPath);
+            return snode?.Status ?? VCItemStatus.Unknown;
         }
 
-        private StatusNode FindNode(string path, string rootPath)
+        StatusNode? FindNode(string path, string rootPath)
         {
             if (statusCache.ContainsKey(rootPath))
             {
-                Status status = statusCache[rootPath];
-                int len = path.Length;
-                int rlen = rootPath.Length + 1;
+                var status = statusCache[rootPath];
+                var len = path.Length;
+                var rlen = rootPath.Length + 1;
                 if (len < rlen) path = ".";
                 else path = path.Substring(rlen);
 
@@ -48,23 +43,23 @@ namespace SourceControl.Sources.Mercurial
             return null;
         }
 
-        public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
+        public List<VCStatusReport>? GetAllOverlays(string path, string rootPath)
         {
-            StatusNode root = FindNode(path, rootPath);
+            var root = FindNode(path, rootPath);
             if (root is null) return null;
 
-            List<StatusNode> children = new List<StatusNode>();
+            var children = new List<StatusNode>();
             GetChildren(root, children);
-            List<VCStatusReport> result = new List<VCStatusReport>();
-            foreach (StatusNode child in children)
+            var result = new List<VCStatusReport>();
+            foreach (var child in children)
                 result.Add(new VCStatusReport(GetNodePath(child, rootPath), child.Status));
             return result;
         }
 
-        private string GetNodePath(StatusNode child, string rootPath)
+        string GetNodePath(StatusNode child, string rootPath)
         {
-            char S = Path.DirectorySeparatorChar;
-            string path = "";
+            var S = Path.DirectorySeparatorChar;
+            var path = "";
             while (child != null && child.Name != ".")
             {
                 path = S + child.Name + path;
@@ -73,10 +68,10 @@ namespace SourceControl.Sources.Mercurial
             return rootPath + S + path;
         }
 
-        private void GetChildren(StatusNode node, List<StatusNode> result)
+        void GetChildren(StatusNode node, List<StatusNode> result)
         {
             if (node.Children is null) return;
-            foreach (StatusNode child in node.Children.Values)
+            foreach (var child in node.Children.Values)
             {
                 result.Add(child);
                 GetChildren(child, result);
@@ -90,6 +85,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 status = new Status(rootPath);
                 status.OnResult += Status_OnResult;
+                status.Run();
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -114,9 +110,8 @@ namespace SourceControl.Sources.Mercurial
             return false;
         }
 
-        public void Commit(string[] files, string message)
-        {
-            new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
-        }
+        public VCCommand Commit(string[] files, string message) => new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
+
+        public VCCommand Unstage(string file) => new UnstageCommand(file);
     }
 }

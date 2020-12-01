@@ -8,40 +8,26 @@ using ProjectManager.Helpers;
 
 namespace SourceControl.Sources.Git
 {
-    class MenuItems : IVCMenuItems
+    internal class MenuItems : IVCMenuItems
     {
         TreeNode[] currentNodes;
+        IVCManager currentManager;
 
         public TreeNode[] CurrentNodes { set => currentNodes = value; }
-        public IVCManager CurrentManager
-        {
-            set { }
-        }
+        public IVCManager CurrentManager { set => currentManager = value; }
 
         public ToolStripItem Update { get; }
-
         public ToolStripItem Commit { get; }
-
         public ToolStripItem Push { get; }
-
         public ToolStripItem ShowLog { get; }
-
         public ToolStripItem MidSeparator { get; }
-
         public ToolStripItem Annotate { get; }
-
         public ToolStripItem Diff { get; }
-
         public ToolStripItem DiffChange { get; }
-
         public ToolStripItem Add { get; }
-
         public ToolStripItem Ignore { get; }
-
         public ToolStripItem UndoAdd { get; }
-
         public ToolStripItem Revert { get; }
-
         public ToolStripItem EditConflict { get; }
 
         public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get; } = new Dictionary<ToolStripItem, VCMenuItemProperties>();
@@ -63,14 +49,15 @@ namespace SourceControl.Sources.Git
             EditConflict = new ToolStripMenuItem(TextHelper.GetString("Label.EditConflict"), PluginBase.MainForm.FindImage("196"), EditConflict_Click);
         }
 
-        private string GetPaths() => string.Join("*", GetPathsArray());
+        string GetPaths() => string.Join("*", GetPathsArray());
 
-        private string[] GetPathsArray()
+        string[] GetPathsArray()
         {
             var paths = new List<string>();
-            if (currentNodes is null) return paths.ToArray();
-            foreach (var node in currentNodes)
-                if (node is GenericNode treeNode) paths.Add(treeNode.BackingPath);
+            if (currentNodes != null)
+                foreach (var node in currentNodes)
+                    if (node is GenericNode) paths.Add((node as GenericNode).BackingPath);
+
             return paths.ToArray();
         }
 
@@ -78,7 +65,7 @@ namespace SourceControl.Sources.Git
 
         void Revert_Click(object sender, EventArgs e) => TortoiseProc.Execute("revert", GetPaths());
 
-        void UndoAdd_Click(object sender, EventArgs e) => new ResetCommand(GetPathsArray());
+        void UndoAdd_Click(object sender, EventArgs e) => new ResetCommand(GetPathsArray()).Run();
 
         void Add_Click(object sender, EventArgs e) => TortoiseProc.Execute("add", GetPaths());
 
@@ -88,7 +75,7 @@ namespace SourceControl.Sources.Git
         {
             if (currentNodes != null)
             {
-                new BlameCommand(((GenericNode) currentNodes[0]).BackingPath);
+                new BlameCommand(((GenericNode) currentNodes[0]).BackingPath).Run();
             }
         }
 
@@ -96,9 +83,10 @@ namespace SourceControl.Sources.Git
 
         void Diff_Click(object sender, EventArgs e)
         {
-            if (currentNodes is null || currentNodes.Length != 2) return;
-            string path1 = ((GenericNode) currentNodes[0]).BackingPath;
-            string path2 = ((GenericNode) currentNodes[1]).BackingPath;
+            if (currentNodes == null || currentNodes.Length != 2)
+                return;
+            var path1 = ((GenericNode) currentNodes[0]).BackingPath;
+            var path2 = ((GenericNode) currentNodes[1]).BackingPath;
             TortoiseProc.Execute("diff", path1, path2);
         }
 
@@ -110,9 +98,13 @@ namespace SourceControl.Sources.Git
         {
             var title = TextHelper.GetString("Label.Commit");
             var msg = TextHelper.GetString("Info.EnterMessage");
-            using var dialog = new LineEntryDialog(title, msg, "");
-            if (dialog.ShowDialog() != DialogResult.OK || dialog.Line == "") return;
-            new CommitCommand(GetPathsArray(), dialog.Line);
+            using (var led = new LineEntryDialog(title, msg, ""))
+            {
+                if (led.ShowDialog() != DialogResult.OK || led.Line == "")
+                    return;
+
+                new CommitCommand(GetPathsArray(), led.Line).Run();
+            }
         }
 
         void Update_Click(object sender, EventArgs e) => TortoiseProc.Execute("pull", GetPaths());

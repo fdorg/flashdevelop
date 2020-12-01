@@ -17,8 +17,8 @@ namespace SourceControl
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private bool ready;
+        string settingFilename;
+        bool ready;
 
         #region Required Properties
 
@@ -96,8 +96,8 @@ namespace SourceControl
                 // Catches Project change event and display the active project path
                 case EventType.Command:
                     if (!ready) return;
-                    DataEvent de = (DataEvent) e;
-                    string cmd = de.Action;
+                    var de = (DataEvent) e;
+                    var cmd = de.Action;
                     if (!cmd.StartsWithOrdinal("ProjectManager.")) return;
                     switch (cmd)
                     {
@@ -150,7 +150,7 @@ namespace SourceControl
                             break;
                         case ProjectManagerEvents.FilePasted: //ProjectFileActionsEvents.FilePaste
                             //cannot distinguish between copy and cut, so assume it was copied
-                            var files = de.Data as Hashtable;
+                            var files = (Hashtable) de.Data;
                             ProjectWatcher.HandleFileCopied((string)files["fromPath"], (string)files["toPath"]);
                             break;
 
@@ -182,7 +182,7 @@ namespace SourceControl
                         case ProjectManagerEvents.FileMoved:
                             try
                             {
-                                var file = de.Data as Hashtable;
+                                var file = (Hashtable) de.Data;
                                 ProjectWatcher.HandleFileMoved((string)file["fromPath"], (string)file["toPath"]);
                             }
                             catch (Exception ex)
@@ -329,7 +329,7 @@ namespace SourceControl
             // Try to find TortoiseProc path from program files
             if (SCSettings.TortoiseGITProcPath == "TortoiseGitProc.exe")
             {
-                string torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
+                var torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
                 if (File.Exists(torProcPath)) SCSettings.TortoiseGITProcPath = torProcPath;
             }
 
@@ -340,25 +340,25 @@ namespace SourceControl
             // Try to find svn path from: Tools/sliksvn/
             if (SCSettings.SVNPath == "svn.exe")
             {
-                string svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
+                var svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
                 if (PathHelper.ResolvePath(svnCmdPath) != null) SCSettings.SVNPath = svnCmdPath;
             }
             // Try to find sliksvn path from program files
             if (SCSettings.SVNPath == "svn.exe")
             {
-                string slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
+                var slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
                 if (File.Exists(slSvnPath)) SCSettings.SVNPath = slSvnPath;
             }
             // Try to find svn from TortoiseSVN
             if (SCSettings.SVNPath == "svn.exe")
             {
-                string torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
+                var torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
                 if (File.Exists(torSvnPath)) SCSettings.SVNPath = torSvnPath;
             }
             // Try to find TortoiseProc path from program files
             if (SCSettings.TortoiseSVNProcPath == "TortoiseProc.exe")
             {
-                string torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
+                var torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
                 if (File.Exists(torProcPath)) SCSettings.TortoiseSVNProcPath = torProcPath;
             }
 
@@ -375,7 +375,7 @@ namespace SourceControl
         /// <summary>
         /// 
         /// </summary>
-        private void CheckPathExists(string path, string name)
+        static void CheckPathExists(string path, string name)
         {
             if (string.IsNullOrEmpty(path)) return;
             if (!Path.IsPathRooted(path)) return;

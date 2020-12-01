@@ -4,23 +4,33 @@ using PluginCore.Managers;
 
 namespace SourceControl.Sources.Git
 {
-    class MoveCommand : BaseCommand
+    internal class MoveCommand : BaseCommand
     {
+        readonly string from;
+        readonly string to;
+
         public MoveCommand(string fromPath, string toPath)
         {
+            from = fromPath;
+            to = toPath;
+        }
+
+        public override void Run()
+        {
+            var toPath = to;
             // directly move empty dirs
-            if (Directory.Exists(fromPath) && Directory.GetFiles(fromPath).Length == 0)
+            if (Directory.Exists(from) && Directory.GetFiles(from).Length == 0)
             {
-                toPath = Path.Combine(toPath, Path.GetFileName(fromPath));
+                toPath = Path.Combine(to, Path.GetFileName(from));
                 if (Directory.Exists(toPath)) return;
-                try { Directory.Move(fromPath, toPath); }
+                try { Directory.Move(from, toPath); }
                 catch (Exception ex) { ErrorManager.ShowInfo(ex.Message); }
                 return;
             }
 
-            string args = $"mv \"{Path.GetFileName(fromPath)}\" \"{toPath}\"";
+            var args = $"mv \"{Path.GetFileName(from)}\" \"{toPath}\"";
 
-            Run(args, Path.GetDirectoryName(fromPath));
+            Run(args, Path.GetDirectoryName(from));
         }
     }
 }

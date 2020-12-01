@@ -45,7 +45,13 @@ namespace SourceControl.Sources
         /// <summary>
         /// Commits the given files with the given message
         /// </summary>
-        void Commit(string[] files, string message);
+        VCCommand Commit(string[] files, string message);
+
+        /// <summary>
+        /// Removes a file from the staging area
+        /// </summary>
+        /// <param name="file"></param>
+        VCCommand Unstage(string file);
     }
 
     /// <summary>
@@ -110,6 +116,7 @@ namespace SourceControl.Sources
         bool FileRename(string path, string newName);
         bool FileDelete(string[] paths, bool confirm);
         bool FileMove(string fromPath, string toPath);
+        void FileAfterMove(string fromPath, VCItemStatus status, string toPath);
 
         bool BuildProject();
         bool TestProject();

@@ -1,16 +1,22 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace SourceControl.Sources.Git
 {
-    class ResetCommand : BaseCommand
+    internal class ResetCommand : BaseCommand
     {
-        public ResetCommand(string[] paths)
+        readonly string args;
+        readonly string dir;
+
+        public ResetCommand(IReadOnlyList<string> paths)
         {
-            string args = "reset ";
-            foreach (string path in paths)
+            args = "reset ";
+            foreach (var path in paths)
                 args += " \"" + Path.GetFileName(path) + "\"";
 
-            Run(args, Path.GetDirectoryName(paths[0]));
+            dir = Path.GetDirectoryName(paths[0]);
         }
+
+        public override void Run() => Run(args, dir);
     }
 }
