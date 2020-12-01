@@ -39,10 +39,7 @@ namespace ASCompletion.Commands
         /// Return the path to the most recent Flash.exe 
         /// </summary>
         /// <returns></returns>
-        public static string FindFlashIDE()
-        {
-            return FindFlashIDE(false);
-        }
+        public static string FindFlashIDE() => FindFlashIDE(false);
 
         /// <summary>
         /// Return the path to the most recent Flash.exe 

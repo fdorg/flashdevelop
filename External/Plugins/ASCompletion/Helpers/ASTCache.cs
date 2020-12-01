@@ -360,7 +360,7 @@ namespace ASCompletion.Helpers
         /// by <paramref name="function"/>
         /// </summary>
         /// <returns>A Dictionary containing all pairs of ClassModels and MemberModels that were overridden by <paramref name="function"/></returns>
-        internal Dictionary<ClassModel, MemberModel> GetOverriddenClasses(ClassModel cls, MemberModel function)
+        internal Dictionary<ClassModel, MemberModel>? GetOverriddenClasses(ClassModel cls, MemberModel function)
         {
             if (cls.Extends.IsVoid()) return null;
             if ((function.Flags & FlagType.Function) == 0 || (function.Flags & FlagType.Override) == 0) return null;
