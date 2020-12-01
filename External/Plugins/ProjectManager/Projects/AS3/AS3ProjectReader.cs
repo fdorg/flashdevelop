@@ -81,16 +81,13 @@ namespace ProjectManager.Projects.AS3
 
                 if (mode != SwfAssetMode.Ignore)
                 {
-                    LibraryAsset asset = new LibraryAsset(project, path);
-                    asset.SwfMode = mode;
+                    var asset = new LibraryAsset(project, path) {SwfMode = mode};
                     project.SwcLibraries.Add(asset);
                 }
                 Read();
             }
             ReadEndElement();
-            string[] result = new string[elements.Count];
-            elements.CopyTo(result);
-            return result;
+            return elements.ToArray();
         }
 
         public void ReadLibraryAssets()

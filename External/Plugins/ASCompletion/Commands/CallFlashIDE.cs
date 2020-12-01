@@ -32,7 +32,8 @@ namespace ASCompletion.Commands
             @"C:\Program Files\Macromedia\Flash MX 2004\Flash.exe",
             @"C:\Program Files (x86)\Macromedia\Flash MX 2004\Flash.exe"
         };
-        private static DateTime lastRun;
+
+        static DateTime lastRun;
 
         /// <summary>
         /// Return the path to the most recent Flash.exe 

@@ -25,7 +25,7 @@ namespace ASCompletion.Settings
         protected bool smartTipsEnabled = DEFAULT_SMARTTIPS;
         protected bool javadocTagsEnabled = DEFAULT_JAVADOCS;
         protected string[] javadocTags = null;
-        private int descriptionLinesLimit = DEFAULT_MAXLINES;
+        int descriptionLinesLimit = DEFAULT_MAXLINES;
 
         [DisplayName("Enable Javadoc Tags")]
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.JavadocTagsEnabled"), DefaultValue(DEFAULT_JAVADOCS)]
@@ -76,17 +76,17 @@ namespace ASCompletion.Settings
         const string DEFAULT_SPACEDCHARS = ",;*+-=/%<>|&!^";
         const string DEFAULT_ADDSPACEAFTER = "if for while do catch with";
 
-        private bool disableAutoCloseBraces = DEFAULT_DISABLE_CLOSEBRACE;
-        private bool disableCodeReformat = DEFAULT_DISABLE_REFORMAT;
-        private bool reformatBraces = DEFAULT_REFORMAT_BRACES;
-        private bool disableKnownTypesColoring = DEFAULT_DISABLETYPESCOLORING;
-        private bool condenseWhitespace = DEFAULT_CONDENSE_WS;
-        private bool spaceBeforeFunctionCall = DEFAULT_SPACEBEFOREFUNCTIONCALL;
-        private int alwaysCompleteWordLength = DEFAULT_ALWAYSCOMPLETELENGTH;
-        private bool disableCallTip = DEFAULT_DISABLECALLTIP;
-        private string compactChars = DEFAULT_COMPACTCHARS;
-        private string spacedChars = DEFAULT_SPACEDCHARS;
-        private string addSpaceAfter = DEFAULT_ADDSPACEAFTER;
+        bool disableAutoCloseBraces = DEFAULT_DISABLE_CLOSEBRACE;
+        bool disableCodeReformat = DEFAULT_DISABLE_REFORMAT;
+        bool reformatBraces = DEFAULT_REFORMAT_BRACES;
+        bool disableKnownTypesColoring = DEFAULT_DISABLETYPESCOLORING;
+        bool condenseWhitespace = DEFAULT_CONDENSE_WS;
+        bool spaceBeforeFunctionCall = DEFAULT_SPACEBEFOREFUNCTIONCALL;
+        int alwaysCompleteWordLength = DEFAULT_ALWAYSCOMPLETELENGTH;
+        bool disableCallTip = DEFAULT_DISABLECALLTIP;
+        string compactChars = DEFAULT_COMPACTCHARS;
+        string spacedChars = DEFAULT_SPACEDCHARS;
+        string addSpaceAfter = DEFAULT_ADDSPACEAFTER;
 
         [DisplayName("Disable Auto-Close Blocks")]
         [LocalizedCategory("ASCompletion.Category.Helpers"), LocalizedDescription("ASCompletion.Description.DisableAutoCloseBraces"), 
@@ -194,7 +194,7 @@ namespace ASCompletion.Settings
 
         #region Flash IDE
 
-        private string pathToFlashIDE;
+        string pathToFlashIDE;
 
         [DisplayName("Path To Flash IDE")]
         [LocalizedCategory("ASCompletion.Category.FlashIDE"), LocalizedDescription("ASCompletion.Description.PathToFlashIDE")]
@@ -350,17 +350,17 @@ namespace ASCompletion.Settings
             })
         };
 
-        private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
-        private string[] eventListenersAutoRemove;
-        private string[] declarationModifierOrder;
-        private PropertiesGenerationLocations propertiesGenerationLocation;
-        private MethodsGenerationLocations methodsGenerationLocation;
-        private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
-        private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
-        private Brace[] addClosingBracesRules;
-        private bool generateScope = DEFAULT_GENERATE_SCOPE;
-        private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
-        private bool generateDefaultModifierDeclaration;
+        bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
+        string[] eventListenersAutoRemove;
+        string[] declarationModifierOrder;
+        PropertiesGenerationLocations propertiesGenerationLocation;
+        MethodsGenerationLocations methodsGenerationLocation;
+        string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
+        bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
+        Brace[] addClosingBracesRules;
+        bool generateScope = DEFAULT_GENERATE_SCOPE;
+        HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
+        bool generateDefaultModifierDeclaration;
 
         [DisplayName("Event Listeners Auto Remove")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.EventListenersAutoRemove")]

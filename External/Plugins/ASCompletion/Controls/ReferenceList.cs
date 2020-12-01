@@ -12,7 +12,7 @@ using Timer = System.Timers.Timer;
 
 namespace ASCompletion.Controls
 {
-    class ReferenceList
+    internal class ReferenceList
     {
         const int MinWidth = 150;
 
@@ -172,7 +172,7 @@ namespace ASCompletion.Controls
         }
     }
 
-    class Reference
+    internal class Reference
     {
         public string Type;
         public string File;

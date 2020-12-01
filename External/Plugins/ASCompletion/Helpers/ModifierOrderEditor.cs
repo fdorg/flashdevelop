@@ -7,7 +7,7 @@ using PluginCore.Controls;
 
 namespace ASCompletion.Helpers
 {
-    class ModifierOrderEditor : UITypeEditor
+    internal class ModifierOrderEditor : UITypeEditor
     {
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context) => UITypeEditorEditStyle.Modal;
 

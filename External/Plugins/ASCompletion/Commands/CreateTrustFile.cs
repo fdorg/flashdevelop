@@ -8,7 +8,7 @@ namespace ASCompletion.Commands
 {
     public class CreateTrustFile
     {
-        private const string FULLPATH = "{0}{1}Macromedia{1}Flash Player{1}#Security{1}FlashPlayerTrust";
+        const string FULLPATH = "{0}{1}Macromedia{1}Flash Player{1}#Security{1}FlashPlayerTrust";
         
         /// <summary>
         /// Executes the command and returns if the command was successful

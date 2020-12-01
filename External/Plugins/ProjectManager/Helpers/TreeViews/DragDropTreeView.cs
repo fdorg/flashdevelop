@@ -87,13 +87,13 @@ namespace System.Windows.Forms
             }
             else if (IsFileDrop(e.Data))
             {
-                TreeNode targetNode = GetNodeAt(PointToClient(new Point(e.X,e.Y)));
+                var targetNode = GetNodeAt(PointToClient(new Point(e.X,e.Y)));
                 targetNode = ChangeDropTarget(targetNode);
 
                 if (targetNode is null) return;
                 
                 // the data is in the form of an array of paths
-                Array aFiledrop = (Array)e.Data.GetData(DataFormats.FileDrop);
+                var aFiledrop = (Array)e.Data.GetData(DataFormats.FileDrop);
 
                 // make a string array
                 string[] paths = new string[aFiledrop.Length];
@@ -154,7 +154,7 @@ namespace System.Windows.Forms
         /// </summary>
         protected virtual TreeNode ChangeDropTarget(TreeNode targetNode) => targetNode;
 
-        static List<TreeNode> Simplify(List<TreeNode> nodes)
+        static List<TreeNode> Simplify(IReadOnlyCollection<TreeNode> nodes)
         {
             var result = nodes.ToList();
             foreach (var node1 in nodes)

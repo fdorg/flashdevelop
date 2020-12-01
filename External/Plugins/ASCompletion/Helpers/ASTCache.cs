@@ -416,7 +416,7 @@ namespace ASCompletion.Helpers
         }
     }
 
-    class CachedClassModel
+    internal class CachedClassModel
     {
         public HashSet<ClassModel> ConnectedClassModels = new HashSet<ClassModel>();
 
@@ -452,7 +452,7 @@ namespace ASCompletion.Helpers
         public CacheDictionary Overriding = new CacheDictionary();
     }
 
-    static class CacheHelper
+    internal static class CacheHelper
     {
         internal static HashSet<T> ToHashSet<T>(this IEnumerable<T> e)
         {

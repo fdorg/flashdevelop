@@ -499,11 +499,9 @@ namespace FileExplorer
         /// </summary>
         void SelectedPathSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (selectedPath.SelectedIndex != -1)
-            {
-                string path = selectedPath.SelectedItem.ToString();
-                if (Directory.Exists(path)) PopulateFileView(path);
-            }
+            if (selectedPath.SelectedIndex == -1) return;
+            var path = selectedPath.SelectedItem.ToString();
+            if (Directory.Exists(path)) PopulateFileView(path);
         }
 
         /// <summary>
@@ -511,25 +509,20 @@ namespace FileExplorer
         /// </summary>
         void SelectedPathKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.Handled = true;
-                string path = selectedPath.Text;
-                if (Directory.Exists(path))
-                {
-                    PopulateFileView(path);
-                }
-            }
+            if (e.KeyCode != Keys.Enter) return;
+            e.Handled = true;
+            var path = selectedPath.Text;
+            if (Directory.Exists(path)) PopulateFileView(path);
         }
 
         /// <summary>
         /// Gets a list of currectly selected files
         /// </summary>
-        string[] GetSelectedFiles()
+        string[]? GetSelectedFiles()
         {
-            int i = 0;
             if (fileView.SelectedItems.Count == 0) return null;
-            string[] files = new string[fileView.SelectedItems.Count];
+            var i = 0;
+            var files = new string[fileView.SelectedItems.Count];
             foreach (ListViewItem item in fileView.SelectedItems)
             {
                 files[i++] = item.Tag.ToString();
@@ -568,11 +561,7 @@ namespace FileExplorer
                 string[] data = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (Directory.Exists(path) && IsValidDropTarget(path, data))
                 {
-                    if (ModifierKeys == Keys.Control)
-                    {
-                        e.Effect = DragDropEffects.Copy;
-                    }
-                    else e.Effect = DragDropEffects.Move;
+                    e.Effect = ModifierKeys == Keys.Control ? DragDropEffects.Copy : DragDropEffects.Move;
                     HighlightSelectedItem(whereToMove);
                 }
                 else

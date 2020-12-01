@@ -1,6 +1,6 @@
 ﻿namespace ASCompletion.Completion
 {
-    static class CodeUtils
+    internal static class CodeUtils
     {
         /// <summary>
         /// Lookup type declaration keywords anywhere in the provided text

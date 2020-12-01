@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using ASCompletion.Context;
@@ -362,11 +363,7 @@ namespace ASCompletion.Model
         void DoScheduledOperations()
         {
             if (toExplore.Count == 0) return;
-            var _toExplore = new string[toExplore.Count];
-            for (int i = 0; i < _toExplore.Length; i++)
-            {
-                _toExplore[i] = toExplore[i];
-            }
+            var _toExplore = toExplore.ToArray();
             toExplore.Clear();
 
             var _toRemove = new List<string>(toRemove.Count);
@@ -378,14 +375,7 @@ namespace ASCompletion.Model
             // cleanup files
             foreach (string file in files.Keys)
             {
-                bool drop = false;
-                foreach (string remPath in _toRemove)
-                    if (file.StartsWithOrdinal(remPath))
-                    {
-                        //TraceManager.Add("drop: " + files[file].FileName);
-                        drop = true;
-                        break;
-                    }
+                var drop = _toRemove.Any(remPath => file.StartsWithOrdinal(remPath));
                 if (drop) continue;
 
                 FileModel model = files[file];
@@ -394,7 +384,7 @@ namespace ASCompletion.Model
                     var directoryName = System.IO.Path.GetDirectoryName(model.FileName);
                     if (!Directory.Exists(directoryName))
                     {
-                        string newRemPath = directoryName.ToUpper() + System.IO.Path.DirectorySeparatorChar;
+                        var newRemPath = directoryName.ToUpper() + System.IO.Path.DirectorySeparatorChar;
                         _toRemove.Add(newRemPath);
                     }
                     //TraceManager.Add("drop2: " + files[file].FileName);

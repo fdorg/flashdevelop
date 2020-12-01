@@ -416,7 +416,7 @@ namespace ASCompletion.Controls
 
         #region Initialization
 
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             colDelete.Image = PluginBase.MainForm.FindImage16("153", false);
             btnUp.Image = PluginBase.MainForm.FindImage16("74", false);

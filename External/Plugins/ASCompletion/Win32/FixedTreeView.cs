@@ -18,7 +18,7 @@ namespace System.Windows.Forms
         private ToolTip tip;
         private int px;
         private int py;*/
-        private TreeNode clickedNode;
+        TreeNode clickedNode;
 
         // disable the automatic tooltips
         /*protected override System.Windows.Forms.CreateParams CreateParams

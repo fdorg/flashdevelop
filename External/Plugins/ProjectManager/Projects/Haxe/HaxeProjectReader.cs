@@ -112,8 +112,7 @@ namespace ProjectManager.Projects.Haxe
 
         public void ReadLibraries()
         {
-            List<string> libraries = new List<string>();
-
+            var libraries = new List<string>();
             ReadStartElement("haxelib");
             while (Name == "library")
             {
@@ -121,9 +120,7 @@ namespace ProjectManager.Projects.Haxe
                 Read();
             }
             ReadEndElement();
-
-            project.CompilerOptions.Libraries = new string[libraries.Count];
-            libraries.CopyTo(project.CompilerOptions.Libraries);
+            project.CompilerOptions.Libraries = libraries.ToArray();
         }
 
         public void ReadBuildOptions()

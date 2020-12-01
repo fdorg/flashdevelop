@@ -208,8 +208,11 @@ namespace ASCompletion
                     // File management
                     //
                     case EventType.FileOpen:
-                        ApplyMarkers(PluginBase.MainForm.CurrentDocument.SplitSci1);
-                        ApplyMarkers(PluginBase.MainForm.CurrentDocument.SplitSci2);
+                        if (PluginBase.MainForm.CurrentDocument is {} tabbedDocument)
+                        {
+                            ApplyMarkers(tabbedDocument.SplitSci1);
+                            ApplyMarkers(tabbedDocument.SplitSci2);
+                        }
                         break;
 
                     case EventType.FileSave:
@@ -225,7 +228,7 @@ namespace ASCompletion
                         return;
 
                     case EventType.SyntaxDetect:
-                        // detect Actionscript language version
+                        // detect ActionScript language version
                         if (sci is null) return;
                         if (sci.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
@@ -284,13 +287,15 @@ namespace ASCompletion
                             {
                                 if (de.Data is Hashtable info)
                                 {
-                                    var setup = new ContextSetupInfos();
-                                    setup.Platform = (string)info["platform"];
-                                    setup.Lang = (string)info["lang"];
-                                    setup.Version = (string)info["version"];
-                                    setup.TargetBuild = (string)info["targetBuild"];
-                                    setup.Classpath = (string[])info["classpath"];
-                                    setup.HiddenPaths = (string[])info["hidden"];
+                                    var setup = new ContextSetupInfos
+                                    {
+                                        Platform = (string) info["platform"],
+                                        Lang = (string) info["lang"],
+                                        Version = (string) info["version"],
+                                        TargetBuild = (string) info["targetBuild"],
+                                        Classpath = (string[]) info["classpath"],
+                                        HiddenPaths = (string[]) info["hidden"]
+                                    };
                                     ASContext.SetLanguageClassPath(setup);
                                     if (setup.AdditionalPaths != null) // report custom classpath
                                         info["additional"] = setup.AdditionalPaths.ToArray();
@@ -316,9 +321,7 @@ namespace ASCompletion
                                     var context = ASContext.GetLanguageContext(info["language"] as string);
                                     if (info["cp"] is List<string> cp && context?.Settings != null)
                                     {
-                                        var pathes = new string[cp.Count];
-                                        cp.CopyTo(pathes);
-                                        context.Settings.UserClasspath = pathes;
+                                        context.Settings.UserClasspath = cp.ToArray();
                                     }
                                 }
                                 e.Handled = true;
@@ -488,7 +491,7 @@ namespace ASCompletion
                         // menu commands
                         case EventType.Command:
                             de = (DataEvent) e;
-                            var command = de.Action ?? "";
+                            var command = de.Action ?? string.Empty;
                             if (command.StartsWithOrdinal("ASCompletion."))
                             {
                                 var cmdData = de.Data as string;
@@ -496,7 +499,7 @@ namespace ASCompletion
                                 {
                                     // run MTASC
                                     case "ASCompletion.CustomBuild":
-                                        ASContext.Context.RunCMD(cmdData ?? "");
+                                        ASContext.Context.RunCMD(cmdData ?? string.Empty);
                                         e.Handled = true;
                                         break;
 
@@ -975,7 +978,7 @@ namespace ASCompletion
         /// </summary>
         public void MakeIntrinsic(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.IsEditable)
+            if (PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable)
                 ASContext.Context.MakeIntrinsic(null);
         }
 
@@ -1000,7 +1003,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
-        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
+        static void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Back From Declaration or Type Declaration
@@ -1045,14 +1048,13 @@ namespace ASCompletion
                 }
 
                 var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
-                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
-
                 if (sci1 != null)
                 {
                     sci1.MarkerDeleteAll(MarkerUp);
                     sci1.MarkerDeleteAll(MarkerDown);
                     sci1.MarkerDeleteAll(MarkerUpDown);
                 }
+                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
                 if (sci2 != null)
                 {
                     sci2.MarkerDeleteAll(MarkerUp);
@@ -1208,8 +1210,7 @@ namespace ASCompletion
         {
             var doc = PluginBase.MainForm.CurrentDocument;
             var isValid = false;
-
-            if (doc.SciControl is { } sci)
+            if (doc?.SciControl is { } sci)
             {
                 if (currentDoc == sci.FileName)
                 {
@@ -1222,7 +1223,6 @@ namespace ASCompletion
                 if (isValid) ASComplete.ResolveContext(sci);
             }
             else ASComplete.ResolveContext(null);
-            
             var enableItems = isValid && !doc.IsUntitled;
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);

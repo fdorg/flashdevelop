@@ -96,7 +96,7 @@ namespace ProjectManager.Projects.AS3
                 }
                 api.Add("Library\\AS3\\frameworks\\Flex" + target);
             }
-            var projectAdditional = project.CompilerOptions.Additional ?? new string[0];
+            var projectAdditional = project.CompilerOptions.Additional ?? Array.Empty<string>();
             var fbAdditional = additional.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             if (fbAdditional.Length > 0)
             {
@@ -272,8 +272,8 @@ namespace ProjectManager.Projects.AS3
             }
             else
                 themeFile = Path.Combine(themeLocation, themeFile);
-            
-            var additional = project.CompilerOptions.Additional ?? new string[] { };
+
+            var additional = project.CompilerOptions.Additional ?? Array.Empty<string>();
             Array.Resize(ref additional, additional.Length + 1);
 
             additional[additional.Length - 1] = "-theme" + (GetAttribute("themeIsDefault") == "false" ? "+=" : "=") + PathHelper.GetShortPathName(themeFile);

@@ -308,7 +308,7 @@ namespace ProjectManager.Projects.Haxe
                 if (saveHXML && OutputType != OutputType.CustomBuild)
                 {
                     var hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
-                    foreach(var line in BuildHXML(new string[0], OutputPath,true))
+                    foreach(var line in BuildHXML(Array.Empty<string>(), OutputPath,true))
                         hxml.WriteLine(line);
                     hxml.Close();
                 }
