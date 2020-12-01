@@ -17,7 +17,7 @@ namespace SourceControl.Sources.Git
         StatusNode temp;
         string dirty;
         string updatingPath;
-        Ignores ignores;
+        readonly Ignores ignores;
 
         public Status(string path)
         {
@@ -94,7 +94,7 @@ namespace SourceControl.Sources.Git
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
         protected override void Runner_Output(object sender, string line)

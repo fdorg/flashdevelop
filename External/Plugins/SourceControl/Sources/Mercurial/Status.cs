@@ -17,7 +17,7 @@ namespace SourceControl.Sources.Mercurial
         StatusNode temp;
         string dirty;
         string updatingPath;
-        Ignores ignores;
+        readonly Ignores ignores;
 
         public Status(string path)
         {
@@ -79,10 +79,7 @@ namespace SourceControl.Sources.Mercurial
             return true;
         }
 
-        public override void Run()
-        {
-            throw new NotImplementedException();
-        }
+        public override void Run() => throw new NotImplementedException();
 
         protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
@@ -94,7 +91,7 @@ namespace SourceControl.Sources.Mercurial
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
         protected override void Runner_Output(object sender, string line)
@@ -154,7 +151,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 var child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }
@@ -167,8 +164,8 @@ namespace SourceControl.Sources.Mercurial
         {
             var p = path.IndexOf(Path.DirectorySeparatorChar);
             if (p < 0) return AddChild(path, status, true);
-            else if (p == path.Length - 1) return AddChild(path.Substring(0, path.Length - 1), status, true);
-            else return AddChild(path.Substring(0, p), status, false)
+            if (p == path.Length - 1) return AddChild(path.Substring(0, path.Length - 1), status, true);
+            return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 
@@ -192,13 +189,11 @@ namespace SourceControl.Sources.Mercurial
                 else status = VCItemStatus.UpToDate;
             }
 
-            var node = new StatusNode(name, status);
-            node.Parent = this;
+            var node = new StatusNode(name, status) {Parent = this};
             if (!HasChildren)
             {
                 HasChildren = true;
-                Children = new Dictionary<string, StatusNode>();
-                Children.Add(name, node);
+                Children = new Dictionary<string, StatusNode> {{name, node}};
             }
             else if (Children.ContainsKey(name))
             {

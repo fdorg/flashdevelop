@@ -53,7 +53,7 @@ namespace SourceControl.Managers
             catch { }
         }
 
-        internal WatcherVCResult ResolveVC(string path, bool andStatus)
+        internal WatcherVCResult? ResolveVC(string path, bool andStatus)
         {
             var result = ResolveVC(path);
             if (result != null && andStatus)
@@ -62,7 +62,7 @@ namespace SourceControl.Managers
             return result;
         }
 
-        internal WatcherVCResult ResolveVC(string path)
+        internal WatcherVCResult? ResolveVC(string path)
         {
             foreach (var watcher in watchers.Keys)
                 if (path.StartsWithOrdinal(watcher.Path))

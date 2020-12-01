@@ -6,10 +6,7 @@ namespace SourceControl.Sources.Mercurial
     {
         readonly string path;
 
-        public AddCommand(string path)
-        {
-            this.path = path;
-        }
+        public AddCommand(string path) => this.path = path;
 
         public override void Run()
         {

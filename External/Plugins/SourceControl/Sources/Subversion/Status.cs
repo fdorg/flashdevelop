@@ -67,7 +67,7 @@ namespace SourceControl.Sources.Subversion
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
         protected override void Runner_Output(object sender, string line)
@@ -80,14 +80,19 @@ namespace SourceControl.Sources.Subversion
             var s = VCItemStatus.Unknown;
             if (c0 == '?') return;
             if (c0 == 'M' || c1 == 'M') s = VCItemStatus.Modified;
-            else if (c0 == 'I') s = VCItemStatus.Ignored;
-            else if (c0 == ' ') s = VCItemStatus.UpToDate;
-            else if (c0 == 'A') s = VCItemStatus.Added;
-            else if (c0 == 'D') s = VCItemStatus.Deleted;
-            else if (c0 == 'C') s = VCItemStatus.Conflicted;
-            else if (c0 == 'R') s = VCItemStatus.Replaced;
-            else if (c0 == 'X') s = VCItemStatus.External;
-            else if (c0 == '!') s = VCItemStatus.Missing;
+            else
+                s = c0 switch
+                {
+                    'I' => VCItemStatus.Ignored,
+                    ' ' => VCItemStatus.UpToDate,
+                    'A' => VCItemStatus.Added,
+                    'D' => VCItemStatus.Deleted,
+                    'C' => VCItemStatus.Conflicted,
+                    'R' => VCItemStatus.Replaced,
+                    'X' => VCItemStatus.External,
+                    '!' => VCItemStatus.Missing,
+                    _ => s
+                };
 
             if (s != VCItemStatus.Unknown)
             {

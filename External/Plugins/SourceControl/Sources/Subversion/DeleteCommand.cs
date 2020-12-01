@@ -7,10 +7,7 @@ namespace SourceControl.Sources.Subversion
     {
         readonly string[] paths;
 
-        public DeleteCommand(string[] paths)
-        {
-            this.paths = paths;
-        }
+        public DeleteCommand(string[] paths) => this.paths = paths;
 
         public override void Run()
         {
@@ -24,7 +21,6 @@ namespace SourceControl.Sources.Subversion
         protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             base.Runner_ProcessEnded(sender, exitCode);
-
             ProjectWatcher.HandleFilesDeleted(paths);
         }
     }

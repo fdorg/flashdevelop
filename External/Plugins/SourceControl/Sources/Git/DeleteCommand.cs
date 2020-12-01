@@ -9,11 +9,8 @@ namespace SourceControl.Sources.Git
     {
         readonly string[] paths;
 
-        public DeleteCommand(string[] paths)
-        {
-            this.paths = paths;
-        }
-        
+        public DeleteCommand(string[] paths) => this.paths = paths;
+
         public override void Run()
         {
             var args = "rm -f";

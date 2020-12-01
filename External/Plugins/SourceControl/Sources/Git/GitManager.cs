@@ -16,10 +16,7 @@ namespace SourceControl.Sources.Git
 
         public IVCFileActions FileActions { get; } = new FileActions();
 
-        public bool IsPathUnderVC(string path)
-        {
-            return Directory.Exists(Path.Combine(path, ".git"));
-        }
+        public bool IsPathUnderVC(string path) => Directory.Exists(Path.Combine(path, ".git"));
 
         public VCItemStatus GetOverlay(string path, string rootPath)
         {
@@ -27,7 +24,7 @@ namespace SourceControl.Sources.Git
             return snode?.Status ?? VCItemStatus.Ignored;
         }
 
-        StatusNode FindNode(string path, string rootPath)
+        StatusNode? FindNode(string path, string rootPath)
         {
             if (statusCache.ContainsKey(rootPath))
             {
@@ -42,7 +39,7 @@ namespace SourceControl.Sources.Git
             return null;
         }
 
-        public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
+        public List<VCStatusReport>? GetAllOverlays(string path, string rootPath)
         {
             var root = FindNode(path, rootPath);
             if (root is null) return null;
@@ -55,7 +52,7 @@ namespace SourceControl.Sources.Git
             return result;
         }
 
-        string GetNodePath(StatusNode child, string rootPath)
+        static string GetNodePath(StatusNode child, string rootPath)
         {
             var S = Path.DirectorySeparatorChar;
             var path = "";
@@ -67,7 +64,7 @@ namespace SourceControl.Sources.Git
             return rootPath + S + path;
         }
 
-        void GetChildren(StatusNode node, ICollection<StatusNode> result)
+        static void GetChildren(StatusNode node, ICollection<StatusNode> result)
         {
             if (node.Children is null) return;
             foreach (var child in node.Children.Values)

@@ -35,22 +35,18 @@ namespace SourceControl.Sources.Subversion
             return VCItemStatus.Unknown;
         }
 
-        StatusNode FindNode(string path, string rootPath)
+        StatusNode? FindNode(string path, string rootPath)
         {
-            if (statusCache.ContainsKey(rootPath))
-            {
-                var status = statusCache[rootPath];
-                var len = path.Length;
-                var rlen = rootPath.Length + 1;
-                if (len < rlen) path = ".";
-                else path = path.Substring(rlen);
-
-                return status.Get(path);
-            }
-            return null;
+            if (!statusCache.ContainsKey(rootPath)) return null;
+            var status = statusCache[rootPath];
+            var len = path.Length;
+            var rlen = rootPath.Length + 1;
+            if (len < rlen) path = ".";
+            else path = path.Substring(rlen);
+            return status.Get(path);
         }
 
-        public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
+        public List<VCStatusReport>? GetAllOverlays(string path, string rootPath)
         {
             var root = FindNode(path, rootPath);
             if (root is null) return null;
@@ -63,7 +59,7 @@ namespace SourceControl.Sources.Subversion
             return result;
         }
 
-        string GetNodePath(StatusNode child, string rootPath)
+        static string GetNodePath(StatusNode child, string rootPath)
         {
             var S = Path.DirectorySeparatorChar;
             var path = "";
@@ -75,7 +71,7 @@ namespace SourceControl.Sources.Subversion
             return rootPath + S + path;
         }
 
-        void GetChildren(StatusNode node, List<StatusNode> result)
+        static void GetChildren(StatusNode node, ICollection<StatusNode> result)
         {
             if (node.Children is null) return;
             foreach (var child in node.Children.Values)

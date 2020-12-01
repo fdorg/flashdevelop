@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.IO;
 
 namespace SourceControl.Sources.Mercurial
@@ -48,9 +49,6 @@ namespace SourceControl.Sources.Mercurial
             commitArgs = null;
         }
 
-        static T SafeGet<T>(T[] a, int i) where T : class
-        {
-            return a != null && a.Length > i ? a[i] : null;
-        }
+        static T SafeGet<T>(IReadOnlyList<T> a, int i) where T : class => a != null && a.Count > i ? a[i] : null;
     }
 }

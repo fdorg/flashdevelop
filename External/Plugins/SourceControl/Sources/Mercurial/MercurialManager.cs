@@ -8,32 +8,27 @@ namespace SourceControl.Sources.Mercurial
     {
         public event VCManagerStatusChange OnChange;
 
-        Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        IVCMenuItems menuItems = new MenuItems();
-        IVCFileActions fileActions = new FileActions();
-        Regex reIgnore = new Regex("([/\\\\]\\.hg[/\\\\]|hg-checkexec)");
+        readonly Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
+        readonly Regex reIgnore = new Regex("([/\\\\]\\.hg[/\\\\]|hg-checkexec)");
         bool ignoreDirty = false;
 
-        public IVCMenuItems MenuItems { get { return menuItems; } }
-        public IVCFileActions FileActions { get { return fileActions; } }
+        public IVCMenuItems MenuItems { get; } = new MenuItems();
+
+        public IVCFileActions FileActions { get; } = new FileActions();
 
         public MercurialManager()
         {
         }
 
-        public bool IsPathUnderVC(string path)
-        {
-            return Directory.Exists(Path.Combine(path, ".hg"));
-        }
+        public bool IsPathUnderVC(string path) => Directory.Exists(Path.Combine(path, ".hg"));
 
         public VCItemStatus GetOverlay(string path, string rootPath)
         {
             var snode = FindNode(path, rootPath);
-            if (snode != null) return snode.Status;
-            else return VCItemStatus.Unknown;
+            return snode?.Status ?? VCItemStatus.Unknown;
         }
 
-        StatusNode FindNode(string path, string rootPath)
+        StatusNode? FindNode(string path, string rootPath)
         {
             if (statusCache.ContainsKey(rootPath))
             {
@@ -48,7 +43,7 @@ namespace SourceControl.Sources.Mercurial
             return null;
         }
 
-        public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
+        public List<VCStatusReport>? GetAllOverlays(string path, string rootPath)
         {
             var root = FindNode(path, rootPath);
             if (root is null) return null;
@@ -89,7 +84,7 @@ namespace SourceControl.Sources.Mercurial
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(Status_OnResult);
+                status.OnResult += Status_OnResult;
                 status.Run();
                 statusCache[rootPath] = status;
             }
@@ -101,7 +96,7 @@ namespace SourceControl.Sources.Mercurial
         void Status_OnResult(Status status)
         {
             ignoreDirty = false;
-            if (OnChange != null) OnChange(this);
+            OnChange?.Invoke(this);
         }
 
         public bool SetPathDirty(string path, string rootPath)

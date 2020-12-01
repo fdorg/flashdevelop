@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace SourceControl.Sources.Git
 {
@@ -7,7 +8,7 @@ namespace SourceControl.Sources.Git
         readonly string args;
         readonly string dir;
 
-        public ResetCommand(string[] paths)
+        public ResetCommand(IReadOnlyList<string> paths)
         {
             args = "reset ";
             foreach (var path in paths)

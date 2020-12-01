@@ -150,7 +150,7 @@ namespace SourceControl
                             break;
                         case ProjectManagerEvents.FilePasted: //ProjectFileActionsEvents.FilePaste
                             //cannot distinguish between copy and cut, so assume it was copied
-                            var files = de.Data as Hashtable;
+                            var files = (Hashtable) de.Data;
                             ProjectWatcher.HandleFileCopied((string)files["fromPath"], (string)files["toPath"]);
                             break;
 
@@ -182,7 +182,7 @@ namespace SourceControl
                         case ProjectManagerEvents.FileMoved:
                             try
                             {
-                                var file = de.Data as Hashtable;
+                                var file = (Hashtable) de.Data;
                                 ProjectWatcher.HandleFileMoved((string)file["fromPath"], (string)file["toPath"]);
                             }
                             catch (Exception ex)

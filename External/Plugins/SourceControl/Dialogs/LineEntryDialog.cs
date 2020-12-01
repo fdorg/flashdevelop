@@ -200,10 +200,6 @@ namespace SourceControl.Dialogs
             }
         }
 
-        public void SelectRange(int start, int length)
-        {
-            lineBox.Select(start, length);
-        }
+        public void SelectRange(int start, int length) => lineBox.Select(start, length);
     }
-
 }

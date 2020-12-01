@@ -47,9 +47,6 @@ namespace SourceControl.Sources.Git
             commitArgs = null;
         }
 
-        static T SafeGet<T>(T[] a, int i) where T : class
-        {
-            return a != null && a.Length > i ? a[i] : null;
-        }
+        static T? SafeGet<T>(T[] a, int i) where T : class => a != null && a.Length > i ? a[i] : null;
     }
 }

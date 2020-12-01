@@ -72,7 +72,7 @@ namespace SourceControl.Managers
             TreeContextMenuUpdate.SetMenu(currentTree, state);
         }
 
-        void ResetNodes(IEnumerable nodes)
+        static void ResetNodes(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
@@ -171,10 +171,7 @@ namespace SourceControl.Managers
                 map.Clear();
         }
 
-        static void AddOverlay(VCItemStatus status)
-        {
-            maps.Add(status, new OverlayMap());
-        }
+        static void AddOverlay(VCItemStatus status) => maps.Add(status, new OverlayMap());
 
         public static void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
         {

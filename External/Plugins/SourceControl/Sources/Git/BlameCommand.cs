@@ -13,17 +13,11 @@ namespace SourceControl.Sources.Git
         LinkedList<string> outputLines;
         bool running;
 
-        public BlameCommand(string file)
-        {
-            fileName = file;
-        }
+        public BlameCommand(string file) => fileName = file;
 
         public override void Run()
         {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                Dispose();
-            }
+            if (string.IsNullOrEmpty(fileName)) Dispose();
             else
             {
                 running = false;

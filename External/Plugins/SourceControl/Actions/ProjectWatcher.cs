@@ -377,10 +377,9 @@ namespace SourceControl.Actions
                 manager.Commit(commitBoth ? new[] { from, to } : new []{ to }, message);
         }
 
-        static string GetRelativeFile(string file)
-        {
-            return PluginBase.CurrentProject != null ? PluginBase.CurrentProject.GetRelativePath(file) : file;
-        }
+        static string GetRelativeFile(string file) => PluginBase.CurrentProject != null
+            ? PluginBase.CurrentProject.GetRelativePath(file)
+            : file;
 
         static string AskForCommit(string message)
         {
@@ -400,7 +399,7 @@ namespace SourceControl.Actions
         }
     }
 
-    internal class UnsafeOperationException:Exception
+    internal class UnsafeOperationException : Exception
     {
         public UnsafeOperationException(string message)
             : base(message)
