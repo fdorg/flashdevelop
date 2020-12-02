@@ -583,7 +583,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public static byte[] ConvertToArray(string str)
         {
             if ( str is null ) {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             
             return Encoding.GetEncoding(DefaultCodePage).GetBytes(str);
@@ -600,7 +600,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public static byte[] ConvertToArray(int flags, string str)
         {
             if (str is null) {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             if ((flags & (int)GeneralBitFlags.UnicodeText) != 0) {

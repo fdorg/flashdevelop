@@ -148,7 +148,7 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         public byte[] GetAuthCode() {
             // We usually don't get advance notice of final block. Hash requres a TransformFinal.
             if (!_finalised) {
-                byte[] dummy = new byte[0];
+                byte[] dummy = Array.Empty<byte>();
                 _hmacsha1.TransformFinalBlock(dummy, 0, 0);
                 _finalised = true;
             }

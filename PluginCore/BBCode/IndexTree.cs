@@ -234,7 +234,7 @@ namespace PluginCore.BBCode
                                              null );
 
             if (tree.data != null && tree.data.GetType().GetMethod("clone") != null)
-                clone.data = tree.data.GetType().InvokeMember("clone", BindingFlags.InvokeMethod, null, tree.data, new object[] { });
+                clone.data = tree.data.GetType().InvokeMember("clone", BindingFlags.InvokeMethod, null, tree.data, System.Array.Empty<object>());
 
             int i = -1;
             int l = tree.nodes.Count;

@@ -491,7 +491,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                     throw;
                 }
             } else {
-                entries_ = new ZipEntry[0];
+                entries_ = Array.Empty<ZipEntry>();
                 isNewArchive_ = true;
             }
         }
@@ -501,7 +501,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         internal ZipFile()
         {
-            entries_ = new ZipEntry[0];
+            entries_ = Array.Empty<ZipEntry>();
             isNewArchive_ = true;
         }
         
@@ -2055,7 +2055,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 baseStream_.Write(centralExtraData, 0, centralExtraData.Length);
             }
 
-            byte[] rawComment = (entry.Comment != null) ? Encoding.ASCII.GetBytes(entry.Comment) : new byte[0];
+            byte[] rawComment = (entry.Comment != null) ? Encoding.ASCII.GetBytes(entry.Comment) : Array.Empty<byte>();
 
             if ( rawComment.Length > 0 ) {
                 baseStream_.Write(rawComment, 0, rawComment.Length);
@@ -2914,7 +2914,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             if ( !isDisposed_ ) {
                 isDisposed_ = true;
-                entries_ = new ZipEntry[0];
+                entries_ = Array.Empty<ZipEntry>();
                         
                 if ( IsStreamOwner && (baseStream_ != null) ) {
                     lock(baseStream_) {
