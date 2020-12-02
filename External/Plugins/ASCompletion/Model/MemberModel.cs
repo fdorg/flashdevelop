@@ -178,9 +178,9 @@ namespace ASCompletion.Model
             return string.Compare(Name, to.Name, false);
         }
 
-        public static string FormatType(string type) => FormatType(type, false);
+        public static string? FormatType(string type) => FormatType(type, false);
 
-        public static string FormatType(string type, bool allowBBCode)
+        public static string? FormatType(string type, bool allowBBCode)
         {
             if (string.IsNullOrEmpty(type)) return null;
             var p = type.IndexOf('@');
@@ -270,7 +270,7 @@ namespace ASCompletion.Model
         /// <param name="mask">Flags mask</param>
         /// <param name="access">Visibility mask</param>
         /// <returns>First match</returns>
-        public MemberModel Search(string name, FlagType mask, Visibility access)
+        public MemberModel? Search(string name, FlagType mask, Visibility access)
         {
             var count = items.Count;
             for (var i = 0; i < count; i++)

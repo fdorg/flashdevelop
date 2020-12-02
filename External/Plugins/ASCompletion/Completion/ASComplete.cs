@@ -825,7 +825,7 @@ namespace ASCompletion.Completion
                 else result = new ASResult();
                 CurrentResolvedContext.Result = result;
 
-                Hashtable args = CurrentResolvedContext.Arguments;
+                var args = CurrentResolvedContext.Arguments;
                 string package = context.CurrentModel.Package;
                 args.Add("TypPkg", package);
 
@@ -982,7 +982,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">Control</param>
         /// <param name="eventAction"></param>
         /// <returns>Resolved element details</returns>
-        public static Hashtable ResolveElement(ScintillaControl sci, string eventAction)
+        public static Hashtable? ResolveElement(ScintillaControl sci, string eventAction)
         {
             if (CurrentResolvedContext is null) ResolveContext(sci);
             if (eventAction != null && !CurrentResolvedContext.Result.IsNull())

@@ -43,10 +43,7 @@ namespace ASCompletion.Model
         public string Comments;
         public ASMetaKind Kind = ASMetaKind.Unknown;
 
-        public ASMetaData(string name)
-        {
-            Name = name.Trim();
-        }
+        public ASMetaData(string name) => Name = name.Trim();
 
         public void ParseParams(string raw)
         {
@@ -143,15 +140,9 @@ namespace ASCompletion.Model
             }
         }
 
-        public FileModel()
-        {
-            Init("");
-        }
+        public FileModel() => Init("");
 
-        public FileModel(string fileName)
-        {
-            Init(fileName);
-        }
+        public FileModel(string fileName) => Init(fileName);
 
         public FileModel(string fileName, DateTime cacheLastWriteTime)
         {
@@ -174,7 +165,7 @@ namespace ASCompletion.Model
             Regions = new MemberList();
         }
 
-        public string GetBasePath()
+        public string? GetBasePath()
         {
             if (FileName.Length == 0) return null;
             
