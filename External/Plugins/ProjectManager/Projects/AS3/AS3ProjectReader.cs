@@ -88,9 +88,7 @@ namespace ProjectManager.Projects.AS3
                 Read();
             }
             ReadEndElement();
-            string[] result = new string[elements.Count];
-            elements.CopyTo(result);
-            return result;
+            return elements.ToArray();
         }
 
         public void ReadLibraryAssets()

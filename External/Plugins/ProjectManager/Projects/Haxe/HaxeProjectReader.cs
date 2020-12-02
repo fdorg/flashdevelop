@@ -122,8 +122,7 @@ namespace ProjectManager.Projects.Haxe
             }
             ReadEndElement();
 
-            project.CompilerOptions.Libraries = new string[libraries.Count];
-            libraries.CopyTo(project.CompilerOptions.Libraries);
+            project.CompilerOptions.Libraries = libraries.ToArray();
         }
 
         public void ReadBuildOptions()

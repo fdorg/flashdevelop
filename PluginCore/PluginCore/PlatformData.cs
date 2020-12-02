@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace PluginCore
@@ -67,8 +68,7 @@ namespace PluginCore
                         Name = Path.GetFileNameWithoutExtension(langDir),
                         Platforms = LoadPlatforms(langDir)
                     };
-                    lang.PlatformNames = new string[lang.Platforms.Count];
-                    lang.Platforms.Keys.CopyTo(lang.PlatformNames, 0);
+                    lang.PlatformNames = lang.Platforms.Keys.ToArray();
                     SupportedLanguages.Add(lang.Name.ToLower(), lang);
                 }
                 catch { }
@@ -124,10 +124,8 @@ namespace PluginCore
                 HaxeTarget = GetAttribute(node, "haxe-target"),
                 DebuggerSupported = GetList(node, "debugger"),
                 RawData = node,
-                VersionNames = new string[versions.Count],
+                VersionNames = versions.Select(it => it.Value).ToArray()
             };
-            for (int i = 0; i < platform.Versions.Count; i++)
-                platform.VersionNames[i] = platform.Versions[i].Value;
             return platform;
         }
 

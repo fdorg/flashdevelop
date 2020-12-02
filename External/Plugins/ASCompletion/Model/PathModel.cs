@@ -362,11 +362,7 @@ namespace ASCompletion.Model
         void DoScheduledOperations()
         {
             if (toExplore.Count == 0) return;
-            var _toExplore = new string[toExplore.Count];
-            for (int i = 0; i < _toExplore.Length; i++)
-            {
-                _toExplore[i] = toExplore[i];
-            }
+            var _toExplore = toExplore.ToArray();
             toExplore.Clear();
 
             var _toRemove = new List<string>(toRemove.Count);

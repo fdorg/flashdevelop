@@ -299,9 +299,8 @@ namespace PluginCore.Controls
             var items = new Item[selectedItems.Count];
             selectedItems.CopyTo(items, 0);
 
-            for (int i = 0; i < items.Length; i++)
+            foreach (var item in items)
             {
-                var item = items[i];
                 availableItems.Items.Remove(item);
                 usedItems.Items.Add(item);
             }
@@ -322,9 +321,8 @@ namespace PluginCore.Controls
             var items = new Item[selectedItems.Count];
             selectedItems.CopyTo(items, 0);
 
-            for (int i = 0; i < items.Length; i++)
+            foreach (var item in items)
             {
-                var item = items[i];
                 if (item.Locked) continue;
                 usedItems.Items.Remove(item);
                 availableItems.Items.Add(item);

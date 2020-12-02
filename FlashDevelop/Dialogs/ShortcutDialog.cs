@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using FlashDevelop.Managers;
 using PluginCore.Controls;
@@ -286,12 +287,7 @@ namespace FlashDevelop.Dialogs
         void InitializeShortcutListItems()
         {
             var collection = ShortcutManager.RegisteredItems.Values;
-            shortcutListItems = new ShortcutListItem[collection.Count];
-            int counter = 0;
-            foreach (var item in collection)
-            {
-                shortcutListItems[counter++] = new ShortcutListItem(item);
-            }
+            shortcutListItems = collection.Select(it => new ShortcutListItem(it)).ToArray();
             Array.Sort(shortcutListItems, new ShortcutListItemComparer());
             UpdateAllShortcutsConflicts();
         }
