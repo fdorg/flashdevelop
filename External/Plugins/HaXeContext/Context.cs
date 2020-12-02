@@ -1013,7 +1013,7 @@ namespace HaXeContext
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
                         if (member is null) continue;
-                        member = (MemberModel) member.Clone();
+                        member = member.Clone();
                         member.InFile = type.InFile;
                         imports[i] = member;
                     }
@@ -1086,7 +1086,7 @@ namespace HaXeContext
                         {
                             if (isUsing)
                             {
-                                c = (ClassModel) c.Clone();
+                                c = c.Clone();
                                 c.Flags |= FlagType.Using;
                             }
                             imports.Add(c);
@@ -1372,7 +1372,7 @@ namespace HaXeContext
             var reReplaceType = new Regex("\\b" + Tname + "\\b");
 
             // clone the type
-            aClass = (ClassModel) aClass.Clone();
+            aClass = aClass.Clone();
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
 
@@ -1493,7 +1493,7 @@ namespace HaXeContext
                                 if (file.FullPackage != import.Type) return true;
                                 foreach (var @class in file.Classes)
                                 {
-                                    var type = (ClassModel) @class.Clone();
+                                    var type = @class.Clone();
                                     type.Flags |= FlagType.Using;
                                     result.Merge(type);
                                 }
@@ -1527,7 +1527,7 @@ namespace HaXeContext
             if ((type.Flags & FlagType.Enum) != 0 && (type.Flags & FlagType.Abstract) == 0
                 && Context.ResolveType("haxe.EnumTools.EnumValueTools", null) is { } @using && !@using.IsVoid())
             {
-                @using = (ClassModel)@using.Clone();
+                @using = @using.Clone();
                 @using.Flags |= FlagType.Using;
                 imports.Add(@using);
             }
@@ -1558,7 +1558,7 @@ namespace HaXeContext
                                     || extensions.Contains(member.Name, 0, 0)
                                     || !CanBeExtended(extends, member, access)) continue;
                                 // transform `extensionMethod(target:Type, ...params)` to `extensionMethod(...params)`
-                                var extension = (MemberModel)member.Clone();
+                                var extension = member.Clone();
                                 extension.Parameters.RemoveAt(0);
                                 extension.Flags = FlagType.Dynamic | FlagType.Function | FlagType.Using;
                                 extension.InFile = import.InFile;
@@ -1570,7 +1570,7 @@ namespace HaXeContext
                 }
             }
             if (extensions.Count == 0) return false;
-            result = (ClassModel) type.Clone();
+            result = type.Clone();
             result.Members.Merge(extensions);
             return true;
             // Utils
@@ -1914,7 +1914,7 @@ namespace HaXeContext
                     }
                     if (member != null && (member.Access & TypesAffinity(Context.CurrentClass, type)) != 0)
                     {
-                        member = (MemberModel) member.Clone();
+                        member = member.Clone();
                         member.Name = "new";
                         result.Add(member);
                     }
@@ -2102,7 +2102,7 @@ namespace HaXeContext
                     var member = model.Members[i];
                     if (member.Type is null || model.InFile is null)
                     {
-                        member = (MemberModel) member.Clone();
+                        member = member.Clone();
                         member.Type = model.Type;
                         member.InFile = model.InFile;
                     }
@@ -2113,7 +2113,7 @@ namespace HaXeContext
             {
                 var meta = model.MetaDatas;
                 if (meta is null || meta.All(it => it.Name != ":enum")) return;
-                foreach (MemberModel member in model.Members)
+                foreach (var member in model.Members)
                 {
                     if (member.Flags.HasFlag(FlagType.Variable)) result.Add(member);
                 }

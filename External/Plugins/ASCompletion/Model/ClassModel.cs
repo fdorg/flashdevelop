@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using PluginCore;
@@ -170,7 +171,7 @@ namespace ASCompletion.Model
         [Obsolete("Please use (Flags & FlagType.Enum) != 0 or Flags.HasFlag(FlagType.Enum")]
         public bool IsEnum() => (Flags & FlagType.Enum) != 0;
 
-        public new object Clone()
+        public new ClassModel Clone()
         {
             var result = new ClassModel();
             result.Name = Name;
@@ -178,24 +179,17 @@ namespace ASCompletion.Model
             result.Flags = Flags;
             result.Access = Access;
             result.Namespace = Namespace;
-            if (Parameters != null)
-            {
-                result.Parameters = new List<MemberModel>();
-                foreach (var param in Parameters)
-                    result.Parameters.Add((MemberModel) param.Clone());
-            }
             result.Type = Type;
             result.Comments = Comments;
             result.InFile = InFile;
             result.Constructor = Constructor;
-            if (Implements != null) result.Implements = new List<string>(Implements);
             result.ExtendsType = ExtendsType;
             result.IndexType = IndexType;
-            result.Members = new MemberList();
-            foreach (MemberModel item in Members)
-                result.Members.Add((MemberModel) item.Clone());
+            result.Members = new MemberList(Members.Items.Select(it => it.Clone()));
             result.LineFrom = LineFrom;
             result.LineTo = LineTo;
+            if (Parameters != null) result.Parameters = Parameters.Select(it => it.Clone()).ToList();
+            if (Implements != null) result.Implements = new List<string>(Implements);
             if (MetaDatas != null)
             {
                 result.MetaDatas = new List<ASMetaData>();
@@ -219,7 +213,7 @@ namespace ASCompletion.Model
 
         public MemberModel ToMemberModel()
         {
-            var result = (ClassModel) Clone();
+            var result = Clone();
             result.Type = QualifiedName;
             result.IndexType = string.Empty;
             return result;
@@ -335,7 +329,7 @@ namespace ASCompletion.Model
                     MemberModel temp;
                     if ((property.Flags & FlagType.Getter) > 0)
                     {
-                        temp = (MemberModel)property.Clone();
+                        temp = property.Clone();
                         temp.Name = "get " + temp.Name;
                         temp.Flags = flags;
                         temp.Parameters = null;
@@ -356,7 +350,7 @@ namespace ASCompletion.Model
                     }
                     if ((property.Flags & FlagType.Setter) > 0)
                     {
-                        temp = (MemberModel)property.Clone();
+                        temp = property.Clone();
                         temp.Name = "set " + temp.Name;
                         temp.Flags = flags;
                         temp.Type = (InFile.Version == 3) ? "void" : "Void";

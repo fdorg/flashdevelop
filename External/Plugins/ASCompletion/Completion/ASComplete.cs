@@ -2077,7 +2077,7 @@ namespace ASCompletion.Completion
                  * If `inClass` is generic type with the concrete type explicit definition, like `Null<UserType>`,
                  * there can be problems in `inClass.ResolveExtends()` because `inClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
                  */
-                exprType = (ClassModel) exprType.Clone();
+                exprType = exprType.Clone();
                 if (expr.InFile != null && !ResolveType(extendsType, expr.InFile).IsVoid()) exprType.InFile = expr.InFile;
                 else exprType.InFile = ctx.CurrentModel;
                 exprType.ResolveExtends();
@@ -4972,7 +4972,7 @@ namespace ASCompletion.Completion
             // if completed a package-level member
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package.Length != 0)
             {
-                import = (MemberModel) context.Member.Clone();
+                import = context.Member.Clone();
                 import.Type = context.Member.InFile.Package + "." + import.Name;
             }
             // if not completed a type

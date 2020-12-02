@@ -53,28 +53,30 @@ namespace ASCompletion.Model
             }
         }
 
-        /// <inheritdoc />
-        public object Clone()
+        public MemberModel Clone()
         {
-            var result = new MemberModel();
-            result.Name = Name;
-            result.Template = Template;
-            result.Flags = Flags;
-            result.Access = Access;
-            result.Namespace = Namespace;
-            result.InFile = InFile;
-            result.IsPackageLevel = IsPackageLevel;
-            result.Parameters = Parameters?.Select(it => (MemberModel) it.Clone()).ToList();
-            result.Type = Type;
-            result.Comments = Comments;
-            result.Value = Value;
-            result.ValueEndPosition = ValueEndPosition;
-            result.LineFrom = LineFrom;
-            result.LineTo = LineTo;
-            result.StartPosition = StartPosition;
-            return result;
+            return new MemberModel
+            {
+                Name = Name,
+                Template = Template,
+                Flags = Flags,
+                Access = Access,
+                Namespace = Namespace,
+                InFile = InFile,
+                IsPackageLevel = IsPackageLevel,
+                Parameters = Parameters?.Select(it => it.Clone()).ToList(),
+                Type = Type,
+                Comments = Comments,
+                Value = Value,
+                ValueEndPosition = ValueEndPosition,
+                LineFrom = LineFrom,
+                LineTo = LineTo,
+                StartPosition = StartPosition
+            };
         }
-        
+
+        object ICloneable.Clone() => Clone();
+
         public override string ToString()
         {
             var result = FullName;
@@ -213,11 +215,8 @@ namespace ASCompletion.Model
         {
         }
 
-        public MemberList(IEnumerable<MemberModel> list)
-        {
-            Items.AddRange(list);
-        }
-        
+        public MemberList(IEnumerable<MemberModel> list) => Items.AddRange(list);
+
         public MemberModel this[int index]
         {
             get => items[index];

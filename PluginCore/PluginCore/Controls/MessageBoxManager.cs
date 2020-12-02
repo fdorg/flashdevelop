@@ -75,9 +75,9 @@ namespace System.Windows.Forms
             public IntPtr hwnd;
         };
 
-        static readonly HookProc hookProc;
-        static readonly EnumChildProc enumProc;
-        [ThreadStatic] static IntPtr hHook;
+        static readonly HookProc hookProc = MessageBoxHookProc;
+        static readonly EnumChildProc enumProc = MessageBoxEnumProc;
+        [ThreadStatic] static IntPtr hHook = IntPtr.Zero;
         [ThreadStatic] static int nButton;
 
         /// <summary>
@@ -108,13 +108,6 @@ namespace System.Windows.Forms
         /// No text
         /// </summary>
         public static string No = "&No";
-
-        static MessageBoxManager()
-        {
-            hookProc = MessageBoxHookProc;
-            enumProc = MessageBoxEnumProc;
-            hHook = IntPtr.Zero;
-        }
 
         /// <summary>
         /// Enables MessageBoxManager functionality
