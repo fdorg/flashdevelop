@@ -415,7 +415,7 @@ namespace HaXeContext.Generators
                 // for example: var foo<generator>:TParam1->TReturn;
                 if ((member.Flags & FlagType.Function) != 0)
                 {
-                    member = (MemberModel) member.Clone();
+                    member = member.Clone();
                     member.Type = ASContext.Context.CodeComplete.ToFunctionDeclarationString(member);
                 }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);

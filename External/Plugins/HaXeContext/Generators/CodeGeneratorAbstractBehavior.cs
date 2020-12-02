@@ -65,7 +65,7 @@ namespace HaXeContext.Generators
 
         protected override void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            var member = (MemberModel) found.Member?.Clone() ?? new MemberModel();
+            var member = found.Member?.Clone() ?? new MemberModel();
             member.Flags |= FlagType.Static;
             var label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateStaticVar");
             options.Add(new GeneratorItem(label, GeneratorJobType.Variable, member, found.InClass));

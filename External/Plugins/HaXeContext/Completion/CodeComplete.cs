@@ -482,7 +482,7 @@ namespace HaXeContext.Completion
                             realType = extends;
                             if (!string.IsNullOrEmpty(t.Extends.IndexType))
                             {
-                                realType = (ClassModel) realType.Clone();
+                                realType = realType.Clone();
                                 realType.IndexType = t.Extends.IndexType;
                             }
                             return false;
@@ -553,7 +553,7 @@ namespace HaXeContext.Completion
                     name = name.Substring(1);
                     if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
                 }
-                item = (MemberModel) item.Clone();
+                item = item.Clone();
                 item.Name = name;
                 item.Type = type;
                 model.Members.MergeByLine(item);
@@ -589,7 +589,7 @@ namespace HaXeContext.Completion
                 {
                     if (originConstructor != constructor.Name)
                     {
-                        constructor = (MemberModel) constructor.Clone();
+                        constructor = constructor.Clone();
                         constructor.Name = originConstructor;
                     }
                     expr.Member = constructor;
@@ -1336,7 +1336,7 @@ namespace HaXeContext.Completion
                 {
                     if (member.Name != inClass.Name)
                     {
-                        member = (MemberModel) member.Clone();
+                        member = member.Clone();
                         member.Name = inClass.Name;
                         inClass = type;
                     }
@@ -1494,11 +1494,11 @@ namespace HaXeContext.Completion
                 }
                 else if (result.Type.IndexType is { } indexType && FileParser.IsFunctionType(indexType))
                 {
-                    result.Member = (MemberModel) result.Member.Clone();
+                    result.Member = result.Member.Clone();
                     FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
                     result.Member.Name = "item";
                     result.Member.Flags |= FlagType.Function;
-                    result.Type = (ClassModel) Context.StubFunctionClass.Clone();
+                    result.Type = Context.StubFunctionClass.Clone();
                     result.Type.Parameters = result.Member.Parameters;
                     result.Type.Type = result.Member.Type;
                     return;
@@ -1545,7 +1545,7 @@ namespace HaXeContext.Completion
                             expressions.Add(expr);
                         }
                     }
-                    member = (MemberModel) member.Clone();
+                    member = member.Clone();
                     var templates = template.Substring(1, template.Length - 2).Split(',');
                     for (var i = 0; i < templates.Length; i++)
                     {
@@ -1577,7 +1577,7 @@ namespace HaXeContext.Completion
                                     newType = expr.Type.Name;
                                 }
                                 if (string.IsNullOrEmpty(newType)) continue;
-                                parameters[j] = (MemberModel) parameter.Clone();
+                                parameters[j] = parameter.Clone();
                                 parameters[j].Type = reTemplateType.Replace(parameterType, newType);
                             }
                         }
@@ -1664,7 +1664,7 @@ namespace HaXeContext.Completion
                      *     }
                      * }
                      */
-                    var clone = (MemberModel) member.Clone();
+                    var clone = member.Clone();
                     var type = TryInferGenericType(clone);
                     if (!type.IsVoid())
                     {

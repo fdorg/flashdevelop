@@ -588,7 +588,7 @@ namespace AS2Context
                 if (otherClass.IndexType == indexType) return otherClass;
 
             // clone the type
-            var aClass = (ClassModel) originalClass.Clone();
+            var aClass = originalClass.Clone();
             aClass.Name = baseType + "@" + indexType;
             aClass.IndexType = indexType;
 
@@ -1026,7 +1026,7 @@ namespace AS2Context
                                 count = model.Members.Count;
                                 for (var i = 0; i < count; i++)
                                 {
-                                    pModel.Members.Add(model.Members[i].Clone() as MemberModel);
+                                    pModel.Members.Add(model.Members[i].Clone());
                                 }
                             }
                             else if (package != prevPackage

@@ -851,7 +851,7 @@ namespace AS3Context
                         {
                             foreach (var member in aFile.Members)
                             {
-                                item = (MemberModel) member.Clone();
+                                item = member.Clone();
                                 item.Name = aFile.Package + "." + item.Name;
                                 fullList.Add(item);
                             }
@@ -860,7 +860,7 @@ namespace AS3Context
                         {
                             foreach (var member in aFile.Members)
                             {
-                                fullList.Add((MemberModel) member.Clone());
+                                fullList.Add(member.Clone());
                             }
                         }
                         return true;
@@ -1038,8 +1038,7 @@ namespace AS3Context
                 if (otherClass.IndexType == indexType) return otherClass;
 
             // clone the type
-            var aClass = (ClassModel) originalClass.Clone();
-
+            var aClass = originalClass.Clone();
             aClass.Name = baseType + ".<" + indexType + ">";
             aClass.IndexType = indexType;
 

@@ -45,7 +45,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Retrieves the content by persist string
         /// </summary>
-        static DockContent GetContentFromPersistString(string persistString)
+        static DockContent? GetContentFromPersistString(string persistString)
         {
             foreach (var pluginPanel in PluginPanels)
             {

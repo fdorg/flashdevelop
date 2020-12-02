@@ -35,20 +35,15 @@ namespace WeifenLuo.WinFormsUI
         string m_toolTipText = "";
         Color m_borderColor = Color.Empty;
 
-        public InertButton()
+        public InertButton() : this(null)
         {
-            InternalConstruct(null, null);
         }
 
-        public InertButton(Image imageEnabled)
+        public InertButton(Image imageEnabled) : this(imageEnabled, null)
         {
-            InternalConstruct(imageEnabled, null);
         }
 
-        public InertButton(Image imageEnabled, Image imageDisabled)
-        {
-            InternalConstruct(imageEnabled, imageDisabled);
-        }
+        public InertButton(Image imageEnabled, Image imageDisabled) => InternalConstruct(imageEnabled, imageDisabled);
 
         void InternalConstruct(Image imageEnabled, Image imageDisabled)
         {
@@ -69,17 +64,13 @@ namespace WeifenLuo.WinFormsUI
             // Should not be allowed to select this control
             SetStyle(ControlStyles.Selectable, false);
 
-            Timer = new Timer();
-            Timer.Enabled = false;
+            Timer = new Timer {Enabled = false};
             Timer.Tick += Timer_Tick;
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                components?.Dispose();
-            }
+            if (disposing) components?.Dispose();
             base.Dispose(disposing);
         }
 

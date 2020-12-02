@@ -7,15 +7,11 @@ namespace FlashDevelop.Managers
 {
     internal class TabbingManager
     {
-        public static Timer TabTimer;
+        public static Timer TabTimer = new Timer {Interval = 100};
         public static List<ITabbedDocument> TabHistory = new List<ITabbedDocument>();
         public static int SequentialIndex;
 
-        static TabbingManager()
-        {
-            TabTimer = new Timer {Interval = 100};
-            TabTimer.Tick += OnTabTimer;
-        }
+        static TabbingManager() => TabTimer.Tick += OnTabTimer;
 
         /// <summary>
         /// Checks to see if the Control key has been released

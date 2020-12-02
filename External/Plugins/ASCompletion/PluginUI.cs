@@ -870,7 +870,7 @@ namespace ASCompletion
                 var img = GetIcon(member.Flags, member.Access);
                 if (hasInference && string.IsNullOrEmpty(member.Type))
                 {
-                    member = (MemberModel) member.Clone();
+                    member = member.Clone();
                     ctx.CodeComplete.InferType(sci, member);
                 }
                 tree.Add(new MemberTreeNode(member, img));

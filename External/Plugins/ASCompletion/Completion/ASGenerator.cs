@@ -1459,7 +1459,7 @@ namespace ASCompletion.Completion
                 // for example: private var foo<generator>:Function/*(v1:*):void*/
                 if ((member.Flags & FlagType.Function) != 0)
                 {
-                    member = (MemberModel) member.Clone();
+                    member = member.Clone();
                     member.Type = ASContext.Context.CodeComplete.ToFunctionDeclarationString(member);
                 }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
@@ -1895,11 +1895,11 @@ namespace ASCompletion.Completion
             var start = mStart.Index + posStart + 1;
             var end = mStart.Index + posStart + mStart.Length;
             sci.SetSel(start, end);
-            var memberCopy = (MemberModel) member.Clone();
+            var memberCopy = member.Clone();
             memberCopy.Parameters ??= new List<MemberModel>();
             if ((contextMember.Flags & FlagType.Function) != 0 && contextMember.Parameters != null)
             {
-                var parameter = (MemberModel) contextMember.Clone();
+                var parameter = contextMember.Clone();
                 parameter.Type = ASContext.Context.CodeComplete.ToFunctionDeclarationString(parameter);
                 memberCopy.Parameters.Add(parameter);
             }
@@ -3924,7 +3924,7 @@ namespace ASCompletion.Completion
                 inClass.ResolveExtends();
                 foreach (var m in selectedMembers.Keys)
                 {
-                    var mCopy = (MemberModel) m.Clone();
+                    var mCopy = m.Clone();
                     var methodTemplate = NewLine;
                     var baseClassType = inClass;
                     if (baseClassType.ContainsMember(m.Name, FlagType.Function, true)) 

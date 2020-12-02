@@ -28,10 +28,8 @@ namespace FlashDevelop.Controls
                 var valueName = Path.GetFileName(Application.ExecutablePath);
                 var subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
                 var emu = Registry.CurrentUser.OpenSubKey(subKey, true);
-                {
-                    var value = emu.GetValue(valueName);
-                    if (value is null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
-                }
+                var value = emu.GetValue(valueName);
+                if (value is null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
             }
             catch { } // No errors please...
         }
