@@ -16,10 +16,6 @@ namespace PluginCore.Managers
         static bool snapshotInvalid;
         static readonly object eventLock = new object();
 
-        static EventManager()
-        {
-        }
-
         /// <summary>
         /// Adds an event handler with <see cref="HandlingPriority.Normal"/>.
         /// </summary>

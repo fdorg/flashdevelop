@@ -8,15 +8,13 @@ namespace FlashDevelop.Managers
     internal class TabbingManager
     {
         public static Timer TabTimer;
-        public static List<ITabbedDocument> TabHistory;
+        public static List<ITabbedDocument> TabHistory = new List<ITabbedDocument>();
         public static int SequentialIndex;
 
         static TabbingManager()
         {
             TabTimer = new Timer {Interval = 100};
             TabTimer.Tick += OnTabTimer;
-            TabHistory = new List<ITabbedDocument>();
-            SequentialIndex = 0;
         }
 
         /// <summary>

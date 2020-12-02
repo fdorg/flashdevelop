@@ -18,12 +18,7 @@ namespace WeifenLuo.WinFormsUI
 
         class RepeatClickEventArgs : EventArgs
         {
-            static RepeatClickEventArgs()
-            {
-                Empty = new RepeatClickEventArgs();
-            }
-
-            public new static RepeatClickEventArgs Empty { get; }
+            public new static RepeatClickEventArgs Empty { get; } = new RepeatClickEventArgs();
         }
 
         readonly IContainer components = new Container();

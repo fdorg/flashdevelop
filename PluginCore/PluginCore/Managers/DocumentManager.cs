@@ -7,10 +7,8 @@ namespace PluginCore.Managers
 {
     public class DocumentManager
     {
-        static int DocumentCount;
+        static int DocumentCount = 1;
         
-        static DocumentManager() => DocumentCount = 1;
-
         /// <summary>
         /// Creates a new name for new document 
         /// </summary>

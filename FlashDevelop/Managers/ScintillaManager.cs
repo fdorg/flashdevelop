@@ -21,7 +21,7 @@ namespace FlashDevelop.Managers
 {
     internal class ScintillaManager
     {
-        public static Bitmap Bookmark;
+        public static Bitmap Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
         static bool initialized;
         static Scintilla sciConfig;
         static ConfigurationUtility sciConfigUtil;
@@ -31,8 +31,6 @@ namespace FlashDevelop.Managers
         internal const int LineMargin = 2;
         internal const int BookmarksMargin = 0;
         internal const int FoldingMargin = 3;
-
-        static ScintillaManager() => Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
 
         /// <summary>
         /// Initializes the config loading

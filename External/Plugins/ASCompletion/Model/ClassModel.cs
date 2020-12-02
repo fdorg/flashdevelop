@@ -14,18 +14,13 @@ namespace ASCompletion.Model
     [Serializable]
     public class ClassModel: MemberModel
     {
-        public static readonly ClassModel VoidClass;
+        public static readonly ClassModel VoidClass = new ClassModel {Name = "void", InFile = FileModel.Ignore};
 
         static readonly Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static readonly Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static readonly Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static readonly Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        
-        static ClassModel()
-        {
-            VoidClass = new ClassModel {Name = "void", InFile = new FileModel("")};
-        }
 
         public string Constructor;
         public MemberList Members;

@@ -30,11 +30,6 @@ namespace FlashDevelop.Dialogs
         Button closeButton;
         Button addButton;
 
-        static ArgumentDialog()
-        {
-            CustomArguments = new List<Argument>();
-        }
-
         public ArgumentDialog()
         {
             Owner = Globals.MainForm;
@@ -234,7 +229,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// List of all custom arguments
         /// </summary>
-        public static List<Argument> CustomArguments { get; private set; }
+        public static List<Argument> CustomArguments { get; private set; } = new List<Argument>();
 
         /// <summary>
         /// Initializes the external graphics
