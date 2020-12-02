@@ -118,7 +118,7 @@ namespace Mono.GetOptions
             object[] objArray1 = GetAssemblyAttributes(type);
             if ((objArray1 is null) || (objArray1.Length == 0))
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
             int num1 = 0;
             string[] textArray1 = new string[objArray1.Length];
@@ -144,7 +144,7 @@ namespace Mono.GetOptions
             object[] objArray1 = GetAssemblyAttributes(type);
             if (objArray1 != null && objArray1.Length > 0)
             {
-                var = (string) type.InvokeMember(propertyName, BindingFlags.GetProperty | (BindingFlags.GetField | (BindingFlags.Public | BindingFlags.Instance)), null, objArray1[0], new object[0]);
+                var = (string) type.InvokeMember(propertyName, BindingFlags.GetProperty | (BindingFlags.GetField | (BindingFlags.Public | BindingFlags.Instance)), null, objArray1[0], Array.Empty<object>());
             }
         }
 

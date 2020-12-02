@@ -411,7 +411,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public TarEntry[] GetDirectoryEntries()
         {
-            if (!Directory.Exists(file)) return new TarEntry[0];
+            if (!Directory.Exists(file)) return Array.Empty<TarEntry>();
             var list   = Directory.GetFileSystemEntries(file);
             var result = new TarEntry[list.Length];
 

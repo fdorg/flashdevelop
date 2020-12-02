@@ -782,7 +782,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 byte[] entryComment = 
                     (entry.Comment != null) ? 
                     ZipConstants.ConvertToArray(entry.Flags, entry.Comment) :
-                    new byte[0];
+                    Array.Empty<byte>();
 
                 if (entryComment.Length > 0xffff) {
                     throw new ZipException("Comment too long.");
@@ -867,7 +867,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Comment for the entire archive recorded in central header.
         /// </summary>
-        byte[] zipComment = new byte[0];
+        byte[] zipComment = Array.Empty<byte>();
         
         /// <summary>
         /// Flag indicating that header patching is required for the current entry.
