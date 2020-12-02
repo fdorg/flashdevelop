@@ -11,22 +11,16 @@ namespace PluginCore.Managers
     {
         static bool synchronizing;
         static int maxQueue = 1000;
-        static readonly List<TraceItem> traceLog;
-        static readonly List<TraceItem> asyncQueue;
-        static readonly Dictionary<string, TraceGroup> traceGroups;
+        static readonly List<TraceItem> traceLog = new List<TraceItem>();
+        static readonly List<TraceItem> asyncQueue = new List<TraceItem>();
+        static readonly Dictionary<string, TraceGroup> traceGroups = new Dictionary<string, TraceGroup>();
         static readonly Timer asyncTimer;
         static int uniqueToken;
 
         static TraceManager()
         {
-            traceLog = new List<TraceItem>();
-            asyncQueue = new List<TraceItem>();
-            traceGroups = new Dictionary<string, TraceGroup>();
-            asyncTimer = new Timer();
-            asyncTimer.Interval = 200;
-            asyncTimer.AutoReset = false;
+            asyncTimer = new Timer {Interval = 200, AutoReset = false};
             asyncTimer.Elapsed += AsyncTimer_Elapsed;
-            uniqueToken = 0;
         }
 
         /// <summary>

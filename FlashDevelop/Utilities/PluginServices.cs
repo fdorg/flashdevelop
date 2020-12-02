@@ -16,10 +16,6 @@ namespace FlashDevelop.Utilities
         public static List<AvailablePlugin> AvailablePlugins = new List<AvailablePlugin>();
         public static int REQUIRED_API_LEVEL = 1;
         
-        static PluginServices()
-        {
-        }
-
         /// <summary>
         /// Finds plugins from the specified folder
         /// </summary>

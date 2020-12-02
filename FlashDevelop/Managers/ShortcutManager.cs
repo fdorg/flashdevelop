@@ -17,10 +17,6 @@ namespace FlashDevelop.Managers
         public static readonly List<ToolStripItem> SecondaryItems = new List<ToolStripItem>();
         public static readonly Dictionary<string, ShortcutItem> RegisteredItems = new Dictionary<string, ShortcutItem>();
 
-        static ShortcutManager()
-        {
-        }
-
         /// <summary>
         /// Registers a shortcut item
         /// </summary>

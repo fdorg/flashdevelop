@@ -11,18 +11,10 @@ namespace FlashDevelop.Managers
 {
     internal class LayoutManager
     {
-        public static List<DockContent> PluginPanels;
-        static readonly DeserializeDockContent contentDeserializer;
-        static readonly HashSet<string> savedPersistStrings;
-        static readonly List<DockContent> dynamicContentTemplates;
-
-        static LayoutManager()
-        {
-            PluginPanels = new List<DockContent>();
-            contentDeserializer = GetContentFromPersistString;
-            savedPersistStrings = new HashSet<string>();
-            dynamicContentTemplates = new List<DockContent>();
-        }
+        public static List<DockContent> PluginPanels = new List<DockContent>();
+        static readonly DeserializeDockContent contentDeserializer = GetContentFromPersistString;
+        static readonly HashSet<string> savedPersistStrings = new HashSet<string>();
+        static readonly List<DockContent> dynamicContentTemplates = new List<DockContent>();
 
         /// <summary>
         /// Builds the look of the layout systems

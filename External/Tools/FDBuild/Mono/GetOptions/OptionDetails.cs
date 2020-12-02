@@ -6,12 +6,6 @@ namespace Mono.GetOptions
 
     internal class OptionDetails : IComparable
     {
-        // Methods
-        static OptionDetails()
-        {
-            Verbose = false;
-        }
-
         public OptionDetails(MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
         {
             paramName = null;

@@ -15,7 +15,7 @@ namespace SourceControl.Helpers
     {
         #region Fields
 
-        static readonly List<AnnotatedDocument> documents;
+        static readonly List<AnnotatedDocument> documents = new List<AnnotatedDocument>();
 
         IBlameCommand command;
         string fileName;
@@ -32,11 +32,6 @@ namespace SourceControl.Helpers
         #endregion
 
         #region Constructors
-
-        static AnnotatedDocument()
-        {
-            documents = new List<AnnotatedDocument>();
-        }
 
         AnnotatedDocument(IBlameCommand cmd, string file, ITabbedDocument doc)
         {

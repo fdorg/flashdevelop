@@ -12,13 +12,9 @@ namespace PluginCore.Utilities
 {
     public class ObjectSerializer
     {
-        static readonly BinaryFormatter formatter = new BinaryFormatter();
+        static readonly BinaryFormatter formatter = new BinaryFormatter{AssemblyFormat = FormatterAssemblyStyle.Simple};
 
-        static ObjectSerializer()
-        {
-            formatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainAssemblyResolve;
-        }
+        static ObjectSerializer() => AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainAssemblyResolve;
 
         /// <summary>
         /// The BinaryFormatter may need some help finding Assemblies from various directories

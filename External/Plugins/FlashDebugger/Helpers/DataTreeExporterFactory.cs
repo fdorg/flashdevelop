@@ -12,9 +12,5 @@ namespace FlashDebugger.Helpers
         {
             [""] = new DefaultDataTreeExporter()
         };
-
-        static DataTreeExporterFactory()
-        {
-        }
     }
 }
