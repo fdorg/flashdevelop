@@ -1876,12 +1876,8 @@ namespace ASCompletion.Completion
             // add imports to function argument types
             if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
             {
-                var l = new string[functionParameters.Count];
-                for (var i = 0; i < functionParameters.Count; i++)
-                {
-                    l[i] = functionParameters[i].paramQualType;
-                }
-                var types = GetQualifiedTypes(l, inClass.InFile);
+                var list = functionParameters.Select(it => it.paramQualType).ToArray();
+                var types = GetQualifiedTypes(list, inClass.InFile);
                 start += AddImportsByName(types, sci.LineFromPosition(end));
             }
             sci.SetSel(start, start);

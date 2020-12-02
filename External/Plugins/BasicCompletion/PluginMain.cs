@@ -304,9 +304,7 @@ namespace BasicCompletion
                     if (words.ContainsKey(hash)) continue;
                     words.Add(hash, word);
                 }
-                var keywords = new string[words.Values.Count];
-                words.Values.CopyTo(keywords, 0);
-                projKeywords = keywords;
+                projKeywords = words.Values.ToArray();
             }
             catch { /* No errors please... */ }
         }
@@ -334,9 +332,7 @@ namespace BasicCompletion
                 if (words.ContainsKey(hash)) continue;
                 words.Add(hash, word);
             }
-            var keywords = new string[words.Values.Count];
-            words.Values.CopyTo(keywords, 0);
-            fileTable[sci.FileName] = keywords;
+            fileTable[sci.FileName] = words.Values.ToArray();
         }
 
         /// <summary>

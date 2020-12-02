@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Linq;
 using PluginCore.DockPanelSuite;
 
 namespace WeifenLuo.WinFormsUI.Docking
@@ -431,19 +432,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        public IDockContent[] GetDocuments()
-        {
-            int count = DocumentsCount;
-            IDockContent[] documents = new IDockContent[count];
-            int i = 0;
-            foreach (IDockContent content in Documents)
-            {
-                documents[i] = content;
-                i++;
-            }
-
-            return documents;
-        }
+        public IDockContent[] GetDocuments() => Documents.ToArray();
 
         public IEnumerable<IDockContent> Documents
         {

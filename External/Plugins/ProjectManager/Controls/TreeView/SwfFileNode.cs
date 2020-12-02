@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore;
@@ -288,8 +289,7 @@ namespace ProjectManager.Controls.TreeView
                 {
                     ClassesNode node = new ClassesNode(BackingPath);
                     node.Text += " (" + FormatBytes(parser.AbcSize) + ")";
-                    int[] groups = new int[classesComp.groups.Keys.Count];
-                    classesComp.groups.Keys.CopyTo(groups, 0);
+                    int[] groups = classesComp.groups.Keys.ToArray();
                     Array.Sort(groups);
                     foreach (int index in groups)
                     {
@@ -322,8 +322,7 @@ namespace ProjectManager.Controls.TreeView
                     SymbolsNode node2 = new SymbolsNode(BackingPath);
                     node2.Text += " (" + FormatBytes(parser.TotalSize - parser.AbcSize - parser.FontsSize) + ")";
 
-                    int[] groups = new int[symbolsComp.groups.Keys.Count];
-                    symbolsComp.groups.Keys.CopyTo(groups, 0);
+                    int[] groups = symbolsComp.groups.Keys.ToArray();
                     Array.Sort(groups);
                     foreach(int index in groups)
                     {
@@ -345,8 +344,7 @@ namespace ProjectManager.Controls.TreeView
                 {
                     FontsNode node2 = new FontsNode(BackingPath);
                     node2.Text += " (" + FormatBytes(parser.FontsSize) + ")";
-                    int[] groups = new int[fontsComp.groups.Keys.Count];
-                    fontsComp.groups.Keys.CopyTo(groups, 0);
+                    int[] groups = fontsComp.groups.Keys.ToArray();
                     Array.Sort(groups);
                     foreach (int index in groups)
                     {

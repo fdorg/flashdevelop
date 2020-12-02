@@ -240,16 +240,14 @@ namespace ProjectManager.Projects.AS3
 
         private string[] GetLibraryPaths(SwfAssetMode mode)
         {
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
             foreach (LibraryAsset asset in SwcLibraries)
                 if (asset.SwfMode == mode)
                 {
                     asset.Path = asset.Path.Replace("/", "\\");
                     paths.Add(asset.Path);
                 }
-            string[] newList = new string[paths.Count];
-            paths.CopyTo(newList);
-            return newList;
+            return paths.ToArray();
         }
 
         #endregion

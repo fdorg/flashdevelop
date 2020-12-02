@@ -316,9 +316,7 @@ namespace ASCompletion
                                     var context = ASContext.GetLanguageContext(info["language"] as string);
                                     if (info["cp"] is List<string> cp && context?.Settings != null)
                                     {
-                                        var pathes = new string[cp.Count];
-                                        cp.CopyTo(pathes);
-                                        context.Settings.UserClasspath = pathes;
+                                        context.Settings.UserClasspath = cp.ToArray();
                                     }
                                 }
                                 e.Handled = true;

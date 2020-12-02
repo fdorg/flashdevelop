@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Mono.GetOptions
 {
@@ -120,14 +121,7 @@ namespace Mono.GetOptions
             {
                 return Array.Empty<string>();
             }
-            int num1 = 0;
-            string[] textArray1 = new string[objArray1.Length];
-            object[] objArray2 = objArray1;
-            foreach (var obj1 in objArray2)
-            {
-                textArray1[num1++] = obj1.ToString();
-            }
-            return textArray1;
+            return objArray1.Select(it => it.ToString()).ToArray();
         }
 
         private void GetAssemblyAttributeValue(Type type, ref string var)
