@@ -282,6 +282,7 @@ namespace FlashDevelop.Controls
             findTextBox.TextChanged -= FindTextBoxTextChanged;
             findTextBox.Text = text; // Change the value...
             findTextBox.TextChanged += FindTextBoxTextChanged;
+            HighlightAllCheckBoxClick();
         }
 
         /// <summary>
@@ -299,24 +300,12 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Executes the search for next match
         /// </summary>
-        public void FindNextButtonClick(object sender, EventArgs e)
-        {
-            if (findTextBox.Text.Length > 0)
-            {
-                FindNext(findTextBox.Text, false);
-            }
-        }
+        void FindNextButtonClick(object sender, EventArgs e) => FindNext(findTextBox.Text, false);
 
         /// <summary>
         /// Executes the search for previous match
         /// </summary>
-        public void FindPrevButtonClick(object sender, EventArgs e)
-        {
-            if (findTextBox.Text.Length > 0)
-            {
-                FindPrev(findTextBox.Text, false);
-            }
-        }
+        void FindPrevButtonClick(object sender, EventArgs e) => FindPrev(findTextBox.Text, false);
 
         /// <summary>
         /// If there is a word selected, insert it to the find box
@@ -332,10 +321,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         void MatchCaseCheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            if (!PluginBase.Settings.DisableFindOptionSync)
-            {
-                Globals.MainForm.SetMatchCase(this, matchCaseCheckBox.Checked);
-            }
+            if (PluginBase.Settings.DisableFindOptionSync) return;
+            Globals.MainForm.SetMatchCase(this, matchCaseCheckBox.Checked);
         }
 
         /// <summary>
@@ -343,10 +330,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         void WholeWordCheckBoxCheckedChanged(object sender, EventArgs e)
         {
-            if (!PluginBase.Settings.DisableFindOptionSync)
-            {
-                Globals.MainForm.SetWholeWord(this, wholeWordCheckBox.Checked);
-            }
+            if (PluginBase.Settings.DisableFindOptionSync) return;
+            Globals.MainForm.SetWholeWord(this, wholeWordCheckBox.Checked);
         }
 
         /// <summary>
@@ -355,7 +340,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void FindTextBoxTextChanged(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument?.SciControl.TextLength > 30000)
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is {} sci && sci.TextLength > 30000)
             {
                 typingTimer.Stop();
                 typingTimer.Start();
@@ -369,13 +354,10 @@ namespace FlashDevelop.Controls
         void TypingTimerTick(object sender, EventArgs e)
         {
             typingTimer.Stop();
-            if (findTextBox.Text.Length > 0)
-            {
-                FindCorrect(findTextBox.Text, highlightCheckBox.Checked);
-            }
+            if (findTextBox.Text.Length > 0) FindCorrect(findTextBox.Text, highlightCheckBox.Checked);
             else
             {
-                infoLabel.Text = "";
+                infoLabel.Text = string.Empty;
                 findTextBox.BackColor = backColor;
                 var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                 if (sci is not null)
@@ -434,7 +416,9 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Highlights or removes highlights for all results
         /// </summary>
-        void HighlightAllCheckBoxClick(object sender, EventArgs e)
+        void HighlightAllCheckBoxClick(object sender, EventArgs e) => HighlightAllCheckBoxClick();
+
+        void HighlightAllCheckBoxClick()
         {
             var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
@@ -482,7 +466,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void FindNext(string text, bool refreshHighlights)
         {
-            if (text == "") return;
+            if (text.Length == 0) return;
             findTextBox.BackColor = backColor;
             var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
@@ -509,7 +493,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void FindPrev(string text, bool refreshHighlights)
         {
-            if (text == "") return;
+            if (text.Length == 0) return;
             findTextBox.BackColor = backColor;
             var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
             if (sci is null) return;
