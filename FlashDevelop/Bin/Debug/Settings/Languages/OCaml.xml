@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="ml-primary-keywords">
+			and as begin class constraint do done downto else end exception external for fun function functor if in include inherit
+			initializer lazy let match method module mutable new object of open or private rec sig struct then try to type val virtual when
+			while with ref not
+		</keyword-class>
+		<keyword-class name="ml-secondary-keywords">
+			raise assert
+		</keyword-class>
+		<keyword-class name="ml-additional-keywords">
+			true false
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="ocaml">
+			<lexer name="caml" style-bits="7" />
+			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_$]]></character-class>
+			<line-comment><![CDATA[//----]]></line-comment>
+			<comment-start><![CDATA[(*]]></comment-start>
+			<comment-end><![CDATA[*)]]></comment-end>
+			<file-extensions>ml,mll,mly</file-extensions>
+			<use-keywords>
+				<keyword key="0" class="ml-primary-keywords" />
+				<keyword key="1" class="ml-secondary-keywords" />
+				<keyword key="2" class="ml-additional-keywords" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="identifier" fore="0x000000" />
+				<style name="tagname" fore="0x000099" />
+				<style name="keyword" fore="0x0060ff" />
+				<style name="keyword2" fore="0x000099" />
+				<style name="keyword3" fore="0x000099" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="operator" fore="0x000000" />
+				<style name="number" fore="0x000099" />
+				<style name="char" fore="0x000099" />
+				<style name="string" fore="0xa31515" />
+				<style name="comment" fore="0x008000" />
+				<style name="comment1" fore="0x008000" />
+				<style name="comment2" fore="0x008000" />
+				<style name="comment3" fore="0x008000" />
+				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>
