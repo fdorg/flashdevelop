@@ -3147,7 +3147,7 @@ namespace ASCompletion.Completion
             return new StatementReturnType(resolve, pos, word);
         }
 
-        protected static string GuessVarName(string name, string type)
+        protected internal static string GuessVarName(string name, string type)
         {
             if (name == "_") name = null;
             if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
@@ -3179,7 +3179,13 @@ namespace ASCompletion.Completion
             var features = ASContext.Context.Features;
             if (name == features.ThisKey || name == features.BaseKey || type == name)
             {
-                if (!string.IsNullOrEmpty(type)) return char.ToLower(type[0]) + type.Substring(1);
+                if (!string.IsNullOrEmpty(type))
+                {
+                    // for example: int -> intValue
+                    if (char.IsLower(type[0])) return name + "Value";
+                    // for example: Number -> number
+                    return char.ToLower(type[0]) + type.Substring(1);
+                }
                 if (name == features.BaseKey) return "p_super";
                 return "p_this";
             }

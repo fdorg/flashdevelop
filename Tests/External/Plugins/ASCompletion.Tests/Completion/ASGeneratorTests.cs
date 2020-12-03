@@ -1899,5 +1899,34 @@ namespace ASCompletion.Completion
             if (options.Count > 0) Assert.IsFalse(options.Any(it => ((GeneratorItem) it).Job == job));
             return null;
         }
+
+        static IEnumerable<TestCaseData> Issue3107GuessVarNameTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Number", "Number")
+                    .Returns("number")
+                    .SetName("Number -> number. Issue 3107. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3107");
+                yield return new TestCaseData("String", "String")
+                    .Returns("string")
+                    .SetName("String -> string. Issue 3107. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3107");
+                yield return new TestCaseData("int", "int")
+                    .Returns("intValue")
+                    .SetName("int -> intValue. Issue 3107. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3107");
+                yield return new TestCaseData("uint", "uint")
+                    .Returns("uintValue")
+                    .SetName("uint -> intValue. Issue 3107. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3107");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(Issue3107GuessVarNameTestCases))
+        ]
+        public string GuessVarName(string name, string type) => ASGenerator.GuessVarName(name, type);
     }
 }
