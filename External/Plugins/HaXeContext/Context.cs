@@ -379,9 +379,34 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
+            var version = GetCurrentSDKVersion();
+
+            features.SpecialPostfixOperators = version >= "3.3.0"
                 ? new[] {'!'}
                 : Array.Empty<char>();
+
+            if (version >= "4")
+            {
+                features.finalKey = "final";
+
+                if (Array.IndexOf(features.codeKeywords, "final") < 0)
+                {
+                    Array.Resize(ref features.codeKeywords, features.codeKeywords.Length + 1);
+                    features.codeKeywords[features.codeKeywords.Length - 1] = "final";
+                }
+
+                if (Array.IndexOf(features.declKeywords, "final") < 0)
+                {
+                    Array.Resize(ref features.declKeywords, features.declKeywords.Length + 1);
+                    features.declKeywords[features.declKeywords.Length - 1] = "final";
+                }
+            }
+            else
+            {
+                features.finalKey = null;
+                features.codeKeywords = features.codeKeywords.Where(w => w != "final").ToArray();
+                features.declKeywords = features.declKeywords.Where(w => w != "final").ToArray();
+            }
 
             UseGenericsShortNotationChange();
         }
