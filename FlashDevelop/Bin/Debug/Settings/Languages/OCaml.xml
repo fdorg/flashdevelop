@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="ml-primary-keywords">
@@ -27,16 +27,15 @@
 				<keyword key="2" class="ml-additional-keywords" />
 			</use-keywords>
 			<!-- COLORING_START -->
-			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" colorize-marker-back="true" margin-fore="0xffffff" margin-back="0xffffff" marker-back="0xbcbcbc" />
 			<use-styles>
-				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
-				<style name="identifier" fore="0x000000" />
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Consolas,Courier New,monospace" />
+				<style name="identifier" />
 				<style name="tagname" fore="0x000099" />
 				<style name="keyword" fore="0x0060ff" />
 				<style name="keyword2" fore="0x000099" />
 				<style name="keyword3" fore="0x000099" />
-				<style name="linenumber" fore="0x666666" />
-				<style name="operator" fore="0x000000" />
+				<style name="operator" />
 				<style name="number" fore="0x000099" />
 				<style name="char" fore="0x000099" />
 				<style name="string" fore="0xa31515" />
@@ -45,6 +44,7 @@
 				<style name="comment2" fore="0x008000" />
 				<style name="comment3" fore="0x008000" />
 				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="linenumber" fore="0x666666" />
 				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 				<style name="bracebad" bold="true" />
 				<style name="controlchar" fore="0xffffff" />
