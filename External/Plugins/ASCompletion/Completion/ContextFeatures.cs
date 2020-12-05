@@ -16,6 +16,7 @@ namespace ASCompletion.Completion
 
         // language constructs
         public bool hasPackages;
+        public string PackageKey;
         public bool hasFriendlyParentPackages;
         public bool hasModules;
         public bool hasNamespaces;

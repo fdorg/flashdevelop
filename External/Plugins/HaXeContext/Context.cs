@@ -158,6 +158,7 @@ namespace HaXeContext
             features.methodModifierDefault = Visibility.Private;
 
             // keywords
+            features.PackageKey = "package";
             features.ClassKey = "class";
             features.InterfaceKey = "interface";
             features.EnumKey = "enum";
@@ -196,7 +197,7 @@ namespace HaXeContext
                 "cast", "return", "break",
                 "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
                 "null", "untyped", "true", "false", "try", "catch", "throw", "trace",
-                features.macroKey
+                features.MacroKey
             };
             features.declKeywords = new[] {features.varKey, features.functionKey};
             features.accessKeywords = new[]
@@ -204,7 +205,7 @@ namespace HaXeContext
                 features.intrinsicKey,
                 features.inlineKey,
                 "dynamic",
-                features.macroKey,
+                features.MacroKey,
                 features.overrideKey,
                 features.publicKey,
                 features.privateKey,
@@ -218,7 +219,7 @@ namespace HaXeContext
                 features.InterfaceKey,
                 features.TypeDefKey,
                 features.EnumKey,
-                features.abstractKey,
+                features.AbstractKey,
             };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};

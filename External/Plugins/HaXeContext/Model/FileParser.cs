@@ -505,11 +505,11 @@ namespace HaXeContext.Model
                             if (wordLength > 4)
                             {
                                 var word = new string(valueBuffer, start, wordLength);
-                                if (word == "macro"
-                                    || word == "extern" || word == "public" || word == "static" || word == "inline"
-                                    || word == "private"
-                                    || word == "override"
-                                    || word == "function"
+                                if (word == features.MacroKey
+                                    || word == features.ExternKey || word == features.publicKey || word == features.staticKey || word == features.inlineKey
+                                    || word == features.privateKey
+                                    || word == features.overrideKey
+                                    || word == features.functionKey
                                     // Haxe 4
                                     || word == "final")
                                 {
@@ -773,11 +773,11 @@ namespace HaXeContext.Model
                             if (wordLength > 4)
                             {
                                 var word = new string(valueBuffer, start, wordLength);
-                                if (word == "macro"
-                                    || word == "extern" || word == "public" || word == "static" || word == "inline"
-                                    || word == "private"
-                                    || word == "override"
-                                    || word == "function"
+                                if (word == features.MacroKey
+                                    || word == features.ExternKey || word == features.publicKey || word == features.staticKey || word == features.inlineKey
+                                    || word == features.privateKey
+                                    || word == features.overrideKey
+                                    || word == features.functionKey
                                     // Haxe 4
                                     || word == "final")
                                 {
@@ -1254,9 +1254,9 @@ namespace HaXeContext.Model
                                 foundColon = false;
                                 lastComment = null;
                             }
-                            else if (context == FlagType.Class && prevToken.Text == "implements")
+                            else if (context == FlagType.Class && prevToken.Text == features.ImplementsKey)
                             {
-                                curToken.Text = "implements";
+                                curToken.Text = features.ImplementsKey;
                                 foundKeyword = FlagType.Implements;
                             }
                         }
@@ -1347,7 +1347,7 @@ namespace HaXeContext.Model
                                 if (curClass != null && curMember is null) curClass.Members.Add(curMethod);
                             }
                             // an Abstract "opaque type"
-                            else if (context == FlagType.Abstract && prevToken.Text == "abstract")
+                            else if (context == FlagType.Abstract && prevToken.Text == features.AbstractKey)
                             {
                                 foundKeyword = FlagType.Class;
                                 curModifiers = FlagType.Extends;
@@ -1675,46 +1675,46 @@ namespace HaXeContext.Model
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
                 // members
-                if (token == "var")
+                if (token == features.varKey)
                 {
                     foundKeyword = FlagType.Variable;
                 }
-                else if (token == "function")
+                else if (token == features.functionKey)
                 {
                     foundKeyword = FlagType.Function;
                 }
                 // class declaration
-                else if (tryPackage && token == "package")
+                else if (tryPackage && token == features.PackageKey)
                 {
                     foundKeyword = FlagType.Package;
                 }
-                else if (token == "class")
+                else if (token == features.ClassKey)
                 {
                     foundKeyword = FlagType.Class;
                     modifiers |= FlagType.Class;
                 }
-                else if (token == "interface")
+                else if (token == features.InterfaceKey)
                 {
                     foundKeyword = FlagType.Class;
                     modifiers |= FlagType.Class | FlagType.Interface;
                 }
-                else if (features.hasTypeDefs && token == "typedef")
+                else if (features.hasTypeDefs && token == features.TypeDefKey)
                 {
                     foundKeyword = FlagType.TypeDef;
                     modifiers |= FlagType.TypeDef;
                 }
-                else if (features.hasTypeDefs && token == "abstract")
+                else if (features.hasTypeDefs && token == features.AbstractKey)
                 {
                     foundKeyword = FlagType.Abstract;
                     modifiers |= FlagType.Abstract;
                     // Haxe 4. transform `enum abstract A {}` to `@:enum abstract A {}`
-                    if (prevToken?.Text == "enum")
+                    if (prevToken?.Text == features.EnumKey)
                     {
-                        if (carriedMetaData is null) carriedMetaData = new List<ASMetaData>();
+                        carriedMetaData ??= new List<ASMetaData>();
                         carriedMetaData.Add(new ASMetaData(":enum"));
                     }
                 }
-                else if (features.hasEnums && token == "enum")
+                else if (features.hasEnums && token == features.EnumKey)
                 {
                     foundKeyword = FlagType.Enum;
                     modifiers |= FlagType.Enum;
@@ -1727,90 +1727,82 @@ namespace HaXeContext.Model
                 // modifiers
                 else
                 {
-                    if (context == FlagType.Class || context == FlagType.TypeDef)
+                    switch (context)
                     {
-                        if (token == "extends")
-                        {
-                            foundKeyword = FlagType.Class;
-                            curModifiers = FlagType.Extends;
-                            return true;
-                        }
-                        if (token == "implements")
-                        {
-                            foundKeyword = FlagType.Class;
-                            curModifiers = FlagType.Implements;
-                            return true;
-                        }
-                    }
-                    else if (context == FlagType.Abstract)
-                    {
-                        if (features.hasTypeDefs)
-                        {
-                            if (token == "from")
+                        case FlagType.Class:
+                        case FlagType.TypeDef:
+                            if (token == features.ExtendsKey)
                             {
                                 foundKeyword = FlagType.Class;
                                 curModifiers = FlagType.Extends;
-                                if (curClass != null)
-                                {
-                                    if (curClass.MetaDatas is null) curClass.MetaDatas = new List<ASMetaData>();
-                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
-                                }
                                 return true;
                             }
-                            if (token == "to")
+                            if (token == features.ImplementsKey)
                             {
-                                if (curClass != null)
-                                {
-                                    if (curClass.MetaDatas is null) curClass.MetaDatas = new List<ASMetaData>();
-                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
-                                }
+                                foundKeyword = FlagType.Class;
+                                curModifiers = FlagType.Implements;
                                 return true;
                             }
-                        }
-                    }
-                    // properties
-                    else if (context == FlagType.Function)
-                    {
-                        if (token == "get")
-                        {
+                            break;
+                        // properties
+                        case FlagType.Abstract:
+                            if (features.hasTypeDefs)
+                            {
+                                if (token == "from")
+                                {
+                                    foundKeyword = FlagType.Class;
+                                    curModifiers = FlagType.Extends;
+                                    if (curClass != null)
+                                    {
+                                        curClass.MetaDatas ??= new List<ASMetaData>();
+                                        curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                    }
+                                    return true;
+                                }
+                                if (token == "to")
+                                {
+                                    if (curClass != null)
+                                    {
+                                        curClass.MetaDatas ??= new List<ASMetaData>();
+                                        curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                    }
+                                    return true;
+                                }
+                            }
+                            break;
+                        case FlagType.Function when token == features.getKey:
                             foundKeyword = FlagType.Function;
                             curModifiers |= FlagType.Getter;
                             return true;
-                        }
-                        if (token == "set")
-                        {
+                        case FlagType.Function when token == features.setKey:
                             foundKeyword = FlagType.Function;
                             curModifiers |= FlagType.Setter;
                             return true;
-                        }
                     }
-
                     FlagType foundModifier = 0;
-
                     // access modifiers
-                    if (token == "public")
+                    if (token == features.publicKey)
                     {
                         foundModifier = FlagType.Access;
                         curAccess = Visibility.Public;
                     }
-                    else if (token == "private")
+                    else if (token == features.privateKey)
                     {
                         foundModifier = FlagType.Access;
                         curAccess = Visibility.Private;
                     }
-
                     // other modifiers
                     if (foundModifier == 0)
                     {
-                        if (token == "static") foundModifier = FlagType.Static;
-                        else if (token == "override") foundModifier = FlagType.Override;
+                        if (token == features.staticKey) foundModifier = FlagType.Static;
+                        else if (token == features.overrideKey) foundModifier = FlagType.Override;
                         else if (token == "final") foundModifier = FlagType.Final;
                         else if (token == "dynamic") foundModifier = FlagType.Dynamic;
-                        else if (token == "inline") foundModifier = (FlagType) HaxeFlagType.Inline;
+                        else if (token == features.inlineKey) foundModifier = (FlagType) HaxeFlagType.Inline;
                         else if (context != FlagType.Package)
                         {
-                            if (token == "extern") foundModifier = FlagType.Intrinsic | FlagType.Extern;
-                            else if (token == "macro") foundModifier = (FlagType) HaxeFlagType.Macro;
+                            if (token == features.ExternKey) foundModifier = FlagType.Intrinsic | FlagType.Extern;
+                            else if (token == features.MacroKey) foundModifier = (FlagType) HaxeFlagType.Macro;
                         }
                     }
                     // a declaration modifier was recognized
@@ -1832,11 +1824,7 @@ namespace HaXeContext.Model
                             modifiers = 0;
                             context = 0;
                         }
-                        if (modifiers == 0)
-                        {
-                            modifiersLine = curToken.Line;
-                            //modifiersPos = curToken.Position;
-                        }
+                        if (modifiers == 0) modifiersLine = curToken.Line;
                         modifiers |= foundModifier;
                         return true;
                     }
@@ -1861,7 +1849,7 @@ namespace HaXeContext.Model
                 inGeneric = false;
                 inValue = false;
                 hadValue = false;
-                if (token != "function") valueMember = null;
+                if (token != features.functionKey) valueMember = null;
                 foundColon = false;
                 foundConstant = false;
                 context = foundKeyword;
@@ -1902,7 +1890,7 @@ namespace HaXeContext.Model
             }
             else if (!inTypedef && (curModifiers & FlagType.TypeDef) != 0
                      && curClass != null && (curClass.Flags & FlagType.TypeDef) != 0
-                     && token != "extends")
+                     && token != features.ExtendsKey)
             {
                 curClass.ExtendsType = token;
                 curModifiers = 0;
@@ -1931,7 +1919,7 @@ namespace HaXeContext.Model
                 switch (context)
                 {
                     case FlagType.Package:
-                        if (prevToken.Text == "package")
+                        if (prevToken.Text == features.PackageKey)
                         {
                             model.Package = token;
                             model.Comments = curComment;
@@ -1997,23 +1985,15 @@ namespace HaXeContext.Model
                                 curClass.Implements.Add(token);
                             }
                         }
-                        else if ((context == FlagType.Class && (prevToken.Text == "class" || prevToken.Text == "interface"))
+                        else if ((context == FlagType.Class && (prevToken.Text == features.ClassKey || prevToken.Text == features.InterfaceKey))
                                  || (context == FlagType.Struct && prevToken.Text == "struct"))
                         {
                             if (curClass != null)
                             {
                                 curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
                             }
-                            // check classname
-                            //int p = token.LastIndexOf('.');
-                            //if (p > 0)
-                            //{
-                            //    //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
-                            //}
-
                             if (model.PrivateSectionIndex != 0 && curToken.Line > model.PrivateSectionIndex)
                                 curAccess = Visibility.Private;
-
                             curClass = new ClassModel();
                             curClass.InFile = model;
                             curClass.Comments = curComment;
@@ -2044,7 +2024,7 @@ namespace HaXeContext.Model
                         break;
 
                     case FlagType.Enum:
-                        if (inEnum && curClass != null && prevToken.Text != "enum")
+                        if (inEnum && curClass != null && prevToken.Text != features.EnumKey)
                         {
                             member = new MemberModel();
                             member.Comments = curComment;
@@ -2078,7 +2058,7 @@ namespace HaXeContext.Model
                         break;
 
                     case FlagType.TypeDef:
-                        if (inTypedef && curClass != null && prevToken.Text != "typedef")
+                        if (inTypedef && curClass != null && prevToken.Text != features.TypeDefKey)
                         {
                             member = new MemberModel();
                             member.Comments = curComment;
@@ -2092,10 +2072,7 @@ namespace HaXeContext.Model
                         }
                         else 
                         {
-                            if (curClass != null)
-                            {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
+                            if (curClass != null) curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
                             curClass = new ClassModel();
                             curClass.InFile = model;
                             curClass.Comments = curComment;
@@ -2112,7 +2089,7 @@ namespace HaXeContext.Model
                         break;
 
                     case FlagType.Abstract:
-                        if (inAbstract && curClass != null && prevToken.Text != "abstract")
+                        if (inAbstract && curClass != null && prevToken.Text != features.AbstractKey)
                         {
                             member = new MemberModel();
                             member.Comments = curComment;
@@ -2181,10 +2158,9 @@ namespace HaXeContext.Model
                             {
                                 member.Flags = FlagType.Variable | FlagType.ParameterVar;
                                 if (inEnum) member.Flags |= FlagType.Enum;
-                                if (curMethod.Parameters is null) curMethod.Parameters = new List<MemberModel>();
+                                curMethod.Parameters ??= new List<MemberModel>();
                                 member.Access = 0;
-                                if (member.Name.Length > 0)
-                                    curMethod.Parameters.Add(member);
+                                if (member.Name.Length > 0) curMethod.Parameters.Add(member);
                             }
                             // class member
                             else if (curClass != null)
