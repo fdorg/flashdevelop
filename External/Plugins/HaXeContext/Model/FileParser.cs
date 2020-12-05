@@ -94,10 +94,7 @@ namespace HaXeContext.Model
         {
         }
 
-        public FileParser(ContextFeatures features)
-        {
-            this.features = features;
-        }
+        public FileParser(ContextFeatures features) => this.features = features;
 
         /// <inheritdoc />
         public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
