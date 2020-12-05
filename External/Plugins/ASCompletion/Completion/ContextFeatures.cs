@@ -16,22 +16,29 @@ namespace ASCompletion.Completion
 
         // language constructs
         public bool hasPackages;
+        public string PackageKey;
         public bool hasFriendlyParentPackages;
         public bool hasModules;
         public bool hasNamespaces;
         public bool hasImports;
         public bool hasImportsWildcard;
         public bool hasClasses;
+        public string ClassKey;
         public bool hasMultipleDefs;
         public bool hasExtends;
         public string ExtendsKey;
         public bool hasImplements;
         public string ImplementsKey;
         public bool hasInterfaces;
+        public string InterfaceKey;
         public bool hasEnums;
+        public string EnumKey;
         public bool hasTypeDefs;
+        public string TypeDefKey;
         public bool hasStructs;
+        public string StructKey;
         public bool hasDelegates;
+        public string DelegateKey;
         public bool hasGenerics;
         public bool hasEcmaTyping;
         public bool hasVars;
@@ -104,7 +111,7 @@ namespace ASCompletion.Completion
         public string intrinsicKey;
         public string inlineKey;
         public string namespaceKey;
-        public string stringInterpolationQuotes = "";
+        public string stringInterpolationQuotes = string.Empty;
         public string ThisKey;
         public string BaseKey;
 
@@ -126,27 +133,24 @@ namespace ASCompletion.Completion
         /// <param name="word"></param>
         /// <returns></returns>
         internal bool HasTypePreKey(string word)
-        {
-            return typesPreKeys != null && typesPreKeys.Any(it => it == word);
-        }
+            => typesPreKeys != null
+               && typesPreKeys.Any(it => it == word);
 
         /// <summary>
         /// Get a selected list of possible completion keywords
         /// </summary>
         /// <param name="text">Context</param>
         /// <returns>Keywords list</returns>
-        internal List<string> GetDeclarationKeywords(string text, bool insideClass)
+        internal List<string> GetDeclarationKeywords(string? text, bool insideClass)
         {
             var result = new List<string>(accessKeywords);
             var members = new List<string>(declKeywords);
             if (!insideClass) members.AddRange(typesKeywords);
-
             string foundMember = null;
-
             if (text != null)
             {
-                string[] tokens = Regex.Split(text, "\\s+");
-                foreach (string token in tokens)
+                var tokens = Regex.Split(text, "\\s+");
+                foreach (var token in tokens)
                 {
                     if (token.Length > 0 && members.Contains(token))
                     {
@@ -154,7 +158,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                foreach (string token in tokens)
+                foreach (var token in tokens)
                 {
                     if (token.Length > 0 && result.Contains(token))
                     {
@@ -178,21 +182,19 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-
             if (foundMember is null) result.AddRange(members);
-            else if (foundMember == "class" || foundMember == "interface")
+            else if (foundMember == ClassKey || foundMember == InterfaceKey)
             {
-                if (hasExtends) result.Add("extends");
-                if (hasImplements && foundMember != "interface") result.Add("implements");
+                if (hasExtends) result.Add(ExtendsKey);
+                if (hasImplements && foundMember != InterfaceKey) result.Add(ImplementsKey);
             }
-            else if (foundMember == "abstract")
-            {
-                result.Add("to");
-                result.Add("from");
-            }
-
+            else GetDeclarationKeywords(foundMember, result);
             result.Sort();
             return result;
+        }
+
+        protected virtual void GetDeclarationKeywords(string foundMember, List<string> result)
+        {
         }
     }
 }

@@ -101,6 +101,8 @@ namespace HaXeContext
         
         public Context(HaXeSettings initSettings, Func<string, InstalledSDK> getCustomSDK)
         {
+            var features = new Completion.ContextFeatures();
+            this.features = features;
             haxeSettings = initSettings;
             haxeSettings.Init();
             this.getCustomSDK = getCustomSDK;
@@ -156,6 +158,11 @@ namespace HaXeContext
             features.methodModifierDefault = Visibility.Private;
 
             // keywords
+            features.PackageKey = "package";
+            features.ClassKey = "class";
+            features.InterfaceKey = "interface";
+            features.EnumKey = "enum";
+            features.TypeDefKey = "typedef";
             features.ExtendsKey = "extends";
             features.ImplementsKey = "implements";
             features.dot = ".";
@@ -184,13 +191,36 @@ namespace HaXeContext
             features.ConstructorKey = "new";
             features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, features.ConstructorKey, features.ExtendsKey, features.ImplementsKey};
             features.codeKeywords = new[] {
-                "var", "function", "new", "cast", "return", "break",
+                features.varKey,
+                features.functionKey,
+                features.ConstructorKey,
+                "cast", "return", "break",
                 "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
-                "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
+                "null", "untyped", "true", "false", "try", "catch", "throw", "trace",
+                features.MacroKey
             };
             features.declKeywords = new[] {features.varKey, features.functionKey};
-            features.accessKeywords = new[] {features.intrinsicKey, features.inlineKey, "dynamic", "macro", features.overrideKey, features.publicKey, features.privateKey, features.staticKey};
-            features.typesKeywords = new[] {features.importKey, features.importKeyAlt, "class", "interface", "typedef", "enum", "abstract" };
+            features.accessKeywords = new[]
+            {
+                features.intrinsicKey,
+                features.inlineKey,
+                "dynamic",
+                features.MacroKey,
+                features.overrideKey,
+                features.publicKey,
+                features.privateKey,
+                features.staticKey
+            };
+            features.typesKeywords = new[]
+            {
+                features.importKey,
+                features.importKeyAlt,
+                features.ClassKey,
+                features.InterfaceKey,
+                features.TypeDefKey,
+                features.EnumKey,
+                features.AbstractKey,
+            };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
@@ -216,7 +246,7 @@ namespace HaXeContext
 
         #region classpath management
 
-        List<string> LookupLibrary(string lib)
+        IEnumerable<string> LookupLibrary(string lib)
         {
             try
             {
@@ -535,7 +565,7 @@ namespace HaXeContext
                 }
                 if (majorVersion >= 9)
                 {
-                    foreach(LibraryAsset asset in project.LibraryAssets)
+                    foreach(var asset in project.LibraryAssets)
                         if (asset.IsSwc)
                         {
                             var path = project.GetAbsolutePath(asset.Path);
@@ -849,7 +879,7 @@ namespace HaXeContext
             return result;
         }
 
-        protected override IFileParser GetCodeParser() => new FileParser(context.Features);
+        protected override IFileParser GetCodeParser() => new FileParser((Completion.ContextFeatures)Features);
 
         /// <summary>
         /// Delete current class's cached file
