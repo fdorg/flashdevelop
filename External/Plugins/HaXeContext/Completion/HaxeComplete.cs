@@ -75,7 +75,8 @@ namespace HaXeContext
 
         void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
-            SaveFile();
+            if (Sci.InvokeRequired) Sci.BeginInvoke((Action) SaveFile);
+            else SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
             {
                 Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()?.ToArray(), GetFileContent()));
