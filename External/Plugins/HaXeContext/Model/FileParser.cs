@@ -847,7 +847,7 @@ namespace HaXeContext.Model
                 {
                     string param = valueLength > 0 ? new string(valueBuffer, 0, valueLength) : "";
                     // get text before the last keyword found
-                    if (valueKeyword != null)
+                    if (valueKeyword is not null)
                     {
                         int p = param.LastIndexOfOrdinal(valueKeyword.Text);
                         if (p > 0) param = param.Substring(0, p).TrimEnd();
@@ -985,7 +985,7 @@ namespace HaXeContext.Model
                         hadWS = false;
                         hadDot = false;
                         // for example: function foo() return null;
-                        if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
+                        if (!inFunction && context != 0 && curClass is not null && curMethod is not null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
                             && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
                             && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
                         {
@@ -1169,7 +1169,7 @@ namespace HaXeContext.Model
                             if (context == FlagType.Package || context == FlagType.Class) context = 0;
                             else if (context == FlagType.Enum) // parse enum block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.Enum) > 0) inEnum = true;
+                                if (curClass is not null && (curClass.Flags & FlagType.Enum) > 0) inEnum = true;
                                 else
                                 {
                                     context = 0;
@@ -1179,7 +1179,7 @@ namespace HaXeContext.Model
                             }
                             else if (context == FlagType.TypeDef) // parse typedef block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) != 0) inTypedef = true;
+                                if (curClass is not null && (curClass.Flags & FlagType.TypeDef) != 0) inTypedef = true;
                                 else
                                 {
                                     context = 0;
@@ -1189,7 +1189,7 @@ namespace HaXeContext.Model
                             }
                             else if (context == FlagType.Abstract) // parse abstract block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.Abstract) > 0) inAbstract = true;
+                                if (curClass is not null && (curClass.Flags & FlagType.Abstract) > 0) inAbstract = true;
                                 else
                                 {
                                     context = 0;
@@ -1205,7 +1205,7 @@ namespace HaXeContext.Model
                             }
                             // not in a class, parse if/for/while/do blocks
                             else if (ScriptMode) context = 0;
-                            else if (curMember != null && (curMember.Flags & FlagType.Function) != 0 && length == 0 && !foundColon)
+                            else if (curMember is not null && (curMember.Flags & FlagType.Function) != 0 && length == 0 && !foundColon)
                             {
                                 inType = false;
                                 braceCount++;
@@ -1224,7 +1224,7 @@ namespace HaXeContext.Model
                                 flattenNextBlock--;
                             }
                             // outside of a method, the '}' ends the current class
-                            else if (curClass != null)
+                            else if (curClass is not null)
                             {
                                 curClass.LineTo = line;
                                 curClass = null;
@@ -1238,7 +1238,7 @@ namespace HaXeContext.Model
                         // member type declaration
                         else if (c1 == ':' && !inValue && !inGeneric)
                         {
-                            foundColon = curMember != null && curMember.Type is null;
+                            foundColon = curMember is not null && curMember.Type is null;
                             // recognize compiler config block
                             if (!foundColon && braceCount == 0
                                 && i < len - 2 && src[i] == ':' && char.IsLetter(src[i + 1]))
@@ -1247,7 +1247,7 @@ namespace HaXeContext.Model
                         // next variable declaration
                         else if (c1 == ',')
                         {
-                            if ((context == FlagType.Variable || context == FlagType.TypeDef) && curMember != null)
+                            if ((context == FlagType.Variable || context == FlagType.TypeDef) && curMember is not null)
                             {
                                 curAccess = curMember.Access;
                                 foundKeyword = FlagType.Variable;
