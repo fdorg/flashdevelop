@@ -1887,6 +1887,8 @@ namespace ASCompletion.Completion
             var position = sci.CurrentPos;
             var expr = GetExpression(sci, position);
             if (expr.Value is null) return true;
+            // for example: expr;.$(EntryPoint)
+            if (expr.Value.Length == 0 && sci.CharAt(position - 1) == '.') return false;
             var ctx = ASContext.Context;
             var features = ctx.Features;
             var dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
@@ -1894,11 +1896,11 @@ namespace ASCompletion.Completion
 
             // complete keyword
             var word = expr.WordBefore;
-            if (word != null && features.declKeywords.Contains(word)) return false;
+            if (!word.IsNullOrEmpty() && features.declKeywords.Contains(word)) return false;
             ClassModel argumentType = null;
             if (dotIndex < 0)
             {
-                if (word != null)
+                if (!word.IsNullOrEmpty())
                 {
                     if (word == features.ClassKey || word == features.PackageKey || word == features.InterfaceKey || word == "catch")
                         return false;
@@ -1935,7 +1937,7 @@ namespace ASCompletion.Completion
                 var cMember = ctx.CurrentMember;
                 if (cMember is null && !ctx.CurrentClass.IsVoid())
                 {
-                    if (!string.IsNullOrEmpty(expr.Value)) return HandleDeclarationCompletion(sci, expr.Value, autoHide);
+                    if (expr.Value.Length != 0) return HandleDeclarationCompletion(sci, expr.Value, autoHide);
                     if (ctx.CurrentModel.Version >= 2) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, features.overrideKey);
                 }
                 else if (cMember != null && sci.LineFromPosition(position) is { } line && line == cMember.LineFrom)
