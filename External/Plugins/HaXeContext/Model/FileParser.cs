@@ -1986,24 +1986,24 @@ namespace HaXeContext.Model
                         else if ((context == FlagType.Class && (prevToken.Text == features.ClassKey || prevToken.Text == features.InterfaceKey))
                                  || (context == FlagType.Struct && prevToken.Text == "struct"))
                         {
-                            if (curClass != null)
+                            if (curClass != null) curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            if (model.PrivateSectionIndex != 0 && curToken.Line > model.PrivateSectionIndex) curAccess = Visibility.Private;
+                            var (name, type, template) = QualifiedName(model, token);
+                            curClass = new ClassModel
                             {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
-                            if (model.PrivateSectionIndex != 0 && curToken.Line > model.PrivateSectionIndex)
-                                curAccess = Visibility.Private;
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Constructor = string.IsNullOrEmpty(features.ConstructorKey) ? token : features.ConstructorKey;
-                            curClass.Flags = curModifiers;
-                            curClass.Access = (curAccess == 0) ? features.classModifierDefault : curAccess;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
+                                InFile = model,
+                                Comments = curComment,
+                                Type = type,
+                                Template = template,
+                                Name = name,
+                                Constructor = features.ConstructorKey.IsNullOrEmpty()
+                                    ? token
+                                    : features.ConstructorKey,
+                                Flags = curModifiers,
+                                Access = curAccess == 0 ? features.classModifierDefault : curAccess,
+                                LineFrom = modifiersLine != 0 ? modifiersLine : curToken.Line,
+                                LineTo = curToken.Line
+                            };
                             AddClass(model, curClass);
                         }
                         else
@@ -2034,27 +2034,26 @@ namespace HaXeContext.Model
                         }
                         else
                         {
-                            if (curClass != null)
+                            if (curClass is not null) curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            var (name, type, template) = QualifiedName(model, token);
+                            curClass = new ClassModel
                             {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Flags = curModifiers;
-                            curClass.Access = (curAccess == 0) ? features.enumModifierDefault : curAccess;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
+                                InFile = model,
+                                Comments = curComment,
+                                Type = type,
+                                Template = template,
+                                Name = name,
+                                Flags = curModifiers,
+                                Access = (curAccess == 0) ? features.enumModifierDefault : curAccess,
+                                LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line,
+                                LineTo = curToken.Line
+                            };
                             AddClass(model, curClass);
                         }
                         break;
 
                     case FlagType.TypeDef:
-                        if (inTypedef && curClass != null && prevToken.Text != features.TypeDefKey)
+                        if (inTypedef && curClass is not null && prevToken.Text != features.TypeDefKey)
                         {
                             member = new MemberModel();
                             member.Comments = curComment;
@@ -2063,29 +2062,30 @@ namespace HaXeContext.Model
                             member.Access = Visibility.Public;
                             member.LineFrom = member.LineTo = curToken.Line;
                             curClass.Members.Add(member);
-                            //
                             curMember = member;
                         }
                         else 
                         {
-                            if (curClass != null) curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Flags = FlagType.Class | FlagType.TypeDef;
-                            curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
+                            if (curClass is not null) curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            var (name, type, template) = QualifiedName(model, token);
+                            curClass = new ClassModel
+                            {
+                                InFile = model,
+                                Comments = curComment,
+                                Type = type,
+                                Template = template,
+                                Name = name,
+                                Flags = FlagType.Class | FlagType.TypeDef,
+                                Access = curAccess == 0 ? features.typedefModifierDefault : curAccess,
+                                LineFrom = modifiersLine != 0 ? modifiersLine : curToken.Line,
+                                LineTo = curToken.Line
+                            };
                             AddClass(model, curClass);
                         }
                         break;
 
                     case FlagType.Abstract:
-                        if (inAbstract && curClass != null && prevToken.Text != features.AbstractKey)
+                        if (inAbstract && curClass is not null && prevToken.Text != features.AbstractKey)
                         {
                             member = new MemberModel();
                             member.Comments = curComment;
@@ -2094,34 +2094,32 @@ namespace HaXeContext.Model
                             member.Access = Visibility.Public;
                             member.LineFrom = member.LineTo = curToken.Line;
                             curClass.Members.Add(member);
-                            //
                             curMember = member;
                         }
-                        else if (!inAbstract && curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
+                        else if (!inAbstract && curClass is not null && (curClass.Flags & FlagType.Abstract) != 0)
                         {
                             if (prevToken.Text == features.ToKey) { /* can be casted to X */ }
                             else curClass.ExtendsType = curToken.Text;
                         }
                         else
                         {
-                            if (curClass != null)
+                            if (curClass is not null) curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            var (name, type, template) = QualifiedName(model, token);
+                            curClass = new ClassModel
                             {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Flags = FlagType.Class | FlagType.Abstract;
-                            curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
+                                InFile = model,
+                                Comments = curComment,
+                                Type = type,
+                                Template = template,
+                                Name = name,
+                                Flags = FlagType.Class | FlagType.Abstract,
+                                Access = curAccess == 0 ? features.typedefModifierDefault : curAccess,
+                                LineFrom = modifiersLine != 0 ? modifiersLine : curToken.Line,
+                                LineTo = curToken.Line
+                            };
                             AddClass(model, curClass);
                         }
-                        if (carriedMetaData != null)
+                        if (carriedMetaData is not null)
                         {
                             if (curClass.MetaDatas is null) curClass.MetaDatas = carriedMetaData;
                             else curClass.MetaDatas.AddRange(carriedMetaData);
@@ -2279,26 +2277,24 @@ namespace HaXeContext.Model
 
         #region tool methods
 
-        QType QualifiedName(FileModel inFile, string name) 
+        static (string name, string type, string template) QualifiedName(FileModel inFile, string name) 
         {
-            var qt = new QType();
             string type;
             if (inFile.Package == "") type = name;
             else if (inFile.Module == "" || inFile.Module == name) type = inFile.Package + "." + name;
             else type = inFile.Package + "." + inFile.Module + "." + name;
-            qt.Type = type;
-            int p = name.IndexOf('<');
+            string template = null;
+            var p = name.IndexOf('<');
             if (p > 0)
             {
-                qt.Template = name.Substring(p);
+                template = name.Substring(p);
                 if (name[p - 1] == '.') p--;
-                qt.Name = name.Substring(0, p);
+                name = name.Substring(0, p);
             }
-            else qt.Name = name;
-            return qt;
+            return (name, type, template);
         }
 
-        string LastStringToken(string token, string separator)
+        static string LastStringToken(string token, string separator)
         {
             var p = token.LastIndexOfOrdinal(separator);
             return (p >= 0) ? token.Substring(p + 1) : token;
@@ -2437,12 +2433,5 @@ namespace HaXeContext.Model
             }
             return braCount == 0;
         }
-    }
-
-    public class QType
-    {
-        public string Name;
-        public string Type;
-        public string Template;
     }
 }
