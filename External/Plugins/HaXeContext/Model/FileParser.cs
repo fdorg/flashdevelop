@@ -82,7 +82,7 @@ namespace HaXeContext.Model
         string lastComment;
         string curComment;
         bool isBlockComment;
-        ContextFeatures features;
+        Completion.ContextFeatures features;
         List<ASMetaData> carriedMetaData;
         #endregion
 
@@ -90,11 +90,11 @@ namespace HaXeContext.Model
 
         #region tokenizer
 
-        public FileParser() : this(new ContextFeatures())
+        public FileParser() : this(new Completion.ContextFeatures())
         {
         }
 
-        public FileParser(ContextFeatures features) => this.features = features;
+        public FileParser(Completion.ContextFeatures features) => this.features = features;
 
         /// <inheritdoc />
         public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
@@ -104,7 +104,7 @@ namespace HaXeContext.Model
             //TraceManager.Add("Parsing " + Path.GetFileName(fileModel.FileName));
             model = fileModel;
             model.OutOfDate = false;
-            if (model.Context != null) features = model.Context.Features;
+            if (model.Context != null) features = (Completion.ContextFeatures) model.Context.Features;
             if (features.hasModules) model.Module = Path.GetFileNameWithoutExtension(model.FileName);
 
             // pre-filtering
