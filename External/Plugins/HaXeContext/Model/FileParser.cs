@@ -103,11 +103,11 @@ namespace HaXeContext.Model
             //TraceManager.Add("Parsing " + Path.GetFileName(fileModel.FileName));
             model = fileModel;
             model.OutOfDate = false;
-            if (model.Context != null) features = (Completion.ContextFeatures) model.Context.Features;
+            if (model.Context is not null) features = (Completion.ContextFeatures) model.Context.Features;
             if (features.hasModules) model.Module = Path.GetFileNameWithoutExtension(model.FileName);
 
             // pre-filtering
-            if (allowBaReExtract && model.HasFiltering && model.Context != null)
+            if (allowBaReExtract && model.HasFiltering && model.Context is not null)
                 src = model.Context.FilterSource(fileModel.FileName, src);
 
             model.InlinedIn = null;
@@ -524,13 +524,13 @@ namespace HaXeContext.Model
                             }
                             valueLength = 0;
                         }
-                        else if (curMethod != null && lastComment is null && curComment is null) curMethod.LineTo = line;
+                        else if (curMethod is not null && lastComment is null && curComment is null) curMethod.LineTo = line;
                         if (c1 == '{') braceCount++;
                         else if (c1 == '}') braceCount--;
                         else if (abort || (braceCount == 0 && c1 == ';'))
                         {
                             lastComment = null;
-                            if (curMethod != null)
+                            if (curMethod is not null)
                             {
                                 if (curMethod.Equals(curMember)) curMember = null;
                                 if (!abort) curMethod.LineTo = line;
@@ -551,7 +551,7 @@ namespace HaXeContext.Model
                         {
                             lastComment = null;
                             braceCount--;
-                            if (braceCount == 0 && curMethod != null)
+                            if (braceCount == 0 && curMethod is not null)
                             {
                                 if (curMethod.Equals(curMember)) curMember = null;
                                 curMethod.LineTo = line;
@@ -734,7 +734,7 @@ namespace HaXeContext.Model
                         && (c1 == ',' || c1 == ';' || c1 == '}' || c1 == '\r' || c1 == '\n' || (inParams && c1 == ')') || inType))
                     {
                         // for example: v:Type = value<position>;
-                        if (inValue && c1 == ';' && curMember != null && length != 0)
+                        if (inValue && c1 == ';' && curMember is not null && length != 0)
                         {
                             curMember.Value = new string(buffer, 0, length);
                             curMember.ValueEndPosition = i;
@@ -782,7 +782,7 @@ namespace HaXeContext.Model
                                     || word == "final")
                                 {
                                     i -= (wordLength + 1);
-                                    if (curMember != null)
+                                    if (curMember is not null)
                                     {
                                         curMember.LineTo = line;
                                         curMember = null;
@@ -843,7 +843,7 @@ namespace HaXeContext.Model
                 }
 
                 // store type / parameter value
-                if (hadValue) //!inValue && valueLength > 0)
+                if (hadValue)
                 {
                     string param = valueLength > 0 ? new string(valueBuffer, 0, valueLength) : "";
                     // get text before the last keyword found
@@ -1577,9 +1577,7 @@ namespace HaXeContext.Model
             }
             var meta = ba.Substring(i0, i - i0);
             var parIndex = meta.IndexOf('(');
-            var md = new ASMetaData(isComplex ? meta.Substring(0, parIndex) : meta);
-            md.LineFrom = line0;
-            md.LineTo = line;
+            var md = new ASMetaData(isComplex ? meta.Substring(0, parIndex) : meta) {LineFrom = line0, LineTo = line};
             if (isComplex) md.Params = new Dictionary<string, string> {["Default"] = meta.Substring(parIndex + 1).Trim()};
             return md;
         }
@@ -1616,7 +1614,7 @@ namespace HaXeContext.Model
                         var member = @class.Members.Items[j];
                         if (!member.Name.StartsWith('?')) continue;
                         member.Name = member.Name.Substring(1);
-                        if (member.MetaDatas is null) member.MetaDatas = new List<ASMetaData>();
+                        member.MetaDatas ??= new List<ASMetaData>();
                         member.MetaDatas.Add(new ASMetaData(":optional"));
                     }
                 }
@@ -1748,7 +1746,7 @@ namespace HaXeContext.Model
                         case FlagType.Abstract:
                             if (features.hasTypeDefs)
                             {
-                                if (token == "from")
+                                if (token == features.FromKey)
                                 {
                                     foundKeyword = FlagType.Class;
                                     curModifiers = FlagType.Extends;
@@ -1759,7 +1757,7 @@ namespace HaXeContext.Model
                                     }
                                     return true;
                                 }
-                                if (token == "to")
+                                if (token == features.ToKey)
                                 {
                                     if (curClass != null)
                                     {
@@ -1971,7 +1969,7 @@ namespace HaXeContext.Model
                                 if (curClass.ExtendsType is null) curClass.ExtendsType = token;
                                 else
                                 {
-                                    if (curClass.ExtendsTypes is null) curClass.ExtendsTypes = new List<string>();
+                                    curClass.ExtendsTypes ??= new List<string>();
                                     curClass.ExtendsTypes.Add(token);
                                 }
                                 if (inTypedef) context = FlagType.TypeDef;
@@ -1981,7 +1979,7 @@ namespace HaXeContext.Model
                         {
                             if (curClass != null)
                             {
-                                if (curClass.Implements is null) curClass.Implements = new List<string>();
+                                curClass.Implements ??= new List<string>();
                                 curClass.Implements.Add(token);
                             }
                         }
@@ -2015,10 +2013,8 @@ namespace HaXeContext.Model
                         }
                         if (carriedMetaData != null)
                         {
-                            if (curClass.MetaDatas is null)
-                                curClass.MetaDatas = carriedMetaData;
+                            if (curClass.MetaDatas is null) curClass.MetaDatas = carriedMetaData;
                             else curClass.MetaDatas.AddRange(carriedMetaData);
-
                             carriedMetaData = null;
                         }
                         break;
@@ -2103,7 +2099,7 @@ namespace HaXeContext.Model
                         }
                         else if (!inAbstract && curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
                         {
-                            if (prevToken.Text == "to") { /* can be casted to X */ }
+                            if (prevToken.Text == features.ToKey) { /* can be casted to X */ }
                             else curClass.ExtendsType = curToken.Text;
                         }
                         else
@@ -2247,7 +2243,7 @@ namespace HaXeContext.Model
                         }
                         //
                         curMember = member;
-                        if (carriedMetaData != null)
+                        if (carriedMetaData is not null)
                         {
                             if (member.MetaDatas is null) member.MetaDatas = carriedMetaData;
                             else member.MetaDatas.AddRange(carriedMetaData);
@@ -2315,9 +2311,9 @@ namespace HaXeContext.Model
 
         internal static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features, T result) where T : MemberModel
         {
+            result.Parameters ??= new List<MemberModel>();
             type = CleanFunctionType(type);
             var voidKey = features.voidKey;
-            if (result.Parameters is null) result.Parameters = new List<MemberModel>();
             var parCount = 0;
             var braCount = 0;
             var genCount = 0;

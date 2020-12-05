@@ -246,7 +246,7 @@ namespace HaXeContext
 
         #region classpath management
 
-        List<string> LookupLibrary(string lib)
+        IEnumerable<string> LookupLibrary(string lib)
         {
             try
             {
@@ -565,7 +565,7 @@ namespace HaXeContext
                 }
                 if (majorVersion >= 9)
                 {
-                    foreach(LibraryAsset asset in project.LibraryAssets)
+                    foreach(var asset in project.LibraryAssets)
                         if (asset.IsSwc)
                         {
                             var path = project.GetAbsolutePath(asset.Path);
