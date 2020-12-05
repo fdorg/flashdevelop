@@ -1887,6 +1887,7 @@ namespace ASCompletion.Completion
             var position = sci.CurrentPos;
             var expr = GetExpression(sci, position);
             if (expr.Value is null) return true;
+            // for example: expr;.$(EntryPoint)
             if (expr.Value.Length == 0 && sci.CharAt(position - 1) == '.') return false;
             var ctx = ASContext.Context;
             var features = ctx.Features;
