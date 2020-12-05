@@ -47,7 +47,7 @@ namespace ASCompletion.Context
         protected static char dirAltSeparatorChar;
         // settings
         protected IContextSettings settings;
-        protected ContextFeatures features;
+        protected ContextFeatures features = new ContextFeatures();
         protected string temporaryPath;
         protected string platform;
         protected int majorVersion;
@@ -60,7 +60,6 @@ namespace ASCompletion.Context
 
         public ASContext()
         {
-            features = new ContextFeatures();
             completionCache = new CompletionCache(this, null);
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
