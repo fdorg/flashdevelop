@@ -1865,9 +1865,7 @@ namespace ASCompletion.Completion
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
         static bool HandleDotCompletion(ScintillaControl sci, bool autoHide)
-        {
-            return ASContext.Context.CodeComplete.HandleDotCompletion(sci, autoHide, null, null);
-        }
+            => ASContext.Context.CodeComplete.HandleDotCompletion(sci, autoHide, null, null);
 
         /// <summary>
         /// Complete object member

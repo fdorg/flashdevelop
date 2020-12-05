@@ -191,19 +191,46 @@ namespace HaXeContext.Completion
                 }
                 return false;
             }
-            var currentClass = ASContext.Context.CurrentClass;
+            var ctx = ASContext.Context;
+            if (ctx.CurrentModel.Imports.Any(it => it.LineFrom == sci.CurrentLine))
+                return HandleImportWithAliasCompletion(sci, position, wordLeft, autoHide);
+            var currentClass = ctx.CurrentClass;
             if (currentClass.Flags.HasFlag(FlagType.Abstract) && (wordLeft == "from" || wordLeft == "to"))
-            {
-                return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
-            }
+                return PositionIsBeforeBody(sci, position, currentClass)
+                       && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
             return wordLeft == "case" && HandleSwitchCaseCompletion(sci, position, autoHide);
+        }
+
+        static bool HandleImportWithAliasCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
+        {
+            // for example: import StringTools.fromCharCode as|in <complete>
+            if (wordLeft == "as" || wordLeft == "in")
+            {
+                var pos = position - 1;
+                GetWordLeft(sci, ref pos);
+                if (GetExpressionType(sci, pos, false, true).Member is {} member)
+                {
+                    CompletionList.Show(new ICompletionListItem[] {new MemberItem(member)}, false);
+                    return true;
+                }
+                return false;
+            }
+            // for example: import StringTools.fromCharCode <complete>
+            if (GetExpressionType(sci, position, false, true).Member is null) return false;
+            var list = new ICompletionListItem[]
+            {
+                new TemplateItem(new MemberModel("as", "as", FlagType.Template, 0)),
+                new TemplateItem(new MemberModel("in", "in", FlagType.Template, 0)),
+            };
+            CompletionList.Show(list, autoHide);
+            return true;
         }
 
         static bool HandleMetadataCompletion(bool autoHide)
         {
             var list = ASContext.Context.Features.metadata
-                .Select(meta => new MemberItem(new MemberModel {Name = meta.Key, Comments = meta.Value, Type = "Compiler Metadata"}))
-                .ToList<ICompletionListItem>();
+                .Select(it => new MemberItem(new MemberModel {Name = it.Key, Comments = it.Value, Type = "Compiler Metadata"}))
+                .ToArray<ICompletionListItem>();
             CompletionList.Show(list, autoHide);
             return true;
         }
@@ -314,7 +341,7 @@ namespace HaXeContext.Completion
             if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
             {
                 if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is { } v && v != "null") return false;
-                CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
+                CompletionList.Show(new ICompletionListItem[] {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
                 return true;
             }
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
