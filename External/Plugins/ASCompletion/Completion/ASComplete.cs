@@ -1097,8 +1097,8 @@ namespace ASCompletion.Completion
             if (flags == FlagType.Function) return features.functionKey;
             if ((flags & FlagType.Constant) > 0) return features.constKey;
             if ((flags & (FlagType.Getter | FlagType.Setter)) > 0) return features.varKey;
-            if ((flags & FlagType.Interface) > 0) return "interface";
-            if ((flags & FlagType.Class) > 0) return "class";
+            if ((flags & FlagType.Interface) > 0) return features.InterfaceKey;
+            if ((flags & FlagType.Class) > 0) return features.ClassKey;
             return string.Empty;
         }
         #endregion
@@ -1900,7 +1900,7 @@ namespace ASCompletion.Completion
             {
                 if (word != null)
                 {
-                    if (word == "class" || word == "package" || word == "interface" || word == "catch")
+                    if (word == features.ClassKey || word == features.PackageKey || word == features.InterfaceKey || word == "catch")
                         return false;
                     if (features.hasInference && word == "for") // haxe doesn't have 'var' in for()
                         return false;
@@ -2434,7 +2434,7 @@ namespace ASCompletion.Completion
             // import
             if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
                 return HandleImportCompletion(sci, string.Empty, autoHide);
-            if (word == "package" || features.typesKeywords.Contains(word)) return false;
+            if (word == features.PackageKey || features.typesKeywords.Contains(word)) return false;
             if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
             if (features.HasTypePreKey(word))
