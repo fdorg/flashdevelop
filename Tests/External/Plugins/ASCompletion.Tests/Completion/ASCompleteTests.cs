@@ -869,10 +869,21 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> OnCharIssue3113TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnCharIssue3113_1", '.', false, false)
+                        .SetName(".| Issue3113. Case 1.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/3113");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(OnCharTestCases)),
                 TestCaseSource(nameof(OnCharIssue2105TestCases)),
+                TestCaseSource(nameof(OnCharIssue3113TestCases)),
             ]
             public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
@@ -890,7 +901,7 @@ namespace ASCompletion.Completion
                 Test,
                 TestCaseSource(nameof(OnCharIssue2955TestCases))
             ]
-            public void OnChar(string fileName, char addedChar, bool autoHide, EqualConstraint selecvtedLabelEqualConstraint) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, selecvtedLabelEqualConstraint);
+            public void OnChar(string fileName, char addedChar, bool autoHide, EqualConstraint selectedLabelEqualConstraint) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, selectedLabelEqualConstraint);
 
             static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2076TestCases
             {
