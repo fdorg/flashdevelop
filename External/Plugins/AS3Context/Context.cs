@@ -197,6 +197,9 @@ namespace AS3Context
             features.methodModifierDefault = Visibility.Internal;
 
             // keywords
+            features.ClassKey = "class";
+            features.InterfaceKey = "interface";
+            features.PackageKey = "package";
             features.ExtendsKey = "extends";
             features.ImplementsKey = "implements";
             features.dot = ".";

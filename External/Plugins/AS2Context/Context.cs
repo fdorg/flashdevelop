@@ -94,6 +94,10 @@ namespace AS2Context
             features.methodModifierDefault = Visibility.Public;
 
             // keywords
+            features.ClassKey = "class";
+            features.InterfaceKey = "interface";
+            features.ExtendsKey = "extends";
+            features.ImplementsKey = "implements";
             features.dot = ".";
             features.voidKey = "Void";
             features.objectKey = "Object";
