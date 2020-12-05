@@ -878,7 +878,7 @@ namespace HaXeContext
             return result;
         }
 
-        protected override IFileParser GetCodeParser() => new FileParser(context.Features);
+        protected override IFileParser GetCodeParser() => new FileParser((Completion.ContextFeatures)Features);
 
         /// <summary>
         /// Delete current class's cached file
