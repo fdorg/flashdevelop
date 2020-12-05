@@ -77,7 +77,6 @@ namespace HaXeContext.Model
         MemberModel curMember;
         MemberModel curMethod;
         Visibility curAccess;
-        string curNamespace;
         ClassModel curClass;
         string lastComment;
         string curComment;
@@ -151,7 +150,6 @@ namespace HaXeContext.Model
             valueKeyword = null;
             valueMember = null;
             curModifiers = 0;
-            curNamespace = "internal";
             curAccess = 0;
 
             char[] buffer = new char[TOKEN_BUFFER];
@@ -1829,7 +1827,6 @@ namespace HaXeContext.Model
                         inGeneric = false;
                         valueMember = null;
                         foundColon = false;
-                        if (curNamespace == "internal") curNamespace = "";
                         if (context != 0)
                         {
                             modifiers = 0;
@@ -1912,7 +1909,6 @@ namespace HaXeContext.Model
                 context = 0;
                 curComment = null;
                 curClass = null;
-                curNamespace = "internal";
                 curAccess = 0;
                 modifiers = 0;
                 modifiersLine = 0;
@@ -2028,7 +2024,6 @@ namespace HaXeContext.Model
                             curClass.Constructor = string.IsNullOrEmpty(features.ConstructorKey) ? token : features.ConstructorKey;
                             curClass.Flags = curModifiers;
                             curClass.Access = (curAccess == 0) ? features.classModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
                             curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
@@ -2056,7 +2051,6 @@ namespace HaXeContext.Model
                             member.Name = token;
                             member.Flags = curModifiers | FlagType.Variable | FlagType.Enum | FlagType.Static;
                             member.Access = Visibility.Public;
-                            member.Namespace = curNamespace;
                             member.LineFrom = member.LineTo = curToken.Line;
                             curClass.Members.Add(member);
                             //
@@ -2077,7 +2071,6 @@ namespace HaXeContext.Model
                             curClass.Name = qtype.Name;
                             curClass.Flags = curModifiers;
                             curClass.Access = (curAccess == 0) ? features.enumModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
                             curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
@@ -2092,7 +2085,6 @@ namespace HaXeContext.Model
                             member.Name = token;
                             member.Flags = curModifiers | FlagType.Variable | FlagType.Dynamic;
                             member.Access = Visibility.Public;
-                            member.Namespace = curNamespace;
                             member.LineFrom = member.LineTo = curToken.Line;
                             curClass.Members.Add(member);
                             //
@@ -2113,7 +2105,6 @@ namespace HaXeContext.Model
                             curClass.Name = qtype.Name;
                             curClass.Flags = FlagType.Class | FlagType.TypeDef;
                             curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
                             curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
@@ -2128,7 +2119,6 @@ namespace HaXeContext.Model
                             member.Name = token;
                             member.Flags = curModifiers | FlagType.Variable | FlagType.Dynamic;
                             member.Access = Visibility.Public;
-                            member.Namespace = curNamespace;
                             member.LineFrom = member.LineTo = curToken.Line;
                             curClass.Members.Add(member);
                             //
@@ -2154,7 +2144,6 @@ namespace HaXeContext.Model
                             curClass.Name = qtype.Name;
                             curClass.Flags = FlagType.Class | FlagType.Abstract;
                             curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
                             curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
@@ -2183,7 +2172,6 @@ namespace HaXeContext.Model
                             if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
                             member.Flags = curModifiers | FlagType.Variable;
                             member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
-                            member.Namespace = curNamespace;
                             member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             member.LineTo = curToken.Line;
                             member.StartPosition = curToken.Position;
@@ -2245,7 +2233,6 @@ namespace HaXeContext.Model
                             curModifiers |= FlagType.Function;
                         member.Flags = curModifiers;
                         member.Access = (curAccess == 0) ? features.methodModifierDefault : curAccess;
-                        member.Namespace = curNamespace;
                         member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                         member.LineTo = curToken.Line;
                         //
@@ -2294,7 +2281,6 @@ namespace HaXeContext.Model
                 }
                 if (context != FlagType.Function && !inParams) curMethod = null;
                 curComment = null;
-                curNamespace = "internal";
                 curAccess = 0;
                 modifiers = 0;
                 modifiersLine = 0;
