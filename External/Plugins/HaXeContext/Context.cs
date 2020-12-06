@@ -189,7 +189,14 @@ namespace HaXeContext
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
             features.ReturnKey = "return";
-            features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, features.ConstructorKey, features.ExtendsKey, features.ImplementsKey};
+            features.typesPreKeys = new[]
+            {
+                features.importKey,
+                features.importKeyAlt,
+                features.ConstructorKey,
+                features.ExtendsKey,
+                features.ImplementsKey
+            };
             features.codeKeywords = new[] {
                 features.varKey,
                 features.functionKey,
@@ -227,6 +234,16 @@ namespace HaXeContext
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!"};
             features.TernaryOperators = new[] {"?", ":"};
+            features.OperatorKeywords = new HashSet<string>
+            {
+                features.ReturnKey,
+                "switch",
+                "case",
+                "in",
+                "throw",
+                "cast",
+                "untyped",
+            };
             /* INITIALIZATION */
 
             settings = initSettings;

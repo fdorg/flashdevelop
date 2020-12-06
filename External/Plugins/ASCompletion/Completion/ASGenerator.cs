@@ -449,7 +449,7 @@ namespace ASCompletion.Completion
         protected virtual bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
         {
             // for example: return expr<generator>
-            if (expr.Context.WordBefore == "return") return false;
+            if (expr.Context.WordBefore == ASContext.Context.Features.ReturnKey) return false;
             if (expr.Member is null) return expr.Type != ClassModel.VoidClass;
             return expr.Member.Type is { } type && type != ASContext.Context.Features.voidKey;
         }
@@ -627,7 +627,7 @@ namespace ASCompletion.Completion
                    // for example, good: new Type()<generator>, bad: new Type().value<generator>
                    || (expr.Context.WordBefore == "new" && !expr.Context.Value.Contains("~."))
                    // for example: class Foo extends Bar<generator>
-                   || (expr.Context.WordBefore == "extends"
+                   || (expr.Context.WordBefore == ASContext.Context.Features.ExtendsKey
                        && ASContext.Context.CurrentClass.Flags is var flags 
                        && flags.HasFlag(FlagType.Class)
                        // for example: interface Foo extends Bar<generator>
@@ -648,7 +648,7 @@ namespace ASCompletion.Completion
             return contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
                    // for example: implements IFoo<generator>
-                   && (expr.Context.WordBefore == "implements" && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
+                   && (expr.Context.WordBefore == ASContext.Context.Features.ImplementsKey && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
                        // for example: public var foo : Fo|o
                        || (expr.Context.Separator == ":"));
         }
@@ -1111,7 +1111,8 @@ namespace ASCompletion.Completion
 
         public static void GenerateJob(GeneratorJobType job, MemberModel member, ClassModel inClass, string itemLabel, object data)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             lookupPosition = sci.CurrentPos;
 
             int position;

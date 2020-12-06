@@ -229,11 +229,11 @@ namespace AS3Context
             features.ThisKey = "this";
             features.BaseKey = "super";
             features.ReturnKey = "return";
-            features.typesPreKeys = new[] { features.importKey, "new", "typeof", "is", "as", features.ExtendsKey, features.ImplementsKey };
+            features.typesPreKeys = new[] { features.importKey, "new", "typeof", "instanceof", "is", "as", features.ExtendsKey, features.ImplementsKey };
             features.codeKeywords = new[] {
                 "var", "function", "const", "new", "delete", "typeof", "is", "as", features.ReturnKey,
                 "break", "continue", "if", "else", "for", "each", "in", "while", "do", "switch", "case", "default", "with",
-                "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
+                "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace", "instanceof",
             };
             features.accessKeywords = new[] {"native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"};
             features.declKeywords = new[] {features.varKey, features.functionKey, features.constKey, features.namespaceKey, features.getKey, features.setKey};
@@ -244,6 +244,15 @@ namespace AS3Context
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!==", "===", "!"};
             features.TernaryOperators = new[] {"?", ":"};
             features.Literals = new HashSet<string> {"int", "uint"};
+            features.OperatorKeywords = new HashSet<string>
+            {
+                features.ReturnKey,
+                "case",
+                "in",
+                "throw",
+                "typeof",
+                "delete",
+            };
             /* INITIALIZATION */
 
             settings = initSettings;

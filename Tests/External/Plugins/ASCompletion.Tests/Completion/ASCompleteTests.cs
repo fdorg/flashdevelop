@@ -84,6 +84,8 @@ namespace ASCompletion.Completion
                     else passed = ((IList<ICompletionListItem>)de.Data).Count == 0;
                 });
             EventManager.AddEventHandler(handler, EventType.Command);
+            UITools.Init();
+            CompletionList.CreateControl(PluginBase.MainForm);
             SetSrc(sci, sourceText);
             ASContext.HasContext = true;
             Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
@@ -879,11 +881,34 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> OnCharIssue3127TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnCharIssue3127_1", ' ', false, true)
+                        .SetName("return | Issue3127. Case 1.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                    yield return new TestCaseData("OnCharIssue3127_2", ' ', false, true)
+                        .SetName("case | Issue3127. Case 2.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                    yield return new TestCaseData("OnCharIssue3127_3", ' ', false, true)
+                        .SetName("delete | Issue3127. Case 3.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                    yield return new TestCaseData("OnCharIssue3127_4", ' ', false, true)
+                        .SetName("in | Issue3127. Case 4.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                    yield return new TestCaseData("OnCharIssue3127_5", ' ', false, true)
+                        .SetName("throw | Issue3127. Case 5.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(OnCharTestCases)),
                 TestCaseSource(nameof(OnCharIssue2105TestCases)),
                 TestCaseSource(nameof(OnCharIssue3113TestCases)),
+                TestCaseSource(nameof(OnCharIssue3127TestCases)),
             ]
             public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 

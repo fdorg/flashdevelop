@@ -2450,11 +2450,14 @@ namespace ASCompletion.Completion
             var beforeBody = true;
             var expr = CurrentResolvedContext?.Result?.Context;
             if (expr != null) beforeBody = expr.ContextFunction is null || expr.BeforeBody;
-            if (!beforeBody && features.codeKeywords.Contains(word)) return false;
-            // override
+            if (!beforeBody) return false;
+            {
+                if (features.OperatorKeywords.Contains(word)) return OnChar(sci, '.', autoHide);
+                if (features.codeKeywords.Contains(word)) return false;
+            }
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
             // public/internal/private/protected/static
-            if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, "", autoHide);
+            if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, string.Empty, autoHide);
             return false;
         }
 
@@ -2476,8 +2479,9 @@ namespace ASCompletion.Completion
         /// <returns>Auto-completion has been handled</returns>
         protected virtual bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
         {
-            var list = new List<ICompletionListItem>();
-            foreach (var it in ASContext.Context.GetAllProjectClasses())
+            var classes = ASContext.Context.GetAllProjectClasses();
+            var list = new List<ICompletionListItem>(classes.Count);
+            foreach (var it in classes)
             {
                 if (!it.Flags.HasFlag(FlagType.Interface)) continue;
                 list.Add(new MemberItem(it));
@@ -4927,32 +4931,35 @@ namespace ASCompletion.Completion
                 return;
             }
             // look for a snippet
-            if (trigger == '\t' && !expr.Value.Contains(features.dot))
+            if (!expr.Value.Contains(features.dot))
             {
-                foreach(var key in features.codeKeywords)
-                    if (key == expr.Value)
-                    {
-                        InsertSnippet(key);
-                        return;
-                    }
-            }
-            if (trigger != ' '
-                // for example: priv$(EntryPoint) -> private $(EntryPoint)
-                && (features.accessKeywords.Contains(text)
-                    // for example: va$(EntryPoint) -> var $(EntryPoint)
-                    || text == features.varKey || text == features.constKey
-                    // for example: re$(EntryPoint) -> return $(EntryPoint)
-                    || text == features.ReturnKey
-                    // for example: im$(EntryPoint) -> import $(EntryPoint)
-                    || features.typesPreKeys.Contains(text)
-                    // for example: cl$(EntryPoint) -> class $(EntryPoint)
-                    || features.typesKeywords.Contains(text)))
-            {
-                var pos = sci.CurrentPos;
-                sci.InsertText(pos++, " ");
-                sci.SetSel(pos, pos);
-                OnChar(sci, ' ', true);
-                return;
+                if (trigger == '\t')
+                {
+                    foreach(var key in features.codeKeywords)
+                        if (key == expr.Value)
+                        {
+                            InsertSnippet(key);
+                            return;
+                        }
+                }
+                if (trigger != ' '
+                    // for example: priv$(EntryPoint) -> private $(EntryPoint)
+                    && (features.accessKeywords.Contains(text)
+                        // for example: va$(EntryPoint) -> var $(EntryPoint)
+                        || text == features.varKey || text == features.constKey
+                        // for example: re$(EntryPoint) -> return $(EntryPoint)
+                        || text == features.ReturnKey
+                        // for example: im$(EntryPoint) -> import $(EntryPoint)
+                        || features.typesPreKeys.Contains(text)
+                        // for example: cl$(EntryPoint) -> class $(EntryPoint)
+                        || features.typesKeywords.Contains(text)))
+                {
+                    var pos = sci.CurrentPos;
+                    sci.InsertText(pos++, " ");
+                    sci.SetSel(pos, pos);
+                    OnChar(sci, ' ', true);
+                    return;
+                }
             }
             // resolve context & do smart insertion
             expr.LocalVars = ParseLocalVars(expr);
