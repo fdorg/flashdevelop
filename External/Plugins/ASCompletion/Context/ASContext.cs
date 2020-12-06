@@ -278,15 +278,13 @@ namespace ASCompletion.Context
         /// <param name="language">File language id (ie. Scintilla.ConfigurationLanguage)</param>
         /// <param name="inlined">Inlined language id</param>
         public static void RegisterInlineLanguage(IASContext contextReference, string language, string inlined)
-        {
-            allContexts.Add(new RegisteredContext(contextReference, language, inlined));
-        }
+            => allContexts.Add(new RegisteredContext(contextReference, language, inlined));
 
         /// <summary>
         /// Return the main context for a language
         /// </summary>
         /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
-        public static IASContext GetLanguageContext(string lang)
+        public static IASContext? GetLanguageContext(string lang)
         {
             if (lang is null) return null;
             lang = lang.ToLower();
