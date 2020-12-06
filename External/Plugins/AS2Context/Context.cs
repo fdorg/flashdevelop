@@ -107,15 +107,6 @@ namespace AS2Context
             features.arrayKey = "Array";
             features.dynamicKey = "*";
             features.importKey = "import";
-            features.typesPreKeys = new[] { "import", "new", "instanceof", "extends", "implements" };
-            features.codeKeywords = new[] { 
-                "var", "function", "new", "delete", "instanceof", "return", "break", "continue",
-                "if", "else", "for", "in", "while", "do", "switch", "case", "default", "with",
-                "null", "undefined", "true", "false", "try", "catch", "finally", "throw"
-            };
-            features.accessKeywords = new[] { "override", "public", "private", "intrinsic", "static" };
-            features.declKeywords = new[] { "var", "function" };
-            features.typesKeywords = new[] { "import", "class", "interface" };
             features.varKey = "var";
             features.functionKey = "function";
             features.getKey = "get";
@@ -126,7 +117,15 @@ namespace AS2Context
             features.privateKey = "private";
             features.intrinsicKey = "intrinsic";
             features.ReturnKey = "return";
-
+            features.typesPreKeys = new[] { "import", "new", "instanceof", "extends", "implements" };
+            features.codeKeywords = new[] { 
+                "var", "function", "new", "delete", "instanceof", "return", "break", "continue",
+                "if", "else", "for", "in", "while", "do", "switch", "case", "default", "with",
+                "null", "undefined", "true", "false", "try", "catch", "finally", "throw"
+            };
+            features.accessKeywords = new[] { "override", "public", "private", "intrinsic", "static" };
+            features.declKeywords = new[] { "var", "function" };
+            features.typesKeywords = new[] { "import", "class", "interface" };
             features.functionArguments = new MemberModel("arguments", "FunctionArguments", FlagType.Variable | FlagType.LocalVar, 0);
             features.ArithmeticOperators = new HashSet<char> { '+', '-', '*', '/' };
             features.IncrementDecrementOperators = new[] {"++", "--"};

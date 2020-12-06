@@ -898,6 +898,11 @@
     <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharAndReplaceTextIssue2980_2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharAndReplaceTextIssue2980_2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue3113_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue3127_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue3127_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue3127_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue3127_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue3127_5.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

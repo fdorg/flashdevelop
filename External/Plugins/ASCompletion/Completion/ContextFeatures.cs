@@ -95,6 +95,7 @@ namespace ASCompletion.Completion
         public string[] codeKeywords = Array.Empty<string>();
         public string[] declKeywords = Array.Empty<string>();
         public string[] typesKeywords = Array.Empty<string>();
+        public HashSet<string> OperatorKeywords = new HashSet<string>();
         public HashSet<string> Literals = new HashSet<string>();
         public string varKey;
         public string constKey;
