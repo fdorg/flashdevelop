@@ -114,6 +114,7 @@ namespace ASCompletion.Completion
         public string stringInterpolationQuotes = string.Empty;
         public string ThisKey;
         public string BaseKey;
+        public string ReturnKey;
 
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 

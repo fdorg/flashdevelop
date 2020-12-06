@@ -4918,27 +4918,42 @@ namespace ASCompletion.Completion
             var type = GetExpressionType(sci, textEndPosition);
             if (type.IsPackage) return;
             var features = ASContext.Context.Features;
-
             // add ; for imports
-            if (" \n\t".Contains(trigger)
+            if ((trigger == ' ' || trigger == '\n' || trigger == '\t')
                 && expr.WordBefore != null
                 && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
             {
                 if (!sci.GetLine(sci.CurrentLine).Contains(';')) sci.InsertText(sci.CurrentPos, ";");
                 return;
             }
-
             // look for a snippet
             if (trigger == '\t' && !expr.Value.Contains(features.dot))
             {
-                foreach(string key in features.codeKeywords)
+                foreach(var key in features.codeKeywords)
                     if (key == expr.Value)
                     {
                         InsertSnippet(key);
                         return;
                     }
             }
-
+            if (trigger != ' '
+                // for example: priv$(EntryPoint) -> private $(EntryPoint)
+                && (features.accessKeywords.Contains(text)
+                    // for example: va$(EntryPoint) -> var $(EntryPoint)
+                    || text == features.varKey || text == features.constKey
+                    // for example: re$(EntryPoint) -> return $(EntryPoint)
+                    || text == features.ReturnKey
+                    // for example: im$(EntryPoint) -> import $(EntryPoint)
+                    || features.typesPreKeys.Contains(text)
+                    // for example: cl$(EntryPoint) -> class $(EntryPoint)
+                    || features.typesKeywords.Contains(text)))
+            {
+                var pos = sci.CurrentPos;
+                sci.InsertText(pos++, " ");
+                sci.SetSel(pos, pos);
+                OnChar(sci, ' ', true);
+                return;
+            }
             // resolve context & do smart insertion
             expr.LocalVars = ParseLocalVars(expr);
             var context = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
