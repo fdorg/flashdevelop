@@ -2447,14 +2447,10 @@ namespace ASCompletion.Completion
                     tail = v;
                 return HandleNewCompletion(sci, tail, autoHide, word);
             }
-            var beforeBody = true;
+            if (features.OperatorKeywords.Contains(word)) return OnChar(sci, '.', autoHide);
             var expr = CurrentResolvedContext?.Result?.Context;
-            if (expr != null) beforeBody = expr.ContextFunction is null || expr.BeforeBody;
-            if (!beforeBody) return false;
-            {
-                if (features.OperatorKeywords.Contains(word)) return OnChar(sci, '.', autoHide);
-                if (features.codeKeywords.Contains(word)) return false;
-            }
+            var beforeBody = expr is not null && (expr.ContextFunction is null || expr.BeforeBody);
+            if (!beforeBody && features.codeKeywords.Contains(word)) return false;
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
             // public/internal/private/protected/static
             if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, string.Empty, autoHide);
