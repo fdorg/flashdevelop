@@ -125,6 +125,7 @@ namespace AS2Context
             features.publicKey = "public";
             features.privateKey = "private";
             features.intrinsicKey = "intrinsic";
+            features.ReturnKey = "return";
 
             features.functionArguments = new MemberModel("arguments", "FunctionArguments", FlagType.Variable | FlagType.LocalVar, 0);
             features.ArithmeticOperators = new HashSet<char> { '+', '-', '*', '/' };

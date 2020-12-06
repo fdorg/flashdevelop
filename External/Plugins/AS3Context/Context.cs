@@ -228,15 +228,16 @@ namespace AS3Context
             features.namespaceKey = "namespace";
             features.ThisKey = "this";
             features.BaseKey = "super";
+            features.ReturnKey = "return";
             features.typesPreKeys = new[] { features.importKey, "new", "typeof", "is", "as", features.ExtendsKey, features.ImplementsKey };
             features.codeKeywords = new[] {
-                "var", "function", "const", "new", "delete", "typeof", "is", "as", "return",
+                "var", "function", "const", "new", "delete", "typeof", "is", "as", features.ReturnKey,
                 "break", "continue", "if", "else", "for", "each", "in", "while", "do", "switch", "case", "default", "with",
                 "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
             };
             features.accessKeywords = new[] {"native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"};
             features.declKeywords = new[] {features.varKey, features.functionKey, features.constKey, features.namespaceKey, features.getKey, features.setKey};
-            features.typesKeywords = new[] {features.importKey, "class", "interface"};
+            features.typesKeywords = new[] {features.importKey, features.ClassKey, features.InterfaceKey};
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};

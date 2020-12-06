@@ -188,12 +188,14 @@ namespace HaXeContext
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
+            features.ReturnKey = "return";
             features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, features.ConstructorKey, features.ExtendsKey, features.ImplementsKey};
             features.codeKeywords = new[] {
                 features.varKey,
                 features.functionKey,
                 features.ConstructorKey,
-                "cast", "return", "break",
+                features.ReturnKey,
+                "cast", "break",
                 "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
                 "null", "untyped", "true", "false", "try", "catch", "throw", "trace",
                 features.MacroKey
