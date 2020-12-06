@@ -1966,6 +1966,12 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue3117_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue3117_2.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue3117_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3127_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3127_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3127_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3127_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3127_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3127_6.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

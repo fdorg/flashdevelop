@@ -430,6 +430,31 @@ namespace HaXeContext.Completion.Haxe3
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue3127TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue3127_1", ' ', false, true)
+                    .SetName("return <complete> Issue 3127. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                yield return new TestCaseData("BeforeOnChar_issue3127_2", ' ', false, true)
+                    .SetName("switch <complete> Issue 3127. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                yield return new TestCaseData("BeforeOnChar_issue3127_3", ' ', false, true)
+                    .SetName("case <complete> Issue 3127. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                yield return new TestCaseData("BeforeOnChar_issue3127_4", ' ', false, true)
+                    .SetName("in <complete> Issue 3127. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                yield return new TestCaseData("BeforeOnChar_issue3127_5", ' ', false, true)
+                    .SetName("cast <complete> Issue 3127. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                yield return new TestCaseData("BeforeOnChar_issue3127_6", ' ', false, true)
+                    .SetName("untyped <complete> Issue 3127. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
@@ -444,6 +469,7 @@ namespace HaXeContext.Completion.Haxe3
             TestCaseSource(nameof(OnCharIssue2598TestCases)),
             TestCaseSource(nameof(OnCharIssue170TestCases)),
             TestCaseSource(nameof(OnCharIssue2630TestCases)),
+            TestCaseSource(nameof(OnCharIssue3127TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {
