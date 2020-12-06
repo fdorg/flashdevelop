@@ -389,10 +389,13 @@ namespace CodeRefactor.Provider
             if (project is null) return false;
             var context = ASContext.GetLanguageContext(project.Language);
             if (context is null) return false;
-            foreach (var pathModel in context.Classpath)
+            if (context.Classpath is {} classpath)
             {
-                var absolute = project.GetAbsolutePath(pathModel.Path);
-                if (file.StartsWithOrdinal(absolute)) return true;
+                foreach (var pathModel in classpath)
+                {
+                    var absolute = project.GetAbsolutePath(pathModel.Path);
+                    if (file.StartsWithOrdinal(absolute)) return true;
+                }
             }
             // If no source paths are defined, is it under the project?
             if (project.SourcePaths.Length != 0) return false;
