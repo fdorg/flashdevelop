@@ -13,6 +13,7 @@ using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
@@ -630,6 +631,8 @@ namespace HaXeContext.Completion
             return false;
         }
 
+        static readonly List<MemberModel> inferingMembers = new List<MemberModel>();
+
         /// <inheritdoc />
         protected override void InferType(ScintillaControl sci, ASExpr local, MemberModel member)
         {
@@ -675,7 +678,30 @@ namespace HaXeContext.Completion
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + member.Name + "\\s*in\\s*");
             if (!m.Success)
             {
-                base.InferType(sci, local, member);
+                if (inferingMembers.Any(it =>
+                {
+                    return it.Name == member.Name
+                           && it.Flags == member.Flags
+                           && it.LineFrom == member.LineFrom && it.LineTo == member.LineTo
+                           && it.StartPosition == member.StartPosition;
+                }))
+                {
+                    var msg = $"Possible Stack Overflow Exception in {ctx.CurrentFile}" +
+                              "\nPlease contact the developers via https://github.com/fdorg/flashdevelop/issues/new" +
+                              "\nDebug information:" +
+                              $"\n{nameof(CodeComplete)}.{nameof(InferType)}({{{member.LineTo + 1}:{line.TrimEnd('\n', '\r')}}})";
+                    TraceManager.AddAsync(msg, (int) TraceType.Fatal);
+                    return;
+                }
+                inferingMembers.Add(member);
+                try
+                {
+                    base.InferType(sci, local, member);
+                }
+                finally
+                {
+                    inferingMembers.Remove(member);
+                }
                 if (string.IsNullOrEmpty(member.Type) && (member.Flags & (FlagType.Variable | FlagType.Getter | FlagType.Setter)) != 0)
                     member.Type = ResolveType(ctx.Features.dynamicKey, null).Name;
                 return;
