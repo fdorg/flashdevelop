@@ -223,7 +223,7 @@ namespace HaXeContext
             var form = (System.Windows.Forms.Form) PluginBase.MainForm;
             if (form.InvokeRequired)
             {
-                form.BeginInvoke((System.Windows.Forms.MethodInvoker)UpdateProject);
+                form.BeginInvoke((Action)UpdateProject);
                 return;
             }
             if (hxproj.MovieOptions.Platform == "Lime" && string.IsNullOrEmpty(hxproj.TargetBuild)) return;

@@ -235,7 +235,7 @@ namespace OutputPanel
             if (pluginMain.PluginPanel is null) return;
             if (pluginMain.PluginPanel.InvokeRequired)
             {
-                pluginMain.PluginPanel.BeginInvoke((MethodInvoker)ApplyWrapText);
+                pluginMain.PluginPanel.BeginInvoke((Action)ApplyWrapText);
                 return;
             }
             wrapTextItem.Checked = pluginMain.PluginSettings.WrapOutput;

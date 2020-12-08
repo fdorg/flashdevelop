@@ -139,7 +139,7 @@ namespace FlashConnect
         /// </summary>
         public void HandleXml(object sender, XmlReceivedEventArgs e)
         {
-            if (PluginBase.MainForm.MenuStrip.InvokeRequired) PluginBase.MainForm.MenuStrip.BeginInvoke((MethodInvoker)(
+            if (PluginBase.MainForm.MenuStrip.InvokeRequired) PluginBase.MainForm.MenuStrip.BeginInvoke((Action)(
                 () =>
                 {
                     try

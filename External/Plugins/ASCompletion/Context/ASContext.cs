@@ -584,7 +584,7 @@ namespace ASCompletion.Context
         {
             if (plugin.Panel.InvokeRequired)
             {
-                plugin.Panel.BeginInvoke((MethodInvoker)delegate { RefreshContextCache(path); });
+                plugin.Panel.BeginInvoke((Action)delegate { RefreshContextCache(path); });
                 return;
             }
             completionCache.IsDirty = true;

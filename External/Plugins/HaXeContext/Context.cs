@@ -13,7 +13,6 @@ using PluginCore;
 using ASCompletion.Completion;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using AS3Context;
 using HaXeContext.Completion;
@@ -2243,7 +2242,7 @@ namespace HaXeContext
 
         internal void OnPositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
-            if (hc.Sci.InvokeRequired) hc.Sci.BeginInvoke((MethodInvoker) (() => HandlePositionResult(hc, result, status)));
+            if (hc.Sci.InvokeRequired) hc.Sci.BeginInvoke((Action) (() => HandlePositionResult(hc, result, status)));
             else HandlePositionResult(hc, result, status); 
         }
 

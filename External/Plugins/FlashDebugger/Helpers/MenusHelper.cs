@@ -216,7 +216,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => UpdateMenuState(sender, state)));
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)(() => UpdateMenuState(sender, state)));
                 return;
             }
             var hasChanged = CurrentState != state;

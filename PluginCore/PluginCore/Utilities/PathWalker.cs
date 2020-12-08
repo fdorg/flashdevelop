@@ -53,7 +53,7 @@ namespace PluginCore.Utilities
         {
             if (PluginBase.MainForm is Form owner && owner.InvokeRequired)
             {
-                owner.BeginInvoke((MethodInvoker)delegate { bg_RunWorkerCompleted(sender, e); });
+                owner.BeginInvoke((Action)delegate { bg_RunWorkerCompleted(sender, e); });
                 return;
             }
             OnComplete?.Invoke(this, foundFiles);

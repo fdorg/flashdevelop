@@ -407,7 +407,7 @@ namespace ProjectManager.Controls
         {
             if (listBox.SelectedItem is null) return;
             var file = PluginBase.CurrentProject.GetAbsolutePath((string)listBox.SelectedItem);
-            ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+            ((Form)PluginBase.MainForm).BeginInvoke((Action)delegate
             {
                 plugin.OpenFile(file);
             });
