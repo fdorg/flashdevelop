@@ -298,7 +298,7 @@ namespace HaXeContext
                 if (string.IsNullOrEmpty(line)) continue;
                 if (line.Contains("not installed"))
                 {
-                    TraceManager.Add(line, (int)TraceType.Error);
+                    TraceManager.Add(line, TraceType.Error);
                 }
                 else if (!line.StartsWith('-'))
                 {
@@ -361,7 +361,7 @@ namespace HaXeContext
             while (!p.StandardOutput.EndOfStream);
 
             var error = p.StandardError.ReadToEnd();
-            if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
+            if (error.Length != 0) TraceManager.Add(error, TraceType.Error);
 
             p.WaitForExit();
             p.Close();
@@ -2516,8 +2516,8 @@ namespace HaXeContext
                 var p = StartHiddenProcess(lixPath, "install haxelib:" + item.Key, projectDir);
                 var output = p.StandardOutput.ReadToEnd();
                 var error = p.StandardError.ReadToEnd();
-                if (output.Length != 0) TraceManager.Add(output, (int)TraceType.Info);
-                else if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
+                if (output.Length != 0) TraceManager.Add(output, TraceType.Info);
+                else if (error.Length != 0) TraceManager.Add(error, TraceType.Error);
                 p.WaitForExit();
                 p.Close();
             }

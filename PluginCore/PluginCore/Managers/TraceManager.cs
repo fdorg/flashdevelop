@@ -36,6 +36,11 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log
         /// </summary>
+        public static void Add(string message, TraceType state) => Add(message, (int)state);
+
+        /// <summary>
+        /// Adds a new entry to the log
+        /// </summary>
         public static void Add(string message, int state) => Add(new TraceItem(message, state));
 
         /// <summary>
@@ -60,6 +65,11 @@ namespace PluginCore.Managers
                 asyncTimer.Start();
             }
         }
+
+        /// <summary>
+        /// Adds a new entry to the log in an unsafe threading context
+        /// </summary>
+        public static void AddAsync(string message, TraceType state) => AddAsync(message, (int) state);
 
         /// <summary>
         /// Adds a new entry to the log in an unsafe threading context

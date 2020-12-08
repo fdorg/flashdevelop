@@ -690,7 +690,7 @@ namespace HaXeContext.Completion
                               "\nPlease contact the developers via https://github.com/fdorg/flashdevelop/issues/new" +
                               "\nDebug information:" +
                               $"\n{nameof(CodeComplete)}.{nameof(InferType)}({{{member.LineTo + 1}:{line.TrimEnd('\n', '\r')}}})";
-                    TraceManager.AddAsync(msg, (int) TraceType.Fatal);
+                    TraceManager.AddAsync(msg,TraceType.Fatal);
                     return;
                 }
                 inferingMembers.Add(member);

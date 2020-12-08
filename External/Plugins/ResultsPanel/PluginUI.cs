@@ -542,7 +542,8 @@ namespace ResultsPanel
         /// </summary>
         internal void AddLogEntries()
         {
-            int count = TraceManager.TraceLog.Count;
+            var traceLog = TraceManager.TraceLog;
+            var count = traceLog.Count;
             if (count <= logCount)
             {
                 logCount = count;
@@ -554,7 +555,7 @@ namespace ResultsPanel
             var limit = Math.Min(count, logCount + 1000);
             for (var i = logCount; i < limit; i++)
             {
-                var entry = TraceManager.TraceLog[i];
+                var entry = traceLog[i];
                 if (entry.GroupData != GroupData) continue;
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)
                 {
