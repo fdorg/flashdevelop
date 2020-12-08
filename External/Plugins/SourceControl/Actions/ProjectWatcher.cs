@@ -251,17 +251,14 @@ namespace SourceControl.Actions
         internal static void HandleFileMoved(string fromFile, string toFile)
         {
             var fResult = fsWatchers.ResolveVC(fromFile, true);
+            if (fResult is null) return;
             var result = fsWatchers.ResolveVC(toFile, true);
-
             fResult.Manager.FileActions.FileAfterMove(fromFile, fResult.Status, toFile);
             ForceRefresh();
-
-            var fromVCed = fResult != null && fResult.Status >= VCItemStatus.UpToDate && fResult.Status != VCItemStatus.Added;
-            var toVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
-
-            if (fromVCed && toVCed)
+            if (fResult.Status < VCItemStatus.UpToDate || fResult.Status == VCItemStatus.Added) return;
+            if (result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added)
                 AskWithTwoFiles(result.Manager, "Moved", fromFile, toFile, true);
-            else if (fromVCed) //counts as delete
+            else //counts as delete
                 HandleFilesDeleted(new[] { fromFile });
         }
 
