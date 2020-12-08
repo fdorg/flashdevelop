@@ -543,7 +543,7 @@ namespace FlashDevelop
             }
             var sci = ((TabbedDocument)createdDoc).SciControl;
             sci.SaveBOM = info.ContainsBOM;
-            sci.BeginInvoke((MethodInvoker)(() =>
+            sci.BeginInvoke((Action)(() =>
             {
                 if (AppSettings.RestoreFileStates) FileStateManager.ApplyFileState(sci, restorePosition);
             }));
@@ -1301,7 +1301,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)(() => OnScintillaControlUpdateControl(sci)));
+                BeginInvoke((Action)(() => OnScintillaControlUpdateControl(sci)));
                 return;
             }
             if (sci != null && DocumentManager.FindDocument(sci) != null)
@@ -1334,7 +1334,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)(() => OnScintillaControlDropFiles(null, data)));
+                BeginInvoke((Action)(() => OnScintillaControlDropFiles(null, data)));
                 return;
             }
             var files = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
@@ -3813,20 +3813,22 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string args = ProcessArgString(((ItemData)button.Tag).Tag);
-                int position = args.IndexOf(';'); // Position of the arguments
-                NotifyEvent ne = new NotifyEvent(EventType.ProcessStart);
+                var button = (ToolStripItem)sender;
+                var args = ProcessArgString(((ItemData)button.Tag).Tag);
+                var position = args.IndexOf(';'); // Position of the arguments
+                var ne = new NotifyEvent(EventType.ProcessStart);
                 EventManager.DispatchEvent(this, ne);
-                if (position < 0)
+                if (position == -1)
                 {
-                    string message = TextHelper.GetString("Info.NotEnoughArguments");
-                    TraceManager.Add(message + " " + args, (int)TraceType.Error);
+                    var message = TextHelper.GetString("Info.NotEnoughArguments");
+                    TraceManager.Add($"{message} {args}", (int)TraceType.Error);
                     return;
                 }
-                string message2 = TextHelper.GetString("Info.RunningProcess");
-                TraceManager.Add(message2 + " " + args.Substring(0, position) + " " + args.Substring(position + 1), (int)TraceType.ProcessStart);
-                processRunner.Run(args.Substring(0, position), args.Substring(position + 1));
+                var message2 = TextHelper.GetString("Info.RunningProcess");
+                var fileName = args.Substring(0, position);
+                var arguments = args.Substring(position + 1);
+                TraceManager.Add($"{message2} {fileName} {arguments}", (int)TraceType.ProcessStart);
+                processRunner.Run(fileName, arguments);
                 ButtonManager.UpdateFlaggedButtons();
             }
             catch (Exception ex)
@@ -3838,19 +3840,19 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the incoming info output
         /// </summary>
-        static void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.Info);
+        static void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int) TraceType.Info);
 
         /// <summary>
         /// Handles the incoming error output
         /// </summary> 
-        static void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.ProcessError);
+        static void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int) TraceType.ProcessError);
 
         /// <summary>
         /// Handles the ending of a process
         /// </summary>
         void ProcessEnded(object sender, int exitCode)
         {
-            if (InvokeRequired) BeginInvoke((MethodInvoker)(() => ProcessEnded(sender, exitCode)));
+            if (InvokeRequired) BeginInvoke((Action)(() => ProcessEnded(sender, exitCode)));
             else
             {
                 var result = $"Done({exitCode})";

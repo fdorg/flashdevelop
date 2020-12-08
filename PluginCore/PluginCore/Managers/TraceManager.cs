@@ -14,14 +14,10 @@ namespace PluginCore.Managers
         static readonly List<TraceItem> traceLog = new List<TraceItem>();
         static readonly List<TraceItem> asyncQueue = new List<TraceItem>();
         static readonly Dictionary<string, TraceGroup> traceGroups = new Dictionary<string, TraceGroup>();
-        static readonly Timer asyncTimer;
+        static readonly Timer asyncTimer = new Timer {Interval = 200, AutoReset = false};
         static int uniqueToken;
 
-        static TraceManager()
-        {
-            asyncTimer = new Timer {Interval = 200, AutoReset = false};
-            asyncTimer.Elapsed += AsyncTimer_Elapsed;
-        }
+        static TraceManager() => asyncTimer.Elapsed += AsyncTimer_Elapsed;
 
         /// <summary>
         /// Apply the modified settings.
@@ -132,10 +128,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupDataUnique(string groupId, params string[] args)
         {
-            if (args.IsNullOrEmpty())
-            {
-                return CreateGroupData(groupId, uniqueToken++.ToString());
-            }
+            if (args.IsNullOrEmpty()) return CreateGroupData(groupId, uniqueToken++.ToString());
             return CreateGroupData(groupId, args) + "," + uniqueToken++;
         }
 
@@ -168,7 +161,7 @@ namespace PluginCore.Managers
                 synchronizing = true;
                 try
                 {
-                    ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
+                    ((Form) PluginBase.MainForm).BeginInvoke((Action) ProcessQueue);
                 }
                 catch (Exception)
                 {
@@ -222,7 +215,6 @@ namespace PluginCore.Managers
 
         public TraceItem(string message, int state) : this(message, state, null)
         {
-
         }
 
         public TraceItem(string message, int state, string groupData)

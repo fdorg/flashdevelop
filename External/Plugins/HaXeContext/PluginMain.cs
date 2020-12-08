@@ -153,9 +153,32 @@ namespace HaXeContext
                 case EventType.Trace:
                 {
                     if (!(PluginBase.CurrentProject is HaxeProject project)) return;
-                    if (settingObject.DisableLibInstallation) return;
-                    var count = TraceManager.TraceLog.Count;
+                    var traceLog = TraceManager.TraceLog;
+                    var count = traceLog.Count;
                     if (count <= logCount)
+                    {
+                        logCount = count;
+                        return;
+                    }
+                    if (contextInstance.GetCurrentSDKVersion() >= "4.0.0")
+                    {
+                        for (var i = logCount; i < count; i++)
+                        {
+                            var item = traceLog[i];
+                            var message = item.Message?.Trim();
+                            if (message.IsNullOrEmpty()) continue;
+                            var match = Regex.Match(message, @"(?<characters>characters\s+)(?<position>\d+-\d+)", RegexOptions.Compiled);
+                            if (!match.Success) continue;
+                            var group = match.Groups["position"];
+                            var parts = group.Value.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                            parts[0] = (Convert.ToInt32(parts[0]) - 1).ToString();
+                            parts[1] = (Convert.ToInt32(parts[1]) - 1).ToString();
+                            var position = string.Join("-", parts);
+                            message = message.Substring(0, group.Index) + position + message.Substring(group.Index + group.Length);
+                            traceLog[i] = new TraceItem(message, item.State, item.GroupData);
+                        }
+                    }
+                    if (settingObject.DisableLibInstallation)
                     {
                         logCount = count;
                         return;
@@ -169,7 +192,7 @@ namespace HaXeContext
                     var nameToVersion = new Dictionary<string, string>();
                     for (; logCount < count; logCount++)
                     {
-                        var message = TraceManager.TraceLog[logCount].Message?.Trim();
+                        var message = traceLog[logCount].Message?.Trim();
                         if (string.IsNullOrEmpty(message)) continue;
                         foreach (var pattern in patterns)
                         {

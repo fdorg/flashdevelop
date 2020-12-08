@@ -9,13 +9,9 @@ namespace PluginCore
     {
         public EventType Type { get; }
 
-        public bool Handled { get; set; }
+        public bool Handled { get; set; } = false;
 
-        public NotifyEvent(EventType type)
-        {
-            Handled = false;
-            Type = type;
-        }
+        public NotifyEvent(EventType type) => Type = type;
     }
 
     /// <summary>
