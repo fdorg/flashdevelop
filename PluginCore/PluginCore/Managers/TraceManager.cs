@@ -178,7 +178,7 @@ namespace PluginCore.Managers
                 synchronizing = true;
                 try
                 {
-                    ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
+                    ((Form) PluginBase.MainForm).BeginInvoke((Action) ProcessQueue);
                 }
                 catch (Exception)
                 {

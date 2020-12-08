@@ -273,7 +273,7 @@ namespace SourceControl.Helpers
         {
             if (applyingTheme)
             {
-                sci.BeginInvoke((MethodInvoker) (() => UpdateTheme(false)));
+                sci.BeginInvoke((Action) (() => UpdateTheme(false)));
                 return;
             }
             var random = new Random();

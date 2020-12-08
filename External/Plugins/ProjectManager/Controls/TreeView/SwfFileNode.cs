@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -233,7 +232,7 @@ namespace ProjectManager.Controls.TreeView
         private void runner_ProcessEnded(object sender, RunWorkerCompletedEventArgs e)
         {
             // marshal to GUI thread
-            TreeView.Invoke(new MethodInvoker(AddExports));
+            TreeView.Invoke((Action)AddExports);
         }
 
         private void AddExports()

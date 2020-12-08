@@ -353,7 +353,7 @@ namespace ProjectManager
                 case EventType.UIStarted:
                     // for some reason we have to do this on the next message loop for the tree
                     // state to be restored properly.
-                    pluginUI.BeginInvoke((MethodInvoker)(() =>
+                    pluginUI.BeginInvoke((Action)(() =>
                     {
                         BroadcastMenuInfo();
                         BroadcastToolBarInfo();

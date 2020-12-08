@@ -159,7 +159,7 @@ namespace FlashDebugger
             }
             catch (Exception ex)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)delegate
                 {
                     ErrorManager.ShowError("Internal Debugger Exception", ex);
                 });
@@ -302,7 +302,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => flashInterface_StartedEvent(sender)));
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)(() => flashInterface_StartedEvent(sender)));
                 return;
             }
             UpdateMenuState(DebuggerState.Running);
@@ -333,7 +333,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => flashInterface_DisconnectedEvent(sender)));
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)(() => flashInterface_DisconnectedEvent(sender)));
                 return;
             }
             CurrentLocation = null;
@@ -424,7 +424,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => UpdateUI(state)));
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)(() => UpdateUI(state)));
                 return;
             }
             try
@@ -459,7 +459,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)UpdateLocalsUI);
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)UpdateLocalsUI);
                 return;
             }
             var frames = FlashInterface.GetFrames();
@@ -484,7 +484,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)UpdateThreadsUI);
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)UpdateThreadsUI);
                 return;
             }
             PanelsHelper.threadsUI.SetThreads(FlashInterface.IsolateSessions);
@@ -497,7 +497,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)ResetCurrentLocation);
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)ResetCurrentLocation);
                 return;
             }
             var sourceFile = CurrentLocation.getFile();
@@ -517,7 +517,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke(new Action<bool>(GotoCurrentLocation), bSetMarker);
+                ((Form) PluginBase.MainForm).BeginInvoke((Action<bool>)GotoCurrentLocation, bSetMarker);
                 return;
             }
             var sourceFile = CurrentLocation?.getFile();
@@ -538,7 +538,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => flashInterface_ProgressEvent(sender, current, total)));
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)(() => flashInterface_ProgressEvent(sender, current, total)));
                 return;
             }
             PluginBase.MainForm.ProgressBar.Maximum = total;

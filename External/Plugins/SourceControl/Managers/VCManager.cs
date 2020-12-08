@@ -42,7 +42,7 @@ namespace SourceControl.Managers
 
         void Manager_OnChange(IVCManager sender)
         {
-            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() =>
+            ((Form) PluginBase.MainForm).BeginInvoke((Action)(() =>
             {
                 refreshTimer.Stop();
                 refreshTimer.Start();

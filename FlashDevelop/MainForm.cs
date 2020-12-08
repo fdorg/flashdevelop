@@ -543,7 +543,7 @@ namespace FlashDevelop
             }
             var sci = ((TabbedDocument)createdDoc).SciControl;
             sci.SaveBOM = info.ContainsBOM;
-            sci.BeginInvoke((MethodInvoker)(() =>
+            sci.BeginInvoke((Action)(() =>
             {
                 if (AppSettings.RestoreFileStates) FileStateManager.ApplyFileState(sci, restorePosition);
             }));
@@ -1301,7 +1301,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)(() => OnScintillaControlUpdateControl(sci)));
+                BeginInvoke((Action)(() => OnScintillaControlUpdateControl(sci)));
                 return;
             }
             if (sci != null && DocumentManager.FindDocument(sci) != null)
@@ -1334,7 +1334,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)(() => OnScintillaControlDropFiles(null, data)));
+                BeginInvoke((Action)(() => OnScintillaControlDropFiles(null, data)));
                 return;
             }
             var files = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
@@ -1840,7 +1840,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)(() => ProcessParameters(args)));
+                BeginInvoke((Action)(() => ProcessParameters(args)));
                 return;
             }
             Activate();
@@ -1919,7 +1919,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker) ApplyAllSettings);
+                BeginInvoke((Action) ApplyAllSettings);
                 return;
             }
             ShortcutManager.ApplyAllShortcuts();
@@ -2635,7 +2635,7 @@ namespace FlashDevelop
         public void FindAndReplaceFrom(object sender, EventArgs e)
         {
             var file = ((ItemData)((ToolStripItem)sender).Tag).Tag;
-            BeginInvoke((MethodInvoker)(() => OpenEditableDocument(file)));
+            BeginInvoke((Action)(() => OpenEditableDocument(file)));
             if (!frInDocDialog.Visible) frInDocDialog.Show();
             else frInDocDialog.Activate();
         }
@@ -3850,7 +3850,7 @@ namespace FlashDevelop
         /// </summary>
         void ProcessEnded(object sender, int exitCode)
         {
-            if (InvokeRequired) BeginInvoke((MethodInvoker)(() => ProcessEnded(sender, exitCode)));
+            if (InvokeRequired) BeginInvoke((Action)(() => ProcessEnded(sender, exitCode)));
             else
             {
                 var result = $"Done({exitCode})";

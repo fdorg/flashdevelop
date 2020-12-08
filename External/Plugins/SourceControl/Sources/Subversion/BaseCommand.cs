@@ -65,7 +65,7 @@ namespace SourceControl.Sources.Subversion
         {
             if (errors.Count > 0)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)delegate
                 {
                     ErrorManager.ShowInfo(string.Join("\n", errors));
                 });

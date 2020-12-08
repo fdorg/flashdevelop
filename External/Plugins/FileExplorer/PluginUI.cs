@@ -378,7 +378,7 @@ namespace FileExplorer
             // Check the specified path
             path = PathHelper.GetPhysicalPathName(path);
             // Do the actual filesystem querying in the background
-            MethodInvoker backgroundMethod = delegate
+            Action backgroundMethod = delegate
             {
                 dir = new DirectoryInfo(path);
                 infos = dir.GetFileSystemInfos();
@@ -387,7 +387,7 @@ namespace FileExplorer
             {
                 backgroundMethod.EndInvoke(result);
                 // marshal back to the UI thread
-                BeginInvoke((MethodInvoker)delegate
+                BeginInvoke((Action)delegate
                 { 
                     UpdateUI(path, dir, infos); 
                 });
@@ -1064,7 +1064,7 @@ namespace FileExplorer
         /// </summary>
         void WatcherChanged(object sender, FileSystemEventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate
+            BeginInvoke((Action)delegate
             {
                 long timestamp = DateTime.Now.Ticks;
                 if (timestamp - lastUpdateTimeStamp < 500) return;

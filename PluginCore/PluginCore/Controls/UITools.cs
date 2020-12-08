@@ -287,7 +287,7 @@ namespace PluginCore.Controls
             var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { OnUIRefresh(sci); });
+                mainForm.BeginInvoke((Action)delegate { OnUIRefresh(sci); });
                 return;
             }
             if (sci != null && sci.IsFocus)
