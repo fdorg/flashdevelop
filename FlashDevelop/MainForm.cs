@@ -3813,20 +3813,22 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string args = ProcessArgString(((ItemData)button.Tag).Tag);
-                int position = args.IndexOf(';'); // Position of the arguments
-                NotifyEvent ne = new NotifyEvent(EventType.ProcessStart);
+                var button = (ToolStripItem)sender;
+                var args = ProcessArgString(((ItemData)button.Tag).Tag);
+                var position = args.IndexOf(';'); // Position of the arguments
+                var ne = new NotifyEvent(EventType.ProcessStart);
                 EventManager.DispatchEvent(this, ne);
-                if (position < 0)
+                if (position == -1)
                 {
-                    string message = TextHelper.GetString("Info.NotEnoughArguments");
-                    TraceManager.Add(message + " " + args, TraceType.Error);
+                    var message = TextHelper.GetString("Info.NotEnoughArguments");
+                    TraceManager.Add($"{message} {args}", (int)TraceType.Error);
                     return;
                 }
-                string message2 = TextHelper.GetString("Info.RunningProcess");
-                TraceManager.Add(message2 + " " + args.Substring(0, position) + " " + args.Substring(position + 1), TraceType.ProcessStart);
-                processRunner.Run(args.Substring(0, position), args.Substring(position + 1));
+                var message2 = TextHelper.GetString("Info.RunningProcess");
+                var fileName = args.Substring(0, position);
+                var arguments = args.Substring(position + 1);
+                TraceManager.Add($"{message2} {fileName} {arguments}", (int)TraceType.ProcessStart);
+                processRunner.Run(fileName, arguments);
                 ButtonManager.UpdateFlaggedButtons();
             }
             catch (Exception ex)

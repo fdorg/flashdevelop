@@ -22,10 +22,7 @@ namespace ProjectManager.Helpers
         ProcessEndedHandler processEndedHandler;
         string savedDirectory; // to save the current directory before running processes
 
-        public FDProcessRunner(IMainForm mainForm)
-        {
-            this.mainForm = mainForm;
-        }
+        public FDProcessRunner(IMainForm mainForm) => this.mainForm = mainForm;
 
         public void StartProcess(string process, string arguments, string startupDirectory, ProcessEndedHandler callback)
         {
@@ -66,7 +63,5 @@ namespace ProjectManager.Helpers
                 runningProcessName = null;
             }
         }
-
     }
-
 }

@@ -227,8 +227,7 @@ namespace ResultsPanel
         /// </summary>
         public void CreatePluginPanel()
         {
-            pluginUI = new PluginUI(this);
-            pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
             pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
             ResultsPanelHelper.Initialize(this, pluginUI);
         }
