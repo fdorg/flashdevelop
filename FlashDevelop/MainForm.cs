@@ -3774,7 +3774,7 @@ namespace FlashDevelop
                 if (position > -1)
                 {
                     var message = TextHelper.GetString("Info.RunningProcess");
-                    TraceManager.Add(message + " " + args.Substring(0, position) + " " + args.Substring(position + 1), (int)TraceType.ProcessStart);
+                    TraceManager.Add(message + " " + args.Substring(0, position) + " " + args.Substring(position + 1), TraceType.ProcessStart);
                     var psi = new ProcessStartInfo
                     {
                         WorkingDirectory = WorkingDirectory,
@@ -3840,12 +3840,12 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the incoming info output
         /// </summary>
-        static void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int) TraceType.Info);
+        static void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, TraceType.Info);
 
         /// <summary>
         /// Handles the incoming error output
         /// </summary> 
-        static void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int) TraceType.ProcessError);
+        static void ProcessError(object sender, string line) => TraceManager.AddAsync(line, TraceType.ProcessError);
 
         /// <summary>
         /// Handles the ending of a process
@@ -3856,7 +3856,7 @@ namespace FlashDevelop
             else
             {
                 var result = $"Done({exitCode})";
-                TraceManager.Add(result, (int)TraceType.ProcessEnd);
+                TraceManager.Add(result, TraceType.ProcessEnd);
                 var te = new TextEvent(EventType.ProcessEnd, result);
                 EventManager.DispatchEvent(this, te);
                 ButtonManager.UpdateFlaggedButtons();
