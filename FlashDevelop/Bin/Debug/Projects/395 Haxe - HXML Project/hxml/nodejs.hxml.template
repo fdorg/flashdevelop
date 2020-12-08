@@ -1,0 +1,3 @@
+hxml/common.hxml
+-lib hxnodejs
+-js bin/js/$(ProjectID).js

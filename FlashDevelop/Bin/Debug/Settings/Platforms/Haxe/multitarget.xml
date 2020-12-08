@@ -1,4 +1,4 @@
-<platform name="HXML MultiTarget" targets="js,neko,hl,php,python,lua,cpp,as3,flash,java,cs,all" debugger="flash"
+<platform name="HXML MultiTarget" targets="js,nodejs,hl,cpp,java,cs,flash,neko,php,python,lua,all" debugger="flash"
   external="cmd" external-capture="" default-project="all.xml">
   <versions>
     <version value="1.0">
