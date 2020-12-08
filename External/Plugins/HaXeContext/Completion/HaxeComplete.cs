@@ -10,7 +10,6 @@ using System.Threading;
 using System.Xml;
 using ASCompletion.Model;
 using PluginCore.Helpers;
-using System.Windows.Forms;
 using LitJson;
 using PluginCore.Utilities;
 
@@ -90,7 +89,7 @@ namespace HaXeContext
         {
             if (Sci.InvokeRequired)
             {
-                Sci.BeginInvoke((MethodInvoker)(() => Notify(callback, result)));
+                Sci.BeginInvoke((Action)(() => Notify(callback, result)));
                 return;
             }
             callback(this, result, Status);

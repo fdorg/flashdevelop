@@ -83,7 +83,7 @@ namespace SourceControl.Sources.Git
         {
             if (errors.Count > 0)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() =>
+                ((Form) PluginBase.MainForm).BeginInvoke((Action)(() =>
                     ErrorManager.ShowInfo(string.Join("\n", errors))));
             }
         }

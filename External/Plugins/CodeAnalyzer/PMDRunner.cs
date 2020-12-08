@@ -116,7 +116,7 @@ namespace CodeAnalyzer
             var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { onTimedDelete(sender, e); });
+                mainForm.BeginInvoke((Action)delegate { onTimedDelete(sender, e); });
                 return;
             }
             try

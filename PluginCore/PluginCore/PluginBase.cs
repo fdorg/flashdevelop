@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Forms;
 
 namespace PluginCore
@@ -44,7 +45,7 @@ namespace PluginCore
         /// Run action on UI thread
         /// </summary>
         /// <param name="action"></param>
-        public static void RunAsync(MethodInvoker action)
+        public static void RunAsync(Action action)
         {
             if (MainForm is Form ui && ui.InvokeRequired) ui.BeginInvoke(action);
             else action.Invoke();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
@@ -76,7 +75,7 @@ namespace ASCompletion.Helpers
 
         public void UpdateOutdatedModels()
         {
-            var action = new Action(() =>
+            var action = (Action)(() =>
             {
                 try
                 {
@@ -135,7 +134,7 @@ namespace ASCompletion.Helpers
                     }
 
                     if (FinishedUpdate != null)
-                        PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                        PluginBase.RunAsync(FinishedUpdate);
                 }
                 catch
                 {
@@ -150,14 +149,14 @@ namespace ASCompletion.Helpers
         /// </summary>
         public void UpdateCompleteCache()
         {
-            var action = new Action(() =>
+            var action = (Action)(() =>
             {
                 try
                 {
                     var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
                     if (context?.Classpath is null || PathExplorer.IsWorking)
                     {
-                        if (FinishedUpdate != null) PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                        if (FinishedUpdate != null) PluginBase.RunAsync(FinishedUpdate);
                         return;
                     }
 
@@ -176,7 +175,7 @@ namespace ASCompletion.Helpers
                         cache = c;
 
                     if (FinishedUpdate != null)
-                        PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                        PluginBase.RunAsync(FinishedUpdate);
                 }
                 catch
                 {

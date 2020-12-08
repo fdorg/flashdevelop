@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -164,7 +165,7 @@ namespace PluginCore.FRService
                         // make this method thread safe
                         if (((Form) PluginBase.MainForm).InvokeRequired)
                         {
-                            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) (() =>
+                            ((Form) PluginBase.MainForm).BeginInvoke((Action) (() =>
                                 openDocuments[file].SciControl.Text = src));
                         }
                         else openDocuments[file].SciControl.Text = src;

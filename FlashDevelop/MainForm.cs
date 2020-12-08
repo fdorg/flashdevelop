@@ -1840,7 +1840,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)(() => ProcessParameters(args)));
+                BeginInvoke((Action)(() => ProcessParameters(args)));
                 return;
             }
             Activate();
@@ -1919,7 +1919,7 @@ namespace FlashDevelop
         {
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker) ApplyAllSettings);
+                BeginInvoke((Action) ApplyAllSettings);
                 return;
             }
             ShortcutManager.ApplyAllShortcuts();
@@ -2635,7 +2635,7 @@ namespace FlashDevelop
         public void FindAndReplaceFrom(object sender, EventArgs e)
         {
             var file = ((ItemData)((ToolStripItem)sender).Tag).Tag;
-            BeginInvoke((MethodInvoker)(() => OpenEditableDocument(file)));
+            BeginInvoke((Action)(() => OpenEditableDocument(file)));
             if (!frInDocDialog.Visible) frInDocDialog.Show();
             else frInDocDialog.Activate();
         }
