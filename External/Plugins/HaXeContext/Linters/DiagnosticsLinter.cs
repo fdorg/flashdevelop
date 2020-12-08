@@ -148,7 +148,7 @@ namespace HaXeContext.Linters
                     }
                     break;
                 case HaxeCompleteStatus.ERROR:
-                    PluginBase.RunAsync(() => TraceManager.Add(hc.Errors, (int)TraceType.Error));
+                    PluginBase.RunAsync(() => TraceManager.Add(hc.Errors, TraceType.Error));
                     break;
             }
         }

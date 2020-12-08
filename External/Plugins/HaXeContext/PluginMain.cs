@@ -154,7 +154,8 @@ namespace HaXeContext
                 {
                     if (!(PluginBase.CurrentProject is HaxeProject project)) return;
                     if (settingObject.DisableLibInstallation) return;
-                    var count = TraceManager.TraceLog.Count;
+                    var traceLog = TraceManager.TraceLog;
+                    var count = traceLog.Count;
                     if (count <= logCount)
                     {
                         logCount = count;
@@ -169,7 +170,7 @@ namespace HaXeContext
                     var nameToVersion = new Dictionary<string, string>();
                     for (; logCount < count; logCount++)
                     {
-                        var message = TraceManager.TraceLog[logCount].Message?.Trim();
+                        var message = traceLog[logCount].Message?.Trim();
                         if (string.IsNullOrEmpty(message)) continue;
                         foreach (var pattern in patterns)
                         {
