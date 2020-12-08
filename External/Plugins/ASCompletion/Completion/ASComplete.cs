@@ -2150,7 +2150,7 @@ namespace ASCompletion.Completion
         public static void DotContextResolved(ScintillaControl sci, ASExpr expr, MemberList items, bool autoHide)
         {
             // still valid context and position?
-            if (sci != PluginBase.MainForm.CurrentDocument.SciControl) return;
+            if (sci != PluginBase.MainForm.CurrentDocument?.SciControl) return;
             var features = ASContext.Context.Features;
             var position = sci.CurrentPos;
             var local = GetExpression(sci, position);
