@@ -21,6 +21,7 @@ using ProjectManager;
 using ProjectManager.Projects.Haxe;
 using SwfOp;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace HaXeContext
 {
@@ -94,6 +95,8 @@ namespace HaXeContext
             if (File.Exists(Context.TemporaryOutputFile)) File.Delete(Context.TemporaryOutputFile);
         }
 
+        static readonly Regex reCompileErrorCharacters = new Regex(@"(?<characters>characters\s+)(?<position>\d+-\d+)", RegexOptions.Compiled);
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
@@ -162,21 +165,39 @@ namespace HaXeContext
                     }
                     if (contextInstance.GetCurrentSDKVersion() >= "4.0.0")
                     {
-                        for (var i = logCount; i < count; i++)
-                        {
-                            var item = traceLog[i];
-                            var message = item.Message?.Trim();
-                            if (message.IsNullOrEmpty()) continue;
-                            var match = Regex.Match(message, @"(?<characters>characters\s+)(?<position>\d+-\d+)", RegexOptions.Compiled);
-                            if (!match.Success) continue;
-                            var group = match.Groups["position"];
-                            var parts = group.Value.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-                            parts[0] = (Convert.ToInt32(parts[0]) - 1).ToString();
-                            parts[1] = (Convert.ToInt32(parts[1]) - 1).ToString();
-                            var position = string.Join("-", parts);
-                            message = message.Substring(0, group.Index) + position + message.Substring(group.Index + group.Length);
-                            traceLog[i] = new TraceItem(message, item.State, item.GroupData);
-                        }
+                            // In Haxe 4.0+, columns are 1 based instead of 0 based (before the first char of a line was 0, now it's 1),
+                            // and positions in the file are utf8-based instead of binary-based (before "é" was counting as 2 chars, it's one now).
+                            IList<TraceItem> list;
+                            try
+                            {
+                                // TODO slavara: Need to refactor
+                                var type = typeof(TraceManager);
+                                list = type.GetField(nameof(traceLog), BindingFlags.Static | BindingFlags.NonPublic)
+                                    ?.GetValue(type) as IList<TraceItem>;
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorManager.ShowError(ex);
+                                break;
+                            }
+                            if (list is not null)
+                            {
+                                for (var i = logCount; i < count; i++)
+                                {
+                                    var item = list[i];
+                                    var message = item.Message?.Trim();
+                                    if (message.IsNullOrEmpty()) continue;
+                                    var match = reCompileErrorCharacters.Match(message);
+                                    if (!match.Success) continue;
+                                    var group = match.Groups["position"];
+                                    var parts = group.Value.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
+                                    parts[0] = (Convert.ToInt32(parts[0]) - 1).ToString();
+                                    parts[1] = (Convert.ToInt32(parts[1]) - 1).ToString();
+                                    var position = string.Join("-", parts);
+                                    message = message.Substring(0, group.Index) + position + message.Substring(group.Index + group.Length);
+                                    list[i] = new TraceItem(message, item.State, item.GroupData);
+                                }
+                            }
                     }
                     if (settingObject.DisableLibInstallation)
                     {

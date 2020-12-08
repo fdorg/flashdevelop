@@ -173,7 +173,7 @@ namespace PluginCore.Managers
                 {
                     ((Form) PluginBase.MainForm).BeginInvoke((Action) ProcessQueue);
                 }
-                catch (Exception)
+                catch
                 {
                     synchronizing = false;
                 }
@@ -229,7 +229,6 @@ namespace PluginCore.Managers
 
         public TraceItem(string message, int state, string groupData)
         {
-            Timestamp = DateTime.Now;
             Message = message;
             State = state;
             GroupData = groupData;
@@ -246,13 +245,13 @@ namespace PluginCore.Managers
         public string Message { get; }
 
         /// <summary>
-        /// Gets the timestamp of the trace.
-        /// </summary>
-        public DateTime Timestamp { get; }
-
-        /// <summary>
         /// Gets the group data.
         /// </summary>
         public string GroupData { get; }
+
+        /// <summary>
+        /// Gets the timestamp of the trace.
+        /// </summary>
+        public DateTime Timestamp { get; } = DateTime.Now;
     }
 }
