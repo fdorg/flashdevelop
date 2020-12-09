@@ -9,9 +9,9 @@ namespace CodeRefactor.Controls
 {
     public class ProgressDialog : SmartForm
     {
-        private Label labelStatus;
-        private Button closeButton;
-        private ProgressBarEx progressBar;
+        Label labelStatus;
+        Button closeButton;
+        ProgressBarEx progressBar;
 
         public ProgressDialog()
         {
@@ -26,7 +26,7 @@ namespace CodeRefactor.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             progressBar = new ProgressBarEx();
             closeButton = new ButtonEx();
@@ -113,7 +113,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(object sender, CancelEventArgs e)
+        void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             PluginBase.MainForm.CurrentDocument.Activate();
@@ -123,7 +123,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(object sender, EventArgs e)
+        void VisibleChange(object sender, EventArgs e)
         {
             if (Visible)
             {

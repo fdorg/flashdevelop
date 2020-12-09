@@ -5,7 +5,7 @@ namespace CodeRefactor.Commands
 {
     public class ExtractMethodCommand
     {
-        private readonly string NewName;
+        readonly string NewName;
 
         public ExtractMethodCommand(string newName)
         {

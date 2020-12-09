@@ -13,12 +13,12 @@ namespace CodeRefactor.Controls
 {
     public class DelegateMethodsDialog : SmartForm
     {
-        private Button btnOK;
-        private Button btnCancel;
-        private CheckedListBox checkedListBox;
-        private Dictionary<MemberModel, ClassModel> members;
+        Button btnOK;
+        Button btnCancel;
+        CheckedListBox checkedListBox;
+        Dictionary<MemberModel, ClassModel> members;
         public Dictionary<MemberModel, ClassModel> checkedMembers;
-        private Dictionary<string, MemberModel> members2;
+        Dictionary<string, MemberModel> members2;
 
         public DelegateMethodsDialog()
         {
@@ -36,7 +36,7 @@ namespace CodeRefactor.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.btnOK = new System.Windows.Forms.ButtonEx();
             this.checkedListBox = new CodeRefactor.Controls.CheckedListBox();
@@ -143,7 +143,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(object sender, CancelEventArgs e)
+        void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             PluginBase.MainForm.CurrentDocument.Activate();
@@ -154,7 +154,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// 
         /// </summary>
-        private void OkButtonClick(object sender, EventArgs e)
+        void OkButtonClick(object sender, EventArgs e)
         {
             this.checkedMembers = new Dictionary<MemberModel, ClassModel>();
             foreach (string item in checkedListBox.CheckedItems)
@@ -174,7 +174,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// 
         /// </summary>
-        private void CancelButtonClick(object sender, EventArgs e)
+        void CancelButtonClick(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();

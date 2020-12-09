@@ -2,7 +2,7 @@
 
 namespace CodeRefactor.Controls
 {
-    class BatchProcessorItem
+    internal class BatchProcessorItem
     {
         public readonly IBatchProcessor Processor;
         

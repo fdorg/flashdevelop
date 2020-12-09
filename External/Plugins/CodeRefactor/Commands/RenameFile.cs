@@ -10,10 +10,10 @@ using PluginCore.Managers;
 
 namespace CodeRefactor.Commands
 {
-    class RenameFile : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    internal class RenameFile : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-        private string oldPath;
-        private string newPath;
+        string oldPath;
+        string newPath;
 
         public RenameFile(string oldPath, string newPath) : this(oldPath, newPath, true)
         {

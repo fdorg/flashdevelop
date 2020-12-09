@@ -7,7 +7,7 @@ namespace CodeRefactor.Managers
 {
     public static class BatchProcessManager
     {
-        private static readonly List<IBatchProcessor> processors = new List<IBatchProcessor>();
+        static readonly List<IBatchProcessor> processors = new List<IBatchProcessor>();
 
         /// <summary>
         /// Adds <param name="processor" /> to be selectable from the BatchProcessDialog

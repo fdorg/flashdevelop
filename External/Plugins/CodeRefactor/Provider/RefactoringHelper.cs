@@ -406,11 +406,12 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Gets all files related to the project
         /// </summary>
-        private static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
+        static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
         {
             return GetAllProjectRelatedFiles(project, onlySourceFiles, false);
         }
-        private static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles, bool ignoreSdkFiles)
+
+        static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles, bool ignoreSdkFiles)
         {
             var files = new List<string>();
             var filter = project.DefaultSearchFilter;

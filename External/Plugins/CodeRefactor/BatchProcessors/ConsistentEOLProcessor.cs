@@ -5,7 +5,7 @@ using PluginCore.Localization;
 
 namespace CodeRefactor.BatchProcessors
 {
-    class ConsistentEOLProcessor : IBatchProcessor
+    internal class ConsistentEOLProcessor : IBatchProcessor
     {
         public bool IsAvailable => true;
 

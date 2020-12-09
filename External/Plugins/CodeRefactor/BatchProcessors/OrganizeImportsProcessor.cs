@@ -7,7 +7,7 @@ using PluginCore.Localization;
 
 namespace CodeRefactor.BatchProcessors
 {
-    class OrganizeImportsProcessor : IBatchProcessor
+    internal class OrganizeImportsProcessor : IBatchProcessor
     {
         public bool IsAvailable => true;
 
