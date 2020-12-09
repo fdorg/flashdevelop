@@ -27,7 +27,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static IDictionary<string, List<SearchMatch>> GetInitialResultsList(FRResults results)
         {
-            var searchResults = new Dictionary<string, List<SearchMatch>>();
+            var result = new Dictionary<string, List<SearchMatch>>();
             if (results is null)
             {
                 // I suppose this should never happen -- 
@@ -48,14 +48,14 @@ namespace CodeRefactor.Provider
                 // TODO: test if this is necessary
                 foreach (var entry in results)
                 {
-                    searchResults.Add(entry.Key, new List<SearchMatch>());
+                    result.Add(entry.Key, new List<SearchMatch>());
                     foreach (var match in entry.Value)
                     {
-                        searchResults[entry.Key].Add(match);
+                        result[entry.Key].Add(match);
                     }
                 }
             }
-            return searchResults;
+            return result;
         }
 
         /// <summary>
@@ -71,10 +71,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Checks if the model is not null and file exists
         /// </summary>
-        public static bool ModelFileExists(FileModel model)
-        {
-            return model != null && File.Exists(model.FileName);
-        }
+        public static bool ModelFileExists(FileModel model) => File.Exists(model?.FileName);
 
         /// <summary>
         /// Checks if the file is under the current SDK
@@ -126,7 +123,7 @@ namespace CodeRefactor.Provider
             {
                 foreach (var classModel in classes)
                 {
-                    if (classModel.Name.Equals(fileName))
+                    if (classModel.Name == fileName)
                     {
                         // Optimization, we don't need to make a full lookup in this case
                         return new ASResult
@@ -139,9 +136,9 @@ namespace CodeRefactor.Provider
             }
             else
             {
-                foreach (MemberModel member in ASContext.Context.CurrentModel.Members)
+                foreach (var member in ASContext.Context.CurrentModel.Members)
                 {
-                    if (member.Name.Equals(fileName))
+                    if (member.Name == fileName)
                     {
                         line = member.LineFrom;
                         break;
@@ -153,7 +150,6 @@ namespace CodeRefactor.Provider
                 sci.SelectText(fileName, sci.PositionFromLine(line));
                 return GetDefaultRefactorTarget();
             }
-
             return null;
         }
 
@@ -305,9 +301,7 @@ namespace CodeRefactor.Provider
         /// <param name="asynchronous">executes in asynchronous mode</param>
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous)
-        {
-            return FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, false, false);
-        }
+            => FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, false, false);
 
         /// <summary>
         /// Finds the given target in all project files.
@@ -322,9 +316,7 @@ namespace CodeRefactor.Provider
         /// <param name="onlySourceFiles">searches only on defined classpaths</param>
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous, bool onlySourceFiles, bool ignoreSdkFiles)
-        {
-            return FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, onlySourceFiles, ignoreSdkFiles, false, false);
-        }
+            => FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, onlySourceFiles, ignoreSdkFiles, false, false);
 
         /// <summary>
         /// Finds the given target in all project files.
@@ -406,11 +398,10 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Gets all files related to the project
         /// </summary>
-        private static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
-        {
-            return GetAllProjectRelatedFiles(project, onlySourceFiles, false);
-        }
-        private static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles, bool ignoreSdkFiles)
+        static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
+            => GetAllProjectRelatedFiles(project, onlySourceFiles, false);
+
+        static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles, bool ignoreSdkFiles)
         {
             var files = new List<string>();
             var filter = project.DefaultSearchFilter;
@@ -623,7 +614,8 @@ namespace CodeRefactor.Provider
         public static bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
         {
             var style = sci.BaseStyleAt(match.Index);
-            return includeComments && IsCommentStyle(style) || includeStrings && IsStringStyle(style);
+            return (includeComments && IsCommentStyle(style))
+                   || (includeStrings && IsStringStyle(style));
         }
 
         public static bool IsCommentStyle(int style)
@@ -674,14 +666,10 @@ namespace CodeRefactor.Provider
         internal static bool IsPrivateTarget(ASResult target)
         {
             if (target.IsPackage) return false;
-            var member = target.Member;
-            if (member != null)
-            {
-                return member.Access == Visibility.Private && !target.InFile.haXe || (member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0;
-            }
-            var type = target.Type;
-            return type != null && type.Access == Visibility.Private && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version) < "4.0.0");
+            if (target.Member is {} member) return member.Access == Visibility.Private && !target.InFile.haXe || (member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0;
+            return target.Type is {} type
+                   && type.Access == Visibility.Private
+                   && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version) < "4.0.0");
         }
     }
-
 }

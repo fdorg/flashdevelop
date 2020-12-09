@@ -85,7 +85,7 @@ namespace CodeRefactor.Controls
         /// </summary>
         public ToolStripMenuItem CodeGeneratorMenuItem { get; }
 
-        private static Image Overlay(Image source, string overlayData)
+        static Image Overlay(Image source, string overlayData)
         {
             var image = new Bitmap(source);
             using var graphics = Graphics.FromImage(image);
@@ -93,5 +93,4 @@ namespace CodeRefactor.Controls
             return PluginBase.MainForm.GetAutoAdjustedImage(image);
         }
     }
-
 }

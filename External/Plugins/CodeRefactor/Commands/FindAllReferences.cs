@@ -204,5 +204,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }

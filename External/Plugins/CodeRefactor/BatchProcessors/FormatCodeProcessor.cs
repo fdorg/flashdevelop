@@ -6,7 +6,7 @@ using PluginCore.Managers;
 
 namespace CodeRefactor.BatchProcessors
 {
-    class FormatCodeProcessor : IBatchProcessor
+    internal class FormatCodeProcessor : IBatchProcessor
     {
         public string Text => TextHelper.GetString("Info.FormatCode");
 

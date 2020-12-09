@@ -18,7 +18,8 @@ namespace CodeRefactor.Commands
 
         public void Execute()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             ASGenerator.GenerateDelegateMethods(sci, result.Member, selectedMembers, result.Type, result.InClass);
         }
     }

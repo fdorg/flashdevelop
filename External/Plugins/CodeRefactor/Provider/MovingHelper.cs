@@ -7,11 +7,11 @@ using PluginCore.Managers;
 
 namespace CodeRefactor.Provider
 {
-    class MovingHelper
+    internal class MovingHelper
     {
-        private static readonly List<QueueItem> queue = new List<QueueItem>();
-        private static readonly Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
-        private static RefactorCommand<IDictionary<string, List<SearchMatch>>> currentCommand;
+        static readonly List<QueueItem> queue = new List<QueueItem>();
+        static readonly Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
+        static RefactorCommand<IDictionary<string, List<SearchMatch>>> currentCommand;
 
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath) => AddToQueue(oldPathToNewPath, false);
 
@@ -25,7 +25,7 @@ namespace CodeRefactor.Provider
             if (currentCommand is null) ExecuteFirst();
         }
 
-        private static void ExecuteFirst()
+        static void ExecuteFirst()
         {
             try
             {
@@ -44,7 +44,7 @@ namespace CodeRefactor.Provider
             }
         }
 
-        private static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> e)
+        static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> e)
         {
             if (currentCommand.OutputResults)
             {
@@ -64,7 +64,7 @@ namespace CodeRefactor.Provider
             }
         }
 
-        private static void ReportResults()
+        static void ReportResults()
         {
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + PluginMain.TraceGroup);
             foreach (var entry in results)
@@ -86,10 +86,10 @@ namespace CodeRefactor.Provider
                 }
                 foreach (var lineSetsToReport in reportableLines)
                 {
-                    var renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    var line = lineChanges[lineSetsToReport.Key].Trim();
                     foreach (var lineToReport in lineSetsToReport.Value)
                     {
-                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info, PluginMain.TraceGroup);
+                        TraceManager.Add(string.Format(lineToReport, line), (int)TraceType.Info, PluginMain.TraceGroup);
                     }
                 }
             }

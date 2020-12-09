@@ -1,13 +1,15 @@
-﻿using PluginCore;
+﻿using System;
+using PluginCore;
 using PluginCore.Managers;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace CodeRefactor.Managers
 {
     public static class BatchProcessManager
     {
-        private static readonly List<IBatchProcessor> processors = new List<IBatchProcessor>();
+        static readonly List<IBatchProcessor> processors = new List<IBatchProcessor>();
 
         /// <summary>
         /// Adds <param name="processor" /> to be selectable from the BatchProcessDialog
@@ -15,7 +17,6 @@ namespace CodeRefactor.Managers
         public static void AddBatchProcessor(IBatchProcessor processor)
         {
             processors.Add(processor);
-
             EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "CodeRefactor.BatchProcessorAdded", processor));
         }
 
@@ -25,7 +26,6 @@ namespace CodeRefactor.Managers
         public static void RemoveBatchProcessor(IBatchProcessor processor)
         {
             processors.Remove(processor);
-
             EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "CodeRefactor.BatchProcessorRemoved", processor));
         }
         
@@ -33,23 +33,11 @@ namespace CodeRefactor.Managers
         /// Returns a list of available batch processors
         /// </summary>
         /// <returns></returns>
-        public static IList<IBatchProcessor> GetAvailableProcessors()
-        {
-            var result = new List<IBatchProcessor>();
-            foreach (var processor in processors)
-            {
-                if (processor.IsAvailable)
-                {
-                    result.Add(processor);
-                }
-            }
-            return result;
-        }
+        public static IList<IBatchProcessor> GetAvailableProcessors() => processors.Where(processor => processor.IsAvailable).ToList();
 
         public static IEnumerable<string> GetAllProjectFiles(IProject project)
         {
-            if (project is null) return null;
-            
+            if (project is null) return Array.Empty<string>();
             var files = new List<string>();
             var filters = project.DefaultSearchFilter.Split(';');
             foreach (var path in project.SourcePaths)
@@ -61,7 +49,6 @@ namespace CodeRefactor.Managers
                 }
             }
             files = files.FindAll(File.Exists);
-
             return files;
         }
     }
@@ -80,6 +67,7 @@ namespace CodeRefactor.Managers
         bool IsAvailable { get; }
 
         void Process(IEnumerable<string> files);
+
         void ProcessProject(IProject project);
     }
 }

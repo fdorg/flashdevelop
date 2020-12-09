@@ -8,12 +8,9 @@ namespace CodeRefactor.Commands
     /// <typeparam name="TRefactorResultType">The type of the results</typeparam>
     public class RefactorCompleteEventArgs<TRefactorResultType> : EventArgs
     {
-        public virtual TRefactorResultType Results { get; }
-
         /// <param name="results"></param>
-        public RefactorCompleteEventArgs(TRefactorResultType resultType)
-        {
-            Results = resultType;
-        }
+        public RefactorCompleteEventArgs(TRefactorResultType results) => Results = results;
+
+        public virtual TRefactorResultType Results { get; }
     }
 }

@@ -34,16 +34,16 @@ using ScintillaNet;
  */
 namespace CodeRefactor.Commands
 {
-    class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    internal class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
         public Dictionary<string, string> OldPathToNewPath;
-        private readonly bool renaming;
-        private readonly bool updatePackages;
-        private List<MoveTargetHelper> targets;
-        private List<string> filesToReopen;
-        private int currentTargetIndex;
-        private ASResult currentTargetResult;
-        private bool targetsOutsideClasspath;
+        readonly bool renaming;
+        readonly bool updatePackages;
+        List<MoveTargetHelper> targets;
+        List<string> filesToReopen;
+        int currentTargetIndex;
+        ASResult currentTargetResult;
+        bool targetsOutsideClasspath;
 
         #region Constructors
 
@@ -159,7 +159,7 @@ namespace CodeRefactor.Commands
 
         #region Private Helper Methods
 
-        private void CreateListOfMoveTargets()
+        void CreateListOfMoveTargets()
         {
             targets = new List<MoveTargetHelper>();
             filesToReopen = new List<string>();
@@ -219,7 +219,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        private MoveTargetHelper GetMoveTarget(string oldFilePath, string newPath, string ownerPath)
+        MoveTargetHelper GetMoveTarget(string oldFilePath, string newPath, string ownerPath)
         {
             MoveTargetHelper result = new MoveTargetHelper();
             result.OldFilePath = oldFilePath;
@@ -264,7 +264,7 @@ namespace CodeRefactor.Commands
             return result;
         }
 
-        private void CopyTargets()
+        void CopyTargets()
         {
             MessageBar.Locked = true;
             foreach (var target in targets)
@@ -293,7 +293,7 @@ namespace CodeRefactor.Commands
             MessageBar.Locked = false;
         }
 
-        private void MoveTargets()
+        void MoveTargets()
         {
             MessageBar.Locked = true;
             foreach (var item in OldPathToNewPath)
@@ -332,7 +332,7 @@ namespace CodeRefactor.Commands
             MessageBar.Locked = false;
         }
 
-        private void CloseDocuments(string oldDirectory, string newDirectory)
+        void CloseDocuments(string oldDirectory, string newDirectory)
         {
             string oldPath = oldDirectory.Contains(Path.DirectorySeparatorChar.ToString())
                                  ? oldDirectory + Path.DirectorySeparatorChar
@@ -364,7 +364,7 @@ namespace CodeRefactor.Commands
             foreach (var file in fileMatches) AssociatedDocumentHelper.InitiallyOpenedFiles.Remove(file);
         }
 
-        private void UpdateReferencesNextTarget()
+        void UpdateReferencesNextTarget()
         {
             if (currentTargetIndex < targets.Count)
             {
@@ -436,7 +436,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        private void MoveRefactoredFiles()
+        void MoveRefactoredFiles()
         {
             MessageBar.Locked = true;
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
@@ -521,7 +521,7 @@ namespace CodeRefactor.Commands
             MessageBar.Locked = false;
         }
 
-        private void ReopenInitialFiles()
+        void ReopenInitialFiles()
         {
             foreach (string file in filesToReopen)
                 PluginBase.MainForm.OpenEditableDocument(file, false);
@@ -531,7 +531,7 @@ namespace CodeRefactor.Commands
 
         #region Event Handlers
 
-        private void FindFinished(FRResults results)
+        void FindFinished(FRResults results)
         {
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
@@ -557,7 +557,7 @@ namespace CodeRefactor.Commands
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
                     sci = AssociatedDocumentHelper.LoadDocument(file).SciControl;
                     // if the search result does point to the member source, store it
-                    if (RefactoringHelper.DoesMatchPointToTarget(sci, match, currentTargetResult, this.AssociatedDocumentHelper))
+                    if (RefactoringHelper.DoesMatchPointToTarget(sci, match, currentTargetResult, AssociatedDocumentHelper))
                         actualMatches.Add(match);
                 }
                 if (actualMatches.Count == 0) continue;

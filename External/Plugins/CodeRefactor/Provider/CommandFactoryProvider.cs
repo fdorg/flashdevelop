@@ -26,7 +26,9 @@ namespace CodeRefactor.Provider
         {
             DefaultFactory.RegisterValidator(typeof(Rename), expr =>
             {
-                if (PluginBase.MainForm.CurrentDocument.SciControl.SelTextSize != 0) return false;
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is null) return false;
+                if (sci.SelTextSize != 0) return false;
                 if (expr is null || expr.IsNull()) return false;
                 var c = expr.Context.Value[0];
                 if (char.IsDigit(c)) return false;
@@ -50,28 +52,28 @@ namespace CodeRefactor.Provider
 
         public static void Register(string language, ICommandFactory factory)
         {
-            if (ContainsLanguage(language)) LanguageToFactory.Remove(language);
+            LanguageToFactory.Remove(language);
             LanguageToFactory.Add(language, factory);
         }
 
         public static bool ContainsLanguage(string language) => LanguageToFactory.ContainsKey(language);
 
-        public static ICommandFactory GetFactoryForCurrentDocument()
+        public static ICommandFactory? GetFactoryForCurrentDocument()
         {
             return PluginBase.MainForm.CurrentDocument?.SciControl is { } sci
                 ? GetFactory(sci)
                 : null;
         }
 
-        public static ICommandFactory GetFactory(ASResult target) => GetFactory(target.InFile ?? target.Type.InFile);
+        public static ICommandFactory? GetFactory(ASResult target) => GetFactory(target.InFile ?? target.Type.InFile);
 
-        public static ICommandFactory GetFactory(FileModel file) => GetFactory(PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName));
+        public static ICommandFactory? GetFactory(FileModel file) => GetFactory(PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName));
 
-        public static ICommandFactory GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
+        public static ICommandFactory? GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
 
-        public static ICommandFactory GetFactory(ScintillaControl sci) => GetFactory(sci.ConfigurationLanguage);
+        public static ICommandFactory? GetFactory(ScintillaControl sci) => GetFactory(sci.ConfigurationLanguage);
 
-        public static ICommandFactory GetFactory(string language)
+        public static ICommandFactory? GetFactory(string language)
         {
             LanguageToFactory.TryGetValue(language, out var factory);
             return factory;

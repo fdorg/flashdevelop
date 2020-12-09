@@ -9,8 +9,8 @@ namespace CodeRefactor
     {
         const bool DEFAULT_USE_INLINE_RENAMING = false;
 
-        private bool separatePackages = false;
-        private bool disableMoveRefactoring = false;
+        bool separatePackages = false;
+        bool disableMoveRefactoring = false;
         bool useInlineRenaming = DEFAULT_USE_INLINE_RENAMING;
 
         [DisplayName("Separate Packages")]

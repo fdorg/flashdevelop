@@ -10,10 +10,10 @@ using PluginCore.Managers;
 
 namespace CodeRefactor.Commands
 {
-    class RenameFile : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    internal class RenameFile : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-        private string oldPath;
-        private string newPath;
+        string oldPath;
+        string newPath;
 
         public RenameFile(string oldPath, string newPath) : this(oldPath, newPath, true)
         {
@@ -30,17 +30,18 @@ namespace CodeRefactor.Commands
 
         protected override void ExecutionImplementation()
         {
-            string oldFileName = Path.GetFileNameWithoutExtension(oldPath);
-            string newFileName = Path.GetFileNameWithoutExtension(newPath);
-            string msg = TextHelper.GetString("Info.RenamingFile");
-            string title = string.Format(TextHelper.GetString("Title.RenameDialog"), oldFileName);
+            var msg = TextHelper.GetString("Info.RenamingFile");
+            var oldFileName = Path.GetFileNameWithoutExtension(oldPath);
+            var title = string.Format(TextHelper.GetString("Title.RenameDialog"), oldFileName);
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
                 if (target != null)
                 {
-                    var command = CommandFactoryProvider.GetFactory(target).CreateRenameCommandAndExecute(target, true, newFileName);
-                    command.RegisterDocumentHelper(AssociatedDocumentHelper);
+                    var newFileName = Path.GetFileNameWithoutExtension(newPath);
+                    CommandFactoryProvider.GetFactory(target)
+                        .CreateRenameCommandAndExecute(target, true, newFileName)
+                        .RegisterDocumentHelper(AssociatedDocumentHelper);
                     return;
                 }
             }
@@ -55,7 +56,6 @@ namespace CodeRefactor.Commands
                 oldPath = tmpPath;
             }
             if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-
             if (FileHelper.ConfirmOverwrite(newPath))
             {
                 FileHelper.ForceMove(oldPath, newPath);

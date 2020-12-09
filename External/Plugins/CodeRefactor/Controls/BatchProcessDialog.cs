@@ -185,8 +185,5 @@ namespace CodeRefactor.Controls
         void CancelButtonClick(object sender, EventArgs e) => Close();
 
         #endregion
-
     }
-
 }
-

@@ -193,10 +193,7 @@ namespace CodeRefactor.Commands
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + PluginMain.TraceGroup);
         }
 
-        void OnItemClick(object sender, EventArgs e)
-        {
-            GenerateExtractVariable(((CompletionListItem) sender).Matches);
-        }
+        void OnItemClick(object sender, EventArgs e) => GenerateExtractVariable(((CompletionListItem) sender).Matches);
     }
 
     internal sealed class CompletionListItem : ToolStripMenuItem, ICompletionListItem

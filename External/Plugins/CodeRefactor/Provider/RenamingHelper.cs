@@ -69,7 +69,7 @@ namespace CodeRefactor.Provider
                 && (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) != 0;
         }
 
-        internal static ASResult FindGetterSetter(ASResult target, string name)
+        internal static ASResult? FindGetterSetter(ASResult target, string name)
         {
             var inClass = target.InClass;
             foreach (var member in inClass.Members)
@@ -82,7 +82,7 @@ namespace CodeRefactor.Provider
             return null;
         }
 
-        static Rename RenameMember(ASResult target, string name, string newName, bool outputResults)
+        static Rename? RenameMember(ASResult target, string name, string newName, bool outputResults)
         {
             return FindGetterSetter(target, name) is { } result
                 ? new Rename(result, outputResults, newName)

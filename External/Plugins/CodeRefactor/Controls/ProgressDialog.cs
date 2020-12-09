@@ -9,13 +9,12 @@ namespace CodeRefactor.Controls
 {
     public class ProgressDialog : SmartForm
     {
-        private Label labelStatus;
-        private Button closeButton;
-        private ProgressBarEx progressBar;
+        Label labelStatus;
+        ProgressBarEx progressBar;
 
         public ProgressDialog()
         {
-            Owner = (Form)PluginBase.MainForm;
+            Owner = (Form) PluginBase.MainForm;
             Font = PluginBase.Settings.DefaultFont;
             InitializeComponent();
         }
@@ -26,10 +25,9 @@ namespace CodeRefactor.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             progressBar = new ProgressBarEx();
-            closeButton = new ButtonEx();
             labelStatus = new Label();
             SuspendLayout();
             // 
@@ -37,7 +35,7 @@ namespace CodeRefactor.Controls
             // 
             progressBar.Anchor = (AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right;
             progressBar.Location = new System.Drawing.Point(12, 23);
-            progressBar.Name = "progressBar";
+            progressBar.Name = nameof(progressBar);
             progressBar.Size = new System.Drawing.Size(491, 14);
             progressBar.TabIndex = 0;
             progressBar.UseWaitCursor = true;
@@ -51,7 +49,7 @@ namespace CodeRefactor.Controls
             labelStatus.FlatStyle = FlatStyle.System;
             labelStatus.ForeColor = System.Drawing.SystemColors.ControlText;
             labelStatus.Location = new System.Drawing.Point(12, 7);
-            labelStatus.Name = "labelStatus";
+            labelStatus.Name = nameof(labelStatus);
             labelStatus.Size = new System.Drawing.Size(43, 13);
             labelStatus.TabIndex = 0;
             labelStatus.Text = "Status: ";
@@ -84,9 +82,6 @@ namespace CodeRefactor.Controls
 
         #region Methods And Event Handlers
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Reset()
         {
             UpdateProgress(0);
@@ -96,14 +91,8 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        public void UpdateProgress(int percentDone)
-        {
-            progressBar.Value = percentDone;
-        }
+        public void UpdateProgress(int percentDone) => progressBar.Value = percentDone;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void UpdateStatusMessage(string message)
         {
             labelStatus.Text = TextHelper.GetString("Info.Status") + " " + message;
@@ -113,22 +102,19 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(object sender, CancelEventArgs e)
+        void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            PluginBase.MainForm.CurrentDocument.Activate();
+            PluginBase.MainForm.CurrentDocument?.Activate();
             Hide();
         }
 
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(object sender, EventArgs e)
+        void VisibleChange(object sender, EventArgs e)
         {
-            if (Visible)
-            {
-                CenterToParent();
-            }
+            if (Visible) CenterToParent();
         }
 
         /// <summary>
@@ -140,16 +126,8 @@ namespace CodeRefactor.Controls
             Reset();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void SetTitle(string title)
-        {
-            Text = title;
-        }
+        public void SetTitle(string title) => Text = title;
 
         #endregion
-
     }
-
 }

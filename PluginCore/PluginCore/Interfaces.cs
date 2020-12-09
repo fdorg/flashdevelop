@@ -95,7 +95,7 @@ namespace PluginCore
         #region ICompletionListItem Properties
 
         string Label { get; }
-        string Value { get; }
+        string? Value { get; }
         string Description { get; }
         Bitmap Icon { get; }
 

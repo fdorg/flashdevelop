@@ -4,7 +4,7 @@ using PluginCore;
 
 namespace CodeRefactor.Controls
 {
-    class CheckedListBox : CheckedListBoxEx
+    internal class CheckedListBox : CheckedListBoxEx
     {
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
@@ -16,7 +16,5 @@ namespace CodeRefactor.Controls
             }
             else base.OnDrawItem(e);
         }
-
     }
-
 }

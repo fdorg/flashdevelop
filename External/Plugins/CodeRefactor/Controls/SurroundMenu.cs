@@ -13,7 +13,7 @@ namespace CodeRefactor.Controls
 {
     public class SurroundMenu : ToolStripMenuItem
     {
-        private readonly List<ICompletionListItem> items;
+        readonly List<ICompletionListItem> items;
 
         public SurroundMenu()
         {
@@ -21,10 +21,7 @@ namespace CodeRefactor.Controls
             items = new List<ICompletionListItem>();
         }
 
-        public void Clear()
-        {
-            items.Clear();
-        }
+        public void Clear() => items.Clear();
 
         /// <summary>
         /// Generates the menu for the selected sci control
@@ -33,14 +30,14 @@ namespace CodeRefactor.Controls
         {
             var files = new List<string>();
 
-            string specific = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage, SurroundWithCommand.SurroundFolder);
+            var specific = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage, SurroundWithCommand.SurroundFolder);
             if (Directory.Exists(specific))
             {
                 var walker = new PathWalker(specific, "*" + SurroundWithCommand.SurroundExt, false);
                 files.AddRange(walker.GetFiles());
             }
 
-            string global = Path.Combine(PathHelper.SnippetDir, SurroundWithCommand.SurroundFolder);
+            var global = Path.Combine(PathHelper.SnippetDir, SurroundWithCommand.SurroundFolder);
             if (Directory.Exists(global))
             {
                 var walker = new PathWalker(global, "*" + SurroundWithCommand.SurroundExt, false);
@@ -62,9 +59,6 @@ namespace CodeRefactor.Controls
             }
         }
 
-        protected override void OnClick(EventArgs e)
-        {
-            CompletionList.Show(items, false);
-        }
+        protected override void OnClick(EventArgs e) => CompletionList.Show(items, false);
     }
 }
