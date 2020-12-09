@@ -14,6 +14,10 @@ namespace FlashDevelop.Dialogs
 {
     public class UpdateDialog : SmartForm
     {
+        // { QUICKFIX slavara: move to DistroConfig
+        public const string DISTRIBUTION_DEV_VERSION = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.txt";
+        public const string DISTRIBUTION_DEV_BUILD = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.exe";
+        // }
         const string URL = DistroConfig.DISTRIBUTION_VERSION;
         readonly HttpClient httpClient = new HttpClient();
         UpdateInfo updateInfo;
@@ -167,7 +171,7 @@ namespace FlashDevelop.Dialogs
                     }
                     case UpdateType.PreviewRelease:
                     {
-                        var response = await httpClient.GetAsync(DistroConfig.DISTRIBUTION_DEV_VERSION);
+                        var response = await httpClient.GetAsync(DISTRIBUTION_DEV_VERSION.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME));
                         using var stream = await response.Content.ReadAsStreamAsync();
                         using var reader = new StreamReader(stream);
                         var version = await reader.ReadLineAsync(); // Read version
@@ -175,7 +179,7 @@ namespace FlashDevelop.Dialogs
                         var product = Application.ProductName; // Internal version
                         var length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
                         var current = product.Substring(length, product.IndexOfOrdinal(" for") - length);
-                        updateInfo = new UpdateInfo(current, version, DistroConfig.DISTRIBUTION_DEV_BUILD);
+                        updateInfo = new UpdateInfo(current, version, DISTRIBUTION_DEV_BUILD.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME));
                         OnLoadComplete();
                         break;
                     }
