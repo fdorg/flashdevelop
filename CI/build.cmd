@@ -83,8 +83,6 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-dir FlashDevelop\Bin\Debug\
-
 :: Rename binaries
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
