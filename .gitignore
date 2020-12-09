@@ -40,4 +40,4 @@ Thumbs.db
 **/System.Buffers.*
 **/System.Memory.*
 **/System.Numerics.Vectors.*
-FlashDevelop/Bin/Debug/Microsoft.Threading.*
+**/Microsoft.Threading.*

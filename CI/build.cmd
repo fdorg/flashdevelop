@@ -6,8 +6,6 @@
 :: set PATH=%PATH%;C:\Program Files (x86)\NSIS
 :: set PATH=%PATH%;C:\Program Files\7-Zip\
 
-nuget
-
 :flashdevelop
 
 :: Extract version from HEAD
