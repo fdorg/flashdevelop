@@ -401,10 +401,10 @@ namespace PluginCore.Controls
         /// </summary> 
         public static void FindWordStartingWith(string word)
         {
-            word ??= "";
-            int len = word.Length;
-            int maxLen = 0;
-            int lastScore = 0;
+            word ??= string.Empty;
+            var len = word.Length;
+            var maxLen = 0;
+            var lastScore = 0;
             /// <summary>
             /// FILTER ITEMS
             /// </summary>
@@ -517,16 +517,27 @@ namespace PluginCore.Controls
                 // update
                 try
                 {
-                    completionList.BeginUpdate();
-                    completionList.Items.Clear();
                     foreach (var item in found)
                     {
-                        completionList.Items.Add(item);
                         if (item.Label.Length > maxLen)
                         {
                             widestLabel = item.Label;
                             maxLen = widestLabel.Length;
                         }
+                    }
+                    completionList.BeginUpdate();
+                    completionList.Items.Clear();
+                    switch (found)
+                    {
+                        case ICompletionListItem[] items:
+                            completionList.Items.AddRange(items);
+                            break;
+                        case List<ICompletionListItem> items:
+                            completionList.Items.AddRange(items.ToArray());
+                            break;
+                        default:
+                            completionList.Items.AddRange(found.ToArray());
+                            break;
                     }
                     var topIndex = lastIndex;
                     if (defaultItem != null)
