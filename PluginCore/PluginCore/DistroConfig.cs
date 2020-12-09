@@ -12,7 +12,5 @@
         public const string DISTRIBUTION_COMPANY = "FlashDevelop.org";
         public const string DISTRIBUTION_RSS = "http://www.flashdevelop.org/community/rss.php?f=15";
         public const string DISTRIBUTION_EXT = "as";
-        public const string DISTRIBUTION_DEV_VERSION = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.txt";
-        public const string DISTRIBUTION_DEV_BUILD = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.exe";
     }
 }
