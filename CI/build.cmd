@@ -12,6 +12,7 @@
 call SetVersion.bat
 
 :: Build the main solution and run tests
+nuget restore FlashDevelop.sln
 msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
@@ -37,6 +38,7 @@ if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
 )
 
 :: Build AnyCPU version for 64bits support
+nuget restore FlashDevelop.sln
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
 
 :: Check for build errors
@@ -75,8 +77,10 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solutions
+nuget restore FlashDevelop.sln
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 ping -n 5 127.0.0.1 > nul
+nuget restore FlashDevelop.sln
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
