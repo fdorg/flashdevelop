@@ -55,6 +55,12 @@ namespace PluginCore
         Weekly = 1
     }
 
+    public enum UpdateType
+    {
+        StableRelease = 0,
+        PreviewRelease = 1,
+    }
+
     public enum SessionType
     {
         Startup = 0,
