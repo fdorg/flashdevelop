@@ -2,7 +2,7 @@
 
 :: Set paths
 :: set PATH=%PATH%;C:\Program Files (x86)\MSBuild\15.0\Bin\
-:: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin
+set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin
 :: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Comunity\MSBuild\Current\Bin
 :: set PATH=%PATH%;C:\Program Files\Git\bin\
 :: set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
