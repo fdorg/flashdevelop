@@ -14,7 +14,7 @@ nuget
 call SetVersion.bat
 
 :: Build the main solution and run tests
-msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
+msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger% -t:restore
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
