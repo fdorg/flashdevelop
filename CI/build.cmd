@@ -44,13 +44,17 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build
 if %errorlevel% neq 0 goto :error
 
 :: Create the installer
+echo "Create the installer"
 makensis FlashDevelop\Installer\Installer.nsi
+echo "Create the installer - ok"
 
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
 
 :: Create the archive
+echo "Create the archive FlashDevelop.zip"
 7z a -tzip FlashDevelop\Installer\Binary\FlashDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+echo "Create the archive ok"
 
 :: Check for 7zip errors
 if %errorlevel% neq 0 goto :error
@@ -90,19 +94,25 @@ ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
 
 : Remove files after build
+echo "del FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll"
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
+echo "del FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll - ok"
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
 :: Create the installer
+echo "Create the installer"
 makensis FlashDevelop\Installer\Installer.nsi
+echo "Create the installer - ok"
 
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
 
 :: Create the archive
+echo "Create the archive HaxeDevelop.zip"
 7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+echo "Create the archive HaxeDevelop.zip - ok"
 
 :: Done
 exit 0
