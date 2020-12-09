@@ -13,10 +13,7 @@ namespace CodeRefactor.Commands
 
         protected string SnippetCode;
 
-        public SurroundWithCommand(string snippet)
-        {
-            SnippetCode = snippet;
-        }
+        public SurroundWithCommand(string snippet) => SnippetCode = snippet;
 
         public void Execute() => ExecutionImplementation();
 
@@ -25,7 +22,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected void ExecutionImplementation()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             sci.BeginUndoAction();
             try
             {
@@ -47,15 +45,9 @@ namespace CodeRefactor.Commands
                 {
                     while (pos >= 0)
                     {
-                        string c = snippet.Substring(--pos, 1);
-                        if (c.Equals("\t"))
-                        {
-                            entryPointIndent += sci.Indent;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        var c = snippet.Substring(--pos, 1);
+                        if (c.Equals("\t")) entryPointIndent += sci.Indent;
+                        else break;
                     }
                 }
 
@@ -82,23 +74,21 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public static string GetSnippet(string word, string syntax, Encoding current)
+        public static string? GetSnippet(string word, string syntax, Encoding current)
         {
-            string specific = Path.Combine(PathHelper.SnippetDir, syntax, SurroundFolder, word + SurroundExt);
-            string global = Path.Combine(PathHelper.SnippetDir, SurroundFolder, word + SurroundExt);
+            var specific = Path.Combine(PathHelper.SnippetDir, syntax, SurroundFolder, word + SurroundExt);
             if (File.Exists(specific))
             {
-                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
+                var info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-
+            var global = Path.Combine(PathHelper.SnippetDir, SurroundFolder, word + SurroundExt);
             if (File.Exists(global))
             {
-                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
+                var info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
             return null;
         }
-
     }
 }

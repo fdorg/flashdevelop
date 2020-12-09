@@ -33,7 +33,12 @@ namespace CodeRefactor.Commands
                 return;
             }
             var imports = context.CurrentModel.Imports.ToList();
-            var sci = SciControl ?? PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = SciControl ?? PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null)
+            {
+                FireOnRefactorComplete();
+                return;
+            }
             var pos = sci.CurrentPos;
             var cppPpStyle = (int)CPP.PREPROCESSOR;
             for (var i = imports.Count - 1; i >= 0; i--)
@@ -159,9 +164,11 @@ namespace CodeRefactor.Commands
         /// </summary>
         Imports SeparateImports(IEnumerable<MemberModel> imports, int privateSectionIndex)
         {
-            var separatedImports = new Imports();
-            separatedImports.PackageImports = new List<MemberModel>();
-            separatedImports.PrivateImports = new List<MemberModel>();
+            var separatedImports = new Imports
+            {
+                PackageImports = new List<MemberModel>(),
+                PrivateImports = new List<MemberModel>(),
+            };
             foreach (var import in imports)
             {
                 if (import.LineFrom < privateSectionIndex) separatedImports.PackageImports.Add(import);
@@ -254,11 +261,13 @@ namespace CodeRefactor.Commands
         protected virtual bool MemberTypeImported(string type, string searchInText, string sourceFile)
         {
             if (type == "*") return true;
-            var search = new FRSearch(type);
-            search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
-            search.NoCase = false;
-            search.WholeWord = true;
-            search.SourceFile = sourceFile;
+            var search = new FRSearch(type)
+            {
+                Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals,
+                NoCase = false,
+                WholeWord = true,
+                SourceFile = sourceFile
+            };
             return search.Match(searchInText) != null;
         }
 
@@ -271,10 +280,7 @@ namespace CodeRefactor.Commands
     /// </summary>
     internal class ImportsComparerLine : IComparer<MemberModel>
     {
-        public int Compare(MemberModel item1, MemberModel item2)
-        {
-            return item2.LineFrom - item1.LineFrom;
-        }
+        public int Compare(MemberModel a, MemberModel b) => b.LineFrom - a.LineFrom;
     }
 
     /// <summary>

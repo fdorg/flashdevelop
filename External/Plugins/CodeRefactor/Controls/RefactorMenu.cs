@@ -93,5 +93,4 @@ namespace CodeRefactor.Controls
             return PluginBase.MainForm.GetAutoAdjustedImage(image);
         }
     }
-
 }

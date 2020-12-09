@@ -575,7 +575,7 @@ namespace CodeRefactor
                     cm = cm.Extends;
                 }
                 using var dialog = new DelegateMethodsDialog();
-                dialog.FillData(members, result.Type);
+                dialog.FillData(members);
                 if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count == 0) return;
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
                 command.Execute();

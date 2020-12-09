@@ -557,7 +557,7 @@ namespace CodeRefactor.Commands
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
                     sci = AssociatedDocumentHelper.LoadDocument(file).SciControl;
                     // if the search result does point to the member source, store it
-                    if (RefactoringHelper.DoesMatchPointToTarget(sci, match, currentTargetResult, this.AssociatedDocumentHelper))
+                    if (RefactoringHelper.DoesMatchPointToTarget(sci, match, currentTargetResult, AssociatedDocumentHelper))
                         actualMatches.Add(match);
                 }
                 if (actualMatches.Count == 0) continue;

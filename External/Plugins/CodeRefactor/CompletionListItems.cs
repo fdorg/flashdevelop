@@ -31,7 +31,7 @@ namespace CodeRefactor
 
         public string Label { get; }
 
-        public string Value
+        public string? Value
         {
             get
             {
@@ -52,12 +52,13 @@ namespace CodeRefactor
 
         public string Label { get; }
 
-        public string Value
+        public string? Value
         {
             get
             {
-                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(Label);
-                command.Execute();
+                CommandFactoryProvider.GetFactoryForCurrentDocument()
+                    ?.CreateSurroundWithCommand(Label)
+                    .Execute();
                 return null;
             }
         }

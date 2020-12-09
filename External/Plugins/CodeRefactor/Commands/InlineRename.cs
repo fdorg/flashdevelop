@@ -1002,10 +1002,7 @@ namespace CodeRefactor.Commands
             /// returns an integer that indicates whether the current instance precedes, follows,
             /// or occurs in the same position in the sort order as the other object. </summary>
             /// <param name="other">An object to compare with this instance. </param>
-            int IComparable<ReferenceInfo>.CompareTo(ReferenceInfo other)
-            {
-                return Index.CompareTo(other.Index);
-            }
+            int IComparable<ReferenceInfo>.CompareTo(ReferenceInfo other) => Index.CompareTo(other.Index);
         }
 
         /// <summary>
@@ -1017,27 +1014,23 @@ namespace CodeRefactor.Commands
         class DelayedExecution : IDisposable
         {
             Action action;
-            Timer timer;
+            Timer timer = new Timer
+            {
+                Enabled = false,
+                Interval = 1
+            };
 
             /// <summary>
             /// Creates a new instance of <see cref="DelayedExecution"/>.
             /// </summary>
-            public DelayedExecution()
-            {
-                timer = new Timer
-                {
-                    Enabled = false,
-                    Interval = 1
-                };
-                timer.Tick += Timer_Tick;
-            }
+            public DelayedExecution() => timer.Tick += Timer_Tick;
 
             /// <summary>
             /// Dispose this <see cref="DelayedExecution"/> instance.
             /// </summary>
             public void Dispose()
             {
-                timer.Dispose();
+                timer?.Dispose();
                 timer = null;
             }
 

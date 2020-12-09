@@ -50,10 +50,7 @@ namespace CodeRefactor.Commands
         {
             get
             {
-                if (associatedDocumentHelper is null)
-                {
-                    RegisterNewDocumentHelper();
-                }
+                if (associatedDocumentHelper is null) RegisterNewDocumentHelper();
                 return associatedDocumentHelper;
             }
             private set => associatedDocumentHelper = value;

@@ -93,9 +93,7 @@ namespace CodeRefactor.Provider
         public void RegisterLoadedDocument(ITabbedDocument document)
         {
             //if it's null, it means it was already opened, or the caller sent us garbage
-            if (document != null
-                && document.FileName is { } fileName
-                && !FilesOpenedAndUsed.ContainsKey(fileName))
+            if (document?.FileName is { } fileName && !FilesOpenedAndUsed.ContainsKey(fileName))
             {
                 //newly opened document.  Let's store it so we can close it later if it's not part of our result set.
                 //false to indicate that it so far hasn't found any matching entries.

@@ -22,12 +22,12 @@ namespace CodeRefactor.Controls
 
         public DelegateMethodsDialog()
         {
-            this.Owner = (Form)PluginBase.MainForm;
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.FormGuid = "5e8c8d89-b70d-4840-9f49-1027b226517a";
-            this.Text = TextHelper.GetString("Title.DelegateMethods");
-            this.InitializeComponent();
-            this.btnOK.Focus();
+            Owner = (Form)PluginBase.MainForm;
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "5e8c8d89-b70d-4840-9f49-1027b226517a";
+            Text = TextHelper.GetString("Title.DelegateMethods");
+            InitializeComponent();
+            btnOK.Focus();
         }
 
         #region Windows Form Designer Generated Code
@@ -38,158 +38,120 @@ namespace CodeRefactor.Controls
         /// </summary>
         void InitializeComponent()
         {
-            this.btnOK = new System.Windows.Forms.ButtonEx();
-            this.checkedListBox = new CodeRefactor.Controls.CheckedListBox();
-            this.btnCancel = new System.Windows.Forms.ButtonEx();
-            this.SuspendLayout();
+            btnOK = new ButtonEx();
+            checkedListBox = new CheckedListBox();
+            btnCancel = new ButtonEx();
+            SuspendLayout();
             // 
             // btnOK
             //
-            this.btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnOK.Location = new System.Drawing.Point(303, 288);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(80, 23);
-            this.btnOK.TabIndex = 0;
-            this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += this.OkButtonClick;
+            btnOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnOK.Location = new System.Drawing.Point(303, 288);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new System.Drawing.Size(80, 23);
+            btnOK.TabIndex = 0;
+            btnOK.Text = "OK";
+            btnOK.UseVisualStyleBackColor = true;
+            btnOK.Click += OkButtonClick;
             // 
             // checkedListBox
             //
-            this.checkedListBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.checkedListBox.CheckOnClick = true;
-            this.checkedListBox.FormattingEnabled = true;
-            this.checkedListBox.Font = PluginBase.Settings.DefaultFont; // Do not remove!!!
-            this.checkedListBox.Location = new System.Drawing.Point(11, 11);
-            this.checkedListBox.Name = "checkedListBox";
-            this.checkedListBox.Size = new System.Drawing.Size(463, 269);
-            this.checkedListBox.IntegralHeight = false;
-            this.checkedListBox.TabIndex = 2;
+            checkedListBox.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
+            checkedListBox.CheckOnClick = true;
+            checkedListBox.FormattingEnabled = true;
+            checkedListBox.Font = PluginBase.Settings.DefaultFont; // Do not remove!!!
+            checkedListBox.Location = new System.Drawing.Point(11, 11);
+            checkedListBox.Name = "checkedListBox";
+            checkedListBox.Size = new System.Drawing.Size(463, 269);
+            checkedListBox.IntegralHeight = false;
+            checkedListBox.TabIndex = 2;
             // 
             // btnCancel
             //
-            this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(389, 288);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(85, 23);
-            this.btnCancel.TabIndex = 1;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += this.CancelButtonClick;
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new System.Drawing.Point(389, 288);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new System.Drawing.Size(85, 23);
+            btnCancel.TabIndex = 1;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += CancelButtonClick;
             // 
             // DelegateMethodsDialog
             //
-            this.ShowIcon = false;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.ShowInTaskbar = false;
-            this.AcceptButton = this.btnOK;
-            this.CancelButton = this.btnCancel;
-            this.MinimumSize = new System.Drawing.Size(300, 200);
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(485, 323);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.checkedListBox);
-            this.Name = "DelegateMethodsDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.ResumeLayout(false);
+            ShowIcon = false;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            ShowInTaskbar = false;
+            AcceptButton = btnOK;
+            CancelButton = btnCancel;
+            MinimumSize = new System.Drawing.Size(300, 200);
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(485, 323);
+            Controls.Add(btnOK);
+            Controls.Add(btnCancel);
+            Controls.Add(checkedListBox);
+            Name = "DelegateMethodsDialog";
+            StartPosition = FormStartPosition.CenterParent;
+            ResumeLayout(false);
         }
 
         #endregion
 
         #region Methods And Event Handlers
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void FillData(Dictionary<MemberModel, ClassModel> members, ClassModel cm)
+        public void FillData(Dictionary<MemberModel, ClassModel> members)
         {
-            string label;
             this.members = members;
             string separatorInserted = null;
             members2 = new Dictionary<string, MemberModel>();
-            System.Windows.Forms.CheckedListBox.ObjectCollection items = checkedListBox.Items;
-            Dictionary<MemberModel, ClassModel>.KeyCollection keys = members.Keys;
+            var items = checkedListBox.Items;
+            var keys = members.Keys;
             items.Clear(); // Clear items...
-            foreach (MemberModel member in keys)
+            foreach (var member in keys)
             {
-                string qname = members[member].QualifiedName;
+                var qname = members[member].QualifiedName;
                 if (separatorInserted != qname)
                 {
                     separatorInserted = qname;
                     items.Add("--- " + qname);
                 }
-                label = TemplateUtils.ToDeclarationString(member, TemplateUtils.GetTemplate("MethodDeclaration"));
+                var label = TemplateUtils.ToDeclarationString(member, TemplateUtils.GetTemplate("MethodDeclaration"));
                 label = label.Replace(SnippetHelper.BOUNDARY, "")
                     .Replace(SnippetHelper.ENTRYPOINT, "")
                     .Replace(SnippetHelper.EXITPOINT, "");
-                if ((member.Flags & FlagType.Getter) > 0) 
-                {
-                    label = "get " + label;
-                }
-                else if ((member.Flags & FlagType.Setter) > 0) 
-                {
-                    label = "set " + label;
-                }
-                
+                if ((member.Flags & FlagType.Getter) > 0) label = "get " + label;
+                else if ((member.Flags & FlagType.Setter) > 0) label = "set " + label;
                 items.Add(label, false);
                 members2.Add(label, member);
             }
         }
 
-        /// <summary>
-        /// Just hides the dialog window when closing
-        /// </summary>
-        void DialogClosing(object sender, CancelEventArgs e)
-        {
-            e.Cancel = true;
-            PluginBase.MainForm.CurrentDocument.Activate();
-            members = null;
-            this.Hide();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         void OkButtonClick(object sender, EventArgs e)
         {
-            this.checkedMembers = new Dictionary<MemberModel, ClassModel>();
+            checkedMembers = new Dictionary<MemberModel, ClassModel>();
             foreach (string item in checkedListBox.CheckedItems)
             {
                 if (item.StartsWithOrdinal("---")) continue;
                 checkedMembers[members2[item]] = members[members2[item]];
             }
-            CancelEventArgs cancelArgs = new CancelEventArgs(false);
+            var cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         void CancelButtonClick(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        /// <summary>
-        /// Update the dialog args when show is called
-        /// </summary>
-        public new void Show()
-        {
-            base.Show();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         #endregion
-
     }
-
 }

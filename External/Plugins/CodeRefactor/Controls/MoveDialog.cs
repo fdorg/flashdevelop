@@ -12,10 +12,8 @@ namespace CodeRefactor.Controls
 {
     public partial class MoveDialog : SmartForm
     {
-        IEnumerable<string> GetClasspaths(string path)
-        {
-            return GetClasspaths(path, null);
-        }
+        IEnumerable<string> GetClasspaths(string path) => GetClasspaths(path, null);
+
         IEnumerable<string> GetClasspaths(string path, string projectDirName)
         {
             var directories = new List<string> {path};
@@ -43,30 +41,29 @@ namespace CodeRefactor.Controls
 
         public MoveDialog(string file):this(new List<string> { file })
         {
-
         }
+
         public MoveDialog(List<string> files)
         {
             MovingFiles = files;
             InitializeComponent();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.FormGuid = "2823102d-d712-4ce6-aa36-58e0bb4bf61d";
+            Font = PluginBase.Settings.DefaultFont;
+            FormGuid = "2823102d-d712-4ce6-aa36-58e0bb4bf61d";
             tree.ItemHeight = tree.Font.Height;
             InitializeClasspaths();
             InitializeInput();
             RefreshTree();
         }
 
-        public List<string> MovingFiles { get; private set; }
+        public List<string> MovingFiles { get; }
 
         public string SelectedDirectory
         {
             get
             {
-                string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                if (tree.SelectedItem != null) return Path.Combine(projectDir, tree.SelectedItem.ToString());
-
-                return null;
+                if (tree.SelectedItem is null) return null;
+                var path = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+                return Path.Combine(path, tree.SelectedItem.ToString());
             }
         }
 
@@ -74,9 +71,9 @@ namespace CodeRefactor.Controls
 
         void InitializeClasspaths()
         {
-            IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
             if (context is null) return;
-            string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            var projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             foreach (PathModel classpath in context.Classpath)
             {
                 if (classpath.IsVirtual) continue;
@@ -109,17 +106,17 @@ namespace CodeRefactor.Controls
 
         void FillTree()
         {
-            List<string> classpaths = new List<string>(projectClasspaths);
+            var classpaths = new List<string>(projectClasspaths);
             if (showExternalClasspaths.Checked) classpaths.AddRange(externalClasspaths);
-            string search = input.Text.Trim();
+            var search = input.Text.Trim();
             if (search.Length > 0)
             {
-                char separator = Path.DirectorySeparatorChar;
-                string searchWord = search.Replace('\\', separator).Replace('/', separator).Replace('.', separator);
-                int searchLength = search.Length;
+                var separator = Path.DirectorySeparatorChar;
+                var searchWord = search.Replace('\\', separator).Replace('/', separator).Replace('.', separator);
+                var searchLength = search.Length;
                 classpaths = classpaths.FindAll(path =>
                 {
-                    int score = PluginCore.Controls.CompletionList.SmartMatch(path, searchWord, searchLength);
+                    int score = CompletionList.SmartMatch(path, searchWord, searchLength);
                     return score > 0 && score < 6;
                 });
             }
@@ -132,10 +129,7 @@ namespace CodeRefactor.Controls
             else processButton.Enabled = false;
         }
 
-        void OnShowExternalClasspathsCheckStateChanged(object sender, EventArgs e)
-        {
-            RefreshTree();
-        }
+        void OnShowExternalClasspathsCheckStateChanged(object sender, EventArgs e) => RefreshTree();
 
         void OnInputKeyDown(object sender, KeyEventArgs e)
         {
@@ -156,10 +150,7 @@ namespace CodeRefactor.Controls
             }
         }
 
-        void OnInputTextChanged(object sender, EventArgs eventArgs)
-        {
-            RefreshTree();
-        }
+        void OnInputTextChanged(object sender, EventArgs eventArgs) => RefreshTree();
 
         void OnTreeMouseDoubleClick(object sender, MouseEventArgs e)
         {

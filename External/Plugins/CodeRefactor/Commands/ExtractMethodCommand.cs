@@ -7,14 +7,12 @@ namespace CodeRefactor.Commands
     {
         readonly string NewName;
 
-        public ExtractMethodCommand(string newName)
-        {
-            NewName = newName;
-        }
+        public ExtractMethodCommand(string newName) => NewName = newName;
 
         public void Execute()
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            if (sci is null) return;
             sci.BeginUndoAction();
             try
             {
@@ -25,7 +23,5 @@ namespace CodeRefactor.Commands
                 sci.EndUndoAction();
             }
         }
-
     }
-
 }

@@ -86,10 +86,10 @@ namespace CodeRefactor.Provider
                 }
                 foreach (var lineSetsToReport in reportableLines)
                 {
-                    var renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    var line = lineChanges[lineSetsToReport.Key].Trim();
                     foreach (var lineToReport in lineSetsToReport.Value)
                     {
-                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info, PluginMain.TraceGroup);
+                        TraceManager.Add(string.Format(lineToReport, line), (int)TraceType.Info, PluginMain.TraceGroup);
                     }
                 }
             }

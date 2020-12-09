@@ -16,7 +16,5 @@ namespace CodeRefactor.Controls
             }
             else base.OnDrawItem(e);
         }
-
     }
-
 }
