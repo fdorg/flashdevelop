@@ -97,6 +97,10 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
+echo "dir FlashDevelop\Bin\Debug\"
+dir FlashDevelop\Bin\Debug\
+echo "dir FlashDevelop\Bin\Debug\ - ok"
+
 :: Rename binaries
 echo "Rename binaries"
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
