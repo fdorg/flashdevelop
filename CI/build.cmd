@@ -31,11 +31,11 @@ del "FlashDevelop\Bin/Debug\System.*" /Q
 ::del "FlashDevelop\Bin/Debug\Microsoft.Threading.*" /Q
 
 :: Check if the build was triggered by a pull request
-::if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
-::    :: Create the archive
-::    7z a -tzip FlashDevelop\Installer\Binary\FlashDevelopPR_%APPVEYOR_PULL_REQUEST_NUMBER%.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
-::    exit 0
-::)
+if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
+    :: Create the archive
+    7z a -tzip FlashDevelop\Installer\Binary\FlashDevelopPR_%APPVEYOR_PULL_REQUEST_NUMBER%.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+    exit 0
+)
 
 :: Build AnyCPU version for 64bits support
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
@@ -86,12 +86,10 @@ if %errorlevel% neq 0 goto :error
 dir FlashDevelop\Bin\Debug\
 
 :: Rename binaries
-echo "Rename binaries"
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
-echo "Rename binaries - ok"
 
 : Remove files after build
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
