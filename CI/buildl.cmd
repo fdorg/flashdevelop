@@ -2,7 +2,7 @@
 
 :: Set paths
 :: set PATH=%PATH%;C:\Program Files (x86)\MSBuild\15.0\Bin\
-:: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin
+ set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin
 :: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Comunity\MSBuild\Current\Bin
 :: set PATH=%PATH%;C:\Program Files\Git\bin\
 :: set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
@@ -34,10 +34,10 @@ call SetVersion.bat
 
 :: Build the solutions
 nuget restore FlashDevelop.sln
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
+:: msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 ping -n 5 127.0.0.1 > nul
 nuget restore FlashDevelop.sln
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+:: msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
