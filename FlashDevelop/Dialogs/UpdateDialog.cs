@@ -15,8 +15,8 @@ namespace FlashDevelop.Dialogs
     public class UpdateDialog : SmartForm
     {
         // { QUICKFIX slavara: move to DistroConfig
-        public const string DISTRIBUTION_DEV_VERSION = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.txt";
-        public const string DISTRIBUTION_DEV_BUILD = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.exe";
+        const string DISTRIBUTION_DEV_VERSION = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.txt";
+        const string DISTRIBUTION_DEV_BUILD = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.exe";
         // }
         const string URL = DistroConfig.DISTRIBUTION_VERSION;
         readonly HttpClient httpClient = new HttpClient();
