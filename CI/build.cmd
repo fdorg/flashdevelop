@@ -9,7 +9,9 @@
 :flashdevelop
 
 :: Extract version from HEAD
+echo "Extract version from HEAD"
 call SetVersion.bat
+echo "Extract version from HEAD - ok"
 
 :: Build the main solution and run tests
 msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
@@ -62,22 +64,30 @@ if %errorlevel% neq 0 goto :error
 :haxedevelop
 
 :: Reset bin files
+echo "Reset bin files"
 git clean -f -x -d FlashDevelop\Bin\Debug
+echo "Reset bin files - ok"
 
 :: Remove unnecessary files
+echo "Remove unnecessary files"
 rd "FlashDevelop\Bin\Debug\Tools\flexpmd" /s /q
 rd "FlashDevelop\Bin\Debug\Tools\flexlibs\frameworks\libs\player" /s /q
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
 del "FlashDevelop\Bin\Debug\StartPage\images\*.*" /q
+echo "Remove unnecessary files - ok"
 
 :: Copy distro files
+echo "Copy distro files"
 xcopy Distros\HaxeDevelop /s /e /y
+echo "Copy distro files - ok"
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
 :: Extract version from HEAD
+echo "Extract version from HEAD"
 call SetVersion.bat
+echo "Extract version from HEAD - ok"
 
 :: Build the solutions
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
@@ -88,10 +98,12 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 if %errorlevel% neq 0 goto :error
 
 :: Rename binaries
+echo "Rename binaries"
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
+echo "Rename binaries - ok"
 
 : Remove files after build
 echo "del FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll"
