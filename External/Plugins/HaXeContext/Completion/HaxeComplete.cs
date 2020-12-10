@@ -74,11 +74,16 @@ namespace HaXeContext
 
         void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
-            if (Sci.InvokeRequired) Sci.BeginInvoke((Action) SaveFile);
-            else SaveFile();
+            if (Sci.InvokeRequired)
+            {
+                Sci.BeginInvoke((Action)(() => StartThread(callback, resultFunc)));
+                return;
+            }
+            SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()?.ToArray(), GetFileContent()));
+                var content = GetFileContent() ?? string.Empty;
+                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()?.ToArray(), content));
                 Notify(callback, resultFunc());
             });
         }
@@ -122,7 +127,7 @@ namespace HaXeContext
             return hxmlArgs;
         }
 
-        protected virtual string GetFileContent() => null;
+        protected virtual string? GetFileContent() => null;
 
         string GetMode()
         {
@@ -246,9 +251,17 @@ namespace HaXeContext
             
             foreach (JsonData file in json)
             {
-                var path = (string)file["file"];
+                var fileName = file["file"];
+                //if (fileName is null)
+                //{
+                //    continue;
+                //}
+                var path = (string)fileName;
                 var diagnostics = file["diagnostics"];
-
+                //if (diagnostics is null)
+                //{
+                //    continue;
+                //}
                 foreach (JsonData diag in diagnostics)
                 {
                     var range = diag["range"];
