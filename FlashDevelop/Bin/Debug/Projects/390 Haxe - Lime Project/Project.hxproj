@@ -10,7 +10,7 @@
     <movie height="0" />
     <movie version="3" />
     <movie minorVersion="0" />
-    <movie platform="NME" />
+    <movie platform="Lime" />
     <movie background="#FFFFFF" />
     <movie preferredSDK=";3;" />
   </output>

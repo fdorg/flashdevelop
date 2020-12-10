@@ -44,10 +44,7 @@ namespace ProjectManager.Controls.TreeView
             Expand();
         }
 
-        void NotifyProjectRefresh()
-        {
-            base.NotifyRefresh();
-        }
+        void NotifyProjectRefresh() => base.NotifyRefresh();
 
         protected override void NotifyRefresh()
         {
@@ -170,6 +167,7 @@ namespace ProjectManager.Controls.TreeView
             ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor", SystemColors.WindowText);
             isDraggable = false;
             isRenamable = false;
+            project.ClasspathChanged += _ => Refresh(true);
         }
 
         public override void Refresh(bool recursive)
@@ -213,9 +211,9 @@ namespace ProjectManager.Controls.TreeView
             {
                 var globalClasspaths = new List<string>(PluginMain.Settings.GlobalClasspaths);
                 globalClasspaths.Sort();
-                foreach (string globalClasspath in globalClasspaths)
+                foreach (var globalClasspath in globalClasspaths)
                 {
-                    string absolute = globalClasspath;
+                    var absolute = globalClasspath;
                     if (!Path.IsPathRooted(absolute)) absolute = project.GetAbsolutePath(globalClasspath);
                     if (absolute.StartsWithOrdinal(project.Directory + Path.DirectorySeparatorChar))
                         continue;
@@ -228,7 +226,7 @@ namespace ProjectManager.Controls.TreeView
 
             // add external libraries at the top level also
             if (project is AS3Project as3Project)
-                foreach (LibraryAsset asset in as3Project.SwcLibraries)
+                foreach (var asset in as3Project.SwcLibraries)
                 {
                     if (!asset.IsSwc) continue;
                     // check if SWC is inside the project or inside a classpath
@@ -261,16 +259,16 @@ namespace ProjectManager.Controls.TreeView
                     }
                 }
 
-            foreach (GenericNode node in nodesToDie)
+            foreach (var node in nodesToDie)
             {
                 node.Dispose();
                 Nodes.Remove(node);
             }
         }
 
-        GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
+        GenericNode? ReuseNode(string absolute, GenericNodeList nodesToDie)
         {
-            foreach (GenericNode node in nodesToDie)
+            foreach (var node in nodesToDie)
                 if (node.BackingPath == absolute)
                 {
                     nodesToDie.Remove(node);

@@ -126,9 +126,7 @@ namespace HaXeContext
                     else if (action == ProjectManagerEvents.Project || action == ProjectManagerEvents.OpenProjectProperties)
                     {
                         var project = de.Data as IProject;
-                        
                         if (action == ProjectManagerEvents.Project) ExternalToolchain.Monitor(project);
-                        
                         var projectPath = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
                         foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
                             if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), projectPath);

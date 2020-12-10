@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using PluginCore;
@@ -28,20 +29,20 @@ namespace ProjectManager.Projects
     public abstract class Project : IProject
     {
         protected MovieOptions movieOptions;
-        internal Dictionary<string, string> storage;
+        internal Dictionary<string, string> storage = new Dictionary<string, string>();
         string preferredSDK;
         string currentSDK;
         PathCollection absClasspaths;
         BuildEventInfo[] vars; // arguments to replace in paths
 
         public OutputType OutputType = OutputType.Unknown;
-        public string InputPath; // For code injection
-        public string OutputPath;
-        public string PreBuildEvent;
-        public string PostBuildEvent;
+        public string InputPath = string.Empty; // For code injection
+        public string OutputPath = string.Empty;
+        public string PreBuildEvent = string.Empty;
+        public string PostBuildEvent = string.Empty;
         public bool AlwaysRunPostBuild;
         public bool ShowHiddenPaths;
-        public TestMovieBehavior TestMovieBehavior;
+        public TestMovieBehavior TestMovieBehavior = TestMovieBehavior.Default;
         public string TestMovieCommand;
 
         public event ChangedHandler ClasspathChanged; // inner operation changed the classpath
@@ -53,19 +54,7 @@ namespace ProjectManager.Projects
             if (IsDirectory(path)) path = Path.Combine(path, "Project.folder");
             ProjectPath = path;
             CompilerOptions = compilerOptions;
-
-            TestMovieBehavior = TestMovieBehavior.Default;
-
-            Classpaths = new PathCollection();
-            CompileTargets = new PathCollection();
-            HiddenPaths = new HiddenPathCollection();
             LibraryAssets = new AssetCollection(this);
-            storage = new Dictionary<string, string>();
-
-            InputPath = string.Empty;
-            OutputPath = string.Empty;
-            PreBuildEvent = string.Empty;
-            PostBuildEvent = string.Empty;
         }
 
         public abstract string Language { get; }
@@ -114,9 +103,9 @@ namespace ProjectManager.Projects
         
         // we only provide getters for these to preserve the original pointer
         public MovieOptions MovieOptions => movieOptions;
-        public PathCollection Classpaths { get; }
-        public PathCollection CompileTargets { get; }
-        public HiddenPathCollection HiddenPaths { get; }
+        public PathCollection Classpaths { get; } = new PathCollection();
+        public PathCollection CompileTargets { get; } = new PathCollection();
+        public HiddenPathCollection HiddenPaths { get; } = new HiddenPathCollection();
         public AssetCollection LibraryAssets { get; }
         public virtual string LibrarySWFPath => OutputPath;
         public Dictionary<string, string> Storage => storage;
@@ -130,14 +119,10 @@ namespace ProjectManager.Projects
             {
                 // property is accessed quite intensively, adding some caching here
                 if (absClasspaths != null) return absClasspaths;
-
-                PathCollection absolute = new PathCollection();
-                foreach (string cp in Classpaths)
-                {
-                    absolute.Add(GetAbsolutePath(cp));
-                }
-                absClasspaths = absolute;
-                return absolute;
+                var result = new PathCollection();
+                result.AddRange(Classpaths.Select(GetAbsolutePath));
+                absClasspaths = result;
+                return result;
             }
         }
 
@@ -160,11 +145,9 @@ namespace ProjectManager.Projects
             get => currentSDK;
             set
             {
-                if (value != currentSDK)
-                {
-                    currentSDK = value; 
-                    OnClasspathChanged();
-                }
+                if (value == currentSDK) return;
+                currentSDK = value; 
+                OnClasspathChanged();
             }
         }
 
@@ -311,8 +294,8 @@ namespace ProjectManager.Projects
         public string GetAbsolutePath(string path)
         {
             path = Environment.ExpandEnvironmentVariables(path);
-            if (vars != null && path.IndexOf('$') >= 0)
-                foreach (BuildEventInfo arg in vars) 
+            if (vars != null && path.Contains('$'))
+                foreach (var arg in vars) 
                     path = path.Replace(arg.FormattedName, arg.Value);
             return ProjectPaths.GetAbsolutePath(Directory, path);
         }
@@ -322,11 +305,9 @@ namespace ProjectManager.Projects
         /// Pattern: ([a-zA-Z0-9])[-_.]debug([\\/.])
         /// </summary>
         public string FixDebugReleasePath(string path)
-        {
-            if (!TraceEnabled)
-                return Regex.Replace(path, @"([a-zA-Z0-9])[-_.]debug([\\/.])", "$1$2");
-            return path;
-        }
+            => TraceEnabled
+                ? path
+                : Regex.Replace(path, @"([a-zA-Z0-9])[-_.]debug([\\/.])", "$1$2");
 
         /// <summary>
         /// Replace accented characters and remove whitespace

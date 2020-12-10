@@ -17,10 +17,7 @@ namespace ProjectManager.Projects.Haxe
 
         protected string[] rawHXML;
 
-        public HaxeProject(string path) : base(path, new HaxeOptions())
-        {
-            movieOptions = new HaxeMovieOptions();
-        }
+        public HaxeProject(string path) : base(path, new HaxeOptions()) => movieOptions = new HaxeMovieOptions();
 
         public override string Language => "haxe";
         public override string LanguageDisplayName => "Haxe";
@@ -273,10 +270,7 @@ namespace ProjectManager.Projects.Haxe
         public static HaxeProject Load(string path)
         {
             var ext = Path.GetExtension(path).ToLower();
-            if (ext == ".hxml")
-            {
-                return new HaxeProject(path) {RawHXML = File.ReadAllLines(path)};
-            }
+            if (ext == ".hxml") return new HaxeProject(path) {RawHXML = File.ReadAllLines(path)};
 
             var reader = new HaxeProjectReader(path);
             try
@@ -353,10 +347,10 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        void ParseHxmlEntries(string[] lines, HxmlEntries entries)
+        void ParseHxmlEntries(IReadOnlyList<string> lines, HxmlEntries entries)
         {
             var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
-            for (var i = 0; i < lines.Length; i++)
+            for (var i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
                 if (line is null) break;
