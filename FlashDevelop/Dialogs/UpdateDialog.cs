@@ -1,8 +1,9 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Windows.Forms;
-using System.ComponentModel;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using FlashDevelop.Settings;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
@@ -13,12 +14,16 @@ namespace FlashDevelop.Dialogs
 {
     public class UpdateDialog : SmartForm
     {
+        // { QUICKFIX slavara: move to DistroConfig
+        const string DISTRIBUTION_DEV_VERSION = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.txt";
+        const string DISTRIBUTION_DEV_BUILD = "https://flashdevelop.org/downloads/builds/FlashDevelop-development.exe";
+        // }
         const string URL = DistroConfig.DISTRIBUTION_VERSION;
+        readonly HttpClient httpClient = new HttpClient();
         UpdateInfo updateInfo;
         Label infoLabel;
         Button closeButton;
         Button downloadButton;
-        BackgroundWorker worker;
         static bool silentCheck;
 
         public UpdateDialog()
@@ -98,7 +103,6 @@ namespace FlashDevelop.Dialogs
             Text = " Update Check";
             FormClosed += DialogClosed;
             ResumeLayout(false);
-
         }
 
         #endregion
@@ -135,10 +139,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When the form is closed cancel the update check
         /// </summary>
-        void DialogClosed(object sender, FormClosedEventArgs e)
-        {
-            if (worker.IsBusy) worker.CancelAsync();
-        }
+        void DialogClosed(object sender, FormClosedEventArgs e) => httpClient.Dispose();
 
         /// <summary>
         /// Closes the dialog when user clicks buttons
@@ -148,58 +149,60 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Startups the update check
         /// </summary>
-        void InitializeUpdating()
-        {
-            worker = new BackgroundWorker();
-            worker.DoWork += WorkerDoWork;
-            worker.RunWorkerCompleted += WorkerCompleted;
-            worker.WorkerSupportsCancellation = true;
-            worker.RunWorkerAsync();
-        }
-
-        /// <summary>
-        /// Does the actual work on background
-        /// </summary>
-        static void WorkerDoWork(object sender, DoWorkEventArgs e)
+        async void InitializeUpdating()
         {
             try
             {
-                var request = WebRequest.Create(URL);
-                var response = request.GetResponse();
-                var stream = response.GetResponseStream();
-                using var reader = new StreamReader(stream);
-                var version = reader.ReadLine(); // Read version
-                var download = reader.ReadLine(); // Read download
-                var product = Application.ProductName; // Internal version
-                var length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
-                var current = product.Substring(length, product.IndexOfOrdinal(" for") - length);
-                stream.Close();
-                response.Close(); // Close all resources
-                e.Result = new UpdateInfo(current, version, download);
+                switch (((SettingObject)PluginBase.MainForm.Settings).AutomaticallyCheckUpdatesFor)
+                {
+                    case UpdateType.StableRelease:
+                    {
+                        var response = await httpClient.GetAsync(URL);
+                        using var stream = await response.Content.ReadAsStreamAsync();
+                        using var reader = new StreamReader(stream);
+                        var version = await reader.ReadLineAsync(); // Read version
+                        var download = await reader.ReadLineAsync(); // Read download
+                        var product = Application.ProductName; // Internal version
+                        var length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
+                        var current = product.Substring(length, product.IndexOfOrdinal(" for") - length);
+                        updateInfo = new UpdateInfo(current, version, download);
+                        OnLoadComplete();
+                        break;
+                    }
+                    case UpdateType.PreviewRelease:
+                    {
+                        var response = await httpClient.GetAsync(DISTRIBUTION_DEV_VERSION.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME));
+                        using var stream = await response.Content.ReadAsStreamAsync();
+                        using var reader = new StreamReader(stream);
+                        var version = await reader.ReadLineAsync(); // Read version
+                        version = Regex.Match(version, @"\d.*\d").Value;
+                        var product = Application.ProductName; // Internal version
+                        var length = DistroConfig.DISTRIBUTION_NAME.Length + 1;
+                        var current = product.Substring(length, product.IndexOfOrdinal(" for") - length);
+                        updateInfo = new UpdateInfo(current, version, DISTRIBUTION_DEV_BUILD.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME));
+                        OnLoadComplete();
+                        break;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 ErrorManager.AddToLog("Update check failed.", ex);
-                e.Result = null;
             }
         }
 
-        /// <summary>
-        /// Handles the finish of the update check
-        /// </summary>
-        void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void OnLoadComplete()
         {
-            updateInfo = (UpdateInfo)e.Result;
             if (updateInfo is null)
             {
-                string info = TextHelper.GetString("Info.UpdateCheckFailed");
+                var info = TextHelper.GetString("Info.UpdateCheckFailed");
                 infoLabel.Text = string.Format(info, "\n\n");
                 if (silentCheck) Close();
             }
             else if (updateInfo.NeedsUpdate)
             {
                 downloadButton.Enabled = true;
-                string info = TextHelper.GetString("Info.UpdateAvailable");
+                var info = TextHelper.GetString("Info.UpdateAvailable");
                 infoLabel.Text = string.Format(info, "\n\n", updateInfo.UserVersion, updateInfo.ServerVersion);
                 if (silentCheck) ShowDialog();
             }
@@ -221,17 +224,16 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
-
     }
 
     #region UpdateInfo
 
     public class UpdateInfo
     {
-        public string UserVersion = null;
-        public string ServerVersion = null;
+        public string UserVersion;
+        public string ServerVersion;
         public string DownloadUrl = "http://www.flashdevelop.org/community/viewforum.php?f=11";
-        public bool NeedsUpdate = false;
+        public bool NeedsUpdate;
 
         public UpdateInfo(string userVersion, string serverVersion, string downloadUrl)
         {

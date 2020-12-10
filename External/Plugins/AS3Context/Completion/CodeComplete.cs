@@ -131,11 +131,9 @@ namespace AS3Context.Completion
         {
             if (keyword == "new")
             {
-                list = list
-                    .Where(it => !(it is MemberItem item)
-                                 || item.Member is null
-                                 || (item.Member.Flags & FlagType.Interface) == 0)
-                    .ToList();
+                list.RemoveAll(it => it is MemberItem item
+                                     && item.Member is {} member
+                                     && (member.Flags & FlagType.Interface) != 0);
             }
             return base.HandleNewCompletion(sci, tail, autoHide, keyword, list);
         }

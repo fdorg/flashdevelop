@@ -30,6 +30,7 @@ UninstallCaption "${DIST_NAME} ${VERSION} Uninstall"
 
 ; The file to write
 OutFile "Binary\${DIST_NAME}.exe"
+Unicode True
 
 ; Default installation folder
 InstallDir "$PROGRAMFILES\${DIST_NAME}\"
