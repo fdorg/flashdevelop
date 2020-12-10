@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Threading;
 
 namespace AppMan
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// SIA Mutex entry
         /// </summary>
-        private static Mutex mutex = new Mutex(true, "{2A46BA9B-F8DA-40AA-904F-4C1630BA4428}");
+        static readonly Mutex mutex = new Mutex(true, "{2A46BA9B-F8DA-40AA-904F-4C1630BA4428}");
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(String[] args)
+        static void Main(string[] args)
         {
             try
             {
@@ -39,7 +37,5 @@ namespace AppMan
                 MessageBox.Show("Error while starting AppMan:\n" + ex.ToString());
             }
         }
-
     }
-
 }

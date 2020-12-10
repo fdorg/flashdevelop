@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using System.Drawing;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
@@ -13,9 +12,9 @@ namespace AppMan
         /// <summary>
         /// Public static props
         /// </summary>
-        public static Boolean IsRunningOnMono;
-        public static Int32 HWND_BROADCAST = 0xffff;
-        public static Int32 WM_SHOWME;
+        public static bool IsRunningOnMono;
+        public static int HWND_BROADCAST = 0xffff;
+        public static int WM_SHOWME;
 
         static Win32()
         {
@@ -29,26 +28,26 @@ namespace AppMan
         public static extern IntPtr WindowFromPoint(Point pt);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern UInt32 GetFullPathName(String lpFileName, UInt32 nBufferLength, StringBuilder lpBuffer, IntPtr mustBeNull);
+        internal static extern uint GetFullPathName(string lpFileName, uint nBufferLength, StringBuilder lpBuffer, IntPtr mustBeNull);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern SafeFileHandle CreateFile(String lpFileName, EFileAccess dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile);
+        internal static extern SafeFileHandle CreateFile(string lpFileName, EFileAccess dwDesiredAccess, uint dwShareMode, IntPtr lpSecurityAttributes, uint dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
         
         [DllImport("user32.dll")]
-        public static extern Boolean PostMessage(IntPtr hwnd, Int32 msg, IntPtr wparam, IntPtr lparam);
+        public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
 
         [DllImport("user32.dll")]
-        public static extern Int32 RegisterWindowMessage(String message);
+        public static extern int RegisterWindowMessage(string message);
 
         #endregion
 
         #region Long Path
 
         // See: http://bcl.codeplex.com/wikipage?title=Long%20Path&referringTitle=Home
-        private const string LongPathPrefix = @"\\?\";
+        const string LongPathPrefix = @"\\?\";
 
         [Flags]
         internal enum EFileAccess : uint

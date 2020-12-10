@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace AppMan.Utilities
@@ -8,19 +6,19 @@ namespace AppMan.Utilities
     public class ArgProcessor
     {
         /// <summary>
-        /// Processes the internal argruments in a string.
+        /// Processes the internal arguments in a string.
         /// </summary>
-        public static String ProcessArguments(String data)
+        public static string ProcessArguments(string data)
         {
             data = data.Replace("$(Quote)", "\"");
             data = data.Replace("$(AppDir)", PathHelper.GetExeDirectory());
             #if FLASHDEVELOP
-            String local = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\.local");
+            var local = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\.local");
             local = Path.GetFullPath(local); /* Fix weird path */
             if (!File.Exists(local)) 
             {
-                String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                String fdUserPath = Path.Combine(userAppDir, MainForm.DISTRO_NAME);
+                var userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                var fdUserPath = Path.Combine(userAppDir, MainForm.DISTRO_NAME);
                 data = data.Replace("$(BaseDir)", fdUserPath);
             }
             else data = data.Replace("$(BaseDir)", Path.GetDirectoryName(local));

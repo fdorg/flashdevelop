@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.IO;
 using System.Windows.Forms;
 
 namespace AppMan.Utilities
@@ -11,31 +8,26 @@ namespace AppMan.Utilities
         /// <summary>
         /// Default path to the log dir.
         /// </summary>
-        public static String LOG_DIR = ArgProcessor.ProcessArguments("$(AppDir)");
+        public static string LOG_DIR = ArgProcessor.ProcessArguments("$(AppDir)");
 
         /// <summary>
         /// Default path to the apps directory.
         /// </summary>
-        public static String APPS_DIR = ArgProcessor.ProcessArguments("$(AppDir)/Apps");
+        public static string APPS_DIR = ArgProcessor.ProcessArguments("$(AppDir)/Apps");
 
         /// <summary>
         /// Default path to the app help.
         /// </summary>
-        public static String HELP_ADR = ArgProcessor.ProcessArguments("$(AppDir)/Help.html");
+        public static string HELP_ADR = ArgProcessor.ProcessArguments("$(AppDir)/Help.html");
 
         /// <summary>
         /// Default path to the config xml file.
         /// </summary>
-        public static String CONFIG_ADR = ArgProcessor.ProcessArguments("$(AppDir)/Config.xml");
+        public static string CONFIG_ADR = ArgProcessor.ProcessArguments("$(AppDir)/Config.xml");
 
         /// <summary>
         /// Gets the directory of the app.
         /// </summary>
-        public static String GetExeDirectory()
-        {
-            return Path.GetDirectoryName(Application.ExecutablePath);
-        }
-
+        public static string GetExeDirectory() => Path.GetDirectoryName(Application.ExecutablePath);
     }
-
 }
