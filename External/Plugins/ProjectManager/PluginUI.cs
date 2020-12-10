@@ -117,18 +117,14 @@ namespace ProjectManager
         public void SetProject(Project project)
         {
             if (this.project == project) return;
-
             this.project = project;
-
             var projects = Tree.Projects;
             projects.Clear(); // only one project active
             if (project != null) projects.Add(project);
             Tree.Projects = projects;
             Tree.Project = project;
             tree_AfterSelect(Tree, null);
-
             help.Visible = (project is null);
-
             if (project != null)
             {
                 TreeBar.ShowHidden.Checked = project.ShowHiddenPaths;

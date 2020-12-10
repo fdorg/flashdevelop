@@ -19,7 +19,6 @@ namespace ProjectManager.Controls.TreeView
         protected GenericNode(string backingPath)
         {
             BackingPath = backingPath;
-
             Text = Path.GetFileName(backingPath);
             Tree.NodeMap[backingPath] = this; // create backreference
         }
@@ -48,7 +47,6 @@ namespace ProjectManager.Controls.TreeView
         public virtual void Refresh(bool recursive)
         {
             if (Parent != null) project = ((GenericNode)Parent).project;
-
             if (Tree.SelectedNodes.Contains(this))
                 Tree.NotifySelectionChanged();
         }
@@ -66,14 +64,8 @@ namespace ProjectManager.Controls.TreeView
 
         public override bool Equals(object obj)
         {
-            if (obj is GenericNode node)
-                return node.BackingPath == BackingPath;
+            if (obj is GenericNode node) return node.BackingPath == BackingPath;
             return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
     }
 
@@ -82,10 +74,8 @@ namespace ProjectManager.Controls.TreeView
         public void AddRange(TreeNodeCollection nodes)
         {
             foreach (TreeNode node in nodes)
-                if (node is GenericNode genericNode)
-                    Add(genericNode);
-                else
-                    throw new Exception("Unexpected node was not a GenericNode: " + node.Name);
+                if (node is GenericNode genericNode) Add(genericNode);
+                else throw new Exception("Unexpected node was not a GenericNode: " + node.Name);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace ProjectManager.Actions
 
         #region New/Open Project
 
-        public Project NewProject()
+        public Project? NewProject()
         {
             using var dialog = new NewProjectDialog();
             if (dialog.ShowDialog(owner) == DialogResult.OK)
@@ -64,7 +64,7 @@ namespace ProjectManager.Actions
             return null;
         }
 
-        public Project OpenProject()
+        public Project? OpenProject()
         {
             using var dialog = new OpenFileDialog();
             dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
@@ -76,7 +76,7 @@ namespace ProjectManager.Actions
             return null;
         }
 
-        public Project OpenProjectSilent(string path)
+        public Project? OpenProjectSilent(string path)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace ProjectManager.Actions
             }
         }
 
-        public Project OpenFolder()
+        public Project? OpenFolder()
         {
             using var dialog = new VistaFolderBrowserDialog();
             if (dialog.ShowDialog(owner) == DialogResult.OK)
@@ -114,9 +114,9 @@ namespace ProjectManager.Actions
             return project;
         }
 
-        public string ImportProject() => ImportProject(null);
+        public string? ImportProject() => ImportProject(null);
 
-        internal string ImportProject(string importFrom)
+        internal string? ImportProject(string importFrom)
         {
             using var dialog = new OpenFileDialog();
             dialog.Title = TextHelper.GetString("Title.ImportProject");
@@ -554,4 +554,3 @@ namespace ProjectManager.Actions
         void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
     }
 }
-

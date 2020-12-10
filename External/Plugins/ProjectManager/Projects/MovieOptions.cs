@@ -12,7 +12,18 @@ namespace ProjectManager.Projects
         public int Height;
         public int MajorVersion;
         public int MinorVersion;
-        public string Platform;
+
+        string platform;
+        public string Platform
+        {
+            get => platform;
+            set
+            {
+                if (value == "NME") return;
+                platform = value;
+            }
+        }
+
         public string Background;
         public string[] TargetBuildTypes;
         public string[] DefaultBuildTargets;

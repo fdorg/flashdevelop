@@ -89,18 +89,17 @@ namespace HaXeContext
             }
             else
             {
-                var infos = new ProcessStartInfo(exe, args);
-                infos.WorkingDirectory = hxproj.Directory;
-                infos.WindowStyle = ProcessWindowStyle.Hidden;
+                var infos = new ProcessStartInfo(exe, args)
+                {
+                    WorkingDirectory = hxproj.Directory,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
                 Process.Start(infos);
             }
             return true;
         }
 
-        static bool ShouldCapture(string[] targets, string config)
-        {
-            return targets != null && targets.Any(config.StartsWithOrdinal);
-        }
+        static bool ShouldCapture(string[] targets, string config) => targets != null && targets.Any(config.StartsWithOrdinal);
 
         /// <summary>
         /// Start Android ADB server in the background
@@ -238,15 +237,17 @@ namespace HaXeContext
                 return;
             }
 
-            var pi = new ProcessStartInfo();
-            pi.FileName = Environment.ExpandEnvironmentVariables(exe);
-            pi.Arguments = args;
-            pi.RedirectStandardError = true;
-            pi.RedirectStandardOutput = true;
-            pi.UseShellExecute = false;
-            pi.CreateNoWindow = true;
-            pi.WorkingDirectory = Path.GetDirectoryName(hxproj.ProjectPath);
-            pi.WindowStyle = ProcessWindowStyle.Hidden;
+            var pi = new ProcessStartInfo
+            {
+                FileName = Environment.ExpandEnvironmentVariables(exe),
+                Arguments = args,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Path.GetDirectoryName(hxproj.ProjectPath),
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             var p = Process.Start(pi);
             p.WaitForExit(5000);
 
@@ -272,52 +273,44 @@ namespace HaXeContext
                 hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
 
                 args = GetCommand(hxproj, "build", false);
-                if (args is null)
-                {
-                    TraceManager.Add($"No external 'build' command found for platform '{hxproj.MovieOptions.Platform}'", -3);
-                }
+                if (args is null) TraceManager.Add($"No external 'build' command found for platform '{hxproj.MovieOptions.Platform}'", -3);
                 else if (string.IsNullOrEmpty(hxproj.PreBuildEvent))
                 {
-                    if (hxproj.MovieOptions.PlatformSupport.ExternalToolchain == "haxelib") hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
-                    else if (hxproj.MovieOptions.PlatformSupport.ExternalToolchain == "cmd") hxproj.PreBuildEvent = "cmd " + args;
-                    else hxproj.PreBuildEvent = "\"" + exe + "\" " + args;
+                    hxproj.PreBuildEvent = hxproj.MovieOptions.PlatformSupport.ExternalToolchain switch
+                    {
+                        "haxelib" => "\"$(CompilerPath)/haxelib\" " + args,
+                        "cmd" => "cmd " + args,
+                        _ => "\"" + exe + "\" " + args
+                    };
                 }
 
                 var run = GetCommand(hxproj, "run");
-                if (run != null)
+                if (run is not null)
                 {
                     hxproj.OutputType = OutputType.CustomBuild;
                     if (hxproj.TestMovieBehavior == TestMovieBehavior.Default)
                     {
                         hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
-                        hxproj.TestMovieCommand = "";
+                        hxproj.TestMovieCommand = string.Empty;
                     }
                 }
                 hxproj.Save();
+                hxproj.OnClasspathChanged();
             }
         }
 
-        static string GetExecutable(string toolchain)
+        static string? GetExecutable(string toolchain)
         {
-            if (toolchain == "haxelib")
+            switch (toolchain)
             {
-                var haxelib = GetHaxelib(hxproj);
-                if (haxelib == "haxelib")
-                {
+                case "haxelib":
+                    var haxelib = GetHaxelib(hxproj);
+                    if (haxelib != "haxelib") return haxelib;
                     TraceManager.Add("haxelib.exe not found in SDK path", -3);
                     return null;
-                }
-                return haxelib;
+                case "cmd": return "%SystemRoot%\\system32\\cmd.exe";
             }
-            if (toolchain == "cmd")
-            {
-                return "%SystemRoot%\\system32\\cmd.exe";
-            }
-            if (File.Exists(toolchain))
-            {
-                return toolchain;
-            }
-            return null;
+            return File.Exists(toolchain) ? toolchain : null;
         }
 
         static string GetHaxelib(IProject project)
@@ -347,17 +340,16 @@ namespace HaXeContext
         {
             var platform = project.MovieOptions.PlatformSupport;
             var version = platform.GetVersion(project.MovieOptions.Version);
-            if (version.Commands is null)
-            {
-                throw new Exception($"No external commands found for target {project.MovieOptions.Platform} and version {project.MovieOptions.Version}");
-            }
+            if (version.Commands is null) throw new Exception($"No external commands found for target {project.MovieOptions.Platform} and version {project.MovieOptions.Version}");
             if (!version.Commands.ContainsKey(name)) return null;
             var cmd = version.Commands[name].Value;
-            if (platform.ExternalToolchain == "haxelib") cmd = "run " + cmd;
-            else if (platform.ExternalToolchain == "cmd") cmd = "/c " + cmd;
-                
-            if (!processArguments) return cmd;
-            return PluginBase.MainForm.ProcessArgString(cmd);
+            cmd = platform.ExternalToolchain switch
+            {
+                "haxelib" => "run " + cmd,
+                "cmd" => "/c " + cmd,
+                _ => cmd
+            };
+            return !processArguments ? cmd : PluginBase.MainForm.ProcessArgString(cmd);
         }
     }
 }
