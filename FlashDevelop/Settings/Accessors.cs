@@ -772,15 +772,6 @@ namespace FlashDevelop.Settings
             set => checkForUpdates = value;
         }
 
-        [DisplayName("Automatically Check Updates For")]
-        [LocalizedCategory("FlashDevelop.Category.State")]
-        [DefaultValue(UpdateType.StableRelease)]
-        public UpdateType AutomaticallyCheckUpdatesFor
-        {
-            get;
-            set;
-        } = UpdateType.StableRelease;
-
         [DisplayName("Latest Startup Command")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.LatestCommand")]
