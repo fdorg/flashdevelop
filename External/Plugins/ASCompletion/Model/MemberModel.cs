@@ -22,17 +22,7 @@ namespace ASCompletion.Model
         public string Namespace;
         public string Name;
         public List<MemberModel> Parameters;
-
-        string type;
-        public string Type
-        {
-            get => type;
-            set
-            {
-                //if (!value.IsNullOrEmpty() && value.Contains("/*")) return;
-                type = value;
-            }
-        }
+        public string Type;
         public string Template;
         public string Comments;
         public string Value;
