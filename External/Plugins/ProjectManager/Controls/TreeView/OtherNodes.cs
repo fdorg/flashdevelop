@@ -175,7 +175,11 @@ namespace ProjectManager.Controls.TreeView
             base.Dispose();
         }
 
-        void OnProjectOnClasspathChanged(Project _) => Refresh(true, project);
+        void OnProjectOnClasspathChanged(Project sender)
+        {
+            if (project is null) sender.ClasspathChanged -= OnProjectOnClasspathChanged;
+            else Refresh(true, project);
+        }
 
         public override void Refresh(bool recursive)
         {
