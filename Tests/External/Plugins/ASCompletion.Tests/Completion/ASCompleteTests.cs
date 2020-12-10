@@ -1080,12 +1080,24 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2701TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2701_1", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2701_1"))
+                        .SetName("override <complete> -> override get width():int. Issue 2701. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2701");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2076TestCases)),
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2282TestCases)),
                 TestCaseSource(nameof(OnCharAndReplaceTextIssue2980TestCases)),
+                TestCaseSource(nameof(OnCharAndReplaceTextIssue2701TestCases)),
             ]
             public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide) => OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
 

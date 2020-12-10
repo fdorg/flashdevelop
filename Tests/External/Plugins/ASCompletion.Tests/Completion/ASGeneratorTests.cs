@@ -1122,8 +1122,7 @@ namespace ASCompletion.Completion
                 yield return new TestCaseData(("BeforeOverrideInternalFunction"), "Foo", "foo", FlagType.Function)
                     .Returns(ReadAllText("AfterOverrideInternalFunction"))
                     .SetName("override internal function");
-                yield return new TestCaseData(("BeforeOverrideHasOwnProperty"), "Object", "hasOwnProperty",
-                        FlagType.Function)
+                yield return new TestCaseData(("BeforeOverrideHasOwnProperty"), "Object", "hasOwnProperty", FlagType.Function)
                     .Returns(ReadAllText("AfterOverrideHasOwnProperty"))
                     .SetName("override hasOwnProperty");
                 yield return new TestCaseData(("BeforeOverridePublicGetSet"), "Foo", "foo", FlagType.Getter)
@@ -1132,14 +1131,27 @@ namespace ASCompletion.Completion
                 yield return new TestCaseData(("BeforeOverrideInternalGetSet"), "Foo", "foo", FlagType.Getter)
                     .Returns(ReadAllText("AfterOverrideInternalGetSet"))
                     .SetName("override internal getter and setter");
-                yield return new TestCaseData(("BeforeOverrideProtectedFunction_issue1383_1"), "Foo", "foo",
-                        FlagType.Function)
+                yield return new TestCaseData(("BeforeOverrideProtectedFunction_issue1383_1"), "Foo", "foo", FlagType.Function)
                     .Returns(ReadAllText("AfterOverrideProtectedFunction_issue1383_1"))
                     .SetName("override protected function foo(v:Vector.<*>):Vector.<*>");
             }
         }
 
-        [Test, TestCaseSource(nameof(GenerateOverrideTestCases))]
+        static IEnumerable<TestCaseData> Issue2701GenerateOverrideTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(("BeforeOverrideFunction_issue2701_1"), "flash.display.DisplayObject", "width", FlagType.Getter)
+                    .Returns(ReadAllText("AfterOverrideFunction_issue2701_1"))
+                    .SetName("override width Issue 2701. Case 1");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(GenerateOverrideTestCases)),
+            TestCaseSource(nameof(Issue2701GenerateOverrideTestCases)),
+        ]
         public string GenerateOverride(string fileName, string ofClassName, string memberName, FlagType memberFlags)
         {
             SetSrc(sci, ReadAllText(fileName));

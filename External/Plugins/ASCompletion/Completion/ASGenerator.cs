@@ -3785,11 +3785,12 @@ namespace ASCompletion.Completion
                             it.Type = ctx.CodeComplete.ToFunctionDeclarationString(it);
                             it.Parameters = null;
                         }
-                    }
-                    if ((member.Flags & FlagType.Getter) != 0 && member.Parameters != null)
-                    {
-                        member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
-                        member.Parameters = null;
+                        // for example: function get value():Function/*(v:*):ReturnType*/
+                        if ((member.Flags & FlagType.Getter) != 0)
+                        {
+                            member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
+                            member.Parameters = null;
+                        }
                     }
                     members.Add(member);
                 }

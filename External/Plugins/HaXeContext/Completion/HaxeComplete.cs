@@ -41,7 +41,6 @@ namespace HaXeContext
         HaxeCompleteResult result;
         List<HaxePositionResult> positionResults;
         List<HaxeDiagnosticsResult> diagnosticsResults;
-
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
         readonly SemVer haxeVersion;
@@ -63,10 +62,7 @@ namespace HaXeContext
 
         public void GetList(HaxeCompleteResultHandler<HaxeCompleteResult> callback) => StartThread(callback, () => result);
 
-        public void GetPosition(HaxeCompleteResultHandler<HaxePositionResult> callback)
-        {
-            StartThread(callback, () => !positionResults.IsNullOrEmpty() ? positionResults[0] : null);
-        }
+        public void GetPosition(HaxeCompleteResultHandler<HaxePositionResult> callback) => StartThread(callback, () => !positionResults.IsNullOrEmpty() ? positionResults[0] : null);
 
         public void GetUsages(HaxeCompleteResultHandler<List<HaxePositionResult>> callback) => StartThread(callback, () => positionResults);
 
@@ -115,12 +111,9 @@ namespace HaXeContext
             RemoveComments(hxmlArgs);
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
-
             if (CompilerService == HaxeCompilerService.GLOBAL_DIAGNOSTICS)
                 hxmlArgs.Add("--display diagnostics");
-            else
-                hxmlArgs.Add($"--display \"{FileName}\"@{pos}{GetMode()}");
-
+            else hxmlArgs.Add($"--display \"{FileName}\"@{pos}{GetMode()}");
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
             if (project.TraceEnabled) hxmlArgs.Add("-debug");
@@ -179,7 +172,6 @@ namespace HaXeContext
         protected virtual int GetDisplayPosition()
         {
             var result = Expr.Position;
-
             switch (CompilerService)
             {
                 case HaxeCompilerService.COMPLETION:
@@ -246,27 +238,15 @@ namespace HaXeContext
         HaxeCompleteStatus ProcessResponse(JsonData json)
         {
             diagnosticsResults = new List<HaxeDiagnosticsResult>();
-
             if (!json.IsArray) return HaxeCompleteStatus.ERROR;
-            
             foreach (JsonData file in json)
             {
-                var fileName = file["file"];
-                //if (fileName is null)
-                //{
-                //    continue;
-                //}
-                var path = (string)fileName;
+                var path = (string) file["file"];
                 var diagnostics = file["diagnostics"];
-                //if (diagnostics is null)
-                //{
-                //    continue;
-                //}
                 foreach (JsonData diag in diagnostics)
                 {
                     var range = diag["range"];
                     var args = diag["args"];
-
                     var result = new HaxeDiagnosticsResult
                     {
                         Kind = (HaxeDiagnosticsKind) (int) diag["kind"],
@@ -297,13 +277,11 @@ namespace HaXeContext
             return HaxeCompleteStatus.DIAGNOSTICS;
         }
 
-        static HaxePositionResult ParseRange(JsonData range, string path)
+        static HaxePositionResult? ParseRange(JsonData range, string path)
         {
             if (range is null) return null;
-
             var start = range["start"];
             var end = range["end"];
-
             return new HaxePositionResult
             {
                 Path = path,
@@ -318,42 +296,31 @@ namespace HaXeContext
         HaxeCompleteStatus ProcessResponse(XmlReader reader)
         {
             reader.MoveToContent();
-
             switch (reader.Name)
             {
                 case "type":
                     ProcessType(reader);
                     return HaxeCompleteStatus.TYPE;
-
-                case "list":
-                    return ProcessList(reader);
-
-                case "il":
-                    return ProcessTopLevel(reader);
+                case "list": return ProcessList(reader);
+                case "il": return ProcessTopLevel(reader);
+                default: return HaxeCompleteStatus.FAILED;
             }
-            return HaxeCompleteStatus.FAILED;
         }
 
         void ProcessType(XmlReader reader)
         {
             var parts = Expr.Value.Split('.');
             var name = parts[parts.Length - 1];
-
-            var type = new MemberModel();
-            type.Name = name;
-            type.Comments = reader.GetAttribute("d");
+            var type = new MemberModel {Name = name, Comments = reader.GetAttribute("d")};
             ExtractType(reader, type);
-            result = new HaxeCompleteResult();
-            result.Type = type;
+            result = new HaxeCompleteResult {Type = type};
         }
 
         HaxeCompleteStatus ProcessList(XmlReader reader)
         {
-            result = new HaxeCompleteResult();
-            result.Members = new MemberList();
+            result = new HaxeCompleteResult {Members = new MemberList()};
             positionResults = new List<HaxePositionResult>();
             MemberModel member = null;
-
             while (reader.Read())
             {
                 if (reader.NodeType == XmlNodeType.EndElement)
@@ -366,18 +333,11 @@ namespace HaXeContext
                                 case HaxeCompilerService.COMPLETION:
                                     result.Members.Sort();
                                     return HaxeCompleteStatus.MEMBERS;
-
-                                case HaxeCompilerService.POSITION:
-                                    return HaxeCompleteStatus.POSITION;
-
-                                case HaxeCompilerService.USAGE:
-                                    return HaxeCompleteStatus.USAGE;
-
-                                case HaxeCompilerService.TOP_LEVEL:
-                                    return HaxeCompleteStatus.TOP_LEVEL;
+                                case HaxeCompilerService.POSITION: return HaxeCompleteStatus.POSITION;
+                                case HaxeCompilerService.USAGE: return HaxeCompleteStatus.USAGE;
+                                case HaxeCompilerService.TOP_LEVEL: return HaxeCompleteStatus.TOP_LEVEL;
                             }
                             break;
-
                         case "i":
                             member = null;
                             break;
@@ -478,23 +438,22 @@ namespace HaXeContext
         }
 
         static bool IsOverload(MemberList members, MemberModel member)
-        {
-            return members.Count > 0 && members[members.Count - 1].FullName == member.FullName;
-        }
+            => members.Count > 0 && members[members.Count - 1].FullName == member.FullName;
 
-        static MemberModel ExtractMember(XmlReader reader)
+        static MemberModel? ExtractMember(XmlReader reader)
         {
             var name = reader.GetAttribute("n");
             if (name is null) return null;
-
-            var result = new MemberModel();
-            result.Name = name;
-            result.Access = Visibility.Public;
-            result.Flags = reader.GetAttribute("k") switch
+            var result = new MemberModel
             {
-                "var" => FlagType.Variable,
-                "method" => FlagType.Function,
-                _ => (FlagType) 0,
+                Name = name,
+                Access = Visibility.Public,
+                Flags = reader.GetAttribute("k") switch
+                {
+                    "var" => FlagType.Variable,
+                    "method" => FlagType.Function,
+                    _ => (FlagType) 0,
+                }
             };
             return result;
         }
