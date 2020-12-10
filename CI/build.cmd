@@ -31,11 +31,11 @@ del "FlashDevelop\Bin/Debug\System.*" /Q
 ::del "FlashDevelop\Bin/Debug\Microsoft.Threading.*" /Q
 
 :: Check if the build was triggered by a pull request
-::if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
-::    :: Create the archive
-::    7z a -tzip FlashDevelop\Installer\Binary\FlashDevelopPR_%APPVEYOR_PULL_REQUEST_NUMBER%.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
-::    exit 0
-::)
+if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
+    :: Create the archive
+    7z a -tzip FlashDevelop\Installer\Binary\FlashDevelopPR_%APPVEYOR_PULL_REQUEST_NUMBER%.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+    exit 0
+)
 
 :: Build AnyCPU version for 64bits support
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
