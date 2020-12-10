@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Entry>
-		<Id>haxe3setup</Id>
-		<Name>Haxe + Neko (x86)</Name>
-		<Version>3.4.7</Version>
+		<Id>haxe4setup64</Id>
+		<Name>Haxe + Neko (x64)</Name>
+		<Version>4.1.4</Version>
 		<Build>1</Build>
-		<Desc>Haxe 3 and Neko virtual machine 32-bit installer</Desc>
+		<Desc>Haxe 4 and Neko virtual machine 64-bit installer</Desc>
 		<Group>Compilers</Group>
 		<Bundles>
 			<Bundle>Haxe</Bundle>
@@ -13,7 +13,23 @@
 		<Type>Executable</Type>
 		<Info>https://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.7/downloads/haxe-3.4.7-win.exe</Url>
+			<Url>https://haxe.org/download/file/4.1.4/haxe-4.1.4-win64.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe4setup</Id>
+		<Name>Haxe + Neko (x86)</Name>
+		<Version>4.1.4</Version>
+		<Build>1</Build>
+		<Desc>Haxe 4 and Neko virtual machine 32-bit installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://www.haxe.org</Info>
+		<Urls>
+			<Url>https://haxe.org/download/file/4.1.4/haxe-4.1.4-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -33,11 +49,11 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>haxe4setup</Id>
+		<Id>haxe3setup</Id>
 		<Name>Haxe + Neko (x86)</Name>
-		<Version>4.1.3</Version>
+		<Version>3.4.7</Version>
 		<Build>1</Build>
-		<Desc>Haxe 4 and Neko virtual machine 32-bit installer</Desc>
+		<Desc>Haxe 3 and Neko virtual machine 32-bit installer</Desc>
 		<Group>Compilers</Group>
 		<Bundles>
 			<Bundle>Haxe</Bundle>
@@ -45,23 +61,7 @@
 		<Type>Executable</Type>
 		<Info>https://www.haxe.org</Info>
 		<Urls>
-			<Url>https://haxe.org/download/file/4.1.3/haxe-4.1.3-win.exe</Url>
-		</Urls>
-	</Entry>
-	<Entry>
-		<Id>haxe4setup64</Id>
-		<Name>Haxe + Neko (x64)</Name>
-		<Version>4.1.3</Version>
-		<Build>1</Build>
-		<Desc>Haxe 4 and Neko virtual machine 64-bit installer</Desc>
-		<Group>Compilers</Group>
-		<Bundles>
-			<Bundle>Haxe</Bundle>
-		</Bundles>
-		<Type>Executable</Type>
-		<Info>https://www.haxe.org</Info>
-		<Urls>
-			<Url>https://haxe.org/download/file/4.1.3/haxe-4.1.3-win64.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.7/downloads/haxe-3.4.7-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>

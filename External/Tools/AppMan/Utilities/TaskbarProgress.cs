@@ -19,7 +19,7 @@ namespace AppMan.Utilities
         [ComImportAttribute()]
         [GuidAttribute("ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf")]
         [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-        private interface ITaskbarList3
+        interface ITaskbarList3
         {
             // ITaskbarList
             [PreserveSig]
@@ -37,7 +37,7 @@ namespace AppMan.Utilities
             void MarkFullscreenWindow(IntPtr hwnd, [MarshalAs(UnmanagedType.Bool)] bool fFullscreen);
             // ITaskbarList3
             [PreserveSig]
-            void SetProgressValue(IntPtr hwnd, UInt64 ullCompleted, UInt64 ullTotal);
+            void SetProgressValue(IntPtr hwnd, ulong ullCompleted, ulong ullTotal);
             [PreserveSig]
             void SetProgressState(IntPtr hwnd, TaskbarStates state);
         }
@@ -45,10 +45,10 @@ namespace AppMan.Utilities
         [GuidAttribute("56FDF344-FD6D-11d0-958A-006097C9A090")]
         [ClassInterfaceAttribute(ClassInterfaceType.None)]
         [ComImportAttribute()]
-        private class TaskbarInstance {}
+        class TaskbarInstance {}
 
-        private static ITaskbarList3 taskbarInstance;
-        private static Boolean taskbarSupported = (Environment.OSVersion.Version >= new Version(6, 1)) && !Win32.IsRunningOnMono;
+        static ITaskbarList3 taskbarInstance;
+        static readonly bool taskbarSupported = (Environment.OSVersion.Version >= new Version(6, 1)) && !Win32.IsRunningOnMono;
 
         public static void SetState(IntPtr windowHandle, TaskbarStates taskbarState)
         {
@@ -67,7 +67,5 @@ namespace AppMan.Utilities
                 taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
             }
         }
-
     }
-
 }

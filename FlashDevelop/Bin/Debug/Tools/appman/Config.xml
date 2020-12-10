@@ -7,7 +7,8 @@
 	<!-- Directory where the archives should be stored -->
 	<Archive>$(BaseDir)\Apps</Archive>
 	<!-- Entry config file, can be an URL or a file path -->
-	<Config>http://www.flashdevelop.org/appman.xml</Config>
+	<!-- <Config>http://www.flashdevelop.org/appman.xml</Config> -->
+	<Config>https://raw.githubusercontent.com/fdorg/flashdevelop/development/appman.xml</Config>
 	<!-- App help file, can be an URL or a file path -->
 	<Help>http://www.flashdevelop.org/wikidocs/</Help>
 	<!-- Paths where '.appman' notification files should be pushed -->
