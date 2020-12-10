@@ -1,8 +1,9 @@
 :: Builds the binary locally and launches the installer
 
 :: Set paths
-:: set PATH=%PATH%;C:\Program Files (x86)\MSBuild\14.0\Bin\
-:: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin
+:: set PATH=%PATH%;C:\Program Files (x86)\MSBuild\15.0\Bin\
+:: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
+:: set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin
 :: set PATH=%PATH%;C:\Program Files\Git\bin\
 :: set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
 :: set PATH=%PATH%;C:\Program Files\7-Zip\
