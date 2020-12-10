@@ -41,7 +41,7 @@ namespace HaXeContext
             if (!isRunning) StartServer();
             try
             {
-                var client = new TcpClient("127.0.0.1", port);
+                using var client = new TcpClient("127.0.0.1", port);
                 using var writer = new StreamWriter(client.GetStream());
                 writer.WriteLine("--cwd " + ((HaxeProject) PluginBase.CurrentProject).Directory);
                 foreach (var arg in args)
@@ -55,7 +55,6 @@ namespace HaXeContext
                 writer.Flush();
                 using var reader = new StreamReader(client.GetStream());
                 var lines = reader.ReadToEnd();
-                client.Close();
                 return lines;
             }
             catch(Exception ex)
@@ -85,7 +84,7 @@ namespace HaXeContext
             }
         }
 
-        void OnOutputDataReceived(object sender, DataReceivedEventArgs e) => TraceManager.AddAsync(e.Data, 2);
+        static void OnOutputDataReceived(object sender, DataReceivedEventArgs e) => TraceManager.AddAsync(e.Data, 2);
 
         void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
         {

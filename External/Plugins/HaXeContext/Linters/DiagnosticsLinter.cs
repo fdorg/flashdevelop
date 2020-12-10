@@ -19,20 +19,15 @@ namespace HaXeContext.Linters
         readonly ProcessingQueue fileQueue;
 
         public DiagnosticsLinter(HaXeSettings settings)
-        {
-            fileQueue = new ProcessingQueue(settings.MaximumDiagnosticsProcesses <= 0 ? 5 : settings.MaximumDiagnosticsProcesses);
-        }
+            => fileQueue = new ProcessingQueue(settings.MaximumDiagnosticsProcesses <= 0 ? 5 : settings.MaximumDiagnosticsProcesses);
 
         public void LintAsync(IEnumerable<string> files, LintCallback callback)
         {
-            var context = ASContext.GetLanguageContext("haxe") as Context;
-
-            if (context is null || !(PluginBase.CurrentProject is ProjectManager.Projects.Haxe.HaxeProject) || !CanContinue(context)) return;
-            
+            var ctx = ASContext.GetLanguageContext("haxe") as Context;
+            if (ctx is null || PluginBase.CurrentProject is not ProjectManager.Projects.Haxe.HaxeProject || !CanContinue(ctx)) return;
             var total = files.Count();
             var list = new List<LintingResult>();
-
-            string untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
+            var untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             foreach (var file in files)
             {
                 if (!File.Exists(file) || file.StartsWithOrdinal(untitledFileStart))
@@ -40,24 +35,16 @@ namespace HaXeContext.Linters
                     total--;
                     continue;
                 }
-
                 var sci = GetStubSci(file);
-
-                var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
-
+                var hc = ctx.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
                 fileQueue.Run(finished =>
                 {
                     hc.GetDiagnostics((complete, results, status) =>
                     {
                         total--;
-
                         sci.Dispose();
-
                         AddDiagnosticsResults(list, status, results, hc);
-
-                        if (total == 0)
-                            callback(list);
-
+                        if (total == 0) callback(list);
                         finished();
                     });
                 });
@@ -68,17 +55,13 @@ namespace HaXeContext.Linters
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
             if (context is null || !CanContinue(context)) return;
-
             var list = new List<LintingResult>();
             var sci = GetStubSci();
             var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.GLOBAL_DIAGNOSTICS);
-
             hc.GetDiagnostics((complete, results, status) =>
             {
                 sci.Dispose();
-                
                 AddDiagnosticsResults(list, status, results, hc);
-
                 callback(list);
             });
         }
@@ -90,7 +73,6 @@ namespace HaXeContext.Linters
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return false;
             if ((settings.EnabledFeatures & CompletionFeatures.Diagnostics) == 0) return false;
             var haxeVersion = context.GetCurrentSDKVersion();
-
             return haxeVersion >= "3.3.0";
         }
 
@@ -160,10 +142,7 @@ namespace HaXeContext.Linters
         readonly int maxRunning;
         readonly HashSet<Task> running = new HashSet<Task>(); //TODO: running is modified on different threads
 
-        public ProcessingQueue(int maxConcurrent)
-        {
-            maxRunning = maxConcurrent;
-        }
+        public ProcessingQueue(int maxConcurrent) => maxRunning = maxConcurrent;
 
         public void Run(Action<Action> action)
         {
