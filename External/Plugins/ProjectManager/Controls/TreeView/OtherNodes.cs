@@ -167,12 +167,26 @@ namespace ProjectManager.Controls.TreeView
             ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor", SystemColors.WindowText);
             isDraggable = false;
             isRenamable = false;
-            project.ClasspathChanged += _ => Refresh(true);
         }
+
+        public override void Dispose()
+        {
+            if (project is not null) project.ClasspathChanged -= OnProjectOnClasspathChanged;
+            base.Dispose();
+        }
+
+        void OnProjectOnClasspathChanged(Project _) => Refresh(true, project);
 
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
+            Refresh(recursive, project);
+        }
+
+        void Refresh(bool recursive, Project project)
+        {
+            project.ClasspathChanged -= OnProjectOnClasspathChanged;
+            project.ClasspathChanged += OnProjectOnClasspathChanged;
             var nodesToDie = new GenericNodeList();
             nodesToDie.AddRange(Nodes);
             if (PluginMain.Settings.ShowExternalLibraries)
@@ -201,7 +215,8 @@ namespace ProjectManager.Controls.TreeView
                     if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
                         continue;
 
-                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(absolute, projectClasspath);
+                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ??
+                                 new ProjectClasspathNode(absolute, projectClasspath);
                     Nodes.Add(cpNode);
                     cpNode.Refresh(recursive);
                 }
@@ -218,7 +233,8 @@ namespace ProjectManager.Controls.TreeView
                     if (absolute.StartsWithOrdinal(project.Directory + Path.DirectorySeparatorChar))
                         continue;
 
-                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(absolute, globalClasspath);
+                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ??
+                                 new ClasspathNode(absolute, globalClasspath);
                     Nodes.Add(cpNode);
                     cpNode.Refresh(recursive);
                 }
@@ -241,6 +257,7 @@ namespace ProjectManager.Controls.TreeView
                             showNode = false;
                             break;
                         }
+
                     foreach (string path in PluginMain.Settings.GlobalClasspaths)
                         if (absolute.StartsWithOrdinal(path))
                         {
