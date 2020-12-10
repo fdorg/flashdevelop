@@ -65,6 +65,21 @@
 		</Urls>
 	</Entry>
 	<Entry>
+		<Id>hl</Id>
+		<Name>HashLink</Name>
+		<Version>1.11.0</Version>
+		<Build>0</Build>
+		<Desc>HashLink is a virtual machine for Haxe</Desc>
+		<Group>Runtimes</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Info>https://hashlink.haxe.org</Info>
+		<Urls>
+			<Url>https://github.com/HaxeFoundation/hashlink/releases/download/1.11/hl-1.11.0-win.zip</Url>
+		</Urls>
+	</Entry>
+	<Entry>
 		<Id>flexsdk</Id>
 		<Name>Flex SDK (OLD)</Name>
 		<Version>4.6.0</Version>
