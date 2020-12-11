@@ -251,7 +251,7 @@ namespace ASCompletion.Model
 
         public void Remove(string name)
         {
-            var member = Search(name, 0, 0);
+            var member = Search(name);
             if (member != null) items.Remove(member);
         }
 
@@ -321,7 +321,7 @@ namespace ASCompletion.Model
         
         public void Sort() => Sort(null);
 
-        public void Sort(IComparer<MemberModel> comparer)
+        public void Sort(IComparer<MemberModel>? comparer)
         {
             if (sorted) return;
             items.Sort(comparer);
@@ -332,7 +332,7 @@ namespace ASCompletion.Model
         /// Merge one item into the list
         /// </summary>
         /// <param name="item">Item to merge</param>
-        public void Merge(MemberModel item)
+        public void Merge(MemberModel? item)
         {
             if (item != null) Merge(new MemberList {item});
         }
@@ -341,7 +341,7 @@ namespace ASCompletion.Model
         /// Merge SORTED lists without duplicate values
         /// </summary>
         /// <param name="list">Items to merge</param>
-        public void Merge(IEnumerable<MemberModel> list)
+        public void Merge(IEnumerable<MemberModel>? list)
         {
             if (list is null) return;
             var index = 0;
@@ -368,7 +368,7 @@ namespace ASCompletion.Model
             }
         }
 
-        public void MergeByLine(MemberModel item)
+        public void MergeByLine(MemberModel? item)
         {
             if (item is null) return;
             var index = 0;
@@ -390,7 +390,7 @@ namespace ASCompletion.Model
         /// Merge ORDERED (by line) lists
         /// </summary>
         /// <param name="list">Items to merge</param>
-        public void MergeByLine(MemberList list)
+        public void MergeByLine(MemberList? list)
         {
             if (list is null) return;
             var index = 0;
@@ -415,7 +415,9 @@ namespace ASCompletion.Model
         /// Merge selected items from the SORTED lists without duplicate values
         /// </summary>
         /// <param name="list">Items to merge</param>
-        public void Merge(MemberList list, FlagType mask, Visibility access)
+        /// <param name="mask">Flags mask</param>
+        /// <param name="access">Visibility mask</param>
+        public void Merge(MemberList? list, FlagType mask, Visibility access)
         {
             if (list is null) return;
             var index = 0;
@@ -578,6 +580,6 @@ namespace ASCompletion.Model
 
         public int Compare(string import1, string import2) => CompareImports(import1, import2);
 
-        public int Compare(MemberModel item1, MemberModel item2) => CompareImports(item1.Type, item2.Type);
+        public int Compare(MemberModel? item1, MemberModel? item2) => CompareImports(item1.Type, item2.Type);
     }
 }

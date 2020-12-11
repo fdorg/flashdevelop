@@ -16,7 +16,8 @@ namespace ASCompletion.Model
 {
 
     #region Token class
-    class Token
+
+    internal class Token
     {
         public int Position;
         public int Line;
@@ -62,7 +63,7 @@ namespace ASCompletion.Model
     public class TypeCommentUtils
     {
         const string ObjectType = "Object";
-        private static readonly Random random = new Random(123456);
+        static readonly Random random = new Random(123456);
 
         /// <summary>
         /// Type-comment parsing into model (source and destination)
@@ -173,7 +174,7 @@ namespace ASCompletion.Model
         /// <summary>
         /// String randomer
         /// </summary>
-        private static string getRandomStringRepl()
+        static string getRandomStringRepl()
         {
             random.NextDouble();
             return "StringRepl" + random.Next(0xFFFFFFF);
@@ -182,7 +183,7 @@ namespace ASCompletion.Model
         /// <summary>
         /// TypedCallback model extracting
         /// </summary>
-        private static MemberModel extractTypedCallbackModel(string comment)
+        static MemberModel extractTypedCallbackModel(string comment)
         {
             if (string.IsNullOrEmpty(comment)) return null;
             if (comment.IndexOf('(') != 0 || comment.IndexOf(')') < 1) return null;
@@ -300,9 +301,9 @@ namespace ASCompletion.Model
         public static readonly Regex Parameter = new Regex(@"[\(,]\s*((?<pName>(\.\.\.)?[\w\$]+)\s*(\:\s*(?<pType>[\w\$\*\.\<\>\@]+))?(\s*\=\s*(?<pVal>[^\,\)]+))?)", RegexOptions.Compiled);
         public static readonly Regex BalancedBraces = new Regex("{[^{}]*(((?<Open>{)[^{}]*)+((?<Close-Open>})[^{}]*)+)*(?(Open)(?!))}", ASFileParserRegexOptions.SinglelineComment);
 
-        private const string typeChars = @"[\w\$][\w\d\$]*";
-        private const string typeClsf = @"(\s*(?<Classifier>" + typeChars + @"(\." + typeChars + ")*" + @"(\:\:?" + typeChars + ")?" + @")\s*)";
-        private const string typeComment = @"(\s*\/\*(?<Comment>.*)\*\/\s*)";
+        const string typeChars = @"[\w\$][\w\d\$]*";
+        const string typeClsf = @"(\s*(?<Classifier>" + typeChars + @"(\." + typeChars + ")*" + @"(\:\:?" + typeChars + ")?" + @")\s*)";
+        const string typeComment = @"(\s*\/\*(?<Comment>.*)\*\/\s*)";
         public static readonly Regex TypeDefinition = new Regex(@"^((" + typeClsf + typeComment + ")|(" + typeComment + typeClsf + ")|(" + typeClsf + "))$", RegexOptions.Compiled);
     }
     
@@ -403,28 +404,23 @@ namespace ASCompletion.Model
     /// </summary>
     public class ASFileParser : IFileParser
     {
-
         #region public methods
 
-        public static FileModel ParseFile(FileModel fileModel)
+        public static FileModel ParseFile(FileModel model)
         {
             // parse file
-            if (fileModel.FileName.Length > 0)
+            if (File.Exists(model.FileName))
             {
-                if (File.Exists(fileModel.FileName))
-                {
-                    var parser = new ASFileParser();
-                    parser.Parse(fileModel);
-                }
-                // the file is not available (for the moment?)
-                else if (Path.GetExtension(fileModel.FileName).Length > 0)
-                {
-                    fileModel.OutOfDate = true;
-                }
+                var parser = new ASFileParser();
+                parser.Parse(model);
+            }
+            // the file is not available (for the moment?)
+            else if (Path.GetExtension(model.FileName).Length > 0)
+            {
+                model.OutOfDate = true;
             }
             // this is a package
-
-            return fileModel;
+            return model;
         }
         #endregion
 
@@ -434,41 +430,42 @@ namespace ASCompletion.Model
         const int VALUE_BUFFER = 1024;
 
         // parser context
-        private FileModel model;
-        private int version;
-        private bool tryPackage;
-        private bool hasPackageSection;
-        private FlagType context;
-        private FlagType modifiers;
-        private FlagType curModifiers;
+        FileModel model;
+        int version;
+        bool tryPackage;
+        bool hasPackageSection;
+        FlagType context;
+        FlagType modifiers;
+
+        FlagType curModifiers;
         //private int modifiersPos;
-        private int line;
-        private int modifiersLine;
-        private bool foundColon;
-        private bool foundConstant;
-        private bool inParams;
-        private bool inGeneric;
-        private bool inValue;
-        private bool hadValue;
-        private bool inConst;
-        private bool inType;
-        private bool inAnonType;
-        private int flattenNextBlock;
-        private FlagType foundKeyword;
-        private Token valueKeyword;
-        private MemberModel valueMember;
-        private Token curToken;
-        private Token prevToken;
-        private MemberModel curMember;
-        private MemberModel curMethod;
-        private Visibility curAccess;
-        private string curNamespace;
-        private ClassModel curClass;
-        private string lastComment;
-        private string curComment;
-        private bool isBlockComment;
-        private ContextFeatures features;
-        private List<ASMetaData> carriedMetaData;
+        int line;
+        int modifiersLine;
+        bool foundColon;
+        bool foundConstant;
+        bool inParams;
+        bool inGeneric;
+        bool inValue;
+        bool hadValue;
+        bool inConst;
+        bool inType;
+        bool inAnonType;
+        int flattenNextBlock;
+        FlagType foundKeyword;
+        Token valueKeyword;
+        MemberModel valueMember;
+        Token curToken;
+        Token prevToken;
+        MemberModel curMember;
+        MemberModel curMethod;
+        Visibility curAccess;
+        string curNamespace;
+        ClassModel curClass;
+        string lastComment;
+        string curComment;
+        bool isBlockComment;
+        ContextFeatures features;
+        List<ASMetaData> carriedMetaData;
         #endregion
 
         #region tokenizer
@@ -1454,7 +1451,7 @@ namespace ASCompletion.Model
             //  Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
         }
 
-        private bool LookupRegex(string ba, ref int i)
+        bool LookupRegex(string ba, ref int i)
         {
             int len = ba.Length;
             char c;
@@ -1497,7 +1494,7 @@ namespace ASCompletion.Model
             return true;
         }
 
-        private ASMetaData LookupMeta(ref string ba, ref int i)
+        ASMetaData LookupMeta(ref string ba, ref int i)
         {
             int len = ba.Length;
             int i0 = i;
@@ -1556,7 +1553,7 @@ namespace ASCompletion.Model
             return md;
         }
 
-        private void FinalizeModel()
+        void FinalizeModel()
         {
             model.Version = version;
             model.HasPackage = hasPackageSection;
@@ -1584,7 +1581,7 @@ namespace ASCompletion.Model
         /// <param name="evalContext">The token could be an identifier</param>
         /// <param name="evalKeyword">The token could be a keyword</param>
         /// <returns>A keyword was found</returns>
-        private bool EvalToken(bool evalContext, bool evalKeyword)
+        bool EvalToken(bool evalContext, bool evalKeyword)
         {
             bool hadContext = (context != 0);
             bool hadKeyword = (foundKeyword != 0);
@@ -2124,7 +2121,7 @@ namespace ASCompletion.Model
             return false;
         }
 
-        private void AddClass(FileModel model, ClassModel curClass)
+        void AddClass(FileModel model, ClassModel curClass)
         {
             // avoid empty duplicates due to Haxe directives
             foreach(var aClass in model.Classes)
@@ -2143,7 +2140,7 @@ namespace ASCompletion.Model
 
         #region tool methods
 
-        public QType QualifiedName(FileModel InFile, string Name) 
+        QType QualifiedName(FileModel InFile, string Name) 
         {
             var qt = new QType();
             string type;
@@ -2162,7 +2159,7 @@ namespace ASCompletion.Model
             return qt;
         }
 
-        private string LastStringToken(string token, string separator)
+        string LastStringToken(string token, string separator)
         {
             int p = token.LastIndexOfOrdinal(separator);
             return (p >= 0) ? token.Substring(p + 1) : token;
@@ -2171,7 +2168,7 @@ namespace ASCompletion.Model
         #endregion
     }
 
-    public class QType
+    internal class QType
     {
         public string Name;
         public string Type;

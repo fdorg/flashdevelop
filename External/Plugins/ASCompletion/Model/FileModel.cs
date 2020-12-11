@@ -71,10 +71,9 @@ namespace ASCompletion.Model
             return Name.CompareTo(meta.Name);
         }
 
-        internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
+        internal static void GenerateIntrinsic(List<ASMetaData>? src, StringBuilder sb, string nl, string tab)
         {
             if (src is null) return;
-
             foreach (var meta in src)
             {
                 if (meta.Kind == ASMetaKind.Include)
@@ -140,7 +139,7 @@ namespace ASCompletion.Model
             }
         }
 
-        public FileModel() => Init("");
+        public FileModel() => Init(string.Empty);
 
         public FileModel(string fileName) => Init(fileName);
 
@@ -152,13 +151,11 @@ namespace ASCompletion.Model
 
         void Init(string fileName)
         {
-            Package = "";
-            Module = "";
-            FileName = fileName ?? "";
+            Package = string.Empty;
+            Module = string.Empty;
+            FileName = fileName ?? string.Empty;
             haXe = FileName.Length > 3 && FileInspector.IsHaxeFile(Path.GetExtension(FileName));
-            //
             Namespaces = new Dictionary<string, Visibility>();
-            //
             Imports = new MemberList();
             Classes = new List<ClassModel>();
             Members = new MemberList();
@@ -168,7 +165,6 @@ namespace ASCompletion.Model
         public string? GetBasePath()
         {
             if (FileName.Length == 0) return null;
-            
             var path = Path.GetDirectoryName(FileName);
             if (string.IsNullOrEmpty(Package)) return path;
 
@@ -183,13 +179,13 @@ namespace ASCompletion.Model
 
         public void Check()
         {
-            if (this == Ignore || !OutOfDate) return;
+            if (!OutOfDate || Ignore == this) return;
             OutOfDate = false;
             if (!File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
             try
             {
-                if (Context != null) Context.GetCodeModel(this);
-                else ASFileParser.ParseFile(this);
+                var ctx = Context ?? ASContext.Context;
+                ctx.GetCodeModel(this);
                 OnFileUpdate?.Invoke(this);
             }
             catch
@@ -199,25 +195,23 @@ namespace ASCompletion.Model
                 Classes.Clear();
                 Members.Clear();
                 PrivateSectionIndex = 0;
-                Package = "";
+                Package = string.Empty;
             }
         }
 
         public ClassModel GetPublicClass()
         {
-            if (Classes != null)
+            if (Classes.IsNullOrEmpty()) return ClassModel.VoidClass;
+            if (Version > 3) // HaXe
             {
-                if (Version > 3) // HaXe
-                {
-                    var module = Module == "" ? Path.GetFileNameWithoutExtension(FileName) : Module;
-                    foreach (var model in Classes)
-                        if ((model.Flags & (FlagType.Class | FlagType.Interface)) > 0 && model.Name == module) return model;
-                }
-                else
-                {
-                    foreach (var model in Classes)
-                        if ((model.Access & (Visibility.Public | Visibility.Internal)) > 0) return model;
-                }
+                var module = Module == string.Empty ? Path.GetFileNameWithoutExtension(FileName) : Module;
+                foreach (var model in Classes)
+                    if ((model.Flags & (FlagType.Class | FlagType.Interface)) > 0 && model.Name == module) return model;
+            }
+            else
+            {
+                foreach (var model in Classes)
+                    if ((model.Access & (Visibility.Public | Visibility.Internal)) > 0) return model;
             }
             return ClassModel.VoidClass;
         }
