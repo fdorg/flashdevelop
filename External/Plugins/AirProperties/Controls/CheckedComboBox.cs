@@ -1,6 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-// Original source code from a CodeProject article, several improvements where added.
+﻿// Original source code from a CodeProject article, several improvements where added.
 
 using System;
 using System.Text;

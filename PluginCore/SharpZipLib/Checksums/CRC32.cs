@@ -1,5 +1,3 @@
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // CRC32.cs - Computes CRC32 data checksum of a data stream
 // Copyright (C) 2001 Mike Krueger
 //
