@@ -1,4 +1,6 @@
-﻿#pragma warning disable 0618
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+#pragma warning disable 0618
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
