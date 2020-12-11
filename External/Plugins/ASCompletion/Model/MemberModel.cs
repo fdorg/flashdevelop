@@ -267,6 +267,13 @@ namespace ASCompletion.Model
         /// Return the first MemberModel instance match in the MemberList
         /// </summary>
         /// <param name="name">Member name to mach</param>
+        /// <returns>First match</returns>
+        public MemberModel? Search(string name) => Search(name, 0, 0);
+
+        /// <summary>
+        /// Return the first MemberModel instance match in the MemberList
+        /// </summary>
+        /// <param name="name">Member name to mach</param>
         /// <param name="mask">Flags mask</param>
         /// <param name="access">Visibility mask</param>
         /// <returns>First match</returns>

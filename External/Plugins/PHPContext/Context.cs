@@ -273,19 +273,19 @@ namespace PHPContext
         /// </summary>
         protected override void UpdateTopLevelElements()
         {
-            var special = topLevel.Members.Search("$this", 0, 0);
+            var special = topLevel.Members.Search("$this");
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.Name;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : docType;
             }
-            special = topLevel.Members.Search("self", 0, 0);
+            special = topLevel.Members.Search("self");
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.Name;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : docType;
             }
-            special = topLevel.Members.Search("parent", 0, 0);
+            special = topLevel.Members.Search("parent");
             if (special != null)
             {
                 cClass.ResolveExtends();
@@ -293,17 +293,6 @@ namespace PHPContext
                 if (!extends.IsVoid()) special.Type = extends.Name;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
             }
-        }
-
-        /// <summary>
-        /// Retrieves a package content
-        /// </summary>
-        /// <param name="name">Package path</param>
-        /// <param name="lazyMode">Force file system exploration</param>
-        /// <returns>Package folders and types</returns>
-        public override FileModel ResolvePackage(string name, bool lazyMode)
-        {
-            return base.ResolvePackage(name, lazyMode);
         }
         #endregion
 

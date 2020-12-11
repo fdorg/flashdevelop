@@ -337,7 +337,7 @@ namespace AS2Context
             var inClass = Context.CurrentClass;
             if (token == "this")
             {
-                result.Member = topLevel.Members.Search("this", 0, 0);
+                result.Member = topLevel.Members.Search("this");
                 if (inClass.IsVoid()) inClass = Context.ResolveType(result.Member.Type, null);
                 result.Type = inClass;
                 result.InFile = Context.CurrentModel;
@@ -348,14 +348,14 @@ namespace AS2Context
             {
                 if (inClass.IsVoid())
                 {
-                    var thisMember = topLevel.Members.Search("this", 0, 0);
+                    var thisMember = topLevel.Members.Search("this");
                     inClass = Context.ResolveType(thisMember.Type, null);
                 }
                 inClass.ResolveExtends();
                 var extends = inClass.Extends;
                 if (!extends.IsVoid())
                 {
-                    result.Member = topLevel.Members.Search("super", 0, 0);
+                    result.Member = topLevel.Members.Search("super");
                     result.Type = extends;
                     result.InFile = extends.InFile;
                     result.RelClass = Context.CurrentClass;
@@ -408,7 +408,7 @@ namespace AS2Context
                             var token = item.Type.Substring(p+1);
                             var pack = ResolvePackage(package, false);
                             if (pack is null) continue;
-                            var member = pack.Members.Search(token, 0, 0);
+                            var member = pack.Members.Search(token);
                             if (member != null) imports.Add(member);
                         }
                     }
@@ -512,7 +512,7 @@ namespace AS2Context
                             {
                                 var pack = ResolvePackage(testPackage, false);
                                 if (pack is null) continue;
-                                var found = pack.Imports.Search(cname, 0, 0);
+                                var found = pack.Imports.Search(cname);
                                 if (found != null) return ResolveType(found.Type, null);
                             }
                         }
@@ -528,7 +528,7 @@ namespace AS2Context
                         {
                             var pack = ResolvePackage(import.Type, false);
                             if (pack is null) continue;
-                            var found = pack.Imports.Search(cname, 0, 0);
+                            var found = pack.Imports.Search(cname);
                             if (found != null) return ResolveType(found.Type, null);
                         }
                     }
@@ -910,13 +910,13 @@ namespace AS2Context
         /// </summary>
         protected override void UpdateTopLevelElements()
         {
-            var special = topLevel.Members.Search("this", 0, 0);
+            var special = topLevel.Members.Search("this");
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.QualifiedName;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : docType;
             }
-            special = topLevel.Members.Search("super", 0, 0);
+            special = topLevel.Members.Search("super");
             if (special != null) 
             {
                 cClass.ResolveExtends();
@@ -1162,7 +1162,7 @@ namespace AS2Context
                     var mainClass = cFile.GetPublicClass();
                     if (!mainClass.IsVoid())
                     {
-                        var toRemove = elements.Search(mainClass.Name, 0, 0);
+                        var toRemove = elements.Search(mainClass.Name);
                         if (toRemove != null && toRemove.Type == mainClass.QualifiedName)
                             elements.Remove(toRemove);
                     }

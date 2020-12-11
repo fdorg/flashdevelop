@@ -342,16 +342,13 @@ namespace ASCompletion.Helpers
         {
             //look for all ClassModels with variables / functions of the same name as member
             //this could give faulty results if there are variables / functions of the same name with different signature in the interface
-            var implementors = new Dictionary<ClassModel, MemberModel>();
-
-            foreach (var interf in interfaces)
+            var result = new Dictionary<ClassModel, MemberModel>();
+            foreach (var it in interfaces)
             {
-                var interfMember = interf.Members.Search(member.Name, 0, 0);
-                if (interfMember != null)
-                    implementors.Add(interf, interfMember);
+                var model = it.Members.Search(member.Name);
+                if (model != null) result.Add(it, model);
             }
-
-            return implementors;
+            return result;
         }
 
         /// <summary>
@@ -359,7 +356,7 @@ namespace ASCompletion.Helpers
         /// by <paramref name="function"/>
         /// </summary>
         /// <returns>A Dictionary containing all pairs of ClassModels and MemberModels that were overridden by <paramref name="function"/></returns>
-        internal Dictionary<ClassModel, MemberModel> GetOverriddenClasses(ClassModel cls, MemberModel function)
+        internal Dictionary<ClassModel, MemberModel>? GetOverriddenClasses(ClassModel cls, MemberModel function)
         {
             if (cls.Extends.IsVoid()) return null;
             if ((function.Flags & FlagType.Function) == 0 || (function.Flags & FlagType.Override) == 0) return null;

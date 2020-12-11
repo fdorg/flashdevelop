@@ -676,11 +676,9 @@ namespace ASCompletion.Completion
                     if (inClass != null)
                     {
                         inClass = result.InFile.GetClassByName(inClass.Name);
-                        if (result.Member != null)
-                            result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
+                        if (result.Member != null) result.Member = inClass.Members.Search(result.Member.Name);
                     }
-                    else if (result.Member != null)
-                        result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
+                    else if (result.Member != null) result.Member = result.InFile.Members.Search(result.Member.Name);
                 }
             }
             if ((inClass is null || inClass.IsVoid()) && result.Member is null) return false;

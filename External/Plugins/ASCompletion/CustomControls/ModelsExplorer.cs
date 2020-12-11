@@ -302,44 +302,36 @@ namespace ASCompletion
 
         void outlineTreeView_Click(object sender, EventArgs e)
         {
-            if (outlineTreeView.SelectedNode is null)
-                return;
-            TreeNode node = outlineTreeView.SelectedNode;
-            TypeTreeNode tnode;
-            if (node is TypeTreeNode treeNode)
+            if (outlineTreeView.SelectedNode is null) return;
+            switch (outlineTreeView.SelectedNode)
             {
-                tnode = treeNode;
-                string filename = ((string) tnode.Tag).Split('@')[0];
-
-                FileModel model = OpenFile(filename);
-                if (model != null)
+                case TypeTreeNode node:
                 {
-                    ClassModel theClass = model.GetClassByName(tnode.Text);
-                    if (!theClass.IsVoid())
-                    {
-                        int line = theClass.LineFrom;
-                        var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                        if (sci != null && !theClass.IsVoid() && line > 0 && line < sci.LineCount)
-                            sci.GotoLineIndent(line);
-                    }
+                    var filename = ((string) node.Tag).Split('@')[0];
+                    var model = OpenFile(filename);
+                    if (model is null) return;
+                    var theClass = model.GetClassByName(node.Text);
+                    if (theClass.IsVoid()) return;
+                    var line = theClass.LineFrom;
+                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                    if (sci != null && !theClass.IsVoid() && line > 0 && line < sci.LineCount)
+                        sci.GotoLineIndent(line);
+                    break;
                 }
-            }
-            else if (node is MemberTreeNode && node.Parent is TypeTreeNode parent)
-            {
-                tnode = parent;
-                string filename = ((string) tnode.Tag).Split('@')[0];
-
-                FileModel model = OpenFile(filename);
-                if (model != null)
+                case MemberTreeNode _ when outlineTreeView.SelectedNode.Parent is TypeTreeNode node:
                 {
-                    ClassModel theClass = model.GetClassByName(tnode.Text);
-                    string memberName = ((string) node.Tag).Split('@')[0];
-                    MemberModel member = theClass.Members.Search(memberName, 0, 0);
+                    var filename = ((string) node.Tag).Split('@')[0];
+                    var model = OpenFile(filename);
+                    if (model is null) return;
+                    var theClass = model.GetClassByName(node.Text);
+                    var memberName = ((string) outlineTreeView.SelectedNode.Tag).Split('@')[0];
+                    var member = theClass.Members.Search(memberName);
                     if (member is null) return;
                     var line = member.LineFrom;
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
                     if (sci != null && line > 0 && line < sci.LineCount)
                         sci.GotoLineIndent(line);
+                    break;
                 }
             }
         }

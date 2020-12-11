@@ -42,12 +42,12 @@ namespace ASCompletion.Model
         /// <returns>First match</returns>
         public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive)
         {
-            if (!recursive) return @this.Members.Search(name, 0, 0);
+            if (!recursive) return @this.Members.Search(name);
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this;
             while (!type.IsVoid())
             {
-                var result = type.Members.Search(name, 0, 0);
+                var result = type.Members.Search(name);
                 if (result != null) return result;
                 type = type.Extends;
             }
@@ -59,13 +59,13 @@ namespace ASCompletion.Model
             if (!recursive)
             {
                 inClass = @this;
-                return @this.Members.Search(name, 0, 0);
+                return @this.Members.Search(name);
             }
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this;
             while (!type.IsVoid())
             {
-                var result = type.Members.Search(name, 0, 0);
+                var result = type.Members.Search(name);
                 if (result != null)
                 {
                     inClass = type;
