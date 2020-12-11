@@ -813,7 +813,7 @@ namespace AS3Context
                             if (result.InFile.Classes.Count > 0)
                             {
                                 result.InClass = result.InFile.Classes[0];
-                                result.Member = result.InClass.Members.Search(member.Name, member.Flags, 0);
+                                result.Member = result.InClass.Members.Search(member.Name, member.Flags);
                             }
                         }
                         else result.Member = member;

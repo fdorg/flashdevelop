@@ -1110,13 +1110,9 @@ namespace AS3Context
         {
             const string filename = "toplevel.as";
             topLevel = new FileModel(filename);
-
-            if (!topLevel.Members.Contains(features.ThisKey, 0, 0))
-                topLevel.Members.Add(new MemberModel(features.ThisKey, "", FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
-            if (!topLevel.Members.Contains(features.BaseKey, 0, 0))
-                topLevel.Members.Add(new MemberModel(features.BaseKey, "", FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
-            if (!topLevel.Members.Contains(features.voidKey, 0, 0))
-                topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Intrinsic, Visibility.Public));
+            if (!topLevel.Members.Contains(features.ThisKey)) topLevel.Members.Add(new MemberModel(features.ThisKey, string.Empty, FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
+            if (!topLevel.Members.Contains(features.BaseKey)) topLevel.Members.Add(new MemberModel(features.BaseKey, string.Empty, FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
+            if (!topLevel.Members.Contains(features.voidKey)) topLevel.Members.Add(new MemberModel(features.voidKey, string.Empty, FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
         }
 

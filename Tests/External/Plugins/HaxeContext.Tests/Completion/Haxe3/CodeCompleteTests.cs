@@ -2584,7 +2584,7 @@ namespace HaXeContext.Completion.Haxe3
         public string ParseFile_Issue104(string name, FlagType flags)
         {
             var list = ASContext.Context.GetVisibleExternalElements();
-            var result = list.Search(name, flags, 0);
+            var result = list.Search(name, flags);
             return result.Comments;
         }
 
