@@ -1902,6 +1902,7 @@ namespace ASCompletion.Completion
                     // import
                     if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
                         return HandleImportCompletion(sci, expr.Value, autoHide);
+                    if (word == features.overrideKey) return HandleOverrideCompletion(expr.Value, autoHide);
                 }
                 // type
                 else if (features.hasEcmaTyping && expr.Separator == ":" && HandleColonCompletion(sci, expr.Value, autoHide))
@@ -2170,6 +2171,74 @@ namespace ASCompletion.Completion
         #endregion
 
         #region types_completion
+
+        /// <summary>
+        /// List methods to override
+        /// </summary>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Completion was handled</returns>
+        internal bool HandleOverrideCompletion(string tail, bool autoHide)
+        {
+            var ctx = ASContext.Context;
+            var curClass = ctx.CurrentClass;
+            if (curClass.IsVoid()) return false;
+
+            var members = new List<MemberModel>();
+            curClass.ResolveExtends();
+
+            const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
+            var tmpClass = curClass.Extends;
+            var access = ctx.TypesAffinity(curClass, tmpClass);
+            while (!tmpClass.IsVoid())
+            {
+                if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
+                {
+                    foreach (var member in tmpClass.Members)
+                    {
+                        member.Namespace = "flash_proxy";
+                        members.Add(member);
+                    }
+                    break;
+                }
+                foreach (var member in tmpClass.Members)
+                {
+                    if (curClass.Members.Contains(member.Name, FlagType.Override, 0)) continue;
+                    if ((member.Flags & FlagType.Dynamic) == 0
+                        || (member.Access & access) == 0
+                        || ((member.Flags & FlagType.Function) == 0 && (member.Flags & mask) == 0)) continue;
+                    if (!member.Parameters.IsNullOrEmpty())
+                    {
+                        foreach (var it in member.Parameters)
+                        {
+                            if ((it.Flags & FlagType.Function) == 0 || it.Parameters is null) continue;
+                            it.Type = ctx.CodeComplete.ToFunctionDeclarationString(it);
+                            it.Parameters = null;
+                        }
+                        // for example: function get value():Function/*(v:*):ReturnType*/
+                        if ((member.Flags & FlagType.Getter) != 0)
+                        {
+                            member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
+                            member.Parameters = null;
+                        }
+                    }
+                    members.Add(member);
+                }
+                tmpClass = tmpClass.Extends;
+                // members visibility
+                access = ctx.TypesAffinity(curClass, tmpClass);
+            }
+            members.Sort();
+            var list = new List<ICompletionListItem>(members.Count);
+            MemberModel last = null;
+            foreach (var member in members)
+            {
+                if (last is null || last.Name != member.Name)
+                    list.Add(new MemberItem(member));
+                last = member;
+            }
+            if (list.Count > 0) CompletionList.Show(list, autoHide, tail);
+            return true;
+        }
 
         protected static bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword)
         {
