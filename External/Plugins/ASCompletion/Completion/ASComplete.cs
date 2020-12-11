@@ -161,7 +161,7 @@ namespace ASCompletion.Completion
                             break;
 
                         case ':':
-                            if (features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
+                            if (features.hasEcmaTyping) return HandleColonCompletion(sci, string.Empty, autoHide);
                             break;
 
                         case '<':
@@ -170,7 +170,7 @@ namespace ASCompletion.Completion
                                 var c0 = (char) sci.CharAt(position - 2);
                                 //TODO: We should check if we are actually on a generic type
                                 if ((ctx.CurrentModel.Version == 3 && c0 == '.') || char.IsLetterOrDigit(c0))
-                                    return HandleColonCompletion(sci, "", autoHide);
+                                    return HandleColonCompletion(sci, string.Empty, autoHide);
                                 return false;
                             }
                             break;
@@ -281,7 +281,7 @@ namespace ASCompletion.Completion
                 if (word.Length > 0)
                 {
                     var features = ASContext.Context.Features;
-                    if (!word.Contains(features.dot) && features.HasTypePreKey(word)) word = "";
+                    if (!word.Contains(features.dot) && features.HasTypePreKey(word)) word = string.Empty;
                 }
                 // display the full project classes list
                 HandleAllClassesCompletion(sci, word, false, true);
@@ -756,7 +756,7 @@ namespace ASCompletion.Completion
         }
 
         protected virtual void LocateMember(ScintillaControl sci, int line, string keyword, string name)
-            => LocateMember(sci, line, $"{keyword ?? ""}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
+            => LocateMember(sci, line, $"{keyword ?? string.Empty}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
 
         protected void LocateMember(ScintillaControl sci, int line, string pattern)
         {
@@ -826,15 +826,15 @@ namespace ASCompletion.Completion
                 CurrentResolvedContext.Result = result;
 
                 var args = CurrentResolvedContext.Arguments;
-                string package = context.CurrentModel.Package;
+                var package = context.CurrentModel.Package;
                 args.Add("TypPkg", package);
 
-                ClassModel cClass = context.CurrentClass ?? ClassModel.VoidClass;
+                var cClass = context.CurrentClass ?? ClassModel.VoidClass;
                 args.Add("TypName", MemberModel.FormatType(cClass.Name));
-                string fullName = MemberModel.FormatType(cClass.QualifiedName);
+                var fullName = MemberModel.FormatType(cClass.QualifiedName);
                 args.Add("TypPkgName", fullName);
-                FlagType flags = cClass.Flags;
-                string kind = GetKind(flags, features);
+                var flags = cClass.Flags;
+                var kind = GetKind(flags, features);
                 args.Add("TypKind", kind);
 
                 if (context.CurrentMember != null)
@@ -845,7 +845,7 @@ namespace ASCompletion.Completion
                     args.Add("MbrKind", kind);
 
                     var aType = CurrentResolvedContext.TokenType = ResolveType(context.CurrentMember.Type, context.CurrentModel);
-                    package = aType.IsVoid() ? "" : aType.InFile.Package;
+                    package = aType.IsVoid() ? string.Empty : aType.InFile.Package;
                     args.Add("MbrTypPkg", package);
                     args.Add("MbrTypName", MemberModel.FormatType(aType.Name));
                     fullName = MemberModel.FormatType(aType.QualifiedName);
@@ -856,7 +856,7 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    args.Add("MbrName", "");
+                    args.Add("MbrName", string.Empty);
                     args.Add("MbrKind", "");
                     args.Add("MbrTypPkg", "");
                     args.Add("MbrTypName", "");
@@ -5125,7 +5125,7 @@ namespace ASCompletion.Completion
                 // remove temp wildcard
                 int startPos = expr.PositionExpression;
                 sci.SetSel(startPos, position);
-                sci.ReplaceSel("");
+                sci.ReplaceSel(string.Empty);
 
                 // generate import
                 if (context.Settings.GenerateImports)

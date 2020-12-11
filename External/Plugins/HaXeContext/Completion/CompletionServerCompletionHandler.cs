@@ -42,7 +42,8 @@ namespace HaXeContext
             try
             {
                 using var client = new TcpClient("127.0.0.1", port);
-                using var writer = new StreamWriter(client.GetStream());
+                var stream = client.GetStream();
+                using var writer = new StreamWriter(stream);
                 writer.WriteLine("--cwd " + ((HaxeProject) PluginBase.CurrentProject).Directory);
                 foreach (var arg in args)
                     writer.WriteLine(arg);
@@ -53,7 +54,7 @@ namespace HaXeContext
                 }
                 writer.Write("\0");
                 writer.Flush();
-                using var reader = new StreamReader(client.GetStream());
+                using var reader = new StreamReader(stream);
                 var lines = reader.ReadToEnd();
                 return lines;
             }

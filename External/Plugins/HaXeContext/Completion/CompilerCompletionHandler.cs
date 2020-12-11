@@ -22,8 +22,7 @@ namespace HaXeContext
             if (args is null || haxeProcessStartInfo is null) return string.Empty;
             try
             {
-                using var process = new Process();
-                process.StartInfo = haxeProcessStartInfo.Value;
+                using var process = new Process {StartInfo = haxeProcessStartInfo.Value};
                 process.StartInfo.Arguments = string.Join(" ", args);
                 process.EnableRaisingEvents = true;
                 process.Start();
