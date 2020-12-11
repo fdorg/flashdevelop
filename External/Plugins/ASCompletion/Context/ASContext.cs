@@ -878,7 +878,7 @@ namespace ASCompletion.Context
         /// Set local code parser features
         /// </summary>
         /// <returns></returns>
-        protected internal virtual IFileParser GetCodeParser() => new ASFileParser(context.Features);
+        protected virtual IFileParser GetCodeParser() => new ASFileParser(context.Features);
 
         /// <summary>
         /// Build the file DOM
