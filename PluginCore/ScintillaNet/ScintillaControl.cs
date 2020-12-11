@@ -4955,7 +4955,7 @@ namespace ScintillaNet
         /// <summary>
         /// Gets a word from the specified position
         /// </summary>
-        public string GetWordFromPosition(int position)
+        public string? GetWordFromPosition(int position)
         {
             try
             {
@@ -4976,10 +4976,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeInsertText(int position, string text)
         {
-            if (CodePage != 65001)
-            {
-                InsertText(position, text);
-            }
+            if (CodePage != 65001) InsertText(position, text);
             else
             {
                 int mbpos = MBSafePosition(position);
@@ -4992,10 +4989,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeGotoPos(int position)
         {
-            if (CodePage != 65001)
-            {
-                GotoPos(position);
-            }
+            if (CodePage != 65001) GotoPos(position);
             else
             {
                 int mbpos = MBSafePosition(position);
@@ -5008,10 +5002,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeSetSel(int start, int end)
         {
-            if (CodePage != 65001)
-            {
-                SetSel(start, end);
-            }
+            if (CodePage != 65001) SetSel(start, end);
             else
             {
                 var count = Text.Substring(start, end - start);
@@ -5026,10 +5017,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeSetSel(int start, string text)
         {
-            if (CodePage != 65001)
-            {
-                SetSel(start, start + text.Length);
-            }
+            if (CodePage != 65001) SetSel(start, start + text.Length);
             else
             {
                 int mbpos = MBSafePosition(start);

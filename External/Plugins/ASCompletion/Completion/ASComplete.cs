@@ -67,11 +67,10 @@ namespace ASCompletion.Completion
         /// <returns>Auto-completion has been handled</returns>
         public static bool OnChar(ScintillaControl sci, int value, bool autoHide)
         {
+            if (sci.IsSelectionRectangle) return false;
             var ctx = ASContext.Context;
-            var features = ctx.Features;
             try
             {
-                if (sci.IsSelectionRectangle) return false;
                 // code auto
                 int eolMode = sci.EOLMode;
                 if (((value == '\n') && (eolMode != 1)) || ((value == '\r') && (eolMode == 1)))
@@ -79,16 +78,13 @@ namespace ASCompletion.Completion
                     if (ASContext.HasContext && ctx.IsFileValid) HandleStructureCompletion(sci);
                     return false;
                 }
-
-                int position = sci.CurrentPos;
+                var position = sci.CurrentPos;
                 if (position < 2) return false;
-
-                char prevValue = (char) sci.CharAt(position - 2);
-                bool skipQuoteCheck = false;
-
+                var prevValue = (char) sci.CharAt(position - 2);
+                var skipQuoteCheck = false;
                 sci.Colourise(0, -1);
-                int style = sci.BaseStyleAt(position - 1);
-                
+                var style = sci.BaseStyleAt(position - 1);
+                var features = ctx.Features;
                 if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
                     var stringTypeChar = sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
@@ -567,7 +563,6 @@ namespace ASCompletion.Completion
         public static bool DeclarationLookup(ScintillaControl sci)
         {
             if (!ASContext.Context.IsFileValid || sci is null) return false;
-
             // let the context handle goto declaration if we couldn't find anything
             if (InternalDeclarationLookup(sci)) return true;
             var expression = GetExpression(sci, sci.CurrentPos);
@@ -618,24 +613,13 @@ namespace ASCompletion.Completion
                 return OpenDocumentToDeclaration(sci, result);
             }
             // show overridden method
-            if (ctx.CurrentMember != null
-                && ctx.Features.overrideKey != null
-                && sci.GetWordFromPosition(position) == ctx.Features.overrideKey)
-            {
-                var member = ctx.CurrentMember;
-                if ((member.Flags & FlagType.Override) > 0)
-                {
-                    var found = ctx.CurrentClass.Extends.SearchMember(member.Name, true, out var inClass);
-                    if (found != null)
-                    {
-                        result = new ASResult();
-                        result.Member = found;
-                        result.InFile = inClass.InFile;
-                        result.InClass = inClass;
-                        OpenDocumentToDeclaration(sci, result);
-                    }
-                }
-            }
+            if (ctx.CurrentMember is null
+                || ctx.Features.overrideKey is null
+                || sci.GetWordFromPosition(position) != ctx.Features.overrideKey) return false;
+            var member = ctx.CurrentMember;
+            if ((member.Flags & FlagType.Override) == 0) return false;
+            var found = ctx.CurrentClass.Extends.SearchMember(member.Name, true, out var inClass);
+            if (found != null) OpenDocumentToDeclaration(sci, new ASResult {Member = found, InFile = inClass.InFile, InClass = inClass});
             return false;
         }
 
