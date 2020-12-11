@@ -94,7 +94,7 @@ namespace ASCompletion.Controls
             return list.Select(m => new Reference
             {
                 File = m.InFile.FileName,
-                Line = m.Members.Search(member.Name, 0, 0).LineFrom,
+                Line = m.Members.Search(member.Name).LineFrom,
                 Type = m.QualifiedName
             });
         }

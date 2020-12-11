@@ -657,7 +657,7 @@ namespace HaXeContext.Completion
                 if (member.Flags.HasFlag(FlagType.Constructor)) return;
                 if (member.Name.StartsWith("get_") || member.Name.StartsWith("set_"))
                 {
-                    var property = ctx.CurrentClass.Members.Search(member.Name.Substring(4), 0, 0);
+                    var property = ctx.CurrentClass.Members.Search(member.Name.Substring(4));
                     if (property != null)
                     {
                         if (string.IsNullOrEmpty(property.Type)) InferType(sci, property);
@@ -772,7 +772,7 @@ namespace HaXeContext.Completion
                             var members = exprType.Members;
                             if (members.Contains("hasNext", 0, 0))
                             {
-                                iterator = members.Search("next", 0, 0);
+                                iterator = members.Search("next");
                                 if (iterator != null) iteratorIndexType = iterator.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
@@ -1323,7 +1323,7 @@ namespace HaXeContext.Completion
                 var type = ResolveType("haxe.Log", inFile);
                 if (!type.IsVoid())
                 {
-                    result.Member = type.Members.Search("trace", 0, 0);
+                    result.Member = type.Members.Search("trace");
                     result.InClass = type;
                     result.InFile = type.InFile;
                     result.RelClass = inClass;
@@ -1475,7 +1475,7 @@ namespace HaXeContext.Completion
                     var names = @params["Default"].Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var param in names)
                     {
-                        var member = tmp.Search(param.Trim(), 0, 0);
+                        var member = tmp.Search(param.Trim());
                         if (member != null) result.Merge(member);
                     }
                     return;
