@@ -2931,8 +2931,8 @@ namespace ASCompletion.Completion
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
             var parameters = ParseFunctionParameters(sci, position);
-            var constructorArgs = new List<MemberModel>();
-            var constructorArgTypes = new List<string>();
+            var constructorArgs = new List<MemberModel>(parameters.Count);
+            var constructorArgTypes = new List<string>(parameters.Count);
             foreach (var p in parameters)
             {
                 constructorArgs.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
@@ -3799,7 +3799,7 @@ namespace ASCompletion.Completion
                 access = ctx.TypesAffinity(curClass, tmpClass);
             }
             members.Sort();
-            var list = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>(members.Count);
             MemberModel last = null;
             foreach (var member in members)
             {

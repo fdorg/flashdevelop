@@ -1348,15 +1348,8 @@ namespace ASCompletion.Completion
                 }
                 tempLine--;
             }
-            if (tab > 0)
-            {
-                sci.SetLineIndentation(line, tab);
-            }
-
-            // build list
-            var list = support.Select(token => new DeclarationItem(token)).ToList<ICompletionListItem>();
-
-            // show
+            if (tab > 0) sci.SetLineIndentation(line, tab);
+            var list = support.Select(token => new DeclarationItem(token)).ToArray<ICompletionListItem>();
             CompletionList.Show(list, autoHide, tail);
             return true;
         }
@@ -1838,7 +1831,7 @@ namespace ASCompletion.Completion
 
             // filter
             list.Sort(new CompletionItemComparer());
-            var items = new List<ICompletionListItem>();
+            var items = new List<ICompletionListItem>(list.Count);
             string prev = null;
             foreach (var item in list)
             {
@@ -2039,7 +2032,7 @@ namespace ASCompletion.Completion
             }
 
             // show
-            list ??= new List<ICompletionListItem>();
+            list ??= new List<ICompletionListItem>(mix.Count);
             foreach (var member in mix)
             {
                 if ((member.Flags & FlagType.Template) > 0) list.Add(new TemplateItem(member));
@@ -2162,7 +2155,7 @@ namespace ASCompletion.Completion
             if (CompletionList.Active) reSelect = CompletionList.SelectedLabel;
 
             // show completion
-            var list = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>(items.Count);
             var testActive = !CompletionList.Active && expr.Position != position;
             foreach (var member in items)
             {
@@ -2253,7 +2246,7 @@ namespace ASCompletion.Completion
             {
                 // list visible classes
                 var known = GetVisibleElements();
-                var list = known.Select(member => new MemberItem(member)).ToList<ICompletionListItem>();
+                var list = known.Select(member => new MemberItem(member)).ToArray<ICompletionListItem>();
                 CompletionList.Show(list, autoHide, tail);
             }
             return true;
@@ -2278,7 +2271,7 @@ namespace ASCompletion.Completion
                 var outOfDate = ctx.UnsetOutOfDate();
                 // list visible classes
                 var known = GetVisibleElements();
-                var list = known.Select(member => new MemberItem(member)).ToList<ICompletionListItem>();
+                var list = known.Select(member => new MemberItem(member)).ToArray<ICompletionListItem>();
                 CompletionList.Show(list, autoHide, tail);
                 if (outOfDate) ctx.SetOutOfDate();
             }
@@ -2375,17 +2368,13 @@ namespace ASCompletion.Completion
             if (expr.ContextMember is null) return false;
             var ctx = ASContext.Context;
             var members = new MemberList();
-
             members.Merge(ctx.CurrentClass.GetSortedMembersList());
-
             if ((expr.ContextMember.Flags & FlagType.Static) > 0)
                 members.RemoveAllWithoutFlag(FlagType.Static);
-            else
-                members.Merge(ctx.CurrentClass.GetSortedInheritedMembersList());
-
+            else members.Merge(ctx.CurrentClass.GetSortedInheritedMembersList());
             members.Merge(ParseLocalVars(expr));
             if (!expressions) members.RemoveAllWithFlag(FlagType.Function);
-            var list = members.Select(member => new MemberItem(member)).ToList<ICompletionListItem>();
+            var list = members.Select(member => new MemberItem(member)).ToArray<ICompletionListItem>();
             CompletionList.Show(list, autoHide);
             return true;
         }
@@ -5143,7 +5132,7 @@ namespace ASCompletion.Completion
 
             // show types
             var imports = context.ResolvePackage(package, false).Imports;
-            var list = imports.Select(import => new MemberItem(import)).ToList<ICompletionListItem>();
+            var list = imports.Select(import => new MemberItem(import)).ToArray<ICompletionListItem>();
             CompletionList.Show(list, false);
             return true;
         }

@@ -273,7 +273,7 @@ namespace HaXeContext.Completion
                         .Select(it => it.Trim()).ToArray();
                     if (names.Length != 0) list.Items.RemoveAll(it => names.Contains(it.Name));
                 }
-                if (list.Count > 0) CompletionList.Show(list.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
+                if (list.Count > 0) CompletionList.Show(list.Select(it => new MemberItem(it)).ToArray<ICompletionListItem>(), autoHide);
                 return true;
             }
             return false;
