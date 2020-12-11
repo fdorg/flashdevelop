@@ -132,7 +132,7 @@ namespace FlashDebugger
                             de.Handled = true;
                         return;
                     }
-                    if (!de.Action.StartsWithOrdinal(nameof(ProjectManager)))  return;
+                    if (!de.Action.StartsWithOrdinal(nameof(ProjectManager))) return;
                     if (de.Action == ProjectManagerEvents.Project)
                     {
                         var project = PluginBase.CurrentProject;
