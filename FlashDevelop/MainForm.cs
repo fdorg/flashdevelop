@@ -676,10 +676,7 @@ namespace FlashDevelop
         void InitializeSettings()
         {
             AppSettings = SettingObject.GetDefaultSettings();
-            if (File.Exists(FileNameHelper.SettingData))
-            {
-                AppSettings = ObjectSerializer.Deserialize(FileNameHelper.SettingData, AppSettings, false);
-            }
+            if (File.Exists(FileNameHelper.SettingData)) AppSettings = ObjectSerializer.Deserialize(FileNameHelper.SettingData, AppSettings, false);
             SettingObject.EnsureValidity(AppSettings);
             FileStateManager.RemoveOldStateFiles();
         }
@@ -706,8 +703,7 @@ namespace FlashDevelop
         /// </summary>
         public void InitializeProcessRunner()
         {
-            processRunner = new ProcessRunner();
-            processRunner.RedirectInput = true;
+            processRunner = new ProcessRunner {RedirectInput = true};
             processRunner.ProcessEnded += ProcessEnded;
             processRunner.Output += ProcessOutput;
             processRunner.Error += ProcessError;
@@ -1848,10 +1844,7 @@ namespace FlashDevelop
             if (!args.IsNullOrEmpty())
             {
                 Silent = args.Contains("-silent");
-                foreach (var arg in args)
-                {
-                    OpenDocumentFromParameters(arg);
-                }
+                args.ForEach(OpenDocumentFromParameters);
             }
             if (Win32.ShouldUseWin32()) Win32.RestoreWindow(Handle);
             /**
@@ -2163,13 +2156,8 @@ namespace FlashDevelop
         {
             openFileDialog.Multiselect = true;
             openFileDialog.InitialDirectory = WorkingDirectory;
-            if (openFileDialog.ShowDialog(this) == DialogResult.OK && openFileDialog.FileName.Length != 0)
-            {
-                foreach (var it in openFileDialog.FileNames)
-                {
-                    OpenEditableDocument(it);
-                }
-            }
+            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+                openFileDialog.FileNames.ForEach(OpenEditableDocument);
             openFileDialog.Multiselect = false;
         }
 
@@ -2255,7 +2243,7 @@ namespace FlashDevelop
         /// </summary>
         public void ClipboardHistory(object sender, EventArgs e)
         {
-            if (ClipboardHistoryDialog.Show(out var data)) CurrentDocument?.SciControl.ReplaceSel(data.Text);
+            if (ClipboardHistoryDialog.Show(out var data)) CurrentDocument?.SciControl?.ReplaceSel(data.Text);
         }
 
         /// <summary>
@@ -2342,11 +2330,13 @@ namespace FlashDevelop
         {
             try
             {
-                if (CurrentDocument.IsUntitled) SaveAs();
-                else if (CurrentDocument.IsModified)
+                var document = CurrentDocument;
+                if (document is null) return;
+                if (document.IsUntitled) SaveAs();
+                else if (document.IsModified)
                 {
                     var reason = ((ItemData)((ToolStripItem)sender).Tag).Tag;
-                    CurrentDocument.Save(CurrentDocument.FileName, reason);
+                    document.Save(document.FileName, reason);
                 }
             }
             catch (Exception ex)
@@ -2393,7 +2383,7 @@ namespace FlashDevelop
                 if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                 {
                     string file = saveFileDialog.FileName;
-                    FileHelper.WriteFile(file, CurrentDocument?.SciControl.SelText, Encoding.UTF8);
+                    FileHelper.WriteFile(file, CurrentDocument?.SciControl?.SelText, Encoding.UTF8);
                 }
                 saveFileDialog.InitialDirectory = prevRootPath;
                 saveFileDialog.Filter = prevFilter;
@@ -2421,7 +2411,7 @@ namespace FlashDevelop
                 if (saveFileDialog.ShowDialog(this) == DialogResult.OK && saveFileDialog.FileName.Length != 0)
                 {
                     string file = saveFileDialog.FileName;
-                    FileHelper.WriteFile(file, CurrentDocument?.SciControl.SelText, Encoding.UTF8);
+                    FileHelper.WriteFile(file, CurrentDocument?.SciControl?.SelText, Encoding.UTF8);
                 }
                 saveFileDialog.InitialDirectory = prevRootPath;
                 saveFileDialog.Filter = prevFilter;
@@ -3136,11 +3126,7 @@ namespace FlashDevelop
         /// <summary>
         /// Inserts a new GUID to the editor
         /// </summary>
-        public void InsertGUID(object sender, EventArgs e)
-        {
-            var guid = Guid.NewGuid().ToString();
-            CurrentDocument?.SciControl?.ReplaceSel(guid);
-        }
+        public void InsertGUID(object sender, EventArgs e) => CurrentDocument?.SciControl?.ReplaceSel(Guid.NewGuid().ToString());
 
         /// <summary>
         /// Inserts a custom hash to the editor
@@ -3306,16 +3292,17 @@ namespace FlashDevelop
         {
             var sci = CurrentDocument?.SciControl;
             if (sci is null) return;
-            int curLine = sci.LineFromPosition(sci.SelectionStart);
-            int endLine = sci.LineFromPosition(sci.SelectionEnd);
-            var lines = new List<string>();
-            for (int line = curLine; line < endLine + 1; ++line)
+            var curLine = sci.LineFromPosition(sci.SelectionStart);
+            var endLine = sci.LineFromPosition(sci.SelectionEnd);
+            var count = endLine + 1;
+            var lines = new List<string>(count - curLine);
+            for (var line = curLine; line < count; ++line)
             {
                 lines.Add(sci.GetLine(line));
             }
             lines.Sort(CompareLines);
             var sb = new StringBuilder();
-            foreach (string s in lines)
+            foreach (var s in lines)
             {
                 sb.Append(s);
             }

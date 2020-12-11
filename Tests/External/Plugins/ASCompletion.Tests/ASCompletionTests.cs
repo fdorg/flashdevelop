@@ -69,20 +69,17 @@ namespace ASCompletion
             mainForm = null;
         }
 
-        ScintillaControl GetBaseScintillaControl()
+        ScintillaControl GetBaseScintillaControl() => new ScintillaControl
         {
-            return new ScintillaControl
-            {
-                Encoding = System.Text.Encoding.UTF8,
-                CodePage = 65001,
-                Indent = settings.IndentSize,
-                Lexer = 3,
-                StyleBits = 7,
-                IsTabIndents = settings.TabIndents,
-                IsUseTabs = settings.UseTabs,
-                TabWidth = settings.TabWidth
-            };
-        }
+            Encoding = System.Text.Encoding.UTF8,
+            CodePage = 65001,
+            Indent = settings.IndentSize,
+            Lexer = 3,
+            StyleBits = 7,
+            IsTabIndents = settings.TabIndents,
+            IsUseTabs = settings.UseTabs,
+            TabWidth = settings.TabWidth
+        };
 
         protected static void SetAs3Features(ScintillaControl sci)
         {
@@ -122,7 +119,5 @@ namespace ASCompletion
 public static class CollectionExtensions
 {
     public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> items, int line) where TSource : MemberModel
-    {
-        return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
-    }
+        => items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
 }

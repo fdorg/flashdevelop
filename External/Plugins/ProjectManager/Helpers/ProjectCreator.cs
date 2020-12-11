@@ -112,18 +112,14 @@ namespace ProjectManager.Helpers
                 CopyFile(file, destFile);
             }
 
-            List<string> excludedDirs = new List<string>(PluginMain.Settings.ExcludedDirectories);
-
-            foreach (string dir in Directory.GetDirectories(sourceDir))
+            var excludedDirs = new List<string>(PluginMain.Settings.ExcludedDirectories);
+            foreach (var dir in Directory.GetDirectories(sourceDir))
             {
-                string dirName = Path.GetFileName(dir);
+                var dirName = Path.GetFileName(dir);
                 dirName = ReplaceKeywords(dirName);
-                string destSubDir = Path.Combine(destDir, dirName);
-
+                var destSubDir = Path.Combine(destDir, dirName);
                 // don't copy like .svn and stuff
-                if (excludedDirs.Contains(dirName.ToLower()))
-                    continue;
-
+                if (excludedDirs.Contains(dirName.ToLower())) continue;
                 CopyProjectFiles(dir, destSubDir, false); // only filter the top directory
             }
         }
@@ -132,18 +128,16 @@ namespace ProjectManager.Helpers
         internal void CopyFile(string source, string dest)
         {
             dest = ReplaceKeywords(dest); // you can use keywords in filenames too
-            string ext = Path.GetExtension(source).ToLower();
+            var ext = Path.GetExtension(source).ToLower();
             if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(ext))
             {
                 if (FileInspector.IsTemplate(ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
-
-                bool saveBOM = PluginBase.Settings.SaveUnicodeWithBOM;
-                Encoding encoding = Encoding.GetEncoding((int)PluginBase.Settings.DefaultCodePage);
+                var saveBOM = PluginBase.Settings.SaveUnicodeWithBOM;
+                var encoding = Encoding.GetEncoding((int)PluginBase.Settings.DefaultCodePage);
                 // batch files must be encoded in ASCII
                 ext = Path.GetExtension(dest).ToLower();
                 if (ext == ".bat" || ext == ".cmd" || ext.StartsWithOrdinal(".php")) encoding = Encoding.ASCII;
-
-                string src = File.ReadAllText(source);
+                var src = File.ReadAllText(source);
                 src = ReplaceKeywords(ProcessCodeStyleLineBreaks(src));
                 FileHelper.WriteFile(dest, src, encoding, saveBOM);
             }
@@ -159,36 +153,33 @@ namespace ProjectManager.Helpers
 
         string ReplaceVars(Match match)
         {
-            if (match.Groups.Count > 0)
+            if (match.Groups.Count == 0) return match.Value;
+            var name = match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture);
+            switch (name)
             {
-                string name = match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture);
-                switch (name)
-                {
-                    case "CBI": return PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
-                    case "QUOTE": return "\"";
-                    case "CLIPBOARD": return GetClipboard();
-                    case "TIMESTAMP": return DateTime.Now.ToString("g");
-                    case "PROJECTNAME": return projectName;
-                    case "PROJECTNAMELOWER": return projectName.ToLower();
-                    case "PROJECTID": return projectId;
-                    case "PROJECTIDLOWER": return projectId.ToLower();
-                    case "PACKAGENAME": return packageName;
-                    case "PACKAGENAMELOWER": return packageName.ToLower();
-                    case "PACKAGEPATH": return packagePath;
-                    case "PACKAGEPATHALT": return packagePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    case "PACKAGEDOT": return packageDot;
-                    case "PACKAGESLASH": return packageSlash;
-                    case "PACKAGESLASHALT": return packageSlash.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    case "DOLLAR": return "$";
-                    case "FLEXSDK":
-                        return defaultFlexSDK ??= PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
-                    case "APPDIR": return PathHelper.AppDir;
-                    default:
-                        arguments ??= PluginBase.MainForm.CustomArguments.ToArray();
-                        foreach (var arg in arguments)
-                            if (arg.Key.ToUpper() == name) return arg.Value;
-                        break;
-                }
+                case "CBI": return PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
+                case "QUOTE": return "\"";
+                case "CLIPBOARD": return GetClipboard();
+                case "TIMESTAMP": return DateTime.Now.ToString("g");
+                case "PROJECTNAME": return projectName;
+                case "PROJECTNAMELOWER": return projectName.ToLower();
+                case "PROJECTID": return projectId;
+                case "PROJECTIDLOWER": return projectId.ToLower();
+                case "PACKAGENAME": return packageName;
+                case "PACKAGENAMELOWER": return packageName.ToLower();
+                case "PACKAGEPATH": return packagePath;
+                case "PACKAGEPATHALT": return packagePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                case "PACKAGEDOT": return packageDot;
+                case "PACKAGESLASH": return packageSlash;
+                case "PACKAGESLASHALT": return packageSlash.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                case "DOLLAR": return "$";
+                case "FLEXSDK": return defaultFlexSDK ??= PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
+                case "APPDIR": return PathHelper.AppDir;
+                default:
+                    arguments ??= PluginBase.MainForm.CustomArguments.ToArray();
+                    foreach (var arg in arguments)
+                        if (arg.Key.ToUpper() == name) return arg.Value;
+                    break;
             }
             return match.Value;
         }
@@ -210,19 +201,13 @@ namespace ProjectManager.Helpers
         /// Gets the clipboard text
         /// </summary>
         public static string GetClipboard()
-        {
-            IDataObject cbdata = Clipboard.GetDataObject();
-            if (cbdata.GetDataPresent("System.String", true))
-            {
-                return cbdata.GetData("System.String", true).ToString();
-            }
+            => Clipboard.GetDataObject() is {} data && data.GetDataPresent("System.String", true)
+                ? data.GetData("System.String", true).ToString()
+                : string.Empty;
 
-            return string.Empty;
-        }
-
-        bool ShouldSkip(string path, bool isProjectRoot)
+        static bool ShouldSkip(string path, bool isProjectRoot)
         {
-            string filename = Path.GetFileName(path).ToLower();
+            var filename = Path.GetFileName(path).ToLower();
             if (isProjectRoot)
                 return projectTypes.ContainsKey(filename)
                     || filename == "project.txt"
@@ -269,18 +254,10 @@ namespace ProjectManager.Helpers
             return null;
         }
 
-        public static string KeyForProjectPath(string path)
-        {
-            return "project" + Path.GetExtension(path).ToLower();
-        }
+        public static string KeyForProjectPath(string path) => "project" + Path.GetExtension(path).ToLower();
 
         public static string GetProjectFilters()
-        {
-            string[] exts = projectExt.ToArray();
-            string filters = "FlashDevelop Projects|" + string.Join(";", exts)
-                + "|Adobe Flex Builder Project|.actionScriptProperties";
-            return filters;
-        }
+            => "FlashDevelop Projects|" + string.Join(";", projectExt) + "|Adobe Flex Builder Project|.actionScriptProperties";
 
         #region ArgsProcessor duplicated code
         /// <summary>
@@ -289,13 +266,14 @@ namespace ProjectManager.Helpers
         public static string ProcessCodeStyleLineBreaks(string text)
         {
             const string CSLB = "$(CSLB)";
-            int nextIndex = text.IndexOfOrdinal(CSLB);
-            if (nextIndex < 0) return text;
-            CodingStyle cs = PluginBase.Settings.CodingStyle;
-            if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
-            int eolMode = (int)PluginBase.Settings.EOLMode;
-            string lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            string result = ""; int currentIndex = 0;
+            var nextIndex = text.IndexOfOrdinal(CSLB);
+            if (nextIndex == -1) return text;
+            var cs = PluginBase.Settings.CodingStyle;
+            if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, string.Empty);
+            var eolMode = (int)PluginBase.Settings.EOLMode;
+            var lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
+            var result = string.Empty;
+            var currentIndex = 0;
             while (nextIndex >= 0)
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
@@ -306,7 +284,7 @@ namespace ProjectManager.Helpers
         }
 
         /// <summary>
-        /// Gets the line intendation from the text
+        /// Gets the line indentation from the text
         /// </summary>
         static string GetLineIndentation(string text, int position)
         {

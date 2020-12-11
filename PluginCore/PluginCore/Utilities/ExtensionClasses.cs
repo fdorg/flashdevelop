@@ -173,5 +173,39 @@ namespace PluginCore
         /// <returns>
         /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
         public static bool IsNullOrEmpty(this PropertyDescriptorCollection value) => value is null || value.Count == 0;
+
+        public static void ForEach<T>(this T[] @this, Action<T> action)
+        {
+            foreach (var it in @this)
+            {
+                action(it);
+            }
+        }
+
+        public static void ForEach<T, _>(this T[] @this, Func<T, _> action)
+        {
+            foreach (var it in @this)
+            {
+                action(it);
+            }
+        }
+
+        public static void ForEach<T>(this IList<T> @this, Action<T> action)
+        {
+            var count = @this.Count;
+            for (var i = 0; i < count; i++)
+            {
+                action(@this[i]);
+            }
+        }
+
+        public static void ForEach<T, _>(this IList<T> @this, Func<T, _> action)
+        {
+            var count = @this.Count;
+            for (var i = 0; i < count; i++)
+            {
+                action(@this[i]);
+            }
+        }
     }
 }
