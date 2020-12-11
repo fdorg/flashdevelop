@@ -1538,7 +1538,6 @@ namespace ProjectManager
 
         void FindInFiles()
         {
-            if (Tree.SelectedPaths is null) return;
             var paths = new List<string>(Tree.SelectedPaths);
             paths.RemoveAll(p => !Directory.Exists(p));
             if (paths.Count == 0) return;

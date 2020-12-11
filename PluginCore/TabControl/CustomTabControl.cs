@@ -452,13 +452,7 @@ namespace System.Windows.Forms
 
                 _TabBuffer = new Bitmap(Width, Height);
 				_TabBufferGraphics = Graphics.FromImage(_TabBuffer);
-
-				if (_BackImage != null){
-					_BackImage.Dispose();
-					_BackImage = null;
-				}
-
-			}
+            }
 			base.OnResize(e);
 		}
 		

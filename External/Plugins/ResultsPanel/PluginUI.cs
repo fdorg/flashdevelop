@@ -1292,11 +1292,12 @@ namespace ResultsPanel
             file = PathHelper.GetLongPathName(file);
             if (!File.Exists(file)) return;
             PluginBase.MainForm.OpenEditableDocument(file, false);
-            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return;
-            var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+            var document = PluginBase.MainForm.CurrentDocument;
+            if (document is null || !document.IsEditable) return;
+            var sci = document.SciControl;
             if (sci is null) return;
-            int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-            string description = item.SubItems[2].Text;
+            var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+            var description = item.SubItems[2].Text;
             Match match;
             if ((match = errorCharacters.Match(description)).Success)
             {

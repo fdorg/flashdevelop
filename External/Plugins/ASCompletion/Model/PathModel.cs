@@ -212,14 +212,12 @@ namespace ASCompletion.Model
                 lock (lockObject)
                 {
                     DoScheduledOperations();
-
-                    foreach (FileModel file in files.Values)
+                    foreach (var file in files.Values)
                     {
                         file?.Check();
                     }
                 }
             }
-
             Owner?.RefreshContextCache(Path);
         }
 

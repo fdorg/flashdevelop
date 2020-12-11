@@ -33,7 +33,7 @@ namespace CodeRefactor.Provider
                 if (sci is null || sci.SelTextSize != 0) return false;
                 var c = expr.Context.Value[0];
                 if (char.IsDigit(c)) return false;
-                var file = expr.InFile ?? expr.Type.InFile ?? FileModel.Ignore;
+                var file = expr.InFile ?? expr.Type?.InFile ?? FileModel.Ignore;
                 if (file == FileModel.Ignore) return false;
                 var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName);
                 var characterClass = ScintillaControl.Configuration.GetLanguage(language).characterclass.Characters;

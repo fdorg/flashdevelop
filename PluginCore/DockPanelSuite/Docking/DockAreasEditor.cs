@@ -104,20 +104,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             public void SetStates(DockAreas dockAreas)
             {
                 m_oldDockAreas = dockAreas;
-                if ((dockAreas & DockAreas.DockLeft) != 0)
-                    checkBoxDockLeft.Checked = true;
-                if ((dockAreas & DockAreas.DockRight) != 0)
-                    checkBoxDockRight.Checked = true;
-                if ((dockAreas & DockAreas.DockTop) != 0)
-                    checkBoxDockTop.Checked = true;
-                if ((dockAreas & DockAreas.DockTop) != 0)
-                    checkBoxDockTop.Checked = true;
-                if ((dockAreas & DockAreas.DockBottom) != 0)
-                    checkBoxDockBottom.Checked = true;
-                if ((dockAreas & DockAreas.Document) != 0)
-                    checkBoxDockFill.Checked = true;
-                if ((dockAreas & DockAreas.Float) != 0)
-                    checkBoxFloat.Checked = true;
+                if ((dockAreas & DockAreas.DockLeft) != 0) checkBoxDockLeft.Checked = true;
+                if ((dockAreas & DockAreas.DockRight) != 0) checkBoxDockRight.Checked = true;
+                if ((dockAreas & DockAreas.DockTop) != 0) checkBoxDockTop.Checked = true;
+                if ((dockAreas & DockAreas.DockTop) != 0) checkBoxDockTop.Checked = true;
+                if ((dockAreas & DockAreas.DockBottom) != 0) checkBoxDockBottom.Checked = true;
+                if ((dockAreas & DockAreas.Document) != 0) checkBoxDockFill.Checked = true;
+                if ((dockAreas & DockAreas.Float) != 0) checkBoxFloat.Checked = true;
             }
         }
 
@@ -130,14 +123,10 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider sp, object value)
         {
-            if (m_ui is null)
-                m_ui = new DockAreasEditor.DockAreasEditorControl();
-
+            m_ui ??= new DockAreasEditor.DockAreasEditorControl();
             m_ui.SetStates((DockAreas)value);
-
-            IWindowsFormsEditorService edSvc = (IWindowsFormsEditorService)sp.GetService(typeof(IWindowsFormsEditorService));
+            var edSvc = (IWindowsFormsEditorService)sp.GetService(typeof(IWindowsFormsEditorService));
             edSvc.DropDownControl(m_ui);
-
             return m_ui.DockAreas;
         }
     }

@@ -391,55 +391,52 @@ namespace ASCompletion.Completion
                         }
                     }
                 }
-                else
+                else if (resolve.Member != null
+                         && (resolve.Member.Flags & FlagType.Function) != 0
+                         && resolve.InClass?.InFile.FileName is {} classFileName
+                         && File.Exists(classFileName)
+                         && !classFileName.StartsWithOrdinal(PathHelper.AppDir))
                 {
-                    if (resolve.Member != null
-                        && (resolve.Member.Flags & FlagType.Function) > 0
-                        && File.Exists(resolve.InClass?.InFile.FileName)
-                        && !resolve.InClass.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
+                    var text = sci.GetLine(line);
+                    var m1 = Regex.Match(text, string.Format(patternMethodDecl, contextToken));
+                    if (!m1.Success && Regex.IsMatch(text, string.Format(patternMethod, contextToken)))
                     {
-                        var text = sci.GetLine(line);
-                        var m1 = Regex.Match(text, string.Format(patternMethodDecl, contextToken));
-                        var m2 = Regex.Match(text, string.Format(patternMethod, contextToken));
-                        if (!m1.Success && m2.Success)
-                        {
-                            contextMatch = m1;
-                            ShowChangeMethodDeclList(found, options);
-                        }
+                        contextMatch = m1;
+                        ShowChangeMethodDeclList(found, options);
                     }
-                    else if (resolve.RelClass != null
-                        && File.Exists(resolve.Type?.InFile.FileName)
-                        && !resolve.Type.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
+                }
+                else if (resolve.RelClass != null
+                         && resolve.Type?.InFile.FileName is {} typeFileName
+                         && File.Exists(typeFileName)
+                         && !typeFileName.StartsWithOrdinal(PathHelper.AppDir))
+                {
+                    var text = sci.GetLine(line);
+                    var m = Regex.Match(text, string.Format(patternClass, contextToken));
+                    if (m.Success)
                     {
-                        var text = sci.GetLine(line);
-                        var m = Regex.Match(text, string.Format(patternClass, contextToken));
-                        if (m.Success)
+                        contextMatch = m;
+                        var type = resolve.Type;
+                        var constructor = type.SearchMember(FlagType.Constructor, true);
+                        if (constructor is null) ShowConstructorAndToStringList(new FoundDeclaration {InClass = resolve.Type}, false, true, options);
+                        else
                         {
-                            contextMatch = m;
-                            var type = resolve.Type;
-                            var constructor = type.SearchMember(FlagType.Constructor, true);
-                            if (constructor is null) ShowConstructorAndToStringList(new FoundDeclaration {InClass = resolve.Type}, false, true, options);
+                            var constructorParametersCount = constructor.Parameters?.Count ?? 0;
+                            var wordEndPosition = sci.WordEndPosition(sci.CurrentPos, true);
+                            var parameters = ParseFunctionParameters(sci, wordEndPosition);
+                            if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, parameters, options);
                             else
                             {
-                                var constructorParametersCount = constructor.Parameters?.Count ?? 0;
-                                var wordEndPosition = sci.WordEndPosition(sci.CurrentPos, true);
-                                var parameters = ParseFunctionParameters(sci, wordEndPosition);
-                                if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, parameters, options);
-                                else
+                                for (var i = 0; i < parameters.Count; i++)
                                 {
-                                    for (var i = 0; i < parameters.Count; i++)
-                                    {
-                                        if (parameters[i].paramType == constructor.Parameters[i].Type) continue;
-                                        ShowChangeConstructorDeclarationList(found, parameters, options);
-                                        break;
-                                    }
+                                    if (parameters[i].paramType == constructor.Parameters[i].Type) continue;
+                                    ShowChangeConstructorDeclarationList(found, parameters, options);
+                                    break;
                                 }
                             }
                         }
                     }
                 }
             }
-            // TODO: Empty line, show generators list? yep
         }
 
         /// <summary>

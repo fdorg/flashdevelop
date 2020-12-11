@@ -1090,21 +1090,21 @@ namespace FlashDevelop.Dialogs
             modifiedLineButton.ImageIndex = bookmarkLineButton.ImageIndex = 1;
             disabledLineButton.ImageIndex = highlightWordBackButton.ImageIndex = 1;
             errorLineButton.ImageIndex = debugLineButton.ImageIndex = 1; 
-            string[] languageFiles = Directory.GetFiles(LangDir, "*.xml");
-            foreach (string language in languageFiles)
+            var languageFiles = Directory.GetFiles(LangDir, "*.xml");
+            foreach (var language in languageFiles)
             {
-                string languageName = Path.GetFileNameWithoutExtension(language);
+                var languageName = Path.GetFileNameWithoutExtension(language);
                 languageDropDown.Items.Add(languageName);
             }
-            InstalledFontCollection fonts = new InstalledFontCollection();
-            fontNameComboBox.Items.Add("");
-            foreach (FontFamily font in fonts.Families)
+            using var fonts = new InstalledFontCollection();
+            fontNameComboBox.Items.Add(string.Empty);
+            foreach (var font in fonts.Families)
             {
                 fontNameComboBox.Items.Add(font.GetName(1033));
             }
-            bool foundSyntax = false;
-            string curSyntax = ArgsProcessor.GetCurSyntax();
-            foreach (object item in languageDropDown.Items)
+            var foundSyntax = false;
+            var curSyntax = ArgsProcessor.GetCurSyntax();
+            foreach (var item in languageDropDown.Items)
             {
                 if (item.ToString().ToLower() == curSyntax)
                 {

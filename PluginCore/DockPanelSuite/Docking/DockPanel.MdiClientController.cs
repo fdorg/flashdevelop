@@ -397,8 +397,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 controller.AutoScroll = true;
                 controller.BorderStyle = BorderStyle.Fixed3D;
-                if (MdiClientExists)
-                    controller.MdiClient.Dock = DockStyle.Fill;
+                if (MdiClientExists) controller.MdiClient.Dock = DockStyle.Fill;
             }
             else if (this.DocumentStyle == DocumentStyle.SystemMdi)
             {
