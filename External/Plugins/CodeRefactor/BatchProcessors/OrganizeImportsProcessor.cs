@@ -18,6 +18,7 @@ namespace CodeRefactor.BatchProcessors
             foreach (var file in files)
             {
                 var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
+                if (document is null) continue;
                 var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document)?.CreateOrganizeImportsCommand();
                 if (command is null) continue;
                 command.SciControl = document.SciControl;
@@ -25,10 +26,6 @@ namespace CodeRefactor.BatchProcessors
             }
         }
 
-        public void ProcessProject(IProject project)
-        {
-            var files = BatchProcessManager.GetAllProjectFiles(project);
-            Process(files);
-        }
+        public void ProcessProject(IProject project) => Process(BatchProcessManager.GetAllProjectFiles(project));
     }
 }

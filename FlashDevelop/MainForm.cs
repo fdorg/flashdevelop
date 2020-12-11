@@ -455,17 +455,17 @@ namespace FlashDevelop
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
-        public DockContent OpenEditableDocument(string file) => OpenEditableDocument(file, null, true);
+        public DockContent? OpenEditableDocument(string file) => OpenEditableDocument(file, null, true);
 
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
-        public DockContent OpenEditableDocument(string file, bool restorePosition) => OpenEditableDocument(file, null, restorePosition);
+        public DockContent? OpenEditableDocument(string file, bool restorePosition) => OpenEditableDocument(file, null, restorePosition);
 
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
-        public DockContent OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
+        public DockContent? OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
         {
             var file = PathHelper.GetPhysicalPathName(org);
             var te = new TextEvent(EventType.FileOpening, file);
@@ -2096,8 +2096,8 @@ namespace FlashDevelop
                 EventManager.DispatchEvent(this, te);
                 if (!te.Handled)
                 {
-                    var document = (ITabbedDocument)CreateEditableDocument(fileName, actionPoint.Text, encoding.CodePage);
-                    SnippetHelper.ExecuteActionPoint(actionPoint, document.SciControl);
+                    var document = (ITabbedDocument) CreateEditableDocument(fileName, actionPoint.Text, encoding.CodePage);
+                    if (document is not null) SnippetHelper.ExecuteActionPoint(actionPoint, document.SciControl);
                 }
             }
             catch (Exception ex)
@@ -2133,8 +2133,8 @@ namespace FlashDevelop
                     EventManager.DispatchEvent(this, te);
                     if (!te.Handled)
                     {
-                        var document = (ITabbedDocument)CreateEditableDocument(newFilePath, actionPoint.Text, encoding.CodePage);
-                        SnippetHelper.ExecuteActionPoint(actionPoint, document.SciControl);
+                        var document = (ITabbedDocument) CreateEditableDocument(newFilePath, actionPoint.Text, encoding.CodePage);
+                        if (document is not null) SnippetHelper.ExecuteActionPoint(actionPoint, document.SciControl);
                     }
                 }
                 else
@@ -3676,7 +3676,7 @@ namespace FlashDevelop
                 var button = (ToolStripItem)sender;
                 var registeredItem = ((ItemData)button.Tag).Tag;
                 var item = ShortcutManager.GetRegisteredItem(registeredItem);
-                item.Item?.PerformClick();
+                item?.Item?.PerformClick();
             }
             catch (Exception ex)
             {
@@ -3753,10 +3753,10 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string args = ProcessArgString(((ItemData)button.Tag).Tag);
-                int position = args.IndexOf(';'); // Position of the arguments
-                NotifyEvent ne = new NotifyEvent(EventType.ProcessStart);
+                var button = (ToolStripItem)sender;
+                var args = ProcessArgString(((ItemData)button.Tag).Tag);
+                var position = args.IndexOf(';'); // Position of the arguments
+                var ne = new NotifyEvent(EventType.ProcessStart);
                 EventManager.DispatchEvent(this, ne);
                 if (position > -1)
                 {

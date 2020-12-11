@@ -177,11 +177,11 @@ namespace PluginCore
         /// <summary>
         /// Opens an editable document.
         /// </summary>
-        DockContent OpenEditableDocument(string file, bool restoreFileState);
+        DockContent? OpenEditableDocument(string file, bool restoreFileState);
         /// <summary>
         /// Opens an editable document.
         /// </summary>
-        DockContent OpenEditableDocument(string file);
+        DockContent? OpenEditableDocument(string file);
         /// <summary>
         /// Creates a new custom document.
         /// </summary>

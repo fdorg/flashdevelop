@@ -201,34 +201,22 @@ namespace ASCompletion.Completion
 
             static Regex ToRegex(string value)
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    return null;
-                }
+                if (string.IsNullOrEmpty(value)) return null;
                 return new Regex("[" + Escape(value) + "]", RegexOptions.Compiled | RegexOptions.Singleline);
             }
 
             static string FromRegex(Regex value)
             {
                 if (value is null) return string.Empty;
-                string str = value.ToString();
+                var str = value.ToString();
                 return Unescape(str.Substring(1, str.Length - 2));
             }
 
-            static string Escape(string value)
-            {
-                return value.Replace("(", @"\(").Replace(")", @"\)").Replace("[", @"\[").Replace("]", @"\]").Replace("{", @"\{").Replace("}", @"\}");
-            }
+            static string Escape(string value) => value.Replace("(", @"\(").Replace(")", @"\)").Replace("[", @"\[").Replace("]", @"\]").Replace("{", @"\{").Replace("}", @"\}");
 
-            static string Unescape(string value)
-            {
-                return value.Replace(@"\(", "(").Replace(@"\)", ")").Replace(@"\[", "[").Replace(@"\]", "]").Replace(@"\{", "{").Replace(@"\}", "}");
-            }
+            static string Unescape(string value) => value.Replace(@"\(", "(").Replace(@"\)", ")").Replace(@"\[", "[").Replace(@"\]", "]").Replace(@"\{", "{").Replace(@"\}", "}");
 
-            static bool RegexCheck(Regex regex, char c, bool exclude)
-            {
-                return regex?.IsMatch(c.ToString()) ^ exclude ?? exclude;
-            }
+            static bool RegexCheck(Regex regex, char c, bool exclude) => (regex?.IsMatch(c.ToString()) ^ exclude) ?? exclude;
 
             static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {

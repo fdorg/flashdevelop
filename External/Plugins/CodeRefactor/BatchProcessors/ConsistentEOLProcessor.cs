@@ -16,14 +16,11 @@ namespace CodeRefactor.BatchProcessors
             foreach (var file in files)
             {
                 var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
-                document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
+                var sci = document?.SciControl;
+                sci?.ConvertEOLs(sci.EOLMode);
             }
         }
 
-        public void ProcessProject(IProject project)
-        {
-            var files = BatchProcessManager.GetAllProjectFiles(project);
-            if (files != null) Process(files);
-        }
+        public void ProcessProject(IProject project) => Process(BatchProcessManager.GetAllProjectFiles(project));
     }
 }

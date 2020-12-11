@@ -1750,7 +1750,7 @@ namespace AirProperties
             {
                 if (extension.IsValid && string.IsNullOrEmpty(extension.Path))
                 {
-                    var project = PluginBase.CurrentProject as Project;
+                    var project = (Project) PluginBase.CurrentProject;
                     foreach (var externalPath in (project.CompilerOptions as MxmlcOptions).ExternalLibraryPaths)
                     {
                         if (Path.GetExtension(externalPath).ToUpperInvariant() == ".ANE")
@@ -1778,7 +1778,6 @@ namespace AirProperties
                             while (reader.Read())
                             {
                                 if (reader.NodeType != XmlNodeType.Element) continue;
-
                                 if (reader.Name == "id")
                                 {
                                     extensionId = reader.ReadInnerXml();

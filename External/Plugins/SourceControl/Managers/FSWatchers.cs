@@ -15,15 +15,12 @@ namespace SourceControl.Managers
     {
         readonly Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
         readonly HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
-        readonly Timer updateTimer;
+        readonly Timer updateTimer = new Timer {SynchronizingObject = PluginBase.MainForm as Form, Interval = 4000};
         string lastDirtyPath;
         bool disposing;
 
         public FSWatchers()
         {
-            updateTimer = new Timer();
-            updateTimer.SynchronizingObject = PluginBase.MainForm as Form;
-            updateTimer.Interval = 4000;
             updateTimer.Elapsed += UpdateTimer_Tick;
             updateTimer.Start();
         }
@@ -39,7 +36,6 @@ namespace SourceControl.Managers
             try
             {
                 updateTimer?.Stop();
-
                 lock (watchers)
                 {
                     foreach (var watcher in watchers.Keys)

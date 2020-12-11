@@ -112,15 +112,13 @@ namespace FlashDevelop.Docking
                     {
                         case ScintillaControl control when !Disposing && !IsDisposed: return control;
                         case SplitContainer container when container.Name == "fdSplitView" && !Disposing && !IsDisposed:
-                        {
                             var sci2 = (ScintillaControl) container.Panel2.Controls[0];
                             if (sci2.IsFocus) return sci2;
                             var sci1 = (ScintillaControl) container.Panel1.Controls[0];
                             if (sci1.IsFocus) return sci1;
-                            return lastEditor != null && lastEditor.Visible 
+                            return lastEditor != null && lastEditor.Visible
                                 ? lastEditor
                                 : sci1;
-                        }
                     }
                 }
                 return null;
@@ -492,6 +490,7 @@ namespace FlashDevelop.Docking
         {
             bookmarks.Clear();
             var sci = SciControl;
+            if (sci is null) return;
             var lineCount = sci.LineCount;
             for (var i = 0; i < lineCount; i++) 
             {

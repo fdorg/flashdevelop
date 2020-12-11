@@ -44,12 +44,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the specified registered shortcut item
         /// </summary>
-        public static ShortcutItem GetRegisteredItem(string id) => RegisteredItems.TryGetValue(id, out var item) ? item : null;
+        public static ShortcutItem? GetRegisteredItem(string id) => RegisteredItems.TryGetValue(id, out var item) ? item : null;
 
         /// <summary>
         /// Gets the specified registered shortcut item
         /// </summary>
-        public static ShortcutItem GetRegisteredItem(Keys keys)
+        public static ShortcutItem? GetRegisteredItem(Keys keys)
         {
             return keys != Keys.None
                 ? RegisteredItems.Values.FirstOrDefault(item => item.Custom == keys)
@@ -59,7 +59,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the specified registered shortcut item
         /// </summary>
-        public static ToolStripItem GetSecondaryItem(string id)
+        public static ToolStripItem? GetSecondaryItem(string id)
         {
             foreach (var item in SecondaryItems)
             {

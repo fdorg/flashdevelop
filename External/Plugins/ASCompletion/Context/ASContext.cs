@@ -912,7 +912,6 @@ namespace ASCompletion.Context
             GetCodeModel(cFile, sci.Text);
             cLine = sci.CurrentLine;
             UpdateContext(cLine);
-
             // update outline
             if (updateUI) Context = this;
         }

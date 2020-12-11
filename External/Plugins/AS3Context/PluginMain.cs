@@ -118,33 +118,26 @@ namespace AS3Context
                     case EventType.Command:
                         var de = (DataEvent) e;
                         var action = de.Action;
-                        if (action == "ProjectManager.Project")
+                        switch (action)
                         {
-                            FlexShells.Instance.Stop(); // clear
-                        }
-                        else if (action == "ProjectManager.OpenVirtualFile")
-                        {
-                            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3")
-                                e.Handled = OpenVirtualFileModel((string) de.Data);
-                        }
-                        else if (!Settings.DisableFDB && action == "AS3Context.StartDebugger")
-                        {
-                            string workDir = (PluginBase.CurrentProject != null)
-                                ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath)
-                                : Environment.CurrentDirectory;
-
-                            string flexSdk = Settings.GetDefaultSDK().Path;
-
-                            // if the default sdk is not defined ask for project sdk
-                            if (string.IsNullOrEmpty(flexSdk))
-                            {
-                                flexSdk = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
-                            }
-                            e.Handled = FlexDebugger.Start(workDir, flexSdk, null);
-                        }
-                        else if (action == "AS3Context.StartProfiler")
-                        {
-                            if (profilerUI.AutoStart) profilerUI.StartProfiling();
+                            case "ProjectManager.Project":
+                                FlexShells.Instance.Stop(); // clear
+                                break;
+                            case "ProjectManager.OpenVirtualFile":
+                                if (PluginBase.CurrentProject?.Language == "as3") e.Handled = OpenVirtualFileModel((string) de.Data);
+                                break;
+                            case "AS3Context.StartDebugger" when !Settings.DisableFDB:
+                                var workDir = PluginBase.CurrentProject != null
+                                    ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath)
+                                    : Environment.CurrentDirectory;
+                                var flexSdk = Settings.GetDefaultSDK().Path;
+                                // if the default sdk is not defined ask for project sdk
+                                if (string.IsNullOrEmpty(flexSdk)) flexSdk = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
+                                e.Handled = FlexDebugger.Start(workDir, flexSdk, null);
+                                break;
+                            case "AS3Context.StartProfiler":
+                                if (profilerUI.AutoStart) profilerUI.StartProfiling();
+                                break;
                         }
                         break;
 
@@ -152,13 +145,10 @@ namespace AS3Context
                         if (inMXML)
                         {
                             var ke = (KeyEvent) e;
-                            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("SearchMenu.GotoDeclaration"))
+                            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("SearchMenu.GotoDeclaration") && MxmlComplete.GotoDeclaration())
                             {
-                                if (MxmlComplete.GotoDeclaration())
-                                {
-                                    ke.Handled = true;
-                                    ke.ProcessKey = false;
-                                }
+                                ke.Handled = true;
+                                ke.ProcessKey = false;
                             }
                         }
                         break;
@@ -177,11 +167,9 @@ namespace AS3Context
                         ASContext.RegisterLanguage(contextInstance, "as3");
                         ASContext.RegisterLanguage(contextInstance, "mxml");
                         break;
-
                     case EventType.FileSave:
                     case EventType.FileSwitch:
                         contextInstance?.OnFileOperation(e);
-
                         if (PluginBase.MainForm.CurrentDocument?.FileName is { } fileName)
                         {
                             inMXML = Path.GetExtension(fileName).ToLower() == ".mxml";
@@ -205,29 +193,29 @@ namespace AS3Context
                     }
                     else if (action.StartsWithOrdinal("FlashViewer."))
                     {
-                        if (action == "FlashViewer.Closed")
+                        switch (action)
                         {
-                            FlexDebugger.Stop();
-                        }
-                        else if (action == "FlashViewer.External" || action == "FlashViewer.Default" || action == "FlashViewer.Popup" || action == "FlashViewer.Document")
-                        {
-                            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.EnableInteractiveDebugger)
-                            {
-                                DataEvent de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
-                                EventManager.DispatchEvent(this, de);
-                                
-                                if (PluginBase.CurrentProject.TraceEnabled)
+                            case "FlashViewer.Closed":
+                                FlexDebugger.Stop();
+                                break;
+                            case "FlashViewer.External":
+                            case "FlashViewer.Default":
+                            case "FlashViewer.Popup":
+                            case "FlashViewer.Document":
+                                if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.EnableInteractiveDebugger)
                                 {
-                                    de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", ((DataEvent) e).Data);
+                                    var de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
                                     EventManager.DispatchEvent(this, de);
+                                    if (PluginBase.CurrentProject.TraceEnabled)
+                                    {
+                                        de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", ((DataEvent) e).Data);
+                                        EventManager.DispatchEvent(this, de);
+                                    }
                                 }
-                            }
+                                break;
                         }
                     }
-                    else if (action == "FlashConnect")
-                    {
-                        ProfilerUI.HandleFlashConnect(sender, ((DataEvent) e).Data);
-                    }
+                    else if (action == "FlashConnect") ProfilerUI.HandleFlashConnect(sender, ((DataEvent) e).Data);
                     else if (inMXML)
                     {
                         var de = (DataEvent) e;
@@ -474,13 +462,13 @@ namespace AS3Context
                 }
             }
             Settings.OnClasspathChanged += SettingObjectOnClasspathChanged;
-            Settings.OnInstalledSDKsChanged += settingObjectOnInstalledSDKsChanged;
+            Settings.OnInstalledSDKsChanged += SettingObjectOnInstalledSDKsChanged;
         }
 
         /// <summary>
         /// Notify of SDK collection changes
         /// </summary>
-        void settingObjectOnInstalledSDKsChanged()
+        void SettingObjectOnInstalledSDKsChanged()
         {
             if (contextInstance is null) return;
             var de = new DataEvent(EventType.Command, "ProjectManager.InstalledSDKsChanged", "as3");
@@ -513,8 +501,8 @@ namespace AS3Context
             {
                 flashPath = Path.GetDirectoryName(flashPath);
             }
-            string basePath = flashPath;
-            string deflang = CultureInfo.CurrentUICulture.Name;
+            var basePath = flashPath;
+            var deflang = CultureInfo.CurrentUICulture.Name;
             deflang = deflang.Substring(0, 2);
             // CS4+ default configuration
             if (Directory.Exists(basePath + "\\Common\\Configuration\\ActionScript 3.0"))
