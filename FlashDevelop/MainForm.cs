@@ -457,17 +457,17 @@ namespace FlashDevelop
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
-        public DockContent OpenEditableDocument(string file) => OpenEditableDocument(file, null, true);
+        public DockContent? OpenEditableDocument(string file) => OpenEditableDocument(file, null, true);
 
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
-        public DockContent OpenEditableDocument(string file, bool restorePosition) => OpenEditableDocument(file, null, restorePosition);
+        public DockContent? OpenEditableDocument(string file, bool restorePosition) => OpenEditableDocument(file, null, restorePosition);
 
         /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
-        public DockContent OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
+        public DockContent? OpenEditableDocument(string org, Encoding encoding, bool restorePosition)
         {
             var file = PathHelper.GetPhysicalPathName(org);
             var te = new TextEvent(EventType.FileOpening, file);

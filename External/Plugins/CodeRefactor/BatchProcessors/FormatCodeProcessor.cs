@@ -18,16 +18,13 @@ namespace CodeRefactor.BatchProcessors
         {
             foreach (var file in files)
             {
-                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
+                var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
+                if (document is null) continue;
+                var de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
                 EventManager.DispatchEvent(this, de);
             }
         }
 
-        public void ProcessProject(IProject project)
-        {
-            var files = BatchProcessManager.GetAllProjectFiles(project);
-            Process(files);
-        }
+        public void ProcessProject(IProject project) => Process(BatchProcessManager.GetAllProjectFiles(project));
     }
 }

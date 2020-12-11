@@ -142,7 +142,7 @@ namespace ASCompletion.Model
             if (model != null && !string.IsNullOrEmpty(comment)
                 && (model.Flags & FlagType.Function) == 0)
             {
-                MemberModel fnModel = extractTypedCallbackModel(comment);
+                MemberModel fnModel = ExtractTypedCallbackModel(comment);
                 if (fnModel != null)
                 {
                     if (!detectKindOnly)
@@ -185,15 +185,15 @@ namespace ASCompletion.Model
         /// <summary>
         /// TypedCallback model extracting
         /// </summary>
-        static MemberModel extractTypedCallbackModel(string comment)
+        static MemberModel ExtractTypedCallbackModel(string comment)
         {
             if (string.IsNullOrEmpty(comment)) return null;
             if (comment.IndexOf('(') != 0 || comment.IndexOf(')') < 1) return null;
 
             // replace strings by temp replacements
-            MatchCollection qStrMatches = ASFileParserRegexes.QuotedString.Matches(comment);
-            Dictionary<string, string> qStrRepls = new Dictionary<string, string>();
-            int i = qStrMatches.Count;
+            var qStrMatches = ASFileParserRegexes.QuotedString.Matches(comment);
+            var qStrRepls = new Dictionary<string, string>();
+            var i = qStrMatches.Count;
             while (i-- > 0)
             {
                 string strRepl = getRandomStringRepl();
@@ -209,13 +209,14 @@ namespace ASCompletion.Model
                 || idxBraceCl < 0 || comment.LastIndexOf(')') != idxBraceCl)
                 return null;
 
-            MemberModel fm = new MemberModel("unknown", "*", FlagType.Function, Visibility.Default);
-            fm.Parameters = new List<MemberModel>();
+            var fm = new MemberModel("unknown", "*", FlagType.Function, Visibility.Default)
+            {
+                Parameters = new List<MemberModel>()
+            };
 
             // return type
-            Match m = ASFileParserRegexes.FunctionType.Match(comment.Substring(idxBraceCl));
-            if (m.Success)
-                fm.Type = m.Groups["fType"].Value;
+            var m = ASFileParserRegexes.FunctionType.Match(comment.Substring(idxBraceCl));
+            if (m.Success) fm.Type = m.Groups["fType"].Value;
 
             // parameters
             string pBody = comment.Substring(idxBraceOp, 1 + idxBraceCl - idxBraceOp);

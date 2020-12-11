@@ -149,7 +149,7 @@ namespace PHPContext
         /// <param name="fileName">File path</param>
         protected override void GetCurrentFileModel(string fileName)
         {
-            string ext = Path.GetExtension(fileName);
+            var ext = Path.GetExtension(fileName);
             if (!re_PHPext.IsMatch(ext))
             {
                 cFile = FileModel.Ignore;
@@ -157,10 +157,11 @@ namespace PHPContext
             }
             else
             {
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is null) return;
                 cFile = new FileModel(fileName) {Context = this, HasFiltering = true};
-                var parser = new ASFileParser();
-                parser.ParseSrc(cFile, (PluginBase.MainForm.CurrentDocument?.SciControl).Text);
-                cLine = (PluginBase.MainForm.CurrentDocument?.SciControl).CurrentLine;
+                cFile = GetCodeModel(cFile, sci.Text);
+                cLine = sci.CurrentLine;
                 UpdateContext(cLine);
             }
         }

@@ -1249,10 +1249,7 @@ namespace ProjectManager
 
         void MenuOpening(object sender, CancelEventArgs e)
         {
-            if (Control.ModifierKeys == Keys.Control)
-            {
-                TreeShowShellMenu();
-            }
+            if (Control.ModifierKeys == Keys.Control) TreeShowShellMenu();
         }
 
         void TreeDoubleClick()
@@ -1263,10 +1260,7 @@ namespace ProjectManager
 
         void TreeOpenItems()
         {
-            foreach (var path in Tree.SelectedPaths)
-            {
-                openFileQueue.Enqueue(path);
-            }
+            Tree.SelectedPaths.ForEach(openFileQueue.Enqueue);
             OpenNextFile();
         }
 
@@ -1281,11 +1275,7 @@ namespace ProjectManager
             }
         }
 
-        void TreeExecuteItems()
-        {
-            foreach (var path in Tree.SelectedPaths)
-                ShellOpenFile(path);
-        }
+        void TreeExecuteItems() => Tree.SelectedPaths.ForEach(ShellOpenFile);
 
         static void ShellOpenFile(string path)
         {
@@ -1467,10 +1457,7 @@ namespace ProjectManager
 
         void ProcessBuildQueue()
         {
-            if (buildQueue.Count > 0)
-            {
-                buildTimer.Start();
-            }
+            if (buildQueue.Count > 0) buildTimer.Start();
         }
 
         void OnBuildTimerTick(object sender, EventArgs e)
@@ -1546,10 +1533,7 @@ namespace ProjectManager
         void FindAndReplace()
         {
             var path = Tree.SelectedPath;
-            if (path != null && File.Exists(path))
-            {
-                PluginBase.MainForm.CallCommand("FindAndReplaceFrom", path);
-            }
+            if (path != null && File.Exists(path)) PluginBase.MainForm.CallCommand("FindAndReplaceFrom", path);
         }
 
         void FindInFiles()

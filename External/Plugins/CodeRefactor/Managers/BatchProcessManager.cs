@@ -46,8 +46,7 @@ namespace CodeRefactor.Managers
             {
                 foreach (var filter in filters)
                 {
-                    files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter,
-                        SearchOption.AllDirectories));
+                    files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter, SearchOption.AllDirectories));
                 }
             }
             files = files.FindAll(File.Exists);
