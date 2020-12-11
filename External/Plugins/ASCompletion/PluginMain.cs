@@ -229,7 +229,7 @@ namespace ASCompletion
                         if (sci is null) return;
                         if (sci.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
-                            settingObject.LastASVersion = DetectActionscriptVersion(doc);
+                            settingObject.LastASVersion = DetectLanguageVersion(doc);
                             ((TextEvent) e).Value = settingObject.LastASVersion;
                             e.Handled = true;
                         }
@@ -911,21 +911,22 @@ namespace ASCompletion
         /// </summary>
         /// <param name="doc">Document to check</param>
         /// <returns>Detected language</returns>
-        string DetectActionscriptVersion(ITabbedDocument doc)
+        string DetectLanguageVersion(ITabbedDocument doc)
         {
-            var parser = new ASFileParser();
-            var sci = doc.SciControl;
-            var model = new FileModel(sci.FileName);
-            parser.ParseSrc(model, sci.Text);
-            if (model.Version == 1 && PluginBase.CurrentProject != null)
+            if (doc.SciControl is {} sci)
             {
-                var lang = PluginBase.CurrentProject.Language;
-                return lang == "*"
-                    ? "as2"
-                    : lang;
+                var ctx = ASContext.Context;
+                var model = ctx.GetCodeModel(ctx.CreateFileModel(sci.FileName), sci.Text);
+                if (model.Version == 1 && PluginBase.CurrentProject is {} project)
+                {
+                    var lang = project.Language;
+                    return lang == "*"
+                        ? "as2"
+                        : lang;
+                }
+                if (model.Version > 2) return "as3";
+                if (model.Version > 1) return "as2";
             }
-            if (model.Version > 2) return "as3";
-            if (model.Version > 1) return "as2";
             if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWithOrdinal("as"))
             {
                 return settingObject.LastASVersion;

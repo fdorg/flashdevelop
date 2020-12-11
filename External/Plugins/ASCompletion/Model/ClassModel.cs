@@ -24,7 +24,7 @@ namespace ASCompletion.Model
         static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string Constructor;
-        public MemberList Members;
+        public MemberList Members = new MemberList();
 
         /// <summary>
         /// 1st extends type
@@ -144,7 +144,7 @@ namespace ASCompletion.Model
                 // check loops in inheritance
                 if (result.Name != objectKey)
                 {
-                    foreach(ClassModel model in extensionList)
+                    foreach(var model in extensionList)
                     {
                         if (model.QualifiedName != result.QualifiedName) continue;
                         var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
@@ -160,11 +160,7 @@ namespace ASCompletion.Model
             return result;
         }
 
-        public ClassModel()
-        {
-            Name = null;
-            Members = new MemberList();
-        }
+        public ClassModel() => Name = null;
 
         public bool IsVoid() => this == VoidClass;
 
@@ -173,21 +169,23 @@ namespace ASCompletion.Model
 
         public new ClassModel Clone()
         {
-            var result = new ClassModel();
-            result.Name = Name;
-            result.Template = Template;
-            result.Flags = Flags;
-            result.Access = Access;
-            result.Namespace = Namespace;
-            result.Type = Type;
-            result.Comments = Comments;
-            result.InFile = InFile;
-            result.Constructor = Constructor;
-            result.ExtendsType = ExtendsType;
-            result.IndexType = IndexType;
-            result.Members = new MemberList(Members.Items.Select(it => it.Clone()));
-            result.LineFrom = LineFrom;
-            result.LineTo = LineTo;
+            var result = new ClassModel
+            {
+                Name = Name,
+                Template = Template,
+                Flags = Flags,
+                Access = Access,
+                Namespace = Namespace,
+                Type = Type,
+                Comments = Comments,
+                InFile = InFile,
+                Constructor = Constructor,
+                ExtendsType = ExtendsType,
+                IndexType = IndexType,
+                Members = new MemberList(Members.Items.Select(it => it.Clone())),
+                LineFrom = LineFrom,
+                LineTo = LineTo
+            };
             if (Parameters != null) result.Parameters = Parameters.Select(it => it.Clone()).ToList();
             if (Implements != null) result.Implements = new List<string>(Implements);
             if (MetaDatas != null)

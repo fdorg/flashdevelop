@@ -109,7 +109,7 @@ namespace PHPContext
             }
 
             // add external pathes
-            List<PathModel> initCP = classPath;
+            var initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
             {
@@ -155,10 +155,8 @@ namespace PHPContext
             }
             else
             {
-                cFile = new FileModel(fileName);
-                cFile.Context = this;
-                cFile.HasFiltering = true;
-                ASFileParser parser = new ASFileParser();
+                cFile = new FileModel(fileName) {Context = this, HasFiltering = true};
+                var parser = new ASFileParser();
                 parser.ParseSrc(cFile, (PluginBase.MainForm.CurrentDocument?.SciControl).Text);
                 cLine = (PluginBase.MainForm.CurrentDocument?.SciControl).CurrentLine;
                 UpdateContext(cLine);
@@ -183,10 +181,8 @@ namespace PHPContext
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public override void FilterSource(FileModel model)
-        {
-            PhpFilter.FilterSource(model, phpRanges);
-        }
+        public override void FilterSource(FileModel model) => PhpFilter.FilterSource(model, phpRanges);
+
         #endregion
 
         #region class resolution
