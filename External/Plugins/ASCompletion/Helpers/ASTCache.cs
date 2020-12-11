@@ -366,7 +366,7 @@ namespace ASCompletion.Helpers
             var currentParent = cls.Extends;
             while (!currentParent.IsVoid())
             {
-                var parentFun = currentParent.Members.Search(function.Name, FlagType.Function, 0); //overridden function can have different access
+                var parentFun = currentParent.Members.Search(function.Name, FlagType.Function); //overridden function can have different access
                 //it should not be necessary to check the parameters, because two functions with different signature cannot have the same name (at least in Haxe)
 
                 if (parentFun != null)

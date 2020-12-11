@@ -1582,14 +1582,14 @@ namespace ASCompletion.Completion
             {
                 if (expr.Type is null) return false;
                 var constructor = ASContext.GetLastStringToken(expr.Type.Name, ".");
-                expr.Member = method = expr.Type.Members.Search(constructor, FlagType.Constructor, 0);
+                expr.Member = method = expr.Type.Members.Search(constructor, FlagType.Constructor);
                 if (method is null) return false;
             }
             else if ((method.Flags & FlagType.Function) == 0)
             {
                 if (method.Name == "super" && expr.Type != null)
                 {
-                    expr.Member = method = expr.Type.Members.Search(expr.Type.Constructor, FlagType.Constructor, 0);
+                    expr.Member = method = expr.Type.Members.Search(expr.Type.Constructor, FlagType.Constructor);
                     if (method is null) return false;
                 }
                 else return false;
@@ -4813,7 +4813,7 @@ namespace ASCompletion.Completion
         protected virtual string GetConstructorTooltipText(ClassModel type)
         {
             var name = type.Name;
-            var member = type.Members.Search(name, FlagType.Constructor, 0) 
+            var member = type.Members.Search(name, FlagType.Constructor) 
                          ?? new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
             return MemberTooltipText(member, type) + GetToolTipDoc(member);
         }

@@ -145,12 +145,12 @@ namespace ASCompletion.Model
 
         public static bool ContainsMember(this ClassModel @this, string name, bool recursive)
         {
-            if (!recursive) return @this.Members.Contains(name, 0, 0);
+            if (!recursive) return @this.Members.Contains(name);
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this;
             while (!type.IsVoid())
             {
-                if (type.Members.Contains(name, 0, 0)) return true;
+                if (type.Members.Contains(name)) return true;
                 type = type.Extends;
             }
             return false;
@@ -173,12 +173,12 @@ namespace ASCompletion.Model
 
         public static bool ContainsMember(this ClassModel @this, string name, FlagType flags, bool recursive)
         {
-            if (!recursive) return @this.Members.Contains(name, flags, 0);
+            if (!recursive) return @this.Members.Contains(name, flags);
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this;
             while (!type.IsVoid())
             {
-                if (type.Members.Contains(name, flags, 0)) return true;
+                if (type.Members.Contains(name, flags)) return true;
                 type = type.Extends;
             }
             return false;

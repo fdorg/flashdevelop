@@ -612,7 +612,7 @@ namespace HaXeContext.Completion
             type.ResolveExtends();
             while (!type.IsVoid())
             {
-                var constructor = type.Members.Search(ASContext.GetLastStringToken(type.Name, "."), FlagType.Constructor, 0);
+                var constructor = type.Members.Search(ASContext.GetLastStringToken(type.Name, "."), FlagType.Constructor);
                 if (constructor != null)
                 {
                     if (originConstructor != constructor.Name)
@@ -770,7 +770,7 @@ namespace HaXeContext.Completion
                         if (iterator is null)
                         {
                             var members = exprType.Members;
-                            if (members.Contains("hasNext", 0, 0))
+                            if (members.Contains("hasNext"))
                             {
                                 iterator = members.Search("next");
                                 if (iterator != null) iteratorIndexType = iterator.Type;
@@ -1384,7 +1384,7 @@ namespace HaXeContext.Completion
             type.ResolveExtends();
             while (!type.IsVoid())
             {
-                var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                var member = type.Members.Search(type.Name, FlagType.Constructor);
                 if (member != null)
                 {
                     if (member.Name != inClass.Name)

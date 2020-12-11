@@ -1175,7 +1175,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            var member = ofClass.Members.Search(memberName, memberFlags, 0);
+            var member = ofClass.Members.Search(memberName, memberFlags);
             ASContext.Context.Settings.GenerateImports = true;
             ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
             ASContext.Context.Settings.GenerateImports = false;

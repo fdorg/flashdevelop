@@ -29,7 +29,7 @@ namespace HaXeContext.Generators
             => sci.GetWordFromPosition(position) is null
                && found.Member is null
                && found.InClass.Flags.HasFlag(FlagType.Abstract)
-               && !found.InClass.Members.Contains(found.InClass.Name, FlagType.Function | FlagType.Constructor, 0)
+               && !found.InClass.Members.Contains(found.InClass.Name, FlagType.Function | FlagType.Constructor)
                && position < sci.LineEndPosition(found.InClass.LineTo)
                && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
 

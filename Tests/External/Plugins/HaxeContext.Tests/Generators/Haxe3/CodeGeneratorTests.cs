@@ -3423,7 +3423,7 @@ namespace HaXeContext.Generators.Haxe3
                     if (ofClass != null) break;
                 }
             }
-            var member = ofClass.Members.Search(memberName, memberFlags, 0);
+            var member = ofClass.Members.Search(memberName, memberFlags);
             ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
             return sci.Text;
         }

@@ -1602,7 +1602,7 @@ namespace HaXeContext
                                 if ((member.Access & access) == 0
                                     || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
                                     || member.Parameters.IsNullOrEmpty()
-                                    || extensions.Contains(member.Name, 0, 0)
+                                    || extensions.Contains(member.Name)
                                     || !CanBeExtended(extends, member, access)) continue;
                                 // transform `extensionMethod(target:Type, ...params)` to `extensionMethod(...params)`
                                 var extension = member.Clone();
@@ -1679,7 +1679,7 @@ namespace HaXeContext
                         if (!paramType.Flags.HasFlag(FlagType.TypeDef)) return false;
                         foreach (var typedefMember in paramType.Members)
                         {
-                            if (!type.Members.Contains(typedefMember.Name, typedefMember.Flags, 0)) return false;
+                            if (!type.Members.Contains(typedefMember.Name, typedefMember.Flags)) return false;
                         }
                     }
                 }
@@ -1949,13 +1949,13 @@ namespace HaXeContext
                 // Attempt to add callback `new` into `result`
                 if (type.Flags == FlagType.Class)
                 {
-                    var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                    var member = type.Members.Search(type.Name, FlagType.Constructor);
                     if (member is null)
                     {
                         type.ResolveExtends();
                         while (!(type = type.Extends).IsVoid())
                         {
-                            member = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                            member = type.Members.Search(type.Name, FlagType.Constructor);
                             if (member != null) break;
                         }
                     }

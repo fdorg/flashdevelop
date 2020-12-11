@@ -261,6 +261,10 @@ namespace ASCompletion.Model
             items.Clear();
         }
 
+        public bool Contains(string name) => Contains(name, 0);
+
+        public bool Contains(string name, FlagType mask) => Contains(name, mask, 0);
+
         public bool Contains(string name, FlagType mask, Visibility access) => Search(name, mask, access) != null;
 
         /// <summary>
@@ -268,7 +272,15 @@ namespace ASCompletion.Model
         /// </summary>
         /// <param name="name">Member name to mach</param>
         /// <returns>First match</returns>
-        public MemberModel? Search(string name) => Search(name, 0, 0);
+        public MemberModel? Search(string name) => Search(name, 0);
+
+        /// <summary>
+        /// Return the first MemberModel instance match in the MemberList
+        /// </summary>
+        /// <param name="name">Member name to mach</param>
+        /// <param name="mask">Flags mask</param>
+        /// <returns>First match</returns>
+        public MemberModel? Search(string name, FlagType mask) => Search(name, mask, 0);
 
         /// <summary>
         /// Return the first MemberModel instance match in the MemberList
