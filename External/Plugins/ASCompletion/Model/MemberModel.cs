@@ -444,7 +444,7 @@ namespace ASCompletion.Model
         
         public int Compare(MemberModel a, MemberModel b) => GetPriority(a.Flags).CompareTo(GetPriority(b.Flags));
 
-        static uint GetPriority(FlagType flag)
+        internal static uint GetPriority(FlagType flag)
         {
             if ((flag & FlagType.Constant) > 0) return 4;
             if ((flag & FlagType.Variable) > 0) return 3;
@@ -463,7 +463,7 @@ namespace ASCompletion.Model
             return cmp != 0 ? cmp : StringComparer.Ordinal.Compare(a.Name,b.Name);
         }
 
-        static uint GetPriority(MemberModel m)
+        internal static uint GetPriority(MemberModel m)
         {
             uint visibility_pri;
             if ((m.Access & Visibility.Public) > 0) visibility_pri = 1;
@@ -496,7 +496,7 @@ namespace ASCompletion.Model
     {
         public static readonly IComparer<MemberModel> Instance = new CaseSensitiveImportComparer();
 
-        static int GetPackageTypeSeparation(string import)
+        internal static int GetPackageTypeSeparation(string import)
         {
             var dot = import.IndexOf('.');
             var lastDot = -1;
@@ -540,39 +540,6 @@ namespace ASCompletion.Model
             result = cmp.Compare(tp1, tp2);
             return result;
         }
-
-#if DEBUG 
-        static void Assert(int res, int expected)
-        {
-            System.Diagnostics.Debug.Assert(res == expected, res + " was not expected " + expected);
-        }
-
-        static CaseSensitiveImportComparer()
-        {
-            // poor man's unit tests
-            Assert(GetPackageTypeSeparation("a.b.C"), 3);
-            Assert(GetPackageTypeSeparation("a.b.c"), 3);
-            Assert(GetPackageTypeSeparation("a.b.C.D"), 3);
-            Assert(GetPackageTypeSeparation("a"), -1);
-            Assert(GetPackageTypeSeparation(".a"), -1);
-            Assert(GetPackageTypeSeparation("a."), -1);
-            Assert(GetPackageTypeSeparation("a.b.c."), 3);
-
-            Assert(CompareImports("a", "A"), 32);
-            Assert(CompareImports("a", "b"), -1);
-            Assert(CompareImports("b", "a"), 1);
-            Assert(CompareImports("a", "a"), 0);
-            Assert(CompareImports("a.A", "b"), 1);
-            Assert(CompareImports("a", "b.B"), -1);
-            Assert(CompareImports("a.A", "b.A"), -1);
-            Assert(CompareImports("b.A", "a.A"), 1);
-            Assert(CompareImports("a.A", "a.A"), 0);
-            Assert(CompareImports("a.A", "a.B"), -1);
-            Assert(CompareImports("b.A", "a.A"), 1);
-            Assert(CompareImports("a.A", "a.a"), -32);
-            Assert(CompareImports("a.MathReal", "a.Mathematics"), -19);
-        }
-#endif
 
         public int Compare(string import1, string import2) => CompareImports(import1, import2);
 
