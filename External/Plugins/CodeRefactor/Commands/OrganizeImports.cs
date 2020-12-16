@@ -48,7 +48,7 @@ namespace CodeRefactor.Commands
                     imports.RemoveAt(i);
                 }
             }
-            imports.Sort(new ImportsComparerLine());
+            imports.Sort(ImportsComparerLine.Instance);
             sci.BeginUndoAction();
             try
             {
@@ -164,27 +164,27 @@ namespace CodeRefactor.Commands
         /// </summary>
         Imports SeparateImports(IEnumerable<MemberModel> imports, int privateSectionIndex)
         {
-            var separatedImports = new Imports
+            var result = new Imports
             {
                 PackageImports = new List<MemberModel>(),
                 PrivateImports = new List<MemberModel>(),
             };
             foreach (var import in imports)
             {
-                if (import.LineFrom < privateSectionIndex) separatedImports.PackageImports.Add(import);
-                else separatedImports.PrivateImports.Add(import);
+                if (import.LineFrom < privateSectionIndex) result.PackageImports.Add(import);
+                else result.PrivateImports.Add(import);
             }
-            if (separatedImports.PackageImports.Count > 0)
+            if (result.PackageImports.Count > 0)
             {
-                var first = separatedImports.PackageImports[0];
-                separatedImports.PackageImportsIndent = GetLineIndentFor(first);
+                var first = result.PackageImports[0];
+                result.PackageImportsIndent = GetLineIndentFor(first);
             }
-            if (separatedImports.PrivateImports.Count > 0)
+            if (result.PrivateImports.Count > 0)
             {
-                var first = separatedImports.PrivateImports[0];
-                separatedImports.PrivateImportsIndent = GetLineIndentFor(first);
+                var first = result.PrivateImports[0];
+                result.PrivateImportsIndent = GetLineIndentFor(first);
             }
-            return separatedImports;
+            return result;
         }
 
         static bool ContainsMember(FileModel file, MemberModel member)
@@ -280,6 +280,8 @@ namespace CodeRefactor.Commands
     /// </summary>
     internal class ImportsComparerLine : IComparer<MemberModel>
     {
+        public static readonly IComparer<MemberModel> Instance = new ImportsComparerLine();
+
         public int Compare(MemberModel a, MemberModel b) => b.LineFrom - a.LineFrom;
     }
 

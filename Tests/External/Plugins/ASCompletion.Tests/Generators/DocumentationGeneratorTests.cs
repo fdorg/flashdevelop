@@ -60,7 +60,7 @@ namespace ASCompletion.Generators
                 fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
                 fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(ASCompletion)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(ASCompletion)}.Tests\\Test Files\\");
                 ASContext.Context.CurrentModel.FileName = fileName;
-                PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                PluginBase.MainForm.CurrentDocument!.FileName.Returns(fileName);
                 return Common(sci, sourceText, job, hasGenerator);
             }
 
