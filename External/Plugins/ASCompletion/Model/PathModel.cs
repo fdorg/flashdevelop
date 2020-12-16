@@ -478,7 +478,7 @@ namespace ASCompletion.Model
 
         public bool HasFile(string fileName)
         {
-            if (!IsValid) return false;
+            if (!IsValid || files.Count == 0) return false;
             lock (lockObject) 
             {
                 return files.ContainsKey(fileName.ToUpper());
@@ -487,7 +487,7 @@ namespace ASCompletion.Model
 
         public bool TryGetFile(string fileName, out FileModel value)
         {
-            if (!IsValid)
+            if (!IsValid || files.Count == 0)
             {
                 value = null;
                 return false;
@@ -524,7 +524,7 @@ namespace ASCompletion.Model
             lock (lockObject)
             {
                 files.Clear();
-                foreach (FileModel model in newFiles.Values)
+                foreach (var model in newFiles.Values)
                     files[model.FileName.ToUpper()] = model;
             }
         }
@@ -533,8 +533,9 @@ namespace ASCompletion.Model
         {
             lock (lockObject)
             {
-                foreach (FileModel model in files.Values)
-                    if (!callback(model)) break;
+                foreach (var model in files.Values)
+                    if (!callback(model))
+                        break;
             }
         }
 

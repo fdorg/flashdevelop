@@ -1082,8 +1082,10 @@ namespace HaXeContext
                 var model = ResolveType(package, null);
                 if (model.IsVoid()) return;
                 var access = TypesAffinity(model, Context.CurrentClass);
-                foreach (MemberModel member in model.Members)
+                var count = model.Members.Count;
+                for (var i = 0; i < count; i++)
                 {
+                    var member = model.Members[i];
                     if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
                     {
                         member.InFile = model.InFile;
@@ -1101,47 +1103,50 @@ namespace HaXeContext
                 return;
             }
             // HX files are "modules": when imported all the classes contained are available
+            // TODO slavara: check for {item.Type: Map<K,V>}
             var fileName = item.Type.Replace(".", dirSeparator) + ".hx";
-            if (fileName.StartsWithOrdinal("flash" + dirSeparator))
+            if (GetCurrentSDKVersion() <= "3.2.0")
             {
-                if (haxeTarget != "flash" || majorVersion > 8) // flash9 remap
-                    fileName = FLASH_NEW + fileName.Substring(5);
-                else
-                    fileName = FLASH_OLD + fileName.Substring(5);
+                // TODO slavara: check relevance
+                if (fileName.StartsWithOrdinal("flash" + dirSeparator))
+                {
+                    if (haxeTarget != "flash" || majorVersion > 8) // flash9 remap
+                        fileName = FLASH_NEW + fileName.Substring(5);
+                    else
+                        fileName = FLASH_OLD + fileName.Substring(5);
+                }
             }
             var isUsing = item.Flags.HasFlag(FlagType.Using);
             var matched = false;
-            foreach (var aPath in classPath)
-                if (aPath.IsValid && !aPath.Updating)
+            var classPathCount = classPath.Count;
+            for (var i = 0; i < classPathCount; i++)
+            {
+                var aPath = classPath[i];
+                if (!aPath.IsValid || aPath.Updating) continue;
+                var path = aPath.Path + dirSeparator + fileName;
+                // cached file
+                if (!aPath.TryGetFile(path, out var file)) continue;
+                if (file.Context != this)
                 {
-                    var path = aPath.Path + dirSeparator + fileName;
-
-                    // cached file
-                    if (!aPath.TryGetFile(path, out var file)) continue;
-                    if (file.Context != this)
-                    {
-                        // not associated with this context -> refresh
-                        file.OutOfDate = true;
-                        file.Context = this;
-                    }
-
-                    // add all public classes of Haxe modules
-                    foreach (var @class in file.Classes)
-                    {
-                        var c = @class;
-                        if (c.IndexType is null && c.Access == Visibility.Public)
-                        {
-                            if (isUsing)
-                            {
-                                c = c.Clone();
-                                c.Flags |= FlagType.Using;
-                            }
-                            imports.Add(c);
-                        }
-                    }
-                    matched = true;
+                    // not associated with this context -> refresh
+                    file.OutOfDate = true;
+                    file.Context = this;
                 }
-
+                // add all public classes of Haxe modules
+                var count = file.Classes.Count;
+                for (var j = 0; j < count; j++)
+                {
+                    var @class = file.Classes[j];
+                    if (@class.IndexType is not null || @class.Access != Visibility.Public) continue;
+                    if (isUsing)
+                    {
+                        @class = @class.Clone();
+                        @class.Flags |= FlagType.Using;
+                    }
+                    imports.Add(@class);
+                }
+                matched = true;
+            }
             if (!matched) imports.Add(item);
         }
 

@@ -186,7 +186,15 @@ namespace ASCompletion.Model
             return false;
         }
 
-        static bool ContainsMember(this ClassModel @this, FlagType mask) => @this.Members.Any(it => (it.Flags & mask) == mask);
+        static bool ContainsMember(this ClassModel @this, FlagType mask)
+        {
+            var count = @this.Members.Count;
+            for (var i = 0; i < count; i++)
+            {
+                if ((@this.Members[i].Flags & mask) == mask) return true;
+            }
+            return false;
+        }
 
         public static bool ContainsMember(this ClassModel @this, string name, FlagType flags, bool recursive)
         {
