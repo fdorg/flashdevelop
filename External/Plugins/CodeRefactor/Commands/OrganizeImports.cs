@@ -113,12 +113,12 @@ namespace CodeRefactor.Commands
                 var packageImportsStartLine = separatedImports.PackageImports.Count > 0
                     ? separatedImports.PackageImports[0].LineFrom
                     : 0;
-                separatedImports.PackageImports.Sort(new CaseSensitiveImportComparer());
+                separatedImports.PackageImports.Sort(CaseSensitiveImportComparer.Instance);
                 var packageImports = GetUniqueImports(separatedImports.PackageImports, publicClassText, sci.FileName);
                 var privateImportsStartLine = separatedImports.PrivateImports.Count > 0
                     ? separatedImports.PrivateImports[0].LineFrom
                     : 0;
-                separatedImports.PrivateImports.Sort(new CaseSensitiveImportComparer());
+                separatedImports.PrivateImports.Sort(CaseSensitiveImportComparer.Instance);
                 var privateImports = GetUniqueImports(separatedImports.PrivateImports, privateClassText, sci.FileName);
                 var abort = true;
                 if (packageImports.Count + privateImports.Count == context.CurrentModel.Imports.Count)

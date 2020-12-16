@@ -204,6 +204,7 @@
     </Compile>
     <Compile Include="Model\FileParserTests.cs" />
     <Compile Include="Model\ClassModelTests.cs" />
+    <Compile Include="Model\MemberModelTests.cs" />
     <Compile Include="PluginUIMock.cs">
       <SubType>UserControl</SubType>
     </Compile>
