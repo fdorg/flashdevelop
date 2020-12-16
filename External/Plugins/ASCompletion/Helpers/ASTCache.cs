@@ -211,14 +211,14 @@ namespace ASCompletion.Helpers
         bool IsCompletelyResolvable(ClassModel cls)
         {
             if (cls is null || cls.IsVoid()) return true;
-
-            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-
-            var missingExtends = cls.ExtendsType != null && cls.ExtendsType != "Dynamic" && cls.ExtendsType != "Void" && cls.Extends.IsVoid(); //Dynamic means the class extends nothing
-            var missingInterfaces = cls.Implements != null && cls.Implements.Any(i => GetCachedModel(context.ResolveType(i, cls.InFile)) is null);
-
             //also check parent interfaces and extends
-            return !missingInterfaces && !missingExtends && (cls.Implements is null || ResolveInterfaces(cls).All(IsCompletelyResolvable)) && IsCompletelyResolvable(cls.Extends);
+            if (cls.ExtendsType != null && cls.ExtendsType != "Dynamic" && cls.ExtendsType != "Void" && cls.Extends.IsVoid()) return true;
+            var missingInterfaces = cls.Implements != null
+                                    && ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) is { } ctx
+                                    && cls.Implements.Any(i => GetCachedModel(ctx.ResolveType(i, cls.InFile)) is null);
+            return !missingInterfaces
+                   && (cls.Implements is null || ResolveInterfaces(cls).All(IsCompletelyResolvable))
+                   && IsCompletelyResolvable(cls.Extends);
         }
 
         void RemoveConnections(ClassModel cls, CacheDictionary goThrough, Func<CachedClassModel, CacheDictionary> removeFrom)
