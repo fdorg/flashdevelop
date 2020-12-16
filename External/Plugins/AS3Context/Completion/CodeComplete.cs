@@ -129,12 +129,7 @@ namespace AS3Context.Completion
         /// <inheritdoc />
         protected override bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword, List<ICompletionListItem> list)
         {
-            if (keyword == "new")
-            {
-                list.RemoveAll(it => it is MemberItem item
-                                     && item.Member is {} member
-                                     && (member.Flags & FlagType.Interface) != 0);
-            }
+            if (keyword == "new") list.RemoveAll(it => it is MemberItem {Member: { } member} && (member.Flags & FlagType.Interface) != 0);
             return base.HandleNewCompletion(sci, tail, autoHide, keyword, list);
         }
 

@@ -11,9 +11,10 @@ namespace ASCompletion.Model
         /// <param name="flags">Flags mask</param>
         /// <param name="recursive"></param>
         /// <returns>All matches</returns>
-        public static MemberList SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
+        public static MemberList? SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (!recursive) return @this.SearchMembers(flags);
+            if (@this.SearchMembers(flags) is {Count: > 0} list) return list;
+            if (!recursive) return null; 
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this.Extends;
             while (!type.IsVoid())
@@ -40,33 +41,37 @@ namespace ASCompletion.Model
         /// <param name="name">Member name to mach</param>
         /// <param name="recursive"></param>
         /// <returns>First match</returns>
-        public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive)
+        public static MemberModel? SearchMember(this ClassModel @this, string name, bool recursive)
         {
-            if (!recursive) return @this.Members.Search(name);
+            if (@this.Members.Search(name) is { } member) return member;
+            if (!recursive) return null;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
-                var result = type.Members.Search(name);
-                if (result != null) return result;
+                if (type.Members.Search(name) is { } result) return result;
                 type = type.Extends;
             }
             return null;
         }
         
-        public static MemberModel SearchMember(this ClassModel @this, string name, bool recursive, out ClassModel inClass)
+        public static MemberModel? SearchMember(this ClassModel @this, string name, bool recursive, out ClassModel inClass)
         {
-            if (!recursive)
+            if (@this.Members.Search(name) is { } member)
             {
                 inClass = @this;
-                return @this.Members.Search(name);
+                return member;
+            }
+            if (!recursive)
+            {
+                inClass = ClassModel.VoidClass;
+                return null;
             }
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
-                var result = type.Members.Search(name);
-                if (result != null)
+                if (type.Members.Search(name) is { } result)
                 {
                     inClass = type;
                     return result;
@@ -84,33 +89,41 @@ namespace ASCompletion.Model
         /// <param name="flags">Flags mask</param>
         /// <param name="recursive"></param>
         /// <returns>First match</returns>
-        public static MemberModel SearchMember(this ClassModel @this, FlagType flags, bool recursive)
+        public static MemberModel? SearchMember(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (!recursive) return @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+            var member = @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+            if (member is not null) return member;
+            if (!recursive) return null;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this;
             while (!type.IsVoid())
             {
                 var result = type.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
-                if (result != null) return result;
+                if (result is not null) return result;
                 type = type.Extends;
             }
             return null;
         }
         
-        public static MemberModel SearchMember(this ClassModel @this, FlagType flags, bool recursive, out ClassModel inClass)
+        public static MemberModel? SearchMember(this ClassModel @this, FlagType flags, bool recursive, out ClassModel inClass)
         {
-            if (!recursive)
+            var member = @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+            if (member is not null)
             {
                 inClass = @this;
-                return @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
+                return member;
+            }
+            if (!recursive)
+            {
+                inClass = ClassModel.VoidClass;
+                return null;
             }
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
                 var result = type.Members.FirstOrDefault(it => (it.Flags & flags) == flags);
-                if (result != null)
+                if (result is not null)
                 {
                     inClass = type;
                     return result;
@@ -131,13 +144,15 @@ namespace ASCompletion.Model
         /// <returns>First match</returns>
         public static MemberModel SearchMember(this ClassModel @this, FlagType flags, Visibility access, bool recursive)
         {
-            if (!recursive) return @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags && (it.Access & access) != 0);
+            var member = @this.Members.FirstOrDefault(it => (it.Flags & flags) == flags && (it.Access & access) != 0);
+            if (member is not null) return member;
+            if (!recursive) return null;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
                 var result = type.Members.FirstOrDefault(it => (it.Flags & flags) == flags && (it.Access & access) != 0);
-                if (result != null) return result;
+                if (result is not null) return result;
                 type = type.Extends;
             }
             return null;
@@ -145,9 +160,10 @@ namespace ASCompletion.Model
 
         public static bool ContainsMember(this ClassModel @this, string name, bool recursive)
         {
-            if (!recursive) return @this.Members.Contains(name);
+            if (@this.Members.Contains(name)) return true;
+            if (!recursive) return false;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
                 if (type.Members.Contains(name)) return true;
@@ -158,9 +174,10 @@ namespace ASCompletion.Model
 
         public static bool ContainsMember(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (!recursive) return @this.ContainsMember(flags);
+            if (@this.ContainsMember(flags)) return true;
+            if (!recursive) return false;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
                 if (type.ContainsMember(flags)) return true;
@@ -173,9 +190,10 @@ namespace ASCompletion.Model
 
         public static bool ContainsMember(this ClassModel @this, string name, FlagType flags, bool recursive)
         {
-            if (!recursive) return @this.Members.Contains(name, flags);
+            if (@this.Members.Contains(name, flags)) return true;
+            if (!recursive) return false;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
-            var type = @this;
+            var type = @this.Extends;
             while (!type.IsVoid())
             {
                 if (type.Members.Contains(name, flags)) return true;

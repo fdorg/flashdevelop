@@ -1521,10 +1521,11 @@ namespace HaXeContext
             var packagePath = string.IsNullOrEmpty(package) ? string.Empty : package.Replace('.', dirSeparatorChar);
             while(true)
             {
+                var importFileName = Path.Combine(packagePath, "import.hx");
                 foreach (var it in classPath)
                 {
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
-                    var path = Path.Combine(it.Path, packagePath, "import.hx");
+                    var path = Path.Combine(it.Path, importFileName);
                     if (!it.TryGetFile(path, out var model)) continue;
                     foreach (var import in model.Imports)
                     {
@@ -1554,7 +1555,7 @@ namespace HaXeContext
                     }
                     break;
                 }
-                if (string.IsNullOrEmpty(packagePath)) break;
+                if (packagePath.Length == 0) break;
                 packagePath = Path.GetDirectoryName(packagePath);
             }
             return result;
