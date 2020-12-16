@@ -3064,7 +3064,7 @@ namespace ASCompletion.Completion
             int removed = 0;
             if (contextResolved != null)
             {
-                contextResolved.Context.LocalVars.Items.Sort(new ByDeclarationPositionMemberComparer());
+                contextResolved.Context.LocalVars.Items.Sort(ByDeclarationPositionMemberComparer.Instance);
                 contextResolved.Context.LocalVars.Items.Reverse();
                 foreach (var member in contextResolved.Context.LocalVars)
                 {

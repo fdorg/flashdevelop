@@ -476,7 +476,7 @@ namespace ASCompletion
             SetHighlight(null);
         }
 
-        TreeNode MatchNodeText(IEnumerable nodes, string match)
+        static TreeNode MatchNodeText(IEnumerable nodes, string match)
         {
             foreach(TreeNode node in nodes)
             {
@@ -506,7 +506,6 @@ namespace ASCompletion
 
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
                 currentHighlight.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
-
             }
         }
 
@@ -733,7 +732,7 @@ namespace ASCompletion
             }
         }
 
-        void AddExtend(TreeNodeCollection tree, ClassModel aClass)
+        static void AddExtend(TreeNodeCollection tree, ClassModel aClass)
         {
             var folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
 
@@ -758,7 +757,7 @@ namespace ASCompletion
             if (folder.Nodes.Count > 0) tree.Add(folder);
         }
 
-        void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
+        static void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
         {
             if (implementsTypes.IsNullOrEmpty()) return;
             var folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
@@ -771,81 +770,77 @@ namespace ASCompletion
 
         void AddMembersSorted(TreeNodeCollection tree, MemberList members)
         {
-            if (settings.SortingMode == OutlineSorting.None)
+            switch (settings.SortingMode)
             {
-                AddMembers(tree, members);
-            }
-            else if (settings.SortingMode == OutlineSorting.SortedGroup)
-            {
-                AddMembersGrouped(tree, members);
-            }
-            else
-            {
-                var comparer = settings.SortingMode switch
-                {
-                    OutlineSorting.Sorted => (IComparer<MemberModel>) null,
-                    OutlineSorting.SortedByKind => new ByKindMemberComparer(),
-                    OutlineSorting.SortedSmart => new SmartMemberComparer(),
-                    OutlineSorting.SortedGroup => new ByKindMemberComparer(),
-                    _ => null
-                };
-
-                var copy = new MemberList {members};
-                copy.Sort(comparer);
-                AddMembers(tree, copy);
+                case OutlineSorting.None:
+                    AddMembers(tree, members);
+                    break;
+                case OutlineSorting.SortedGroup:
+                    AddMembersGrouped(tree, members);
+                    break;
+                default:
+                    var comparer = settings.SortingMode switch
+                    {
+                        OutlineSorting.SortedByKind => ByKindMemberComparer.Instance,
+                        OutlineSorting.SortedGroup => ByKindMemberComparer.Instance,
+                        OutlineSorting.SortedSmart => SmartMemberComparer.Instance,
+                        OutlineSorting.Sorted => null,
+                        _ => null
+                    };
+                    var copy = new MemberList {members};
+                    copy.Sort(comparer);
+                    AddMembers(tree, copy);
+                    break;
             }
         }
 
-        void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
+        static void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
         {
-            MemberList regions = aFile.Regions;
-            int count = regions.Count;
+            var regions = aFile.Regions;
+            var count = regions.Count;
             for (var index = 0; index < count; ++index)
             {
                 var region = regions[index];
-                MemberTreeNode node = new MemberTreeNode(region, ICON_PACKAGE);
+                var node = new MemberTreeNode(region, ICON_PACKAGE);
                 tree.Add(node);
 
                 var endRegion = region.LineTo;
-                if (endRegion == 0)
-                {
-                    endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
-                }
+                if (endRegion == 0) endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
 
-                MemberList regionMembers = new MemberList();
-                foreach (MemberModel import in aFile.Imports)
+                var regionMembers = new MemberList();
+                foreach (var import in aFile.Imports)
                 {
-                    if (import.LineFrom >= region.LineFrom &&
-                        import.LineTo <= endRegion)
+                    if (import.LineFrom >= region.LineFrom
+                        && import.LineTo <= endRegion)
                     {
                         regionMembers.Add(import);
                     }
                 }
 
-                foreach (MemberModel fileMember in aFile.Members)
+                foreach (var fileMember in aFile.Members)
                 {
-                    if (fileMember.LineFrom >= region.LineFrom &&
-                        fileMember.LineTo <= endRegion)
+                    if (fileMember.LineFrom >= region.LineFrom
+                        && fileMember.LineTo <= endRegion)
                     {
                         regionMembers.Add(fileMember);
                     }
                 }
 
-                foreach (ClassModel cls in aFile.Classes)
+                foreach (var cls in aFile.Classes)
                 {
                     if (cls.LineFrom <= region.LineFrom)
                     {
-                        foreach (MemberModel clsMember in cls.Members)
+                        foreach (var clsMember in cls.Members)
                         {
-                            if (clsMember.LineFrom >= region.LineFrom &&
-                                clsMember.LineTo <= endRegion)
+                            if (clsMember.LineFrom >= region.LineFrom
+                                && clsMember.LineTo <= endRegion)
                             {
                                 regionMembers.Add(clsMember);
                             }
                         }
                     }
-                    else if (cls.LineFrom >= region.LineFrom &&
-                             cls.LineTo <= endRegion)
+                    else if (cls.LineFrom >= region.LineFrom
+                             && cls.LineTo <= endRegion)
                     {
                         regionMembers.Add(cls);
                     }
