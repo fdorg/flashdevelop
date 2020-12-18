@@ -4143,11 +4143,13 @@ namespace ASCompletion.Completion
         /// </summary>
         public static bool IsTextStyle(int style)
         {
-            return style == 0 || style == 10 /*punctuation*/ || style == 11 /*identifier*/
-                || style == 16 /*word2 (secondary keywords: class name)*/
-                || style == (int)CPP.WORD4 /*word4 (add keywords4)*/
-                || style == (int)CPP.WORD5 /*word5 (add keywords5)*/
-                || style == 127 /*PHP*/;
+            return style == 0
+                   || style == 10 /*punctuation*/
+                   || style == 11 /*identifier*/
+                   || style == 16 /*word2 (secondary keywords: class name)*/
+                   || style == (int)CPP.WORD4 /*word4 (add keywords4)*/
+                   || style == (int)CPP.WORD5 /*word5 (add keywords5)*/
+                   || style == 127 /*PHP*/;
         }
 
         /// <summary>
@@ -4155,14 +4157,10 @@ namespace ASCompletion.Completion
         /// </summary>
         public static bool IsTextStyleEx(int style)
         {
-            return style == 0 || style == 5 /*word (secondary keywords)*/
-                || style == 10 /*punctuation*/ || style == 11 /*identifier*/
-                || style == 16 /*word2 (secondary keywords: class name)*/
-                || style == 19 /*globalclass (primary keywords)*/
-                || style == (int)CPP.WORD3 /*word3 (add keywords3)*/
-                || style == (int)CPP.WORD4 /*word4 (add keywords4)*/
-                || style == (int)CPP.WORD5 /*word5 (add keywords5)*/
-                || style == 127 /*PHP*/;
+            return IsTextStyle(style)
+                   || style == 5 /*word (secondary keywords)*/
+                   || style == 19 /*globalclass (primary keywords)*/
+                   || style == (int) CPP.WORD3 /*word3 (add keywords3)*/;
         }
 
         public static bool IsCommentStyle(int style)
