@@ -407,7 +407,6 @@ namespace ScintillaNet
             catch { /* If not found, uses the lang.lexer.key directly. */ }
             configLanguage = value;
             Lexer = lang.lexer.key;
-            if (lang.lexer.stylebits > 0) StyleBits = lang.lexer.stylebits;
             if (lang.editorstyle != null)
             {
                 EdgeColour = lang.editorstyle.PrintMarginColor;
@@ -896,10 +895,13 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve number of bits in style bytes used to hold the lexical state.
         /// </summary>
+        [Obsolete("Deprecated by 4.0.1. Please use `mask = 0xff` instead of `mask = ((1 << StyleBits) - 1)`")]
         public int StyleBits
         {
-            get => SPerform(2091).ToInt32();
-            set => SPerform(2090, value);
+            get => 8;
+            set
+            {
+            }
         }
 
         /// <summary>
@@ -1816,6 +1818,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the number of bits the current lexer needs for styling.
         /// </summary>
+        [Obsolete("Deprecated by 4.0.1")]
         public int GetStyleBitsNeeded() => SPerform(4011).ToInt32();
 
         /// <summary>
@@ -5191,7 +5194,7 @@ namespace ScintillaNet
         /// <summary>
         /// Returns the base style (without indicators) byte at the position.
         /// </summary>
-        public int BaseStyleAt(int pos) => (SPerform(2010, pos, 0) & ((1 << StyleBits) - 1));
+        public int BaseStyleAt(int pos) => SPerform(2010, pos, 0) & 0xff;
 
         /// <summary>
         /// Adds the specified highlight to the control
@@ -5200,8 +5203,7 @@ namespace ScintillaNet
         {
             var doc = DocumentManager.FindDocument(this);
             if (doc is null) return;
-            int es = EndStyled;
-            int mask = (1 << StyleBits) - 1;
+            var es = EndStyled;
             // Define indics in both controls...
             doc.SplitSci1.SetIndicStyle(indicator, indicStyle);
             doc.SplitSci1.SetIndicFore(indicator, highlightColor);
@@ -5212,12 +5214,11 @@ namespace ScintillaNet
             CurrentIndicator = indicator;
             IndicatorValue = 1;
             IndicatorFillRange(start, length);
-            StartStyling(es, mask);
+            StartStyling(es, 0xff);
         }
-        public void AddHighlight(int indicStyle, int highlightColor, int start, int length)
-        {
-            AddHighlight(0, indicStyle, highlightColor, start, length);
-        }
+        
+        public void AddHighlight(int indicStyle, int highlightColor, int start, int length) => AddHighlight(0, indicStyle, highlightColor, start, length);
+
         public void AddHighlight(int highlightColor, int start, int length)
         {
             int indicStyle = (int)Enums.IndicatorStyle.RoundBox;
@@ -5232,11 +5233,10 @@ namespace ScintillaNet
             if (matches is null) return;
             var doc = DocumentManager.FindDocument(this);
             if (doc is null) return;
-            foreach (SearchMatch match in matches)
+            foreach (var match in matches)
             {
-                int es = EndStyled;
-                int mask = (1 << StyleBits) - 1;
-                int start = MBSafePosition(match.Index);
+                var es = EndStyled;
+                var start = MBSafePosition(match.Index);
                 // Define indics in both controls...
                 doc.SplitSci1.SetIndicStyle(indicator, (int)Enums.IndicatorStyle.RoundBox);
                 doc.SplitSci1.SetIndicFore(indicator, highlightColor);
@@ -5247,7 +5247,7 @@ namespace ScintillaNet
                 CurrentIndicator = indicator;
                 IndicatorValue = 1;
                 IndicatorFillRange(start, MBSafeTextLength(match.Value));
-                StartStyling(es, mask);
+                StartStyling(es, 0xff);
             }
         }
         public void AddHighlights(int indicator, List<SearchMatch> matches, int highlightColor)
@@ -5266,11 +5266,10 @@ namespace ScintillaNet
         /// </summary>
         public void RemoveHighlight(int indicator, int start, int length)
         {
-            int es = EndStyled;
-            int mask = (1 << StyleBits) - 1;
+            var es = EndStyled;
             CurrentIndicator = indicator;
             IndicatorClearRange(start, length);
-            StartStyling(es, mask);
+            StartStyling(es, 0xff);
         }
         public void RemoveHighlight(int start, int length) => RemoveHighlight(0, start, length);
 
@@ -5279,11 +5278,10 @@ namespace ScintillaNet
         /// </summary>
         public void RemoveHighlights(int indicator)
         {
-            int es = EndStyled;
-            int mask = (1 << StyleBits) - 1;
+            var es = EndStyled;
             CurrentIndicator = indicator;
             IndicatorClearRange(0, Length);
-            StartStyling(es, mask);
+            StartStyling(es, 0xff);
         }
         public void RemoveHighlights() => RemoveHighlights(0);
 

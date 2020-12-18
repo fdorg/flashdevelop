@@ -375,7 +375,6 @@ namespace FlashDevelop.Managers
             sci.SelectionStart = 0;
             sci.SmartIndentType = SmartIndent.CPP;
             sci.Status = 0;
-            sci.StyleBits = 7;
             sci.TabIndex = 0;
             sci.TargetEnd = 0;
             sci.TargetStart = 0;

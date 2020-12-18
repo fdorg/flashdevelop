@@ -266,9 +266,7 @@ namespace CodeRefactor.Commands
             Sci.SetIndicFore(Indicator, 0x00FF00);
             Sci.CurrentIndicator = Indicator;
             Sci.IndicatorFillRange(startIndex, length);
-            var es = Sci.EndStyled;
-            var mask = (1 << Sci.StyleBits) - 1;
-            Sci.StartStyling(es, mask);
+            Sci.StartStyling(Sci.EndStyled, 0xff);
         }
     }
 }
