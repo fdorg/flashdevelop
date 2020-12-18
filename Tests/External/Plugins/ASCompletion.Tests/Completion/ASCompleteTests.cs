@@ -1229,6 +1229,56 @@ namespace ASCompletion.Completion
                 SetSrc(sci, text);
                 return ASComplete.IsCharStyle(sci.StyleAt(sci.CurrentPos));
             }
+            
+            static IEnumerable<TestCaseData> IsCommentStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("//$(EntryPoint)120").Returns(true);
+                    yield return new TestCaseData("/*$(EntryPoint)120*/").Returns(true);
+                    yield return new TestCaseData("/*$(EntryPoint)120").Returns(true);
+                    yield return new TestCaseData("/*\n$(EntryPoint)120\n*/").Returns(true);
+                    yield return new TestCaseData("/*\n*\n*$(EntryPoint)120\n*\n*/").Returns(true);
+                    yield return new TestCaseData("'//$(EntryPoint)120'").Returns(false);
+                    yield return new TestCaseData("\"//$(EntryPoint)120\"").Returns(false);
+                    yield return new TestCaseData("'/*$(EntryPoint)120*/'").Returns(false);
+                    yield return new TestCaseData("\"/*$(EntryPoint)120*/\"").Returns(false);
+                    yield return new TestCaseData("/**\n*\n@ret$(EntryPoint)urn\n*/").Returns(true);
+                    yield return new TestCaseData("@ret$(EntryPoint)urn").Returns(false);
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(IsCommentStyleTestCases))
+            ]
+            public bool IsCommentStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASComplete.IsCommentStyle(sci.StyleAt(sci.CurrentPos));
+            }
+
+            static IEnumerable<TestCaseData> IsRegexStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("$(EntryPoint)~/\\s/gm").Returns(false);
+                    yield return new TestCaseData("~$(EntryPoint)/\\s/gm").Returns(true);
+                    yield return new TestCaseData("~/\\s/$(EntryPoint)gm").Returns(true);
+                    yield return new TestCaseData("\"~/\\s/$(EntryPoint)g\"").Returns(false);
+                    yield return new TestCaseData("'~/\\s/$(EntryPoint)'").Returns(false);
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(IsRegexStyleTestCases))
+            ]
+            public bool IsRegexStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASContext.Context.CodeComplete.IsRegexStyle(sci, sci.CurrentPos);
+            }
         }
 
         [TestFixture]
