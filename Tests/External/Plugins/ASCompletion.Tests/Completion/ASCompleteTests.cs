@@ -21,8 +21,8 @@ namespace ASCompletion.Completion
         {
             SetSrc(sci, sourceText);
             //{ Update completion cache
-            var ctx = ASContext.GetLanguageContext(sci.ConfigurationLanguage);
-            ((ASContext) ctx).completionCache.IsDirty = true;
+            var ctx = (ASContext) ASContext.GetLanguageContext(sci.ConfigurationLanguage);
+            ctx.completionCache.IsDirty = true;
             var visibleExternalElements = ctx.GetVisibleExternalElements();
             ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
             //}
@@ -1126,6 +1126,108 @@ namespace ASCompletion.Completion
                 SetSrc(sci, ReadAllText(fileName));
                 var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos, false, true);
                 return ASComplete.GetToolTipText(expr);
+            }
+
+            static IEnumerable<TestCaseData> IsLiteralStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("$(EntryPoint)120").Returns(true);
+                    yield return new TestCaseData("1$(EntryPoint)20").Returns(true);
+                    yield return new TestCaseData("120$(EntryPoint)").Returns(false);
+                    yield return new TestCaseData("\"$(EntryPoint)120\"").Returns(true);
+                    yield return new TestCaseData("\"$(EntryPoint)a\"").Returns(true);
+                    yield return new TestCaseData("'$(EntryPoint)120'").Returns(true);
+                    yield return new TestCaseData("'$(EntryPoint)a'").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)a").Returns(false);
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(IsLiteralStyleTestCases))
+            ]
+            public bool IsLiteralStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASComplete.IsLiteralStyle(sci.StyleAt(sci.CurrentPos));
+            }
+
+            static IEnumerable<TestCaseData> IsNumericStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("$(EntryPoint)120").Returns(true);
+                    yield return new TestCaseData("1$(EntryPoint)20").Returns(true);
+                    yield return new TestCaseData("1.$(EntryPoint)20").Returns(true);
+                    yield return new TestCaseData(".$(EntryPoint)20").Returns(true);
+                    yield return new TestCaseData("120$(EntryPoint)").Returns(false);
+                    yield return new TestCaseData("\"$(EntryPoint)120\"").Returns(false);
+                    yield return new TestCaseData("'$(EntryPoint)120'").Returns(false);
+                    yield return new TestCaseData("some_$(EntryPoint)120").Returns(false);
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(IsNumericStyleTestCases))
+            ]
+            public bool IsNumericStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASComplete.IsNumericStyle(sci.StyleAt(sci.CurrentPos));
+            }
+
+            static IEnumerable<TestCaseData> IsStringStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("$(EntryPoint)120").Returns(false);
+                    yield return new TestCaseData("\"$(EntryPoint)120\"").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)\"120\"").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)\"").Returns(true);
+                    yield return new TestCaseData("'$(EntryPoint)\"'").Returns(false);
+                    yield return new TestCaseData("'$(EntryPoint)120'").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)'120'").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)'").Returns(false);
+                    yield return new TestCaseData("some_$(EntryPoint)120").Returns(false);
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(IsStringStyleTestCases))
+            ]
+            public bool IsStringStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASComplete.IsStringStyle(sci.StyleAt(sci.CurrentPos));
+            }
+            
+            static IEnumerable<TestCaseData> IsCharStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("$(EntryPoint)120").Returns(false);
+                    yield return new TestCaseData("\"$(EntryPoint)120\"").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)\"120\"").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)\"").Returns(false);
+                    yield return new TestCaseData("'$(EntryPoint)\"'").Returns(true);
+                    yield return new TestCaseData("'$(EntryPoint)120'").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)'120'").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)'").Returns(true);
+                    yield return new TestCaseData("some_$(EntryPoint)120").Returns(false);
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(IsCharStyleTestCases))
+            ]
+            public bool IsCharStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASComplete.IsCharStyle(sci.StyleAt(sci.CurrentPos));
             }
         }
 
