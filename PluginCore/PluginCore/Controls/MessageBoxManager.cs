@@ -142,7 +142,7 @@ namespace System.Windows.Forms
         {
             if (nCode < 0) return CallNextHookEx(hHook, nCode, wParam, lParam);
 
-            CWPRETSTRUCT msg = (CWPRETSTRUCT)Marshal.PtrToStructure(lParam, typeof(CWPRETSTRUCT));
+            var msg = Marshal.PtrToStructure<CWPRETSTRUCT>(lParam);
             IntPtr hook = hHook;
 
             if (msg.message == WM_INITDIALOG)
