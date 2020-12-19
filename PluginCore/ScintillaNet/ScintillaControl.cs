@@ -357,9 +357,9 @@ namespace ScintillaNet
         /// </summary>
         public string GetFileExtension()
         {
-            var extension = Path.GetExtension(FileName);
-            if (!string.IsNullOrEmpty(extension)) extension = extension.Substring(1); // remove dot
-            return extension;
+            var result = Path.GetExtension(FileName);
+            if (!string.IsNullOrEmpty(result)) result = result.Substring(1); // remove dot
+            return result;
         }
 
         public void SaveExtensionToSyntaxConfig(string extension)
@@ -383,6 +383,7 @@ namespace ScintillaNet
             foreach (var document in PluginBase.MainForm.Documents)
             {
                 var sci = document.SciControl;
+                if (sci is null) continue;
                 if (sci.GetFileExtension() == extension)
                     sci.ConfigurationLanguage = ConfigurationLanguage;
             }
@@ -393,11 +394,8 @@ namespace ScintillaNet
             var lang = Configuration.GetLanguage(value);
             if (lang is null) return;
             StyleClearAll();
-            try
-            {
-                lang.lexer.key = (int)Enum.Parse(typeof(Enums.Lexer), lang.lexer.name, true);
-            }
-            catch { /* If not found, uses the lang.lexer.key directly. */ }
+            if (Enum.TryParse<Enums.Lexer>(lang.lexer.name, true, out var key))
+                lang.lexer.key = (int) key;
             configLanguage = value;
             Lexer = lang.lexer.key;
             if (lang.editorstyle != null)
@@ -409,8 +407,8 @@ namespace ScintillaNet
                 SetSelFore(true, lang.editorstyle.SelectionForegroundColor);
                 SetFoldMarginHiColour(true, lang.editorstyle.MarginForegroundColor);
                 SetFoldMarginColour(true, lang.editorstyle.MarginBackgroundColor);
-                int markerForegroundColor = lang.editorstyle.MarkerForegroundColor;
-                int markerBackgroundColor = lang.editorstyle.MarkerBackgroundColor;
+                var markerForegroundColor = lang.editorstyle.MarkerForegroundColor;
+                var markerBackgroundColor = lang.editorstyle.MarkerBackgroundColor;
                 MarkerSetBack((int)Enums.MarkerOutline.Folder, markerBackgroundColor);
                 MarkerSetFore((int)Enums.MarkerOutline.Folder, markerForegroundColor);
                 MarkerSetBack((int)Enums.MarkerOutline.FolderOpen, markerBackgroundColor);
@@ -428,10 +426,7 @@ namespace ScintillaNet
                 MarkerSetBack(0, lang.editorstyle.BookmarkLineColor);
                 MarkerSetBack(2, lang.editorstyle.ModifiedLineColor);
             }
-            if (lang.characterclass != null)
-            {
-                WordChars(lang.characterclass.Characters);
-            }
+            if (lang.characterclass != null) WordChars(lang.characterclass.Characters);
             var lexerType = ((Enums.Lexer) lang.lexer.key) switch
             {
                 Enums.Lexer.PYTHON => typeof(PYTHON),
@@ -536,16 +531,12 @@ namespace ScintillaNet
                             ErrorManager.ShowWarning(info, ex);
                             break;
                         }
-
                         info = $"Style '{usestyle.name}' in syntax file is not used by lexer '{lexerType.Name}'.";
                         ErrorManager.ShowWarning(info, ex);
                     }
                 }
                 // Set whitespace fore color to indentguide color
-                if (usestyle.key == (int)Enums.StylesCommon.IndentGuide)
-                {
-                    SetWhitespaceFore(true, usestyle.ForegroundColor);
-                }
+                if (usestyle.key == (int)Enums.StylesCommon.IndentGuide) SetWhitespaceFore(true, usestyle.ForegroundColor);
                 if (usestyle.HasForegroundColor) StyleSetFore(usestyle.key, usestyle.ForegroundColor);
                 if (usestyle.HasBackgroundColor) StyleSetBack(usestyle.key, usestyle.BackgroundColor);
                 if (usestyle.HasFontName) StyleSetFont(usestyle.key, usestyle.FontName);
@@ -555,10 +546,10 @@ namespace ScintillaNet
                 if (usestyle.HasEolFilled) StyleSetEOLFilled(usestyle.key, usestyle.IsEolFilled);
             }
             // Clear the keywords lists 
-            for (int j = 0; j < 9; j++) KeyWords(j, "");
+            for (int j = 0; j < 9; j++) KeyWords(j, string.Empty);
             foreach (var usekeyword in lang.usekeywords)
             {
-                KeywordClass kc = Configuration.GetKeywordClass(usekeyword.cls);
+                var kc = Configuration.GetKeywordClass(usekeyword.cls);
                 if (kc != null) KeyWords(usekeyword.key, kc.val);
             }
 
@@ -5661,18 +5652,13 @@ namespace ScintillaNet
         {
             int start = SelectionStart;
             int end = SelectionEnd;
-
             if (start == end)
             {
                 int line = CurrentLine;
                 start = PositionFromLine(line);
                 end = PositionFromLine(line + 1);
             }
-
-            if (start < end)
-            {
-                CopyRTF(start, end);
-            }
+            if (start < end) CopyRTF(start, end);
         }
 
         /// <summary>

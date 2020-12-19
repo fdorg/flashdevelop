@@ -84,14 +84,8 @@ namespace FlashDebugger
             return true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         internal bool Start() => Start(false);
 
-        /// <summary>
-        /// 
-        /// </summary>
         internal bool Start(bool alwaysStart)
         {
             if (!alwaysStart && !CheckCurrent()) return false;
@@ -148,9 +142,6 @@ namespace FlashDebugger
             return true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try

@@ -133,39 +133,44 @@ namespace FlashDebugger
                         return;
                     }
                     if (!de.Action.StartsWithOrdinal(nameof(ProjectManager))) return;
-                    if (de.Action == ProjectManagerEvents.Project)
+                    switch (de.Action)
                     {
-                        var project = PluginBase.CurrentProject;
-                        if (project != null && project.EnableInteractiveDebugger)
-                        {
-                            disableDebugger = false;
-                            if (breakPointManager.Project != null && breakPointManager.Project != project)
+                        case ProjectManagerEvents.Project:
+                            var project = PluginBase.CurrentProject;
+                            if (project != null && project.EnableInteractiveDebugger)
                             {
-                                breakPointManager.Save();
-                                watchManager.Save();
+                                disableDebugger = false;
+                                if (breakPointManager.Project != null && breakPointManager.Project != project)
+                                {
+                                    breakPointManager.Save();
+                                    watchManager.Save();
+                                }
+                                PanelsHelper.breakPointUI.Clear();
+                                PanelsHelper.watchUI.Clear();
+                                breakPointManager.Project = project;
+                                breakPointManager.Load();
+                                breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
+                                watchManager.Project = project;
+                                watchManager.Load();
                             }
-                            PanelsHelper.breakPointUI.Clear();
-                            PanelsHelper.watchUI.Clear();
-                            breakPointManager.Project = project;
-                            breakPointManager.Load();
-                            breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
-
-                            watchManager.Project = project;
-                            watchManager.Load();
-                        }
-                        else
-                        {
-                            disableDebugger = true;
-                            if (breakPointManager.Project != null)
+                            else
                             {
-                                breakPointManager.Save();
-                                watchManager.Save();
+                                disableDebugger = true;
+                                if (breakPointManager.Project != null)
+                                {
+                                    breakPointManager.Save();
+                                    watchManager.Save();
+                                }
+                                PanelsHelper.breakPointUI.Clear();
+                                PanelsHelper.watchUI.Clear();
                             }
-                            PanelsHelper.breakPointUI.Clear();
-                            PanelsHelper.watchUI.Clear();
-                        }
+                            break;
+                        case ProjectManagerEvents.FileDeleted:
+                            breakPointManager.ClearAll((string)de.Data);
+                            breakPointManager.ResetAll();
+                            break;
                     }
-                    else if (disableDebugger) return;
+                    if (disableDebugger) return;
                     switch (de.Action)
                     {
                         case ProjectManagerCommands.HotBuild:
@@ -248,7 +253,7 @@ namespace FlashDebugger
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename))
@@ -262,7 +267,7 @@ namespace FlashDebugger
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
     }

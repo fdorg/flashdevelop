@@ -186,7 +186,7 @@ namespace System.Windows.Forms
 		    }
 		
 		    public static RECT FromIntPtr(IntPtr ptr){
-		    	var rect = Marshal.PtrToStructure<RECT>(ptr);
+		    	RECT rect = Marshal.PtrToStructure<RECT>(ptr);
 		    	return rect;
 		    }
 		    

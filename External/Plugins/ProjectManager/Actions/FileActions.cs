@@ -44,10 +44,7 @@ namespace ProjectManager.Actions
         public event FileMovedHandler FileMoved;
         public event FileMovedHandler FileCopied;
 
-        public FileActions(IMainForm mainForm)
-        {
-            this.mainForm = mainForm;
-        }
+        public FileActions(IMainForm mainForm) => this.mainForm = mainForm;
 
         void PushCurrentDirectory()
         {

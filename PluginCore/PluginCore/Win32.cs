@@ -89,7 +89,7 @@ namespace PluginCore
         [StructLayout(LayoutKind.Sequential)]
         public class SCROLLINFO
         {
-            public int cbSize = Marshal.SizeOf(typeof(SCROLLINFO));
+            public int cbSize = Marshal.SizeOf<SCROLLINFO>();
             public int fMask;
             public int nMin;
             public int nMax;

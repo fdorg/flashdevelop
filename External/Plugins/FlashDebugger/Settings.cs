@@ -234,11 +234,8 @@ namespace FlashDebugger
         [OnDeserialized]
         void OnDeserialized(StreamingContext context)
         {
-            if (m_CopyTreeMaxChars == 0)
-                m_CopyTreeMaxChars = 1000000;
-
-            if (m_CopyTreeMaxRecursion == 0)
-                m_CopyTreeMaxRecursion = 10;
+            if (m_CopyTreeMaxChars <= 0) m_CopyTreeMaxChars = 1000000;
+            if (m_CopyTreeMaxRecursion <= 0) m_CopyTreeMaxRecursion = 10;
         }
     }
 }
