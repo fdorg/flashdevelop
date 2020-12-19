@@ -3866,174 +3866,173 @@ namespace ScintillaNet
             }
             else if (m.Msg == WM_NOTIFY)
             {
-                var scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
-                if (scn.nmhdr.hwndFrom == HandleSci && !DisableAllSciEvents)
+                if (DisableAllSciEvents) return;
+                var scn = Marshal.PtrToStructure<SCNotification>(m.LParam);
+                if (scn.nmhdr.hwndFrom != HandleSci) return;
+                switch (scn.nmhdr.code)
                 {
-                    switch (scn.nmhdr.code)
-                    {
-                        case (uint)Enums.ScintillaEvents.StyleNeeded:
-                            StyleNeeded?.Invoke(this, scn.position);
-                            break;
+                    case (uint)Enums.ScintillaEvents.StyleNeeded:
+                        StyleNeeded?.Invoke(this, scn.position);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.CharAdded:
-                            CharAdded?.Invoke(this, scn.ch);
-                            break;
+                    case (uint)Enums.ScintillaEvents.CharAdded:
+                        CharAdded?.Invoke(this, scn.ch);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.SavePointReached:
-                            SavePointReached?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.SavePointReached:
+                        SavePointReached?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.SavePointLeft:
-                            SavePointLeft?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.SavePointLeft:
+                        SavePointLeft?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.ModifyAttemptRO:
-                            ModifyAttemptRO?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.ModifyAttemptRO:
+                        ModifyAttemptRO?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.Key:
-                            Key?.Invoke(this, scn.ch, scn.modifiers);
-                            break;
+                    case (uint)Enums.ScintillaEvents.Key:
+                        Key?.Invoke(this, scn.ch, scn.modifiers);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.DoubleClick:
-                            DoubleClick?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.DoubleClick:
+                        DoubleClick?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.UpdateUI:
-                            UpdateUI?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.UpdateUI:
+                        UpdateUI?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.MacroRecord:
-                            MacroRecord?.Invoke(this, scn.message, scn.wParam, scn.lParam);
-                            break;
+                    case (uint)Enums.ScintillaEvents.MacroRecord:
+                        MacroRecord?.Invoke(this, scn.message, scn.wParam, scn.lParam);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.MarginClick:
-                            MarginClick?.Invoke(this, scn.modifiers, scn.position, scn.margin);
-                            break;
+                    case (uint)Enums.ScintillaEvents.MarginClick:
+                        MarginClick?.Invoke(this, scn.modifiers, scn.position, scn.margin);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.NeedShown:
-                            NeedShown?.Invoke(this, scn.position, scn.length);
-                            break;
+                    case (uint)Enums.ScintillaEvents.NeedShown:
+                        NeedShown?.Invoke(this, scn.position, scn.length);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.Painted:
-                            Painted?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.Painted:
+                        Painted?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.UserListSelection:
-                            UserListSelection?.Invoke(this, scn.listType, MarshalStr(scn.text));
-                            break;
+                    case (uint)Enums.ScintillaEvents.UserListSelection:
+                        UserListSelection?.Invoke(this, scn.listType, MarshalStr(scn.text));
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.URIDropped:
-                            URIDropped?.Invoke(this, MarshalStr(scn.text));
-                            break;
+                    case (uint)Enums.ScintillaEvents.URIDropped:
+                        URIDropped?.Invoke(this, MarshalStr(scn.text));
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.DwellStart:
-                            DwellStart?.Invoke(this, scn.position, scn.x, scn.y);
-                            break;
+                    case (uint)Enums.ScintillaEvents.DwellStart:
+                        DwellStart?.Invoke(this, scn.position, scn.x, scn.y);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.DwellEnd:
-                            DwellEnd?.Invoke(this, scn.position, scn.x, scn.y);
-                            break;
+                    case (uint)Enums.ScintillaEvents.DwellEnd:
+                        DwellEnd?.Invoke(this, scn.position, scn.x, scn.y);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.Zoom:
-                            Zoom?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.Zoom:
+                        Zoom?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.HotspotClick:
-                            HotSpotClick?.Invoke(this, scn.modifiers, scn.position);
-                            break;
+                    case (uint)Enums.ScintillaEvents.HotspotClick:
+                        HotSpotClick?.Invoke(this, scn.modifiers, scn.position);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.HotspotDoubleClick:
-                            HotSpotDoubleClick?.Invoke(this, scn.modifiers, scn.position);
-                            break;
+                    case (uint)Enums.ScintillaEvents.HotspotDoubleClick:
+                        HotSpotDoubleClick?.Invoke(this, scn.modifiers, scn.position);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.CalltipClick:
-                            CallTipClick?.Invoke(this, scn.position);
-                            break;
+                    case (uint)Enums.ScintillaEvents.CalltipClick:
+                        CallTipClick?.Invoke(this, scn.position);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.AutoCSelection:
-                            AutoCSelection?.Invoke(this, MarshalStr(scn.text));
-                            break;
+                    case (uint)Enums.ScintillaEvents.AutoCSelection:
+                        AutoCSelection?.Invoke(this, MarshalStr(scn.text));
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.IndicatorClick:
-                            IndicatorClick?.Invoke(this, scn.position);
-                            break;
+                    case (uint)Enums.ScintillaEvents.IndicatorClick:
+                        IndicatorClick?.Invoke(this, scn.position);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.IndicatorRelease:
-                            IndicatorRelease?.Invoke(this, scn.position);
-                            break;
+                    case (uint)Enums.ScintillaEvents.IndicatorRelease:
+                        IndicatorRelease?.Invoke(this, scn.position);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.AutoCCharDeleted:
-                            AutoCCharDeleted?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.AutoCCharDeleted:
+                        AutoCCharDeleted?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.AutoCCancelled:
-                            AutoCCancelled?.Invoke(this);
-                            break;
+                    case (uint)Enums.ScintillaEvents.AutoCCancelled:
+                        AutoCCancelled?.Invoke(this);
+                        break;
 
-                        case (uint)Enums.ScintillaEvents.Modified:
-                            bool notify = false;
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.InsertText) > 0)
+                    case (uint)Enums.ScintillaEvents.Modified:
+                        bool notify = false;
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.InsertText) > 0)
+                        {
+                            TextInserted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
+                            notify = true;
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.DeleteText) > 0)
+                        {
+                            TextDeleted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
+                            notify = true;
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeStyle) > 0)
+                        {
+                            StyleChanged?.Invoke(this, scn.position, scn.length);
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeFold) > 0)
+                        {
+                            FoldChanged?.Invoke(this, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.UserPerformed) > 0)
+                        {
+                            UserPerformed?.Invoke(this);
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.UndoPerformed) > 0)
+                        {
+                            UndoPerformed?.Invoke(this);
+                            notify = true;
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.RedoPerformed) > 0)
+                        {
+                            RedoPerformed?.Invoke(this);
+                            notify = true;
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.LastStepInUndoRedo) > 0)
+                        {
+                            LastStepInUndoRedo?.Invoke(this);
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeMarker) > 0)
+                        {
+                            MarkerChanged?.Invoke(this, scn.line);
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeInsert) > 0)
+                        {
+                            BeforeInsert?.Invoke(this, scn.position, scn.length);
+                            notify = false;
+                        }
+                        if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeDelete) > 0)
+                        {
+                            BeforeDelete?.Invoke(this, scn.position, scn.length);
+                            notify = false;
+                        }
+                        if (notify && scn.text != null && Modified is { } modified)
+                        {
+                            try
                             {
-                                TextInserted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
-                                notify = true;
+                                var text = MarshalStr(scn.text, scn.length);
+                                modified(this, scn.position, scn.modificationType, text, scn.length, scn.linesAdded, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
                             }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.DeleteText) > 0)
-                            {
-                                TextDeleted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeStyle) > 0)
-                            {
-                                StyleChanged?.Invoke(this, scn.position, scn.length);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeFold) > 0)
-                            {
-                                FoldChanged?.Invoke(this, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.UserPerformed) > 0)
-                            {
-                                UserPerformed?.Invoke(this);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.UndoPerformed) > 0)
-                            {
-                                UndoPerformed?.Invoke(this);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.RedoPerformed) > 0)
-                            {
-                                RedoPerformed?.Invoke(this);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.LastStepInUndoRedo) > 0)
-                            {
-                                LastStepInUndoRedo?.Invoke(this);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeMarker) > 0)
-                            {
-                                MarkerChanged?.Invoke(this, scn.line);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeInsert) > 0)
-                            {
-                                BeforeInsert?.Invoke(this, scn.position, scn.length);
-                                notify = false;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeDelete) > 0)
-                            {
-                                BeforeDelete?.Invoke(this, scn.position, scn.length);
-                                notify = false;
-                            }
-                            if (notify && scn.text != null && Modified is { } modified)
-                            {
-                                try
-                                {
-                                    var text = MarshalStr(scn.text, scn.length);
-                                    modified(this, scn.position, scn.modificationType, text, scn.length, scn.linesAdded, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
-                                }
-                                catch { }
-                            }
-                            break;
-                    }
+                            catch { }
+                        }
+                        break;
                 }
             }
             else if (m.Msg == WM_DROPFILES)
