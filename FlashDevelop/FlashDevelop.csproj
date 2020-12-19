@@ -350,30 +350,15 @@
     <EmbeddedResource Include="Resources\QuickFindClose.png" />
     <EmbeddedResource Include="Resources\QuickFindNext.png" />
     <EmbeddedResource Include="Resources\QuickFindPrev.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\SnippetVars.en_US.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\SnippetVars.ja_JP.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\SnippetVars.de_DE.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\SnippetVars.eu_ES.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\SnippetVars.zh_CN.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\BookmarkIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\SnippetVars.ko_KR.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
