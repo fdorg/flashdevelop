@@ -1492,7 +1492,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Set extra descent for each line
+        /// Gets or sets extra descent for each line
         /// </summary>
         public int ExtraDescent
         {
@@ -1501,7 +1501,16 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Get the start of the range of style numbers used for margin text
+        /// Gets or sets number of margins
+        /// </summary>
+        public int Margins
+        {
+            get => (int) SPerform(2253);
+            set => SPerform(2252, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the start of the range of style numbers used for margin text
         /// </summary>
         public int MarginStyleOffset
         {
@@ -1683,10 +1692,7 @@ namespace ScintillaNet
         /// <summary>
         /// Sets a style to be italic or not.
         /// </summary>
-        public void StyleSetItalic(int style, bool italic)
-        {
-            SPerform(2054, style, italic ? 1 : 0);
-        }
+        public void StyleSetItalic(int style, bool italic) => SPerform(2054, style, italic ? 1 : 0);
 
         /// <summary>
         /// Gets whether a style is italic or not.
