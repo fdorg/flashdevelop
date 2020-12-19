@@ -30,7 +30,7 @@ namespace PluginCore.Utilities
                 if (m.Msg == Win32.WM_COPYDATA)
                 {
                     //convert the message LParam to the WM_COPYDATA structure
-                    var data = (Win32.COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof(Win32.COPYDATASTRUCT));
+                    var data = Marshal.PtrToStructure<Win32.COPYDATASTRUCT>(m.LParam);
                     object obj = null;
                     if (data.cbData > 0 && data.lpData != IntPtr.Zero)
                     {
@@ -42,8 +42,7 @@ namespace PluginCore.Utilities
                     }
                     _theInstance.OnNewInstanceMessage(obj);
                 }
-                else
-                    base.WndProc(ref m);
+                else base.WndProc(ref m);
             }
         }
 
