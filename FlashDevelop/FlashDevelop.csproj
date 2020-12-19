@@ -287,11 +287,7 @@
     <Compile Include="Managers\FileStateManager.cs" />
     <Compile Include="Managers\RecoveryManager.cs" />
     <Compile Include="Managers\SessionManager.cs" />
-    <Compile Include="Managers\StripBarManager.cs">
-    </Compile>
-    <Compile Include="Scripting.evaluator.cs" />
-    <Compile Include="Scripting.Extensions.cs" />
-    <Compile Include="Scripting.native.cs" />
+    <Compile Include="Managers\StripBarManager.cs" />
     <Compile Include="Settings\Accessors.cs" />
     <Compile Include="Settings\Properties.cs" />
     <Compile Include="Settings\Reflection.cs" />
