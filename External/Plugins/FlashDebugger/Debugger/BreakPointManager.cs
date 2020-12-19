@@ -27,7 +27,7 @@ namespace FlashDebugger
         public event ChangeBreakPointEventHandler ChangeBreakPointEvent;
         public event UpdateBreakPointEventHandler UpdateBreakPointEvent;
 
-        public List<BreakPointInfo> BreakPoints { get; private set; } = new List<BreakPointInfo>();
+        public List<BreakPointInfo> BreakPoints { get; private set; } = new();
 
         public IProject Project
         {
@@ -50,6 +50,18 @@ namespace FlashDebugger
         }
 
         public void ClearAll() => BreakPoints.Clear();
+
+        public void ClearAll(string fileName)
+        {
+            foreach (var it in BreakPoints)
+            {
+                if (it.FileFullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    it.IsDeleted = true;
+                    ChangeBreakPointEvent?.Invoke(this, new BreakPointArgs(it.FileFullPath, it.Line, it.Exp, it.IsDeleted, it.IsEnabled));
+                }
+            }
+        }
 
         public void ResetAll()
         {

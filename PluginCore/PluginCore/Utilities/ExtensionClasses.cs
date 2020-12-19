@@ -66,7 +66,7 @@ namespace PluginCore
         /// <param name="value">The string to compare to the substring at the end of this instance.</param>
         /// <returns><code>true</code> if <code>value</code> matches the end of this string; otherwise, <code>false</code>.</returns>
         public static bool EndsWithOrdinal(this string @this, string value) => @this.EndsWith(value, StringComparison.Ordinal);
-
+        
         /// <summary>
         /// Reports the zero-based index of the first occurrence of the specified string in the current <see cref="string"/> object using ordinal comparison option.
         /// <para/>
