@@ -7,6 +7,7 @@ using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
 using WeifenLuo.WinFormsUI.Docking;
+using TabDrawMode = ScintillaNet.Enums.TabDrawMode;
 
 namespace PluginCore
 {
@@ -576,7 +577,7 @@ namespace PluginCore
         bool EndAtLastLine { get; set; }
         string InsertionTriggers { get; set; }
         int ClipboardHistorySize { get; set; }
-
+        TabDrawMode TabDrawMode { get; set; }
         #endregion
     }
 

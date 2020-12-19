@@ -10,6 +10,7 @@ using Ookii.Dialogs;
 using PluginCore;
 using PluginCore.Localization;
 using ScintillaNet.Enums;
+using TabDrawMode = ScintillaNet.Enums.TabDrawMode;
 
 namespace FlashDevelop.Settings
 {
@@ -389,6 +390,11 @@ namespace FlashDevelop.Settings
                 clipboardHistorySize = value;
             }
         }
+
+        [DefaultValue(TabDrawMode.LongArrow)]
+        [DisplayName("Tab draw mode")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        public TabDrawMode TabDrawMode { get; set; } = TabDrawMode.LongArrow;
 
         #endregion
 

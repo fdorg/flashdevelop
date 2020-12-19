@@ -505,4 +505,10 @@ namespace ScintillaNet.Enums
         SelectedWord,
         None
     }
+
+    public enum TabDrawMode
+    {
+        LongArrow = 0,
+        StrikeOut = 1,
+    }
 }

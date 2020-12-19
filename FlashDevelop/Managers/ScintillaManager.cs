@@ -229,6 +229,7 @@ namespace FlashDevelop.Managers
                 sci.TabWidth = settings.TabWidth;
                 sci.ViewWS = Convert.ToInt32(settings.ViewWhitespace);
                 sci.WrapMode = Convert.ToInt32(settings.WrapText);
+                sci.TabDrawMode = (int) settings.TabDrawMode;
                 sci.SetProperty("fold", Convert.ToInt32(settings.UseFolding).ToString());
                 sci.SetProperty("fold.comment", Convert.ToInt32(settings.FoldComment).ToString());
                 sci.SetProperty("fold.compact", Convert.ToInt32(settings.FoldCompact).ToString());

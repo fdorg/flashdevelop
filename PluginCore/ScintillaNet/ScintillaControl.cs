@@ -1510,7 +1510,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Get the start of the range of style numbers used for annotations
+        /// Get or sets the start of the range of style numbers used for annotations
         /// </summary>
         public int AnnotationStyleOffset
         {
@@ -1519,7 +1519,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Get the start of the range of style numbers used for annotations
+        /// Get or sets the start of the range of style numbers used for annotations
         /// </summary>
         public bool AnnotationVisible
         {
@@ -1528,7 +1528,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Sets whether the maximum width line displayed is used to set scroll width.
+        /// Gets or sets whether the maximum width line displayed is used to set scroll width.
         /// </summary>
         public bool ScrollWidthTracking
         {
@@ -4976,14 +4976,22 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Gets of set the tab draw mode
+        /// 0 - The "long arrow" which is the normal/default way
+        /// 1 - The "strike out" is a single horizontal line (like the arrow but with no arrow head). This is how Sublime text does and maybe others. 
+        /// </summary>
+        public int TabDrawMode
+        {
+            get => (int) SPerform(2698);
+            set => SPerform(2699, value);
+        }
+
+        /// <summary>
         /// Insert text with wide-char to byte position conversion
         /// </summary>
         public void MBSafeInsertText(int position, string text)
         {
-            if (CodePage != 65001)
-            {
-                InsertText(position, text);
-            }
+            if (CodePage != 65001) InsertText(position, text);
             else
             {
                 int mbpos = MBSafePosition(position);
@@ -4996,10 +5004,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeGotoPos(int position)
         {
-            if (CodePage != 65001)
-            {
-                GotoPos(position);
-            }
+            if (CodePage != 65001) GotoPos(position);
             else
             {
                 int mbpos = MBSafePosition(position);
@@ -5012,10 +5017,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeSetSel(int start, int end)
         {
-            if (CodePage != 65001)
-            {
-                SetSel(start, end);
-            }
+            if (CodePage != 65001) SetSel(start, end);
             else
             {
                 var count = Text.Substring(start, end - start);
@@ -5030,10 +5032,7 @@ namespace ScintillaNet
         /// </summary>
         public void MBSafeSetSel(int start, string text)
         {
-            if (CodePage != 65001)
-            {
-                SetSel(start, start + text.Length);
-            }
+            if (CodePage != 65001) SetSel(start, start + text.Length);
             else
             {
                 int mbpos = MBSafePosition(start);
