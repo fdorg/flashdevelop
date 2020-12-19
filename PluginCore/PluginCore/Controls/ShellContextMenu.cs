@@ -538,8 +538,8 @@ namespace PluginCore.Controls
         const int S_OK = 0;
         const int S_FALSE = 1;
 
-        static readonly int cbMenuItemInfo = Marshal.SizeOf(typeof(MENUITEMINFO));
-        static readonly int cbInvokeCommand = Marshal.SizeOf(typeof(CMINVOKECOMMANDINFOEX));
+        static readonly int cbMenuItemInfo = Marshal.SizeOf<MENUITEMINFO>();
+        static readonly int cbInvokeCommand = Marshal.SizeOf<CMINVOKECOMMANDINFOEX>();
 
         #endregion
 
