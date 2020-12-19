@@ -80,7 +80,8 @@ namespace ScintillaNet.Enums
         Back = 2,
         Fore = 3,
         Text = 4,
-        Rtext = 5
+        Rtext = 5,
+        Color = 6,
     }
     
     public enum WhiteSpace

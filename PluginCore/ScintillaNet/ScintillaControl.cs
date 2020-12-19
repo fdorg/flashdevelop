@@ -1969,6 +1969,16 @@ namespace ScintillaNet
         public void SetMarginCursorN(int margin, int cursor) => SPerform(2248, margin, cursor);
 
         /// <summary>
+        /// Gets the color of a margin.
+        /// </summary>
+        public int GetMarginBackN(int margin) => (int) SPerform(2251, margin);
+
+        /// <summary>
+        /// Set the color of a margin.
+        /// </summary>
+        public void SetMarginBackN(int margin, int color) => SPerform(2250, margin, color);
+
+        /// <summary>
         /// Retrieve the style of an indicator.
         /// </summary>
         public int GetIndicStyle(int indic) => SPerform(2081, indic).ToInt32();
