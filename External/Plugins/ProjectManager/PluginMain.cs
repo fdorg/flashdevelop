@@ -62,6 +62,7 @@ namespace ProjectManager
         public const string ProjectCreated = "ProjectManager.ProjectCreated";
         public const string FileMoved = "ProjectManager.FileMoved";
         public const string FilePasted = "ProjectManager.FilePasted";
+        public const string FileDeleted = "ProjectManager.FileDeleted";
         public const string UserRefreshTree = "ProjectManager.UserRefreshTree";
         public const string BeforeSave = "ProjectManager.BeforeSave";
     }
@@ -185,7 +186,7 @@ namespace ProjectManager
             menus.BuildProject.Click += BuildProjectClick;
             menus.View.Click += delegate { OpenPanel(); };
             menus.GlobalClasspaths.Click += delegate { OpenGlobalClasspaths(); };
-            menus.ConfigurationSelector.FlatCombo.SelectedIndexChanged += delegate 
+            menus.ConfigurationSelector.FlatCombo.SelectedIndexChanged += (_, _) =>
             {
                 var isDebug = menus.ConfigurationSelector.Text == TextHelper.GetString("Info.Debug");
                 FlexCompilerShell.Cleanup();
@@ -286,8 +287,7 @@ namespace ProjectManager
 
             pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, Icons.Project.Img, DockState.DockRight);
             buildQueue = new Queue<string>();
-            buildTimer = new Timer();
-            buildTimer.Interval = 500;
+            buildTimer = new Timer {Interval = 500};
             buildTimer.Tick += OnBuildTimerTick;
             buildingAll = false;
             runOutput = false;
@@ -295,16 +295,17 @@ namespace ProjectManager
 
         void BuildProjectClick(object sender, EventArgs e)
         {
-            if (uiStatus == ProjectManagerUIStatus.NotBuilding) BuildProject();
-            else if (uiStatus == ProjectManagerUIStatus.Building)
+            switch (uiStatus)
             {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.AreYouSureToStopBuild");
-
-                DialogResult result = MessageBox.Show(PluginBase.MainForm, message,
-                    title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result == DialogResult.Yes)
-                    PluginBase.MainForm.KillProcess();
+                case ProjectManagerUIStatus.NotBuilding:
+                    BuildProject();
+                    break;
+                case ProjectManagerUIStatus.Building:
+                    var title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    var message = TextHelper.GetString("Info.AreYouSureToStopBuild");
+                    var result = MessageBox.Show(PluginBase.MainForm, message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result == DialogResult.Yes) PluginBase.MainForm.KillProcess();
+                    break;
             }
         }
 
@@ -1088,10 +1089,7 @@ namespace ProjectManager
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.TestProject, (noTrace) ? "Release" : "Debug");
             EventManager.DispatchEvent(this, de);
             if (de.Handled) return;
-            if (!buildActions.Build(project, true, noTrace))
-            {
-                BroadcastBuildFailed(project);
-            }
+            if (!buildActions.Build(project, true, noTrace)) BroadcastBuildFailed(project);
         }
 
         void RunProject()
@@ -1107,10 +1105,7 @@ namespace ProjectManager
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildProject, (noTrace) ? "Release" : "Debug");
             EventManager.DispatchEvent(this, de);
             if (de.Handled) return;
-            if (!buildActions.Build(project, false, noTrace))
-            {
-                BroadcastBuildFailed(project);
-            }
+            if (!buildActions.Build(project, false, noTrace)) BroadcastBuildFailed(project);
         }
 
         void CleanProject()
@@ -1119,17 +1114,12 @@ namespace ProjectManager
             {
                 var disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
                 EventManager.DispatchEvent(this, disableWatchers);
-
                 var project = activeProject; // TODO clean all projects
-
                 var de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
                 EventManager.DispatchEvent(this, de);
-                if (de.Handled)
-                    return;
-
+                if (de.Handled) return;
                 FlexCompilerShell.Cleanup();
-                if (!project.Clean())
-                    ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
+                if (!project.Clean()) ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
             }
             finally
             {
@@ -1148,6 +1138,8 @@ namespace ProjectManager
                 project.Save();
             }
             pluginUI.WatchParentOf(path);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.FileDeleted, path);
+            EventManager.DispatchEvent(this, de);
         }
 
         void FileMoved(string fromPath, string toPath)
@@ -1187,17 +1179,22 @@ namespace ProjectManager
 
         void SettingChanged(string setting)
         {
-            if (setting == "ExcludedFileTypes" || setting == "ExcludedDirectories" || setting == "ShowProjectClasspaths" || setting == "ShowGlobalClasspaths" || setting == "GlobalClasspath" || setting == "ShowExternalLibraries")
+            switch (setting)
             {
-                Tree.RebuildTree();
-            }
-            else if (setting == "ExecutableFileTypes")
-            {
-                FileInspector.ExecutableFileTypes = Settings.ExecutableFileTypes;
-            }
-            else if (setting == "GlobalClasspath")
-            {
-                FlexCompilerShell.Cleanup(); // clear compile cache for all projects
+                case "ExcludedFileTypes":
+                case "ExcludedDirectories":
+                case "ShowProjectClasspaths":
+                case "ShowGlobalClasspaths":
+                case "GlobalClasspath":
+                case "ShowExternalLibraries":
+                    Tree.RebuildTree();
+                    break;
+                case "ExecutableFileTypes":
+                    FileInspector.ExecutableFileTypes = Settings.ExecutableFileTypes;
+                    break;
+                default:
+                    if (setting == "GlobalClasspath") FlexCompilerShell.Cleanup(); // clear compile cache for all projects
+                    break;
             }
         }
 
