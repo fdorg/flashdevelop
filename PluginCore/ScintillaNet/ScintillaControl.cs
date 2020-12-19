@@ -2736,6 +2736,14 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldFlags(int flags) => SPerform(2233, flags);
 
+        public void ToggleFoldShowText(int line, char ch) => SPerform(2700, line, ch);
+
+        public int FoldDisplayTextStyle
+        {
+            get => (int) SPerform(2707);
+            set => SPerform(2701, value);
+        }
+
         /// <summary>
         /// Ensure a particular line is visible by expanding any header line hiding it.
         /// Use the currently set visibility policy to determine which range to display.
@@ -2745,10 +2753,7 @@ namespace ScintillaNet
         /// <summary>
         /// Get position of start of word.
         /// </summary>
-        public int WordStartPosition(int pos, bool onlyWordCharacters)
-        {
-            return SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
-        }
+        public int WordStartPosition(int pos, bool onlyWordCharacters) => SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
 
         /// <summary>
         /// Get position of end of word.

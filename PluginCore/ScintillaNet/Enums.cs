@@ -107,6 +107,7 @@ namespace ScintillaNet.Enums
         ControlChar = 36,
         IndentGuide = 37,
         Calltip = 38,
+        FoldDisplayText = 39,
         LastPredefined = 39,
         Max = 255
     }
