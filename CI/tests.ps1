@@ -23,30 +23,29 @@ If ($env:HAXEPATH -eq $null)
 
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
-    $testFiles = [System.IO.Directory]::GetFiles("FlashDevelop\Bin\Debug", "*.Tests.dll")
+    $path = [System.IO.Directory]::GetCurrentDirectory() + "/FlashDevelop/Bin/Debug"
+    $testFiles = [System.IO.Directory]::GetFiles(path, "*.Tests.dll")
     IF ($testFiles.Count -eq 0)
     {
         Write-Output "No test assemblies found"
         exit 1
     }
-    ELSE
-    {
-        #nunit3-console.exe $testFiles --result=myresults.xml;format=AppVeyor
-        #nunit3-console.exe $testFiles --x86
-        nunit3-console.exe --version
-        nunit3-console.exe $testFiles
 
-        #It turns out it's not needed to upload the file
-        #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
-        #{
-        #    $wc = New-Object 'System.Net.WebClient'
-        #    $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResult.xml))
-        #}
+    cd $path
+    #nunit3-console.exe $testFiles --result=myresults.xml;format=AppVeyor
+    #nunit3-console.exe $testFiles --x86
+    nunit3-console.exe $testFiles
+
+    #It turns out it's not needed to upload the file
+    #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
+    #{
+    #    $wc = New-Object 'System.Net.WebClient'
+    #    $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResult.xml))
+    #}
         
-        if ($LASTEXITCODE -ne 0)
-        {
-            exit 1
-        }
+    if ($LASTEXITCODE -ne 0)
+    {
+        exit 1
     }
 }
 ELSE
