@@ -17,15 +17,14 @@ msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Reb
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-echo %AppVeyorCI%
-::if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
+if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
+
 echo "-----------------------------------------------------"
 cd "FlashDevelop\Bin\Debug"
 dir
 cd "..\..\.."
 echo "-----------------------------------------------------"
 goto :error
-powershell.exe -file ci\tests.ps1
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
