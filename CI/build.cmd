@@ -27,24 +27,17 @@ del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
 del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
 del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
 del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
-del "FlashDevelop\Bin/Debug\System.*" /Q
-del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
-del "FlashDevelop\Bin/Debug\CSScriptLibrary.*" /Q
-del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
-::del "FlashDevelop\Bin/Debug\Microsoft.Threading.*" /Q
-
-:::: Check if the build was triggered by a pull request
-::if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
-::    :: Create the archive
-::    7z a -tzip FlashDevelop\Installer\Binary\FlashDevelopPR_%APPVEYOR_PULL_REQUEST_NUMBER%.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
-::    exit 0
-::)
 
 :: Build AnyCPU version for 64bits support
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
+
+del "FlashDevelop\Bin/Debug\System.*" /Q
+del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
+del "FlashDevelop\Bin/Debug\CSScriptLibrary.*" /Q
+del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Create the installer
 makensis FlashDevelop\Installer\Installer.nsi
@@ -94,6 +87,10 @@ ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
 
 : Remove files after build
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
+del "FlashDevelop\Bin/Debug\System.*" /Q
+del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
+del "FlashDevelop\Bin/Debug\CSScriptLibrary.*" /Q
+del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
