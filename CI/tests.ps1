@@ -14,13 +14,11 @@ Param (
 
 If ($env:HAXEPATH -eq $null)
 {
-	# https://help.appveyor.com/discussions/problems/5616-not-able-to-build-due-to-problem-in-chocolateyinstallps1
 	cinst.exe haxe --version 4.1.4 -y --no-progress
+    $env:HAXEPATH = "C:\ProgramData\chocolatey\lib\haxe"
     Write-Output "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     Write-Output "env:HAXEPATH: " + $env:HAXEPATH
-    $env:HAXEPATH = "C:\ProgramData\chocolatey\lib\haxe"
     Get-ChildItem -Path $env:HAXEPATH
-    haxe --version
 }
 
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
