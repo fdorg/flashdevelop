@@ -24,7 +24,7 @@ If ($env:HAXEPATH -eq $null)
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
     cd "FlashDevelop\Bin\Debug"
-    echo [System.IO.Directory]::GetCurrentDirectory();
+    echo [System.IO.Directory]::GetCurrentDirectory()
     $testFiles = [System.IO.Directory]::GetFiles(".", "*.Tests.dll")
     IF ($testFiles.Count -eq 0)
     {
