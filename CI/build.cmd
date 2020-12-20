@@ -36,7 +36,7 @@ if %errorlevel% neq 0 goto :error
 
 del "FlashDevelop\Bin/Debug\System.*" /Q
 del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
-del "FlashDevelop\Bin/Debug\CSScriptLibrary.*" /Q
+del "FlashDevelop\Bin/Debug\CSScriptLibrary.xml" /Q
 del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Create the installer
@@ -89,7 +89,7 @@ ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
 del "FlashDevelop\Bin/Debug\System.*" /Q
 del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
-del "FlashDevelop\Bin/Debug\CSScriptLibrary.*" /Q
+del "FlashDevelop\Bin/Debug\CSScriptLibrary.xml" /Q
 del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Check for build errors
