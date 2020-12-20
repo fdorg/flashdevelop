@@ -20,7 +20,9 @@ If ($env:HAXEPATH -eq $null)
 	#$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
 	#RefreshEnv
 
+    Write-Output "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     Write-Output $env:HAXEPATH
+    haxe --version
 }
 
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
