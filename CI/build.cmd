@@ -12,7 +12,7 @@
 call SetVersion.bat
 
 :: Build the main solution and run tests
-msbuild FlashDevelop.sln /p:Configuration=Debug+Tests /p:Platform="x64" /t:Rebuild %MSBuildLogger%
+msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -22,8 +22,25 @@ if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
+:: Remove testing binaries so we can reuse the current build
+del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
+del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
+del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
+del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
+del "FlashDevelop\Bin/Debug\System.*" /Q
+del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
+del "FlashDevelop\Bin/Debug\CSScriptLibrary.xml" /Q
+del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
+
+:: Check if the build was triggered by a pull request
+if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" (
+    :: Create the archive
+    7z a -tzip FlashDevelop\Installer\Binary\FlashDevelopPR_%APPVEYOR_PULL_REQUEST_NUMBER%.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+    exit 0
+)
+
 :: Build the main solution and run tests
-msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86 /t:Rebuild %MSBuildLogger%
+msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x64 /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
