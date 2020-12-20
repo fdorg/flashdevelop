@@ -19,13 +19,6 @@ if %errorlevel% neq 0 goto :error
 
 if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
 
-echo "-----------------------------------------------------"
-cd "FlashDevelop\Bin\Debug"
-dir
-cd "..\..\.."
-echo "-----------------------------------------------------"
-goto :error
-
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
