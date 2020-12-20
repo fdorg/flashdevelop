@@ -23,16 +23,15 @@ If ($env:HAXEPATH -eq $null)
 
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
-    cd "FlashDevelop\Bin\Debug"
-    Get-Location
-    Get-ChildItem
-    $testFiles = [System.IO.Directory]::GetFiles(".", "*.Tests.dll")
+    $testFiles = [System.IO.Directory]::GetFiles("FlashDevelop\Bin\Debug", "*.Tests.dll")
+    Write-Output "Count: " + $testFiles.Count
     IF ($testFiles.Count -eq 0)
     {
         Write-Output "No test assemblies found"
     }
     ELSE
     {
+        cd "FlashDevelop\Bin\Debug"
         nunit3-console.exe $testFiles --result=TestResult.xml;format=AppVeyor
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
