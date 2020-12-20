@@ -27,11 +27,14 @@ If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
     IF ($testFiles.Count -eq 0)
     {
         Write-Output "No test assemblies found"
+        exit 1
     }
     ELSE
     {
         #nunit3-console.exe $testFiles --result=myresults.xml;format=AppVeyor
-        nunit3-console.exe $testFiles --x86
+        #nunit3-console.exe $testFiles --x86
+        nunit3-console.exe --version
+        nunit3-console.exe $testFiles
 
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
@@ -49,4 +52,5 @@ If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 ELSE
 {
     Write-Output "NUnit runner not found"
+    exit 1
 }
