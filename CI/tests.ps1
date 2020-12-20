@@ -18,6 +18,8 @@ If ($env:HAXEPATH -eq $null)
 	cinst.exe haxe --version 4.1.4 -y --no-progress
     Write-Output "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     Write-Output "env:HAXEPATH: " + $env:HAXEPATH
+    $env:HAXEPATH = "C:\ProgramData\chocolatey\lib\haxe"
+    Get-ChildItem -Path $env:HAXEPATH
     haxe --version
 }
 
