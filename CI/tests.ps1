@@ -31,7 +31,7 @@ If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
     ELSE
     {
         #nunit3-console.exe $testFiles --result=myresults.xml;format=AppVeyor
-        nunit3-console.exe $testFiles
+        nunit3-console.exe $testFiles --x86
 
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
