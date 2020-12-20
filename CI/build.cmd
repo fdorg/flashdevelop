@@ -28,6 +28,9 @@ del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
 del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
 del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
 del "FlashDevelop\Bin/Debug\System.*" /Q
+del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
+del "FlashDevelop\Bin/Debug\CSScriptLibrary.*" /Q
+del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 ::del "FlashDevelop\Bin/Debug\Microsoft.Threading.*" /Q
 
 :::: Check if the build was triggered by a pull request
