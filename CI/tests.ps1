@@ -31,7 +31,6 @@ If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
     }
     ELSE
     {
-        cd "FlashDevelop\Bin\Debug"
         nunit3-console.exe $testFiles --result=TestResult.xml;format=AppVeyor
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
