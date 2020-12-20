@@ -72,6 +72,7 @@ namespace HaXeContext.Completion.Haxe3
         public bool IsInterpolationStringStyle(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
+            return true;
             return ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, sci.CurrentPos);
         }
 
