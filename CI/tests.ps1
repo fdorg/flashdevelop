@@ -24,7 +24,7 @@ If ($env:HAXEPATH -eq $null)
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
     $path = [System.IO.Directory]::GetCurrentDirectory() + "/FlashDevelop/Bin/Debug"
-    $testFiles = [System.IO.Directory]::GetFiles(path, "*.Tests.dll")
+    $testFiles = [System.IO.Directory]::GetFiles($path, "*.Tests.dll")
     IF ($testFiles.Count -eq 0)
     {
         Write-Output "No test assemblies found"
