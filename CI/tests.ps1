@@ -15,7 +15,7 @@ Param (
 If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe --version 4.1.4 -y --no-progress
-    $paths = [System.IO.Directory]::GetDirectories("C:\ProgramData\chocolatey\lib\haxe", "haxe_");
+    $paths = [System.IO.Directory]::GetDirectories("C:\ProgramData\chocolatey\lib\haxe", "haxe_*");
     Write-Output "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     Get-ChildItem -Path "C:\ProgramData\chocolatey\lib\haxe"
     Write-Output "paths: " + $paths
