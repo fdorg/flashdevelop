@@ -245,6 +245,7 @@
   <ItemGroup>
     <PackageReference Include="CS-Script" Version="3.30.4" />
   </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
     <PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
   </PropertyGroup>
@@ -267,5 +268,4 @@ IF EXIST "$(TargetDir)$(TargetName)86$(TargetExt)" move /Y "$(TargetDir)$(Target
     <PostBuildEvent>if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"; fi &amp;&amp;
       if [ -d "$(TargetDir)$(TargetName)86$(TargetExt)" ]; then mv -f "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"; fi</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
