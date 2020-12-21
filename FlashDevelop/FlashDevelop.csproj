@@ -392,9 +392,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <PackageReference Include="CS-Script" Version="3.30.4" />
+    <PackageReference Include="LitJson" Version="0.16.0" />
   </ItemGroup>
+  <!-- <ItemGroup> -->
+    <!-- <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" /> -->
+    <!-- <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" /> -->
+  <!-- </ItemGroup> -->
   <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
     <PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
   </PropertyGroup>
@@ -417,12 +421,5 @@ IF EXIST "$(TargetDir)$(TargetName)86$(TargetExt)" move /Y "$(TargetDir)$(Target
     <PostBuildEvent>if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"; fi &amp;&amp;
       if [ -d "$(TargetDir)$(TargetName)86$(TargetExt)" ]; then mv -f "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"; fi</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-  </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
