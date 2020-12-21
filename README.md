@@ -5,7 +5,7 @@ FlashDevelop is a free and open source (MIT license) source code editor.
 
 [![FlashDevelop](http://flashdevelop.org/screenshots/fdstart-mini.png "FlashDevelop")](http://www.flashdevelop.org/)
 
-FlashDevelop offers first class support for Flash ActionScript (2 and 3) and Haxe development: great and fast code completion & code generation, projects compilation & Flash debugging, plenty of project templates, SWF/SWC exploration, etc.
+FlashDevelop offers first class support for Flash ActionScript (2 and 3) and [Haxe](https://haxe.org/) development: great and fast code completion & code generation, projects compilation & Flash debugging, plenty of project templates, SWF/SWC exploration, etc.
 
 FlashDevelop is more generally a great web developer IDE with integrated source-control support (svn, git, mercurial), tasks/todo, snippets, XML/HTML/CSS completion and built-in zen-coding for HTML.
 
@@ -26,7 +26,7 @@ Building
 --------
 
 * Open in [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) (Community version is free),
-* Click the solution and select "Release|x86" from "Active config" in Properties panel,
+* Click the solution and select "Release|x86" or "Release|x64" from "Active config" in Properties panel,
 * Build the entire solution, the built binary will run in standalone mode
 
 Contribute
