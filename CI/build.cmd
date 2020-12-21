@@ -98,11 +98,15 @@ del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
 del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 echo "End: Remove files after build"
 
+dir FlashDevelop\Bin\Debug\
+
+echo "Start: Rename binaries"
 :: Rename binaries
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
+echo "End: Rename binaries"
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
