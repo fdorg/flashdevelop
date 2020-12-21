@@ -1325,11 +1325,12 @@ namespace ASCompletion.Completion
         public List<MemberModel> ParseFunctionParameters(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
+            var ctx = ASContext.GetLanguageContext(sci.ConfigurationLanguage);
             var list = new MemberList();
-            list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
-            list.Merge(ASContext.Context.CurrentModel.Imports);
+            list.Merge(ctx.GetVisibleExternalElements());
+            list.Merge(ctx.CurrentModel.Imports);
             ASContext.Context.GetVisibleExternalElements().Returns(list);
-            var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos) .Select(it => it.result.Type ?? it.result.Member).ToList();
+            var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
             return result;
         }
 

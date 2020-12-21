@@ -12,6 +12,17 @@
 call SetVersion.bat
 
 :: Build the main solution and run tests
+msbuild FlashDevelop.sln /p:Configuration=Debug+Tests /p:Platform="x64" /t:Rebuild %MSBuildLogger%
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
+
+if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
+
+:: Build the main solution and run tests
 msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors

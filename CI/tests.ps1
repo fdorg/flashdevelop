@@ -16,6 +16,11 @@ If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe --version 4.1.4 -y --no-progress
     $env:HAXEPATH = [System.IO.Directory]::GetDirectories("C:\ProgramData\chocolatey\lib\haxe", "haxe_*")[0];
+    If ($env:HAXEPATH -eq $null)
+    {
+        Write-Output "HAXEPATH is invalid"
+        exit 1
+    }
 }
 
 If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
@@ -30,8 +35,8 @@ If ((Get-Command "nunit3-console.exe" -ErrorAction SilentlyContinue) -ne $null)
 
     cd $path
     #nunit3-console.exe $testFiles --result=myresults.xml;format=AppVeyor
-    nunit3-console.exe $testFiles --x86
-    #nunit3-console.exe $testFiles
+    #nunit3-console.exe $testFiles --x86
+    nunit3-console.exe $testFiles
 
     #It turns out it's not needed to upload the file
     #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
