@@ -47,7 +47,6 @@ if %errorlevel% neq 0 goto :error
 
 del "FlashDevelop\Bin/Debug\System.*" /Q
 del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
-del "FlashDevelop\Bin/Debug\CSScriptLibrary.xml" /Q
 del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Create the installer
