@@ -90,6 +90,7 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
+dir FlashDevelop\Bin\Debug\
 echo "Start: Remove files after build"
 :: Remove files after build
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
@@ -117,8 +118,10 @@ makensis FlashDevelop\Installer\Installer.nsi
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
 
+echo "Start: Create the archive"
 :: Create the archive
 7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+echo "End: Create the archive"
 
 :: Done
 exit 0
