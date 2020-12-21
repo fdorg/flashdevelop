@@ -11,6 +11,8 @@
     <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -69,6 +71,57 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\CheckedComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TriStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\AirWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AirWizard.Designer.cs">
+      <DependentUpon>AirWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ListItem.cs" />
+    <Compile Include="Forms\IOSDeviceManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\IOSDeviceManager.Designer.cs">
+      <DependentUpon>IOSDeviceManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LocaleManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LocaleManager.Designer.cs">
+      <DependentUpon>LocaleManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WizardHelper.cs" />
+    <Compile Include="Managers\AndroidManifestManager.cs" />
+    <Compile Include="Managers\IphonePlistManager.cs" />
+    <Compile Include="PluginMain.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Managers\PropertyManager.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Controls\TableLayoutPanelExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\IOSDeviceManager.resx">
+      <DependentUpon>IOSDeviceManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\blockdevice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\blockdevice_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\AirWizard.resx">
+      <DependentUpon>AirWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\irc_protocol.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
