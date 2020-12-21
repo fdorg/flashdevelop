@@ -11,8 +11,6 @@
     <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -65,59 +63,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Commands\CallFlashIDE.cs" />
-    <Compile Include="Commands\CreateTrustFile.cs" />
-    <Compile Include="Completion\ArgumentsProcessor.cs" />
-    <Compile Include="Completion\ASComplete.cs" />
-    <Compile Include="Completion\ASGenerator.cs" />
-    <Compile Include="Completion\Brace.cs" />
-    <Compile Include="Completion\CodeUtils.cs" />
-    <Compile Include="Generators\CodeGeneratorDefaultBehavior.cs" />
-    <Compile Include="Generators\CodeGeneratorInterfaceBehavior.cs" />
-    <Compile Include="Generators\DocumenattionGenerator.cs" />
-    <Compile Include="Generators\ICodeGeneratorBehavior.cs" />
-    <Compile Include="Generators\IContextualGenerator.cs" />
-    <Compile Include="Completion\Reformater.cs" />
-    <Compile Include="Completion\TemplateUtils.cs" />
-    <Compile Include="Context\ASContext.cs" />
-    <Compile Include="Completion\ASDocumentation.cs" />
-    <Compile Include="Completion\ContextFeatures.cs" />
-    <Compile Include="Context\IASContext.cs" />
-    <Compile Include="Controls\AddClosingBracesRulesEditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\ReferenceList.cs" />
-    <Compile Include="CustomControls\StateSavingTreeView.cs" />
-    <Compile Include="CustomControls\ModelsExplorer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CustomControls\ModelsExplorer.Designer.cs">
-      <DependentUpon>ModelsExplorer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\AddClosingBracesRulesEditor.cs" />
-    <Compile Include="Helpers\ASTCache.cs" />
-    <Compile Include="Helpers\FlashErrorsWatcher.cs" />
-    <Compile Include="Helpers\ModifierOrderEditor.cs" />
-    <Compile Include="Model\ASFileParser.cs" />
-    <Compile Include="Model\ClassModelExtensions.cs" />
-    <Compile Include="Model\MemberModel.cs" />
-    <Compile Include="Model\ClassModel.cs" />
-    <Compile Include="Model\Enums.cs" />
-    <Compile Include="Model\FileModel.cs" />
-    <Compile Include="Model\PathExplorer.cs" />
-    <Compile Include="Model\PathModel.cs" />
-    <Compile Include="PluginMain.cs" />
-    <Compile Include="PluginUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\GeneralSettings.cs" />
-    <Compile Include="Settings\IContextSettings.cs" />
-    <Compile Include="Win32\FixedTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -129,40 +74,5 @@
       <Name>PluginCore</Name>
       <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\CheckAS.png" />
-    <EmbeddedResource Include="Icons\Class.png" />
-    <EmbeddedResource Include="Icons\FilePlain.png" />
-    <EmbeddedResource Include="Icons\FolderClosed.png" />
-    <EmbeddedResource Include="Icons\FolderOpen.png" />
-    <EmbeddedResource Include="Icons\Intrinsic.png" />
-    <EmbeddedResource Include="Icons\Method.png" />
-    <EmbeddedResource Include="Icons\MethodPrivate.png" />
-    <EmbeddedResource Include="Icons\Package.png" />
-    <EmbeddedResource Include="Icons\Property.png" />
-    <EmbeddedResource Include="Icons\PropertyPrivate.png" />
-    <EmbeddedResource Include="Icons\QuickBuild.png" />
-    <EmbeddedResource Include="Icons\Template.png" />
-    <EmbeddedResource Include="Icons\Variable.png" />
-    <EmbeddedResource Include="Icons\VariablePrivate.png" />
-    <EmbeddedResource Include="Icons\UpDownArrow.png" />
-    <EmbeddedResource Include="Icons\Const.png" />
-    <EmbeddedResource Include="Icons\ConstPrivate.png" />
-    <EmbeddedResource Include="Icons\ConstProtected.png" />
-    <EmbeddedResource Include="Icons\Declaration.png" />
-    <EmbeddedResource Include="Icons\Interface.png" />
-    <EmbeddedResource Include="Icons\MethodProtected.png" />
-    <EmbeddedResource Include="Icons\MethodStatic.png" />
-    <EmbeddedResource Include="Icons\MethodStaticPrivate.png" />
-    <EmbeddedResource Include="Icons\MethodStaticProtected.png" />
-    <EmbeddedResource Include="Icons\PropertyProtected.png" />
-    <EmbeddedResource Include="Icons\PropertyStatic.png" />
-    <EmbeddedResource Include="Icons\PropertyStaticPrivate.png" />
-    <EmbeddedResource Include="Icons\PropertyStaticProtected.png" />
-    <EmbeddedResource Include="Icons\VariableProtected.png" />
-    <EmbeddedResource Include="Icons\VariableStatic.png" />
-    <EmbeddedResource Include="Icons\VariableStaticPrivate.png" />
-    <EmbeddedResource Include="Icons\VariableStaticProtected.png" />
   </ItemGroup>
 </Project>
