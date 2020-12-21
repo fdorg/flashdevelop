@@ -1,144 +1,147 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AS3Context</RootNamespace>
-    <AssemblyName>AS3Context</AssemblyName>
-    <TargetFramework>net48</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="AbcConverter.cs" />
-    <Compile Include="AS3Settings.cs" />
-    <Compile Include="Compiler\FdbWrapper.cs" />
-    <Compile Include="Compiler\FlexShells.cs" />
-    <Compile Include="Compiler\FlexDebugger.cs" />
-    <Compile Include="Completion\CodeComplete.cs" />
-    <Compile Include="Context.cs" />
-    <Compile Include="Controls\ProfilerLiveObjectsView.cs">
-    </Compile>
-    <Compile Include="Controls\ProfilerMemView.cs" />
-    <Compile Include="Controls\ProfilerObjectsView.cs">
-    </Compile>
-    <Compile Include="Controls\ProfilerUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ProfilerUI.Designer.cs">
-      <DependentUpon>ProfilerUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ObjectRefsGrid.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MxmlComplete.cs" />
-    <Compile Include="MxmlFilter.cs" />
-    <Compile Include="PluginMain.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Aga, Version=1.6.1.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\FlashDevelop\Bin\Debug\Aga.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SwfOp, Version=1.0.0.41016, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\FlashDevelop\Bin\Debug\SwfOp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
-      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
-      <Name>PluginCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\AS2Context\AS2Context.csproj">
-      <Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
-      <Name>AS2Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
-      <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
-      <Name>ASCompletion</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\FlashConnect\FlashConnect.csproj">
-      <Project>{D6AAF434-F4DF-4376-863D-109A8762CECA}</Project>
-      <Name>FlashConnect</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
-      <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
-      <Name>ProjectManager</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\XMLCompletion\XMLCompletion.csproj">
-      <Project>{556F43A0-C288-471A-8CD8-A787FC7ACA34}</Project>
-      <Name>XMLCompletion</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\FlexShells.jar" />
-    <EmbeddedResource Include="Resources\Profiler.swf" />
-  </ItemGroup>
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>AS3Context</RootNamespace>
+		<AssemblyName>AS3Context</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="AbcConverter.cs" />
+		<Compile Include="AS3Settings.cs" />
+		<Compile Include="Compiler\FdbWrapper.cs" />
+		<Compile Include="Compiler\FlexShells.cs" />
+		<Compile Include="Compiler\FlexDebugger.cs" />
+		<Compile Include="Completion\CodeComplete.cs" />
+		<Compile Include="Context.cs" />
+		<Compile Include="Controls\ProfilerLiveObjectsView.cs">
+		</Compile>
+		<Compile Include="Controls\ProfilerMemView.cs" />
+		<Compile Include="Controls\ProfilerObjectsView.cs">
+		</Compile>
+		<Compile Include="Controls\ProfilerUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\ProfilerUI.Designer.cs">
+			<DependentUpon>ProfilerUI.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Controls\ObjectRefsGrid.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="MxmlComplete.cs" />
+		<Compile Include="MxmlFilter.cs" />
+		<Compile Include="PluginMain.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference
+			Include="Aga, Version=1.6.1.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\..\..\FlashDevelop\Bin\Debug\Aga.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="SwfOp, Version=1.0.0.41016, Culture=neutral, processorArchitecture=x86">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\..\..\FlashDevelop\Bin\Debug\SwfOp.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+			<Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+			<Name>PluginCore</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\AS2Context\AS2Context.csproj">
+			<Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
+			<Name>AS2Context</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
+			<Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
+			<Name>ASCompletion</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\FlashConnect\FlashConnect.csproj">
+			<Project>{D6AAF434-F4DF-4376-863D-109A8762CECA}</Project>
+			<Name>FlashConnect</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
+			<Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
+			<Name>ProjectManager</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\XMLCompletion\XMLCompletion.csproj">
+			<Project>{556F43A0-C288-471A-8CD8-A787FC7ACA34}</Project>
+			<Name>XMLCompletion</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\FlexShells.jar" />
+		<EmbeddedResource Include="Resources\Profiler.swf" />
+	</ItemGroup>
 </Project>

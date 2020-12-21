@@ -1,271 +1,280 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FlashDevelop</RootNamespace>
-    <AssemblyName>FlashDevelop</AssemblyName>
-    <StartupObject>FlashDevelop.Program</StartupObject>
-    <TargetZone>LocalIntranet</TargetZone>
-    <GenerateManifests>false</GenerateManifests>
-    <ApplicationIcon>Resources\FlashDevelopIcon.ico</ApplicationIcon>
-    <ApplicationManifest>Properties\Program.manifest</ApplicationManifest>
-    <TargetFramework>net48</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <MapFileExtensions>true</MapFileExtensions>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <RuntimeIdentifiers>win-x64;win-x86;</RuntimeIdentifiers>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <Platforms>x64;x86;AnyCPU</Platforms>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <LangVersion>9</LangVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <LangVersion>9</LangVersion>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <LangVersion>9</LangVersion>
-    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <LangVersion>9</LangVersion>
-    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <Prefer32Bit>true</Prefer32Bit>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <Prefer32Bit>true</Prefer32Bit>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Controls\ArgEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FilteredGrid.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\QuickFind.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ArgumentDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\FormState.cs" />
-    <Compile Include="Dialogs\ArgReplaceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ClipboardHistoryDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ControlDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\HashDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\EditorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ShortcutDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\SnippetDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Managers\CleanupManager.cs" />
-    <Compile Include="Managers\ClipboardManager.cs" />
-    <Compile Include="Managers\FilePollManager.cs" />
-    <Compile Include="Managers\MarkerManager.cs" />
-    <Compile Include="Managers\OldTabsManager.cs" />
-    <Compile Include="Managers\ShortcutManager.cs" />
-    <Compile Include="Managers\TabTextManager.cs" />
-    <Compile Include="Managers\ThemeManager.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controls\Browser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Dialogs\FirstRunDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\FRInFilesDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\FRInDocDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ErrorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\RecoveryDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\SettingDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\UpdateDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Globals.cs" />
-    <Compile Include="Managers\FileStateManager.cs" />
-    <Compile Include="Managers\RecoveryManager.cs" />
-    <Compile Include="Managers\SessionManager.cs" />
-    <Compile Include="Managers\StripBarManager.cs" />
-    <Compile Include="Settings\Accessors.cs" />
-    <Compile Include="Settings\Properties.cs" />
-    <Compile Include="Settings\Reflection.cs" />
-    <Compile Include="Dialogs\AboutDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\GoToDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Docking\DockablePanel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Docking\TabbedDocument.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Helpers\FileNameHelper.cs" />
-    <Compile Include="Helpers\ResourceHelper.cs" />
-    <Compile Include="Managers\ButtonManager.cs" />
-    <Compile Include="Managers\PrintingManager.cs" />
-    <Compile Include="Managers\ScintillaManager.cs" />
-    <Compile Include="Managers\SnippetManager.cs" />
-    <Compile Include="Managers\TabbingManager.cs" />
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Utilities\ArgsProcessor.cs" />
-    <Compile Include="Managers\ImageManager.cs" />
-    <Compile Include="Managers\LayoutManager.cs" />
-    <Compile Include="Utilities\FRDialogGenerics.cs" />
-    <Compile Include="Utilities\PluginServices.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <BaseApplicationManifest Include="Properties\Program.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PluginCore\PluginCore.csproj">
-      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
-      <Name>PluginCore</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Dialogs\ControlDialog.resx">
-      <DependentUpon>ControlDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\AboutDialog.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Controls\Browser.resx">
-      <DependentUpon>Browser.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\FlashDevelopIcon.ico" />
-    <EmbeddedResource Include="Resources\QuickFindClose.png" />
-    <EmbeddedResource Include="Resources\QuickFindNext.png" />
-    <EmbeddedResource Include="Resources\QuickFindPrev.png" />
-    <EmbeddedResource Include="Resources\SnippetVars.en_US.txt" />
-    <EmbeddedResource Include="Resources\SnippetVars.ja_JP.txt" />
-    <EmbeddedResource Include="Resources\SnippetVars.de_DE.txt" />
-    <EmbeddedResource Include="Resources\SnippetVars.eu_ES.txt" />
-    <EmbeddedResource Include="Resources\SnippetVars.zh_CN.txt" />
-    <EmbeddedResource Include="Resources\BookmarkIcon.png" />
-    <EmbeddedResource Include="Resources\SnippetVars.ko_KR.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CS-Script" Version="3.30.4" />
-  </ItemGroup>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-  <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
-    <PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
-    <PreBuildEvent>"$(SolutionDir)SetVersion.sh" "$(SolutionDir)"</PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' != 'Unix' And '$(Platform)' == 'AnyCPU' ">
-    <PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)" &amp;&amp; ^
-IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"</PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(Platform)' == 'AnyCPU' ">
-    <PreBuildEvent>"$(SolutionDir)SetVersion.sh" "$(SolutionDir)" &amp;&amp;
-if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"; fi</PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' != 'Unix' And  '$(Platform)' == 'AnyCPU' ">
-    <PostBuildEvent>IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"&amp;&amp; ^
-IF EXIST "$(TargetDir)$(TargetName)86$(TargetExt)" move /Y "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And  '$(Platform)' == 'AnyCPU' ">
-    <PostBuildEvent>if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"; fi &amp;&amp;
-      if [ -d "$(TargetDir)$(TargetName)86$(TargetExt)" ]; then mv -f "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"; fi</PostBuildEvent>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}</ProjectGuid>
+		<OutputType>WinExe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>FlashDevelop</RootNamespace>
+		<AssemblyName>FlashDevelop</AssemblyName>
+		<StartupObject>FlashDevelop.Program</StartupObject>
+		<TargetZone>LocalIntranet</TargetZone>
+		<GenerateManifests>false</GenerateManifests>
+		<ApplicationIcon>Resources\FlashDevelopIcon.ico</ApplicationIcon>
+		<ApplicationManifest>Properties\Program.manifest</ApplicationManifest>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<FileUpgradeFlags />
+		<UpgradeBackupLocation />
+		<TargetFrameworkProfile />
+		<NuGetPackageImportStamp />
+		<PublishUrl>publish\</PublishUrl>
+		<Install>true</Install>
+		<InstallFrom>Disk</InstallFrom>
+		<MapFileExtensions>true</MapFileExtensions>
+		<UseApplicationTrust>false</UseApplicationTrust>
+		<RuntimeIdentifiers>win-x64;win-x86;</RuntimeIdentifiers>
+		<Platforms>x64;x86;AnyCPU</Platforms>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UseVSHostingProcess>true</UseVSHostingProcess>
+		<LangVersion>9</LangVersion>
+		<Prefer32Bit>false</Prefer32Bit>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<Optimize>true</Optimize>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UseVSHostingProcess>true</UseVSHostingProcess>
+		<LangVersion>9</LangVersion>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<LangVersion>9</LangVersion>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+		<LangVersion>9</LangVersion>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
+	</PropertyGroup>
+	<PropertyGroup>
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<Prefer32Bit>true</Prefer32Bit>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>Bin\Debug\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<Prefer32Bit>true</Prefer32Bit>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System" />
+		<Reference Include="System.Design" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Net.Http" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="Controls\ArgEditor.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\FilteredGrid.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Controls\QuickFind.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Dialogs\ArgumentDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Controls\FormState.cs" />
+		<Compile Include="Dialogs\ArgReplaceDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\ClipboardHistoryDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\ControlDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\HashDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\EditorDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\ShortcutDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\SnippetDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Managers\CleanupManager.cs" />
+		<Compile Include="Managers\ClipboardManager.cs" />
+		<Compile Include="Managers\FilePollManager.cs" />
+		<Compile Include="Managers\MarkerManager.cs" />
+		<Compile Include="Managers\OldTabsManager.cs" />
+		<Compile Include="Managers\ShortcutManager.cs" />
+		<Compile Include="Managers\TabTextManager.cs" />
+		<Compile Include="Managers\ThemeManager.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+		<Compile Include="Controls\Browser.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Dialogs\FirstRunDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\FRInFilesDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\FRInDocDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\ErrorDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\RecoveryDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\SettingDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\UpdateDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Globals.cs" />
+		<Compile Include="Managers\FileStateManager.cs" />
+		<Compile Include="Managers\RecoveryManager.cs" />
+		<Compile Include="Managers\SessionManager.cs" />
+		<Compile Include="Managers\StripBarManager.cs" />
+		<Compile Include="Settings\Accessors.cs" />
+		<Compile Include="Settings\Properties.cs" />
+		<Compile Include="Settings\Reflection.cs" />
+		<Compile Include="Dialogs\AboutDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Dialogs\GoToDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Docking\DockablePanel.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Docking\TabbedDocument.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Helpers\FileNameHelper.cs" />
+		<Compile Include="Helpers\ResourceHelper.cs" />
+		<Compile Include="Managers\ButtonManager.cs" />
+		<Compile Include="Managers\PrintingManager.cs" />
+		<Compile Include="Managers\ScintillaManager.cs" />
+		<Compile Include="Managers\SnippetManager.cs" />
+		<Compile Include="Managers\TabbingManager.cs" />
+		<Compile Include="MainForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Program.cs" />
+		<Compile Include="Utilities\ArgsProcessor.cs" />
+		<Compile Include="Managers\ImageManager.cs" />
+		<Compile Include="Managers\LayoutManager.cs" />
+		<Compile Include="Utilities\FRDialogGenerics.cs" />
+		<Compile Include="Utilities\PluginServices.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<BaseApplicationManifest Include="Properties\Program.manifest" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PluginCore\PluginCore.csproj">
+			<Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+			<Name>PluginCore</Name>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Dialogs\ControlDialog.resx">
+			<DependentUpon>ControlDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Resources\AboutDialog.jpg" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Controls\Browser.resx">
+			<DependentUpon>Browser.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\FlashDevelopIcon.ico" />
+		<EmbeddedResource Include="Resources\QuickFindClose.png" />
+		<EmbeddedResource Include="Resources\QuickFindNext.png" />
+		<EmbeddedResource Include="Resources\QuickFindPrev.png" />
+		<EmbeddedResource Include="Resources\SnippetVars.en_US.txt" />
+		<EmbeddedResource Include="Resources\SnippetVars.ja_JP.txt" />
+		<EmbeddedResource Include="Resources\SnippetVars.de_DE.txt" />
+		<EmbeddedResource Include="Resources\SnippetVars.eu_ES.txt" />
+		<EmbeddedResource Include="Resources\SnippetVars.zh_CN.txt" />
+		<EmbeddedResource Include="Resources\BookmarkIcon.png" />
+		<EmbeddedResource Include="Resources\SnippetVars.ko_KR.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="packages.config" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CS-Script" Version="3.30.4" />
+	</ItemGroup>
+	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+	<PropertyGroup Condition=" '$(OS)' != 'Unix' ">
+		<PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' == 'Unix' ">
+		<PreBuildEvent>"$(SolutionDir)SetVersion.sh" "$(SolutionDir)"</PreBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' != 'Unix' And '$(Platform)' == 'AnyCPU' ">
+		<PreBuildEvent>
+			"$(SolutionDir)SetVersion.bat" "$(SolutionDir)" &amp;&amp; ^
+			IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"
+		</PreBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(Platform)' == 'AnyCPU' ">
+		<PreBuildEvent>
+			"$(SolutionDir)SetVersion.sh" "$(SolutionDir)" &amp;&amp;
+			if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"; fi
+		</PreBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' != 'Unix' And  '$(Platform)' == 'AnyCPU' ">
+		<PostBuildEvent>
+			IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"&amp;&amp; ^
+			IF EXIST "$(TargetDir)$(TargetName)86$(TargetExt)" move /Y "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"
+		</PostBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' == 'Unix' And  '$(Platform)' == 'AnyCPU' ">
+		<PostBuildEvent>
+			if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"; fi &amp;&amp;
+			if [ -d "$(TargetDir)$(TargetName)86$(TargetExt)" ]; then mv -f "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"; fi
+		</PostBuildEvent>
+	</PropertyGroup>
 </Project>
