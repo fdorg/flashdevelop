@@ -423,6 +423,7 @@ namespace HaXeContext.Generators.Haxe3
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_12", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_12"))
                     .SetName("Issue2069. Case 12.")
+                    .Ignore("only Haxe 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_13", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_13"))
