@@ -28,6 +28,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UseApplicationTrust>false</UseApplicationTrust>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RuntimeIdentifiers>win-x64;win-x86;</RuntimeIdentifiers>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +43,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <LangVersion>9</LangVersion>
     <Prefer32Bit>false</Prefer32Bit>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -51,11 +54,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <LangVersion>9</LangVersion>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>Bin\Debug\</OutputPath>
     <LangVersion>9</LangVersion>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -64,6 +69,7 @@
     <Optimize>true</Optimize>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <LangVersion>9</LangVersion>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -74,6 +80,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>9</LangVersion>
     <Prefer32Bit>true</Prefer32Bit>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>Bin\Debug\</OutputPath>
@@ -82,6 +89,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>9</LangVersion>
     <Prefer32Bit>true</Prefer32Bit>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -236,10 +244,6 @@
   <ItemGroup>
     <PackageReference Include="CS-Script" Version="3.30.4" />
   </ItemGroup>
-  <!-- <ItemGroup> -->
-    <!-- <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" /> -->
-    <!-- <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" /> -->
-  <!-- </ItemGroup> -->
   <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
     <PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
   </PropertyGroup>
