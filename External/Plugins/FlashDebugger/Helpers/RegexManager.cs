@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Reflection;
+using FlashDebugger;
 
 namespace FdbPlugin
 {
@@ -80,13 +81,8 @@ namespace FdbPlugin
         public static Regex RegexNameValue = new Regex(@"(?<name>.*).*?( = )(?<value>.*)", RegexOptions.Compiled);
         public static Regex RegexObject = new Regex(@".*\[Object\s\d*, class='.*'\]", RegexOptions.Compiled);
 
-        private Dictionary<string, Regex> RegexDic;
+        private Dictionary<string, Regex> RegexDic = new Dictionary<string, Regex>();
         private FdbRegex fdbRegex;
-
-        public RegexManager()
-        {
-            RegexDic = new Dictionary<string, Regex>();
-        }
 
         public void SetRegex(object obj)
         {
@@ -94,10 +90,7 @@ namespace FdbPlugin
             {
                 if (info.FieldType == typeof(Regex))
                 {
-                    RegexPattern p = fdbRegex.RegexList.Find(delegate(RegexPattern rp)
-                    {
-                        return rp.Name == info.Name;
-                    });
+                    RegexPattern p = fdbRegex.RegexList.Find(rp => rp.Name == info.Name);
 
                     if (p != null)
                     {
@@ -112,10 +105,7 @@ namespace FdbPlugin
                 
                 if (info.FieldType == typeof(Regex))
                 {
-                    RegexPattern p = fdbRegex.RegexList.Find(delegate(RegexPattern rp)
-                    {
-                        return rp.Name == info.Name;
-                    });
+                    RegexPattern p = fdbRegex.RegexList.Find(rp => rp.Name == info.Name);
 
                     if (p != null)
                     {
@@ -125,10 +115,7 @@ namespace FdbPlugin
                 }
                 else if (info.FieldType == typeof(string))
                 {
-                    MsgPattern p = fdbRegex.MsgList.Find(delegate(MsgPattern mp)
-                    {
-                        return mp.Name == info.Name;
-                    });
+                    MsgPattern p = fdbRegex.MsgList.Find(mp => mp.Name == info.Name);
 
                     if (p != null)
                         info.SetValue(obj, p.Pattern);
@@ -136,9 +123,6 @@ namespace FdbPlugin
             }
         }
 
-        public void Load(string s)
-        {
-            fdbRegex = Util.SerializeXML<FdbRegex>.LoadString(s);
-        }
+        public void Load(string s) => fdbRegex = Util.SerializeXML<FdbRegex>.LoadString(s);
     }
 }
