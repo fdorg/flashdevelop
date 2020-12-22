@@ -33,11 +33,12 @@ if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-:: Remove testing binaries so we can reuse the current build
-del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
-del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
-del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
-del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
+git clean -xfd
+
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="x86" /t:Rebuild %MSBuildLogger%
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
 
 :: Build AnyCPU version for 64bits support
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
