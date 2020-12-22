@@ -3,97 +3,91 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashDevelop", "FlashDevelop\FlashDevelop.csproj", "{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashDevelop", "FlashDevelop\FlashDevelop.csproj", "{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}"
 	ProjectSection(ProjectDependencies) = postProject
 		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginCore", "PluginCore\PluginCore.csproj", "{61885F70-B4DC-4B44-852D-5D6D03F2A734}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginCore", "PluginCore\PluginCore.csproj", "{61885F70-B4DC-4B44-852D-5D6D03F2A734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileExplorer", "External\Plugins\FileExplorer\FileExplorer.csproj", "{C1AEDDBD-7D3C-4C09-9C88-1644D796FD9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileExplorer", "External\Plugins\FileExplorer\FileExplorer.csproj", "{C1AEDDBD-7D3C-4C09-9C88-1644D796FD9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashConnect", "External\Plugins\FlashConnect\FlashConnect.csproj", "{D6AAF434-F4DF-4376-863D-109A8762CECA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashConnect", "External\Plugins\FlashConnect\FlashConnect.csproj", "{D6AAF434-F4DF-4376-863D-109A8762CECA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashViewer", "External\Plugins\FlashViewer\FlashViewer.csproj", "{3E8B5548-D3AB-44CD-8C1D-D828540D49C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashViewer", "External\Plugins\FlashViewer\FlashViewer.csproj", "{3E8B5548-D3AB-44CD-8C1D-D828540D49C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutputPanel", "External\Plugins\OutputPanel\OutputPanel.csproj", "{EF8EE44C-62B2-4744-85CB-278E1F37D418}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OutputPanel", "External\Plugins\OutputPanel\OutputPanel.csproj", "{EF8EE44C-62B2-4744-85CB-278E1F37D418}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultsPanel", "External\Plugins\ResultsPanel\ResultsPanel.csproj", "{8B33C830-34CF-42E5-AF2F-E8D9A4AF49D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultsPanel", "External\Plugins\ResultsPanel\ResultsPanel.csproj", "{8B33C830-34CF-42E5-AF2F-E8D9A4AF49D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLCompletion", "External\Plugins\XMLCompletion\XMLCompletion.csproj", "{556F43A0-C288-471A-8CD8-A787FC7ACA34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XMLCompletion", "External\Plugins\XMLCompletion\XMLCompletion.csproj", "{556F43A0-C288-471A-8CD8-A787FC7ACA34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCompletion", "External\Plugins\ASCompletion\ASCompletion.csproj", "{4EBF2653-9654-4E40-880E-0046B3D6210E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASCompletion", "External\Plugins\ASCompletion\ASCompletion.csproj", "{4EBF2653-9654-4E40-880E-0046B3D6210E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS2Context", "External\Plugins\AS2Context\AS2Context.csproj", "{74AD0487-CEF9-43FE-9283-BC6F79539ADE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS2Context", "External\Plugins\AS2Context\AS2Context.csproj", "{74AD0487-CEF9-43FE-9283-BC6F79539ADE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager", "External\Plugins\ProjectManager\ProjectManager.csproj", "{78101C01-E186-4954-B1DD-DEBB7905FAD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManager", "External\Plugins\ProjectManager\ProjectManager.csproj", "{78101C01-E186-4954-B1DD-DEBB7905FAD8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutManager", "External\Plugins\LayoutManager\LayoutManager.csproj", "{BD6AFBEA-DB64-432A-80F7-4672A7FF283E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataEncoder", "External\Plugins\DataEncoder\DataEncoder.csproj", "{285FADFC-E221-4575-B9DD-42E452B4381F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS3Context", "External\Plugins\AS3Context\AS3Context.csproj", "{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaXeContext", "External\Plugins\HaXeContext\HaXeContext.csproj", "{5B4E9515-994A-4DA7-9916-CDA8FD874701}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartPage", "External\Plugins\StartPage\StartPage.csproj", "{DCEEBF26-BB93-45EE-8B00-32927A687761}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskListPanel", "External\Plugins\TaskListPanel\TaskListPanel.csproj", "{40FEAC2B-A68A-498E-AD78-52A8268EFA45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookmarkPanel", "External\Plugins\BookmarkPanel\BookmarkPanel.csproj", "{FDF347DB-0577-43DD-A819-16C7F30B49A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashLogViewer", "External\Plugins\FlashLogViewer\FlashLogViewer.csproj", "{21912919-338F-431D-945B-F3C104A96B8E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MacroManager", "External\Plugins\MacroManager\MacroManager.csproj", "{E462A275-2DAF-411C-95ED-C6A35FEC29D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASClassWizard", "External\Plugins\ASClassWizard\ASClassWizard.csproj", "{A2C159C1-7D21-4483-AEB1-38D9FDC4C7F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeRefactor", "External\Plugins\CodeRefactor\CodeRefactor.csproj", "{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeAnalyzer", "External\Plugins\CodeAnalyzer\CodeAnalyzer.csproj", "{E4504497-89BF-4ED5-A0CC-6F02E96C2652}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceControl", "External\Plugins\SourceControl\SourceControl.csproj", "{CDB62A9F-0887-43AE-815D-4593A8E35E44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirProperties", "External\Plugins\AirProperties\AirProperties.csproj", "{F2CED639-1DA7-489D-9DBB-909F7B590C3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeFormatter", "External\Plugins\CodeFormatter\CodeFormatter.csproj", "{B97FEDD3-8F61-4006-ACCD-AD735069B0CA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BridgeSettings", "External\Plugins\BridgeSettings\BridgeSettings.csproj", "{3074D447-A469-4CA2-A7E5-FE53DB45CB11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHPContext", "External\Plugins\PHPContext\PHPContext.csproj", "{2F93393B-9629-470E-B7B8-0D8CFA25315A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashDebugger", "External\Plugins\FlashDebugger\FlashDebugger.csproj", "{194B58C9-9D2B-4D5E-9256-773FD3222582}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicCompletion", "External\Plugins\BasicCompletion\BasicCompletion.csproj", "{DC936D9F-7ED7-4D2B-9A03-881C86E2F6C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CssCompletion", "External\Plugins\CssCompletion\CssCompletion.csproj", "{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FDBuild", "External\Tools\FDBuild\FDBuild.csproj", "{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayoutManager", "External\Plugins\LayoutManager\LayoutManager.csproj", "{BD6AFBEA-DB64-432A-80F7-4672A7FF283E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASCompletion.Tests", "Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj", "{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataEncoder", "External\Plugins\DataEncoder\DataEncoder.csproj", "{285FADFC-E221-4575-B9DD-42E452B4381F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeRefactor.Tests", "Tests\External\Plugins\CodeRefactor.Tests\CodeRefactor.Tests.csproj", "{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS3Context", "External\Plugins\AS3Context\AS3Context.csproj", "{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginCore.Tests", "Tests\PluginCore\PluginCore.Tests\PluginCore.Tests.csproj", "{F44D3125-12E8-4143-B250-84C5D89D253C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaXeContext", "External\Plugins\HaXeContext\HaXeContext.csproj", "{5B4E9515-994A-4DA7-9916-CDA8FD874701}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LintingHelper", "External\Plugins\LintingHelper\LintingHelper.csproj", "{8B5A1C53-AF20-4379-A8D1-31822ACC6AD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartPage", "External\Plugins\StartPage\StartPage.csproj", "{DCEEBF26-BB93-45EE-8B00-32927A687761}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManager.Tests", "Tests\External\Plugins\ProjectManager.Test\ProjectManager.Tests.csproj", "{F616101E-6103-4788-9382-964D0A1D0A09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskListPanel", "External\Plugins\TaskListPanel\TaskListPanel.csproj", "{40FEAC2B-A68A-498E-AD78-52A8268EFA45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaxeContext.Tests", "Tests\External\Plugins\HaxeContext.Tests\HaxeContext.Tests.csproj", "{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkPanel", "External\Plugins\BookmarkPanel\BookmarkPanel.csproj", "{FDF347DB-0577-43DD-A819-16C7F30B49A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS3Context.Tests", "Tests\External\Plugins\AS3Context.Tests\AS3Context.Tests.csproj", "{536FDE15-CA93-4F84-B1FF-08126C3C443A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashLogViewer", "External\Plugins\FlashLogViewer\FlashLogViewer.csproj", "{21912919-338F-431D-945B-F3C104A96B8E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroManager", "External\Plugins\MacroManager\MacroManager.csproj", "{E462A275-2DAF-411C-95ED-C6A35FEC29D8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASClassWizard", "External\Plugins\ASClassWizard\ASClassWizard.csproj", "{A2C159C1-7D21-4483-AEB1-38D9FDC4C7F3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRefactor", "External\Plugins\CodeRefactor\CodeRefactor.csproj", "{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalyzer", "External\Plugins\CodeAnalyzer\CodeAnalyzer.csproj", "{E4504497-89BF-4ED5-A0CC-6F02E96C2652}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceControl", "External\Plugins\SourceControl\SourceControl.csproj", "{CDB62A9F-0887-43AE-815D-4593A8E35E44}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirProperties", "External\Plugins\AirProperties\AirProperties.csproj", "{F2CED639-1DA7-489D-9DBB-909F7B590C3D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFormatter", "External\Plugins\CodeFormatter\CodeFormatter.csproj", "{B97FEDD3-8F61-4006-ACCD-AD735069B0CA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BridgeSettings", "External\Plugins\BridgeSettings\BridgeSettings.csproj", "{3074D447-A469-4CA2-A7E5-FE53DB45CB11}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHPContext", "External\Plugins\PHPContext\PHPContext.csproj", "{2F93393B-9629-470E-B7B8-0D8CFA25315A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashDebugger", "External\Plugins\FlashDebugger\FlashDebugger.csproj", "{194B58C9-9D2B-4D5E-9256-773FD3222582}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicCompletion", "External\Plugins\BasicCompletion\BasicCompletion.csproj", "{DC936D9F-7ED7-4D2B-9A03-881C86E2F6C8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssCompletion", "External\Plugins\CssCompletion\CssCompletion.csproj", "{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDBuild", "External\Tools\FDBuild\FDBuild.csproj", "{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}"
-	ProjectSection(ProjectDependencies) = postProject
-		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCompletion.Tests", "Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj", "{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRefactor.Tests", "Tests\External\Plugins\CodeRefactor.Tests\CodeRefactor.Tests.csproj", "{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginCore.Tests", "Tests\PluginCore\PluginCore.Tests\PluginCore.Tests.csproj", "{F44D3125-12E8-4143-B250-84C5D89D253C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LintingHelper", "External\Plugins\LintingHelper\LintingHelper.csproj", "{8B5A1C53-AF20-4379-A8D1-31822ACC6AD8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Tests", "Tests\External\Plugins\ProjectManager.Test\ProjectManager.Tests.csproj", "{F616101E-6103-4788-9382-964D0A1D0A09}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaxeContext.Tests", "Tests\External\Plugins\HaxeContext.Tests\HaxeContext.Tests.csproj", "{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS3Context.Tests", "Tests\External\Plugins\AS3Context.Tests\AS3Context.Tests.csproj", "{536FDE15-CA93-4F84-B1FF-08126C3C443A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaxeTypeWizard", "External\Plugins\HaxeTypeWizard\HaxeTypeWizard.csproj", "{BBF3BC59-7FA1-4BE4-B0FD-2D91AB109889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaxeTypeWizard", "External\Plugins\HaxeTypeWizard\HaxeTypeWizard.csproj", "{BBF3BC59-7FA1-4BE4-B0FD-2D91AB109889}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -855,26 +849,26 @@ Global
 		{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}.Release+Tests|x64.Build.0 = Release|Any CPU
 		{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}.Release+Tests|x86.ActiveCfg = Release|Any CPU
 		{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}.Release+Tests|x86.Build.0 = Release|Any CPU
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.Build.0 = Debug|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x64.ActiveCfg = Debug|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x64.Build.0 = Debug|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x86.ActiveCfg = Debug|x86
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x86.Build.0 = Debug|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|Any CPU.ActiveCfg = Debug|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|Any CPU.Build.0 = Debug|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|x64.ActiveCfg = Debug|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|x64.Build.0 = Debug|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|x86.ActiveCfg = Debug|x86
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug+Tests|x86.Build.0 = Debug|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|Any CPU.ActiveCfg = Release|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|Any CPU.Build.0 = Release|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|x64.ActiveCfg = Release|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|x64.Build.0 = Release|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|x86.ActiveCfg = Release|x86
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|x86.Build.0 = Release|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|Any CPU.ActiveCfg = Release|x86
-		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|Any CPU.Build.0 = Release|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|Any CPU.ActiveCfg = Release|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|x64.ActiveCfg = Release|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|x64.Build.0 = Release|x64
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release+Tests|x86.ActiveCfg = Release|x86

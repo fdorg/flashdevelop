@@ -36,3 +36,4 @@ Thumbs.db
 /FlashDevelop/Bin/Debug/Mono.*
 /packages/
 /PluginCore/Bin
+FlashDevelop/Bin/Debug/LitJSON.*
