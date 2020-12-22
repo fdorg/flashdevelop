@@ -91,6 +91,9 @@
 		<EmbeddedResource Include="Icons\HaxeFile.png" />
 		<EmbeddedResource Include="Icons\SwcFile.png" />
 		<EmbeddedResource Include="Icons\FlashCS3.png" />
+		<EmbeddedResource Include="Icons\Method.png" />
+		<EmbeddedResource Include="Icons\Const.png" />
+		<EmbeddedResource Include="Icons\Variable.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
@@ -98,10 +101,5 @@
 			<Name>PluginCore</Name>
 			<Private>False</Private>
 		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Icons\Method.png" />
-		<EmbeddedResource Include="Icons\Const.png" />
-		<EmbeddedResource Include="Icons\Variable.png" />
 	</ItemGroup>
 </Project>

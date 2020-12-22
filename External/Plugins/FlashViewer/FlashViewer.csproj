@@ -87,8 +87,6 @@
 			<SubType>Designer</SubType>
 			<DependentUpon>FlashView.cs</DependentUpon>
 		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Resources\Player.ico" />
 	</ItemGroup>
 </Project>

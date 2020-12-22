@@ -79,11 +79,7 @@
 			<DependentUpon>IOSDeviceManager.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Resources\blockdevice.png" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Resources\blockdevice_small.png" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Forms\AirWizard.resx">
 			<DependentUpon>AirWizard.cs</DependentUpon>
 			<SubType>Designer</SubType>
