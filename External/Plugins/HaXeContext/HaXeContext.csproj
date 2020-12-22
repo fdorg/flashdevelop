@@ -1,150 +1,147 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5B4E9515-994A-4DA7-9916-CDA8FD874701}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HaXeContext</RootNamespace>
-    <AssemblyName>HaXeContext</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <NuGetPackageImportStamp />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <ItemGroup>
-    <Reference Include="LitJSON, Version=0.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\LitJson.0.16.0\lib\net45\LitJSON.dll</HintPath>
-    </Reference>
-    <Reference Include="SwfOp, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\FlashDevelop\Bin\Debug\SwfOp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
-      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
-      <Name>PluginCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\AS2Context\AS2Context.csproj">
-      <Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
-      <Name>AS2Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\AS3Context\AS3Context.csproj">
-      <Project>{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}</Project>
-      <Name>AS3Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
-      <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
-      <Name>ASCompletion</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\CodeRefactor\CodeRefactor.csproj">
-      <Project>{1f6df858-6011-4cac-b33e-7000ee90ffbe}</Project>
-      <Name>CodeRefactor</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\LintingHelper\LintingHelper.csproj">
-      <Project>{8b5a1c53-af20-4379-a8d1-31822acc6ad8}</Project>
-      <Name>LintingHelper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
-      <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
-      <Name>ProjectManager</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CodeRefactor\Commands\HaxeCompilerFindAllReferences.cs" />
-    <Compile Include="CodeRefactor\Commands\HaxeOrganizeImports.cs" />
-    <Compile Include="CodeRefactor\Provider\HaxeCommandFactory.cs" />
-    <Compile Include="CodeRefactor\Provider\HaxeFindAllReferences.cs" />
-    <Compile Include="Completion\CodeComplete.cs" />
-    <Compile Include="Completion\ContextFeatures.cs" />
-    <Compile Include="Completion\HaxeComplete400.cs" />
-    <Compile Include="Generators\CodeGenerator.cs" />
-    <Compile Include="Context.cs" />
-    <Compile Include="Completion\HaxeComplete.cs" />
-    <Compile Include="Completion\IHaxeCompletionHandler.cs" />
-    <Compile Include="Completion\CompilerCompletionHandler.cs" />
-    <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
-    <Compile Include="Completion\HaxeComplete330.cs" />
-    <Compile Include="Generators\CodeGeneratorAbstractBehavior.cs" />
-    <Compile Include="Generators\CodeGeneratorInterfaceBehavior.cs" />
-    <Compile Include="Generators\DocumentationGenerator.cs" />
-    <Compile Include="HaXeSettings.cs" />
-    <Compile Include="ExternalToolchain.cs" />
-    <Compile Include="Helpers\FlagEnumEditor.cs" />
-    <Compile Include="Helpers\ProcessExtensions.cs" />
-    <Compile Include="Linters\DiagnosticsLinter.cs" />
-    <Compile Include="Model\FileParser.cs" />
-    <Compile Include="PluginMain.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
+
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{5B4E9515-994A-4DA7-9916-CDA8FD874701}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>HaXeContext</RootNamespace>
+		<AssemblyName>HaXeContext</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+   		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<Platforms>x64;x86;AnyCPU</Platforms>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="SwfOp, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\..\..\FlashDevelop\Bin\Debug\SwfOp.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.XML" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+			<Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+			<Name>PluginCore</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\AS2Context\AS2Context.csproj">
+			<Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
+			<Name>AS2Context</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\AS3Context\AS3Context.csproj">
+			<Project>{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}</Project>
+			<Name>AS3Context</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
+			<Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
+			<Name>ASCompletion</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\CodeRefactor\CodeRefactor.csproj">
+			<Project>{1f6df858-6011-4cac-b33e-7000ee90ffbe}</Project>
+			<Name>CodeRefactor</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\LintingHelper\LintingHelper.csproj">
+			<Project>{8b5a1c53-af20-4379-a8d1-31822acc6ad8}</Project>
+			<Name>LintingHelper</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
+			<Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
+			<Name>ProjectManager</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="CodeRefactor\Commands\HaxeCompilerFindAllReferences.cs" />
+		<Compile Include="CodeRefactor\Commands\HaxeOrganizeImports.cs" />
+		<Compile Include="CodeRefactor\Provider\HaxeCommandFactory.cs" />
+		<Compile Include="CodeRefactor\Provider\HaxeFindAllReferences.cs" />
+		<Compile Include="Completion\CodeComplete.cs" />
+		<Compile Include="Completion\ContextFeatures.cs" />
+		<Compile Include="Completion\HaxeComplete400.cs" />
+		<Compile Include="Generators\CodeGenerator.cs" />
+		<Compile Include="Context.cs" />
+		<Compile Include="Completion\HaxeComplete.cs" />
+		<Compile Include="Completion\IHaxeCompletionHandler.cs" />
+		<Compile Include="Completion\CompilerCompletionHandler.cs" />
+		<Compile Include="Completion\CompletionServerCompletionHandler.cs" />
+		<Compile Include="Completion\HaxeComplete330.cs" />
+		<Compile Include="Generators\CodeGeneratorAbstractBehavior.cs" />
+		<Compile Include="Generators\CodeGeneratorInterfaceBehavior.cs" />
+		<Compile Include="Generators\DocumentationGenerator.cs" />
+		<Compile Include="HaXeSettings.cs" />
+		<Compile Include="ExternalToolchain.cs" />
+		<Compile Include="Helpers\FlagEnumEditor.cs" />
+		<Compile Include="Helpers\ProcessExtensions.cs" />
+		<Compile Include="Linters\DiagnosticsLinter.cs" />
+		<Compile Include="Model\FileParser.cs" />
+		<Compile Include="PluginMain.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="packages.config" />
+	</ItemGroup>
 </Project>

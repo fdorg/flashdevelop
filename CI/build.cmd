@@ -12,7 +12,7 @@
 call SetVersion.bat
 
 :: Build the main solution and run tests
-msbuild FlashDevelop.sln /p:Configuration=Debug+Tests /p:Platform="x64" /t:Rebuild %MSBuildLogger%
+msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x64" /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -33,11 +33,14 @@ if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-:: Remove testing binaries so we can reuse the current build
-del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
-del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
-del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
-del "FlashDevelop\Bin/Debug\Castle.Core.*" /Q
+git clean -xfd
+
+nuget restore FlashDevelop.sln
+
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="x86" /t:Rebuild %MSBuildLogger%
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
 
 :: Build AnyCPU version for 64bits support
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build %MSBuildLogger%
@@ -45,9 +48,9 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Build
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
+:: Remove files after build
 del "FlashDevelop\Bin/Debug\System.*" /Q
 del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
-del "FlashDevelop\Bin/Debug\CSScriptLibrary.xml" /Q
 del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Create the installer
@@ -90,18 +93,17 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
+:: Remove files after build
+del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
+del "FlashDevelop\Bin/Debug\System.*" /Q
+del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
+del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
+
 :: Rename binaries
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
-
-: Remove files after build
-del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
-del "FlashDevelop\Bin/Debug\System.*" /Q
-del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
-del "FlashDevelop\Bin/Debug\CSScriptLibrary.xml" /Q
-del "FlashDevelop\Bin/Debug\Mono.CSharp.*" /Q
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error

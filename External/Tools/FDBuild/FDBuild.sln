@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29021.104
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDBuild", "FDBuild.csproj", "{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{78101C01-E186-4954-B1DD-DEBB7905FAD8} = {78101C01-E186-4954-B1DD-DEBB7905FAD8}

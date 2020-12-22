@@ -1,223 +1,224 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{194B58C9-9D2B-4D5E-9256-773FD3222582}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FlashDebugger</RootNamespace>
-    <AssemblyName>FlashDebugger</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1591</NoWarn>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <Optimize>false</Optimize>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <NoWarn>1591</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Aga, Version=1.7.0.1, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
-      <HintPath>..\..\..\FlashDevelop\Bin\Debug\Aga.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="fdb.j4n, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\fdb.j4n.dll</HintPath>
-    </Reference>
-    <Reference Include="jni4net.n-0.8.9.0, Version=0.8.9.0, Culture=neutral, PublicKeyToken=9f9a8ed97ffef0ce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\jni4net.n-0.8.9.0.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Controls\DataTree\ContinuedDataNode.cs" />
-    <Compile Include="Controls\DataTree\DataNode.cs" />
-    <Compile Include="Controls\DataTree\ErrorNode.cs" />
-    <Compile Include="Controls\DataTree\ScalarNode.cs" />
-    <Compile Include="Controls\DataTree\ValueNode.cs" />
-    <Compile Include="Controls\DataTree\VariableNode.cs" />
-    <Compile Include="Controls\LocalsUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ThreadsUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DataTreeModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ImmediateUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ImmediateUI.Designer.cs">
-      <DependentUpon>ImmediateUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\LiveDataTip.cs" />
-    <Compile Include="Controls\WatchUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Debugger\BreakPointManager.cs" />
-    <Compile Include="Controls\BreakPointUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DataTipForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\DataTipForm.Designer.cs">
-      <DependentUpon>DataTipForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DataTreeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DataTreeControl.Designer.cs">
-      <DependentUpon>DataTreeControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ViewerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\ViewerForm.Designer.cs">
-      <DependentUpon>ViewerForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Debugger\DebuggerManager.cs" />
-    <Compile Include="Debugger\ExpressionContext.cs" />
-    <Compile Include="Debugger\FlashInterface.cs" />
-    <Compile Include="Debugger\VariableFacade.cs" />
-    <Compile Include="Debugger\WatchManager.cs" />
-    <Compile Include="Helpers\DataTreeExporterFactory.cs" />
-    <Compile Include="Helpers\DefaultDataTreeExporter.cs" />
-    <Compile Include="Helpers\IDataTreeExporter.cs" />
-    <Compile Include="Helpers\MenusHelper.cs" />
-    <Compile Include="Helpers\PanelsHelper.cs" />
-    <Compile Include="Helpers\StringsHelper.cs" />
-    <Compile Include="Helpers\ScintillaHelper.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PluginMain.cs" />
-    <Compile Include="Properties\Resource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Settings.cs" />
-    <Compile Include="Controls\StackframeUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Utilities.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fbd.j4n.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Breakpoints\CurLine.png" />
-    <Content Include="Icons\Breakpoints\Disabled.png" />
-    <Content Include="Icons\Breakpoints\Enabled.png" />
-    <Content Include="Icons\Continue.png" />
-    <Content Include="Icons\Current.png" />
-    <Content Include="jni4net.j-0.8.9.0.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="jni4net.n.w32.v40-0.8.9.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="Icons\DeleteBreakpoints.png" />
-    <None Include="Icons\DeleteBreakpoint.png" />
-    <None Include="Icons\ExportBreakpoints.png" />
-    <Content Include="Icons\Finish.png" />
-    <None Include="Icons\ImportBreakpoints.png" />
-    <Content Include="Icons\Next.png" />
-    <Content Include="Icons\Pause.png" />
-    <Content Include="Icons\Step.png" />
-    <Content Include="Icons\RunToCursor.png" />
-    <Content Include="Icons\Stop.png" />
-    <None Include="Icons\ToggleBreakpoints.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
-      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
-      <Name>PluginCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
-      <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
-      <Name>ASCompletion</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
-      <Project>{BD6AFBEA-DB64-432A-80F7-4672A7FF283E}</Project>
-      <Name>LayoutManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
-      <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
-      <Name>ProjectManager</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{194B58C9-9D2B-4D5E-9256-773FD3222582}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>FlashDebugger</RootNamespace>
+		<AssemblyName>FlashDebugger</AssemblyName>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<Platforms>x64;x86;AnyCPU</Platforms>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<NoWarn>1591</NoWarn>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<Optimize>false</Optimize>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<NoWarn>1591</NoWarn>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="Aga, Version=1.7.0.1, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
+			<HintPath>..\..\..\FlashDevelop\Bin\Debug\Aga.dll</HintPath>
+			<SpecificVersion>False</SpecificVersion>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="fdb.j4n, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>.\fdb.j4n.dll</HintPath>
+		</Reference>
+		<Reference Include="jni4net.n-0.8.9.0, Version=0.8.9.0, Culture=neutral, PublicKeyToken=9f9a8ed97ffef0ce, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>.\jni4net.n-0.8.9.0.dll</HintPath>
+		</Reference>
+		<Reference Include="System" />
+		<Reference Include="System.Design" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.XML" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="Controls\DataTree\ContinuedDataNode.cs" />
+		<Compile Include="Controls\DataTree\DataNode.cs" />
+		<Compile Include="Controls\DataTree\ErrorNode.cs" />
+		<Compile Include="Controls\DataTree\ScalarNode.cs" />
+		<Compile Include="Controls\DataTree\ValueNode.cs" />
+		<Compile Include="Controls\DataTree\VariableNode.cs" />
+		<Compile Include="Controls\LocalsUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\ThreadsUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\DataTreeModel.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Include="Controls\ImmediateUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\ImmediateUI.Designer.cs">
+			<DependentUpon>ImmediateUI.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Controls\LiveDataTip.cs" />
+		<Compile Include="Controls\WatchUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Debugger\BreakPointManager.cs" />
+		<Compile Include="Controls\BreakPointUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\DataTipForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Controls\DataTipForm.Designer.cs">
+			<DependentUpon>DataTipForm.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Controls\DataTreeControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Controls\DataTreeControl.Designer.cs">
+			<DependentUpon>DataTreeControl.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Controls\ViewerForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Controls\ViewerForm.Designer.cs">
+			<DependentUpon>ViewerForm.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Debugger\DebuggerManager.cs" />
+		<Compile Include="Debugger\ExpressionContext.cs" />
+		<Compile Include="Debugger\FlashInterface.cs" />
+		<Compile Include="Debugger\VariableFacade.cs" />
+		<Compile Include="Debugger\WatchManager.cs" />
+		<Compile Include="Helpers\DataTreeExporterFactory.cs" />
+		<Compile Include="Helpers\DefaultDataTreeExporter.cs" />
+		<Compile Include="Helpers\IDataTreeExporter.cs" />
+		<Compile Include="Helpers\MenusHelper.cs" />
+		<Compile Include="Helpers\PanelsHelper.cs" />
+		<Compile Include="Helpers\StringsHelper.cs" />
+		<Compile Include="Helpers\ScintillaHelper.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+		<Compile Include="PluginMain.cs" />
+		<Compile Include="Properties\Resource.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>Resource.resx</DependentUpon>
+		</Compile>
+		<Compile Include="Settings.cs" />
+		<Compile Include="Controls\StackframeUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Utilities.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Properties\Resource.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resource.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="fbd.j4n.jar">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Icons\Breakpoints\CurLine.png" />
+		<Content Include="Icons\Breakpoints\Disabled.png" />
+		<Content Include="Icons\Breakpoints\Enabled.png" />
+		<Content Include="Icons\Continue.png" />
+		<Content Include="Icons\Current.png" />
+		<Content Include="jni4net.j-0.8.9.0.jar">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="jni4net.n.w32.v40-0.8.9.0.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<None Include="Icons\DeleteBreakpoints.png" />
+		<None Include="Icons\DeleteBreakpoint.png" />
+		<None Include="Icons\ExportBreakpoints.png" />
+		<Content Include="Icons\Finish.png" />
+		<None Include="Icons\ImportBreakpoints.png" />
+		<Content Include="Icons\Next.png" />
+		<Content Include="Icons\Pause.png" />
+		<Content Include="Icons\Step.png" />
+		<Content Include="Icons\RunToCursor.png" />
+		<Content Include="Icons\Stop.png" />
+		<None Include="Icons\ToggleBreakpoints.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+			<Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+			<Name>PluginCore</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
+			<Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
+			<Name>ASCompletion</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
+			<Project>{BD6AFBEA-DB64-432A-80F7-4672A7FF283E}</Project>
+			<Name>LayoutManager</Name>
+			<Private>False</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
+			<Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
+			<Name>ProjectManager</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
 </Project>
