@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props"
-	        Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
+	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -150,8 +149,7 @@
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withoutAutoRemove.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPrivateField.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPrivateField.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicField.as" />
@@ -175,8 +173,7 @@
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forSomeType.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticVariable_forSomeType.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsFalse.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsFalse.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forCurrentType.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forSomeType.as" />
@@ -257,32 +254,22 @@
 		<EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_ArrayInitializer.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_VectorInitializer.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_VectorInitializer.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_TwoDimensionalVectorInitializer.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_TwoDimensionalVectorInitializer.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_TwoDimensionalVectorInitializer.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_TwoDimensionalVectorInitializer.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_Function.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_Function.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_ArrayAccess.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfArrayAccess.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFieldOfItemOfVector.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFieldOfItemOfVector.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMethodChaining_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMethodChaining_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMethodChaining2_useSpaces.as" />
@@ -291,18 +278,14 @@
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewString_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewString2_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewString2_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayInitializer_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayInitializer_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayInitializer2_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayInitializer2_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFunctionResult_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFunctionResult_useSpaces.as" />
 		<EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfNewString.as" />
@@ -376,20 +359,13 @@
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_5.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_6.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_6.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_6.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_2.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_3.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_4.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_5.as" />
-		<EmbeddedResource
-			Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_6.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_2.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_3.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_4.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_5.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfNewObject.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods.as" />

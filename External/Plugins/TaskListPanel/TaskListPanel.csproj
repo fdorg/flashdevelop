@@ -12,7 +12,6 @@
 		<TargetFramework>net48</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -72,15 +71,6 @@
 		<Reference Include="System" />
 		<Reference Include="System.Drawing" />
 		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="PluginMain.cs" />
-		<Compile Include="PluginUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Settings.cs" />
-		<Compile Include="ListViewSorter.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
