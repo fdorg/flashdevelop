@@ -27,18 +27,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS2Context", "External\Plugins\AS2Context\AS2Context.csproj", "{74AD0487-CEF9-43FE-9283-BC6F79539ADE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectManager", "External\Plugins\ProjectManager\ProjectManager.csproj", "{78101C01-E186-4954-B1DD-DEBB7905FAD8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutManager", "External\Plugins\LayoutManager\LayoutManager.csproj", "{BD6AFBEA-DB64-432A-80F7-4672A7FF283E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataEncoder", "External\Plugins\DataEncoder\DataEncoder.csproj", "{285FADFC-E221-4575-B9DD-42E452B4381F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS3Context", "External\Plugins\AS3Context\AS3Context.csproj", "{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaXeContext", "External\Plugins\HaXeContext\HaXeContext.csproj", "{5B4E9515-994A-4DA7-9916-CDA8FD874701}"
 EndProject

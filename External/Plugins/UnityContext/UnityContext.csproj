@@ -57,18 +57,22 @@
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
       <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
       <Name>PluginCore</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\AS2Context\AS2Context.csproj">
       <Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
       <Name>AS2Context</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
       <Name>ProjectManager</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
 </Project>
