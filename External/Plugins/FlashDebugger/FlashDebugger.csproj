@@ -12,7 +12,6 @@
 		<TargetFramework>net48</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -91,79 +90,6 @@
 		<Reference Include="System.Drawing" />
 		<Reference Include="System.Windows.Forms" />
 		<Reference Include="System.XML" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Controls\DataTree\ContinuedDataNode.cs" />
-		<Compile Include="Controls\DataTree\DataNode.cs" />
-		<Compile Include="Controls\DataTree\ErrorNode.cs" />
-		<Compile Include="Controls\DataTree\ScalarNode.cs" />
-		<Compile Include="Controls\DataTree\ValueNode.cs" />
-		<Compile Include="Controls\DataTree\VariableNode.cs" />
-		<Compile Include="Controls\LocalsUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Controls\ThreadsUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Controls\DataTreeModel.cs">
-			<SubType>Code</SubType>
-		</Compile>
-		<Compile Include="Controls\ImmediateUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Controls\ImmediateUI.Designer.cs">
-			<DependentUpon>ImmediateUI.cs</DependentUpon>
-		</Compile>
-		<Compile Include="Controls\LiveDataTip.cs" />
-		<Compile Include="Controls\WatchUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Debugger\BreakPointManager.cs" />
-		<Compile Include="Controls\BreakPointUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Controls\DataTipForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Controls\DataTipForm.Designer.cs">
-			<DependentUpon>DataTipForm.cs</DependentUpon>
-		</Compile>
-		<Compile Include="Controls\DataTreeControl.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Controls\DataTreeControl.Designer.cs">
-			<DependentUpon>DataTreeControl.cs</DependentUpon>
-		</Compile>
-		<Compile Include="Controls\ViewerForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Controls\ViewerForm.Designer.cs">
-			<DependentUpon>ViewerForm.cs</DependentUpon>
-		</Compile>
-		<Compile Include="Debugger\DebuggerManager.cs" />
-		<Compile Include="Debugger\ExpressionContext.cs" />
-		<Compile Include="Debugger\FlashInterface.cs" />
-		<Compile Include="Debugger\VariableFacade.cs" />
-		<Compile Include="Debugger\WatchManager.cs" />
-		<Compile Include="Helpers\DataTreeExporterFactory.cs" />
-		<Compile Include="Helpers\DefaultDataTreeExporter.cs" />
-		<Compile Include="Helpers\IDataTreeExporter.cs" />
-		<Compile Include="Helpers\MenusHelper.cs" />
-		<Compile Include="Helpers\PanelsHelper.cs" />
-		<Compile Include="Helpers\StringsHelper.cs" />
-		<Compile Include="Helpers\ScintillaHelper.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="PluginMain.cs" />
-		<Compile Include="Properties\Resource.Designer.cs">
-			<AutoGen>True</AutoGen>
-			<DesignTime>True</DesignTime>
-			<DependentUpon>Resource.resx</DependentUpon>
-		</Compile>
-		<Compile Include="Settings.cs" />
-		<Compile Include="Controls\StackframeUI.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Utilities.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\Resource.resx">

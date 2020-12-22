@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props"
-	        Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
+	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -158,8 +157,7 @@
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_issue2512_2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withElseIfDirective.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_importStaticMember.hx" />
@@ -168,10 +166,8 @@
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue2512_1.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue2512_2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withElseIfDirective.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\import.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_1.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_2.hx" />
@@ -201,14 +197,11 @@
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_stringInterpolations_1.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_stringInterpolations_1_withoutEntryPoint.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1_withoutEntryPoint.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1_withoutEntryPoint.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1_withoutEntryPoint.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1_withoutEntryPoint.hx" />
 		<EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_4.hx" />
 		<EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_5.hx" />
 		<EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_1.hx" />
@@ -905,10 +898,8 @@
 		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2743_4.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2743_5.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_ParameterizedFunction_case1.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\BeforeAssignStatementToVar_ParameterizedFunction_issue2510_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\BeforeAssignStatementToVar_ParameterizedFunction_issue2510_2.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_ParameterizedFunction_issue2510_1.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_ParameterizedFunction_issue2510_2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_1.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_3.hx" />
@@ -1127,20 +1118,13 @@
 		<EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_typedef.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\ParseFunctionParameters_issue2478_1.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\ParseFunctionParameters_issue2478_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_empty.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_3.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_4.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_6.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_empty.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_2.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_3.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_4.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
+		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_6.hx" />
 		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_empty.hx" />
 		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails.hx" />
 		<EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_2.hx" />
@@ -1489,8 +1473,7 @@
 		<EmbeddedResource Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_Dynamic.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_issue1712_1.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_issue1712_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_String.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeChangeConstructorDeclaration_String2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_Boolean.hx" />
@@ -1499,8 +1482,7 @@
 		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_Dynamic.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_issue1712_1.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_issue1712_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_String.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterChangeConstructorDeclaration_String2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\ParseFunctionParameters_Array.hx" />
@@ -1561,8 +1543,7 @@
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstant.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstant_issue1460.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateEventHandler_withAutoRemove.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateEventHandler_withoutAutoRemove.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateExtractVariableGeneric.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_issue103.hx" />
@@ -1593,22 +1574,14 @@
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_issue1780_1.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_issue1780_2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_issue1836.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_18.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_19.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_20.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_21.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_18.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_19.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_20.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_21.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue_1.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue_2.hx" />
@@ -1633,10 +1606,8 @@
 		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_generateExplicitScopeIsTrue.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicStaticVariable_forCurrentType.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicStaticVariable_forSomeType.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicVariable_generateExplicitScopeIsFalse.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicVariable_generateExplicitScopeIsTrue.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicVariable_issue1734_1.hx" />
@@ -1846,10 +1817,8 @@
 		<EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_6.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_7.hx" />
 		<EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2818_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\BeforeConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\generators\code\AfterConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\BeforeConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1.hx" />
+		<EmbeddedResource Include="Test Files\generators\code\AfterConvertStaticMethodCallIntoStaticExtensionsCall_issue2939_1.hx" />
 		<EmbeddedResource Include="Test Files\parser\Issue2933_1.hx" />
 		<EmbeddedResource Include="Test Files\parser\Issue2933_2.hx" />
 		<EmbeddedResource Include="Test Files\generators\code\BeforeGenerateVariable_issue2952_1.hx" />

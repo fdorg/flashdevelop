@@ -1,663 +1,183 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <ProjectType>Local</ProjectType>
-    <ProjectGuid>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>PluginCore</AssemblyName>
-    <OutputType>Library</OutputType>
-    <RootNamespace>PluginCore</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <TargetFramework>net48</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>Bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>Bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>Bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <FileAlignment>4096</FileAlignment>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System">
-      <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Design">
-      <Name>System.Design</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DockPanelSuite\Customization\DockPanelControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Customization\DockPanelStripRenderer.cs" />
-    <Compile Include="DockPanelSuite\Customization\InertButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Customization\VS2005AutoHideStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Customization\VS2005DockPaneCaption.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Customization\VS2005DockPaneStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\AutoHideStripBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockAreasEditor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockContentCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockContentEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockContentHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockOutlineBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPane.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPane.SplitterControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPaneCaptionBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPaneCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.AutoHideWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.DockDragHandler.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.DragHandler.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.FocusManager.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.MdiClientController.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.Persistor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanel.SplitterDragHandler.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPanelExtender.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockPaneStripBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockWindow.SplitterControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DockWindowCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DragForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\DummyControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\Enums.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\FloatWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\FloatWindowCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\InertButtonBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\Interfaces.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\Localization.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\Measures.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\NestedDockingStatus.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\NestedPaneCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\SplitterBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Docking\VisibleNestedPaneCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Helpers\DockHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Helpers\DrawHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Helpers\ResourceHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Helpers\Win32Helper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="DockPanelSuite\Strings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-    <Compile Include="DockPanelSuite\Win32\Enums.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DockPanelSuite\Win32\NativeMethods.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="BBCode\BBCodeStyle.cs" />
-    <Compile Include="BBCode\BBCodeTagHandler.cs" />
-    <Compile Include="BBCode\BBCodeTagInfo.cs" />
-    <Compile Include="BBCode\BBCodeTagMatch.cs" />
-    <Compile Include="BBCode\BBCodeTagMatcher.cs" />
-    <Compile Include="BBCode\BBCodeUtils.cs" />
-    <Compile Include="BBCode\BottomUpParser.cs" />
-    <Compile Include="BBCode\IndexTree.cs" />
-    <Compile Include="BBCode\IPairTag.cs" />
-    <Compile Include="BBCode\PairTag.cs" />
-    <Compile Include="Ookii.Dialogs\Interop\COMGuids.cs" />
-    <Compile Include="Ookii.Dialogs\Interop\ErrorHelper.cs" />
-    <Compile Include="Ookii.Dialogs\Interop\ShellComInterfaces.cs" />
-    <Compile Include="Ookii.Dialogs\Interop\ShellWrapperDefinitions.cs" />
-    <Compile Include="Ookii.Dialogs\Interop\WindowHandleWrapper.cs" />
-    <Compile Include="Ookii.Dialogs\NativeMethods.cs" />
-    <Compile Include="Ookii.Dialogs\SafeHandles.cs" />
-    <Compile Include="Ookii.Dialogs\VistaFolderBrowserDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
-    <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
-    <Compile Include="PluginCore\Collections\FixedSizeQueue.cs" />
-    <Compile Include="PluginCore\Controls\CodeTip.cs" />
-    <Compile Include="PluginCore\Controls\Common.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
-    <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\MemoryMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\MemoryMessageBox.Designer.cs">
-      <DependentUpon>MemoryMessageBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
-    <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\ShellContextMenu.cs" />
-    <Compile Include="PluginCore\Controls\SmartForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\ToolStripEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\WinFormUtils.cs" />
-    <Compile Include="PluginCore\DistroConfig.cs" />
-    <Compile Include="PluginCore\Helpers\ConfigHelper.cs" />
-    <Compile Include="PluginCore\Helpers\FileInspector.cs" />
-    <Compile Include="PluginCore\Helpers\ScaleHelper.cs" />
-    <Compile Include="PluginCore\Helpers\JvmConfigHelper.cs" />
-    <Compile Include="PluginCore\Helpers\ProcessHelper.cs" />
-    <Compile Include="PluginCore\Helpers\ResourceHelper.cs" />
-    <Compile Include="PluginCore\Helpers\SnippetHelper.cs" />
-    <Compile Include="PluginCore\Helpers\DrawHelper.cs" />
-    <Compile Include="PluginCore\DataClasses.cs" />
-    <Compile Include="PluginCore\Helpers\ThemeHelper.cs" />
-    <Compile Include="PluginCore\Localization\Attributes.cs" />
-    <Compile Include="PluginCore\Localization\LocaleVersion.cs" />
-    <Compile Include="PluginCore\Localization\TextHelper.cs" />
-    <Compile Include="PluginCore\Managers\DocumentManager.cs" />
-    <Compile Include="PluginCore\Bridge\BridgeManager.cs" />
-    <Compile Include="PluginCore\Bridge\BridgeClient.cs" />
-    <Compile Include="PluginCore\Bridge\ServerSocket.cs" />
-    <Compile Include="PluginCore\Bridge\WatcherEx.cs" />
-    <Compile Include="PluginCore\Managers\ImageListManager.cs" />
-    <Compile Include="PluginCore\PlatformData.cs" />
-    <Compile Include="PluginCore\Utilities\CryptoClasses.cs" />
-    <Compile Include="PluginCore\Utilities\ExtensionClasses.cs" />
-    <Compile Include="PluginCore\Utilities\ImageKonverter.cs" />
-    <Compile Include="PluginCore\Utilities\LogicalComparer.cs" />
-    <Compile Include="PluginCore\Utilities\ImageQuantizers.cs" />
-    <Compile Include="PluginCore\Utilities\ProcessRunner.cs" />
-    <Compile Include="PluginCore\Utilities\InteropSHFileOperation.cs" />
-    <Compile Include="PluginCore\Utilities\SemVer.cs" />
-    <Compile Include="PluginCore\Utilities\SingleInstanceApp.cs" />
-    <Compile Include="PluginCore\Win32.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PluginCore\Controls\MethodCallTip.cs" />
-    <Compile Include="PluginCore\Controls\CompletionList.cs" />
-    <Compile Include="PluginCore\Controls\RichToolTip.cs" />
-    <Compile Include="PluginCore\Controls\MessageBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PluginCore\Controls\UITools.cs" />
-    <Compile Include="PluginCore\Enumerators.cs" />
-    <Compile Include="PluginCore\FRService\FRConfiguration.cs" />
-    <Compile Include="PluginCore\FRService\FRRunner.cs" />
-    <Compile Include="PluginCore\FRService\FRSearch.cs" />
-    <Compile Include="PluginCore\Helpers\FolderHelper.cs" />
-    <Compile Include="PluginCore\Helpers\PathHelper.cs" />
-    <Compile Include="PluginCore\Utilities\HashCalculator.cs" />
-    <Compile Include="PluginCore\Utilities\IconExtractor.cs" />
-    <Compile Include="PluginCore\Utilities\PathWalker.cs" />
-    <Compile Include="PluginCore\Managers\EventManager.cs" />
-    <Compile Include="PluginCore\PluginBase.cs" />
-    <Compile Include="PluginCore\Helpers\FileHelper.cs" />
-    <Compile Include="PluginCore\Helpers\XmlHelper.cs" />
-    <Compile Include="PluginCore\Managers\ErrorManager.cs" />
-    <Compile Include="PluginCore\EventTypes.cs" />
-    <Compile Include="PluginCore\Interfaces.cs" />
-    <Compile Include="PluginCore\Managers\TraceManager.cs" />
-    <Compile Include="PluginCore\Utilities\DataConverter.cs" />
-    <Compile Include="PluginCore\Utilities\LineEndDetector.cs" />
-    <Compile Include="PluginCore\Utilities\ObjectSerializer.cs" />
-    <Compile Include="ScintillaNet\Configuration\CharacterClass.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\ConfigFile.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\ConfigItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\ConfigurationUtility.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\EditorStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\Include.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\KeywordClass.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\Language.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\Lexer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\Scintilla.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\StyleClass.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\UseKeyword.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\UseStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Configuration\Value.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Enums.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Events.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Lexers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\RGBA.cs" />
-    <Compile Include="ScintillaNet\RTF.cs" />
-    <Compile Include="ScintillaNet\ScintillaControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\Structs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\XPM.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SevenZip\Common\CommandLineParser.cs" />
-    <Compile Include="SevenZip\Common\CRC.cs" />
-    <Compile Include="SevenZip\Common\InBuffer.cs" />
-    <Compile Include="SevenZip\Common\OutBuffer.cs" />
-    <Compile Include="SevenZip\Compress\LZMA\LzmaBase.cs" />
-    <Compile Include="SevenZip\Compress\LZMA\LzmaDecoder.cs" />
-    <Compile Include="SevenZip\Compress\LZMA\LzmaEncoder.cs" />
-    <Compile Include="SevenZip\Compress\LZ\IMatchFinder.cs" />
-    <Compile Include="SevenZip\Compress\LZ\LzBinTree.cs" />
-    <Compile Include="SevenZip\Compress\LZ\LzInWindow.cs" />
-    <Compile Include="SevenZip\Compress\LZ\LzOutWindow.cs" />
-    <Compile Include="SevenZip\Compress\RangeCoder\RangeCoder.cs" />
-    <Compile Include="SevenZip\Compress\RangeCoder\RangeCoderBit.cs" />
-    <Compile Include="SevenZip\Compress\RangeCoder\RangeCoderBitTree.cs" />
-    <Compile Include="SevenZip\ICoder.cs" />
-    <Compile Include="SharpZipLib\BZip2\BZip2.cs" />
-    <Compile Include="SharpZipLib\BZip2\BZip2Constants.cs" />
-    <Compile Include="SharpZipLib\BZip2\BZip2Exception.cs" />
-    <Compile Include="SharpZipLib\BZip2\BZip2InputStream.cs" />
-    <Compile Include="SharpZipLib\BZip2\BZip2OutputStream.cs" />
-    <Compile Include="SharpZipLib\Checksums\Adler32.cs" />
-    <Compile Include="SharpZipLib\Checksums\CRC32.cs" />
-    <Compile Include="SharpZipLib\Checksums\IChecksum.cs" />
-    <Compile Include="SharpZipLib\Checksums\StrangeCRC.cs" />
-    <Compile Include="SharpZipLib\Core\FileSystemScanner.cs" />
-    <Compile Include="SharpZipLib\Core\INameTransform.cs" />
-    <Compile Include="SharpZipLib\Core\IScanFilter.cs" />
-    <Compile Include="SharpZipLib\Core\NameFilter.cs" />
-    <Compile Include="SharpZipLib\Core\PathFilter.cs" />
-    <Compile Include="SharpZipLib\Core\StreamUtils.cs" />
-    <Compile Include="SharpZipLib\Core\WindowsPathUtils.cs" />
-    <Compile Include="SharpZipLib\Encryption\PkzipClassic.cs" />
-    <Compile Include="SharpZipLib\Encryption\ZipAESStream.cs" />
-    <Compile Include="SharpZipLib\Encryption\ZipAESTransform.cs" />
-    <Compile Include="SharpZipLib\GZip\GZIPConstants.cs" />
-    <Compile Include="SharpZipLib\GZip\GZipException.cs" />
-    <Compile Include="SharpZipLib\GZip\GzipInputStream.cs" />
-    <Compile Include="SharpZipLib\GZip\GzipOutputStream.cs" />
-    <Compile Include="SharpZipLib\Lzw\LzwConstants.cs" />
-    <Compile Include="SharpZipLib\Lzw\LzwException.cs" />
-    <Compile Include="SharpZipLib\Lzw\LzwInputStream.cs" />
-    <Compile Include="SharpZipLib\SharpZipBaseException.cs" />
-    <Compile Include="SharpZipLib\Tar\InvalidHeaderException.cs" />
-    <Compile Include="SharpZipLib\Tar\TarArchive.cs" />
-    <Compile Include="SharpZipLib\Tar\TarBuffer.cs" />
-    <Compile Include="SharpZipLib\Tar\TarEntry.cs" />
-    <Compile Include="SharpZipLib\Tar\TarException.cs" />
-    <Compile Include="SharpZipLib\Tar\TarHeader.cs" />
-    <Compile Include="SharpZipLib\Tar\TarInputStream.cs" />
-    <Compile Include="SharpZipLib\Tar\TarOutputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Deflater.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\DeflaterPending.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Inflater.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\PendingBuffer.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
-    <Compile Include="SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
-    <Compile Include="SharpZipLib\Zip\FastZip.cs" />
-    <Compile Include="SharpZipLib\Zip\IEntryFactory.cs" />
-    <Compile Include="SharpZipLib\Zip\WindowsNameTransform.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipConstants.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipEntry.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipEntryFactory.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipException.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipExtraData.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipFile.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipHelperStream.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
-    <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
-    <Compile Include="TabControl\CustomTabControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\NativeMethods.cs" />
-    <Compile Include="TabControl\TabStyle.cs" />
-    <Compile Include="TabControl\TabStyleProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleFlatProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleAngledProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleChromeProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleDefaultProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleIE8Provider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleNoneProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleRoundedProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleVisualStudioProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\TabStyleProviders\TabStyleVS2010Provider.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabControl\ThemedColors.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\Big5Prober.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\BitPackage.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\CharDistributionAnalyser.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\CharsetProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\Charsets.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\CodingStateMachine.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\EscCharsetProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\EscSM.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\EUCJPProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\EUCKRProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\EUCTWProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\GB18030Prober.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\HebrewProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\JapaneseContextAnalyser.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\LangBulgarianModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\LangCyrillicModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\LangGreekModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\LangHebrewModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\LangHungarianModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\LangThaiModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\Latin1Prober.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\MBCSGroupProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\MBCSSM.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\SBCharsetProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\SBCSGroupProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\SequenceModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\SJISProber.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\SMModel.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\UniversalDetector.cs" />
-    <Compile Include="UdeLibrary\Ude.Core\UTF8Prober.cs" />
-    <Compile Include="UdeLibrary\Ude\CharsetDetector.cs" />
-    <Compile Include="UdeLibrary\Ude\DetectionConfidence.cs" />
-    <Compile Include="UdeLibrary\Ude\ICharsetDetector.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DockPanelSuite\Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DockPanelSuite\Strings.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\en_US.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\eu_ES.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ja_JP.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\MessageBarClose.bmp" />
-    <EmbeddedResource Include="PluginCore\Resources\zh_CN.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Bottom.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Fill.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Hotspot.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_HotspotIndex.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Left.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Right.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Top.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPanel.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_AutoHide.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Close.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Dock.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Option.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.png" />
-    <Content Include="Ookii.Dialogs\license.txt" />
-    <Content Include="Ookii.Dialogs\VistaFolderBrowserDialog.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="PluginCore\Helpers\PlatformHelper.cs" />
-  </ItemGroup>
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+	<PropertyGroup>
+		<ProjectType>Local</ProjectType>
+		<ProjectGuid>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</ProjectGuid>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<AssemblyName>PluginCore</AssemblyName>
+		<OutputType>Library</OutputType>
+		<RootNamespace>PluginCore</RootNamespace>
+		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<OutputPath>Bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BaseAddress>285212672</BaseAddress>
+		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+		<ConfigurationOverrideFile>
+		</ConfigurationOverrideFile>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<DocumentationFile>
+		</DocumentationFile>
+		<DebugSymbols>true</DebugSymbols>
+		<FileAlignment>4096</FileAlignment>
+		<NoStdLib>false</NoStdLib>
+		<NoWarn>
+		</NoWarn>
+		<Optimize>false</Optimize>
+		<RegisterForComInterop>false</RegisterForComInterop>
+		<RemoveIntegerChecks>false</RemoveIntegerChecks>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<WarningLevel>4</WarningLevel>
+		<DebugType>full</DebugType>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<OutputPath>Bin\Release\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BaseAddress>285212672</BaseAddress>
+		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+		<ConfigurationOverrideFile>
+		</ConfigurationOverrideFile>
+		<DefineConstants>TRACE</DefineConstants>
+		<DocumentationFile>
+		</DocumentationFile>
+		<DebugSymbols>false</DebugSymbols>
+		<FileAlignment>4096</FileAlignment>
+		<NoStdLib>false</NoStdLib>
+		<NoWarn>
+		</NoWarn>
+		<Optimize>true</Optimize>
+		<RegisterForComInterop>false</RegisterForComInterop>
+		<RemoveIntegerChecks>false</RemoveIntegerChecks>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<WarningLevel>4</WarningLevel>
+		<DebugType>none</DebugType>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>Bin\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<BaseAddress>285212672</BaseAddress>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<FileAlignment>4096</FileAlignment>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>bin\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<BaseAddress>285212672</BaseAddress>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<FileAlignment>4096</FileAlignment>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System">
+			<Name>System</Name>
+		</Reference>
+		<Reference Include="System.Design">
+			<Name>System.Design</Name>
+		</Reference>
+		<Reference Include="System.Drawing">
+			<Name>System.Drawing</Name>
+		</Reference>
+		<Reference Include="System.Windows.Forms">
+			<Name>System.Windows.Forms</Name>
+		</Reference>
+		<Reference Include="System.Xml">
+			<Name>System.XML</Name>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="DockPanelSuite\Resources.resx">
+			<SubType>Designer</SubType>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Include="DockPanelSuite\Strings.resx">
+			<SubType>Designer</SubType>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\ko_KR.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\en_US.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\eu_ES.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\ja_JP.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\MessageBarClose.bmp" />
+		<EmbeddedResource Include="PluginCore\Resources\zh_CN.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Bottom.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Fill.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Hotspot.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_HotspotIndex.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Left.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Right.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Top.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockPanel.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockPane_AutoHide.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_Close.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_Dock.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_Option.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.png" />
+		<Content Include="Ookii.Dialogs\license.txt" />
+		<Content Include="Ookii.Dialogs\VistaFolderBrowserDialog.bmp" />
+	</ItemGroup>
 </Project>

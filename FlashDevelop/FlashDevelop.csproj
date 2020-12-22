@@ -17,7 +17,6 @@
 		<TargetFramework>net48</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<FileUpgradeFlags />
 		<UpgradeBackupLocation />
@@ -104,111 +103,6 @@
 		<Reference Include="System.Xml" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="Controls\ArgEditor.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Controls\FilteredGrid.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Include="Controls\QuickFind.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Include="Dialogs\ArgumentDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Controls\FormState.cs" />
-		<Compile Include="Dialogs\ArgReplaceDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\ClipboardHistoryDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\ControlDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\HashDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\EditorDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\ShortcutDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\SnippetDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Managers\CleanupManager.cs" />
-		<Compile Include="Managers\ClipboardManager.cs" />
-		<Compile Include="Managers\FilePollManager.cs" />
-		<Compile Include="Managers\MarkerManager.cs" />
-		<Compile Include="Managers\OldTabsManager.cs" />
-		<Compile Include="Managers\ShortcutManager.cs" />
-		<Compile Include="Managers\TabTextManager.cs" />
-		<Compile Include="Managers\ThemeManager.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="Controls\Browser.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Include="Dialogs\FirstRunDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\FRInFilesDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\FRInDocDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\ErrorDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\RecoveryDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\SettingDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\UpdateDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Globals.cs" />
-		<Compile Include="Managers\FileStateManager.cs" />
-		<Compile Include="Managers\RecoveryManager.cs" />
-		<Compile Include="Managers\SessionManager.cs" />
-		<Compile Include="Managers\StripBarManager.cs" />
-		<Compile Include="Settings\Accessors.cs" />
-		<Compile Include="Settings\Properties.cs" />
-		<Compile Include="Settings\Reflection.cs" />
-		<Compile Include="Dialogs\AboutDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Dialogs\GoToDialog.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Docking\DockablePanel.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Docking\TabbedDocument.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Helpers\FileNameHelper.cs" />
-		<Compile Include="Helpers\ResourceHelper.cs" />
-		<Compile Include="Managers\ButtonManager.cs" />
-		<Compile Include="Managers\PrintingManager.cs" />
-		<Compile Include="Managers\ScintillaManager.cs" />
-		<Compile Include="Managers\SnippetManager.cs" />
-		<Compile Include="Managers\TabbingManager.cs" />
-		<Compile Include="MainForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Include="Program.cs" />
-		<Compile Include="Utilities\ArgsProcessor.cs" />
-		<Compile Include="Managers\ImageManager.cs" />
-		<Compile Include="Managers\LayoutManager.cs" />
-		<Compile Include="Utilities\FRDialogGenerics.cs" />
-		<Compile Include="Utilities\PluginServices.cs" />
-	</ItemGroup>
-	<ItemGroup>
 		<BaseApplicationManifest Include="Properties\Program.manifest" />
 	</ItemGroup>
 	<ItemGroup>
@@ -222,14 +116,10 @@
 			<DependentUpon>ControlDialog.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Resources\AboutDialog.jpg" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Controls\Browser.resx">
 			<DependentUpon>Browser.cs</DependentUpon>
 			<SubType>Designer</SubType>
 		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Resources\FlashDevelopIcon.ico" />
 		<EmbeddedResource Include="Resources\QuickFindClose.png" />
 		<EmbeddedResource Include="Resources\QuickFindNext.png" />

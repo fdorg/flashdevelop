@@ -13,7 +13,6 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<Platforms>x64;x86;AnyCPU</Platforms>
@@ -74,11 +73,9 @@
 		<Compile Include="Compiler\FlexDebugger.cs" />
 		<Compile Include="Completion\CodeComplete.cs" />
 		<Compile Include="Context.cs" />
-		<Compile Include="Controls\ProfilerLiveObjectsView.cs">
-		</Compile>
+		<Compile Include="Controls\ProfilerLiveObjectsView.cs"/>
 		<Compile Include="Controls\ProfilerMemView.cs" />
-		<Compile Include="Controls\ProfilerObjectsView.cs">
-		</Compile>
+		<Compile Include="Controls\ProfilerObjectsView.cs"/>
 		<Compile Include="Controls\ProfilerUI.cs">
 			<SubType>UserControl</SubType>
 		</Compile>

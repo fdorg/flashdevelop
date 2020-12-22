@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props"
-	        Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
+	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -121,31 +120,22 @@
 		<None Include="app.config" />
 		<None Include="packages.config" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable.as" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceAllOccurrences.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceAllOccurrences.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_fromNumber.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_fromString.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable.as" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_withContextualGenerator.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_withContextualGenerator.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromNumber.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromString.as" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromString.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromString.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\ParameterVar.hx" />
 		<None Include="Properties\Settings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>
@@ -201,18 +191,12 @@
 		<EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameClass.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameClass_withoutEntryPoint.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRenameClass.as" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_1.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric_2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric_2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_1.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_1.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue592_1.as" />
@@ -224,10 +208,8 @@
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue781_1.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_4.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_4.as" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber_2.hx" />
-		<EmbeddedResource
-			Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber_2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber_2.hx" />
+		<EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber_2.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_1.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_2.as" />
 		<EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_3.as" />
