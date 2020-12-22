@@ -12,10 +12,9 @@
 		<TargetFramework>net48</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<Platforms>x64;x86;AnyCPU</Platforms>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -59,17 +58,6 @@
 		<Reference Include="System.Core" />
 		<Reference Include="System.Drawing" />
 		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="BatchProcess\LintProcessor.cs" />
-		<Compile Include="Helpers\DictionaryHelper.cs" />
-		<Compile Include="LintingCache.cs" />
-		<Compile Include="LintingResult.cs" />
-		<Compile Include="Managers\LintingManager.cs" />
-		<Compile Include="PluginMain.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="ILintProvider.cs" />
-		<Compile Include="Settings.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
