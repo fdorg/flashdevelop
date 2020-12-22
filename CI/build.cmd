@@ -35,6 +35,8 @@ if %errorlevel% neq 0 goto :error
 
 git clean -xfd
 
+nuget restore FlashDevelop.sln
+
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="x86" /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
