@@ -254,27 +254,16 @@
 		<PreBuildEvent>"$(SolutionDir)SetVersion.sh" "$(SolutionDir)"</PreBuildEvent>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(OS)' != 'Unix' And '$(Platform)' == 'AnyCPU' ">
-		<PreBuildEvent>
-			"$(SolutionDir)SetVersion.bat" "$(SolutionDir)" &amp;&amp; ^
-			IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"
-		</PreBuildEvent>
+		<PreBuildEvent>"$(SolutionDir)SetVersion.bat" "$(SolutionDir)" &amp;&amp; ^ IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"</PreBuildEvent>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(Platform)' == 'AnyCPU' ">
-		<PreBuildEvent>
-			"$(SolutionDir)SetVersion.sh" "$(SolutionDir)" &amp;&amp;
-			if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"; fi
-		</PreBuildEvent>
+		<PreBuildEvent>"$(SolutionDir)SetVersion.sh" "$(SolutionDir)" &amp;&amp; if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)86$(TargetExt)"; fi
+	</PreBuildEvent>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(OS)' != 'Unix' And  '$(Platform)' == 'AnyCPU' ">
-		<PostBuildEvent>
-			IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"&amp;&amp; ^
-			IF EXIST "$(TargetDir)$(TargetName)86$(TargetExt)" move /Y "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"
-		</PostBuildEvent>
+		<PostBuildEvent>IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"&amp;&amp; ^ IF EXIST "$(TargetDir)$(TargetName)86$(TargetExt)" move /Y "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"</PostBuildEvent>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(OS)' == 'Unix' And  '$(Platform)' == 'AnyCPU' ">
-		<PostBuildEvent>
-			if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"; fi &amp;&amp;
-			if [ -d "$(TargetDir)$(TargetName)86$(TargetExt)" ]; then mv -f "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"; fi
-		</PostBuildEvent>
+		<PostBuildEvent>if [ -d "$(TargetPath)" ]; then mv -f "$(TargetPath)" "$(TargetDir)$(TargetName)64$(TargetExt)"; fi &amp;&amp; if [ -d "$(TargetDir)$(TargetName)86$(TargetExt)" ]; then mv -f "$(TargetDir)$(TargetName)86$(TargetExt)" "$(TargetPath)"; fi</PostBuildEvent>
 	</PropertyGroup>
 </Project>
