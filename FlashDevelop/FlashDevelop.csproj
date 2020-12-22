@@ -116,14 +116,10 @@
 			<DependentUpon>ControlDialog.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Resources\AboutDialog.jpg" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Controls\Browser.resx">
 			<DependentUpon>Browser.cs</DependentUpon>
 			<SubType>Designer</SubType>
 		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Resources\FlashDevelopIcon.ico" />
 		<EmbeddedResource Include="Resources\QuickFindClose.png" />
 		<EmbeddedResource Include="Resources\QuickFindNext.png" />

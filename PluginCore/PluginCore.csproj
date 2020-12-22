@@ -1,181 +1,183 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <ProjectType>Local</ProjectType>
-    <ProjectGuid>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>PluginCore</AssemblyName>
-    <OutputType>Library</OutputType>
-    <RootNamespace>PluginCore</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <TargetFramework>net48</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>Bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>Bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>Bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>Bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <FileAlignment>4096</FileAlignment>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System">
-      <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Design">
-      <Name>System.Design</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DockPanelSuite\Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DockPanelSuite\Strings.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\en_US.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\eu_ES.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ja_JP.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\MessageBarClose.bmp" />
-    <EmbeddedResource Include="PluginCore\Resources\zh_CN.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Bottom.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Fill.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Hotspot.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_HotspotIndex.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Left.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Right.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Top.png" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop_Active.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPanel.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_AutoHide.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Close.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Dock.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Option.png" />
-    <Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.png" />
-    <Content Include="Ookii.Dialogs\license.txt" />
-    <Content Include="Ookii.Dialogs\VistaFolderBrowserDialog.bmp" />
-  </ItemGroup>
+	<PropertyGroup>
+		<ProjectType>Local</ProjectType>
+		<ProjectGuid>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</ProjectGuid>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<AssemblyName>PluginCore</AssemblyName>
+		<OutputType>Library</OutputType>
+		<RootNamespace>PluginCore</RootNamespace>
+		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<OutputPath>Bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BaseAddress>285212672</BaseAddress>
+		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+		<ConfigurationOverrideFile>
+		</ConfigurationOverrideFile>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<DocumentationFile>
+		</DocumentationFile>
+		<DebugSymbols>true</DebugSymbols>
+		<FileAlignment>4096</FileAlignment>
+		<NoStdLib>false</NoStdLib>
+		<NoWarn>
+		</NoWarn>
+		<Optimize>false</Optimize>
+		<RegisterForComInterop>false</RegisterForComInterop>
+		<RemoveIntegerChecks>false</RemoveIntegerChecks>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<WarningLevel>4</WarningLevel>
+		<DebugType>full</DebugType>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<OutputPath>Bin\Release\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BaseAddress>285212672</BaseAddress>
+		<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+		<ConfigurationOverrideFile>
+		</ConfigurationOverrideFile>
+		<DefineConstants>TRACE</DefineConstants>
+		<DocumentationFile>
+		</DocumentationFile>
+		<DebugSymbols>false</DebugSymbols>
+		<FileAlignment>4096</FileAlignment>
+		<NoStdLib>false</NoStdLib>
+		<NoWarn>
+		</NoWarn>
+		<Optimize>true</Optimize>
+		<RegisterForComInterop>false</RegisterForComInterop>
+		<RemoveIntegerChecks>false</RemoveIntegerChecks>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<WarningLevel>4</WarningLevel>
+		<DebugType>none</DebugType>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>Bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>Bin\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<BaseAddress>285212672</BaseAddress>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<FileAlignment>4096</FileAlignment>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>bin\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<BaseAddress>285212672</BaseAddress>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<FileAlignment>4096</FileAlignment>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System">
+			<Name>System</Name>
+		</Reference>
+		<Reference Include="System.Design">
+			<Name>System.Design</Name>
+		</Reference>
+		<Reference Include="System.Drawing">
+			<Name>System.Drawing</Name>
+		</Reference>
+		<Reference Include="System.Windows.Forms">
+			<Name>System.Windows.Forms</Name>
+		</Reference>
+		<Reference Include="System.Xml">
+			<Name>System.XML</Name>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="DockPanelSuite\Resources.resx">
+			<SubType>Designer</SubType>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Include="DockPanelSuite\Strings.resx">
+			<SubType>Designer</SubType>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\ko_KR.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\en_US.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\eu_ES.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\ja_JP.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="PluginCore\Resources\MessageBarClose.bmp" />
+		<EmbeddedResource Include="PluginCore\Resources\zh_CN.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Bottom.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Fill.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Hotspot.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_HotspotIndex.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Left.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Right.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Top.png" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelLeft_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelRight_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop_Active.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockPanel.bmp" />
+		<Content Include="DockPanelSuite\Resources\DockPane_AutoHide.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_Close.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_Dock.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_Option.png" />
+		<Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.png" />
+		<Content Include="Ookii.Dialogs\license.txt" />
+		<Content Include="Ookii.Dialogs\VistaFolderBrowserDialog.bmp" />
+	</ItemGroup>
 </Project>
