@@ -1,28 +1,21 @@
 ﻿using System;
 using System.IO;
-using System.Data;
-using System.Text;
-using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
 using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Localization;
-using PluginCore.Helpers;
-using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
     public class ExportDialog : Form
     {
-        private System.String languageDirectory;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog;
-        private System.Windows.Forms.ColumnHeader columnHeader;
-        private System.Windows.Forms.ListView itemListView;
-        
-        private ExportDialog()
+        System.String languageDirectory;
+        System.Windows.Forms.Button okButton;
+        System.Windows.Forms.Button cancelButton;
+        System.Windows.Forms.SaveFileDialog saveFileDialog;
+        System.Windows.Forms.ColumnHeader columnHeader;
+        System.Windows.Forms.ListView itemListView;
+
+        ExportDialog()
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
@@ -36,7 +29,7 @@ namespace FlashDevelop.Dialogs
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -123,7 +116,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Applies the localized texts to the form
         /// </summary>
-        private void ApplyLocalizedTexts()
+        void ApplyLocalizedTexts()
         {
             this.Text = TextHelper.GetString("Title.SyntaxExportDialog");
             this.saveFileDialog.Filter = TextHelper.GetString("Info.ZipFilter");
@@ -134,7 +127,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Populates controls with their default items
         /// </summary>
-        private void PopulateControls()
+        void PopulateControls()
         {
             String[] languageFiles = Directory.GetFiles(this.languageDirectory, "*.xml");
             itemListView.Items.Clear();
@@ -150,7 +143,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Imports or exports the language files
         /// </summary>
-        private void OkButtonClick(Object sender, EventArgs e)
+        void OkButtonClick(Object sender, EventArgs e)
         {
             if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -174,7 +167,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the dialog when loaded
         /// </summary>
-        private void SyntaxPanelExportDialogLoad(Object sender, EventArgs e)
+        void SyntaxPanelExportDialogLoad(Object sender, EventArgs e)
         {
             this.PopulateControls();
         }
@@ -182,7 +175,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog
         /// </summary>
-        private void CancelButtonClick(Object sender, EventArgs e)
+        void CancelButtonClick(Object sender, EventArgs e)
         {
             this.Close();
         }
@@ -190,5 +183,4 @@ namespace FlashDevelop.Dialogs
         #endregion
 
     }
-
 }

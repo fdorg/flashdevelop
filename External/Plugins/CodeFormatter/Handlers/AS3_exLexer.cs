@@ -4864,17 +4864,12 @@ public class AS3_exLexer : Lexer {
             int alt25 = 3;
             int LA25_0 = input.LA(1);
 
-            if ( (LA25_0 == '$' || (LA25_0 >= 'A' && LA25_0 <= 'Z') || LA25_0 == '_' || (LA25_0 >= 'a' && LA25_0 <= 'z')) && (synpred1_AS3_ex()) )
+            alt25 = LA25_0 switch
             {
-                alt25 = 1;
-            }
-            else if ( ((LA25_0 >= '0' && LA25_0 <= '9')) )
-            {
-                alt25 = 2;
-            }
-            else 
-            {
-                alt25 = 3;}
+                '$' or >= 'A' and <= 'Z' or '_' or >= 'a' and <= 'z' when (synpred1_AS3_ex()) => 1,
+                >= '0' and <= '9' => 2,
+                _ => 3
+            };
             switch (alt25) 
             {
                 case 1 :
@@ -6982,19 +6977,17 @@ public class AS3_exLexer : Lexer {
                     int index30_34 = input.Index();
                     input.Rewind();
                     s = -1;
-                    if ( (LA30_34 == '=') ) { s = 126; }
+                    s = LA30_34 switch
+                    {
+                        '=' => 126,
+                        '>' => 127,
+                        '*' => 128,
+                        '/' => 129,
+                        >= '\u0000' and <= '\t' or >= '\u000B' and <= '\f' or >= '\u000E' and <= ')' or >= '+' and <=
+                            '.' or >= '0' and <= '<' or >= '?' and <= '\uFFFF' when ((isRegularExpression())) => 131,
+                        _ => 130
+                    };
 
-                    else if ( (LA30_34 == '>') ) { s = 127; }
-
-                    else if ( (LA30_34 == '*') ) { s = 128; }
-
-                    else if ( (LA30_34 == '/') ) { s = 129; }
-
-                    else if ( ((LA30_34 >= '\u0000' && LA30_34 <= '\t') || (LA30_34 >= '\u000B' && LA30_34 <= '\f') || (LA30_34 >= '\u000E' && LA30_34 <= ')') || (LA30_34 >= '+' && LA30_34 <= '.') || (LA30_34 >= '0' && LA30_34 <= '<') || (LA30_34 >= '?' && LA30_34 <= '\uFFFF')) && ((isRegularExpression())) ) { s = 131; }
-
-                    else s = 130;
-
-                     
                     input.Seek(index30_34);
                     if ( s >= 0 ) return s;
                     break;

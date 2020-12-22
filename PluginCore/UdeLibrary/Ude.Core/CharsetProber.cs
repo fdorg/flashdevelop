@@ -152,11 +152,13 @@ namespace Ude.Core
             while (cur < max) {
                     
                 byte b = buf[cur];
-                    
-                if (b == GREATER_THAN)
-                    inTag = false;
-                else if (b == LESS_THAN)
-                    inTag = true;
+
+                inTag = b switch
+                {
+                    GREATER_THAN => false,
+                    LESS_THAN => true,
+                    _ => inTag
+                };
 
                 // it's ascii, but it's not a letter
                 if ((b & 0x80) == 0 && (b < CAPITAL_A || b > SMALL_Z

@@ -57,7 +57,7 @@ namespace ProjectManager.Controls.TreeView
 
             if (project != null && project.IsPathHidden(path))
                 ImageIndex = Icons.HiddenFile.Index;
-            else if ((FileInspector.IsActionScript(ext) || FileInspector.IsHaxeFile(ext)) && project.IsCompileTarget(path))
+            else if (project.IsCompileTarget(path) && (FileInspector.IsActionScript(ext) || FileInspector.IsHaxeFile(ext)))
                 ImageIndex = Icons.ActionScriptCompile.Index;
             else if (FileInspector.IsMxml(ext) && project.IsCompileTarget(path))
                 ImageIndex = Icons.MxmlFileCompile.Index;
@@ -77,24 +77,22 @@ namespace ProjectManager.Controls.TreeView
                 LibraryAsset asset = project.GetAsset(path);
                 if (asset != null && asset.IsSwc)
                 {
-                    if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
-                        colorId = "ProjectTreeView.ExternalLibraryTextColor";
-                    else if (asset.SwfMode == SwfAssetMode.Library)
-                        colorId = "ProjectTreeView.LibraryTextColor";
-                    else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
-                        colorId = "ProjectTreeView.IncludedLibraryTextColor";
+                    colorId = asset.SwfMode switch
+                    {
+                        SwfAssetMode.ExternalLibrary => "ProjectTreeView.ExternalLibraryTextColor",
+                        SwfAssetMode.Library => "ProjectTreeView.LibraryTextColor",
+                        SwfAssetMode.IncludedLibrary => "ProjectTreeView.IncludedLibraryTextColor",
+                        _ => colorId
+                    };
                 }
 
                 if (asset != null && asset.HasManualID)
                     Text += " (" + asset.ManualID + ")";
             }
 
-            Color textColor = PluginBase.MainForm.GetThemeColor(colorId);
+            var textColor = PluginBase.MainForm.GetThemeColor(colorId);
             if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = SystemColors.Highlight;
-
-            if (textColor != Color.Empty) ForeColorRequest = textColor;
-            else ForeColorRequest = SystemColors.ControlText;
-
+            ForeColorRequest = textColor != Color.Empty ? textColor : SystemColors.ControlText;
             // hook for plugins
             OnFileNodeRefresh?.Invoke(this);
         }
@@ -111,9 +109,7 @@ namespace ProjectManager.Controls.TreeView
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
-
-            if (!FileExists)
-                ImageIndex = SelectedImageIndex = Icons.SwfFileHidden.Index;
+            if (!FileExists) ImageIndex = SelectedImageIndex = Icons.SwfFileHidden.Index;
         }
     }
 }

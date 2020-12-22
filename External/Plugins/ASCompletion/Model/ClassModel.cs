@@ -484,10 +484,13 @@ namespace ASCompletion.Model
             if ((flags & (FlagType.Getter | FlagType.Setter)) > 0) return $"{modifiers}property {member}";
             if ((flags & FlagType.Delegate) > 0) return $"{modifiers}delegate {member}";
             if ((flags & FlagType.Function) > 0) return $"{modifiers}function {member}";
-            if (flags == FlagType.Package) return $"Package {member.Type}";
-            if (flags == FlagType.Template) return $"Template {member.Type}";
-            if (flags == FlagType.Declaration) return $"Declaration {member.Type}";
-            return $"{modifiers}type {member.Type}";
+            return flags switch
+            {
+                FlagType.Package => $"Package {member.Type}",
+                FlagType.Template => $"Template {member.Type}",
+                FlagType.Declaration => $"Declaration {member.Type}",
+                _ => $"{modifiers}type {member.Type}"
+            };
         }
 
         public static string CommentDeclaration(string comment, string tab)

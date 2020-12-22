@@ -27,7 +27,7 @@ namespace SevenZip.Compression.LZMA
             g_FastPos[1] = 1;
             for (byte slotFast = 2; slotFast < kFastSlots; slotFast++)
             {
-                uint k = ((uint)1 << ((slotFast >> 1) - 1));
+                var k = (uint)1 << ((slotFast >> 1) - 1);
                 for (uint j = 0; j < k; j++, c++)
                     g_FastPos[c] = slotFast;
             }
@@ -35,20 +35,22 @@ namespace SevenZip.Compression.LZMA
 
         static uint GetPosSlot(uint pos)
         {
-            if (pos < (1 << 11))
-                return g_FastPos[pos];
-            if (pos < (1 << 21))
-                return (uint)(g_FastPos[pos >> 10] + 20);
-            return (uint)(g_FastPos[pos >> 20] + 40);
+            return pos switch
+            {
+                < 1 << 11 => g_FastPos[pos],
+                < 1 << 21 => (uint) (g_FastPos[pos >> 10] + 20),
+                _ => (uint) (g_FastPos[pos >> 20] + 40)
+            };
         }
 
         static uint GetPosSlot2(uint pos)
         {
-            if (pos < (1 << 17))
-                return (uint)(g_FastPos[pos >> 6] + 12);
-            if (pos < (1 << 27))
-                return (uint)(g_FastPos[pos >> 16] + 32);
-            return (uint)(g_FastPos[pos >> 26] + 52);
+            return pos switch
+            {
+                < 1 << 17 => (uint) (g_FastPos[pos >> 6] + 12),
+                < 1 << 27 => (uint) (g_FastPos[pos >> 16] + 32),
+                _ => (uint) (g_FastPos[pos >> 26] + 52)
+            };
         }
 
         Base.State _state = new Base.State();

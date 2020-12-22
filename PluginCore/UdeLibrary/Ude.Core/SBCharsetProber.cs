@@ -110,12 +110,15 @@ namespace Ude.Core
             }
 
             if (state == ProbingState.Detecting) {
-                if (totalSeqs > SB_ENOUGH_REL_THRESHOLD) {
+                if (totalSeqs > SB_ENOUGH_REL_THRESHOLD)
+                {
                     float cf = GetConfidence();
-                    if (cf > POSITIVE_SHORTCUT_THRESHOLD)
-                        state = ProbingState.FoundIt;
-                    else if (cf < NEGATIVE_SHORTCUT_THRESHOLD)
-                        state = ProbingState.NotMe;
+                    state = cf switch
+                    {
+                        > POSITIVE_SHORTCUT_THRESHOLD => ProbingState.FoundIt,
+                        < NEGATIVE_SHORTCUT_THRESHOLD => ProbingState.NotMe,
+                        _ => state
+                    };
                 }
             }
             return state;

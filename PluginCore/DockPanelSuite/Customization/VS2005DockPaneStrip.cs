@@ -37,7 +37,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_image1 = image1;
             }
 
-            int m_imageCategory = 0;
+            int m_imageCategory;
             public int ImageCategory
             {
                 get => m_imageCategory;
@@ -420,23 +420,13 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-                Components.Dispose();
+            if (disposing) Components.Dispose();
             base.Dispose (disposing);
         }
 
         Font m_boldFont;
 
-        Font BoldFont
-        {
-            get
-            {
-                if (m_boldFont is null)
-                    m_boldFont = new Font(Font, FontStyle.Bold);
-
-                return m_boldFont;
-            }
-        }
+        Font BoldFont => m_boldFont ??= new Font(Font, FontStyle.Bold);
 
         protected override void OnFontChanged(EventArgs e)
         {
@@ -448,9 +438,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        int FirstDisplayingTab { get; set; } = 0;
+        int FirstDisplayingTab { get; set; }
 
-        int m_startDisplayingTab = 0;
+        int m_startDisplayingTab;
 
         int StartDisplayingTab
         {
@@ -462,22 +452,17 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        int EndDisplayingTab { get; set; } = 0;
+        int EndDisplayingTab { get; set; }
 
-        bool m_documentTabsOverflow = false;
+        bool m_documentTabsOverflow;
 
         bool DocumentTabsOverflow
         {
             set
             {
-                if (m_documentTabsOverflow == value)
-                    return;
-
+                if (m_documentTabsOverflow == value) return;
                 m_documentTabsOverflow = value;
-                if (value)
-                    ButtonWindowList.ImageCategory = 1;
-                else
-                    ButtonWindowList.ImageCategory = 0;
+                ButtonWindowList.ImageCategory = value ? 1 : 0;
             }
         }
 
@@ -620,11 +605,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             // Set tab whose max width less than average width
-            bool anyWidthWithinAverage = true;
             int totalWidth = rectTabStrip.Width - ToolWindowStripGapLeft - ToolWindowStripGapRight;
             int totalAllocatedWidth = 0;
             int averageWidth = totalWidth / countTabs;
             int remainedTabs = countTabs;
+            bool anyWidthWithinAverage;
             for (anyWidthWithinAverage=true; anyWidthWithinAverage && remainedTabs>0;)
             {
                 anyWidthWithinAverage = false;
@@ -1301,15 +1286,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             var lastItem = ts.Items[ts.Items.Count - 1];
             if (lastItem.Bounds.Bottom < ts.Height && firstItem.Bounds.Top > 0)
                 return;
-            delta /= -4;
-            if (delta < 0 && firstItem.Bounds.Top - delta > scrollButtonHeight)
+            delta = delta switch
             {
-                delta = firstItem.Bounds.Top - scrollButtonHeight;
-            }
-            else if (delta > 0 && delta > lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2)
-            {
-                delta = lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2;
-            }
+                < 0 when firstItem.Bounds.Top - delta > scrollButtonHeight => firstItem.Bounds.Top - scrollButtonHeight,
+                > 0 when delta > lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2 => lastItem.Bounds.Bottom -
+                    ts.Height + scrollButtonHeight * 2,
+                _ => -4
+            };
             if (delta != 0)
             {
                 ScrollInternal(ts, delta);

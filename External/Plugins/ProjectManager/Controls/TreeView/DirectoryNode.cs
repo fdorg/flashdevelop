@@ -57,11 +57,10 @@ namespace ProjectManager.Controls.TreeView
                 InsideLibrarypath = node.InsideLibrarypath;
             }
 
-            string colorId = "ProjectTreeView.ForeColor";
+            var colorId = "ProjectTreeView.ForeColor";
             if (project != null)
             {
-                if (project.IsPathHidden(BackingPath))
-                    ImageIndex = Icons.HiddenFolder.Index;
+                if (project.IsPathHidden(BackingPath)) ImageIndex = Icons.HiddenFolder.Index;
                 else if (InsideClasspath is null && project.IsClassPath(BackingPath))
                 {
                     InsideClasspath = this;
@@ -71,13 +70,14 @@ namespace ProjectManager.Controls.TreeView
                     ImageIndex = Icons.FolderCompile.Index;
                 else if (InsideLibrarypath is null && project.IsLibraryAsset(BackingPath))
                 {
-                    LibraryAsset asset = project.GetAsset(BackingPath);
-                    if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
-                        colorId = "ProjectTreeView.ExternalLibraryTextColor";
-                    else if (asset.SwfMode == SwfAssetMode.Library)
-                        colorId = "ProjectTreeView.LibraryTextColor";
-                    else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
-                        colorId = "ProjectTreeView.IncludedLibraryTextColor";
+                    var asset = project.GetAsset(BackingPath);
+                    colorId = asset.SwfMode switch
+                    {
+                        SwfAssetMode.ExternalLibrary => "ProjectTreeView.ExternalLibraryTextColor",
+                        SwfAssetMode.Library => "ProjectTreeView.LibraryTextColor",
+                        SwfAssetMode.IncludedLibrary => "ProjectTreeView.IncludedLibraryTextColor",
+                        _ => colorId
+                    };
 
                     InsideLibrarypath = this;
                     ImageIndex = Icons.LibrarypathFolder.Index;
@@ -89,10 +89,9 @@ namespace ProjectManager.Controls.TreeView
 
             SelectedImageIndex = ImageIndex;
 
-            Color textColor = PluginBase.MainForm.GetThemeColor(colorId);
+            var textColor = PluginBase.MainForm.GetThemeColor(colorId);
             if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = SystemColors.Highlight;
-            if (textColor != Color.Empty) ForeColorRequest = textColor;
-            else ForeColorRequest = SystemColors.ControlText;
+            ForeColorRequest = textColor != Color.Empty ? textColor : SystemColors.ControlText;
 
             // make the plus/minus sign correct
             // TODO: Check if this works ok!
@@ -134,7 +133,7 @@ namespace ProjectManager.Controls.TreeView
             if (dirty) PopulateChildNodes(false);
         }
 
-        private void PopulateChildNodes(bool recursive)
+        void PopulateChildNodes(bool recursive)
         {
             dirty = false;
 
@@ -175,7 +174,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void PopulateDirectories(GenericNodeList nodesToDie, bool recursive)
+        void PopulateDirectories(GenericNodeList nodesToDie, bool recursive)
         {
             foreach (string directory in Directory.GetDirectories(BackingPath))
             {
@@ -204,10 +203,9 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void PopulateFiles(GenericNodeList nodesToDie, bool recursive)
+        void PopulateFiles(GenericNodeList nodesToDie, bool recursive)
         {
-            string[] files = Directory.GetFiles(BackingPath);
-
+            var files = Directory.GetFiles(BackingPath);
             foreach (string file in files)
             {
                 if (IsFileExcluded(file))
@@ -246,7 +244,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void EnsureParentedBy(GenericNode child, GenericNode parent)
+        static void EnsureParentedBy(GenericNode child, TreeNode parent)
         {
             if (child.Parent != parent)
             {
@@ -256,7 +254,7 @@ namespace ProjectManager.Controls.TreeView
         }
 
         // Let another plugin extend the tree by specifying mapping
-        private FileMapping GetFileMapping(string[] files)
+        FileMapping GetFileMapping(string[] files)
         {
             FileMappingRequest request = new FileMappingRequest(files);
 
@@ -276,7 +274,7 @@ namespace ProjectManager.Controls.TreeView
         /// directories first, then files).
         /// </summary>
         /// <param name="node"></param>
-        private static void InsertNode(TreeNodeCollection nodes, GenericNode node)
+        static void InsertNode(TreeNodeCollection nodes, GenericNode node)
         {
             bool inserted = false;
 
