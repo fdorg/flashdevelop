@@ -15,7 +15,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockHandler.IsActivatedChanged += DockHandler_IsActivatedChanged;
         }
 
-        private readonly DockContentHandler m_dockHandler = null;
+        readonly DockContentHandler m_dockHandler;
         [Browsable(false)]
         public DockContentHandler DockHandler => m_dockHandler;
 
@@ -55,10 +55,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             get => DockHandler.TabText;
             set => DockHandler.TabText = value;
         }
-        private bool ShouldSerializeTabText()
-        {
-            return (DockHandler.TabText != null);
-        }
+
+        bool ShouldSerializeTabText() => DockHandler.TabText != null;
 
         [Browsable(false)]
         public Color TabColor
@@ -133,10 +131,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual string GetPersistString()
-        {
-            return GetType().ToString();
-        }
+        public virtual string GetPersistString() => GetType().ToString();
 
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockContent_HideOnClose_Description")]
@@ -159,15 +154,12 @@ namespace WeifenLuo.WinFormsUI.Docking
         [Browsable(false)]
         public bool IsActivated => DockHandler.IsActivated;
 
-        public bool IsDockStateValid(DockState dockState)
-        {
-            return DockHandler.IsDockStateValid(dockState);
-        }
+        public bool IsDockStateValid(DockState dockState) => DockHandler.IsDockStateValid(dockState);
 
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockContent_TabPageContextMenu_Description")]
         [DefaultValue(null)]
-        public ContextMenu TabPageContextMenu
+        public ContextMenuStrip TabPageContextMenu
         {
             get => DockHandler.TabPageContextMenu;
             set => DockHandler.TabPageContextMenu = value;
@@ -192,75 +184,37 @@ namespace WeifenLuo.WinFormsUI.Docking
             set => DockHandler.ToolTipText = value;
         }
 
-        public new void Activate()
-        {
-            DockHandler.Activate();
-        }
+        public new void Activate() => DockHandler.Activate();
 
-        public new void Hide()
-        {
-            DockHandler.Hide();
-        }
+        public new void Hide() => DockHandler.Hide();
 
-        public new void Show()
-        {
-            DockHandler.Show();
-        }
+        public new void Show() => DockHandler.Show();
 
-        public void Show(DockPanel dockPanel)
-        {
-            DockHandler.Show(dockPanel);
-        }
+        public void Show(DockPanel dockPanel) => DockHandler.Show(dockPanel);
 
-        public void Show(DockPanel dockPanel, DockState dockState)
-        {
-            DockHandler.Show(dockPanel, dockState);
-        }
+        public void Show(DockPanel dockPanel, DockState dockState) => DockHandler.Show(dockPanel, dockState);
 
         [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters")]
-        public void Show(DockPanel dockPanel, Rectangle floatWindowBounds)
-        {
-            DockHandler.Show(dockPanel, floatWindowBounds);
-        }
+        public void Show(DockPanel dockPanel, Rectangle floatWindowBounds) => DockHandler.Show(dockPanel, floatWindowBounds);
 
-        public void Show(DockPane pane, IDockContent beforeContent)
-        {
-            DockHandler.Show(pane, beforeContent);
-        }
+        public void Show(DockPane pane, IDockContent beforeContent) => DockHandler.Show(pane, beforeContent);
 
-        public void Show(DockPane previousPane, DockAlignment alignment, double proportion)
-        {
-            DockHandler.Show(previousPane, alignment, proportion);
-        }
+        public void Show(DockPane previousPane, DockAlignment alignment, double proportion) => DockHandler.Show(previousPane, alignment, proportion);
 
         [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters")]
-        public void FloatAt(Rectangle floatWindowBounds)
-        {
-            DockHandler.FloatAt(floatWindowBounds);
-        }
+        public void FloatAt(Rectangle floatWindowBounds) => DockHandler.FloatAt(floatWindowBounds);
 
-        public void DockTo(DockPane paneTo, DockStyle dockStyle, int contentIndex)
-        {
-            DockHandler.DockTo(paneTo, dockStyle, contentIndex);
-        }
+        public void DockTo(DockPane paneTo, DockStyle dockStyle, int contentIndex) => DockHandler.DockTo(paneTo, dockStyle, contentIndex);
 
-        public void DockTo(DockPane paneTo, DockStyle dockStyle, int contentIndex, double proportion)
-        {
-            DockHandler.DockTo(paneTo, dockStyle, contentIndex, proportion);
-        }
+        public void DockTo(DockPane paneTo, DockStyle dockStyle, int contentIndex, double proportion) => DockHandler.DockTo(paneTo, dockStyle, contentIndex, proportion);
 
-        public void DockTo(DockPanel panel, DockStyle dockStyle)
-        {
-            DockHandler.DockTo(panel, dockStyle);
-        }
+        public void DockTo(DockPanel panel, DockStyle dockStyle) => DockHandler.DockTo(panel, dockStyle);
 
         #region Events
-        private void DockHandler_DockStateChanged(object sender, EventArgs e)
-        {
-            OnDockStateChanged(e);
-        }
 
-        private static readonly object DockStateChangedEvent = new object();
+        void DockHandler_DockStateChanged(object sender, EventArgs e) => OnDockStateChanged(e);
+
+        static readonly object DockStateChangedEvent = new object();
         [LocalizedCategory("Category_PropertyChanged")]
         [LocalizedDescription("Pane_DockStateChanged_Description")]
         public event EventHandler DockStateChanged
@@ -274,12 +228,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             handler?.Invoke(this, e);
         }
 
-        private void DockHandler_IsActivatedChanged(object sender, EventArgs e)
-        {
-            OnIsActivatedChanged(e);
-        }
+        void DockHandler_IsActivatedChanged(object sender, EventArgs e) => OnIsActivatedChanged(e);
 
-        private static readonly object IsActivatedChangedEvent = new object();
+        static readonly object IsActivatedChangedEvent = new object();
         public event EventHandler IsActivatedChanged
         {
             add => Events.AddHandler(IsActivatedChangedEvent, value);
