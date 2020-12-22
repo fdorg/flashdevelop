@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BEEA3146-4CE6-400A-9D21-7217760404D2}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MXMLCompletionBuilder</RootNamespace>
     <AssemblyName>MXMLCompletionBuilder</AssemblyName>

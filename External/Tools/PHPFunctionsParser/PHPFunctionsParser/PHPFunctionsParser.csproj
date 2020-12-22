@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{21040C2F-A055-4C8B-82FC-5F72260243A6}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PHPFunctionsParser</RootNamespace>
     <AssemblyName>PHPFunctionsParser</AssemblyName>
