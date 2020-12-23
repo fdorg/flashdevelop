@@ -163,16 +163,14 @@ namespace CssCompletion
                 _ => null,
             };
             if (items is null) return;
-
             if (autoInsert && !string.IsNullOrEmpty(context.Word))
             {
-                var matches = items.Where(item => item.Label.StartsWithOrdinal(context.Word)).ToList();
-                if (matches.Count == 1)
-                {
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                    sci.SetSel(context.Position, sci.CurrentPos);
-                    sci.ReplaceSel(matches[0].Label);
-                }
+                var matches = items.Where(item => item.Label.StartsWithOrdinal(context.Word)).ToArray();
+                if (matches.Length != 1) return;
+                var sci = PluginBase.MainForm.CurrentDocument?.SciControl;
+                if (sci is null) return;
+                sci.SetSel(context.Position, sci.CurrentPos);
+                sci.ReplaceSel(matches[0].Label);
             }
             else CompletionList.Show(items, autoHide, context.Word);
         }
@@ -181,10 +179,7 @@ namespace CssCompletion
         {
             if (!(item is CompletionItem)) return;
             var it = (CompletionItem) item;
-            if (trigger == ':')
-            {
-                lastColonInsert = position + text.Length + 1;
-            }
+            if (trigger == ':') lastColonInsert = position + text.Length + 1;
             else if (it.Kind == ItemKind.Property && !settings.DisableInsertColon)
             {
                 int pos = position + text.Length;
@@ -210,9 +205,12 @@ namespace CssCompletion
                 return ctx;
             }
 
-            int inString = 0;
-            if (style == 14) inString = 1;
-            if (style == 13) inString = 2;
+            int inString = style switch
+            {
+                14 => 1,
+                13 => 2,
+                _ => 0
+            };
 
             bool inWord = true;
             bool inComment = false;

@@ -82,8 +82,12 @@ namespace ASCompletion.Completion
                 switch (inString)
                 {
                     case 0:
-                        if (c == '"') inString = 1;
-                        else if (c == '\'') inString = 2;
+                        inString = c switch
+                        {
+                            '"' => 1,
+                            '\'' => 2,
+                            _ => inString
+                        };
                         break;
                     case 1:
                         sb.Append(c);
@@ -445,8 +449,12 @@ namespace ASCompletion.Completion
                 switch (inString)
                 {
                     case 0:
-                        if (c == '"') inString = 1;
-                        else if (c == '\'') inString = 2;
+                        inString = c switch
+                        {
+                            '"' => 1,
+                            '\'' => 2,
+                            _ => inString
+                        };
                         if (inString > 0 && c2 != '=') return false;
                         break;
                     case 1:

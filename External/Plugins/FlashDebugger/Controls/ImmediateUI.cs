@@ -11,8 +11,8 @@ namespace FlashDebugger.Controls
 {
     public partial class ImmediateUI : DockPanelControl
     {
-        private readonly List<string> history;
-        private int historyPos;
+        readonly List<string> history;
+        int historyPos;
 
         public ImmediateUI()
         {
@@ -23,7 +23,7 @@ namespace FlashDebugger.Controls
             ScrollBarEx.Attach(textBox);
         }
 
-        private void textBox_KeyDown(object sender, KeyEventArgs e)
+        void textBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Back && textBox.GetFirstCharIndexOfCurrentLine() == textBox.SelectionStart) e.SuppressKeyPress = true;
             if (e.KeyCode == Keys.Up && historyPos > 0)
@@ -113,7 +113,7 @@ namespace FlashDebugger.Controls
             }
         }
 
-        private string processSwfs()
+        string processSwfs()
         {
                 StringBuilder ret = new StringBuilder();
 
@@ -127,18 +127,21 @@ namespace FlashDebugger.Controls
                 return ret.ToString();
         }
 
-        private string processExpr(string expr)
+        string processExpr(string expr)
         {
             IASTBuilder builder = new ASTBuilder(true);
             ValueExp exp = builder.parse(new java.io.StringReader(expr));
             var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
             var obj = exp.evaluate(ctx);
-            if (obj is Variable) return ctx.FormatValue(((Variable)obj).getValue());
-            if (obj is Value) return ctx.FormatValue((Value)obj);
-            return obj.toString();
+            return obj switch
+            {
+                Variable variable => ctx.FormatValue(variable.getValue()),
+                Value value => ctx.FormatValue(value),
+                _ => obj.toString()
+            };
         }
 
-        private string processGlobal(string expr)
+        string processGlobal(string expr)
         {
             var val = PluginMain.debugManager.FlashInterface.Session.getGlobal(expr);
             //var val = PluginMain.debugManager.FlashInterface.Session.getValue(Convert.ToInt64(expr));
@@ -146,24 +149,24 @@ namespace FlashDebugger.Controls
             return ctx.FormatValue(val);
         }
 
-        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
+        void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Clear();
             history.Clear();
             historyPos = 0;
         }
 
-        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Cut();
         }
 
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Copy();
         }
 
-        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox.Paste();
         }

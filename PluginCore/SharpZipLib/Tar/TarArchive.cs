@@ -157,15 +157,12 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>Returns a <see cref="TarArchive"/> suitable for reading.</returns>
         public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor)
         {
-            if ( inputStream is null ) {
-                throw new ArgumentNullException(nameof(inputStream));
-            }
-
-            if ( inputStream is TarInputStream ) {
-                throw new ArgumentException("TarInputStream not valid");
-            }
-            
-            return new TarArchive(new TarInputStream(inputStream, blockFactor));
+            return inputStream switch
+            {
+                null => throw new ArgumentNullException(nameof(inputStream)),
+                TarInputStream => throw new ArgumentException("TarInputStream not valid"),
+                _ => new TarArchive(new TarInputStream(inputStream, blockFactor))
+            };
         }
         
         /// <summary>
@@ -199,15 +196,12 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>Returns a <see cref="TarArchive"/> suitable for writing.</returns>
         public static TarArchive CreateOutputTarArchive(Stream outputStream, int blockFactor)
         {
-            if ( outputStream is null ) {
-                throw new ArgumentNullException(nameof(outputStream));
-            }
-
-            if ( outputStream is TarOutputStream ) {
-                throw new ArgumentException("TarOutputStream is not valid");
-            }
-
-            return new TarArchive(new TarOutputStream(outputStream, blockFactor));
+            return outputStream switch
+            {
+                null => throw new ArgumentNullException(nameof(outputStream)),
+                TarOutputStream => throw new ArgumentException("TarOutputStream is not valid"),
+                _ => new TarArchive(new TarOutputStream(outputStream, blockFactor))
+            };
         }
         #endregion
         

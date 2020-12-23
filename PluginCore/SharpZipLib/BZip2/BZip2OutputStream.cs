@@ -569,19 +569,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
             if (nMTF <= 0) {
                 Panic();
             }
-            
-            if (nMTF < 200) {
-                nGroups = 2;
-            } else if (nMTF < 600) {
-                nGroups = 3;
-            } else if (nMTF < 1200) {
-                nGroups = 4;
-            } else if (nMTF < 2400) {
-                nGroups = 5;
-            } else {
-                nGroups = 6;
-            }
-            
+
+            nGroups = nMTF switch
+            {
+                < 200 => 2,
+                < 600 => 3,
+                < 1200 => 4,
+                < 2400 => 5,
+                _ => 6
+            };
+
             /*--- Generate an initial set of coding tables ---*/ 
             int nPart = nGroups;
             int remF  = nMTF;

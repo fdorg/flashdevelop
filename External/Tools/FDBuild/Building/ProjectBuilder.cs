@@ -27,15 +27,16 @@ namespace ProjectManager.Building
 
         public static ProjectBuilder Create(Project project, string ipcName, string compilerPath)
         {
-            if (project is AS2Project as2Project) return new AS2ProjectBuilder(as2Project, compilerPath);
-            if (project is AS3Project as3Project)
+            return project switch
             {
-                if (Directory.Exists(Path.Combine(compilerPath, "js"))) return new FlexJSProjectBuilder(as3Project, compilerPath);
-                return new AS3ProjectBuilder(as3Project, compilerPath, ipcName);
-            }
-            if (project is HaxeProject haxeProject) return new HaxeProjectBuilder(haxeProject, compilerPath);
-            if (project is GenericProject genericProject) return new GenericProjectBuilder(genericProject, compilerPath);
-            throw new Exception("FDBuild doesn't know how to build " + project.GetType().Name);
+                AS2Project as2Project => new AS2ProjectBuilder(as2Project, compilerPath),
+                AS3Project as3Project when Directory.Exists(Path.Combine(compilerPath, "js")) =>
+                    new FlexJSProjectBuilder(as3Project, compilerPath),
+                AS3Project as3Project => new AS3ProjectBuilder(as3Project, compilerPath, ipcName),
+                HaxeProject haxeProject => new HaxeProjectBuilder(haxeProject, compilerPath),
+                GenericProject genericProject => new GenericProjectBuilder(genericProject, compilerPath),
+                _ => throw new Exception("FDBuild doesn't know how to build " + project.GetType().Name)
+            };
         }
 
         protected string FDBuildDirectory => ProjectPaths.ApplicationDirectory;

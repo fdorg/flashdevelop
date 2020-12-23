@@ -116,20 +116,16 @@ public class MXMLLexer : Lexer {
                             }
                             break;
                         case '!':
-                            {
+                        {
                             int LA1_5 = input.LA(3);
 
-                            if ( (LA1_5 == 'D') )
+                            alt1 = LA1_5 switch
                             {
-                                alt1 = 2;
-                            }
-                            else if ( (LA1_5 == '-') )
-                            {
-                                alt1 = 4;
-                            }
-
-
-                            }
+                                'D' => 2,
+                                '-' => 4,
+                                _ => alt1
+                            };
+                        }
                             break;
                         case '\t':
                         case '\n':

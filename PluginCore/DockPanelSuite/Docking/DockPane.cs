@@ -1079,19 +1079,16 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void DockTo(DockPanel panel, DockStyle dockStyle)
         {
-            if (panel != DockPanel)
-                throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, nameof(panel));
-
-            if (dockStyle == DockStyle.Top)
-                DockState = DockState.DockTop;
-            else if (dockStyle == DockStyle.Bottom)
-                DockState = DockState.DockBottom;
-            else if (dockStyle == DockStyle.Left)
-                DockState = DockState.DockLeft;
-            else if (dockStyle == DockStyle.Right)
-                DockState = DockState.DockRight;
-            else if (dockStyle == DockStyle.Fill)
-                DockState = DockState.Document;
+            if (panel != DockPanel) throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, nameof(panel));
+            DockState = dockStyle switch
+            {
+                DockStyle.Top => DockState.DockTop,
+                DockStyle.Bottom => DockState.DockBottom,
+                DockStyle.Left => DockState.DockLeft,
+                DockStyle.Right => DockState.DockRight,
+                DockStyle.Fill => DockState.Document,
+                _ => DockState
+            };
         }
 
         #endregion

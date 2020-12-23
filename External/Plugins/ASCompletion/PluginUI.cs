@@ -245,17 +245,16 @@ namespace ASCompletion
             {
                 rst = ICON_INTERFACE;
             }
-            else if (flag == FlagType.Package)
-                rst = ICON_PACKAGE;
-            else if (flag == FlagType.Declaration)
-                rst = ICON_DECLARATION;
-            else if (flag == FlagType.Template)
-                rst = ICON_TEMPLATE;
             else
-            {
-                rst = ((flag & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE :
-                    ((flag & FlagType.Interface) > 0) ? ICON_INTERFACE : ICON_TYPE;
-            }
+                rst = flag switch
+                {
+                    FlagType.Package => ICON_PACKAGE,
+                    FlagType.Declaration => ICON_DECLARATION,
+                    FlagType.Template => ICON_TEMPLATE,
+                    _ => ((flag & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE :
+                        ((flag & FlagType.Interface) > 0) ? ICON_INTERFACE : ICON_TYPE
+                };
+
             return rst;
         }
 
@@ -1158,12 +1157,9 @@ namespace ASCompletion
         public bool OnShortcut(Keys keys)
         {
             if (!ContainsFocus) return false;
-            if (keys == (Keys.Control | Keys.F))
-            {
-                findTextTxt.Focus();
-                return true;
-            }
-            return false;
+            if (keys != (Keys.Control | Keys.F)) return false;
+            findTextTxt.Focus();
+            return true;
         }
     }
 

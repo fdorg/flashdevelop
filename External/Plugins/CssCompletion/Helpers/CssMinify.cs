@@ -111,7 +111,7 @@ namespace CssCompletion
         /// <param name="theCurState">The current CSS parsing state.</param>
         /// 
         /// <returns>The future CSS parsing state.</returns>
-        private static CssState GetState(string theCss, ref int thePos, CssState theCurState)
+        static CssState GetState(string theCss, ref int thePos, CssState theCurState)
         {
             int aLen = theCss.Length;
             int i = thePos;
@@ -184,22 +184,26 @@ namespace CssCompletion
             if (IsTokenChar(c))
                 return CssState.Token;
 
-            if (c == '\"')
-                return CssState.StringD;
-            if (c == '\'')
-                return CssState.StringS;
-            return CssState.Punctuation;
+            return c switch
+            {
+                '\"' => CssState.StringD,
+                '\'' => CssState.StringS,
+                _ => CssState.Punctuation
+            };
         }
 
-        private static bool IsWhitespaceChar(char p) => p == '\t' || p == '\r' || p == '\n' || p == ' ';
+        static bool IsWhitespaceChar(char p) => p == '\t' || p == '\r' || p == '\n' || p == ' ';
 
-        private static bool IsTokenChar(char theChar)
+        static bool IsTokenChar(char theChar)
         {
-            if (theChar >= 'a' && theChar <= 'z') return true;
-            if (theChar >= '0' && theChar <= '9') return true;
-            if (theChar >= 'A' && theChar <= 'Z') return true;
-            if (AdditionalTokenChars.IndexOf(theChar) >= 0) return true;
-            return false;
+            switch (theChar)
+            {
+                case >= 'a' and <= 'z':
+                case >= '0' and <= '9':
+                case >= 'A' and <= 'Z':
+                    return true;
+            }
+            return AdditionalTokenChars.IndexOf(theChar) >= 0;
         }
     }
 }

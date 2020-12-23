@@ -1177,8 +1177,12 @@ namespace ASCompletion.Completion
             if (options.IsHaXe)
             {
                 var initialStyle = sci.BaseStyleAt(startPos);
-                if (initialStyle == 6) options.InString = 1;
-                else if (initialStyle == 7) options.InString = 2;
+                options.InString = initialStyle switch
+                {
+                    6 => 1,
+                    7 => 2,
+                    _ => options.InString
+                };
             }
 
             int newOffset = offset;

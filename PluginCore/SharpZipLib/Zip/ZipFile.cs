@@ -2588,17 +2588,15 @@ namespace ICSharpCode.SharpZipLib.Zip
                     int yCmdValue = ((y.Command == UpdateCommand.Copy) || (y.Command == UpdateCommand.Modify)) ? 0 : 1;
 
                     result = xCmdValue - yCmdValue;
-                    if (result == 0) {
+                    if (result == 0)
+                    {
                         long offsetDiff = x.Entry.Offset - y.Entry.Offset;
-                        if (offsetDiff < 0) {
-                            result = -1;
-                        }
-                        else if (offsetDiff == 0) {
-                            result = 0;
-                        }
-                        else {
-                            result = 1;
-                        }
+                        result = offsetDiff switch
+                        {
+                            < 0 => -1,
+                            0 => 0,
+                            _ => 1
+                        };
                     }
                 }
                 return result;

@@ -30,11 +30,12 @@ namespace PluginCore.Utilities
         {
             var cr = text.IndexOf('\r');
             var lf = text.IndexOf('\n');
-            if (cr >= 0 && lf >= 0) return cr >= lf ? 2 : 0;
-            if (cr < 0 && lf < 0) return (int) PluginBase.Settings.EOLMode;
-            return lf < 0
-                ? 1
-                : 2;
+            return cr switch
+            {
+                >= 0 when lf >= 0 => cr >= lf ? 2 : 0,
+                < 0 when lf < 0 => (int) PluginBase.Settings.EOLMode,
+                _ => lf < 0 ? 1 : 2
+            };
         }
     }
 }

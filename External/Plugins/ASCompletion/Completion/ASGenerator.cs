@@ -1642,10 +1642,12 @@ namespace ASCompletion.Completion
 
             if (m1.Success || m2.Success)
             {
-                Match m;
-                if (m1.Success && m2.Success) m = m1.Index > m2.Index ? m2 : m1;
-                else if (m1.Success) m = m1;
-                else m = m2;
+                Match m = m1.Success switch
+                {
+                    true when m2.Success => m1.Index > m2.Index ? m2 : m1,
+                    true => m1,
+                    _ => m2
+                };
                 value = value.Substring(m.Index + 1, m.Length - 2);
             }
 

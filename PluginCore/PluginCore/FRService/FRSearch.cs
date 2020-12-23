@@ -519,8 +519,12 @@ namespace PluginCore.FRService
                     {
                         if (literalMatch == 0)
                         {
-                            if (c == '"') literalMatch = 1;
-                            else if (c == '\'') literalMatch = 2;
+                            literalMatch = c switch
+                            {
+                                '"' => 1,
+                                '\'' => 2,
+                                _ => literalMatch
+                            };
                         }
                         else if (pos > 1)
                             if (literalMatch == 1)

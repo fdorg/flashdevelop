@@ -35,13 +35,14 @@ namespace ProjectManager.Projects
         {
             if (version > 1) return;
 
-            // import FD3 project
-            if (Project.OutputType == OutputType.Unknown)
-                Project.OutputType = Project.MovieOptions.DefaultOutput(Project.MovieOptions.Platform);
-
-            else if (Project.OutputType == OutputType.OtherIDE
-                && (!string.IsNullOrEmpty(Project.PreBuildEvent) || !string.IsNullOrEmpty(Project.PostBuildEvent)))
-                Project.OutputType = OutputType.CustomBuild;
+            Project.OutputType = Project.OutputType switch
+            {
+                // import FD3 project
+                OutputType.Unknown => Project.MovieOptions.DefaultOutput(Project.MovieOptions.Platform),
+                OutputType.OtherIDE when (!string.IsNullOrEmpty(Project.PreBuildEvent) ||
+                                          !string.IsNullOrEmpty(Project.PostBuildEvent)) => OutputType.CustomBuild,
+                _ => Project.OutputType
+            };
         }
 
         protected virtual void ProcessRootNode()
