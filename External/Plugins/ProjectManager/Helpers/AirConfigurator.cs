@@ -22,12 +22,10 @@ namespace ProjectManager.Helpers
 
         public void SetUp()
         {
-            if (!string.IsNullOrEmpty(ApplicationSetupBatch) && ApplicationSetupParams.Count > 0)
-            {
-                var fileInfo = FileHelper.GetEncodingFileInfo(ApplicationSetupBatch);
-                string contents = BatchParamRegEx.Replace(fileInfo.Contents, ParseApplicationSetupBatchParams);
-                FileHelper.WriteFile(ApplicationSetupBatch, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
-            }
+            if (string.IsNullOrEmpty(ApplicationSetupBatch) || ApplicationSetupParams.Count == 0) return;
+            var fileInfo = FileHelper.GetEncodingFileInfo(ApplicationSetupBatch);
+            var contents = BatchParamRegEx.Replace(fileInfo.Contents, ParseApplicationSetupBatchParams);
+            FileHelper.WriteFile(ApplicationSetupBatch, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
         string ParseApplicationSetupBatchParams(Match m)

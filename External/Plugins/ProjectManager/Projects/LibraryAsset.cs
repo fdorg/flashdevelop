@@ -74,10 +74,7 @@ namespace ProjectManager.Projects
     {
         readonly Project project;
 
-        public AssetCollection(Project project)
-        {
-            this.project = project;
-        }
+        public AssetCollection(Project project) => this.project = project;
 
         public void Add(string path) => Add(new LibraryAsset(project, path));
 

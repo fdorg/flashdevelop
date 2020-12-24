@@ -7,11 +7,8 @@ namespace ProjectManager.Projects.AS2
     {
         readonly AS2Project project;
 
-        public AS2ProjectReader(string filename)
-            : base(filename, new AS2Project(filename))
-        {
-            project = Project as AS2Project;
-        }
+        public AS2ProjectReader(string filename) : base(filename, new AS2Project(filename))
+            => project = Project as AS2Project;
 
         public new AS2Project ReadProject() => base.ReadProject() as AS2Project;
 
@@ -28,8 +25,7 @@ namespace ProjectManager.Projects.AS2
 
         public void ReadBuildOptions()
         {
-            List<string> includePackages = new List<string>();
-
+            var includePackages = new List<string>();
             ReadStartElement("build");
             while (Name == "option")
             {

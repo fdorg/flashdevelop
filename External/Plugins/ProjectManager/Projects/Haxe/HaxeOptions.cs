@@ -19,7 +19,8 @@ namespace ProjectManager.Projects.Haxe
         [DisplayName("Additional Compiler Options")]
         [LocalizedDescription("ProjectManager.Description.Additional")]
         [DefaultValue(new string[] { })]
-        public string[] Additional {
+        public string[] Additional
+        {
             get => additional;
             set => additional = value;
         }
@@ -28,7 +29,8 @@ namespace ProjectManager.Projects.Haxe
         [DisplayName("Enable Debugger")]
         [LocalizedDescription("ProjectManager.Description.EnableDebug")]
         [DefaultValue(false)]
-        public bool EnableDebug {
+        public bool EnableDebug
+        {
             get => enableDebug;
             set => enableDebug = value;
         }
@@ -46,7 +48,8 @@ namespace ProjectManager.Projects.Haxe
         [DisplayName("Set No-Inline On Debug")]
         [LocalizedDescription("ProjectManager.Description.NoInlineOnDebug")]
         [DefaultValue(false)]
-        public bool NoInlineOnDebug {
+        public bool NoInlineOnDebug
+        {
             get => noInlineOnDebug;
             set => noInlineOnDebug = value;
         }
@@ -55,7 +58,8 @@ namespace ProjectManager.Projects.Haxe
         [DisplayName("Directives")]
         [LocalizedDescription("ProjectManager.Description.Directives")]
         [DefaultValue("")]
-        public string[] Directives {
+        public string[] Directives
+        {
             get => directives;
             set => directives = value;
         }
@@ -74,7 +78,8 @@ namespace ProjectManager.Projects.Haxe
         [DisplayName("Main Class")]
         [LocalizedDescription("ProjectManager.Description.MainClass")]
         [DefaultValue("")]
-        public string MainClass {
+        public string MainClass
+        {
             get => mainClass;
             set => mainClass = value;
         }

@@ -43,8 +43,7 @@ namespace ProjectManager.Projects.AS3
 
         public void WriteLibraries()
         {
-            MxmlcOptions options = project.CompilerOptions;
-
+            var options = project.CompilerOptions;
             WriteComment(" SWC Include Libraries ");
             WriteList("includeLibraries", options.IncludeLibraries);
             WriteComment(" SWC Libraries ");
@@ -61,9 +60,7 @@ namespace ProjectManager.Projects.AS3
         {
             WriteComment(" Build options ");
             WriteStartElement("build");
-
-            MxmlcOptions options = project.CompilerOptions;
-
+            var options = project.CompilerOptions;
             WriteOption("accessible", options.Accessible);
             WriteOption("advancedTelemetry", options.AdvancedTelemetry);
             if (!string.IsNullOrEmpty(options.AdvancedTelemetryPassword))

@@ -126,43 +126,37 @@ namespace ProjectManager.Actions
 
         public string ProcessArgs(Project project, string args)
         {
-            if (lastFileFromTemplate != null)
+            if (lastFileFromTemplate is null) return args;
+            var fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
+            args = args.Replace("$(FileName)", fileName);
+            if (args.Contains("$(FileNameWithPackage)") || args.Contains("$(Package)"))
             {
-                string fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
+                string package = "";
+                string path = lastFileFromTemplate;
 
-                args = args.Replace("$(FileName)", fileName);
-
-                if (args.Contains("$(FileNameWithPackage)") || args.Contains("$(Package)"))
+                // Find closest parent
+                var classpath = project.AbsoluteClasspaths.GetClosestParent(path);
+                // Can't find parent, look in global classpaths
+                if (classpath is null)
                 {
-                    string package = "";
-                    string path = lastFileFromTemplate;
-
-                    // Find closest parent
-                    string classpath = project.AbsoluteClasspaths.GetClosestParent(path);
-
-                    // Can't find parent, look in global classpaths
-                    if (classpath is null)
-                    {
-                        PathCollection globalPaths = new PathCollection();
-                        foreach (string cp in PluginMain.Settings.GlobalClasspaths)
-                            globalPaths.Add(cp);
-                        classpath = globalPaths.GetClosestParent(path);
-                    }
-                    if (classpath != null)
-                    {
-                        // Parse package name from path
-                        package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, path));
-                        package = package.Replace(Path.DirectorySeparatorChar, '.');
-                    }
-
-                    if (package.Length == 0) args = args.Replace(" $(Package)", "");
-                    args = args.Replace("$(Package)", package);
-
-                    if (package.Length != 0)
-                        args = args.Replace("$(FileNameWithPackage)", package + "." + fileName);
-                    else
-                        args = args.Replace("$(FileNameWithPackage)", fileName);
+                    var globalPaths = new PathCollection();
+                    globalPaths.AddRange(PluginMain.Settings.GlobalClasspaths);
+                    classpath = globalPaths.GetClosestParent(path);
                 }
+                if (classpath != null)
+                {
+                    // Parse package name from path
+                    package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, path));
+                    package = package.Replace(Path.DirectorySeparatorChar, '.');
+                }
+
+                if (package.Length == 0) args = args.Replace(" $(Package)", "");
+                args = args.Replace("$(Package)", package);
+
+                if (package.Length != 0)
+                    args = args.Replace("$(FileNameWithPackage)", package + "." + fileName);
+                else
+                    args = args.Replace("$(FileNameWithPackage)", fileName);
             }
             return args;
         }
@@ -173,49 +167,43 @@ namespace ProjectManager.Actions
 
         public void AddLibraryAsset(Project project, string inDirectory)
         {
-            using var dialog = new OpenFileDialog();
-            dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
-            dialog.Filter = TextHelper.GetString("Info.FileFilter");
-            dialog.Multiselect = false;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using var dialog = new OpenFileDialog
             {
-                string filePath = CopyFile(dialog.FileName, inDirectory);
-
-                // null means the user cancelled
-                if (filePath is null) return;
-
-                // add as an asset
-                project.SetLibraryAsset(filePath, true);
-
-                if (!FileInspector.IsSwc(filePath))
+                Title = TextHelper.GetString("Label.AddLibraryAsset"),
+                Filter = TextHelper.GetString("Info.FileFilter"),
+                Multiselect = false
+            };
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            string filePath = CopyFile(dialog.FileName, inDirectory);
+            // null means the user cancelled
+            if (filePath is null) return;
+            // add as an asset
+            project.SetLibraryAsset(filePath, true);
+            if (!FileInspector.IsSwc(filePath))
+            {
+                // ask if you want to keep this file updated
+                var caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.ConfirmFileUpdate");
+                var result = MessageBox.Show(mainForm, message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
                 {
-                    // ask if you want to keep this file updated
-                    string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                    string message = TextHelper.GetString("Info.ConfirmFileUpdate");
-
-                    DialogResult result = MessageBox.Show(mainForm, message, caption,
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        LibraryAsset asset = project.GetAsset(filePath);
-                        asset.UpdatePath = project.GetRelativePath(dialog.FileName);
-                    }
+                    var asset = project.GetAsset(filePath);
+                    asset.UpdatePath = project.GetRelativePath(dialog.FileName);
                 }
-
-                project.Save();
-                OnProjectModified(new[] { filePath });
             }
+
+            project.Save();
+            OnProjectModified(new[] { filePath });
         }
 
         public void AddExistingFile(string inDirectory)
         {
-            using var dialog = new OpenFileDialog();
-            dialog.Title = TextHelper.GetString("Label.AddExistingFile");
-            dialog.Filter = TextHelper.GetString("Info.FileFilter");
-            dialog.Multiselect = false;
-
+            using var dialog = new OpenFileDialog
+            {
+                Title = TextHelper.GetString("Label.AddExistingFile"),
+                Filter = TextHelper.GetString("Info.FileFilter"),
+                Multiselect = false
+            };
             if (dialog.ShowDialog() == DialogResult.OK)
                 CopyFile(dialog.FileName, inDirectory);
         }

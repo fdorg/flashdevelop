@@ -16,18 +16,12 @@ namespace System.Windows.Forms
         bool multiSelect;
         bool ignoreNextMultiSelect;
 
-        readonly List<TreeNode> selectedNodes;
-        readonly Hashtable originalColor;
+        readonly List<TreeNode> selectedNodes = new List<TreeNode>();
+        readonly Hashtable originalColor = new Hashtable();
         TreeNode beginRange;
-        readonly Timer labelEditTimer;
+        readonly Timer labelEditTimer = new Timer {Interval = 1500};
 
-        public MultiSelectTreeView()
-        {
-            selectedNodes = new List<TreeNode>();
-            originalColor = new Hashtable();
-            labelEditTimer = new Timer {Interval = 1500};
-            labelEditTimer.Tick += labelEditTimer_Tick;
-        }
+        public MultiSelectTreeView() => labelEditTimer.Tick += labelEditTimer_Tick;
 
         public bool MultiSelect
         {
@@ -42,7 +36,7 @@ namespace System.Windows.Forms
 
         public void ForceLabelEdit()
         {
-            if (SelectedNode == null) return;
+            if (SelectedNode is null) return;
             labelEditTimer.Enabled = false;
             SelectedNode.BeginEdit();
         }

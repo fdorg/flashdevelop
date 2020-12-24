@@ -10,11 +10,8 @@ namespace ProjectManager.Projects.AS2
 {
     public class AS2Project : Project
     {
-        public AS2Project(string path)
-            : base(path, new MtascOptions()) 
-        {
-            movieOptions = new AS2MovieOptions();
-        }
+        public AS2Project(string path) : base(path, new MtascOptions())
+            => movieOptions = new AS2MovieOptions();
 
         public override string Language => "as2";
         public override string LanguageDisplayName => "AS2";

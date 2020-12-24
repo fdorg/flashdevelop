@@ -2,8 +2,7 @@
 {
     public class GenericProjectReader : ProjectReader
     {
-        public GenericProjectReader(string filename)
-            : base(filename, new GenericProject(filename))
+        public GenericProjectReader(string filename) : base(filename, new GenericProject(filename))
         {
         }
 

@@ -47,17 +47,19 @@ namespace ProjectManager.Helpers
             IsRunning = true;
             if (!projectTypesSet) SetInitialProjectHash();
             SetContext(projectName, packageName);
-            string projectTemplate = FindProjectTemplate(templateDirectory);
-            string projectPath = Path.Combine(projectLocation, projectName + Path.GetExtension(projectTemplate));
+            var projectTemplate = FindProjectTemplate(templateDirectory);
+            var projectPath = Path.Combine(projectLocation, projectName + Path.GetExtension(projectTemplate));
             projectPath = PathHelper.GetPhysicalPathName(projectPath);
             // notify & let a plugin handle project creation
-            Hashtable para = new Hashtable();
-            para["template"] = projectTemplate;
-            para["location"] = projectLocation;
-            para["project"] = projectPath;
-            para["id"] = projectId;
-            para["package"] = packageName;
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CreateProject, para);
+            var para = new Hashtable
+            {
+                ["template"] = projectTemplate,
+                ["location"] = projectLocation,
+                ["project"] = projectPath,
+                ["id"] = projectId,
+                ["package"] = packageName
+            };
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.CreateProject, para);
             EventManager.DispatchEvent(this, de);
             if (!de.Handled)
             {
@@ -67,23 +69,19 @@ namespace ProjectManager.Helpers
                 CopyProjectFiles(templateDirectory, projectLocation, true);
             }
             IsRunning = false;
-            if (File.Exists(projectPath))
+            if (!File.Exists(projectPath)) return null;
+            projectPath = PathHelper.GetPhysicalPathName(projectPath);
+            de = new DataEvent(EventType.Command, ProjectManagerEvents.ProjectCreated, para);
+            EventManager.DispatchEvent(this, de);
+            try
             {
-                projectPath = PathHelper.GetPhysicalPathName(projectPath);
-                de = new DataEvent(EventType.Command, ProjectManagerEvents.ProjectCreated, para);
-                EventManager.DispatchEvent(this, de);
-                try
-                {
-                    return ProjectLoader.Load(projectPath);
-                }
-                catch (Exception ex)
-                {
-                    TraceManager.Add(ex.Message);
-                    return null;
-                }
+                return ProjectLoader.Load(projectPath);
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                TraceManager.Add(ex.Message);
+                return null;
+            }
         }
 
         public static string FindProjectTemplate(string templateDirectory)

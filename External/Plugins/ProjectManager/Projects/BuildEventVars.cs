@@ -27,10 +27,7 @@ namespace ProjectManager.Projects
         readonly Project project;
         readonly List<BuildEventInfo> additional = new List<BuildEventInfo>();
 
-        public BuildEventVars(Project project)
-        {
-            this.project = project;
-        }
+        public BuildEventVars(Project project) => this.project = project;
 
         public void AddVar(string name, string value) => additional.Add(new BuildEventInfo(name, value));
 

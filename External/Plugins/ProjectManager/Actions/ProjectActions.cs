@@ -109,9 +109,11 @@ namespace ProjectManager.Actions
 
         internal string? ImportProject(string importFrom)
         {
-            using var dialog = new OpenFileDialog();
-            dialog.Title = TextHelper.GetString("Title.ImportProject");
-            dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
+            using var dialog = new OpenFileDialog
+            {
+                Title = TextHelper.GetString("Title.ImportProject"),
+                Filter = TextHelper.GetString("Info.ImportProjectFilter")
+            };
             if (importFrom == "hxml") dialog.FilterIndex = 3;
             if (dialog.ShowDialog() != DialogResult.OK || !File.Exists(dialog.FileName)) return null;
             var fileName = dialog.FileName;

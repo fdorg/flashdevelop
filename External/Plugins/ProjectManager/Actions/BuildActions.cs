@@ -50,7 +50,7 @@ namespace ProjectManager.Actions
 
         void SetupRemotingServer()
         {
-            IpcChannel channel = new IpcChannel(IPCName);
+            var channel = new IpcChannel(IPCName);
             ChannelServices.RegisterChannel(channel, false);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(FlexCompilerShell), "FlexCompilerShell", WellKnownObjectMode.Singleton);
         }
@@ -69,81 +69,83 @@ namespace ProjectManager.Actions
             }
             project.TraceEnabled = !releaseMode;
 
-            if (project.OutputType == OutputType.OtherIDE)
+            switch (project.OutputType)
             {
-                // compile using associated IDE
-                var command = project.GetOtherIDE(runOutput, releaseMode, out var error);
-                if (error != null) ErrorManager.ShowInfo(TextHelper.GetString(error));
-                else
+                case OutputType.OtherIDE:
                 {
-                    if (command == "FlashIDE") RunFlashIDE(project, runOutput, releaseMode);
+                    // compile using associated IDE
+                    var command = project.GetOtherIDE(runOutput, releaseMode, out var error);
+                    if (error != null) ErrorManager.ShowInfo(TextHelper.GetString(error));
                     else
                     {
-                        var data = new Hashtable
+                        if (command == "FlashIDE") RunFlashIDE(project, runOutput, releaseMode);
+                        else
                         {
-                            ["command"] = command,
-                            ["project"] = project,
-                            ["runOutput"] = runOutput,
-                            ["releaseMode"] = releaseMode
-                        };
-                        var de = new DataEvent(EventType.Command, "ProjectManager.RunWithAssociatedIDE", data);
-                        EventManager.DispatchEvent(project, de);
-                        if (de.Handled) return true;
+                            var data = new Hashtable
+                            {
+                                ["command"] = command,
+                                ["project"] = project,
+                                ["runOutput"] = runOutput,
+                                ["releaseMode"] = releaseMode
+                            };
+                            var de = new DataEvent(EventType.Command, "ProjectManager.RunWithAssociatedIDE", data);
+                            EventManager.DispatchEvent(project, de);
+                            if (de.Handled) return true;
+                        }
                     }
-                }
-                return false;
-            }
-
-            if (project.OutputType == OutputType.CustomBuild)
-            {
-                // validate commands not empty
-                if (project.PreBuildEvent.Trim().Length == 0 && project.PostBuildEvent.Trim().Length == 0)
-                {
-                    string info = TextHelper.GetString("Info.NoOutputAndNoBuild");
-                    TraceManager.Add(info);
-                }
-            }
-            else if (project.IsCompilable)
-            {
-                // ask the project to validate itself
-                project.ValidateBuild(out var error);
-                if (error != null)
-                {
-                    ErrorManager.ShowInfo(TextHelper.GetString(error));
                     return false;
                 }
-
-                if (project.OutputPath.Length == 0)
+                case OutputType.CustomBuild:
                 {
-                    string info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
-                    ErrorManager.ShowInfo(info);
-                    return false;
+                    // validate commands not empty
+                    if (project.PreBuildEvent.Trim().Length == 0 && project.PostBuildEvent.Trim().Length == 0)
+                    {
+                        var info = TextHelper.GetString("Info.NoOutputAndNoBuild");
+                        TraceManager.Add(info);
+                    }
+                    break;
                 }
-
-                if (!Directory.Exists(compiler) && !File.Exists(compiler))
-                {
-                    string info = TextHelper.GetString("Info.CheckSDKSettings");
-                    MessageBox.Show(info, TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OK);
-                    return false;
-                }
+                default:
+                    if (project.IsCompilable)
+                    {
+                        // ask the project to validate itself
+                        project.ValidateBuild(out var error);
+                        if (error != null)
+                        {
+                            ErrorManager.ShowInfo(TextHelper.GetString(error));
+                            return false;
+                        }
+                        if (project.OutputPath.Length == 0)
+                        {
+                            var info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
+                            ErrorManager.ShowInfo(info);
+                            return false;
+                        }
+                        if (!Directory.Exists(compiler) && !File.Exists(compiler))
+                        {
+                            var info = TextHelper.GetString("Info.CheckSDKSettings");
+                            MessageBox.Show(info, TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OK);
+                            return false;
+                        }
+                    }
+                    break;
             }
 
             // close running AIR projector
             if (project.MovieOptions.Platform.StartsWithOrdinal("AIR"))
             {
-                foreach (Process proc in Process.GetProcessesByName("adl"))
+                foreach (var proc in Process.GetProcessesByName("adl"))
                 {
                     try { proc.Kill(); proc.WaitForExit(10 * 1000); }
                     catch { }
                 }
             }
-
             return FDBuild(project, runOutput, releaseMode, sdk);
         }
 
         public static bool RunFlashIDE(Project project, bool runOutput, bool releaseMode)
         {
-            string cmd = (runOutput) ? "testmovie" : "buildmovie";
+            var cmd = runOutput ? "testmovie" : "buildmovie";
             if (!PluginMain.Settings.DisableExtFlashIntegration) cmd += "-fd";
 
             cmd += ".jsfl";
@@ -157,17 +159,17 @@ namespace ProjectManager.Actions
                 return false;
             }
 
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CallFlashIDE", cmd);
+            var de = new DataEvent(EventType.Command, "ASCompletion.CallFlashIDE", cmd);
             EventManager.DispatchEvent(project, de);
             return de.Handled;
         }
 
         public bool FDBuild(Project project, bool runOutput, bool releaseMode, InstalledSDK sdk)
         {
-            string directory = Environment.CurrentDirectory;
+            var directory = Environment.CurrentDirectory;
             Environment.CurrentDirectory = project.Directory;
 
-            string fdBuildPath = Path.Combine(PathHelper.ToolDir, "fdbuild", "fdbuild.exe");
+            var fdBuildPath = Path.Combine(PathHelper.ToolDir, "fdbuild", "fdbuild.exe");
 
             string arguments = " -ipc " + IPCName;
             if (sdk != null)
@@ -197,7 +199,7 @@ namespace ProjectManager.Actions
             // Apache Flex compat
             if (project.Language == "as3") 
             {
-                string playerglobalHome = Environment.ExpandEnvironmentVariables("%PLAYERGLOBAL_HOME%");
+                var playerglobalHome = Environment.ExpandEnvironmentVariables("%PLAYERGLOBAL_HOME%");
                 if (playerglobalHome.StartsWith('%')) setPlayerglobalHomeEnv = true;
                 if (setPlayerglobalHomeEnv)
                 {
@@ -253,7 +255,7 @@ namespace ProjectManager.Actions
         public static InstalledSDK GetProjectSDK(Project project)
         {
             if (project is null) return null;
-            InstalledSDK[] sdks = GetInstalledSDKs(project);
+            var sdks = GetInstalledSDKs(project);
             return MatchSDK(sdks, project);
         }
 
@@ -318,10 +320,10 @@ namespace ProjectManager.Actions
             }
 
             // new SDK from path
-            string sdkPath = parts[parts.Length - 1];
+            var sdkPath = parts[parts.Length - 1];
             if (sdks.Length > 0) InstalledSDKContext.Current = sdks[0].Owner;
             else TraceManager.AddAsync("Warning: compilation may fail if you do not have any (non-custom) SDK configured for the language", -3);
-            InstalledSDK newSdk = new InstalledSDK();
+            var newSdk = new InstalledSDK();
             InstalledSDKContext.Current = null;
             newSdk.Path = sdkPath;
             LatestSDKMatchQuality = -1;

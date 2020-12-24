@@ -50,11 +50,8 @@ namespace ProjectManager.Helpers
         /// </summary>
         protected override void Dispose( bool disposing )
         {
-            if( disposing )
-            {
-                components?.Dispose();
-            }
-            base.Dispose( disposing );
+            if (disposing) components?.Dispose();
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -163,7 +160,6 @@ namespace ProjectManager.Helpers
         {
             var shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
             if (string.IsNullOrEmpty(shortcutId)) return;
-
             switch (shortcutId)
             {
                 case "EditMenu.ToLowercase":
@@ -171,8 +167,8 @@ namespace ProjectManager.Helpers
                     var selectedText = lineBox.SelectedText;
                     if (string.IsNullOrEmpty(selectedText)) break;
                     selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
-                    int selectionStart = lineBox.SelectionStart;
-                    int selectionLength = lineBox.SelectionLength;
+                    var selectionStart = lineBox.SelectionStart;
+                    var selectionLength = lineBox.SelectionLength;
                     lineBox.Paste(selectedText);
                     SelectRange(selectionStart, selectionLength);
                     break;

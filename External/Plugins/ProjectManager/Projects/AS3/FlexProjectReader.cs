@@ -22,8 +22,8 @@ namespace ProjectManager.Projects.AS3
 
         public FlexProjectReader(string filename) : base(filename, new AS3Project(filename))
         {
-            project = Project as AS3Project;
-            Directory.SetCurrentDirectory(project.Directory);
+            project = (AS3Project) Project;
+            Directory.SetCurrentDirectory(Project.Directory);
         }
 
         protected override void ProcessRootNode()
@@ -215,21 +215,13 @@ namespace ProjectManager.Projects.AS3
 
         void ReadTheme()
         {
-            char s = Path.DirectorySeparatorChar;
-            string themeLocation = OSPath(GetAttribute("themeLocation"));
-            bool isSdk = GetAttribute("themeIsSDK") == "true";
-            string themeName = themeLocation.Substring(themeLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1).ToLower();
-            string[] tmpPaths;
-
-            if (!isSdk)
-            {
-                tmpPaths = new[] {".packagedThemes", reArgs.Replace(themeLocation, ReplaceVars)};
-            }
-            else
-            {
-                tmpPaths = new [] {reArgs.Replace(themeLocation, ReplaceVars)};
-            }
-
+            var s = Path.DirectorySeparatorChar;
+            var themeLocation = OSPath(GetAttribute("themeLocation"));
+            var isSdk = GetAttribute("themeIsSDK") == "true";
+            var themeName = themeLocation.Substring(themeLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1).ToLower();
+            var tmpPaths = !isSdk
+                ? new[] {".packagedThemes", reArgs.Replace(themeLocation, ReplaceVars)}
+                : new [] {reArgs.Replace(themeLocation, ReplaceVars)};
             string themeFile = string.Empty;
             bool themeFound = false;
             foreach (var tmpPath in tmpPaths)

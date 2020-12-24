@@ -73,7 +73,7 @@ namespace ProjectManager.Projects.AS3
         string[] ReadLibrary(string name, SwfAssetMode mode)
         {
             ReadStartElement(name);
-            List<string> elements = new List<string>();
+            var elements = new List<string>();
             while (Name == "element")
             {
                 var path = OSPath(GetAttribute("path"));
