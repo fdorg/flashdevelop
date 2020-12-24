@@ -21,7 +21,7 @@ namespace ProjectManager.Controls
             Index = index;
         }
 
-        public Icon Icon => Icon.FromHandle((Img as Bitmap).GetHicon());
+        public Icon Icon => Icon.FromHandle(((Bitmap) Img).GetHicon());
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ namespace ProjectManager.Controls
         // store all extension icons we've pulled from the file system
         static readonly Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
 
-        private static IMainForm mainForm;
-        private static FDImageList imageList;
+        static IMainForm mainForm;
+        static FDImageList imageList;
 
         public static FDImage BulletAdd;
         public static FDImage SilkPage;
@@ -170,23 +170,17 @@ namespace ProjectManager.Controls
             CollapseAll = GetGray(166);
         }
 
-        public static FDImage GetGray(int fdIndex)
-        {
-            return GetGray(fdIndex.ToString());
-        }
+        public static FDImage GetGray(int fdIndex) => GetGray(fdIndex.ToString());
 
         public static FDImage GetGray(string data)
         {
-            Image image = (mainForm != null) ? mainForm.FindImage(data, false) : new Bitmap(16, 16);
+            var image = (mainForm != null) ? mainForm.FindImage(data, false) : new Bitmap(16, 16);
             image = mainForm.GetAutoAdjustedImage(ImageKonverter.ImageToGrayscale(image));
             imageList.Images.Add(image);
             return new FDImage(image, imageList.Images.Count - 1);
         }
 
-        public static FDImage Get(int fdIndex)
-        {
-            return Get(fdIndex.ToString());
-        }
+        public static FDImage Get(int fdIndex) => Get(fdIndex.ToString());
 
         public static FDImage Get(string data)
         {
@@ -215,31 +209,19 @@ namespace ProjectManager.Controls
 
         public static FDImage GetImageForFile(string file)
         {
-            if (string.IsNullOrEmpty(file))
-                return BlankFile;
-            string ext = Path.GetExtension(file).ToLower();
-            if (FileInspector.IsActionScript(ext))
-                return ActionScript;
-            if (FileInspector.IsHaxeFile(ext))
-                return HaxeFile;
-            if (FileInspector.IsMxml(ext))
-                return MxmlFile;
-            if (FileInspector.IsFont(ext))
-                return Font;
-            if (FileInspector.IsImage(ext) || ext == ".ico")
-                return ImageResource;
-            if (FileInspector.IsSwf(ext))
-                return SwfFile;
-            if (FileInspector.IsSwc(file, ext))
-                return SwcFile;
-            if (FileInspector.IsHtml(ext))
-                return HtmlFile;
-            if (FileInspector.IsXml(ext))
-                return XmlFile;
-            if (FileInspector.IsText(file, ext))
-                return TextFile;
-            if (FileInspector.IsFLA(ext))
-                return FlashCS3;
+            if (string.IsNullOrEmpty(file)) return BlankFile;
+            var ext = Path.GetExtension(file).ToLower();
+            if (FileInspector.IsActionScript(ext)) return ActionScript;
+            if (FileInspector.IsHaxeFile(ext)) return HaxeFile;
+            if (FileInspector.IsMxml(ext)) return MxmlFile;
+            if (FileInspector.IsFont(ext)) return Font;
+            if (FileInspector.IsImage(ext) || ext == ".ico") return ImageResource;
+            if (FileInspector.IsSwf(ext)) return SwfFile;
+            if (FileInspector.IsSwc(file, ext)) return SwcFile;
+            if (FileInspector.IsHtml(ext)) return HtmlFile;
+            if (FileInspector.IsXml(ext)) return XmlFile;
+            if (FileInspector.IsText(file, ext)) return TextFile;
+            if (FileInspector.IsFLA(ext)) return FlashCS3;
             return ExtractIconIfNecessary(file);
         }
 
@@ -275,7 +257,7 @@ namespace ProjectManager.Controls
         {
             protected override void OnRefresh()
             {
-                Image[] temp = new Image[Images.Count];
+                var temp = new Image[Images.Count];
                 temp[BulletAdd.Index] = BulletAdd.Img;
                 temp[SilkPage.Index] = SilkPage.Img;
                 temp[XmlFile.Index] = XmlFile.Img;
@@ -350,5 +332,4 @@ namespace ProjectManager.Controls
             }
         }
     }
-
 }

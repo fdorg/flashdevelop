@@ -7,8 +7,8 @@ namespace ProjectManager.Helpers
 {
     public class AirConfigurator
     {
-        private static readonly Regex BatchParamRegEx = new Regex("(^\\s*set\\s+)(\\w+)(\\s*=\\s*)(.*)", RegexOptions.IgnoreCase | RegexOptions.Multiline |
-                                                             RegexOptions.Compiled);
+        static readonly Regex BatchParamRegEx = new Regex("(^\\s*set\\s+)(\\w+)(\\s*=\\s*)(.*)", RegexOptions.IgnoreCase | RegexOptions.Multiline |
+                                                                                                 RegexOptions.Compiled);
         public const string DescriptorPath = "APP_XML";
         public const string PackageDir = "APP_DIR";
         public const string AndroidCert = "AND_CERT_FILE";
@@ -18,24 +18,17 @@ namespace ProjectManager.Helpers
 
         public string ApplicationSetupBatch { get; set; }
 
-        public Dictionary<string, string> ApplicationSetupParams { get; }
-
-        public AirConfigurator()
-        {
-            ApplicationSetupParams = new Dictionary<string, string>();
-        }
+        public Dictionary<string, string> ApplicationSetupParams { get; } = new Dictionary<string, string>();
 
         public void SetUp()
         {
-            if (!string.IsNullOrEmpty(ApplicationSetupBatch) && ApplicationSetupParams.Count > 0)
-            {
-                var fileInfo = FileHelper.GetEncodingFileInfo(ApplicationSetupBatch);
-                string contents = BatchParamRegEx.Replace(fileInfo.Contents, ParseApplicationSetupBatchParams);
-                FileHelper.WriteFile(ApplicationSetupBatch, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
-            }
+            if (string.IsNullOrEmpty(ApplicationSetupBatch) || ApplicationSetupParams.Count == 0) return;
+            var fileInfo = FileHelper.GetEncodingFileInfo(ApplicationSetupBatch);
+            var contents = BatchParamRegEx.Replace(fileInfo.Contents, ParseApplicationSetupBatchParams);
+            FileHelper.WriteFile(ApplicationSetupBatch, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
-        private string ParseApplicationSetupBatchParams(Match m)
+        string ParseApplicationSetupBatchParams(Match m)
         {
             if (ApplicationSetupParams.TryGetValue(m.Groups[2].Value, out var paramValue))
                 return m.Groups[1].Value + m.Groups[2].Value + m.Groups[3].Value + paramValue;

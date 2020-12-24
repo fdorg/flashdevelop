@@ -8,17 +8,17 @@ namespace System.Windows.Forms
     /// </summary>
     public class ToolTippedTreeView : DragDropTreeView
     {
-        private const int TVS_NOTOOLTIPS = 0x80;
-        private ToolTip tip;
-        private int px;
-        private int py;
+        const int TVS_NOTOOLTIPS = 0x80;
+        ToolTip tip;
+        int px;
+        int py;
 
         // disable the automatic tooltips
-        protected override System.Windows.Forms.CreateParams CreateParams
+        protected override CreateParams CreateParams
         {
             get 
             {
-                CreateParams p = base.CreateParams;
+                var p = base.CreateParams;
                 p.Style |= TVS_NOTOOLTIPS;
                 return p;
             }
@@ -28,15 +28,10 @@ namespace System.Windows.Forms
         protected override void OnMouseMove(MouseEventArgs e)
         {
             // create tooltip
-            if (tip is null) 
-            {
-                tip = new ToolTip();
-                tip.ShowAlways = true;
-                tip.AutoPopDelay = 10000;
-            }
+            tip ??= new ToolTip {ShowAlways = true, AutoPopDelay = 10000};
             // get node under mouse
-            TreeNode currentNode = this.GetNodeAt(this.PointToClient(Cursor.Position));
-            string prev = tip.GetToolTip(this);
+            var currentNode = GetNodeAt(PointToClient(Cursor.Position));
+            var prev = tip.GetToolTip(this);
             if (currentNode != null)
             {
                 string text = currentNode.Text;
@@ -55,10 +50,10 @@ namespace System.Windows.Forms
                     if (prev != "") tip.SetToolTip(this, "");
                     return;
                 }
-                Graphics g = this.CreateGraphics();
-                SizeF textSize = g.MeasureString(text, this.Font);
+                Graphics g = CreateGraphics();
+                SizeF textSize = g.MeasureString(text, Font);
                 int w = (int)textSize.Width;
-                if (w+offset > this.Width)
+                if (w+offset > Width)
                 {
                     px = e.X;
                     py = e.Y;

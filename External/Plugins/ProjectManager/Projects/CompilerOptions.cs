@@ -16,7 +16,7 @@ namespace ProjectManager.Projects
 
         public CompilerOptions Clone()
         {
-            MemoryStream stream = new MemoryStream();
+            var stream = new MemoryStream();
             formatter.Serialize(stream, this);
             stream.Position = 0;
             return (CompilerOptions)formatter.Deserialize(stream);

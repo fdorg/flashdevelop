@@ -9,172 +9,169 @@ namespace ProjectManager.Controls
 {
     public class BuildEventDialog : SmartForm
     {
-        Project project;
-        readonly BuildEventVars vars;
-
         #region Windows Form Designer
 
-        private System.Windows.Forms.StatusBar statusBar;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ListView listView;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.ColumnHeader nameColumn;
-        private System.Windows.Forms.ColumnHeader valueColumn;
-        private System.Windows.Forms.TextBox textBox;
-        private System.Windows.Forms.ToolTip toolTip;
-        private System.ComponentModel.IContainer components;
-        private System.Windows.Forms.Button insertButton;
+        StatusBar statusBar;
+        Panel panel1;
+        ListView listView;
+        Button cancelButton;
+        Button okButton;
+        Splitter splitter1;
+        ColumnHeader nameColumn;
+        ColumnHeader valueColumn;
+        TextBox textBox;
+        ToolTip toolTip;
+        System.ComponentModel.IContainer components;
+        Button insertButton;
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.statusBar = new System.Windows.Forms.StatusBarEx();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.insertButton = new System.Windows.Forms.ButtonEx();
-            this.textBox = new System.Windows.Forms.TextBoxEx();
-            this.splitter1 = new System.Windows.Forms.Splitter();
-            this.okButton = new System.Windows.Forms.ButtonEx();
-            this.listView = new System.Windows.Forms.ListViewEx();
-            this.nameColumn = new System.Windows.Forms.ColumnHeader();
-            this.valueColumn = new System.Windows.Forms.ColumnHeader();
-            this.cancelButton = new System.Windows.Forms.ButtonEx();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.panel1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            statusBar = new StatusBarEx();
+            panel1 = new Panel();
+            insertButton = new ButtonEx();
+            textBox = new TextBoxEx();
+            splitter1 = new Splitter();
+            okButton = new ButtonEx();
+            listView = new ListViewEx();
+            nameColumn = new ColumnHeader();
+            valueColumn = new ColumnHeader();
+            cancelButton = new ButtonEx();
+            toolTip = new ToolTip(components);
+            panel1.SuspendLayout();
+            SuspendLayout();
             // 
             // statusBar
             // 
-            this.statusBar.Location = new System.Drawing.Point(0, 320);
-            this.statusBar.Name = "statusBar";
-            this.statusBar.Size = new System.Drawing.Size(384, 22);
-            this.statusBar.TabIndex = 0;
+            statusBar.Location = new Point(0, 320);
+            statusBar.Name = "statusBar";
+            statusBar.Size = new Size(384, 22);
+            statusBar.TabIndex = 0;
             // 
             // panel1
             //
-            this.panel1.Controls.Add(this.okButton);
-            this.panel1.Controls.Add(this.insertButton);
-            this.panel1.Controls.Add(this.cancelButton);
-            this.panel1.Controls.Add(this.textBox);
-            this.panel1.Controls.Add(this.listView);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(8, 8, 8, 38);
-            this.panel1.Size = new System.Drawing.Size(384, 320);
-            this.panel1.TabIndex = 1;
+            panel1.Controls.Add(okButton);
+            panel1.Controls.Add(insertButton);
+            panel1.Controls.Add(cancelButton);
+            panel1.Controls.Add(textBox);
+            panel1.Controls.Add(listView);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Padding = new Padding(8, 8, 8, 38);
+            panel1.Size = new Size(384, 320);
+            panel1.TabIndex = 1;
             // 
             // insertButton
             // 
-            this.insertButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.insertButton.Enabled = false;
-            this.insertButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.insertButton.Location = new System.Drawing.Point(7, 288);
-            this.insertButton.Name = "insertButton";
-            this.insertButton.Size = new System.Drawing.Size(75, 23);
-            this.insertButton.TabIndex = 4;
-            this.insertButton.Text = "&Insert";
-            this.insertButton.Click += this.insertButton_Click;
+            insertButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            insertButton.Enabled = false;
+            insertButton.FlatStyle = FlatStyle.System;
+            insertButton.Location = new Point(7, 288);
+            insertButton.Name = "insertButton";
+            insertButton.Size = new Size(75, 23);
+            insertButton.TabIndex = 4;
+            insertButton.Text = "&Insert";
+            insertButton.Click += insertButton_Click;
             // 
             // textBox
             // 
-            this.textBox.AcceptsReturn = true;
-            this.textBox.AcceptsTab = true;
-            this.textBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox.Location = new System.Drawing.Point(8, 8);
-            this.textBox.Multiline = true;
-            this.textBox.Name = "textBox";
-            this.textBox.Size = new System.Drawing.Size(368, 116);
-            this.textBox.TabIndex = 0;
-            this.textBox.TextChanged += this.textBox_TextChanged;
+            textBox.AcceptsReturn = true;
+            textBox.AcceptsTab = true;
+            textBox.Dock = DockStyle.Fill;
+            textBox.Location = new Point(8, 8);
+            textBox.Multiline = true;
+            textBox.Name = "textBox";
+            textBox.Size = new Size(368, 116);
+            textBox.TabIndex = 0;
+            textBox.TextChanged += textBox_TextChanged;
             // 
             // splitter1
             // 
-            this.splitter1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitter1.Location = new System.Drawing.Point(8, 124);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(368, 6);
-            this.splitter1.TabIndex = 3;
-            this.splitter1.TabStop = false;
+            splitter1.Dock = DockStyle.Bottom;
+            splitter1.Location = new Point(8, 124);
+            splitter1.Name = "splitter1";
+            splitter1.Size = new Size(368, 6);
+            splitter1.TabIndex = 3;
+            splitter1.TabStop = false;
             // 
             // okButton
             // 
-            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Enabled = false;
-            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okButton.Location = new System.Drawing.Point(221, 288);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 2;
-            this.okButton.Text = "&OK";
+            okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            okButton.DialogResult = DialogResult.OK;
+            okButton.Enabled = false;
+            okButton.FlatStyle = FlatStyle.System;
+            okButton.Location = new Point(221, 288);
+            okButton.Name = "okButton";
+            okButton.Size = new Size(75, 23);
+            okButton.TabIndex = 2;
+            okButton.Text = "&OK";
             // 
             // listView
             // 
-            this.listView.Columns.AddRange(new[] {
-            this.nameColumn,
-            this.valueColumn});
-            this.listView.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.listView.FullRowSelect = true;
-            this.listView.GridLines = true;
-            this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView.HideSelection = false;
-            this.listView.Location = new System.Drawing.Point(8, 130);
-            this.listView.MultiSelect = false;
-            this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(368, 152);
-            this.listView.TabIndex = 1;
-            this.listView.UseCompatibleStateImageBehavior = false;
-            this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += this.listView_DoubleClick;
-            this.listView.SelectedIndexChanged += this.listView_SelectedIndexChanged;
-            this.listView.MouseMove += this.listView_MouseMove;
+            listView.Columns.AddRange(new[] {
+            nameColumn,
+            valueColumn});
+            listView.Dock = DockStyle.Bottom;
+            listView.FullRowSelect = true;
+            listView.GridLines = true;
+            listView.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            listView.HideSelection = false;
+            listView.Location = new Point(8, 130);
+            listView.MultiSelect = false;
+            listView.Name = "listView";
+            listView.Size = new Size(368, 152);
+            listView.TabIndex = 1;
+            listView.UseCompatibleStateImageBehavior = false;
+            listView.View = View.Details;
+            listView.DoubleClick += listView_DoubleClick;
+            listView.SelectedIndexChanged += listView_SelectedIndexChanged;
+            listView.MouseMove += listView_MouseMove;
             // 
             // nameColumn
             // 
-            this.nameColumn.Text = "Name";
-            this.nameColumn.Width = 94;
+            nameColumn.Text = "Name";
+            nameColumn.Width = 94;
             // 
             // valueColumn
             // 
-            this.valueColumn.Text = "Value";
-            this.valueColumn.Width = 254;
+            valueColumn.Text = "Value";
+            valueColumn.Width = 254;
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelButton.Location = new System.Drawing.Point(302, 288);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 0;
-            this.cancelButton.Text = "&Cancel";
+            cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            cancelButton.DialogResult = DialogResult.Cancel;
+            cancelButton.FlatStyle = FlatStyle.System;
+            cancelButton.Location = new Point(302, 288);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new Size(75, 23);
+            cancelButton.TabIndex = 0;
+            cancelButton.Text = "&Cancel";
             // 
             // BuildEventDialog
             // 
-            this.AcceptButton = this.okButton;
-            this.CancelButton = this.cancelButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 342);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.statusBar);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "BuildEventDialog";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Command-Line Builder";
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            this.ResumeLayout(false);
+            AcceptButton = okButton;
+            CancelButton = cancelButton;
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(384, 342);
+            Controls.Add(panel1);
+            Controls.Add(statusBar);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "BuildEventDialog";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Command-Line Builder";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
 
         }
         #endregion
@@ -183,22 +180,21 @@ namespace ProjectManager.Controls
         {
             InitializeComponent();
             InitializeLocalization();
-            this.FormGuid = "ada69d37-2ec0-4484-b113-72bfeab2f239";
-            this.Font = PluginCore.PluginBase.Settings.DefaultFont;
+            FormGuid = "ada69d37-2ec0-4484-b113-72bfeab2f239";
+            Font = PluginCore.PluginBase.Settings.DefaultFont;
 
-            this.project = project;
-            this.vars = new BuildEventVars(project);
-            foreach (BuildEventInfo info in vars.GetVars()) Add(info);
+            var vars = new BuildEventVars(project);
+            foreach (var info in vars.GetVars()) Add(info);
         }
 
         public void InitializeLocalization()
         {
-            this.okButton.Text = TextHelper.GetString("Label.OK");
-            this.nameColumn.Text = TextHelper.GetString("Column.Name");
-            this.valueColumn.Text = TextHelper.GetString("Column.Value");
-            this.insertButton.Text = TextHelper.GetString("Label.Insert");
-            this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            this.Text = " " + TextHelper.GetString("Title.CommandLineBuilder");
+            okButton.Text = TextHelper.GetString("Label.OK");
+            nameColumn.Text = TextHelper.GetString("Column.Name");
+            valueColumn.Text = TextHelper.GetString("Column.Value");
+            insertButton.Text = TextHelper.GetString("Label.Insert");
+            cancelButton.Text = TextHelper.GetString("Label.Cancel");
+            Text = " " + TextHelper.GetString("Title.CommandLineBuilder");
         }
 
         public string CommandLine
@@ -207,42 +203,32 @@ namespace ProjectManager.Controls
             set => textBox.Text = value;
         }
 
-        private void Add(BuildEventInfo info)
+        void Add(BuildEventInfo info)
         {
-            ListViewItem item = new ListViewItem(info.Name);
+            var item = new ListViewItem(info.Name);
             item.SubItems.Add(info.Value);
             item.Tag = info;
             listView.Items.Add(item);
         }
 
-        private void textBox_TextChanged(object sender, System.EventArgs e)
-        {
-            okButton.Enabled = true;
-        }
+        void textBox_TextChanged(object sender, EventArgs e) => okButton.Enabled = true;
 
-        private void listView_DoubleClick(object sender, System.EventArgs e)
+        void listView_DoubleClick(object sender, EventArgs e)
         {
             if (listView.SelectedItems.Count > 0)
                 DoInsert();
         }
 
-        private void insertButton_Click(object sender, System.EventArgs e)
-        {
-            DoInsert();
-        }
+        void insertButton_Click(object sender, EventArgs e) => DoInsert();
 
-        private void DoInsert()
+        void DoInsert()
         {
-            BuildEventInfo info = listView.SelectedItems[0].Tag as BuildEventInfo;
-            
+            var info = (BuildEventInfo) listView.SelectedItems[0].Tag;
             textBox.Focus();
             SendKeys.Send(info.SendKeysName);
         }
 
-        private void listView_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            insertButton.Enabled = (listView.SelectedItems.Count > 0);
-        }
+        void listView_SelectedIndexChanged(object sender, EventArgs e) => insertButton.Enabled = listView.SelectedItems.Count > 0;
 
         protected override void OnResize(EventArgs e)
         {
@@ -250,22 +236,20 @@ namespace ProjectManager.Controls
             valueColumn.Width = listView.Width - 10 - nameColumn.Width;
         }
 
-        private void listView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        void listView_MouseMove(object sender, MouseEventArgs e)
         {
-            ListViewItem item = listView.GetItemAt(e.X,e.Y);
-            
+            var item = listView.GetItemAt(e.X,e.Y);
             if (item != null && e.X >= nameColumn.Width)
             {
-                BuildEventInfo info = item.Tag as BuildEventInfo;
-                Graphics g = listView.CreateGraphics();
+                var info = (BuildEventInfo) item.Tag;
+                var g = listView.CreateGraphics();
                 if (g.MeasureString(info.Value,listView.Font).Width > valueColumn.Width)
                 {
                     toolTip.SetToolTip(listView,info.Value);
                     return;
                 }
             }
-
-            toolTip.SetToolTip(listView,"");
+            toolTip.SetToolTip(listView,string.Empty);
         }
     }
 }

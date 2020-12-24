@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore.Localization;
@@ -10,10 +11,10 @@ namespace ProjectManager.Controls
 
     public class RecentProjectsMenu : ToolStripMenuItem
     {
-        private readonly ToolStripMenuItem cleanItemMenu;
-        private readonly ToolStripMenuItem cleanItemToolbar;
-        private readonly ToolStripMenuItem clearItemMenu;
-        private readonly ToolStripMenuItem clearItemToolbar;
+        readonly ToolStripMenuItem cleanItemMenu;
+        readonly ToolStripMenuItem cleanItemToolbar;
+        readonly ToolStripMenuItem clearItemMenu;
+        readonly ToolStripMenuItem clearItemToolbar;
         public event ProjectEventHandler ProjectSelected;
         public ToolStripDropDownButton ToolbarSelector;
 
@@ -56,7 +57,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void RebuildList()
+        void RebuildList()
         {
             int count = PluginMain.Settings.RecentProjects.Count;
             int max = PluginMain.Settings.MaxRecentProjects;
@@ -82,7 +83,7 @@ namespace ProjectManager.Controls
             ToolbarSelector.Enabled = Enabled = true;
         }
 
-        private ToolStripMenuItem BuildItem(string projectPath, bool showPath)
+        ToolStripMenuItem BuildItem(string projectPath, bool showPath)
         {
             ToolStripMenuItem item = new ToolStripMenuItem();
             string name = Path.GetFileNameWithoutExtension(projectPath);
@@ -105,17 +106,17 @@ namespace ProjectManager.Controls
                 }
             }
             item.Tag = projectPath;
-            item.Click += delegate { OnProjectSelected(projectPath); };
+            item.Click += (_, _) => OnProjectSelected(projectPath);
             return item;
         }
 
-        private void CleanAllItems()
+        void CleanAllItems()
         {
             FileHelper.FilterByExisting(PluginMain.Settings.RecentProjects, true);
             RebuildList();
         }
 
-        private void ClearAllItems()
+        void ClearAllItems()
         {
             PluginMain.Settings.RecentProjects.Clear();
             DropDownItems.Clear();
@@ -124,7 +125,7 @@ namespace ProjectManager.Controls
             ToolbarSelector.Enabled = false;
         }
 
-        private void OnProjectSelected(string projectPath)
+        void OnProjectSelected(string projectPath)
         {
             // if the project no longer exists, fail with a nice message.
             if (!File.Exists(projectPath))
@@ -136,7 +137,5 @@ namespace ProjectManager.Controls
 
             ProjectSelected?.Invoke(projectPath);
         }
-
     }
-
 }

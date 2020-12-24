@@ -52,13 +52,10 @@ namespace ProjectManager.Projects.Haxe
         {
             if (export != null) return export;
             var isInjectionTarget = (UsesInjection && path == GetAbsolutePath(InputPath));
-            if (IsLibraryAsset(path) && !isInjectionTarget)
-                return GetAsset(path).ID;
-
+            if (IsLibraryAsset(path) && !isInjectionTarget) return GetAsset(path).ID;
             var dirName = inFile;
             if (FileInspector.IsHaxeFile(Path.GetExtension(inFile).ToLower()))
                 dirName = ProjectPath;
-
             return '"' + ProjectPaths.GetRelativePath(Path.GetDirectoryName(dirName), path).Replace('\\', '/') + '"'; 
         }
 

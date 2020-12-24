@@ -13,21 +13,15 @@ namespace ProjectManager.Actions
         static string pathServed;
         static string fileServed;
         static Process process;
-        static int portServed = 2000;
 
-        public static bool Enabled => portServed > 0;
+        public static bool Enabled => Port > 0;
 
-        public static int Port
-        {
-            get => portServed;
-            set => portServed = value;
-        }
-                
+        public static int Port { get; set; } = 2000;
+
         public static void StartServer(string path)
         {
             KillServer();
-
-            if (portServed < 80) // invalid port
+            if (Port < 80) // invalid port
             {
                 PluginBase.MainForm.CallCommand("RunProcess", path);
                 return;
@@ -37,7 +31,7 @@ namespace ProjectManager.Actions
             CreateServer();
 
             // open browser
-            PluginBase.MainForm.CallCommand("RunProcess", "http://localhost:" + portServed + "/" + fileServed);
+            PluginBase.MainForm.CallCommand("RunProcess", "http://localhost:" + Port + "/" + fileServed);
         }
 
         static void ValidatePath(string path)
@@ -58,7 +52,7 @@ namespace ProjectManager.Actions
             if (config is null) return;
 
             var server = Path.Combine(ToolsWebserver, config["executable"]);
-            var arguments = config["arguments"].Replace("{doc}", pathServed).Replace("{port}", portServed.ToString());
+            var arguments = config["arguments"].Replace("{doc}", pathServed).Replace("{port}", Port.ToString());
 
             TraceManager.Add("Web Server starting with root: " + pathServed);
             if (config.ContainsKey("verbose") && config["verbose"].ToLower() == "true")
@@ -69,11 +63,13 @@ namespace ProjectManager.Actions
 
         static void StartProcess(string executable, string arguments)
         {
-            var infos = new ProcessStartInfo();
-            infos.FileName = executable;
-            infos.Arguments = arguments;
-            infos.WorkingDirectory = pathServed;
-            infos.WindowStyle = ProcessWindowStyle.Hidden;
+            var infos = new ProcessStartInfo
+            {
+                FileName = executable,
+                Arguments = arguments,
+                WorkingDirectory = pathServed,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             try
             {
                 process = Process.Start(infos);
@@ -81,7 +77,6 @@ namespace ProjectManager.Actions
             catch (Exception ex)
             {
                 TraceManager.Add("Unable to start the webserver: " + ex.Message, 3);
-                return;
             }
         }
 
@@ -93,35 +88,29 @@ namespace ProjectManager.Actions
                 TraceManager.Add("Missing " + configPath, 3);
                 return null;
             }
-
             var config = ini["Default"];
             if (!config.ContainsKey("executable"))
             {
                 TraceManager.Add("Missing 'executable' entry in in " + configPath, 3);
                 return null;
             }
-            if (!config.ContainsKey("arguments"))
-            {
-                TraceManager.Add("Missing 'arguments' entry in in " + configPath, 3);
-                return null;
-            }
-            return config;
+            if (config.ContainsKey("arguments")) return config;
+            TraceManager.Add("Missing 'arguments' entry in in " + configPath, 3);
+            return null;
         }
 
         public static void KillServer()
         {
-            if (process != null)
+            if (process is null) return;
+            try
             {
-                try
-                {
-                    if (!process.HasExited) process.Kill();
-                }
-                catch { }
-                finally
-                {
-                    pathServed = null;
-                    process = null;
-                }
+                if (!process.HasExited) process.Kill();
+            }
+            catch { }
+            finally
+            {
+                pathServed = null;
+                process = null;
             }
         }
     }

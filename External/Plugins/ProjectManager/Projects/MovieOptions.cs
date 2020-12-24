@@ -61,14 +61,7 @@ namespace ProjectManager.Projects
 
         public virtual LanguagePlatform PlatformSupport => LanguageSupport.Platforms[Platform];
 
-        public virtual string[] TargetPlatforms 
-        {
-            get
-            {
-                if (HasSupport) return LanguageSupport.PlatformNames;
-                return new[] { "Custom" };
-            }
-        }
+        public virtual string[] TargetPlatforms => HasSupport ? LanguageSupport.PlatformNames : new[] { "Custom" };
 
         public virtual string[] TargetVersions(string platform)
         {
@@ -137,6 +130,5 @@ namespace ProjectManager.Projects
             }
             return false;
         }
-
     }
 }

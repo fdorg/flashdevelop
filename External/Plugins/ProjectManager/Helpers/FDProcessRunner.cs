@@ -43,25 +43,20 @@ namespace ProjectManager.Helpers
         // which is spawned by MainForm
         public void ProcessStartedEventCaught()
         {
-            if (runningProcessNameRequest != null)
-            {
-                runningProcessName = runningProcessNameRequest;
-            }
+            if (runningProcessNameRequest != null) runningProcessName = runningProcessNameRequest;
         }
 
         public void ProcessEndedEventCaught(string result)
         {
             // test if this process was started by us - we are assuming that FD can
             // only run one process at a time.
-            if (runningProcessName != null)
-            {
-                bool success = result.EndsWithOrdinal("(0)");
-                processEndedHandler?.DynamicInvoke(success);
-                // restore current directory
-                Environment.CurrentDirectory = savedDirectory;
-                processEndedHandler = null;
-                runningProcessName = null;
-            }
+            if (runningProcessName is null) return;
+            var success = result.EndsWithOrdinal("(0)");
+            processEndedHandler?.DynamicInvoke(success);
+            // restore current directory
+            Environment.CurrentDirectory = savedDirectory;
+            processEndedHandler = null;
+            runningProcessName = null;
         }
     }
 }

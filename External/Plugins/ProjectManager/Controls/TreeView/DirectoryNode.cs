@@ -226,15 +226,13 @@ namespace ProjectManager.Controls.TreeView
                 }
             }
 
-            FileMapping mapping = GetFileMapping(files);
+            var mapping = GetFileMapping(files);
             if (mapping is null) return;
 
             foreach (string file in files)
             {
-                if (IsFileExcluded(file))
-                    continue;
-
-                GenericNode node = Tree.NodeMap[file];
+                if (IsFileExcluded(file)) continue;
+                var node = Tree.NodeMap[file];
 
                 // ensure this file is in the right spot
                 if (mapping.ContainsKey(file) && Tree.NodeMap.ContainsKey(mapping[file]))

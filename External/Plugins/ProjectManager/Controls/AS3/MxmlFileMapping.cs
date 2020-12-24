@@ -6,9 +6,9 @@ using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls.AS3
 {
-    static class MxmlFileMapping
+    internal static class MxmlFileMapping
     {
-        private static readonly Regex reSource = new Regex("\\ssource=\"(?<file>[^\"]+)\"", RegexOptions.Compiled);
+        static readonly Regex reSource = new Regex("\\ssource=\"(?<file>[^\"]+)\"", RegexOptions.Compiled);
 
         public static void AddMxmlMapping(FileMappingRequest request)
         {
@@ -20,34 +20,20 @@ namespace ProjectManager.Controls.AS3
                 }
         }
 
-        private static string[] GetIncludedFiles(string mxmlFile)
+        static string[] GetIncludedFiles(string mxmlFile)
         {
-            string dir = Path.GetDirectoryName(mxmlFile);
-            List<string> included = new List<string>();
-
+            var dir = Path.GetDirectoryName(mxmlFile);
+            var included = new List<string>();
             try
             {
-                string src = File.ReadAllText(mxmlFile);
-                MatchCollection matches = reSource.Matches(src);
+                var src = File.ReadAllText(mxmlFile);
+                var matches = reSource.Matches(src);
                 if (matches.Count > 0)
                     foreach (Match match in matches)
                         included.Add(Path.Combine(dir, match.Groups["file"].Value));
-                /*
-                XmlReader reader = XmlReader.Create(mxmlFile);
-                while (reader.Read())
-                {
-                    if (reader.Name == "mx:Script")
-                    {
-                        string source = reader.GetAttribute("source");
-                        if (source != null && source != "")
-                            included.Add(Path.Combine(dir, source));
-                    }
-                }
-                reader.Close();*/
             }
             // this is just a convenience feature, no big deal if it fails
             catch { }
-
             return included.ToArray();
         }
     }

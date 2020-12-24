@@ -42,14 +42,13 @@ namespace System.Windows.Forms
 
         public void RestoreExpandedState()
         {
-            foreach (string path in expandedPaths)
+            foreach (var path in expandedPaths)
             {
-                TreeNode node = FindClosestPath(path);
-                node?.Expand();
+                FindClosestPath(path)?.Expand();
             }
         }
 
-        void AddExpandedPaths(TreeNodeCollection nodes)
+        void AddExpandedPaths(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {

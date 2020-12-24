@@ -91,7 +91,7 @@ namespace ProjectManager.Controls
             EnableTargetBuildSelector(false);
         }
 
-        int GetThemeWidth(string themeId, int defaultValue)
+        static int GetThemeWidth(string themeId, int defaultValue)
         {
             string strValue = PluginBase.MainForm.GetThemeValue(themeId);
             return int.TryParse(strValue, out var intValue) ? intValue : defaultValue;
@@ -167,10 +167,7 @@ namespace ProjectManager.Controls
         }
 
         
-        public void ToggleDebugRelease()
-        {
-            ConfigurationSelector.SelectedIndex = (ConfigurationSelector.SelectedIndex + 1) % 2;
-        }
+        public void ToggleDebugRelease() => ConfigurationSelector.SelectedIndex = (ConfigurationSelector.SelectedIndex + 1) % 2;
     }
 
     /// <summary>
@@ -249,20 +246,20 @@ namespace ProjectManager.Controls
             AllItems.Add(Properties);
 
             base.Text = TextHelper.GetString("Label.Project");
-            base.DropDownItems.Add(NewProject);
-            base.DropDownItems.Add(OpenProject);
-            base.DropDownItems.Add(OpenFolder);
-            base.DropDownItems.Add(ImportProject);
-            base.DropDownItems.Add(CloseProject);
-            base.DropDownItems.Add(new ToolStripSeparator());
-            base.DropDownItems.Add(OpenResource);
-            base.DropDownItems.Add(new ToolStripSeparator());
-            base.DropDownItems.Add(TestMovie);
-            base.DropDownItems.Add(RunProject);
-            base.DropDownItems.Add(BuildProject);
-            base.DropDownItems.Add(CleanProject);
-            base.DropDownItems.Add(new ToolStripSeparator());
-            base.DropDownItems.Add(Properties);
+            DropDownItems.Add(NewProject);
+            DropDownItems.Add(OpenProject);
+            DropDownItems.Add(OpenFolder);
+            DropDownItems.Add(ImportProject);
+            DropDownItems.Add(CloseProject);
+            DropDownItems.Add(new ToolStripSeparator());
+            DropDownItems.Add(OpenResource);
+            DropDownItems.Add(new ToolStripSeparator());
+            DropDownItems.Add(TestMovie);
+            DropDownItems.Add(RunProject);
+            DropDownItems.Add(BuildProject);
+            DropDownItems.Add(CleanProject);
+            DropDownItems.Add(new ToolStripSeparator());
+            DropDownItems.Add(Properties);
         }
 
         public bool ProjectItemsEnabled
@@ -303,5 +300,4 @@ namespace ProjectManager.Controls
             }
         }
     }
-
 }

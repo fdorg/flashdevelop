@@ -2,8 +2,7 @@
 {
     public class GenericProjectWriter : ProjectWriter
     {
-        public GenericProjectWriter(Project project, string filename)
-            : base(project, filename)
+        public GenericProjectWriter(Project project, string filename) : base(project, filename)
         {
         }
     }

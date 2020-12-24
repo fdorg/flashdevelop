@@ -20,11 +20,10 @@ namespace ProjectManager.Projects.AS3
 
         public IDictionary<string, string> EnvironmentPaths { get; set; }
 
-        public FlexProjectReader(string filename)
-            : base(filename, new AS3Project(filename))
+        public FlexProjectReader(string filename) : base(filename, new AS3Project(filename))
         {
-            this.project = base.Project as AS3Project;
-            Directory.SetCurrentDirectory(project.Directory);
+            project = (AS3Project) Project;
+            Directory.SetCurrentDirectory(Project.Directory);
         }
 
         protected override void ProcessRootNode()
@@ -36,15 +35,15 @@ namespace ProjectManager.Projects.AS3
 
         protected override void ProcessNode(string name)
         {
-            if (NodeType == XmlNodeType.Element)
-                switch (name)
-                {
-                    case "compiler": ReadCompilerOptions(); break;
-                    case "applications": ReadApplications(); break;
-                    case "modules": ReadModules(); break;
-                    case "theme": ReadTheme(); break;
-                    case "buildTargets": ReadBuildTargets(); break;
-                }
+            if (NodeType != XmlNodeType.Element) return;
+            switch (name)
+            {
+                case "compiler": ReadCompilerOptions(); break;
+                case "applications": ReadApplications(); break;
+                case "modules": ReadModules(); break;
+                case "theme": ReadTheme(); break;
+                case "buildTargets": ReadBuildTargets(); break;
+            }
         }
 
         void ReadCompilerOptions()
@@ -216,21 +215,13 @@ namespace ProjectManager.Projects.AS3
 
         void ReadTheme()
         {
-            char s = Path.DirectorySeparatorChar;
-            string themeLocation = OSPath(GetAttribute("themeLocation"));
-            bool isSdk = GetAttribute("themeIsSDK") == "true";
-            string themeName = themeLocation.Substring(themeLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1).ToLower();
-            string[] tmpPaths;
-
-            if (!isSdk)
-            {
-                tmpPaths = new[] {".packagedThemes", reArgs.Replace(themeLocation, ReplaceVars)};
-            }
-            else
-            {
-                tmpPaths = new [] {reArgs.Replace(themeLocation, ReplaceVars)};
-            }
-
+            var s = Path.DirectorySeparatorChar;
+            var themeLocation = OSPath(GetAttribute("themeLocation"));
+            var isSdk = GetAttribute("themeIsSDK") == "true";
+            var themeName = themeLocation.Substring(themeLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1).ToLower();
+            var tmpPaths = !isSdk
+                ? new[] {".packagedThemes", reArgs.Replace(themeLocation, ReplaceVars)}
+                : new [] {reArgs.Replace(themeLocation, ReplaceVars)};
             string themeFile = string.Empty;
             bool themeFound = false;
             foreach (var tmpPath in tmpPaths)

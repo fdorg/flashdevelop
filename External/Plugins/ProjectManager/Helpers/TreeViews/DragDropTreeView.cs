@@ -13,18 +13,13 @@ namespace System.Windows.Forms
         Color originalText;
         TreeNode highlightedNode;       
 
-        public DragDropTreeView()
-        {
-            base.AllowDrop = true;
-        }
+        public DragDropTreeView() => base.AllowDrop = true;
 
         protected override void OnItemDrag(ItemDragEventArgs e)
         {
             // can't drag the root node
-            if (!SelectedNodes.Contains(Nodes[0]))
-                DoDragDrop(BeginDragNodes(SelectedNodes), DragDropEffects.All);
-            else
-                base.OnItemDrag(e);
+            if (!SelectedNodes.Contains(Nodes[0])) DoDragDrop(BeginDragNodes(SelectedNodes), DragDropEffects.All);
+            else base.OnItemDrag(e);
         }
 
         /// <summary>
@@ -39,12 +34,9 @@ namespace System.Windows.Forms
 
         protected override void OnDragEnter(DragEventArgs e)
         {
-            if (IsOurDrag(e.Data))
-                e.Effect = (e.KeyState == 9) ? DragDropEffects.Copy : DragDropEffects.Move;
-            else if (IsFileDrop(e.Data))
-                e.Effect = DragDropEffects.Copy;
-            else
-                base.OnDragEnter(e);
+            if (IsOurDrag(e.Data)) e.Effect = (e.KeyState == 9) ? DragDropEffects.Copy : DragDropEffects.Move;
+            else if (IsFileDrop(e.Data)) e.Effect = DragDropEffects.Copy;
+            else base.OnDragEnter(e);
         }
 
         protected override void OnDragOver(DragEventArgs e)
@@ -154,7 +146,7 @@ namespace System.Windows.Forms
         /// </summary>
         protected virtual TreeNode ChangeDropTarget(TreeNode targetNode) => targetNode;
 
-        static List<TreeNode> Simplify(List<TreeNode> nodes)
+        static List<TreeNode> Simplify(IReadOnlyCollection<TreeNode> nodes)
         {
             var result = nodes.ToList();
             foreach (var node1 in nodes)
@@ -177,24 +169,20 @@ namespace System.Windows.Forms
 
         void HighlightTarget(TreeNode node)
         {
-            if (node != highlightedNode)
-            {
-                UnhighlightTarget();
-                originalColor = node.BackColor;
-                originalText = node.ForeColor;
-                highlightedNode = node;
-                highlightedNode.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
-                highlightedNode.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
-            }
+            if (node == highlightedNode) return;
+            UnhighlightTarget();
+            originalColor = node.BackColor;
+            originalText = node.ForeColor;
+            highlightedNode = node;
+            highlightedNode.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+            highlightedNode.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
         }
 
         void UnhighlightTarget()
         {
-            if (highlightedNode != null)
-            {
-                highlightedNode.BackColor = originalColor;
-                highlightedNode.ForeColor = originalText;
-            }
+            if (highlightedNode is null) return;
+            highlightedNode.BackColor = originalColor;
+            highlightedNode.ForeColor = originalText;
         }
 
         #region Auto-Scroll

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using PluginCore;
 
 namespace System.Windows.Forms
 {
@@ -15,19 +16,12 @@ namespace System.Windows.Forms
         bool multiSelect;
         bool ignoreNextMultiSelect;
 
-        readonly List<TreeNode> selectedNodes;
-        readonly Hashtable originalColor;
+        readonly List<TreeNode> selectedNodes = new List<TreeNode>();
+        readonly Hashtable originalColor = new Hashtable();
         TreeNode beginRange;
-        readonly Timer labelEditTimer;
+        readonly Timer labelEditTimer = new Timer {Interval = 1500};
 
-        public MultiSelectTreeView()
-        {
-            selectedNodes = new List<TreeNode>();
-            originalColor = new Hashtable();
-            labelEditTimer = new Timer();
-            labelEditTimer.Interval = 1500;
-            labelEditTimer.Tick += labelEditTimer_Tick;
-        }
+        public MultiSelectTreeView() => labelEditTimer.Tick += labelEditTimer_Tick;
 
         public bool MultiSelect
         {
@@ -35,19 +29,16 @@ namespace System.Windows.Forms
             set
             {
                 multiSelect = value;
-                if (!multiSelect)
-                    foreach (var node in selectedNodes)
-                        UnpaintNode(node);
+                if (multiSelect) return;
+                selectedNodes.ForEach(UnpaintNode);
             }
         }
 
         public void ForceLabelEdit()
         {
-            if (SelectedNode != null)
-            {
-                labelEditTimer.Enabled = false;
-                SelectedNode.BeginEdit();
-            }
+            if (SelectedNode is null) return;
+            labelEditTimer.Enabled = false;
+            SelectedNode.BeginEdit();
         }
 
         void IgnoreNextLabelEdit()
@@ -56,10 +47,7 @@ namespace System.Windows.Forms
             labelEditTimer.Enabled = true;
         }
 
-        void labelEditTimer_Tick(object sender, EventArgs e)
-        {
-            labelEditTimer.Enabled = false;
-        }
+        void labelEditTimer_Tick(object sender, EventArgs e) => labelEditTimer.Enabled = false;
 
         // prevents some flicker
         protected override void WndProc(ref Message m)
@@ -70,7 +58,7 @@ namespace System.Windows.Forms
                     m.Msg = 0x0000; // Set to null
                     break;
                 case 0xf: // WM_PAINT
-                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(Handle), Bounds));
                     break;
             }
             base.WndProc(ref m);
@@ -229,7 +217,7 @@ namespace System.Windows.Forms
             if (node1 == node2) return; // nice try
             bool found = false;
             bool finished = false;
-            SelectRange(base.Nodes, node1, node2, ref found, ref finished);
+            SelectRange(Nodes, node1, node2, ref found, ref finished);
         }
 
         void SelectRange(IEnumerable nodes, TreeNode node1, TreeNode node2, ref bool found, ref bool finished)
@@ -312,17 +300,17 @@ namespace System.Windows.Forms
         {
             if (multiSelect)
             {
-                UnselectAllExcept(base.SelectedNode);
-                if (base.SelectedNode != null)
-                    UnpaintNode(base.SelectedNode);
+                UnselectAllExcept(SelectedNode);
+                if (SelectedNode != null)
+                    UnpaintNode(SelectedNode);
             }
             base.OnLostFocus(e);
         }
 
         protected override void OnGotFocus(EventArgs e)
         {
-            if (multiSelect && base.SelectedNode != null)
-                PaintNode(base.SelectedNode);
+            if (multiSelect && SelectedNode != null)
+                PaintNode(SelectedNode);
 
             base.OnGotFocus (e);
         }

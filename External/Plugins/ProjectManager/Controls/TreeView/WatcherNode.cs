@@ -27,37 +27,32 @@ namespace ProjectManager.Controls.TreeView
             excludedDirs = PluginMain.Settings.ExcludedDirectories.Clone() as string[];
             excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as string[];
             // Use a timer for FileSystemWatcher updates so they don't do lots of redrawing
-            updateTimer = new Timer();
-            updateTimer.SynchronizingObject = Tree;
-            updateTimer.Interval = 500;
+            updateTimer = new Timer {SynchronizingObject = Tree, Interval = 500};
             updateTimer.Elapsed += updateTimer_Tick;
-            setWatcher();
+            SetWatcher();
         }
 
-        private void setWatcher()
+        void SetWatcher()
         {
             try
             {
-                if (Directory.Exists(BackingPath))
+                if (!Directory.Exists(BackingPath)) return;
+                watcher = new WatcherEx(BackingPath);
+                if (watcher.IsRemote) watcher.Changed += watcher_Changed;
+                else
                 {
-                    watcher = new WatcherEx(BackingPath);
-                    if (watcher.IsRemote)
-                        watcher.Changed += watcher_Changed;
-                    else
-                    {
-                        watcher.Created += watcher_Created;
-                        watcher.Deleted += watcher_Deleted;
-                        watcher.Renamed += watcher_Renamed;
-                    }
-                    watcher.EnableRaisingEvents = true;
+                    watcher.Created += watcher_Created;
+                    watcher.Deleted += watcher_Deleted;
+                    watcher.Renamed += watcher_Renamed;
                 }
+                watcher.EnableRaisingEvents = true;
             }
             catch {}
         }
 
         public override void Refresh(bool recursive)
         {
-            if (watcher is null) setWatcher();
+            if (watcher is null) SetWatcher();
             base.Refresh(recursive);
         }
         
@@ -82,7 +77,7 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Enabled = true;
         }
 
-        private bool AppendPath(FileSystemEventArgs e)
+        bool AppendPath(FileSystemEventArgs e)
         {
             lock (changedPaths)
             {
@@ -99,7 +94,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private bool AppendToChangedPaths(string fullPath, string path, WatcherChangeTypes changeType)
+        bool AppendToChangedPaths(string fullPath, string path, WatcherChangeTypes changeType)
         {
             if (excludedDirs != null) // filter ignored paths
             {
@@ -130,28 +125,31 @@ namespace ProjectManager.Controls.TreeView
             return true;
         }
 
-        private void watcher_Changed(object sender, FileSystemEventArgs e)
-        {
-            if (AppendPath(e))
-                Changed();
-        }
-        private void watcher_Created(object sender, FileSystemEventArgs e) 
-        {
-            if (AppendPath(e))
-                Changed(); 
-        }
-        private void watcher_Deleted(object sender, FileSystemEventArgs e) 
-        {
-            if (AppendPath(e))
-                Changed(); 
-        }
-        private void watcher_Renamed(object sender, RenamedEventArgs e) 
+        void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (AppendPath(e))
                 Changed();
         }
 
-        private void Changed()
+        void watcher_Created(object sender, FileSystemEventArgs e) 
+        {
+            if (AppendPath(e))
+                Changed(); 
+        }
+
+        void watcher_Deleted(object sender, FileSystemEventArgs e) 
+        {
+            if (AppendPath(e))
+                Changed(); 
+        }
+
+        void watcher_Renamed(object sender, RenamedEventArgs e) 
+        {
+            if (AppendPath(e))
+                Changed();
+        }
+
+        void Changed()
         {
             // have we been deleted already?
             if (!Directory.Exists(BackingPath)) return;
@@ -160,7 +158,7 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Enabled = true;
         }
 
-        private void Update()
+        void Update()
         {
             if (!updateNeeded) return;
             updateTimer.Enabled = false;
@@ -198,7 +196,5 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Enabled = false;
             Update();
         }
-
     }
-
 }

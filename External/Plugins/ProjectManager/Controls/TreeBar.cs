@@ -23,12 +23,12 @@ namespace ProjectManager.Controls
 
         public TreeBar()
         {
-            this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.Size = new Size(200, 26);
-            this.Renderer = new DockPanelStripRenderer();
-            this.GripStyle = ToolStripGripStyle.Hidden;
-            this.Padding = new Padding(2, 1, 2, 1);
-            this.CanOverflow = false;
+            ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            Size = new Size(200, 26);
+            Renderer = new DockPanelStripRenderer();
+            GripStyle = ToolStripGripStyle.Hidden;
+            Padding = new Padding(2, 1, 2, 1);
+            CanOverflow = false;
 
             RefreshSelected = new ToolStripButton(Icons.Refresh.Img);
             RefreshSelected.ToolTipText = TextHelper.GetString("ToolTip.Refresh");
@@ -80,6 +80,5 @@ namespace ProjectManager.Controls
         {
             set => ProjectProperties.Image = value ? Icons.OptionsWithIssues.Img : Icons.Options.Img;
         }
-    }    
-
+    }
 }
