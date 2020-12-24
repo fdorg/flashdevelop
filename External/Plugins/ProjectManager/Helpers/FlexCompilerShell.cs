@@ -70,8 +70,6 @@ namespace ProjectManager.Helpers
             return ReadUntilPrompt();
         }
 
-        void process_Exited(object sender, EventArgs e) => throw new Exception("Process Exited");
-
         public void Compile(string projectPath,
                             string arguments,
                             out string output,

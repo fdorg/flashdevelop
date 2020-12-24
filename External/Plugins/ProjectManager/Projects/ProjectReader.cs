@@ -39,8 +39,8 @@ namespace ProjectManager.Projects
             {
                 // import FD3 project
                 OutputType.Unknown => Project.MovieOptions.DefaultOutput(Project.MovieOptions.Platform),
-                OutputType.OtherIDE when (!string.IsNullOrEmpty(Project.PreBuildEvent) ||
-                                          !string.IsNullOrEmpty(Project.PostBuildEvent)) => OutputType.CustomBuild,
+                OutputType.OtherIDE when !string.IsNullOrEmpty(Project.PreBuildEvent)
+                                         || !string.IsNullOrEmpty(Project.PostBuildEvent) => OutputType.CustomBuild,
                 _ => Project.OutputType
             };
         }

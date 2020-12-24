@@ -161,12 +161,11 @@ namespace ProjectManager.Projects
 
         public void WriteExample(string nodeName, params string[] attributes)
         {
-            StringBuilder example = new StringBuilder();
-            example.Append(" example: <"+nodeName);
-            foreach (string attribute in attributes)
-                example.Append(" " + attribute + "=\"...\"");
-            example.Append(" /> ");
-            WriteComment(example.ToString());
+            var sb = new StringBuilder();
+            sb.Append(" example: <"+nodeName);
+            foreach (string attribute in attributes) sb.Append(" " + attribute + "=\"...\"");
+            sb.Append(" /> ");
+            WriteComment(sb.ToString());
         }
     }
 }

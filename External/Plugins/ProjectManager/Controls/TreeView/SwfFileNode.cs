@@ -52,38 +52,24 @@ namespace ProjectManager.Controls.TreeView
             ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.ImageResource.Index;
         }
-
-        static string SafeFileName(string export)
-        {
-            return reSafeChars.Replace(export, "?");
-        }
     }
 
     public class MemberExportNode : ClassExportNode
     {
-        public MemberExportNode(string filePath, string export, int image)
-            : base(filePath, export)
-        {
-            ImageIndex = SelectedImageIndex = image;
-        }
+        public MemberExportNode(string filePath, string export, int image) : base(filePath, export)
+            => ImageIndex = SelectedImageIndex = image;
     }
 
     public class ClassExportNode : ExportNode
     {
-        public ClassExportNode(string filePath, string export)
-            : base(filePath, export)
-        {
-            ImageIndex = SelectedImageIndex = Icons.Class.Index;
-        }
+        public ClassExportNode(string filePath, string export) : base(filePath, export)
+            => ImageIndex = SelectedImageIndex = Icons.Class.Index;
     }
 
     public class FontExportNode : ExportNode
     {
-        public FontExportNode(string filePath, string export)
-            : base(filePath, export)
-        {
-            ImageIndex = SelectedImageIndex = Icons.Font.Index;
-        }
+        public FontExportNode(string filePath, string export) : base(filePath, export)
+            => ImageIndex = SelectedImageIndex = Icons.Font.Index;
     }
 
     public class HeaderInfoNode : FakeNode
@@ -213,21 +199,15 @@ namespace ProjectManager.Controls.TreeView
         void Explore()
         {
             explored = true;
-
-            if (parser != null) 
-                return;
+            if (parser != null) return;
             parser = new ContentParser(BackingPath);
-
             runner = new BackgroundWorker();
             runner.RunWorkerCompleted += runner_ProcessEnded;
-            runner.DoWork += runner_DoWork;
+            runner.DoWork += Runner_DoWork;
             runner.RunWorkerAsync(parser);
         }
 
-        void runner_DoWork(object sender, DoWorkEventArgs e)
-        {
-            (e.Argument as ContentParser).Run();
-        }
+        static void Runner_DoWork(object sender, DoWorkEventArgs e) => ((ContentParser) e.Argument).Run();
 
         void runner_ProcessEnded(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -241,12 +221,10 @@ namespace ProjectManager.Controls.TreeView
             TreeView.BeginUpdate();
             try
             {
-                if (parser is null)
-                    return;
+                if (parser is null) return;
                 if (parser.Errors.Count > 0)
                 {
-                    WorkingNode wnode = Nodes[0] as WorkingNode;
-                    if (wnode is null)
+                    if (!(Nodes[0] is WorkingNode wnode))
                     {
                         Nodes.Clear();
                         wnode = new WorkingNode(BackingPath);
@@ -257,13 +235,13 @@ namespace ProjectManager.Controls.TreeView
                 }
 
                 Nodes.Clear();
-                ExportComparer classesComp = new ExportComparer(parser.Frames);
+                ExportComparer classesComp = new ExportComparer();
                 if (parser.Classes.Count == 1) classesComp.Compare(parser.Classes[0], parser.Classes[0]);
                 parser.Classes.Sort(classesComp);
-                ExportComparer symbolsComp = new ExportComparer(parser.Frames);
+                ExportComparer symbolsComp = new ExportComparer();
                 if (parser.Symbols.Count == 1) symbolsComp.Compare(parser.Symbols[0], parser.Symbols[0]);
                 parser.Symbols.Sort(symbolsComp);
-                ExportComparer fontsComp = new ExportComparer(parser.Frames);
+                ExportComparer fontsComp = new ExportComparer();
                 if (parser.Fonts.Count == 1) fontsComp.Compare(parser.Fonts[0], parser.Fonts[0]);
                 parser.Fonts.Sort(fontsComp);
 
@@ -318,20 +296,20 @@ namespace ProjectManager.Controls.TreeView
 
                 if (parser.Symbols.Count > 0)
                 {
-                    SymbolsNode node2 = new SymbolsNode(BackingPath);
+                    var node2 = new SymbolsNode(BackingPath);
                     node2.Text += " (" + FormatBytes(parser.TotalSize - parser.AbcSize - parser.FontsSize) + ")";
-
-                    int[] groups = symbolsComp.groups.Keys.ToArray();
+                    var groups = symbolsComp.groups.Keys.ToArray();
                     Array.Sort(groups);
                     foreach(int index in groups)
                     {
-                        DeclEntry group = parser.Frames[index];
-                        string groupName = group.Name;
-                        SwfFrameNode frame = new SwfFrameNode(BackingPath, groupName);
-                        frame.Text = groupName + " (" + FormatBytes(group.DataSize) + ")";
+                        var group = parser.Frames[index];
+                        var groupName = group.Name;
+                        var frame = new SwfFrameNode(BackingPath, groupName)
+                        {
+                            Text = groupName + " (" + FormatBytes(group.DataSize) + ")"
+                        };
                         if (parser.Frames.Count > 1) node2.Nodes.Add(frame);
-
-                        List<string> names = symbolsComp.groups[index];
+                        var names = symbolsComp.groups[index];
                         names.Sort(); // TODO Add setting?
                         foreach (string symbol in names)
                             node2.Nodes.Add(new ExportNode(BackingPath, symbol));
@@ -347,13 +325,14 @@ namespace ProjectManager.Controls.TreeView
                     Array.Sort(groups);
                     foreach (int index in groups)
                     {
-                        DeclEntry group = parser.Frames[index];
-                        string groupName = group.Name;
-                        SwfFrameNode frame = new SwfFrameNode(BackingPath, groupName);
-                        frame.Text = groupName + " (" + FormatBytes(group.FontSize) + ")";
+                        var group = parser.Frames[index];
+                        var groupName = group.Name;
+                        var frame = new SwfFrameNode(BackingPath, groupName)
+                        {
+                            Text = groupName + " (" + FormatBytes(group.FontSize) + ")"
+                        };
                         if (parser.Frames.Count > 1) node2.Nodes.Add(frame);
-
-                        List<string> names = fontsComp.groups[index];
+                        var names = fontsComp.groups[index];
                         names.Sort(); // TODO Add setting?
                         foreach (string font in names)
                             node2.Nodes.Add(new FontExportNode(BackingPath, font));
@@ -369,12 +348,9 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        string FormatDimensions(Rectangle rect)
-        {
-            return rect.Width + "x" + rect.Height;
-        }
+        public string FormatDimensions(Rectangle rect) => rect.Width + "x" + rect.Height;
 
-        Rectangle GetSwfRect(byte[] bytes)
+        static Rectangle GetSwfRect(byte[] bytes)
         {
             BitArray ba = BitParser.GetBitValues(bytes);
             int Nbits = BitParser.ReadUInt32(ba, 5);
@@ -408,12 +384,6 @@ namespace ProjectManager.Controls.TreeView
         class ExportComparer : IComparer<DeclEntry>
         {
             public readonly Dictionary<int, List<string>> groups = new Dictionary<int, List<string>>();
-            List<DeclEntry> frames;
-
-            public ExportComparer(List<DeclEntry> swfFrames)
-            {
-                frames = swfFrames;
-            }
 
             public int Compare(DeclEntry a, DeclEntry b)
             {
@@ -426,7 +396,6 @@ namespace ProjectManager.Controls.TreeView
                 if (a.Frame != b.Frame) return a.Frame - b.Frame;
                 return string.Compare(na, nb);
             }
-
         }
     }
 
@@ -443,10 +412,7 @@ namespace ProjectManager.Controls.TreeView
 
     public class SwfFrameNode : GenericNode
     {
-        public SwfFrameNode(string filePath, string name)
-            : base(filePath + ";" + name)
-        {
-            ImageIndex = SelectedImageIndex = Icons.DownArrow.Index;
-        }
+        public SwfFrameNode(string filePath, string name) : base(filePath + ";" + name)
+            => ImageIndex = SelectedImageIndex = Icons.DownArrow.Index;
     }
 }

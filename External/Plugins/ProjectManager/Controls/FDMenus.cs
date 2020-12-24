@@ -91,7 +91,7 @@ namespace ProjectManager.Controls
             EnableTargetBuildSelector(false);
         }
 
-        int GetThemeWidth(string themeId, int defaultValue)
+        static int GetThemeWidth(string themeId, int defaultValue)
         {
             string strValue = PluginBase.MainForm.GetThemeValue(themeId);
             return int.TryParse(strValue, out var intValue) ? intValue : defaultValue;
@@ -167,10 +167,7 @@ namespace ProjectManager.Controls
         }
 
         
-        public void ToggleDebugRelease()
-        {
-            ConfigurationSelector.SelectedIndex = (ConfigurationSelector.SelectedIndex + 1) % 2;
-        }
+        public void ToggleDebugRelease() => ConfigurationSelector.SelectedIndex = (ConfigurationSelector.SelectedIndex + 1) % 2;
     }
 
     /// <summary>
@@ -303,5 +300,4 @@ namespace ProjectManager.Controls
             }
         }
     }
-
 }

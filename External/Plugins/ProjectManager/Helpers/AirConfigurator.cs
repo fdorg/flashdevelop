@@ -18,12 +18,7 @@ namespace ProjectManager.Helpers
 
         public string ApplicationSetupBatch { get; set; }
 
-        public Dictionary<string, string> ApplicationSetupParams { get; }
-
-        public AirConfigurator()
-        {
-            ApplicationSetupParams = new Dictionary<string, string>();
-        }
+        public Dictionary<string, string> ApplicationSetupParams { get; } = new Dictionary<string, string>();
 
         public void SetUp()
         {

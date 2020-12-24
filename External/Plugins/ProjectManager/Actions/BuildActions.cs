@@ -79,12 +79,14 @@ namespace ProjectManager.Actions
                     if (command == "FlashIDE") RunFlashIDE(project, runOutput, releaseMode);
                     else
                     {
-                        Hashtable data = new Hashtable();
-                        data["command"] = command;
-                        data["project"] = project;
-                        data["runOutput"] = runOutput;
-                        data["releaseMode"] = releaseMode;
-                        DataEvent de = new DataEvent(EventType.Command, "ProjectManager.RunWithAssociatedIDE", data);
+                        var data = new Hashtable
+                        {
+                            ["command"] = command,
+                            ["project"] = project,
+                            ["runOutput"] = runOutput,
+                            ["releaseMode"] = releaseMode
+                        };
+                        var de = new DataEvent(EventType.Command, "ProjectManager.RunWithAssociatedIDE", data);
                         EventManager.DispatchEvent(project, de);
                         if (de.Handled) return true;
                     }
@@ -329,29 +331,39 @@ namespace ProjectManager.Actions
         static int CompareVersions(string sdkVersion, string version)
         {
             int score = 0;
-            string[] sa = sdkVersion.Split(',');
-            string[] sb = version.Split(',');
+            var sa = sdkVersion.Split(',');
+            var sb = version.Split(',');
 
             for (int j = 0; j < sb.Length; j++)
             {
                 try
                 {
                     // TODO: Adjust scoring based on pre-release metadata (e.g. 4.0.0 is better than 4.0.0-preview.3). Handling various possible cases might get complicated, though.
-                    string[] pa = new SemVer(sa[j].Trim()).ToString().Split('.');
-                    string[] pb = new SemVer(sb[j].Trim()).ToString().Split('.');
-                    int major = int.Parse(pa[0]) - int.Parse(pb[0]);
-                    if (major < 0) return int.MaxValue;
-                    if (major > 0) score += 10;
-                    else
+                    var pa = new SemVer(sa[j].Trim()).ToString().Split('.');
+                    var pb = new SemVer(sb[j].Trim()).ToString().Split('.');
+                    var major = int.Parse(pa[0]) - int.Parse(pb[0]);
+                    switch (major)
                     {
-                        var minor = int.Parse(pa[1]) - int.Parse(pb[1]);
-                        if (minor < 0) score += 5;
-                        else if (minor > 0) score += 2;
-                        else
-                        {
-                            var detail = int.Parse(pa[2]) - int.Parse(pb[2]);
-                            if (detail < 0) score += 2;
-                        }
+                        case < 0: return int.MaxValue;
+                        case > 0:
+                            score += 10;
+                            break;
+                        default:
+                            var minor = int.Parse(pa[1]) - int.Parse(pb[1]);
+                            switch (minor)
+                            {
+                                case < 0:
+                                    score += 5;
+                                    break;
+                                case > 0:
+                                    score += 2;
+                                    break;
+                                default:
+                                    var detail = int.Parse(pa[2]) - int.Parse(pb[2]);
+                                    if (detail < 0) score += 2;
+                                    break;
+                            }
+                            break;
                     }
                 }
                 catch { score += 40; }

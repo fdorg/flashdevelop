@@ -76,15 +76,10 @@ namespace ProjectManager.Projects.AS3
             List<string> elements = new List<string>();
             while (Name == "element")
             {
-                string path = OSPath(GetAttribute("path"));
+                var path = OSPath(GetAttribute("path"));
                 elements.Add(path);
-
                 if (mode != SwfAssetMode.Ignore)
-                {
-                    LibraryAsset asset = new LibraryAsset(project, path);
-                    asset.SwfMode = mode;
-                    project.SwcLibraries.Add(asset);
-                }
+                    project.SwcLibraries.Add(new LibraryAsset(project, path) {SwfMode = mode});
                 Read();
             }
             ReadEndElement();

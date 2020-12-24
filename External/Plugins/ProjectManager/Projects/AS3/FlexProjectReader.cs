@@ -20,8 +20,7 @@ namespace ProjectManager.Projects.AS3
 
         public IDictionary<string, string> EnvironmentPaths { get; set; }
 
-        public FlexProjectReader(string filename)
-            : base(filename, new AS3Project(filename))
+        public FlexProjectReader(string filename) : base(filename, new AS3Project(filename))
         {
             project = Project as AS3Project;
             Directory.SetCurrentDirectory(project.Directory);
@@ -36,15 +35,15 @@ namespace ProjectManager.Projects.AS3
 
         protected override void ProcessNode(string name)
         {
-            if (NodeType == XmlNodeType.Element)
-                switch (name)
-                {
-                    case "compiler": ReadCompilerOptions(); break;
-                    case "applications": ReadApplications(); break;
-                    case "modules": ReadModules(); break;
-                    case "theme": ReadTheme(); break;
-                    case "buildTargets": ReadBuildTargets(); break;
-                }
+            if (NodeType != XmlNodeType.Element) return;
+            switch (name)
+            {
+                case "compiler": ReadCompilerOptions(); break;
+                case "applications": ReadApplications(); break;
+                case "modules": ReadModules(); break;
+                case "theme": ReadTheme(); break;
+                case "buildTargets": ReadBuildTargets(); break;
+            }
         }
 
         void ReadCompilerOptions()

@@ -33,7 +33,7 @@ namespace ProjectManager.Helpers
         public LineEntryDialog(string captionText, string labelText, string defaultLine)
         {
             InitializeComponent();
-            InititalizeLocalization();
+            InitializeLocalization();
             Font = PluginBase.Settings.DefaultFont;
             Text = " " + captionText;
             titleLabel.Text = labelText;
@@ -133,7 +133,7 @@ namespace ProjectManager.Helpers
 
         #endregion
 
-        void InititalizeLocalization()
+        void InitializeLocalization()
         {
             btnOK.Text = TextHelper.GetString("Label.OK");
             btnCancel.Text = TextHelper.GetString("Label.Cancel");
@@ -144,7 +144,7 @@ namespace ProjectManager.Helpers
         void btnOK_Click(object sender, System.EventArgs e)
         {
             Line = lineBox.Text;
-            CancelEventArgs cancelArgs = new CancelEventArgs(false);
+            var cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)
             {
@@ -161,14 +161,14 @@ namespace ProjectManager.Helpers
 
         void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
         {
-            string shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
+            var shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
             if (string.IsNullOrEmpty(shortcutId)) return;
 
             switch (shortcutId)
             {
                 case "EditMenu.ToLowercase":
                 case "EditMenu.ToUppercase":
-                    string selectedText = lineBox.SelectedText;
+                    var selectedText = lineBox.SelectedText;
                     if (string.IsNullOrEmpty(selectedText)) break;
                     selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
                     int selectionStart = lineBox.SelectionStart;

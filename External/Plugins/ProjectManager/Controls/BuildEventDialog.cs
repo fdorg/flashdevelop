@@ -9,8 +9,6 @@ namespace ProjectManager.Controls
 {
     public class BuildEventDialog : SmartForm
     {
-        readonly BuildEventVars vars;
-
         #region Windows Form Designer
 
         StatusBar statusBar;
@@ -185,8 +183,8 @@ namespace ProjectManager.Controls
             FormGuid = "ada69d37-2ec0-4484-b113-72bfeab2f239";
             Font = PluginCore.PluginBase.Settings.DefaultFont;
 
-            vars = new BuildEventVars(project);
-            foreach (BuildEventInfo info in vars.GetVars()) Add(info);
+            var vars = new BuildEventVars(project);
+            foreach (var info in vars.GetVars()) Add(info);
         }
 
         public void InitializeLocalization()
@@ -207,16 +205,13 @@ namespace ProjectManager.Controls
 
         void Add(BuildEventInfo info)
         {
-            ListViewItem item = new ListViewItem(info.Name);
+            var item = new ListViewItem(info.Name);
             item.SubItems.Add(info.Value);
             item.Tag = info;
             listView.Items.Add(item);
         }
 
-        void textBox_TextChanged(object sender, EventArgs e)
-        {
-            okButton.Enabled = true;
-        }
+        void textBox_TextChanged(object sender, EventArgs e) => okButton.Enabled = true;
 
         void listView_DoubleClick(object sender, EventArgs e)
         {
@@ -224,23 +219,16 @@ namespace ProjectManager.Controls
                 DoInsert();
         }
 
-        void insertButton_Click(object sender, EventArgs e)
-        {
-            DoInsert();
-        }
+        void insertButton_Click(object sender, EventArgs e) => DoInsert();
 
         void DoInsert()
         {
-            BuildEventInfo info = listView.SelectedItems[0].Tag as BuildEventInfo;
-            
+            var info = (BuildEventInfo) listView.SelectedItems[0].Tag;
             textBox.Focus();
             SendKeys.Send(info.SendKeysName);
         }
 
-        void listView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            insertButton.Enabled = (listView.SelectedItems.Count > 0);
-        }
+        void listView_SelectedIndexChanged(object sender, EventArgs e) => insertButton.Enabled = listView.SelectedItems.Count > 0;
 
         protected override void OnResize(EventArgs e)
         {
@@ -250,20 +238,18 @@ namespace ProjectManager.Controls
 
         void listView_MouseMove(object sender, MouseEventArgs e)
         {
-            ListViewItem item = listView.GetItemAt(e.X,e.Y);
-            
+            var item = listView.GetItemAt(e.X,e.Y);
             if (item != null && e.X >= nameColumn.Width)
             {
-                BuildEventInfo info = item.Tag as BuildEventInfo;
-                Graphics g = listView.CreateGraphics();
+                var info = (BuildEventInfo) item.Tag;
+                var g = listView.CreateGraphics();
                 if (g.MeasureString(info.Value,listView.Font).Width > valueColumn.Width)
                 {
                     toolTip.SetToolTip(listView,info.Value);
                     return;
                 }
             }
-
-            toolTip.SetToolTip(listView,"");
+            toolTip.SetToolTip(listView,string.Empty);
         }
     }
 }

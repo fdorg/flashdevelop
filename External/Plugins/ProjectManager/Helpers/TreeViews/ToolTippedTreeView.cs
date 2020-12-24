@@ -28,15 +28,10 @@ namespace System.Windows.Forms
         protected override void OnMouseMove(MouseEventArgs e)
         {
             // create tooltip
-            if (tip is null) 
-            {
-                tip = new ToolTip();
-                tip.ShowAlways = true;
-                tip.AutoPopDelay = 10000;
-            }
+            tip ??= new ToolTip {ShowAlways = true, AutoPopDelay = 10000};
             // get node under mouse
-            TreeNode currentNode = GetNodeAt(PointToClient(Cursor.Position));
-            string prev = tip.GetToolTip(this);
+            var currentNode = GetNodeAt(PointToClient(Cursor.Position));
+            var prev = tip.GetToolTip(this);
             if (currentNode != null)
             {
                 string text = currentNode.Text;

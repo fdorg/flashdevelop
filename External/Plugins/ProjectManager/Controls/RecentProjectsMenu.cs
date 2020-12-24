@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore.Localization;
@@ -105,7 +106,7 @@ namespace ProjectManager.Controls
                 }
             }
             item.Tag = projectPath;
-            item.Click += delegate { OnProjectSelected(projectPath); };
+            item.Click += (_, _) => OnProjectSelected(projectPath);
             return item;
         }
 
@@ -136,7 +137,5 @@ namespace ProjectManager.Controls
 
             ProjectSelected?.Invoke(projectPath);
         }
-
     }
-
 }

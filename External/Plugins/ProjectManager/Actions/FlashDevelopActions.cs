@@ -12,10 +12,7 @@ namespace ProjectManager.Actions
         static bool nameAsked;
         readonly IMainForm mainForm;
 
-        public FlashDevelopActions(IMainForm mainForm)
-        {
-            this.mainForm = mainForm;
-        }
+        public FlashDevelopActions(IMainForm mainForm) => this.mainForm = mainForm;
 
         public Encoding GetDefaultEncoding() => Encoding.GetEncoding((int) mainForm.Settings.DefaultCodePage);
 

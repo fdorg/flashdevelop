@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using PluginCore;
 
 namespace System.Windows.Forms
 {
@@ -24,8 +25,7 @@ namespace System.Windows.Forms
         {
             selectedNodes = new List<TreeNode>();
             originalColor = new Hashtable();
-            labelEditTimer = new Timer();
-            labelEditTimer.Interval = 1500;
+            labelEditTimer = new Timer {Interval = 1500};
             labelEditTimer.Tick += labelEditTimer_Tick;
         }
 
@@ -35,19 +35,16 @@ namespace System.Windows.Forms
             set
             {
                 multiSelect = value;
-                if (!multiSelect)
-                    foreach (var node in selectedNodes)
-                        UnpaintNode(node);
+                if (multiSelect) return;
+                selectedNodes.ForEach(UnpaintNode);
             }
         }
 
         public void ForceLabelEdit()
         {
-            if (SelectedNode != null)
-            {
-                labelEditTimer.Enabled = false;
-                SelectedNode.BeginEdit();
-            }
+            if (SelectedNode == null) return;
+            labelEditTimer.Enabled = false;
+            SelectedNode.BeginEdit();
         }
 
         void IgnoreNextLabelEdit()
@@ -56,10 +53,7 @@ namespace System.Windows.Forms
             labelEditTimer.Enabled = true;
         }
 
-        void labelEditTimer_Tick(object sender, EventArgs e)
-        {
-            labelEditTimer.Enabled = false;
-        }
+        void labelEditTimer_Tick(object sender, EventArgs e) => labelEditTimer.Enabled = false;
 
         // prevents some flicker
         protected override void WndProc(ref Message m)

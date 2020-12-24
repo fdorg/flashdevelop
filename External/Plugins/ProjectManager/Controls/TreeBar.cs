@@ -80,6 +80,5 @@ namespace ProjectManager.Controls
         {
             set => ProjectProperties.Image = value ? Icons.OptionsWithIssues.Img : Icons.Options.Img;
         }
-    }    
-
+    }
 }

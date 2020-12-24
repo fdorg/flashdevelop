@@ -34,46 +34,38 @@ namespace ProjectManager.Actions
 
         public event ProjectModifiedHandler ProjectModified;
 
-        public ProjectActions(IWin32Window owner)
-        {
-            this.owner = owner;
-        }
+        public ProjectActions(IWin32Window owner) => this.owner = owner;
 
         #region New/Open Project
 
         public Project? NewProject()
         {
             using var dialog = new NewProjectDialog();
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
+            if (dialog.ShowDialog(owner) != DialogResult.OK) return null;
+            try
             {
-                try
-                {
-                    FlashDevelopActions.CheckAuthorName();
-                    var creator = new ProjectCreator();
-                    var created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
-                    PatchProject(created);
-                    return created;
-                }
-                catch (Exception exception)
-                {
-                    var msg = TextHelper.GetString("Info.CouldNotCreateProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
-                }
+                FlashDevelopActions.CheckAuthorName();
+                var creator = new ProjectCreator();
+                var created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
+                PatchProject(created);
+                return created;
             }
-
+            catch (Exception exception)
+            {
+                var msg = TextHelper.GetString("Info.CouldNotCreateProject");
+                ErrorManager.ShowInfo(msg + " " + exception.Message);
+            }
             return null;
         }
 
         public Project? OpenProject()
         {
-            using var dialog = new OpenFileDialog();
-            dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
-            dialog.Filter = ProjectCreator.GetProjectFilters();
-
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
-                return OpenProjectSilent(dialog.FileName);
-
-            return null;
+            using var dialog = new OpenFileDialog
+            {
+                Title = " " + TextHelper.GetString("Title.OpenProjectDialog"),
+                Filter = ProjectCreator.GetProjectFilters()
+            };
+            return dialog.ShowDialog(owner) == DialogResult.OK ? OpenProjectSilent(dialog.FileName) : null;
         }
 
         public Project? OpenProjectSilent(string path)
@@ -107,8 +99,7 @@ namespace ProjectManager.Actions
         {
             var hxmlFiles = Directory.GetFiles(path, "*.hxml");
             if (hxmlFiles.Length == 0) return new GenericProject(path);
-            var project = new HaxeProject(path);
-            project.RawHXML = File.ReadAllLines(hxmlFiles[0]);
+            var project = new HaxeProject(path) {RawHXML = File.ReadAllLines(hxmlFiles[0])};
             PatchProject(project);
             PatchHxmlProject(project);
             return project;

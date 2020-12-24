@@ -17,14 +17,9 @@ namespace ProjectManager.Projects.AS3
             SwcLibraries = new AssetCollection(this);
         }
         
-        public override string Name 
-        { 
-            get
-            {
-                if (FileInspector.IsFlexBuilderProject(ProjectPath)) return Path.GetFileName(Path.GetDirectoryName(ProjectPath));
-                return Path.GetFileNameWithoutExtension(ProjectPath);
-            } 
-        }
+        public override string Name => FileInspector.IsFlexBuilderProject(ProjectPath)
+            ? Path.GetFileName(Path.GetDirectoryName(ProjectPath))
+            : Path.GetFileNameWithoutExtension(ProjectPath);
 
         public override string Language => "as3";
         public override string LanguageDisplayName => "AS3";
@@ -38,10 +33,9 @@ namespace ProjectManager.Projects.AS3
 
         public override PropertiesDialog CreatePropertiesDialog() => new AS3PropertiesDialog();
 
-        public override void ValidateBuild(out string error)
-        {
-            error = CompileTargets.Count == 0 ? "Description.MissingEntryPoint" : null;
-        }
+        public override void ValidateBuild(out string error) => error = CompileTargets.Count == 0
+            ? "Description.MissingEntryPoint"
+            : null;
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
@@ -63,15 +57,17 @@ namespace ProjectManager.Projects.AS3
                 }
                 return $"{pre}Embed(source=\"{relPath}\", symbol=\"{export}\"){post}";
             }
-            if (FileInspector.IsImage(fileExt) || IsText(fileExt) 
-                || FileInspector.IsFont(fileExt) || FileInspector.IsSound(fileExt))
+            if (FileInspector.IsImage(fileExt)
+                || IsText(fileExt) 
+                || FileInspector.IsFont(fileExt)
+                || FileInspector.IsSound(fileExt))
             {
                 return $"{pre}Embed(source=\"{relPath}\"){post}";
             }
             return $"{pre}Embed(source=\"{relPath}\", mimeType=\"application/octet-stream\"){post}";
         }
 
-        bool IsText(string ext) => ext == ".txt" || ext == ".xml";
+        static bool IsText(string ext) => ext == ".txt" || ext == ".xml";
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
         {
@@ -96,7 +92,8 @@ namespace ProjectManager.Projects.AS3
                     File.Delete(GetAbsolutePath(OutputPath));
                 return true;
             }
-            catch {
+            catch
+            {
                 return false;
             }
         }

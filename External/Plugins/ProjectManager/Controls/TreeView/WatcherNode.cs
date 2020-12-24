@@ -27,37 +27,32 @@ namespace ProjectManager.Controls.TreeView
             excludedDirs = PluginMain.Settings.ExcludedDirectories.Clone() as string[];
             excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as string[];
             // Use a timer for FileSystemWatcher updates so they don't do lots of redrawing
-            updateTimer = new Timer();
-            updateTimer.SynchronizingObject = Tree;
-            updateTimer.Interval = 500;
+            updateTimer = new Timer {SynchronizingObject = Tree, Interval = 500};
             updateTimer.Elapsed += updateTimer_Tick;
-            setWatcher();
+            SetWatcher();
         }
 
-        void setWatcher()
+        void SetWatcher()
         {
             try
             {
-                if (Directory.Exists(BackingPath))
+                if (!Directory.Exists(BackingPath)) return;
+                watcher = new WatcherEx(BackingPath);
+                if (watcher.IsRemote) watcher.Changed += watcher_Changed;
+                else
                 {
-                    watcher = new WatcherEx(BackingPath);
-                    if (watcher.IsRemote)
-                        watcher.Changed += watcher_Changed;
-                    else
-                    {
-                        watcher.Created += watcher_Created;
-                        watcher.Deleted += watcher_Deleted;
-                        watcher.Renamed += watcher_Renamed;
-                    }
-                    watcher.EnableRaisingEvents = true;
+                    watcher.Created += watcher_Created;
+                    watcher.Deleted += watcher_Deleted;
+                    watcher.Renamed += watcher_Renamed;
                 }
+                watcher.EnableRaisingEvents = true;
             }
             catch {}
         }
 
         public override void Refresh(bool recursive)
         {
-            if (watcher is null) setWatcher();
+            if (watcher is null) SetWatcher();
             base.Refresh(recursive);
         }
         
@@ -201,7 +196,5 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Enabled = false;
             Update();
         }
-
     }
-
 }

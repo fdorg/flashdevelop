@@ -311,5 +311,4 @@ namespace ProjectManager
     ///  Event delegates of the class
     /// </summary>
     public delegate bool RenameEventHandler(string path, string newName);
-
 }

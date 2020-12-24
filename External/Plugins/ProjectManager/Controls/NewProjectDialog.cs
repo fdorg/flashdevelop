@@ -333,10 +333,7 @@ namespace ProjectManager.Controls
             Load += NewProjectDialog_Load;
         }
 
-        int CompareFolderNames(string pathA, string pathB)
-        {
-            return Path.GetFileName(pathA).CompareTo(Path.GetFileName(pathB));
-        }
+        static int CompareFolderNames(string pathA, string pathB) => Path.GetFileName(pathA).CompareTo(Path.GetFileName(pathB));
 
         void NewProjectDialog_Load(object sender, EventArgs e)
         {
@@ -378,7 +375,6 @@ namespace ProjectManager.Controls
         public string PackageName
         {
             get => packageTextBox.Text;
-
             set => packageTextBox.Text = value;
         }
 
@@ -386,46 +382,21 @@ namespace ProjectManager.Controls
         {
             get
             {
-                if (TemplateDirectory != null)
-                {
-                    string templateFile = ProjectCreator.FindProjectTemplate(TemplateDirectory);
-                    if (templateFile != null)
-                        return Path.GetExtension(templateFile);
-                }
-                return null;
+                if (TemplateDirectory == null) return null;
+                var templateFile = ProjectCreator.FindProjectTemplate(TemplateDirectory);
+                return Path.GetExtension(templateFile);
             }
         }
 
         public string ProjectLocation
         {
-            get
-            {
-                if (createDirectoryBox.Checked)
-                    return Path.Combine(locationTextBox.Text,ProjectName);
-                return locationTextBox.Text;
-            }
+            get => createDirectoryBox.Checked ? Path.Combine(locationTextBox.Text,ProjectName) : locationTextBox.Text;
             set => locationTextBox.Text = value;
         }
 
-        public string TemplateDirectory
-        {
-            get
-            {
-                if (projectListView.SelectedItems.Count > 0)
-                    return projectListView.SelectedItems[0].Tag as string;
-                return null;
-            }
-        }
+        public string TemplateDirectory => projectListView.SelectedItems.Count > 0 ? projectListView.SelectedItems[0].Tag as string : null;
 
-        public string TemplateName
-        {
-            get
-            {
-                if (projectListView.SelectedItems.Count > 0)
-                    return projectListView.SelectedItems[0].Text;
-                return null;
-            }
-        }
+        public string TemplateName => projectListView.SelectedItems.Count > 0 ? projectListView.SelectedItems[0].Text : null;
 
         #endregion
 
@@ -436,11 +407,9 @@ namespace ProjectManager.Controls
             cancelButton.Text = TextHelper.GetString("Label.Cancel");
             browseButton.Text = TextHelper.GetString("Label.Browse");
             createDirectoryBox.Text = TextHelper.GetString("Info.CreateDirForProject");
-            //this.groupBox2.Text = TextHelper.GetString("Label.InstalledTemplates");
             nameTextBox.Text = TextHelper.GetString("Info.NewProject");
             label1.Text = TextHelper.GetString("Label.Location");
             label3.Text = TextHelper.GetString("Label.Package");
-            //this.label4.Text = TextHelper.GetString("Info.AboutPackages");
             Text = " " + TextHelper.GetString("Info.NewProject");
         }
 
@@ -469,15 +438,15 @@ namespace ProjectManager.Controls
             // does this project file already exist?
             if (File.Exists(projectPath))
             {
-                string msg = TextHelper.GetString("Info.ProjectFileAlreadyExists");
-                string title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
-                DialogResult result = MessageBox.Show(this, msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                var msg = TextHelper.GetString("Info.ProjectFileAlreadyExists");
+                var title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
+                var result = MessageBox.Show(this, msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (result != DialogResult.OK) return;
             }
-
             PluginMain.Settings.CreateProjectDirectory = createDirectoryBox.Checked;
-            if (createDirectoryBox.Checked) PluginMain.Settings.NewProjectDefaultDirectory = locationTextBox.Text;
-            else PluginMain.Settings.NewProjectDefaultDirectory = Path.GetDirectoryName(locationTextBox.Text);
+            PluginMain.Settings.NewProjectDefaultDirectory = createDirectoryBox.Checked
+                ? locationTextBox.Text
+                : Path.GetDirectoryName(locationTextBox.Text);
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -510,21 +479,21 @@ namespace ProjectManager.Controls
 
         void SetProjectImage(string projectImage)
         {
-            Image image = Image.FromFile(projectImage);
-            Bitmap empty = new Bitmap(previewBox.Width, previewBox.Height);
-            Graphics graphics = Graphics.FromImage(empty);
+            using var image = Image.FromFile(projectImage);
+            var empty = new Bitmap(previewBox.Width, previewBox.Height);
+            using var graphics = Graphics.FromImage(empty);
             graphics.DrawImage(image, new Rectangle(empty.Width / 2 - image.Width / 2, empty.Height / 2 - image.Height / 2, image.Width, image.Height));
             previewBox.Image = empty;
-            graphics.Dispose();
-            image.Dispose();
         }
 
         void browseButton_Click(object sender, EventArgs e)
         {
-            using var dialog = new VistaFolderBrowserDialog();
-            dialog.RootFolder = Environment.SpecialFolder.Desktop;
-            dialog.UseDescriptionForTitle = true;
-            dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
+            using var dialog = new VistaFolderBrowserDialog
+            {
+                RootFolder = Environment.SpecialFolder.Desktop,
+                UseDescriptionForTitle = true,
+                Description = TextHelper.GetString("Info.SelectProjectDirectory")
+            };
 
             string selectedPath = locationTextBox.Text;
             // try to get as close as we can to the directory you typed in
@@ -575,9 +544,11 @@ namespace ProjectManager.Controls
             statusBar.Text = status;
         }
 
-        void locationTextBox_TextChanged(object sender, EventArgs e) { UpdateStatusBar(); }
-        void nameTextBox_TextChanged(object sender, EventArgs e) { UpdateStatusBar(); }
-        void createDirectoryBox_CheckedChanged(object sender, EventArgs e) { UpdateStatusBar(); }
+        void locationTextBox_TextChanged(object sender, EventArgs e) => UpdateStatusBar();
+        
+        void nameTextBox_TextChanged(object sender, EventArgs e) => UpdateStatusBar();
+        
+        void createDirectoryBox_CheckedChanged(object sender, EventArgs e) => UpdateStatusBar();
 
         void textPackage_TextChanged(object sender, EventArgs e)
         {
@@ -597,10 +568,6 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Make sure previewBox background remains white
         /// </summary>
-        public void AfterTheming()
-        {
-            previewBox.BackColor = Color.White;
-        }
+        public void AfterTheming() => previewBox.BackColor = Color.White;
     }
-
 }
