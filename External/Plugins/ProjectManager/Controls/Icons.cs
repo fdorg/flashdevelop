@@ -32,8 +32,8 @@ namespace ProjectManager.Controls
         // store all extension icons we've pulled from the file system
         static readonly Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
 
-        private static IMainForm mainForm;
-        private static FDImageList imageList;
+        static IMainForm mainForm;
+        static FDImageList imageList;
 
         public static FDImage BulletAdd;
         public static FDImage SilkPage;

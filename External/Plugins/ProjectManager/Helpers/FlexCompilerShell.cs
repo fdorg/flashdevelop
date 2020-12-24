@@ -13,7 +13,7 @@ namespace ProjectManager.Helpers
     public class FlexCompilerShell : MarshalByRefObject
     {
         //C:\...\Main.as(17): col: 15 Warning: variable 'yc' has no type declaration.
-        private static readonly Regex reWarning
+        static readonly Regex reWarning
             = new Regex("\\([0-9]+\\): col: [0-9]+ Warning:", RegexOptions.Compiled);
 
         // fcsh.exe process
@@ -224,7 +224,7 @@ namespace ProjectManager.Helpers
         /// Read the compile id fsch returns
         /// </summary>
         /// <returns></returns>
-        private int ReadCompileID()
+        int ReadCompileID()
         {
             string line = "";
             lock (typeof(FlexCompilerShell))
@@ -252,9 +252,9 @@ namespace ProjectManager.Helpers
         /// Read until fcsh is in idle state, displaying its (fcsh) prompt
         /// </summary>
         /// <returns></returns>
-        private string ReadUntilPrompt() => ReadUntilToken("(fcsh)");
+        string ReadUntilPrompt() => ReadUntilToken("(fcsh)");
 
-        private string ReadUntilToken(string token)
+        string ReadUntilToken(string token)
         {
             StringBuilder output = new StringBuilder();
             Queue<char> queue = new Queue<char>();

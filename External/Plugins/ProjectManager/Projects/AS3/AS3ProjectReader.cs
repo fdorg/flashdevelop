@@ -60,17 +60,17 @@ namespace ProjectManager.Projects.AS3
                 }
         }
 
-        private void ReadIntrinsicPaths() => project.CompilerOptions.IntrinsicPaths = ReadLibrary("intrinsics", SwfAssetMode.Ignore);
+        void ReadIntrinsicPaths() => project.CompilerOptions.IntrinsicPaths = ReadLibrary("intrinsics", SwfAssetMode.Ignore);
 
-        private void ReadRSLPaths() => project.CompilerOptions.RSLPaths = ReadLibrary("rslPaths", SwfAssetMode.Ignore);
+        void ReadRSLPaths() => project.CompilerOptions.RSLPaths = ReadLibrary("rslPaths", SwfAssetMode.Ignore);
 
-        private void ReadExternalLibraryPaths() => project.CompilerOptions.ExternalLibraryPaths = ReadLibrary("externalLibraryPaths", SwfAssetMode.ExternalLibrary);
+        void ReadExternalLibraryPaths() => project.CompilerOptions.ExternalLibraryPaths = ReadLibrary("externalLibraryPaths", SwfAssetMode.ExternalLibrary);
 
-        private void ReadLibrayPath() => project.CompilerOptions.LibraryPaths = ReadLibrary("libraryPaths", SwfAssetMode.Library);
+        void ReadLibrayPath() => project.CompilerOptions.LibraryPaths = ReadLibrary("libraryPaths", SwfAssetMode.Library);
 
-        private void ReadIncludeLibraries() => project.CompilerOptions.IncludeLibraries = ReadLibrary("includeLibraries", SwfAssetMode.IncludedLibrary);
+        void ReadIncludeLibraries() => project.CompilerOptions.IncludeLibraries = ReadLibrary("includeLibraries", SwfAssetMode.IncludedLibrary);
 
-        private string[] ReadLibrary(string name, SwfAssetMode mode)
+        string[] ReadLibrary(string name, SwfAssetMode mode)
         {
             ReadStartElement(name);
             List<string> elements = new List<string>();
@@ -156,7 +156,7 @@ namespace ProjectManager.Projects.AS3
             ReadEndElement();
         }
 
-        private MxmlNamespace[] ReadNamespaces()
+        MxmlNamespace[] ReadNamespaces()
         {
             var data = Value.Split('\n');
             int entriesNo = data.Length;

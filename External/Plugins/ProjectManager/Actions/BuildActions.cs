@@ -48,7 +48,7 @@ namespace ProjectManager.Actions
             SetupRemotingServer();
         }
 
-        private void SetupRemotingServer()
+        void SetupRemotingServer()
         {
             IpcChannel channel = new IpcChannel(IPCName);
             ChannelServices.RegisterChannel(channel, false);
@@ -326,7 +326,7 @@ namespace ProjectManager.Actions
             return newSdk;
         }
 
-        private static int CompareVersions(string sdkVersion, string version)
+        static int CompareVersions(string sdkVersion, string version)
         {
             int score = 0;
             string[] sa = sdkVersion.Split(',');

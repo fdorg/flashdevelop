@@ -13,14 +13,15 @@ namespace ProjectManager.Helpers
     {
         #region Form Designer Components
 
-        private System.Windows.Forms.TextBox lineBox;
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Button btnCancel;
+        System.Windows.Forms.TextBox lineBox;
+        System.Windows.Forms.Button btnOK;
+        System.Windows.Forms.Button btnCancel;
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private readonly System.ComponentModel.Container components = null;
-        private System.Windows.Forms.Label titleLabel;
+        readonly System.ComponentModel.Container components = null;
+
+        System.Windows.Forms.Label titleLabel;
 
         #endregion
 
@@ -64,7 +65,7 @@ namespace ProjectManager.Helpers
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.titleLabel = new System.Windows.Forms.Label();
             this.lineBox = new System.Windows.Forms.TextBoxEx();
@@ -132,7 +133,7 @@ namespace ProjectManager.Helpers
 
         #endregion
 
-        private void InititalizeLocalization()
+        void InititalizeLocalization()
         {
             this.btnOK.Text = TextHelper.GetString("Label.OK");
             this.btnCancel.Text = TextHelper.GetString("Label.Cancel");
@@ -140,7 +141,7 @@ namespace ProjectManager.Helpers
             this.Text = " " + TextHelper.GetString("Title.EnterText");
         }
 
-        private void btnOK_Click(object sender, System.EventArgs e)
+        void btnOK_Click(object sender, System.EventArgs e)
         {
             this.Line = lineBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
@@ -152,7 +153,7 @@ namespace ProjectManager.Helpers
             }
         }
 
-        private void btnCancel_Click(object sender, System.EventArgs e)
+        void btnCancel_Click(object sender, System.EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();

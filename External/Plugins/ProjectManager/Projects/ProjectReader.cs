@@ -66,7 +66,7 @@ namespace ProjectManager.Projects
             }
         }
 
-        private void ReadPluginStorage()
+        void ReadPluginStorage()
         {
             if (IsEmptyElement)
             {

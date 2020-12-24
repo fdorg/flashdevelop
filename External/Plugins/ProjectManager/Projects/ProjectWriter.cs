@@ -120,7 +120,7 @@ namespace ProjectManager.Projects
             WriteEndElement();
         }
 
-        private void WriteStorage()
+        void WriteStorage()
         {
             WriteComment(" Plugin storage ");
             WriteStartElement("storage");

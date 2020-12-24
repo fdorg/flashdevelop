@@ -34,7 +34,7 @@ namespace ProjectManager.Controls.TreeView
             setWatcher();
         }
 
-        private void setWatcher()
+        void setWatcher()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Enabled = true;
         }
 
-        private bool AppendPath(FileSystemEventArgs e)
+        bool AppendPath(FileSystemEventArgs e)
         {
             lock (changedPaths)
             {
@@ -99,7 +99,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private bool AppendToChangedPaths(string fullPath, string path, WatcherChangeTypes changeType)
+        bool AppendToChangedPaths(string fullPath, string path, WatcherChangeTypes changeType)
         {
             if (excludedDirs != null) // filter ignored paths
             {
@@ -130,28 +130,31 @@ namespace ProjectManager.Controls.TreeView
             return true;
         }
 
-        private void watcher_Changed(object sender, FileSystemEventArgs e)
-        {
-            if (AppendPath(e))
-                Changed();
-        }
-        private void watcher_Created(object sender, FileSystemEventArgs e) 
-        {
-            if (AppendPath(e))
-                Changed(); 
-        }
-        private void watcher_Deleted(object sender, FileSystemEventArgs e) 
-        {
-            if (AppendPath(e))
-                Changed(); 
-        }
-        private void watcher_Renamed(object sender, RenamedEventArgs e) 
+        void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (AppendPath(e))
                 Changed();
         }
 
-        private void Changed()
+        void watcher_Created(object sender, FileSystemEventArgs e) 
+        {
+            if (AppendPath(e))
+                Changed(); 
+        }
+
+        void watcher_Deleted(object sender, FileSystemEventArgs e) 
+        {
+            if (AppendPath(e))
+                Changed(); 
+        }
+
+        void watcher_Renamed(object sender, RenamedEventArgs e) 
+        {
+            if (AppendPath(e))
+                Changed();
+        }
+
+        void Changed()
         {
             // have we been deleted already?
             if (!Directory.Exists(BackingPath)) return;
@@ -160,7 +163,7 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Enabled = true;
         }
 
-        private void Update()
+        void Update()
         {
             if (!updateNeeded) return;
             updateTimer.Enabled = false;
