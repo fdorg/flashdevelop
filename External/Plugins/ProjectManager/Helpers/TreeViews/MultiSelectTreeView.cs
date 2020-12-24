@@ -70,7 +70,7 @@ namespace System.Windows.Forms
                     m.Msg = 0x0000; // Set to null
                     break;
                 case 0xf: // WM_PAINT
-                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(Handle), Bounds));
                     break;
             }
             base.WndProc(ref m);
@@ -229,7 +229,7 @@ namespace System.Windows.Forms
             if (node1 == node2) return; // nice try
             bool found = false;
             bool finished = false;
-            SelectRange(base.Nodes, node1, node2, ref found, ref finished);
+            SelectRange(Nodes, node1, node2, ref found, ref finished);
         }
 
         void SelectRange(IEnumerable nodes, TreeNode node1, TreeNode node2, ref bool found, ref bool finished)
@@ -312,17 +312,17 @@ namespace System.Windows.Forms
         {
             if (multiSelect)
             {
-                UnselectAllExcept(base.SelectedNode);
-                if (base.SelectedNode != null)
-                    UnpaintNode(base.SelectedNode);
+                UnselectAllExcept(SelectedNode);
+                if (SelectedNode != null)
+                    UnpaintNode(SelectedNode);
             }
             base.OnLostFocus(e);
         }
 
         protected override void OnGotFocus(EventArgs e)
         {
-            if (multiSelect && base.SelectedNode != null)
-                PaintNode(base.SelectedNode);
+            if (multiSelect && SelectedNode != null)
+                PaintNode(SelectedNode);
 
             base.OnGotFocus (e);
         }

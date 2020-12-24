@@ -20,13 +20,13 @@ namespace ProjectManager.Controls
 
         #region Component Designer
 
-        System.Windows.Forms.Button btnUp;
-        System.Windows.Forms.Button btnDown;
-        System.Windows.Forms.ListBox listBox;
-        System.Windows.Forms.ComboBox langComboBox;
-        System.Windows.Forms.Button btnNewClasspath;
-        System.Windows.Forms.Button btnRemove;
-        System.Windows.Forms.ToolTip toolTip;
+        Button btnUp;
+        Button btnDown;
+        ListBox listBox;
+        ComboBox langComboBox;
+        Button btnNewClasspath;
+        Button btnRemove;
+        ToolTip toolTip;
 
         /// <summary> 
         /// Required designer variable.
@@ -54,94 +54,94 @@ namespace ProjectManager.Controls
         /// </summary>
         void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.listBox = new System.Windows.Forms.ListBoxEx();
-            this.btnNewClasspath = new System.Windows.Forms.ButtonEx();
-            this.btnRemove = new System.Windows.Forms.ButtonEx();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnUp = new System.Windows.Forms.ButtonEx();
-            this.btnDown = new System.Windows.Forms.ButtonEx();
-            this.langComboBox = new System.Windows.Forms.FlatCombo();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            listBox = new ListBoxEx();
+            btnNewClasspath = new ButtonEx();
+            btnRemove = new ButtonEx();
+            toolTip = new ToolTip(components);
+            btnUp = new ButtonEx();
+            btnDown = new ButtonEx();
+            langComboBox = new FlatCombo();
+            SuspendLayout();
             // 
             // listBox
             // 
-            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.listBox.Location = new System.Drawing.Point(1, 1);
-            this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(271, 133);
-            this.listBox.TabIndex = 0;
-            this.listBox.DoubleClick += this.listBox_DoubleClick;
-            this.listBox.SelectedIndexChanged += this.listBox_SelectedIndexChanged;
-            this.listBox.MouseMove += this.listBox_MouseMove;
-            this.listBox.IntegralHeight = false;
+            listBox.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
+            listBox.Location = new Point(1, 1);
+            listBox.Name = "listBox";
+            listBox.Size = new Size(271, 133);
+            listBox.TabIndex = 0;
+            listBox.DoubleClick += listBox_DoubleClick;
+            listBox.SelectedIndexChanged += listBox_SelectedIndexChanged;
+            listBox.MouseMove += listBox_MouseMove;
+            listBox.IntegralHeight = false;
             // 
             // btnNewClasspath
             // 
-            this.btnNewClasspath.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnNewClasspath.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNewClasspath.Location = new System.Drawing.Point(0, 147);
-            this.btnNewClasspath.Name = "btnNewClasspath";
-            this.btnNewClasspath.Size = new System.Drawing.Size(107, 21);
-            this.btnNewClasspath.TabIndex = 1;
-            this.btnNewClasspath.Text = "&Add Classpath...";
-            this.btnNewClasspath.Click += this.btnNewClasspath_Click;
+            btnNewClasspath.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnNewClasspath.FlatStyle = FlatStyle.System;
+            btnNewClasspath.Location = new Point(0, 147);
+            btnNewClasspath.Name = "btnNewClasspath";
+            btnNewClasspath.Size = new Size(107, 21);
+            btnNewClasspath.TabIndex = 1;
+            btnNewClasspath.Text = "&Add Classpath...";
+            btnNewClasspath.Click += btnNewClasspath_Click;
             // 
             // btnRemove
             // 
-            this.btnRemove.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnRemove.Location = new System.Drawing.Point(111, 147);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(69, 21);
-            this.btnRemove.TabIndex = 2;
-            this.btnRemove.Text = "&Remove";
-            this.btnRemove.Click += this.btnRemove_Click;
+            btnRemove.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnRemove.FlatStyle = FlatStyle.System;
+            btnRemove.Location = new Point(111, 147);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Size = new Size(69, 21);
+            btnRemove.TabIndex = 2;
+            btnRemove.Text = "&Remove";
+            btnRemove.Click += btnRemove_Click;
             // 
             // btnUp
             // 
-            this.btnUp.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.btnUp.Location = new System.Drawing.Point(278, 0);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(24, 24);
-            this.btnUp.TabIndex = 3;
-            this.btnUp.Click += this.btnUp_Click;
+            btnUp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnUp.Location = new Point(278, 0);
+            btnUp.Name = "btnUp";
+            btnUp.Size = new Size(24, 24);
+            btnUp.TabIndex = 3;
+            btnUp.Click += btnUp_Click;
             // 
             // btnDown
             // 
-            this.btnDown.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.btnDown.Location = new System.Drawing.Point(278, 24);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(24, 24);
-            this.btnDown.TabIndex = 4;
-            this.btnDown.Click += this.btnDown_Click;
+            btnDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDown.Location = new Point(278, 24);
+            btnDown.Name = "btnDown";
+            btnDown.Size = new Size(24, 24);
+            btnDown.TabIndex = 4;
+            btnDown.Click += btnDown_Click;
             // 
             // langComboBox
             // 
-            this.langComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.langComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.langComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.langComboBox.FormattingEnabled = true;
-            this.langComboBox.Items.AddRange(new object[] {
+            langComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            langComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            langComboBox.FlatStyle = FlatStyle.System;
+            langComboBox.FormattingEnabled = true;
+            langComboBox.Items.AddRange(new object[] {
             "AS2",
             "AS3",
             "Haxe"});
-            this.langComboBox.Location = new System.Drawing.Point(187, 150);
-            this.langComboBox.Name = "langComboBox";
-            this.langComboBox.Size = new System.Drawing.Size(88, 21);
-            this.langComboBox.TabIndex = 5;
+            langComboBox.Location = new Point(187, 150);
+            langComboBox.Name = "langComboBox";
+            langComboBox.Size = new Size(88, 21);
+            langComboBox.TabIndex = 5;
             // 
             // ClasspathControl
             // 
-            this.Controls.Add(this.langComboBox);
-            this.Controls.Add(this.btnDown);
-            this.Controls.Add(this.btnUp);
-            this.Controls.Add(this.btnRemove);
-            this.Controls.Add(this.btnNewClasspath);
-            this.Controls.Add(this.listBox);
-            this.Name = "ClasspathControl";
-            this.Size = new System.Drawing.Size(302, 170);
-            this.ResumeLayout(false);
+            Controls.Add(langComboBox);
+            Controls.Add(btnDown);
+            Controls.Add(btnUp);
+            Controls.Add(btnRemove);
+            Controls.Add(btnNewClasspath);
+            Controls.Add(listBox);
+            Name = "ClasspathControl";
+            Size = new Size(302, 170);
+            ResumeLayout(false);
 
         }
 
@@ -176,13 +176,13 @@ namespace ProjectManager.Controls
 
         public ComboBox LanguageBox
         {
-            get => this.langComboBox;
-            set => this.langComboBox = value;
+            get => langComboBox;
+            set => langComboBox = value;
         }
 
         public string Language
         {
-            get => this.language;
+            get => language;
             set 
             {
                 if (value is null) return;
@@ -192,7 +192,7 @@ namespace ProjectManager.Controls
                         langComboBox.SelectedIndex = i;
                         break;
                     }
-                this.language = value; 
+                language = value; 
             }
         }
 
@@ -215,8 +215,8 @@ namespace ProjectManager.Controls
 
         void InitializeLocalization()
         {
-            this.btnRemove.Text = TextHelper.GetString("Label.Remove");
-            this.btnNewClasspath.Text = TextHelper.GetString("Label.AddClasspath");
+            btnRemove.Text = TextHelper.GetString("Label.Remove");
+            btnNewClasspath.Text = TextHelper.GetString("Label.AddClasspath");
         }
 
         void OnChanged()
@@ -284,7 +284,7 @@ namespace ProjectManager.Controls
             SetButtons();
         }
 
-        void listBox_DoubleClick(object sender, System.EventArgs e)
+        void listBox_DoubleClick(object sender, EventArgs e)
         {
             var entry = listBox.SelectedItem as ClasspathEntry;
             if (entry is null) return; // you could have double-clicked on whitespace
@@ -315,7 +315,7 @@ namespace ProjectManager.Controls
 
         Point prevPoint = new Point(0, 0); // blocks too frequent updates
 
-        void listBox_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        void listBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (prevPoint.Equals(new Point(e.X, e.Y))) return;
             prevPoint = new Point(e.X, e.Y);
@@ -333,7 +333,7 @@ namespace ProjectManager.Controls
             toolTip.SetToolTip(listBox, "");
         }
 
-        void btnUp_Click(object sender, System.EventArgs e)
+        void btnUp_Click(object sender, EventArgs e)
         {
             int index = listBox.SelectedIndex;
             object temp = listBox.Items[index-1];
@@ -343,7 +343,7 @@ namespace ProjectManager.Controls
             OnChanged();
         }
 
-        void btnDown_Click(object sender, System.EventArgs e)
+        void btnDown_Click(object sender, EventArgs e)
         {
             int index = listBox.SelectedIndex;
             object temp = listBox.Items[index+1];
@@ -392,7 +392,7 @@ namespace ProjectManager.Controls
 
             public ClasspathEntry(string classpath)
             {
-                this.Classpath = classpath;
+                Classpath = classpath;
             }
 
             public override string ToString()

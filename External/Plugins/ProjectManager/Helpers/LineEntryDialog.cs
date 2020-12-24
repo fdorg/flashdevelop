@@ -13,15 +13,15 @@ namespace ProjectManager.Helpers
     {
         #region Form Designer Components
 
-        System.Windows.Forms.TextBox lineBox;
-        System.Windows.Forms.Button btnOK;
-        System.Windows.Forms.Button btnCancel;
+        TextBox lineBox;
+        Button btnOK;
+        Button btnCancel;
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        readonly System.ComponentModel.Container components = null;
+        readonly Container components = null;
 
-        System.Windows.Forms.Label titleLabel;
+        Label titleLabel;
 
         #endregion
 
@@ -67,67 +67,67 @@ namespace ProjectManager.Helpers
         /// </summary>
         void InitializeComponent()
         {
-            this.titleLabel = new System.Windows.Forms.Label();
-            this.lineBox = new System.Windows.Forms.TextBoxEx();
-            this.btnOK = new System.Windows.Forms.ButtonEx();
-            this.btnCancel = new System.Windows.Forms.ButtonEx();
-            this.SuspendLayout();
+            titleLabel = new Label();
+            lineBox = new TextBoxEx();
+            btnOK = new ButtonEx();
+            btnCancel = new ButtonEx();
+            SuspendLayout();
             // 
             // titleLabel
             // 
-            this.titleLabel.Location = new System.Drawing.Point(8, 8);
-            this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(266, 16);
-            this.titleLabel.TabIndex = 3;
-            this.titleLabel.Text = "Enter text:";
+            titleLabel.Location = new System.Drawing.Point(8, 8);
+            titleLabel.Name = "titleLabel";
+            titleLabel.Size = new System.Drawing.Size(266, 16);
+            titleLabel.TabIndex = 3;
+            titleLabel.Text = "Enter text:";
             // 
             // lineBox
             // 
-            this.lineBox.Location = new System.Drawing.Point(10, 24);
-            this.lineBox.Name = "lineBox";
-            this.lineBox.Size = new System.Drawing.Size(260, 20);
-            this.lineBox.TabIndex = 0;
+            lineBox.Location = new System.Drawing.Point(10, 24);
+            lineBox.Name = "lineBox";
+            lineBox.Size = new System.Drawing.Size(260, 20);
+            lineBox.TabIndex = 0;
             // 
             // btnOK
             // 
-            this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(68, 50);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(72, 21);
-            this.btnOK.TabIndex = 1;
-            this.btnOK.Text = "OK";
-            this.btnOK.Click += this.btnOK_Click;
+            btnOK.FlatStyle = FlatStyle.System;
+            btnOK.Location = new System.Drawing.Point(68, 50);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new System.Drawing.Size(72, 21);
+            btnOK.TabIndex = 1;
+            btnOK.Text = "OK";
+            btnOK.Click += btnOK_Click;
             // 
             // btnCancel
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(149, 50);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(72, 21);
-            this.btnCancel.TabIndex = 2;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += this.btnCancel_Click;
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.FlatStyle = FlatStyle.System;
+            btnCancel.Location = new System.Drawing.Point(149, 50);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new System.Drawing.Size(72, 21);
+            btnCancel.TabIndex = 2;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // LineEntryDialog
             // 
-            this.AcceptButton = this.btnOK;
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(282, 81);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.lineBox);
-            this.Controls.Add(this.titleLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "LineEntryDialog";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Enter Text";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = btnOK;
+            AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            CancelButton = btnCancel;
+            ClientSize = new System.Drawing.Size(282, 81);
+            Controls.Add(btnCancel);
+            Controls.Add(btnOK);
+            Controls.Add(lineBox);
+            Controls.Add(titleLabel);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "LineEntryDialog";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Enter Text";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -135,28 +135,28 @@ namespace ProjectManager.Helpers
 
         void InititalizeLocalization()
         {
-            this.btnOK.Text = TextHelper.GetString("Label.OK");
-            this.btnCancel.Text = TextHelper.GetString("Label.Cancel");
-            this.titleLabel.Text = TextHelper.GetString("Info.EnterText");
-            this.Text = " " + TextHelper.GetString("Title.EnterText");
+            btnOK.Text = TextHelper.GetString("Label.OK");
+            btnCancel.Text = TextHelper.GetString("Label.Cancel");
+            titleLabel.Text = TextHelper.GetString("Info.EnterText");
+            Text = " " + TextHelper.GetString("Title.EnterText");
         }
 
         void btnOK_Click(object sender, System.EventArgs e)
         {
-            this.Line = lineBox.Text;
+            Line = lineBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
 
         void btnCancel_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)

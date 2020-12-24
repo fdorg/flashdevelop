@@ -14,7 +14,7 @@ namespace System.Windows.Forms
         int py;
 
         // disable the automatic tooltips
-        protected override System.Windows.Forms.CreateParams CreateParams
+        protected override CreateParams CreateParams
         {
             get 
             {
@@ -35,7 +35,7 @@ namespace System.Windows.Forms
                 tip.AutoPopDelay = 10000;
             }
             // get node under mouse
-            TreeNode currentNode = this.GetNodeAt(this.PointToClient(Cursor.Position));
+            TreeNode currentNode = GetNodeAt(PointToClient(Cursor.Position));
             string prev = tip.GetToolTip(this);
             if (currentNode != null)
             {
@@ -55,10 +55,10 @@ namespace System.Windows.Forms
                     if (prev != "") tip.SetToolTip(this, "");
                     return;
                 }
-                Graphics g = this.CreateGraphics();
-                SizeF textSize = g.MeasureString(text, this.Font);
+                Graphics g = CreateGraphics();
+                SizeF textSize = g.MeasureString(text, Font);
                 int w = (int)textSize.Width;
-                if (w+offset > this.Width)
+                if (w+offset > Width)
                 {
                     px = e.X;
                     py = e.Y;

@@ -23,7 +23,7 @@ namespace ProjectManager.Projects.AS3
         public FlexProjectReader(string filename)
             : base(filename, new AS3Project(filename))
         {
-            this.project = base.Project as AS3Project;
+            project = Project as AS3Project;
             Directory.SetCurrentDirectory(project.Directory);
         }
 

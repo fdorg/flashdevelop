@@ -94,8 +94,8 @@ namespace ProjectManager
 
             #endregion
 
-            this.Controls.Add(help);
-            this.Controls.Add(panel);
+            Controls.Add(help);
+            Controls.Add(panel);
 
             #region Events
 

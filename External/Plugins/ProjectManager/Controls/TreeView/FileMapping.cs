@@ -19,7 +19,7 @@ namespace ProjectManager.Controls.TreeView
         public FileMappingRequest(string[] files)
         {
             this.files = files;
-            this.mapping = new FileMapping();
+            mapping = new FileMapping();
         }
 
         public string[] Files

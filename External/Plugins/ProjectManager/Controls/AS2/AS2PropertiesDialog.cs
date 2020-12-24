@@ -27,11 +27,11 @@ namespace ProjectManager.Controls.AS2
 
         void InitializeLocalization()
         {
-            this.infoLabel.Text = TextHelper.GetString("Info.CodeInjection");
-            this.injectionTab.Text = TextHelper.GetString("Info.Injection");
-            this.injectionCheckBox.Text = TextHelper.GetString("Info.UseCodeInjection");
-            this.inputBrowseButton.Text = TextHelper.GetString("Label.Browse");
-            this.inputFileLabel.Text = TextHelper.GetString("Info.InputSWF");
+            infoLabel.Text = TextHelper.GetString("Info.CodeInjection");
+            injectionTab.Text = TextHelper.GetString("Info.Injection");
+            injectionCheckBox.Text = TextHelper.GetString("Info.UseCodeInjection");
+            inputBrowseButton.Text = TextHelper.GetString("Label.Browse");
+            inputFileLabel.Text = TextHelper.GetString("Info.InputSWF");
         }
 
         void inputSwfBox_TextChanged(object sender, System.EventArgs e)

@@ -41,10 +41,10 @@ namespace ProjectManager.Actions
             this.pluginMain = pluginMain;
 
             // setup FDProcess helper class
-            this.fdProcess = new FDProcessRunner(mainForm);
+            fdProcess = new FDProcessRunner(mainForm);
 
             // setup remoting service so FDBuild can use our in-memory services like FlexCompilerShell
-            this.IPCName = Guid.NewGuid().ToString();
+            IPCName = Guid.NewGuid().ToString();
             SetupRemotingServer();
         }
 
