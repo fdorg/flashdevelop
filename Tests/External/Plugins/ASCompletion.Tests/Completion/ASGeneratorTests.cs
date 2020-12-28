@@ -1845,6 +1845,43 @@ namespace ASCompletion.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> Issue3183MoveLocalUpTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_1", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_1"))
+                    .SetName("Move Local Up. Issue 3183. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_2", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_2"))
+                    .SetName("Move Local Up. Issue 3183. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_3", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_3"))
+                    .SetName("Move Local Up. Issue 3183. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_4", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_4"))
+                    .SetName("Move Local Up. Issue 3183. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_5", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_5"))
+                    .SetName("Move Local Up. Issue 3183. Case 5")
+                    .Ignore("BUG")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_6", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_6"))
+                    .SetName("Move Local Up. Issue 3183. Case 6")
+                    .Ignore("BUG")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+                yield return new TestCaseData("BeforeMoveLocalUp_issue3183_7", GeneratorJobType.MoveLocalUp, true)
+                    .Returns(ReadAllText("AfterMoveLocalUp_issue3183_7"))
+                    .SetName("Move Local Up. Issue 3183. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3183");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(AssignStatementToVarIssue1756TestCases)),
@@ -1854,6 +1891,7 @@ namespace ASCompletion.Completion
             TestCaseSource(nameof(GenerateEventHandlerIssue2421TestCases)),
             TestCaseSource(nameof(ConvertToConstIssue2406TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
+            TestCaseSource(nameof(Issue3183MoveLocalUpTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator)
         {
