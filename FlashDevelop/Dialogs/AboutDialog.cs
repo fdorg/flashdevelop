@@ -122,7 +122,14 @@ namespace FlashDevelop.Dialogs
             Text = $" {TextHelper.GetString("Title.AboutDialog")} {bit}";
             versionLabel.Font = new Font(Font, FontStyle.Bold);
             versionLabel.Text = name;
-            var sha = Regex.Match(name, "#([a-f0-9]*)").Captures[0].ToString().Remove(0, 1);
+            string sha;
+            var match = Regex.Match(name, "#([a-f0-9]*)");
+            if (match.Success && match.Captures.Count > 0) sha = match.Captures[0].ToString().Remove(0, 1);
+            else
+            {
+                // TODO slavara: https://github.com/fdorg/flashdevelop/issues/3215
+                sha = $"ProductName#{name}";
+            }
             var link = $"www.github.com/fdorg/flashdevelop/commit/{sha}";
             var lastChar = versionLabel.Text.Length;
             var firstChar = versionLabel.Text.IndexOf('(');
