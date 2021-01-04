@@ -27,7 +27,7 @@ namespace StartPage
         public bool CloseOnProjectOpen
         {
             get => closeOnProjectOpen;
-            set => this.closeOnProjectOpen = value;
+            set => closeOnProjectOpen = value;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace StartPage
         public bool ShowStartPageInsteadOfUntitled
         {
             get => showStartPageInsteadOfUntitled;
-            set => this.showStartPageInsteadOfUntitled = value;
+            set => showStartPageInsteadOfUntitled = value;
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace StartPage
         public ShowStartPageOnStartupEnum ShowStartPageOnStartup
         {
             get => showStartPageOnStartup;
-            set => this.showStartPageOnStartup = value;
+            set => showStartPageOnStartup = value;
         }
 
         #endregion
@@ -70,7 +70,7 @@ namespace StartPage
         public string CustomStartPage
         {
             get => customStartPage;
-            set => this.customStartPage = value;
+            set => customStartPage = value;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace StartPage
         public bool UseCustomStartPage
         {
             get => useCustomStartPage;
-            set => this.useCustomStartPage = value;
+            set => useCustomStartPage = value;
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace StartPage
         public string CustomRssFeed
         {
             get => customRssFeed;
-            set => this.customRssFeed = value;
+            set => customRssFeed = value;
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace StartPage
         public bool UseCustomRssFeed
         {
             get => useCustomRssFeed;
-            set => this.useCustomRssFeed = value;
+            set => useCustomRssFeed = value;
         }
 
         #endregion

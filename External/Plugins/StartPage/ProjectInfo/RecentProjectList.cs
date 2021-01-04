@@ -8,14 +8,9 @@ namespace StartPage.ProjectInfo
     {
         readonly XmlSerializer xmlSerializer;
 
-        public RecentProjectList()
-        {
-            xmlSerializer = XmlSerializer.FromTypes(new[]{GetType()})[0];
-        }
-        public RecentProjectList(List<string> recentProjects)
-        {
-            Update(recentProjects);
-        }
+        public RecentProjectList() => xmlSerializer = XmlSerializer.FromTypes(new[]{GetType()})[0];
+
+        public RecentProjectList(List<string> recentProjects) => Update(recentProjects);
 
         /// <summary>
         /// Updates the recent project list from list of paths
@@ -23,7 +18,7 @@ namespace StartPage.ProjectInfo
         public void Update(List<string> recentProjects)
         {
             Clear();
-            foreach (string recentProject in recentProjects)
+            foreach (var recentProject in recentProjects)
             {
                 Add(new RecentProject(recentProject));
             }
@@ -42,9 +37,9 @@ namespace StartPage.ProjectInfo
 
     public class RecentProject
     {
-        public string Path = "";
-        public string Name = "";
-        public string Type = "";
+        public string Path = string.Empty;
+        public string Name = string.Empty;
+        public string Type = string.Empty;
         public string Created = "Error getting file information.";
         public string Modified = "Error getting file information.";
 
