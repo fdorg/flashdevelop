@@ -35,6 +35,9 @@ if %errorlevel% neq 0 goto :error
 
 git clean -xfd
 
+:: Extract version from HEAD
+call SetVersion.bat
+
 nuget restore FlashDevelop.sln
 
 :: Build the solutions

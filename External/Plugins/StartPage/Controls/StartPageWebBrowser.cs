@@ -13,25 +13,25 @@ namespace StartPage.Controls
 {
     public class StartPageWebBrowser : UserControl
     {
-        private readonly string rssUrl = string.Empty;
-        private readonly string pageUrl = string.Empty;
-        private bool showingStartPage = false;
-        private readonly RecentProjectList recentProjectList;
-        private readonly StartPageActions startPageActions;
-        private WebBrowserEx webBrowser;
-        private DragDropPanel dndPanel;
+        readonly string rssUrl;
+        readonly string pageUrl;
+        bool showingStartPage;
+        readonly RecentProjectList recentProjectList;
+        readonly StartPageActions startPageActions;
+        WebBrowserEx webBrowser;
+        DragDropPanel dndPanel;
 
         public StartPageWebBrowser(string pageUrl, string rssUrl)
         {
             this.rssUrl = rssUrl;
             this.pageUrl = pageUrl;
-            this.InitializeDragDrop();
-            this.InitializeComponent();
-            this.startPageActions = new StartPageActions();
-            this.recentProjectList = new RecentProjectList();
-            this.webBrowser.ObjectForScripting = this.startPageActions;
-            this.startPageActions.DocumentCompleted += WebBrowserDocumentCompleted;
-            this.ShowStartPage();
+            InitializeDragDrop();
+            InitializeComponent();
+            startPageActions = new StartPageActions();
+            recentProjectList = new RecentProjectList();
+            webBrowser.ObjectForScripting = startPageActions;
+            startPageActions.DocumentCompleted += WebBrowserDocumentCompleted;
+            ShowStartPage();
         }
         
         #region Component Designer Generated Code
@@ -40,34 +40,33 @@ namespace StartPage.Controls
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.webBrowser = new WebBrowserEx();
-            this.SuspendLayout();
+            webBrowser = new WebBrowserEx();
+            SuspendLayout();
             // 
             // webBrowser
             // 
-            this.webBrowser.AllowWebBrowserDrop = false;
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(696, 602);
-            this.webBrowser.TabIndex = 0;
-            this.webBrowser.WebBrowserShortcutsEnabled = false;
-            this.webBrowser.Navigating += this.WebBrowserNavigating;
-            this.webBrowser.NewWindow += this.WebBrowserNewWindow;
+            webBrowser.AllowWebBrowserDrop = false;
+            webBrowser.Dock = DockStyle.Fill;
+            webBrowser.IsWebBrowserContextMenuEnabled = false;
+            webBrowser.Location = new System.Drawing.Point(0, 0);
+            webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            webBrowser.Name = "webBrowser";
+            webBrowser.Size = new System.Drawing.Size(696, 602);
+            webBrowser.TabIndex = 0;
+            webBrowser.WebBrowserShortcutsEnabled = false;
+            webBrowser.Navigating += WebBrowserNavigating;
+            webBrowser.NewWindow += WebBrowserNewWindow;
             // 
             // StartPageWebBrowser
             //
-            this.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.Controls.Add(this.webBrowser);
-            this.Name = "StartPageWebBrowser";
-            this.Size = new System.Drawing.Size(696, 602);
-            this.ResumeLayout(false);
-
+            Dock = DockStyle.Fill;
+            AutoScaleMode = AutoScaleMode.None;
+            Controls.Add(webBrowser);
+            Name = "StartPageWebBrowser";
+            Size = new System.Drawing.Size(696, 602);
+            ResumeLayout(false);
         }
 
         #endregion
@@ -77,10 +76,10 @@ namespace StartPage.Controls
         /// <summary>
         /// Initializes the drag and drop operation.
         /// </summary>
-        private void InitializeDragDrop()
+        void InitializeDragDrop()
         {
-            this.dndPanel = new DragDropPanel();
-            this.Controls.Add(this.dndPanel);
+            dndPanel = new DragDropPanel();
+            Controls.Add(dndPanel);
         }
 
         /// <summary>
@@ -88,8 +87,8 @@ namespace StartPage.Controls
         /// </summary>
         public void ShowStartPage()
         {
-            this.showingStartPage = true;
-            this.webBrowser.Navigate(this.pageUrl);
+            showingStartPage = true;
+            webBrowser.Navigate(pageUrl);
         }
 
         /// <summary>
@@ -97,49 +96,46 @@ namespace StartPage.Controls
         /// </summary>
         public void SendProjectInfo()
         {
-            this.recentProjectList.Update(ProjectManager.PluginMain.Settings.RecentProjects);
-            this.webBrowser.Document.InvokeScript("handleXmlData", new[] { this.recentProjectList.ToXml(), null});
+            recentProjectList.Update(ProjectManager.PluginMain.Settings.RecentProjects);
+            webBrowser.Document?.InvokeScript("handleXmlData", new[] { recentProjectList.ToXml(), null});
         }
         
         /// <summary>
         /// Updates the recent projects list
         /// </summary>
-        private void WebBrowserDocumentCompleted(object sender, EventArgs e)
+        void WebBrowserDocumentCompleted(object sender, EventArgs e)
         {
-            this.recentProjectList.Update(ProjectManager.PluginMain.Settings.RecentProjects);
-            this.webBrowser.Document.InvokeScript("handleXmlData", new[] { this.recentProjectList.ToXml(), this.rssUrl});
+            recentProjectList.Update(ProjectManager.PluginMain.Settings.RecentProjects);
+            webBrowser.Document?.InvokeScript("handleXmlData", new[] { recentProjectList.ToXml(), rssUrl});
         }
 
         /// <summary>
         /// If the page tries to open a new window use a fd tab instead
         /// </summary>
-        private void WebBrowserNewWindow(object sender, CancelEventArgs e)
+        void WebBrowserNewWindow(object sender, CancelEventArgs e)
         {
-            this.startPageActions.ShowURL(this.webBrowser.StatusText);
+            startPageActions.ShowURL(webBrowser.StatusText);
             e.Cancel = true;
         }
 
         /// <summary>
         /// If we're not about to show the start page and it isn't a javascript call then open a new fd tab
         /// </summary>
-        private void WebBrowserNavigating(object sender, WebBrowserNavigatingEventArgs e)
+        void WebBrowserNavigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (this.IsDownloadable(e.Url.ToString())) return;
-            if (!this.showingStartPage && !e.Url.ToString().StartsWithOrdinal("javascript"))
+            if (IsDownloadable(e.Url.ToString())) return;
+            if (!showingStartPage && !e.Url.ToString().StartsWithOrdinal("javascript"))
             {
-                this.startPageActions.ShowURL(e.Url.ToString());
+                startPageActions.ShowURL(e.Url.ToString());
                 e.Cancel = true;
             }
-            this.showingStartPage = false;
+            showingStartPage = false;
         }
 
         /// <summary>
         /// Checks if the url is downloadable file
         /// </summary>
-        private bool IsDownloadable(string url)
-        {
-            return url.EndsWithOrdinal(".exe") || url.EndsWithOrdinal(".zip");
-        }
+        static bool IsDownloadable(string url) => url.EndsWithOrdinal(".exe") || url.EndsWithOrdinal(".zip");
 
         #endregion
 
@@ -150,107 +146,78 @@ namespace StartPage.Controls
         {
             public event EventHandler DocumentCompleted;
 
-            private static string RELEASE_NOTES_URL = Path.Combine(PathHelper.DocDir, "index.html");
+            static string RELEASE_NOTES_URL = Path.Combine(PathHelper.DocDir, "index.html");
 
-            public void PageReady()
-            {
-                DocumentCompleted?.Invoke(this, null);
-            }
+            public void PageReady() => DocumentCompleted?.Invoke(this, null);
 
             /// <summary>
-            /// Called from webpage to browse any url in seperate browser control
+            /// Called from webpage to browse any url in separate browser control
             /// </summary>
-            public void ShowURL(string url)
-            {
-                PluginBase.MainForm.CallCommand("Browse", url);
-            }
+            public void ShowURL(string url) => PluginBase.MainForm.CallCommand("Browse", url);
 
             /// <summary>
             /// Called from webpage to browse FlashDevelop Homepage
             /// </summary>
-            public void ShowHome()
-            {
-                this.ShowURL(DistroConfig.DISTRIBUTION_HOME);
-            }
+            public void ShowHome() => ShowURL(DistroConfig.DISTRIBUTION_HOME);
 
             /// <summary>
             /// Called from webpage to browse release notes
             /// </summary>
-            public void ShowReleaseNotes()
-            {
-                this.ShowURL(RELEASE_NOTES_URL);
-            }
+            public void ShowReleaseNotes() => ShowURL(RELEASE_NOTES_URL);
 
             /// <summary>
             /// Called from webpage to browse documentation
             /// </summary>
-            public void ShowDocumentation()
-            {
-                this.ShowURL(DistroConfig.DISTRIBUTION_HELP);
-            }
+            public void ShowDocumentation() => ShowURL(DistroConfig.DISTRIBUTION_HELP);
 
             /// <summary>
             /// Called from webpage to show FlashDevelop About dialog
             /// </summary>
-            public void ShowAbout()
-            {
-                PluginBase.MainForm.CallCommand("About", null);
-            }
+            public void ShowAbout() => PluginBase.MainForm.CallCommand("About", null);
 
             /// <summary>
             /// Opens appman to install new software
             /// </summary>
-            public void InstallSoftware()
-            {
-                PluginBase.MainForm.CallCommand("RunProcess", "$(Quote)$(AppDir)\\Tools\\appman\\AppMan.exe$(Quote);-locale=$(Locale)");
-            }
+            public void InstallSoftware() => PluginBase.MainForm.CallCommand("RunProcess", "$(Quote)$(AppDir)\\Tools\\appman\\AppMan.exe$(Quote);-locale=$(Locale)");
 
             /// <summary>
             /// Called from webpage to show New Project Dialog
             /// </summary>
             public void NewProject()
             {
-                DataEvent de = new DataEvent(EventType.Command, ProjectManagerCommands.NewProject, null);
+                var de = new DataEvent(EventType.Command, ProjectManagerCommands.NewProject, null);
                 EventManager.DispatchEvent(this, de);
             }
 
             /// <summary>
             /// Called from webpage to open a project
             /// </summary>
-            public void OpenProject(string path)
-            {
-                PluginBase.MainForm.OpenEditableDocument(path);
-            }
+            public void OpenProject(string path) => PluginBase.MainForm.OpenEditableDocument(path);
 
             /// <summary>
             /// Called from webpage to open project dialog
             /// </summary>
             public void OpenProjectDialog()
             {
-                DataEvent de = new DataEvent(EventType.Command, ProjectManagerCommands.OpenProject, null);
+                var de = new DataEvent(EventType.Command, ProjectManagerCommands.OpenProject, null);
                 EventManager.DispatchEvent(this, de);
             }
 
         }
 
         #endregion
-
     }
 
     #region WebBrowserEx
 
-    class WebBrowserEx : WebBrowser
+    internal class WebBrowserEx : WebBrowser
     {
         /// <summary>
         /// Redirect events to MainForm.
         /// </summary>
         public override bool PreProcessMessage(ref Message msg)
-        {
-            return ((Form)PluginBase.MainForm).PreProcessMessage(ref msg);
-        }
-
+            => ((Form)PluginBase.MainForm).PreProcessMessage(ref msg);
     }
 
     #endregion
-
 }

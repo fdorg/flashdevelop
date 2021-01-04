@@ -8,12 +8,12 @@ namespace StartPage.Controls
     {
         public DragDropPanel()
         {
-            this.AutoSize = false;
-            this.AllowDrop = true;
-            this.DragOver += this.PanelDragOver;
-            this.DragDrop += this.PanelDragDrop;
-            this.Width = 300;
-            this.Height = 90;
+            AutoSize = false;
+            AllowDrop = true;
+            DragOver += PanelDragOver;
+            DragDrop += PanelDragDrop;
+            Width = 300;
+            Height = 90;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace StartPage.Controls
         {
             get
             {
-                CreateParams cp = base.CreateParams;
+                var cp = base.CreateParams;
                 cp.ExStyle |= 0x20;
                 return cp;
             }
@@ -37,7 +37,7 @@ namespace StartPage.Controls
         /// <summary>
         /// Handles the drag over event and enables correct dn'd effects.
         /// </summary>
-        private void PanelDragOver(object sender, DragEventArgs e)
+        static void PanelDragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -49,21 +49,17 @@ namespace StartPage.Controls
         /// <summary>
         /// Handles the actual file drop and opens them as editable documents.
         /// </summary>
-        private void PanelDragDrop(object sender, DragEventArgs e)
+        static void PanelDragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
             {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                foreach (string file in files)
+                if (File.Exists(file))
                 {
-                    if (File.Exists(file))
-                    {
-                        PluginBase.MainForm.OpenEditableDocument(file);
-                    }
+                    PluginBase.MainForm.OpenEditableDocument(file);
                 }
             }
         }
-
     }
-
 }
