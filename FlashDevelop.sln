@@ -89,6 +89,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS3Context.Tests", "Tests\E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaxeTypeWizard", "External\Plugins\HaxeTypeWizard\HaxeTypeWizard.csproj", "{BBF3BC59-7FA1-4BE4-B0FD-2D91AB109889}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C714C81C-C491-42D7-AF9B-55A6E1F972FB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
