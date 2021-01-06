@@ -75,6 +75,22 @@
 		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_1.as" />
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_2.as" />
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_3.as" />
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_4.as" />
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_5.as" />
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_6.as" />
+	  <None Remove="Test Files\generated\as3\AfterMoveLocalUp_issue3183_7.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_1.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_2.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_3.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_4.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_5.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_6.as" />
+	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_7.as" />
+	</ItemGroup>
+	<ItemGroup>
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="System.Drawing" />
@@ -107,6 +123,20 @@
 	<ItemGroup>
 		<None Include="app.config" />
 		<None Include="packages.config" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_3.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_2.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_1.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_4.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_5.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_6.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\AfterMoveLocalUp_issue3183_7.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_7.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_6.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_5.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_4.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_3.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_2.as" />
+		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_1.as" />
 		<EmbeddedResource Include="Test Files\parser\OverrideFunctionTest.as" />
 		<EmbeddedResource Include="Test Files\parser\SimpleClassTest.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\ImplementInterfaceNoMembers.as" />
