@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,8 +12,6 @@
 		<TargetFramework>net48</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<Platforms>x64;x86;AnyCPU</Platforms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -27,8 +24,8 @@
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
-		<PlatformTarget>x86</PlatformTarget>
 		<LangVersion>9</LangVersion>
+		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>pdbonly</DebugType>
@@ -38,6 +35,7 @@
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
 		<LangVersion>9</LangVersion>
+		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
 		<DebugSymbols>true</DebugSymbols>
@@ -46,7 +44,6 @@
 		<DebugType>full</DebugType>
 		<PlatformTarget>x86</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
-		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -56,7 +53,6 @@
 		<DebugType>pdbonly</DebugType>
 		<PlatformTarget>x86</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
-		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
@@ -81,21 +77,6 @@
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="CodeRefactor\Commands\RefactorCommandTests.cs" />
-		<Compile Include="CodeRefactor\Provider\HaxeCommandFactoryTests.cs" />
-		<Compile Include="Completion\Haxe3\CodeCompleteTests.cs" />
-		<Compile Include="Completion\Haxe4\CodeCompleteTests.cs" />
-		<Compile Include="Generators\Haxe3\CodeGeneratorTests2.cs" />
-		<Compile Include="Generators\Haxe3\CodeGeneratorTests.cs" />
-		<Compile Include="ContextTests.cs" />
-		<Compile Include="Generators\Haxe3\DocumentationGeneratorTests.cs" />
-		<Compile Include="Generators\Haxe4\CodeGeneratorTests.cs" />
-		<Compile Include="Model\Haxe3\FileParserTests.cs" />
-		<Compile Include="Model\Haxe4\FileParserTests.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="TestUtils\TestFile.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -1881,6 +1862,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="NSubstitute" Version="4.2.2" />
-		<PackageReference Include="NUnit" Version="3.12.0" />
+		<PackageReference Include="NUnit" Version="3.13.0" />
 	</ItemGroup>
 </Project>
