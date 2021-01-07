@@ -14,8 +14,8 @@ namespace BasicCompletion
     [Serializable]
     public class Settings
     {
-        private bool disableAutoCompletion = false;
-        private AutoInsert autoInsertType = AutoInsert.CPP;
+        bool disableAutoCompletion;
+        AutoInsert autoInsertType = AutoInsert.CPP;
 
         /// <summary> 
         /// Get and sets the AutoInsertType
@@ -40,6 +40,4 @@ namespace BasicCompletion
         }
 
     }
-
 }
-
