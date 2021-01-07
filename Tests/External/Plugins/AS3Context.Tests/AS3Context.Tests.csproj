@@ -108,7 +108,6 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="app.config" />
         <None Include="packages.config" />
         <EmbeddedResource Include="Test Files\parser\IsImported_case1.as" />
 	</ItemGroup>
