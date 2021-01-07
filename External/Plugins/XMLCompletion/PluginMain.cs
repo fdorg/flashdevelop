@@ -92,7 +92,8 @@ namespace XMLCompletion
 
                 case EventType.Command:
                     var de = (DataEvent)e;
-                    if (XMLComplete.Active && !settingObject.DisableZenCoding
+                    if (XMLComplete.Active
+                        && !settingObject.DisableZenCoding
                         && de.Action == "SnippetManager.Expand")
                     {
                         var data = (Hashtable)de.Data;
@@ -110,7 +111,7 @@ namespace XMLCompletion
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(XMLCompletion));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -121,16 +122,13 @@ namespace XMLCompletion
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventType eventType = EventType.FileSwitch | EventType.SyntaxChange | EventType.Keys | EventType.Command | EventType.Completion;
-            EventManager.AddEventHandler(this, eventType);
-        }
+        void AddEventHandlers()
+            => EventManager.AddEventHandler(this, EventType.FileSwitch | EventType.SyntaxChange | EventType.Keys | EventType.Command | EventType.Completion);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -141,9 +139,8 @@ namespace XMLCompletion
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
-
     }
 }
