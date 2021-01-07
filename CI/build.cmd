@@ -48,8 +48,6 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-dir FlashDevelop\Bin\Debug
-
 :: Remove files after build
 del "FlashDevelop\Bin/Debug\System.*" /Q
 del "FlashDevelop\Bin/Debug\Microsoft.*" /Q
@@ -94,8 +92,6 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
-
-dir FlashDevelop\Bin\Debug
 
 :: Remove files after build
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
