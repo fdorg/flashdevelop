@@ -189,7 +189,7 @@ namespace BasicCompletion
         /// <summary>
         /// Initializes the update timer
         /// </summary>
-        public void InitTimer()
+        void InitTimer()
         {
             updateTimer = new Timer {SynchronizingObject = (Form) PluginBase.MainForm, Interval = 500};
             updateTimer.Elapsed += UpdateTimerElapsed;
@@ -326,7 +326,7 @@ namespace BasicCompletion
                     if (!words.Contains(it)) words.Add(it);
                 }
             }
-            if (PluginBase.CurrentProject != null && projKeywords != null)
+            if (PluginBase.CurrentProject is not null && projKeywords is not null)
             {
                 foreach (var it in projKeywords)
                 {
