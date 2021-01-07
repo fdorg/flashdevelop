@@ -136,7 +136,7 @@
 		<None Include="packages.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="CS-Script" Version="3.30.4" />
+		<PackageReference Include="CS-Script" Version="3.30.5.1" />
 	</ItemGroup>
 	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 	<PropertyGroup Condition=" '$(OS)' != 'Unix' ">
