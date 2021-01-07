@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Bridge;
@@ -183,10 +184,9 @@ namespace FileExplorer
         static void FindHere(IEnumerable<string> paths)
         {
             if (paths is null) return;
-            var pathsList = new List<string>(paths);
-            pathsList.RemoveAll(p => !Directory.Exists(p));
-            if (pathsList.Count == 0) return;
-            string path = string.Join(";", pathsList);
+            var list = paths.Where(Directory.Exists).ToArray();
+            if (list.Length == 0) return;
+            var path = string.Join(";", list);
             PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
         }
 
@@ -198,19 +198,14 @@ namespace FileExplorer
             try
             {
                 path = PluginBase.MainForm.ProcessArgString(path);
-                /*if (BridgeManager.Active && BridgeManager.IsRemote(path) && BridgeManager.Settings.UseRemoteConsole)
-                {
-                    BridgeManager.RemoteConsole(path);
-                    return;
-                }*/
-                Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
+                var config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("cmd")) config["cmd"] = PluginBase.MainForm.CommandPromptExecutable;
-                string cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
-                int start = cmd.StartsWith('\"') ? cmd.IndexOf('\"', 2) : 0;
-                int p = cmd.IndexOf(' ', start);
+                var cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
+                var start = cmd.StartsWith('\"') ? cmd.IndexOf('\"', 2) : 0;
+                var p = cmd.IndexOf(' ', start);
                 if (path.StartsWith('\"') && path.Length > 2) path = path.Substring(1, path.Length - 2);
                 // Start the process...
-                ProcessStartInfo psi = new ProcessStartInfo(p > 0 ? cmd.Substring(0, p) : cmd);
+                var psi = new ProcessStartInfo(p > 0 ? cmd.Substring(0, p) : cmd);
                 if (p > 0) psi.Arguments = string.Format(cmd.Substring(p + 1), path);
                 psi.WorkingDirectory = path;
                 ProcessHelper.StartAsync(psi);
@@ -224,7 +219,7 @@ namespace FileExplorer
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(FileExplorer));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -237,16 +232,12 @@ namespace FileExplorer
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            const EventType eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
-            EventManager.AddEventHandler(this, eventMask, HandlingPriority.Low);
-        }
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command | EventType.FileOpen | EventType.UIStarted, HandlingPriority.Low);
 
         /// <summary>
         /// Creates a menu item for the plugin
         /// </summary>
-        public void CreateMenuItem()
+        void CreateMenuItem()
         {
             var label = TextHelper.GetString("Label.ViewMenuItem");
             var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
@@ -258,7 +249,7 @@ namespace FileExplorer
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        public void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
             pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockRight);
@@ -267,7 +258,7 @@ namespace FileExplorer
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             Settings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -281,12 +272,12 @@ namespace FileExplorer
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
+        void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
     }

@@ -11,10 +11,10 @@ namespace PHPContext
 {
     public class PluginMain : IPlugin
     {
-        private readonly string associatedSyntax = "HTML"; // ie. coloring syntax file name
-        private ContextSettings settingObject;
-        private string settingFilename;
-        private Context contextInstance;
+        readonly string associatedSyntax = "HTML"; // ie. coloring syntax file name
+        ContextSettings settingObject;
+        string settingFilename;
+        Context contextInstance;
 
         #region Required Properties
 
@@ -95,7 +95,7 @@ namespace PHPContext
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(PHPContext));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -106,12 +106,12 @@ namespace PHPContext
         /// <summary>
         /// Adds the required event handlers
         /// </summary>
-        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted);
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new ContextSettings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -123,19 +123,16 @@ namespace PHPContext
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
+        void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
+        void SaveSettings()
         {
             settingObject.OnClasspathChanged -= SettingObjectOnClasspathChanged;
             ObjectSerializer.Serialize(settingFilename, settingObject);
         }
-
         #endregion
-
     }
-
 }

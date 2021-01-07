@@ -16,10 +16,10 @@ namespace FlashConnect
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private Settings settingObject;
-        private XmlSocket xmlSocket;
-        private Timer pendingSetup;
+        string settingFilename;
+        Settings settingObject;
+        XmlSocket xmlSocket;
+        Timer pendingSetup;
 
         #region Required Properties
 
@@ -99,14 +99,14 @@ namespace FlashConnect
         #region Custom Methods
 
         // Response messages and errors
-        private readonly byte[] RESULT_INVALID = Encoding.Default.GetBytes("<flashconnect status=\"1\"/>\0");
-        private readonly byte[] RESULT_NOTFOUND = Encoding.Default.GetBytes("<flashconnect status=\"2\"/>\0");
-        private readonly Exception INVALID_MSG = new Exception(TextHelper.GetString("Info.InvalidMessage"));
+        readonly byte[] RESULT_INVALID = Encoding.Default.GetBytes("<flashconnect status=\"1\"/>\0");
+        readonly byte[] RESULT_NOTFOUND = Encoding.Default.GetBytes("<flashconnect status=\"2\"/>\0");
+        readonly Exception INVALID_MSG = new Exception(TextHelper.GetString("Info.InvalidMessage"));
 
         /// <summary>
         /// Sets up the basic stuff
         /// </summary> 
-        private void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(FlashConnect));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -117,11 +117,10 @@ namespace FlashConnect
         /// <summary>
         /// Setups the socket connection
         /// </summary> 
-        private void SetupSocket()
+        void SetupSocket()
         {
-            pendingSetup = new Timer();
-            pendingSetup.Interval = 5000;
-            pendingSetup.Tick += (sender, e) =>
+            pendingSetup = new Timer {Interval = 5000};
+            pendingSetup.Tick += (_, _) =>
             {
                 pendingSetup.Stop();
                 pendingSetup = null;
@@ -137,7 +136,7 @@ namespace FlashConnect
         /// <summary>
         /// Handles the incoming xml message
         /// </summary>
-        public void HandleXml(object sender, XmlReceivedEventArgs e)
+        void HandleXml(object sender, XmlReceivedEventArgs e)
         {
             if (PluginBase.MainForm.MenuStrip.InvokeRequired) PluginBase.MainForm.MenuStrip.BeginInvoke((Action)(
                 () =>
@@ -184,16 +183,14 @@ namespace FlashConnect
         /// <summary>
         /// Handles the call message
         /// </summary>
-        public void HandleCallMsg(XmlNode msgNode, Socket client)
+        void HandleCallMsg(XmlNode msgNode, Socket client)
         {
             try
             {
-                string command = XmlHelper.GetAttribute(msgNode, "command");
-                string arguments = HttpUtility.UrlDecode(XmlHelper.GetValue(msgNode));
-                if (settingObject.Commands.Contains(command))
-                {
-                    PluginBase.MainForm.CallCommand(command, arguments);
-                }
+                var command = XmlHelper.GetAttribute(msgNode, "command");
+                if (!settingObject.Commands.Contains(command)) return;
+                var arguments = HttpUtility.UrlDecode(XmlHelper.GetValue(msgNode));
+                PluginBase.MainForm.CallCommand(command, arguments);
             }
             catch
             {
@@ -204,7 +201,7 @@ namespace FlashConnect
         /// <summary>
         /// Handles the trace message
         /// </summary>
-        public void HandleTraceMsg(XmlNode msgNode, Socket client)
+        void HandleTraceMsg(XmlNode msgNode, Socket client)
         {
             try
             {
@@ -221,16 +218,16 @@ namespace FlashConnect
         /// <summary>
         /// Handles the notify message
         /// </summary>
-        public void HandleNotifyMsg(XmlNode msgNode, Socket client)
+        void HandleNotifyMsg(XmlNode msgNode, Socket client)
         {
             try
             {
-                var message = HttpUtility.UrlDecode(XmlHelper.GetValue(msgNode));
                 var guid = XmlHelper.GetAttribute(msgNode, "guid");
                 var plugin = PluginBase.MainForm.FindPlugin(guid);
                 if (plugin != null)
                 {
-                    var de = new DataEvent(EventType.Command, "FlashConnect", message);
+                    var message = HttpUtility.UrlDecode(XmlHelper.GetValue(msgNode));
+                    var de = new DataEvent(EventType.Command, nameof(FlashConnect), message);
                     plugin.HandleEvent(client, de, HandlingPriority.High);
                 }
                 else client.Send(RESULT_NOTFOUND);
@@ -244,12 +241,11 @@ namespace FlashConnect
         /// <summary>
         /// Handles the return message
         /// </summary>
-        public void HandleReturnMsg(XmlNode msgNode, Socket client)
+        void HandleReturnMsg(XmlNode msgNode, Socket client)
         {
             try
             {
-                var data = Encoding.ASCII.GetBytes(msgNode.InnerXml + "\0");
-                client.Send(data);
+                client.Send(Encoding.ASCII.GetBytes(msgNode.InnerXml + "\0"));
             }
             catch
             {
@@ -260,7 +256,7 @@ namespace FlashConnect
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -273,7 +269,7 @@ namespace FlashConnect
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
     }

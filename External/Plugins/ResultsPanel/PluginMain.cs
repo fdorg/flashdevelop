@@ -166,7 +166,7 @@ namespace ResultsPanel
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(ResultsPanel));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -178,12 +178,12 @@ namespace ResultsPanel
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -193,7 +193,7 @@ namespace ResultsPanel
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
+        void AddEventHandlers()
         {
             const EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
                                         | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
@@ -225,7 +225,7 @@ namespace ResultsPanel
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        public void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
             pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
@@ -235,7 +235,7 @@ namespace ResultsPanel
         /// <summary>
         /// Creates a menu item for the plugin
         /// </summary>
-        public void CreateMenuItem()
+        void CreateMenuItem()
         {
             viewItemMainPanel = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage) { Tag = null };
             viewItemSeparator = new ToolStripSeparator();

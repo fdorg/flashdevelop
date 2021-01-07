@@ -164,22 +164,17 @@ namespace OutputPanel
         /// <summary>
         /// Initializes the custom rendering
         /// </summary>
-        void InitializeLayout()
-        {
-            toolStrip.Renderer = new DockPanelStripRenderer();
-        }
+        void InitializeLayout() => toolStrip.Renderer = new DockPanelStripRenderer();
 
         /// <summary>
         /// Initializes the timers used in the control.
         /// </summary>
         void InitializeTimers()
         {
-            autoShow = new Timer();
-            autoShow.Interval = 300;
+            autoShow = new Timer {Interval = 300};
             autoShow.Tick += AutoShowPanel;
-            typingTimer = new Timer();
+            typingTimer = new Timer {Interval = 250};
             typingTimer.Tick += TypingTimerTick;
-            typingTimer.Interval = 250;
         }
 
         /// <summary>
@@ -187,7 +182,7 @@ namespace OutputPanel
         /// </summary>
         void InitializeContextMenu()
         {
-            ContextMenuStrip menu = new ContextMenuStrip();
+            var menu = new ContextMenuStrip();
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer();
             menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearOutput"), null, ClearOutput));
@@ -207,10 +202,7 @@ namespace OutputPanel
         /// <summary>
         /// Opens the clicked link
         /// </summary>
-        void LinkClicked(object sender, LinkClickedEventArgs e)
-        {
-            PluginBase.MainForm.CallCommand("Browse", e.LinkText);
-        }
+        static void LinkClicked(object sender, LinkClickedEventArgs e) => PluginBase.MainForm.CallCommand("Browse", e.LinkText);
 
         /// <summary>
         /// Handle the internal key down event
@@ -258,10 +250,7 @@ namespace OutputPanel
         /// <summary>
         /// Update colors on start after theme engine
         /// </summary>
-        public void UpdateAfterTheme()
-        {
-            findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
-        }
+        public void UpdateAfterTheme() => findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
 
         /// <summary>
         /// Clears the output
@@ -316,25 +305,21 @@ namespace OutputPanel
         /// </summary>
         public bool OnShortcut(Keys keys)
         {
-            if (ContainsFocus)
+            if (!ContainsFocus) return false;
+            switch (keys)
             {
-                switch (keys)
-                {
-                    case Keys.F3:
-                        FindNextMatch(true);
-                        return true;
-                    case Keys.Shift | Keys.F3:
-                        FindNextMatch(false);
-                        return true;
-                    case Keys.Escape:
-                    {
-                        if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci) sci.Focus();
-                        break;
-                    }
-                    case Keys.Control | Keys.F:
-                        findTextBox.Focus();
-                        return true;
-                }
+                case Keys.F3:
+                    FindNextMatch(true);
+                    return true;
+                case Keys.Shift | Keys.F3:
+                    FindNextMatch(false);
+                    return true;
+                case Keys.Escape:
+                    if (PluginBase.MainForm.CurrentDocument?.SciControl is { } sci) sci.Focus();
+                    break;
+                case Keys.Control | Keys.F:
+                    findTextBox.Focus();
+                    return true;
             }
             return false;
         }
@@ -357,13 +342,13 @@ namespace OutputPanel
                 logCount = newCount;
                 return;
             }
-            Color newColor = Color.Red;
-            Color currentColor = Color.Red;
-            int oldSelectionStart = textLog.SelectionStart;
-            int oldSelectionLength = textLog.SelectionLength;
-            List<HighlightMarker> markers = pluginMain.PluginSettings.HighlightMarkers;
-            bool fastMode = (newCount - logCount) > 1000;
-            StringBuilder newText = new StringBuilder();
+            var newColor = Color.Red;
+            var currentColor = Color.Red;
+            var oldSelectionStart = textLog.SelectionStart;
+            var oldSelectionLength = textLog.SelectionLength;
+            var markers = pluginMain.PluginSettings.HighlightMarkers;
+            var fastMode = (newCount - logCount) > 1000;
+            var newText = new StringBuilder();
             for (int i = logCount; i < newCount; i++)
             {
                 var entry = log[i];
@@ -415,8 +400,9 @@ namespace OutputPanel
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            if (message.Contains("Warning")) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
-                            else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
+                            newColor = message.Contains("Warning")
+                                ? PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange)
+                                : PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
                     if (newColor != currentColor)

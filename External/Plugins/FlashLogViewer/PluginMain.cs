@@ -14,10 +14,10 @@ namespace FlashLogViewer
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private Settings settingObject;
-        private PluginUI pluginUI;
-        private Image pluginImage;
+        string settingFilename;
+        Settings settingObject;
+        PluginUI pluginUI;
+        Image pluginImage;
 
         #region Required Properties
 
@@ -118,7 +118,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(FlashLogViewer));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -130,12 +130,12 @@ namespace FlashLogViewer
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command |EventType.ProcessEnd);
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command |EventType.ProcessEnd);
 
         /// <summary>
         /// Creates a menu item for the plugin and adds a ignored key
         /// </summary>
-        public void CreateMenuItem()
+        void CreateMenuItem()
         {
             var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
             var viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage, OpenPanel);
@@ -146,7 +146,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        public void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
             PluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
@@ -155,7 +155,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -165,7 +165,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Opens the plugin panel if closed

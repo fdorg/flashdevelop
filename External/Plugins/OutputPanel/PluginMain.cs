@@ -151,7 +151,7 @@ namespace OutputPanel
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(OutputPanel));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -163,16 +163,12 @@ namespace OutputPanel
         /// <summary>
         /// Adds the required event handlers
         /// </summary>
-        public void AddEventHandlers()
-        {
-            const EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted | EventType.Command;
-            EventManager.AddEventHandler(this, eventMask);
-        }
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted | EventType.Command);
 
         /// <summary>
         /// Creates a menu item for the plugin
         /// </summary>
-        public void CreateMenuItem()
+        void CreateMenuItem()
         {
             var label = TextHelper.GetString("Label.ViewMenuItem");
             var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
@@ -184,7 +180,7 @@ namespace OutputPanel
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        public void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
             PluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottom);
@@ -193,7 +189,7 @@ namespace OutputPanel
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             PluginSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -203,12 +199,12 @@ namespace OutputPanel
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, PluginSettings);
+        internal void SaveSettings() => ObjectSerializer.Serialize(settingFilename, PluginSettings);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(object sender, EventArgs e) => PluginPanel.Show();
+        void OpenPanel(object sender, EventArgs e) => PluginPanel.Show();
 
         #endregion
     }

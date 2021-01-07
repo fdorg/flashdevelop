@@ -46,7 +46,6 @@
 		<DebugType>full</DebugType>
 		<PlatformTarget>x86</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
-		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -56,7 +55,6 @@
 		<DebugType>pdbonly</DebugType>
 		<PlatformTarget>x86</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
-		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">

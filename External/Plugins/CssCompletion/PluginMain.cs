@@ -94,7 +94,6 @@ namespace CssCompletion
             switch (e.Type)
             {
                 case EventType.Keys:
-                {
                     var keys = ((KeyEvent) e).Value;
                     if (IsSupported(sci) && keys == (Keys.Control | Keys.Space) && completion != null)
                     {
@@ -102,11 +101,9 @@ namespace CssCompletion
                         e.Handled = true;
                     }
                     break;
-                }
                 case EventType.FileSwitch:
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
-                {
                     if (IsSupported(sci))
                     {
                         var ext = Path.GetExtension(sci.FileName).ToLower();
@@ -120,14 +117,10 @@ namespace CssCompletion
                         }
                     }
                     break;
-                }
                 case EventType.Completion:
-                {
                     if (features != null) e.Handled = true;
                     return;
-                }
                 case EventType.FileSave:
-                {
                     if (IsSupported(sci))
                     {
                         updateFile = sci.FileName;
@@ -135,7 +128,6 @@ namespace CssCompletion
                         updater.Start();
                     }
                     break;
-                }
             }
         }
 
@@ -146,17 +138,14 @@ namespace CssCompletion
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(CssCompletion));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             settingFilename = Path.Combine(path, "Settings.fdb");
             Description = TextHelper.GetString("Info.Description");
 
-            updater = new Timer();
-            updater.Interval = 100;
-            updater.AutoReset = false;
-            updater.SynchronizingObject = PluginBase.MainForm as Form;
+            updater = new Timer {Interval = 100, AutoReset = false, SynchronizingObject = (Form) PluginBase.MainForm};
             updater.Elapsed += Updater_Elapsed;
 
             CompletionItem.TagIcon = (Bitmap)PluginBase.MainForm.FindImage("417");
@@ -172,7 +161,7 @@ namespace CssCompletion
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
+        void AddEventHandlers()
         {
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
@@ -183,7 +172,7 @@ namespace CssCompletion
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -205,14 +194,12 @@ namespace CssCompletion
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Checks if the language should use basic completion 
         /// </summary>
-        public bool IsSupported(ITabbedDocument document) => IsSupported(document.SciControl);
-
-        public bool IsSupported(ScintillaControl sci) => sci.ConfigurationLanguage == "css";
+        bool IsSupported(ScintillaControl sci) => sci.ConfigurationLanguage == "css";
 
         #endregion
 

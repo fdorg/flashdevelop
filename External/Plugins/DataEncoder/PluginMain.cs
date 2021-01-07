@@ -148,15 +148,12 @@ namespace DataEncoder
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.FileSaving | EventType.FileEncode | EventType.FileDecode | EventType.FileRenaming);
-        }
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.FileSaving | EventType.FileEncode | EventType.FileDecode | EventType.FileRenaming);
 
         /// <summary>
         /// Loads the serialized binary file
         /// </summary>
-        public string LoadBinaryFile(string file)
+        string LoadBinaryFile(string file)
         {
             try
             {
@@ -181,7 +178,7 @@ namespace DataEncoder
         /// <summary>
         /// Saves the serialized binary file
         /// </summary>
-        public void SaveBinaryFile(string file, string text)
+        void SaveBinaryFile(string file, string text)
         {
             try
             {
@@ -233,7 +230,7 @@ namespace DataEncoder
         /// <summary>
         /// Gets the file type for file
         /// </summary>
-        public TypeData GetFileObjectType(string file) => objectTypes.FirstOrDefault(it => it.File == file);
+        TypeData GetFileObjectType(string file) => objectTypes.FirstOrDefault(it => it.File == file);
 
         #endregion
 
@@ -241,7 +238,7 @@ namespace DataEncoder
 
     #region Structures
 
-    public class TypeData
+    internal class TypeData
     {
         public Type Type;
         public string File;
