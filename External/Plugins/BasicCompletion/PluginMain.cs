@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -21,9 +20,9 @@ namespace BasicCompletion
 {
     public class PluginMain : IPlugin
     {
-        readonly Hashtable updateTable = new Hashtable();
-        readonly Hashtable baseTable = new Hashtable();
-        readonly Hashtable fileTable = new Hashtable();
+        readonly ISet<string> updateTable = new HashSet<string>();
+        readonly IDictionary<string, List<string>> baseTable = new Dictionary<string, List<string>>();
+        readonly IDictionary<string, string[]> fileTable = new Dictionary<string, string[]>();
         Timer updateTimer;
         bool isActive;
         bool isSupported;
@@ -108,8 +107,7 @@ namespace BasicCompletion
                                 if (!items.IsNullOrEmpty())
                                 {
                                     items.Sort();
-                                    var curPos = sci.CurrentPos - 1;
-                                    var word = sci.GetWordLeft(curPos, false);
+                                    var word = sci.GetWordLeft(sci.CurrentPos - 1, false);
                                     CompletionList.Show(items, false, word);
                                     e.Handled = true;
                                 }
@@ -147,7 +145,7 @@ namespace BasicCompletion
                     var te = (TextEvent) e;
                     if (te.Value == sci.FileName && isSupported) AddDocumentKeywords(sci);
                     else if (DocumentManager.FindDocument(te.Value) is not null)
-                        updateTable[te.Value] = true;
+                        updateTable.Add(te.Value);
                     break;
                 case EventType.Command:
                     var de = (DataEvent) e;
@@ -169,17 +167,10 @@ namespace BasicCompletion
                 var language = sci.ConfigurationLanguage;
                 if (!baseTable.ContainsKey(language)) AddBaseKeywords(language);
                 if (!fileTable.ContainsKey(sci.FileName)) AddDocumentKeywords(sci);
-                if (updateTable.ContainsKey(sci.FileName)) // Need to update after save?
-                {
-                    updateTable.Remove(sci.FileName);
-                    AddDocumentKeywords(sci);
-                }
+                if (updateTable.Remove(sci.FileName)) AddDocumentKeywords(sci); // Need to update after save?
                 updateTimer.Stop();
             }
-            else if (updateTable.ContainsKey(sci.FileName)) // Not supported saved, remove
-            {
-                updateTable.Remove(sci.FileName);
-            }
+            else updateTable.Remove(sci.FileName); // Not supported saved, remove
         }
 
         #endregion
@@ -218,7 +209,7 @@ namespace BasicCompletion
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
+        void AddEventHandlers()
         {
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
@@ -317,10 +308,9 @@ namespace BasicCompletion
         List<ICompletionListItem> GetCompletionListItems(string lang, string file)
         {
             var words = new List<string>();
-            if (baseTable.ContainsKey(lang)) words.AddRange((List<string>) baseTable[lang]);
-            if (fileTable.ContainsKey(file))
+            if (baseTable.TryGetValue(lang, out var list)) words.AddRange(list);
+            if (fileTable.TryGetValue(file, out var fileWords))
             {
-                var fileWords = (string[]) fileTable[file];
                 foreach (var it in fileWords)
                 {
                     if (!words.Contains(it)) words.Add(it);
@@ -343,18 +333,17 @@ namespace BasicCompletion
         {
             if (!isSupported || settingObject.DisableAutoCompletion) return;
             var lang = sci.ConfigurationLanguage;
-            var config = ScintillaControl.Configuration.GetLanguage(lang);
-            var characters = config.characterclass.Characters;
+            var characters = ScintillaControl.Configuration.GetLanguage(lang).characterclass.Characters;
             // Do not autocomplete in word
             if (characters.Contains(sci.CurrentChar)) return;
             // Autocomplete after typing word chars only
             if (!characters.Contains((char)value)) return;
-            var curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
-            if (curWord is null || curWord.Length < 3) return;
+            var word = sci.GetWordLeft(sci.CurrentPos - 1, false);
+            if (word is null || word.Length < 3) return;
             var items = GetCompletionListItems(lang, sci.FileName);
             if (items.IsNullOrEmpty()) return;
             items.Sort();
-            CompletionList.Show(items, true, curWord);
+            CompletionList.Show(items, true, word);
             var insert = settingObject.AutoInsertType;
             if (insert == AutoInsert.Never || (insert == AutoInsert.CPP && (sci.Lexer != 3/*CPP*/ || sci.PositionIsOnComment(sci.CurrentPos)) || lang == "text"))
             {
@@ -374,7 +363,6 @@ namespace BasicCompletion
         }
 
         #endregion
-
     }
 
     #region Extra Classes
@@ -395,7 +383,7 @@ namespace BasicCompletion
         public string Value => Label;
 
         int IComparable.CompareTo(object obj)
-            => string.Compare(Label, (obj as ICompletionListItem).Label, true);
+            => string.Compare(Label, ((ICompletionListItem) obj).Label, true);
 
         int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
             => string.Compare(Label, other.Label, true);
