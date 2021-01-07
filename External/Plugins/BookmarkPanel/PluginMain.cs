@@ -107,7 +107,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             Description = TextHelper.GetString("Info.Description");
             pluginImage = PluginBase.MainForm.FindImage("402");
@@ -116,15 +116,12 @@ namespace BookmarkPanel
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileClose | EventType.FileEmpty | EventType.ApplySettings);
-        }
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileClose | EventType.FileEmpty | EventType.ApplySettings);
 
         /// <summary>
         /// Creates a menu item for the plugin and adds a ignored key
         /// </summary>
-        public void CreateMenuItem()
+        void CreateMenuItem()
         {
             var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
             var viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage, OpenPanel);
@@ -135,7 +132,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
-        public void CreatePluginPanel()
+        void CreatePluginPanel()
         {
             pluginUI = new PluginUI {Text = TextHelper.GetString("Title.PluginPanel")};
             pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockRight);
@@ -144,7 +141,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
+        void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
     }

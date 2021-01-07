@@ -118,7 +118,7 @@ namespace CodeFormatter
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             EventManager.AddEventHandler(this, EventType.Command);
             EventManager.AddEventHandler(this, EventType.FileSwitch);
@@ -142,7 +142,7 @@ namespace CodeFormatter
         /// <summary>
         /// Creates a menu item for the plugin
         /// </summary>
-        public void CreateMainMenuItem()
+        void CreateMainMenuItem()
         {
             string label = TextHelper.GetString("Label.CodeFormatter");
             mainMenuItem = new ToolStripMenuItem(label, null, Format, Keys.Control | Keys.Shift | Keys.D2);
@@ -154,19 +154,19 @@ namespace CodeFormatter
         /// <summary>
         /// Creates a context menu item for the plugin
         /// </summary>
-        public void CreateContextMenuItem()
+        void CreateContextMenuItem()
         {
             string label = TextHelper.GetString("Label.CodeFormatter");
             contextMenuItem = new ToolStripMenuItem(label, null, Format, Keys.None);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeFormatter", contextMenuItem);
         }
 
-        public void AttachContextMenuItem(ToolStripMenuItem menu) => menu.DropDownItems.Insert(6, contextMenuItem);
+        void AttachContextMenuItem(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(6, contextMenuItem);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) 
@@ -180,7 +180,7 @@ namespace CodeFormatter
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
 

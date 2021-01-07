@@ -248,7 +248,7 @@ namespace HaXeContext
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(HaXeContext));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -259,7 +259,7 @@ namespace HaXeContext
         /// <summary>
         /// Adds the required event handlers
         /// </summary>
-        public void AddEventHandlers()
+        void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.Trace, HandlingPriority.High);
             EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command);
@@ -268,7 +268,7 @@ namespace HaXeContext
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new HaXeSettings();
             if (!File.Exists(settingFilename)) SaveSettings();

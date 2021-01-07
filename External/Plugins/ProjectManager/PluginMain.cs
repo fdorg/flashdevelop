@@ -565,7 +565,7 @@ namespace ProjectManager
                     break;
 
                 case EventType.Keys:
-                    e.Handled = HandleKeyEvent(e as KeyEvent);
+                    e.Handled = HandleKeyEvent((KeyEvent) e);
                     break;
             }
         }
@@ -580,38 +580,68 @@ namespace ProjectManager
         bool HandleKeyEvent(KeyEvent ke)
         {
             if (activeProject is null) return false;
-
-            var shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
-            if (shortcutId == "ProjectMenu.ConfigurationSelector")
+            switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
             {
-                pluginUI.menus.ConfigurationSelector.Focus();
-            }
-            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
-            {
-                pluginUI.menus.ToggleDebugRelease();
-            }
-            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
-            {
-                pluginUI.menus.TargetBuildSelector.Focus();
-            }
-            else if (shortcutId == "ProjectTree.LocateActiveFile")
-            {
-                pluginPanel.Show();
-                TreeSyncToCurrentFile();
+                case "ProjectMenu.ConfigurationSelector":
+                    pluginUI.menus.ConfigurationSelector.Focus();
+                    return true;
+                case "ProjectMenu.ConfigurationSelectorToggle":
+                    pluginUI.menus.ToggleDebugRelease();
+                    return true;
+                case "ProjectMenu.TargetBuildSelector":
+                    pluginUI.menus.TargetBuildSelector.Focus();
+                    return true;
+                case "ProjectTree.LocateActiveFile":
+                    pluginPanel.Show();
+                    TreeSyncToCurrentFile();
+                    return true;
             }
             // Handle tree-level simple shortcuts like copy/paste/del
-            else if (Tree.Focused && !pluginUI.IsEditingLabel)
+            if (!Tree.Focused || pluginUI.IsEditingLabel) return false;
+            switch (ke.Value)
             {
-                if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
-                else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
-                else if (ke.Value == (Keys.Control | Keys.V) && pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
-                else if (ke.Value == Keys.Delete && pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
-                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
-                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
-                else return false;
+                case Keys.Control | Keys.C:
+                    if (pluginUI.Menu.Contains(pluginUI.Menu.Copy))
+                    {
+                        TreeCopyItems();
+                        return true;
+                    }
+                    break;
+                case Keys.Control | Keys.X:
+                    if (pluginUI.Menu.Contains(pluginUI.Menu.Cut))
+                    {
+                        TreeCutItems();
+                        return true;
+                    }
+                    break;
+                case Keys.Control | Keys.V:
+                    if (pluginUI.Menu.Contains(pluginUI.Menu.Paste))
+                    {
+                        TreePasteItems();
+                        return true;
+                    }
+                    break;
+                case Keys.Delete:
+                    if (pluginUI.Menu.Contains(pluginUI.Menu.Delete))
+                    {
+                        TreeDeleteItems();
+                        return true;
+                    }
+                    break;
+                case Keys.Enter:
+                    if (pluginUI.Menu.Contains(pluginUI.Menu.Open))
+                    {
+                        TreeOpenItems();
+                        return true;
+                    }
+                    else if (pluginUI.Menu.Contains(pluginUI.Menu.Insert))
+                    {
+                        TreeInsertItem();
+                        return true;
+                    }
+                    break;
             }
-            else return false;
-            return true;
+            return false;
         }
         
         #endregion
@@ -744,10 +774,10 @@ namespace ProjectManager
             }
             TabColors.UpdateTabColors(Settings);
         }
-        
-        public void OpenPanel() => pluginPanel.Show();
 
-        public void OpenLastProject()
+        void OpenPanel() => pluginPanel.Show();
+
+        void OpenLastProject()
         {
             // try to open the last opened project
             var lastProject = Settings.LastProject;
@@ -1175,8 +1205,6 @@ namespace ProjectManager
             EventManager.DispatchEvent(this, de);
         }
 
-        public void PropertiesClick(object sender, EventArgs e) => OpenProjectProperties();
-
         void SettingChanged(string setting)
         {
             switch (setting)
@@ -1367,14 +1395,14 @@ namespace ProjectManager
                 projectActions.ToggleHidden(project, Tree.SelectedPaths);
         }
 
-        public void ToggleShowHidden()
+        void ToggleShowHidden()
         {
             var project = activeProject; // TODO apply to all projects
             projectActions.ToggleShowHidden(project);
             pluginUI.ShowHiddenPaths(project.ShowHiddenPaths);
         }
 
-        public void TreeRefreshSelectedNode()
+        void TreeRefreshSelectedNode()
         {
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.UserRefreshTree, Tree);
             EventManager.DispatchEvent(this, de);

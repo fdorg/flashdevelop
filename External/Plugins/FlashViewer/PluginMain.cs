@@ -102,22 +102,21 @@ namespace FlashViewer
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(FlashViewer));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             settingFilename = Path.Combine(path, "Settings.fdb");
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            const string resource = "FlashViewer.Resources.Player.ico";
-            Stream stream = assembly.GetManifestResourceStream(resource);
             Description = TextHelper.GetString("Info.Description");
-            playerIcon = new Icon(stream);
+            const string resource = "FlashViewer.Resources.Player.ico";
+            var assembly = Assembly.GetExecutingAssembly();
+            playerIcon = new Icon(assembly.GetManifestResourceStream(resource));
         }
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
+        void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.FileOpening, HandlingPriority.Low);
             EventManager.AddEventHandler(this, EventType.Command);
@@ -126,7 +125,7 @@ namespace FlashViewer
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -140,10 +139,10 @@ namespace FlashViewer
             // Try to find player path from AppMan archive
             if (string.IsNullOrEmpty(settingObject.PlayerPath))
             {
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
+                var appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
+                    var exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
                     foreach (string exeFile in exeFiles)
                     {
                         settingObject.PlayerPath = exeFile;
@@ -207,12 +206,12 @@ namespace FlashViewer
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Handles the Command event and displays the movie
         /// </summary>
-        public void HandleCommand(DataEvent e)
+        void HandleCommand(DataEvent e)
         {
             try
             {
@@ -289,32 +288,28 @@ namespace FlashViewer
         /// <summary>
         /// Handles the FileOpen event and displays the movie
         /// </summary>
-        public void HandleFileOpening(TextEvent e)
+        void HandleFileOpening(TextEvent e)
         {
-            if (File.Exists(e.Value) && Path.GetExtension(e.Value) == ".swf")
+            if (!File.Exists(e.Value) || Path.GetExtension(e.Value) != ".swf") return;
+            switch (settingObject.DisplayStyle)
             {
-                switch (settingObject.DisplayStyle)
-                {
-                    case ViewStyle.Popup : 
-                        CreatePopup(e.Value, new Size(550, 400));
-                        break;
-
-                    case ViewStyle.Document : 
-                        CreateDocument(e.Value);
-                        break;
-
-                    case ViewStyle.External:
-                        LaunchExternal(e.Value);
-                        break;
-                }
-                e.Handled = true;
+                case ViewStyle.Popup: 
+                    CreatePopup(e.Value, new Size(550, 400));
+                    break;
+                case ViewStyle.Document: 
+                    CreateDocument(e.Value);
+                    break;
+                case ViewStyle.External:
+                    LaunchExternal(e.Value);
+                    break;
             }
+            e.Handled = true;
         }
 
         /// <summary>
         /// Displays the flash movie in a popup
         /// </summary>
-        public void CreatePopup(string file, Size size)
+        void CreatePopup(string file, Size size)
         {
             FlashView flashView;
             if (!File.Exists(file)) return;
@@ -333,7 +328,7 @@ namespace FlashViewer
                     return;
                 }
             }
-            Form popup = new Form();
+            var popup = new Form();
             popup.Icon = playerIcon;
             popup.Text = Path.GetFileName(file);
             popup.ClientSize = new Size(size.Width, size.Height);
@@ -346,7 +341,7 @@ namespace FlashViewer
             flashView.MoviePath = file;
             popup.Show();
             popup.FormClosing += PopupFormClosing;
-            popup.Disposed += (sender, args) => NotifyDisposed(file);
+            popup.Disposed += (_, _) => NotifyDisposed(file);
             popups.Add(popup);
         }
 
@@ -358,7 +353,7 @@ namespace FlashViewer
         /// <summary>
         /// Displays the flash movie in a document
         /// </summary>
-        public void CreateDocument(string file)
+        void CreateDocument(string file)
         {
             FlashView flashView;
             if (!File.Exists(file)) return;
@@ -390,7 +385,7 @@ namespace FlashViewer
             var flashDoc = PluginBase.MainForm.CreateCustomDocument(flashView);
             flashDoc.Text = Path.GetFileName(file);
             flashView.MoviePath = file;
-            flashDoc.Disposed += delegate { NotifyDisposed(file); };
+            flashDoc.Disposed += (_, _) => NotifyDisposed(file);
         }
 
         void NotifyDisposed(string file)
@@ -402,7 +397,7 @@ namespace FlashViewer
         /// <summary>
         /// Creates a flash view control and if it fails gives an error message
         /// </summary>
-        FlashView CreateFlashView(string file)
+        static FlashView CreateFlashView(string file)
         {
             try
             {
@@ -410,8 +405,7 @@ namespace FlashViewer
             }
             catch (Exception ex)
             {
-                string msg = TextHelper.GetString("Info.FlashMissing");
-                ErrorManager.ShowWarning(msg, ex);
+                ErrorManager.ShowWarning(TextHelper.GetString("Info.FlashMissing"), ex);
                 return null;
             }
         }
@@ -419,7 +413,7 @@ namespace FlashViewer
         /// <summary>
         /// Displays the flash movie in an external player
         /// </summary>
-        public void LaunchExternal(string file)
+        void LaunchExternal(string file)
         {
             try
             {
