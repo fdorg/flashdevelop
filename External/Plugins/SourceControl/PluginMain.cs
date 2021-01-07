@@ -285,14 +285,14 @@ namespace SourceControl
         #region Custom Methods
         
         /// <summary>
-        /// Acessor got the settings object
+        /// Accessor got the settings object
         /// </summary>
         public static Settings SCSettings { get; set; }
 
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(SourceControl));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -303,15 +303,12 @@ namespace SourceControl
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate | EventType.ApplyTheme);
-        }
+        void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate | EventType.ApplyTheme);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             SCSettings = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -372,9 +369,6 @@ namespace SourceControl
             CheckPathExists(SCSettings.TortoiseHGProcPath, "TortoiseHG (Proc)");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         static void CheckPathExists(string path, string name)
         {
             if (string.IsNullOrEmpty(path)) return;
@@ -387,7 +381,7 @@ namespace SourceControl
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, SCSettings);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, SCSettings);
 
         #endregion
     }
