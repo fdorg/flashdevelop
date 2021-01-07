@@ -13,8 +13,6 @@
 		<TargetFramework>net48</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
 		<Platforms>x64;x86;AnyCPU</Platforms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -82,11 +80,6 @@
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="ContextTests.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="TestUtils\TestFile.cs" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
 			<Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
 			<Name>AS2Context</Name>
@@ -115,8 +108,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="app.config" />
-		<EmbeddedResource Include="Test Files\parser\IsImported_case1.as" />
-		<None Include="packages.config" />
+        <None Include="packages.config" />
+        <EmbeddedResource Include="Test Files\parser\IsImported_case1.as" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="NUnit" Version="3.12.0" />
