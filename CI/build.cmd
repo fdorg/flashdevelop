@@ -33,7 +33,7 @@ if "%AppVeyorCI%" neq "" powershell.exe -file ci\tests.ps1
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-git clean -xfd
+git clean -xfd FlashDevelop\Bin\Debug
 
 :: Extract version from HEAD
 call SetVersion.bat
@@ -47,6 +47,8 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
+
+dir
 
 :: Remove files after build
 del "FlashDevelop\Bin/Debug\System.*" /Q
@@ -68,7 +70,7 @@ if %errorlevel% neq 0 goto :error
 :haxedevelop
 
 :: Reset bin files
-git clean -f -x -d FlashDevelop\Bin\Debug
+git clean -xfd FlashDevelop\Bin\Debug
 
 :: Remove unnecessary files
 rd "FlashDevelop\Bin\Debug\Tools\flexpmd" /s /q
@@ -92,6 +94,8 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
+
+dir
 
 :: Remove files after build
 del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
