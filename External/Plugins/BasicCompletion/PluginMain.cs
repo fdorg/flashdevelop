@@ -99,46 +99,39 @@ namespace BasicCompletion
             switch (e.Type)
             {
                 case EventType.Keys:
-                {
-                    var keys = ((KeyEvent) e).Value;
-                    if (isSupported && keys == (Keys.Control | Keys.Space))
+                    if (isSupported)
                     {
-                        var lang = sci.ConfigurationLanguage;
-                        var items = GetCompletionListItems(lang, sci.FileName);
-                        if (!items.IsNullOrEmpty())
+                        switch (((KeyEvent) e).Value)
                         {
-                            items.Sort();
-                            var curPos = sci.CurrentPos - 1;
-                            var word = sci.GetWordLeft(curPos, false);
-                            CompletionList.Show(items, false, word);
-                            e.Handled = true;
+                            case Keys.Control | Keys.Space:
+                                var items = GetCompletionListItems(sci.ConfigurationLanguage, sci.FileName);
+                                if (!items.IsNullOrEmpty())
+                                {
+                                    items.Sort();
+                                    var curPos = sci.CurrentPos - 1;
+                                    var word = sci.GetWordLeft(curPos, false);
+                                    CompletionList.Show(items, false, word);
+                                    e.Handled = true;
+                                }
+                                break;
+                            case Keys.Control | Keys.Space | Keys.Alt:
+                                PluginBase.MainForm.CallCommand("InsertSnippet", "null");
+                                e.Handled = true;
+                                break;
                         }
                     }
-                    else if (isSupported && keys == (Keys.Control | Keys.Alt | Keys.Space))
-                    {
-                        PluginBase.MainForm.CallCommand("InsertSnippet", "null");
-                        e.Handled = true;
-                    }
                     break;
-                }
                 case EventType.UIStarted:
-                {
                     isSupported = false;
                     isActive = true;
                     break;
-                }
                 case EventType.UIClosing:
-                {
                     isActive = false;
                     break;
-                }
                 case EventType.FileSwitch:
-                {
                     isSupported = false;
                     break;
-                }
                 case EventType.Completion:
-                {
                     if (!e.Handled && isActive)
                     {
                         isSupported = true;
@@ -146,33 +139,23 @@ namespace BasicCompletion
                     }
                     HandleFile(sci);
                     break;
-                }
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
-                {
                     HandleFile(sci);
                     break;
-                }
                 case EventType.FileSave:
-                {
                     var te = (TextEvent) e;
                     if (te.Value == sci.FileName && isSupported) AddDocumentKeywords(sci);
-                    else
-                    {
-                        var saveDoc = DocumentManager.FindDocument(te.Value);
-                        if (saveDoc != null) updateTable[te.Value] = true;
-                    }
+                    else if (DocumentManager.FindDocument(te.Value) is not null)
+                        updateTable[te.Value] = true;
                     break;
-                }
                 case EventType.Command:
-                {
                     var de = (DataEvent) e;
-                    if (de.Action == "ProjectManager.Project")
+                    if (de.Action == "ProjectManager.Project" && de.Data is IProject project)
                     {
-                        if (de.Data is IProject project) LoadProjectKeywords(project);
+                        LoadProjectKeywords(project);
                     }
                     break;
-                }
             }
         }
 
@@ -208,9 +191,8 @@ namespace BasicCompletion
         /// </summary>
         public void InitTimer()
         {
-            updateTimer = new Timer {SynchronizingObject = PluginBase.MainForm as Form};
+            updateTimer = new Timer {SynchronizingObject = (Form) PluginBase.MainForm, Interval = 500};
             updateTimer.Elapsed += UpdateTimerElapsed;
-            updateTimer.Interval = 500;
         }
 
         /// <summary>
@@ -225,7 +207,7 @@ namespace BasicCompletion
         /// <summary>
         /// Initializes important variables
         /// </summary>
-        public void InitBasics()
+        void InitBasics()
         {
             var path = Path.Combine(PathHelper.DataDir, nameof(BasicCompletion));
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -240,15 +222,14 @@ namespace BasicCompletion
         {
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
-            const EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted | EventType.UIClosing;
             EventManager.AddEventHandler(this, EventType.Completion, HandlingPriority.Low);
-            EventManager.AddEventHandler(this, eventTypes);
+            EventManager.AddEventHandler(this, EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted | EventType.UIClosing);
         }
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             settingObject = new Settings();
             if (!File.Exists(settingFilename)) SaveSettings();
@@ -258,12 +239,12 @@ namespace BasicCompletion
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Adds base keywords from config file to hashtable
         /// </summary>
-        public void AddBaseKeywords(string language)
+        void AddBaseKeywords(string language)
         {
             var keywords = new List<string>();
             var lang = ScintillaControl.Configuration.GetLanguage(language);
@@ -287,7 +268,7 @@ namespace BasicCompletion
         /// <summary>
         /// Load the current project's keywords from completion file
         /// </summary>
-        public void LoadProjectKeywords(IProject project)
+        void LoadProjectKeywords(IProject project)
         {
             var projDir = Path.GetDirectoryName(project.ProjectPath);
             var complFile = Path.Combine(projDir, "COMPLETION");
@@ -297,7 +278,7 @@ namespace BasicCompletion
                 var text = File.ReadAllText(complFile);
                 var matches = Regex.Matches(text, "[A-Za-z0-9_$]{2,}");
                 var words = new Dictionary<int, string>();
-                for (int i = 0; i < matches.Count; i++)
+                for (var i = 0; i < matches.Count; i++)
                 {
                     var word = matches[i].Value;
                     var hash = word.GetHashCode();
@@ -312,12 +293,7 @@ namespace BasicCompletion
         /// <summary>
         /// Adds document keywords from config file to hashtable
         /// </summary>
-        public void AddDocumentKeywords(ITabbedDocument document) => AddDocumentKeywords(document?.SciControl);
-
-        /// <summary>
-        /// Adds document keywords from config file to hashtable
-        /// </summary>
-        public void AddDocumentKeywords(ScintillaControl sci)
+        void AddDocumentKeywords(ScintillaControl sci)
         {
             var textLang = sci.ConfigurationLanguage;
             var language = ScintillaControl.Configuration.GetLanguage(textLang);
@@ -338,30 +314,26 @@ namespace BasicCompletion
         /// <summary>
         /// Gets the completion list items combining base and doc keywords
         /// </summary>
-        public List<ICompletionListItem> GetCompletionListItems(string lang, string file)
+        List<ICompletionListItem> GetCompletionListItems(string lang, string file)
         {
-            var allWords = new List<string>();
-            if (baseTable.ContainsKey(lang))
-            {
-                var baseWords = baseTable[lang] as List<string>;
-                allWords.AddRange(baseWords);
-            }
+            var words = new List<string>();
+            if (baseTable.ContainsKey(lang)) words.AddRange((List<string>) baseTable[lang]);
             if (fileTable.ContainsKey(file))
             {
                 var fileWords = (string[]) fileTable[file];
                 foreach (var it in fileWords)
                 {
-                    if (!allWords.Contains(it)) allWords.Add(it);
+                    if (!words.Contains(it)) words.Add(it);
                 }
             }
             if (PluginBase.CurrentProject != null && projKeywords != null)
             {
                 foreach (var it in projKeywords)
                 {
-                    if (!allWords.Contains(it)) allWords.Add(it);
+                    if (!words.Contains(it)) words.Add(it);
                 }
             }
-            return allWords.Select(it => new CompletionItem(it)).ToList<ICompletionListItem>();
+            return words.Select(it => new CompletionItem(it)).ToList<ICompletionListItem>();
         }
 
         /// <summary>
@@ -410,12 +382,9 @@ namespace BasicCompletion
     /// <summary>
     /// Simple completion list item
     /// </summary>
-    public class CompletionItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
+    internal class CompletionItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        public CompletionItem(string label)
-        {
-            Label = label;
-        }
+        public CompletionItem(string label) => Label = label;
 
         public string Label { get; }
 
@@ -426,13 +395,10 @@ namespace BasicCompletion
         public string Value => Label;
 
         int IComparable.CompareTo(object obj)
-        {
-            return string.Compare(Label, (obj as ICompletionListItem).Label, true);
-        }
+            => string.Compare(Label, (obj as ICompletionListItem).Label, true);
+
         int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
-        {
-            return string.Compare(Label, other.Label, true);
-        }
+            => string.Compare(Label, other.Label, true);
     }
 
     #endregion
