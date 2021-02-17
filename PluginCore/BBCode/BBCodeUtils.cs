@@ -113,7 +113,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleTreeToTextbox(RichTextBox tf, string input, IndexTree bbCodeTree)
         {
-            if (tf is null || bbCodeTree is null || string.IsNullOrEmpty(input)) return;
+            if (tf is null || tf.IsDisposed || bbCodeTree is null || string.IsNullOrEmpty(input)) return;
 
             tf.Text = "";
 
@@ -194,6 +194,7 @@ namespace PluginCore.BBCode
         }
         public static string bbCodeToRtf(string bbCodeText, RichTextBox texbox)
         {
+            if (texbox is null || texbox.IsDisposed) return string.Empty;
             Init();
 
             bbCodeParser.input = bbCodeText;
