@@ -28,43 +28,52 @@
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>none</DebugType>
-		<Optimize>true</Optimize>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
 		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<DebugSymbols>false</DebugSymbols>
+		<DefineConstants>TRACE</DefineConstants>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
 		<PlatformTarget>x86</PlatformTarget>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
 		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+        <WarningLevel>4</WarningLevel>
 		<LangVersion>9</LangVersion>
+        <ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
 		<PlatformTarget>x86</PlatformTarget>
 		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
 		<DefineConstants>TRACE</DefineConstants>
-		<Optimize>true</Optimize>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-		<DebugSymbols>true</DebugSymbols>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <PlatformTarget>x64</PlatformTarget>
 		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<DebugType>full</DebugType>
-		<PlatformTarget>x64</PlatformTarget>
+        <WarningLevel>4</WarningLevel>
 		<LangVersion>9</LangVersion>
 		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<Optimize>true</Optimize>
-		<PlatformTarget>x64</PlatformTarget>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
+        <PlatformTarget>x64</PlatformTarget>
+        <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
 		<LangVersion>9</LangVersion>
-		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="System" />
