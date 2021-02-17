@@ -1327,11 +1327,21 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2750_1", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2750_1"))
                     .SetName("'\n'.<complete> Issue 2750. Case 1")
+                    .Ignore("Need support for multi-line strings")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2750");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2750_2", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2750_2"))
                     .SetName("\"\n\".<complete> Issue 2750. Case 2")
+                    .Ignore("Need support for multi-line strings")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2750");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3227_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3227_1"))
+                    .SetName("var a=\".<complete> Issue 3227. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3227");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3227_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3227_2"))
+                    .SetName("var a=\".test<complete> Issue 3227. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3227");
             }
         }
 

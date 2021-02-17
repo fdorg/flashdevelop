@@ -74,6 +74,12 @@
 		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Test Files\completion\AfterOnCharAndReplaceText_issue3227_1.hx" />
+	  <None Remove="Test Files\completion\AfterOnCharAndReplaceText_issue3227_2.hx" />
+	  <None Remove="Test Files\completion\BeforeOnCharAndReplaceText_issue3227_1.hx" />
+	  <None Remove="Test Files\completion\BeforeOnCharAndReplaceText_issue3227_2.hx" />
+	</ItemGroup>
+	<ItemGroup>
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="System.Windows.Forms" />
@@ -183,6 +189,8 @@
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1.hx" />
 		<EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1_withoutEntryPoint.hx" />
+		<EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue3227_2.hx" />
+		<EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue3227_1.hx" />
 		<EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_4.hx" />
 		<EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_5.hx" />
 		<EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_1.hx" />
@@ -267,6 +275,8 @@
 		<EmbeddedResource Include="Test Files\completion\BeforeBody_2.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeBody_3.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeBody_4.hx" />
+		<EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue3227_2.hx" />
+		<EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue3227_1.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue170_1.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue170_2.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue170_3.hx" />

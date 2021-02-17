@@ -107,16 +107,6 @@ namespace ASCompletion.Completion
                             skipQuoteCheck = true; // continue on with regular completion
                     }
                 }
-                /**
-                 * for example:
-                 * '
-                 * '.<complete>
-                 * or
-                 * "
-                 * ".<complete>
-                 */
-                else if (features.HasMultilineString && value == '.' && sci.GetStringType(position - 1) is var c && (c == '\"' || c == '\''))
-                    skipQuoteCheck = true;
 
                 if (!skipQuoteCheck)
                 {
@@ -202,7 +192,11 @@ namespace ASCompletion.Completion
             }
             catch (Exception ex)
             {
+                #if DEBUG
+                throw;
+                #else
                 ErrorManager.ShowError(/*"Completion error",*/ ex);
+                #endif
             }
 
             // CodeAuto context
@@ -4130,17 +4124,25 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Text style is a numeric literal.
         /// </summary>
-        public static bool IsNumericStyle(int style) => style == 4;
+        public static bool IsNumericStyle(int style) => style == (int) CPP.NUMBER;
 
         /// <summary>
         /// Text style is a string literal.
         /// </summary>
-        public static bool IsStringStyle(int style) => style == 6;
+        public static bool IsStringStyle(int style) => style == (int) CPP.STRING;
+
+        /// <summary>
+        /// Text style is a multiline string literal.
+        /// </summary>
+        protected virtual bool IsMultilineStringStyle(ScintillaControl sci, int position)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Text style is character literal.
         /// </summary>
-        public static bool IsCharStyle(int style) => style == 7;
+        public static bool IsCharStyle(int style) => style == (int) CPP.CHARACTER;
 
         /// <summary>
         /// Text is word 
@@ -4150,9 +4152,9 @@ namespace ASCompletion.Completion
             return style == 0
                    || style == 10 /*punctuation*/
                    || style == 11 /*identifier*/
-                   || style == 16 /*word2 (secondary keywords: class name)*/
-                   || style == (int)CPP.WORD4 /*word4 (add keywords4)*/
-                   || style == (int)CPP.WORD5 /*word5 (add keywords5)*/
+                   || style == (int) CPP.WORD2 /*word2 (secondary keywords: class name)*/
+                   || style == (int) CPP.WORD4 /*word4 (add keywords4)*/
+                   || style == (int) CPP.WORD5 /*word5 (add keywords5)*/
                    || style == 127 /*PHP*/;
         }
 
