@@ -187,7 +187,7 @@ namespace PluginCore.Controls
             toolTip.Left = mousePos.X;
             if (toolTip.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
             {
-                toolTip.Left -= (toolTip.Right - ((Form)PluginBase.MainForm).ClientRectangle.Right);
+                toolTip.Left -= toolTip.Right - ((Form)PluginBase.MainForm).ClientRectangle.Right;
             }
             toolTip.Top = mousePos.Y - toolTip.Height - ScaleHelper.Scale(10);
             toolTip.Show();
@@ -213,7 +213,7 @@ namespace PluginCore.Controls
 
         public void SetText(string rawText, bool redraw)
         {
-            this.rawText = rawText ?? "";
+            this.rawText = rawText ?? string.Empty;
             if (redraw) Redraw();
         }
 
@@ -221,10 +221,11 @@ namespace PluginCore.Controls
 
         public void Redraw(bool autoSize)
         {
+            if (toolTipRTB.IsDisposed) return;
             toolTipRTB.Rtf = GetRtfFor(rawText);
 
-            Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
-            Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
+            var fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+            var back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
             toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
             toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
             toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
