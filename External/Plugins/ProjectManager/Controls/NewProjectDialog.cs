@@ -9,7 +9,6 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore;
-using System.Collections.Generic;
 using PluginCore.Controls;
 using Ookii.Dialogs;
 
@@ -35,7 +34,8 @@ namespace ProjectManager.Controls
         Label label2;
         TextBox nameTextBox;
         CheckBox createDirectoryBox;
-        StatusBar statusBar;
+        StatusStrip statusBar;
+        ToolStripStatusLabel statusLabel;
         Label label3;
         TextBox packageTextBox;
         System.ComponentModel.IContainer components;
@@ -60,10 +60,14 @@ namespace ProjectManager.Controls
             label2 = new Label();
             nameTextBox = new TextBoxEx();
             createDirectoryBox = new CheckBoxEx();
-            statusBar = new StatusBarEx();
+            statusLabel = new ToolStripStatusLabel();
+            statusBar = new StatusStrip
+            {
+                Items = {statusLabel},
+            };
             label3 = new Label();
             packageTextBox = new TextBoxEx();
-            ((System.ComponentModel.ISupportInitialize)(previewBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)previewBox).BeginInit();
             SuspendLayout();
             // 
             // cancelButton
@@ -210,7 +214,7 @@ namespace ProjectManager.Controls
             statusBar.Name = "statusBar";
             statusBar.Size = new Size(673, 21);
             statusBar.TabIndex = 9;
-            statusBar.Text = "  Will create:  C:\\Documents and Settings\\Nick\\My Documents\\New Project.fdp";
+            statusLabel.Text = "  Will create:  C:\\Documents and Settings\\Nick\\My Documents\\New Project.fdp";
             // 
             // label3
             // 
@@ -296,7 +300,7 @@ namespace ProjectManager.Controls
             }
 
             ListViewGroup group = null;
-            List<string> templateDirs = ProjectPaths.GetAllProjectDirs();
+            var templateDirs = ProjectPaths.GetAllProjectDirs();
             templateDirs.Sort(CompareFolderNames);
             ListViewItem lastItem = null;
             string lastTemplate = null;
@@ -308,11 +312,9 @@ namespace ProjectManager.Controls
 
                 string templateName = Path.GetFileName(templateDir).Substring(3);
                 if (!templateName.Contains('-')) templateName = "-" + templateName;
-                string[] parts = templateName.Split('-');
+                var parts = templateName.Split('-');
 
-                ListViewItem item = new ListViewItem(" " + parts[1].Trim());
-                item.ImageIndex = 0;
-                item.Tag = templateDir;
+                var item = new ListViewItem(" " + parts[1].Trim()) {ImageIndex = 0, Tag = templateDir};
 
                 if (parts[0].Length > 0)
                 {
@@ -418,7 +420,7 @@ namespace ProjectManager.Controls
             // we want to create a project directory with the same name as the
             // project file, underneath the selected location.
             string projectName = Path.GetFileNameWithoutExtension(ProjectName);
-            string projectPath = Path.Combine(ProjectLocation,projectName+ProjectExt);
+            string projectPath = Path.Combine(ProjectLocation, projectName + ProjectExt);
 
             // does this directory exist and is NOT empty?
             if (Directory.Exists(ProjectLocation) && Directory.GetFileSystemEntries(ProjectLocation).Length > 0)
@@ -428,9 +430,9 @@ namespace ProjectManager.Controls
                 {} // don't show the dialog in this case
                 else
                 {
-                    string msg = TextHelper.GetString("Info.TargetDirNotEmpty");
-                    string title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
-                    DialogResult result = MessageBox.Show(this, msg, title, MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
+                    var msg = TextHelper.GetString("Info.TargetDirNotEmpty");
+                    var title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
+                    var result = MessageBox.Show(this, msg, title, MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
                     if (result != DialogResult.OK) return;
                 }
             }
@@ -459,15 +461,15 @@ namespace ProjectManager.Controls
 
                 previewBox.Image?.Dispose();
 
-                string projectImage = Path.Combine(TemplateDirectory,"Project.png");
+                var projectImage = Path.Combine(TemplateDirectory,"Project.png");
                 if (File.Exists(projectImage)) SetProjectImage(projectImage);
                 else if (File.Exists(defaultProjectImage)) SetProjectImage(defaultProjectImage);
                 else previewBox.Image = null;
 
-                string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
+                var projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
                 if (File.Exists(projectDescription))
                 {
-                    using StreamReader reader = File.OpenText(projectDescription);
+                    using var reader = File.OpenText(projectDescription);
                     descriptionLabel.Text = reader.ReadToEnd();
                 }
                 else descriptionLabel.Text = "";
@@ -541,7 +543,7 @@ namespace ProjectManager.Controls
                 status += ext;
                 status = status.Replace('\\', separator).Replace('/', separator);
             }
-            statusBar.Text = status;
+            statusLabel.Text = status;
         }
 
         void locationTextBox_TextChanged(object sender, EventArgs e) => UpdateStatusBar();
