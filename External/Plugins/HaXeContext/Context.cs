@@ -235,7 +235,6 @@ namespace HaXeContext
             features.TernaryOperators = new[] {"?", ":"};
             features.OperatorKeywords = new HashSet<string>
             {
-                features.ReturnKey,
                 "switch",
                 "case",
                 "in",
@@ -243,20 +242,17 @@ namespace HaXeContext
                 "cast",
                 "untyped",
             };
-            /* INITIALIZATION */
 
             settings = initSettings;
 
-            currentSDK = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path) ?? "";
+            currentSDK = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path) ?? string.Empty;
             initSettings.CompletionModeChanged += OnCompletionModeChange;
             initSettings.UseGenericsShortNotationChanged += UseGenericsShortNotationChange;
-            //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
             CodeComplete = new CodeComplete();
-            //BuildClassPath(); // defered to first use
         }
 
         #endregion

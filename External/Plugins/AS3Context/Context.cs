@@ -246,23 +246,18 @@ namespace AS3Context
             features.Literals = new HashSet<string> {"int", "uint"};
             features.OperatorKeywords = new HashSet<string>
             {
-                features.ReturnKey,
                 "case",
                 "in",
                 "throw",
                 "typeof",
                 "delete",
             };
-            /* INITIALIZATION */
 
             settings = initSettings;
             CodeComplete = new CodeComplete();
-            //BuildClassPath(); // defered to first use
 
             // live syntax checking
-            timerCheck = new Timer(500);
-            timerCheck.SynchronizingObject = PluginBase.MainForm as Form;
-            timerCheck.AutoReset = false;
+            timerCheck = new Timer(500) {SynchronizingObject = PluginBase.MainForm as Form, AutoReset = false};
             timerCheck.Elapsed += timerCheck_Elapsed;
             FlexShells.SyntaxError += FlexShell_SyntaxError;
         }

@@ -885,7 +885,7 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData("OnCharIssue3127_1", ' ', false, true)
+                    yield return new TestCaseData("OnCharIssue3127_1", ' ', false, false)
                         .SetName("return | Issue3127. Case 1.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
                     yield return new TestCaseData("OnCharIssue3127_2", ' ', false, true)

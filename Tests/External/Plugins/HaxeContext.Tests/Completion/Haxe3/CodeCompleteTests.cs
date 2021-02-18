@@ -434,7 +434,7 @@ namespace HaXeContext.Completion.Haxe3
         {
             get
             {
-                yield return new TestCaseData("BeforeOnChar_issue3127_1", ' ', false, true)
+                yield return new TestCaseData("BeforeOnChar_issue3127_1", ' ', false, false)
                     .SetName("return <complete> Issue 3127. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
                 yield return new TestCaseData("BeforeOnChar_issue3127_2", ' ', false, true)
@@ -452,6 +452,24 @@ namespace HaXeContext.Completion.Haxe3
                 yield return new TestCaseData("BeforeOnChar_issue3127_6", ' ', false, true)
                     .SetName("untyped <complete> Issue 3127. Case 6")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/3127");
+                yield return new TestCaseData("BeforeOnChar_issue3229_1", ' ', false, false)
+                    .SetName("return <complete> Issue 3229. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3229");
+                yield return new TestCaseData("BeforeOnChar_issue3229_2", ' ', false, false)
+                    .SetName("return <complete> Issue 3229. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3229");
+                yield return new TestCaseData("BeforeOnChar_issue3229_1", '\n', false, false)
+                    .SetName("return <complete> Issue 3229. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3229");
+                yield return new TestCaseData("BeforeOnChar_issue3229_2", '\n', false, false)
+                    .SetName("return <complete> Issue 3229. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3229");
+                yield return new TestCaseData("BeforeOnChar_issue3229_3", ' ', false, false)
+                    .SetName("return <complete> Issue 3229. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3229");
+                yield return new TestCaseData("BeforeOnChar_issue3229_3", '\n', false, false)
+                    .SetName("return <complete> Issue 3229. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3229");
             }
         }
 
@@ -2595,7 +2613,7 @@ namespace HaXeContext.Completion.Haxe3
         {
             var list = ASContext.Context.GetVisibleExternalElements();
             var result = list.Search(name, flags);
-            return result.Comments;
+            return result?.Comments;
         }
 
         static IEnumerable<TestCaseData> ExpressionEndPositionTestCases

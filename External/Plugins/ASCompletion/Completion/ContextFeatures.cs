@@ -134,9 +134,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        internal bool HasTypePreKey(string word)
-            => typesPreKeys != null
-               && typesPreKeys.Any(it => it == word);
+        internal bool HasTypePreKey(string word) => typesPreKeys != null && typesPreKeys.Any(it => it == word);
 
         /// <summary>
         /// Get a selected list of possible completion keywords

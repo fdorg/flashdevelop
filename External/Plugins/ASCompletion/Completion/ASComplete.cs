@@ -4945,6 +4945,15 @@ namespace ASCompletion.Completion
                         // for example: cl$(EntryPoint) -> class $(EntryPoint)
                         || features.typesKeywords.Contains(text)))
                 {
+                    if (text == features.ReturnKey)
+                    {
+                        var returnType = expr.ContextFunction?.Type;
+                        if (returnType.IsNullOrEmpty() || returnType == features.voidKey)
+                        {
+                            return;
+                        }
+                    }
+
                     var pos = sci.CurrentPos;
                     sci.InsertText(pos++, " ");
                     sci.SetSel(pos, pos);

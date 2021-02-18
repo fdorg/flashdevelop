@@ -78,6 +78,9 @@
 	  <None Remove="Test Files\completion\AfterOnCharAndReplaceText_issue3227_2.hx" />
 	  <None Remove="Test Files\completion\BeforeOnCharAndReplaceText_issue3227_1.hx" />
 	  <None Remove="Test Files\completion\BeforeOnCharAndReplaceText_issue3227_2.hx" />
+	  <None Remove="Test Files\completion\BeforeOnChar_issue3229_1.hx" />
+	  <None Remove="Test Files\completion\BeforeOnChar_issue3229_2.hx" />
+	  <None Remove="Test Files\completion\BeforeOnChar_issue3229_3.hx" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="System" />
@@ -321,6 +324,9 @@
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2632_2.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2632_3.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2632_4.hx" />
+		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3229_3.hx" />
+		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3229_2.hx" />
+		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue3229_1.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_1.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_10.hx" />
 		<EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_11.hx" />
