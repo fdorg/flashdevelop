@@ -92,6 +92,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C714C81C-C491-42D7-AF9B-55A6E1F972FB}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		appman.xml = appman.xml
 	EndProjectSection
 EndProject
 Global

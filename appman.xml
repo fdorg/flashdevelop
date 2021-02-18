@@ -188,43 +188,17 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>flashie</Id>
-		<Name>Flash Player (AX)</Name>
-		<Version>32.0.0</Version>
-		<Build>142</Build>
-		<Desc>Debug Flash Player plugin for Internet Explorer - ActiveX</Desc>
+		<Id>flashcn</Id>
+		<Name>Flash Player</Name>
+		<Version>34.0.0</Version>
+		<Build>1</Build>
+		<Desc>Flash Player official client</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
-		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
+		<Info>https://www.flash.cn/english</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_ax_debug.exe</Url>
+			<Url>https://www.flash.cn/cdm/latest/flashplayerpp_install_cn.exe</Url>
 		</Urls>
-	</Entry>
-	<Entry>
-		<Id>flashnpapi</Id>
-		<Name>Flash Player (NPAPI)</Name>
-		<Version>32.0.0</Version>
-		<Build>142</Build>
-		<Desc>Debug Flash Player plugin for Firefox - NPAPI</Desc>
-		<Group>Runtimes</Group>
-		<Type>Executable</Type>
-		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
-		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_plugin_debug.exe</Url>
-	</Urls>
-	</Entry>
-	<Entry>
-		<Id>flashppapi</Id>
-		<Name>Flash Player (PPAPI)</Name>
-		<Version>32.0.0</Version>
-		<Build>142</Build>
-		<Desc>Debug Flash Player plugin for Opera and Chromium based applications - PPAPI</Desc>
-		<Group>Runtimes</Group>
-		<Type>Executable</Type>
-		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
-		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_ppapi_debug.exe</Url>
-	</Urls>
 	</Entry>
     <Entry>
         <Id>torgit64</Id>
