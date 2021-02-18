@@ -43,7 +43,17 @@
 				
         ]]></InfoAdditions> 
 		<requestedDisplayResolution>high</requestedDisplayResolution>
-    </iPhone> 
+    </iPhone>
+	<macOS>
+		<InfoAdditions>
+			<![CDATA[
+				<key>NSCameraUsageDescription</key>
+				<string>My app needs to access the camera for some reason</string>
+				<key>NSMicrophoneUsageDescription</key>
+				<string>My app needs to access the microphone for some reason</string>
+			]]>
+		</InfoAdditions>
+	</macOS>
 	
 	<initialWindow>
 		<title>$(PROJECTNAME)</title>
