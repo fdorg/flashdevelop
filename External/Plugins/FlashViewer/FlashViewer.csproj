@@ -41,6 +41,7 @@
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 		<PlatformTarget>x86</PlatformTarget>
 		<OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
