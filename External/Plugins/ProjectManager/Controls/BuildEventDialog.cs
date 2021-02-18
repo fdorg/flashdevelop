@@ -11,7 +11,7 @@ namespace ProjectManager.Controls
     {
         #region Windows Form Designer
 
-        StatusBar statusBar;
+        StatusStrip statusBar;
         Panel panel1;
         ListView listView;
         Button cancelButton;
@@ -31,7 +31,7 @@ namespace ProjectManager.Controls
         void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            statusBar = new StatusBarEx();
+            statusBar = new StatusStrip();
             panel1 = new Panel();
             insertButton = new ButtonEx();
             textBox = new TextBoxEx();
