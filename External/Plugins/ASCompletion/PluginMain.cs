@@ -22,7 +22,9 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
+using ScintillaNet.Enums;
 using WeifenLuo.WinFormsUI.Docking;
+using Keys = System.Windows.Forms.Keys;
 using Timer = System.Timers.Timer;
 
 namespace ASCompletion
@@ -1127,10 +1129,12 @@ namespace ASCompletion
 
         /// <summary>
         /// Display completion list or calltip info
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="value">Character inserted</param>
         /// </summary>
         static void OnChar(ScintillaControl sci, int value)
         {
-            if (sci.Lexer == 3 || sci.Lexer == 4)
+            if (sci.Lexer == (int) Lexer.CPP || sci.Lexer == (int) Lexer.XML)
                 ASComplete.OnChar(sci, value, true);
         }
 

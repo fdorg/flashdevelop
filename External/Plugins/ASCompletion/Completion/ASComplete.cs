@@ -284,7 +284,6 @@ namespace ASCompletion.Completion
                 // project build
                 var de = new DataEvent(EventType.Command, "ProjectManager.HotBuild", null);
                 EventManager.DispatchEvent(ASContext.Context, de);
-                //
                 if (!de.Handled)
                 {
                     // quick build
@@ -325,9 +324,8 @@ namespace ASCompletion.Completion
                 || !ASContext.Context.Features.hasEcmaTyping
                 || ASContext.CommonSettings.AlwaysCompleteWordLength <= 0) return;
             // fire completion if starting to write a word
-            var n = ASContext.CommonSettings.AlwaysCompleteWordLength;
             var wordStart = sci.WordStartPosition(position, true);
-            if (position - wordStart != n) return;
+            if (position - wordStart < ASContext.CommonSettings.AlwaysCompleteWordLength) return;
             var c = (char)sci.CharAt(wordStart);
             if (char.IsDigit(c)) return;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
@@ -345,27 +343,20 @@ namespace ASCompletion.Completion
                 {
                     canComplete = true;
                     // TODO  Add HTML lookup here
-                    if (pos > 0)
-                    {
-                        if (c == '/' && (char) sci.CharAt(pos) == '<') canComplete = false;
-                    }
+                    if (pos > 0 && c == '/' && (char) sci.CharAt(pos) == '<') canComplete = false;
                     break;
                 }
-                if (c <= 32)
+                if (c <= ' ')
                 {
                     if (c == '\r' || c == '\n')
                     {
                         canComplete = true;
                         break;
                     }
-                    if (pos > 1)
+                    if (pos > 1 && sci.BaseStyleAt(pos - 1) == (int) CPP.GLOBALCLASS)
                     {
-                        int style = sci.BaseStyleAt(pos - 1);
-                        if (style == 19)
-                        {
-                            canComplete = true;
-                            break;
-                        }
+                        canComplete = true;
+                        break;
                     }
                     hadWS = true;
                 }
@@ -375,6 +366,12 @@ namespace ASCompletion.Completion
                     canComplete = false;
                     break;
                 }
+            }
+            if (hadWS)
+            {
+                // for example: override<pos> ad<complete>
+                canComplete = sci.GetWordFromPosition(pos) is {Length: > 0} word
+                              && ASContext.Context.Features.accessKeywords.Contains(word);
             }
             if (canComplete) HandleDotCompletion(sci, true);
         }
@@ -558,7 +555,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Using the text under at cursor position, search and open the object/class/member declaration
         /// </summary>
-        /// <param name="sci">Control</param>
+        /// <param name="sci">Scintilla Control</param>
         /// <returns>Declaration was found</returns>
         public static bool DeclarationLookup(ScintillaControl sci)
         {
@@ -1857,7 +1854,6 @@ namespace ASCompletion.Completion
             // only auto-complete where it makes sense
             if (autoHide && DeclarationSectionOnly()) return false;
 
-            // get expression at cursor position
             var position = sci.CurrentPos;
             var expr = GetExpression(sci, position);
             if (expr.Value is null) return true;
