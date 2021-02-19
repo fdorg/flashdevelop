@@ -30,7 +30,7 @@ namespace HaXeContext.Completion.Haxe3
             fileName = Path.Combine(PathHelper.AppDir.Replace("FlashDevelop\\Bin\\Debug\\", string.Empty), fileName);
             fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
-            PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+            PluginBase.MainForm.CurrentDocument!.FileName.Returns(fileName);
         }
 
         [OneTimeSetUp]
@@ -1439,6 +1439,21 @@ namespace HaXeContext.Completion.Haxe3
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue3167TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3167_1", 'd', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3167_1"))
+                    .SetName("override ad<complete> Issue 3167. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3167");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue3167_2", 'n', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue3167_2"))
+                    .SetName("Bin<complete> Issue 3167. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/3167");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -1468,10 +1483,11 @@ namespace HaXeContext.Completion.Haxe3
             TestCaseSource(nameof(OnCharAndReplaceTextIssue3048TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue3055TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue3117TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue3167TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
-            ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
+            ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(_ => null);
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
 

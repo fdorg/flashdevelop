@@ -67,11 +67,10 @@ namespace ASCompletion.Completion
         /// <returns>Auto-completion has been handled</returns>
         public static bool OnChar(ScintillaControl sci, int value, bool autoHide)
         {
+            if (sci.IsSelectionRectangle) return false;
             var ctx = ASContext.Context;
-            var features = ctx.Features;
             try
             {
-                if (sci.IsSelectionRectangle) return false;
                 // code auto
                 int eolMode = sci.EOLMode;
                 if (((value == '\n') && (eolMode != 1)) || ((value == '\r') && (eolMode == 1)))
@@ -79,16 +78,13 @@ namespace ASCompletion.Completion
                     if (ASContext.HasContext && ctx.IsFileValid) HandleStructureCompletion(sci);
                     return false;
                 }
-
-                int position = sci.CurrentPos;
+                var position = sci.CurrentPos;
                 if (position < 2) return false;
-
-                char prevValue = (char) sci.CharAt(position - 2);
-                bool skipQuoteCheck = false;
-
+                var prevValue = (char) sci.CharAt(position - 2);
+                var skipQuoteCheck = false;
                 sci.Colourise(0, -1);
-                int style = sci.BaseStyleAt(position - 1);
-                
+                var style = sci.BaseStyleAt(position - 1);
+                var features = ctx.Features;
                 if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
                     var stringTypeChar = sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
@@ -288,7 +284,6 @@ namespace ASCompletion.Completion
                 // project build
                 var de = new DataEvent(EventType.Command, "ProjectManager.HotBuild", null);
                 EventManager.DispatchEvent(ASContext.Context, de);
-                //
                 if (!de.Handled)
                 {
                     // quick build
@@ -324,15 +319,14 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// </summary>
         static void AutoStartCompletion(ScintillaControl sci, int position)
-        {
+        { 
             if (CompletionList.Active
                 || !ASContext.Context.Features.hasEcmaTyping
                 || ASContext.CommonSettings.AlwaysCompleteWordLength <= 0) return;
             // fire completion if starting to write a word
-            var n = ASContext.CommonSettings.AlwaysCompleteWordLength;
             var wordStart = sci.WordStartPosition(position, true);
-            if (position - wordStart != n) return;
-            var c = (char)sci.CharAt(wordStart);
+            if (position - wordStart < ASContext.CommonSettings.AlwaysCompleteWordLength) return;
+            var c = (char) sci.CharAt(wordStart);
             if (char.IsDigit(c)) return;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             if (!characterClass.Contains(c)) return;
@@ -349,27 +343,20 @@ namespace ASCompletion.Completion
                 {
                     canComplete = true;
                     // TODO  Add HTML lookup here
-                    if (pos > 0)
-                    {
-                        if (c == '/' && (char) sci.CharAt(pos) == '<') canComplete = false;
-                    }
+                    if (pos > 0 && c == '/' && (char) sci.CharAt(pos) == '<') canComplete = false;
                     break;
                 }
-                if (c <= 32)
+                if (c <= ' ')
                 {
                     if (c == '\r' || c == '\n')
                     {
                         canComplete = true;
                         break;
                     }
-                    if (pos > 1)
+                    if (pos > 1 && sci.BaseStyleAt(pos - 1) == (int) CPP.GLOBALCLASS)
                     {
-                        int style = sci.BaseStyleAt(pos - 1);
-                        if (style == 19)
-                        {
-                            canComplete = true;
-                            break;
-                        }
+                        canComplete = true;
+                        break;
                     }
                     hadWS = true;
                 }
@@ -380,6 +367,10 @@ namespace ASCompletion.Completion
                     break;
                 }
             }
+            canComplete |= hadWS
+                           // for example: override<pos> ad<complete>
+                           && sci.GetWordFromPosition(pos) is {Length: > 0} word
+                           && ASContext.Context.Features.accessKeywords.Contains(word);
             if (canComplete) HandleDotCompletion(sci, true);
         }
         #endregion
@@ -562,12 +553,11 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Using the text under at cursor position, search and open the object/class/member declaration
         /// </summary>
-        /// <param name="sci">Control</param>
+        /// <param name="sci">Scintilla Control</param>
         /// <returns>Declaration was found</returns>
         public static bool DeclarationLookup(ScintillaControl sci)
         {
             if (!ASContext.Context.IsFileValid || sci is null) return false;
-
             // let the context handle goto declaration if we couldn't find anything
             if (InternalDeclarationLookup(sci)) return true;
             var expression = GetExpression(sci, sci.CurrentPos);
@@ -618,24 +608,13 @@ namespace ASCompletion.Completion
                 return OpenDocumentToDeclaration(sci, result);
             }
             // show overridden method
-            if (ctx.CurrentMember != null
-                && ctx.Features.overrideKey != null
-                && sci.GetWordFromPosition(position) == ctx.Features.overrideKey)
-            {
-                var member = ctx.CurrentMember;
-                if ((member.Flags & FlagType.Override) > 0)
-                {
-                    var found = ctx.CurrentClass.Extends.SearchMember(member.Name, true, out var inClass);
-                    if (found != null)
-                    {
-                        result = new ASResult();
-                        result.Member = found;
-                        result.InFile = inClass.InFile;
-                        result.InClass = inClass;
-                        OpenDocumentToDeclaration(sci, result);
-                    }
-                }
-            }
+            if (ctx.CurrentMember is null
+                || ctx.Features.overrideKey is null
+                || sci.GetWordFromPosition(position) != ctx.Features.overrideKey) return false;
+            var member = ctx.CurrentMember;
+            if ((member.Flags & FlagType.Override) == 0) return false;
+            var found = ctx.CurrentClass.Extends.SearchMember(member.Name, true, out var inClass);
+            if (found != null) OpenDocumentToDeclaration(sci, new ASResult {Member = found, InFile = inClass.InFile, InClass = inClass});
             return false;
         }
 
@@ -1873,7 +1852,6 @@ namespace ASCompletion.Completion
             // only auto-complete where it makes sense
             if (autoHide && DeclarationSectionOnly()) return false;
 
-            // get expression at cursor position
             var position = sci.CurrentPos;
             var expr = GetExpression(sci, position);
             if (expr.Value is null) return true;
@@ -1902,6 +1880,7 @@ namespace ASCompletion.Completion
                     // import
                     if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
                         return HandleImportCompletion(sci, expr.Value, autoHide);
+                    if (word == features.overrideKey) return HandleOverrideCompletion(expr.Value, autoHide);
                 }
                 // type
                 else if (features.hasEcmaTyping && expr.Separator == ":" && HandleColonCompletion(sci, expr.Value, autoHide))
@@ -2170,6 +2149,74 @@ namespace ASCompletion.Completion
         #endregion
 
         #region types_completion
+
+        /// <summary>
+        /// List methods to override
+        /// </summary>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Completion was handled</returns>
+        internal bool HandleOverrideCompletion(string tail, bool autoHide)
+        {
+            var ctx = ASContext.Context;
+            var curClass = ctx.CurrentClass;
+            if (curClass.IsVoid()) return false;
+
+            var members = new List<MemberModel>();
+            curClass.ResolveExtends();
+
+            const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
+            var tmpClass = curClass.Extends;
+            var access = ctx.TypesAffinity(curClass, tmpClass);
+            while (!tmpClass.IsVoid())
+            {
+                if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
+                {
+                    foreach (var member in tmpClass.Members)
+                    {
+                        member.Namespace = "flash_proxy";
+                        members.Add(member);
+                    }
+                    break;
+                }
+                foreach (var member in tmpClass.Members)
+                {
+                    if (curClass.Members.Contains(member.Name, FlagType.Override, 0)) continue;
+                    if ((member.Flags & FlagType.Dynamic) == 0
+                        || (member.Access & access) == 0
+                        || ((member.Flags & FlagType.Function) == 0 && (member.Flags & mask) == 0)) continue;
+                    if (!member.Parameters.IsNullOrEmpty())
+                    {
+                        foreach (var it in member.Parameters)
+                        {
+                            if ((it.Flags & FlagType.Function) == 0 || it.Parameters is null) continue;
+                            it.Type = ctx.CodeComplete.ToFunctionDeclarationString(it);
+                            it.Parameters = null;
+                        }
+                        // for example: function get value():Function/*(v:*):ReturnType*/
+                        if ((member.Flags & FlagType.Getter) != 0)
+                        {
+                            member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
+                            member.Parameters = null;
+                        }
+                    }
+                    members.Add(member);
+                }
+                tmpClass = tmpClass.Extends;
+                // members visibility
+                access = ctx.TypesAffinity(curClass, tmpClass);
+            }
+            members.Sort();
+            var list = new List<ICompletionListItem>(members.Count);
+            MemberModel last = null;
+            foreach (var member in members)
+            {
+                if (last is null || last.Name != member.Name)
+                    list.Add(new MemberItem(member));
+                last = member;
+            }
+            if (list.Count > 0) CompletionList.Show(list, autoHide, tail);
+            return true;
+        }
 
         protected static bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword)
         {

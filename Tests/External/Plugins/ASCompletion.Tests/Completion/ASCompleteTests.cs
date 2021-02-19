@@ -11,8 +11,6 @@ using PluginCore.Helpers;
 using PluginCore.Managers;
 using ScintillaNet;
 
-//TODO: Sadly most of ASComplete is currently untestable in a proper way. Work on this branch solves it: https://github.com/Neverbirth/flashdevelop/tree/completionlist
-
 namespace ASCompletion.Completion
 {
     public class ASCompleteTests : ASCompletionTests
@@ -22,7 +20,7 @@ namespace ASCompletion.Completion
             SetSrc(sci, sourceText);
             //{ Update completion cache
             var ctx = (ASContext) ASContext.GetLanguageContext(sci.ConfigurationLanguage);
-            ctx.completionCache.IsDirty = true;
+            ctx!.completionCache.IsDirty = true;
             var visibleExternalElements = ctx.GetVisibleExternalElements();
             ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
             //}
@@ -110,7 +108,7 @@ namespace ASCompletion.Completion
             ASContext.HasContext = true;
             //{ Update completion cache
             var ctx = ASContext.GetLanguageContext(sci.ConfigurationLanguage);
-            var visibleExternalElements = ctx.GetVisibleExternalElements();
+            var visibleExternalElements = ctx!.GetVisibleExternalElements();
             ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
             //}
             ASComplete.OnChar(sci, addedChar, autoHide);

@@ -24,7 +24,7 @@ namespace ASCompletion.TestUtils
             ctx.CurrentModel = new FileModel {Context = mock, Version = 3};
             SetFeatures(mock, ctx);
             mock.GetTopLevelElements()
-                .Returns(it =>
+                .Returns(_ =>
                 {
                     ctx.completionCache.IsDirty = true;
                     return ctx.GetTopLevelElements();
@@ -41,7 +41,7 @@ namespace ASCompletion.TestUtils
             ctx.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
             SetFeatures(mock, ctx);
             mock.GetTopLevelElements()
-                .Returns(it =>
+                .Returns(_ =>
                 {
                     ctx.completionCache.IsDirty = true;
                     return ctx.GetTopLevelElements();

@@ -11,7 +11,6 @@ using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -3746,69 +3745,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Completion was handled</returns>
-        protected virtual bool HandleOverrideCompletion(bool autoHide)
-        {
-            var ctx = ASContext.Context;
-            var curClass = ctx.CurrentClass;
-            if (curClass.IsVoid()) return false;
-
-            var members = new List<MemberModel>();
-            curClass.ResolveExtends(); // Resolve inheritance chain
-
-            // explore getters or setters
-            const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
-            var tmpClass = curClass.Extends;
-            var access = ctx.TypesAffinity(curClass, tmpClass);
-            while (!tmpClass.IsVoid())
-            {
-                if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
-                {
-                    foreach (var member in tmpClass.Members)
-                    {
-                        member.Namespace = "flash_proxy";
-                        members.Add(member);
-                    }
-                    break;
-                }
-                foreach (var member in tmpClass.Members)
-                {
-                    if (curClass.Members.Contains(member.Name, FlagType.Override)) continue;
-                    if ((member.Flags & FlagType.Dynamic) == 0
-                        || (member.Access & access) == 0
-                        || ((member.Flags & FlagType.Function) == 0 && (member.Flags & mask) == 0)) continue;
-                    if (!member.Parameters.IsNullOrEmpty())
-                    {
-                        foreach (var it in member.Parameters)
-                        {
-                            if ((it.Flags & FlagType.Function) == 0 || it.Parameters is null) continue;
-                            it.Type = ctx.CodeComplete.ToFunctionDeclarationString(it);
-                            it.Parameters = null;
-                        }
-                        // for example: function get value():Function/*(v:*):ReturnType*/
-                        if ((member.Flags & FlagType.Getter) != 0)
-                        {
-                            member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
-                            member.Parameters = null;
-                        }
-                    }
-                    members.Add(member);
-                }
-                tmpClass = tmpClass.Extends;
-                // members visibility
-                access = ctx.TypesAffinity(curClass, tmpClass);
-            }
-            members.Sort();
-            var list = new List<ICompletionListItem>(members.Count);
-            MemberModel last = null;
-            foreach (var member in members)
-            {
-                if (last is null || last.Name != member.Name)
-                    list.Add(new MemberItem(member));
-                last = member;
-            }
-            if (list.Count > 0) CompletionList.Show(list, autoHide);
-            return true;
-        }
+        protected virtual bool HandleOverrideCompletion(bool autoHide) => ASContext.Context.CodeComplete.HandleOverrideCompletion(string.Empty, autoHide);
 
         public static void GenerateOverride(ScintillaControl sci, ClassModel ofClass, MemberModel member, int position)
         {
