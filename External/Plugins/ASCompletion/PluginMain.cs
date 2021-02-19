@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Timers;
@@ -227,7 +228,7 @@ namespace ASCompletion
                         return;
 
                     case EventType.SyntaxDetect:
-                        // detect Actionscript language version
+                        // detect ActionScript language version
                         if (sci is null) return;
                         if (sci.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
@@ -276,7 +277,6 @@ namespace ASCompletion
                     case EventType.Command:
                         de = (DataEvent) e;
                         var command = de.Action ?? "";
-
                         if (command.StartsWithOrdinal("ASCompletion."))
                         {
                             var cmdData = de.Data as string;
@@ -286,13 +286,15 @@ namespace ASCompletion
                             {
                                 if (de.Data is Hashtable info)
                                 {
-                                    var setup = new ContextSetupInfos();
-                                    setup.Platform = (string)info["platform"];
-                                    setup.Lang = (string)info["lang"];
-                                    setup.Version = (string)info["version"];
-                                    setup.TargetBuild = (string)info["targetBuild"];
-                                    setup.Classpath = (string[])info["classpath"];
-                                    setup.HiddenPaths = (string[])info["hidden"];
+                                    var setup = new ContextSetupInfos
+                                    {
+                                        Platform = (string) info["platform"],
+                                        Lang = (string) info["lang"],
+                                        Version = (string) info["version"],
+                                        TargetBuild = (string) info["targetBuild"],
+                                        Classpath = (string[]) info["classpath"],
+                                        HiddenPaths = (string[]) info["hidden"]
+                                    };
                                     ASContext.SetLanguageClassPath(setup);
                                     if (setup.AdditionalPaths != null) // report custom classpath
                                         info["additional"] = setup.AdditionalPaths.ToArray();
@@ -306,7 +308,7 @@ namespace ASCompletion
                                 {
                                     var context = ASContext.GetLanguageContext(info["language"] as string);
                                     if (context?.Settings?.UserClasspath != null)
-                                        info["cp"] = new List<string>(context.Settings.UserClasspath);
+                                        info["cp"] = context.Settings.UserClasspath.ToList();
                                 }
                                 e.Handled = true;
                             }
@@ -1074,15 +1076,9 @@ namespace ASCompletion
             PluginBase.RunAsync(() =>
             {
                 if (PluginBase.CurrentProject is null) return;
-
-                foreach (var cls in obj.Classes)
-                {
-                    astCache.MarkAsOutdated(cls);
-                }
-
+                obj.Classes.ForEach(astCache.MarkAsOutdated);
                 astCacheTimer.Stop();
                 astCacheTimer.Start();
-
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
             });
         }
@@ -1104,9 +1100,9 @@ namespace ASCompletion
                 {
                     ReferenceList.Show(
                         ReferenceList.ConvertClassCache(cached.ImplementorClassModels),
-                        new List<Reference>(0), 
+                        Array.Empty<Reference>(), 
                         ReferenceList.ConvertClassCache(cached.ChildClassModels),
-                        new List<Reference>(0)
+                        Array.Empty<Reference>()
                     );
                     return;
                 }
@@ -1161,15 +1157,12 @@ namespace ASCompletion
             ASContext.OnTextChanged(sender, position, length, linesAdded);
 
             if (settingObject.DisableInheritanceNavigation) return;
-
+            const int searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
             var start = sender.LineFromPosition(position);
             var end = sender.LineFromPosition(position + Math.Abs(length));
-
             for (var i = start; i <= end; ++i)
             {
-                var mask = sender.MarkerGet(i);
-                const int searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
-                if ((mask & searchMask) > 0)
+                if ((sender.MarkerGet(i) & searchMask) > 0)
                 {
                     sender.MarkerDelete(i, MarkerUp);
                     sender.MarkerDelete(i, MarkerDown);
@@ -1210,8 +1203,8 @@ namespace ASCompletion
         void ContextChanged()
         {
             var doc = PluginBase.MainForm.CurrentDocument;
+            if (doc is null) return;
             var isValid = false;
-
             if (doc.SciControl is { } sci)
             {
                 if (currentDoc == sci.FileName)
@@ -1225,7 +1218,6 @@ namespace ASCompletion
                 if (isValid) ASComplete.ResolveContext(sci);
             }
             else ASComplete.ResolveContext(null);
-            
             var enableItems = isValid && !doc.IsUntitled;
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);
