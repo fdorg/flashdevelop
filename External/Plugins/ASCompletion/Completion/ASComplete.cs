@@ -319,14 +319,14 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// </summary>
         static void AutoStartCompletion(ScintillaControl sci, int position)
-        {
+        { 
             if (CompletionList.Active
                 || !ASContext.Context.Features.hasEcmaTyping
                 || ASContext.CommonSettings.AlwaysCompleteWordLength <= 0) return;
             // fire completion if starting to write a word
             var wordStart = sci.WordStartPosition(position, true);
             if (position - wordStart < ASContext.CommonSettings.AlwaysCompleteWordLength) return;
-            var c = (char)sci.CharAt(wordStart);
+            var c = (char) sci.CharAt(wordStart);
             if (char.IsDigit(c)) return;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             if (!characterClass.Contains(c)) return;
@@ -367,12 +367,10 @@ namespace ASCompletion.Completion
                     break;
                 }
             }
-            if (hadWS)
-            {
-                // for example: override<pos> ad<complete>
-                canComplete = sci.GetWordFromPosition(pos) is {Length: > 0} word
-                              && ASContext.Context.Features.accessKeywords.Contains(word);
-            }
+            canComplete |= hadWS
+                           // for example: override<pos> ad<complete>
+                           && sci.GetWordFromPosition(pos) is {Length: > 0} word
+                           && ASContext.Context.Features.accessKeywords.Contains(word);
             if (canComplete) HandleDotCompletion(sci, true);
         }
         #endregion
