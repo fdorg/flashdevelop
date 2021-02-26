@@ -39,12 +39,7 @@ namespace LintingHelper.Managers
         public static void UnregisterLinter(string language, ILintProvider provider)
         {
             language = language.ToLower();
-
-            if (linters.ContainsKey(language))
-            {
-                linters[language].Remove(provider);
-            }
-
+            if (linters.TryGetValue(language, out var linter)) linter.Remove(provider);
             EventManager.DispatchEvent(provider, new DataEvent(EventType.Command, "LintingManager.LinterUnregistered", language));
         }
 
@@ -54,8 +49,7 @@ namespace LintingHelper.Managers
         public static bool HasLanguage(string language)
         {
             language = language.ToLower();
-
-            return linters.ContainsKey(language) && linters[language].Count > 0;
+            return linters.TryGetValue(language, out var linter) && linter.Count > 0;
         }
 
         /// <summary>

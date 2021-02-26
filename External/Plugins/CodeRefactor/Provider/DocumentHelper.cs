@@ -109,8 +109,8 @@ namespace CodeRefactor.Provider
         /// </summary>
         public bool CloseDocument(string fileName)
         {
-            if (!FilesOpenedDocumentReferences.ContainsKey(fileName) || InitiallyOpenedFiles.ContainsKey(fileName)) return false;
-            FilesOpenedDocumentReferences[fileName].Close();
+            if (!FilesOpenedDocumentReferences.TryGetValue(fileName, out var document) || InitiallyOpenedFiles.ContainsKey(fileName)) return false;
+            document.Close();
             FilesOpenedAndUsed.Remove(fileName);
             FilesOpenedDocumentReferences.Remove(fileName);
             return true;

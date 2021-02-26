@@ -625,15 +625,12 @@ namespace FlashDebugger
                         // handle only worker events
                         if (PluginMain.settingObject.VerboseOutput)
                             TraceManager.AddAsync("Worker " + @event.isolateId + " BreakEvent");
-                        if (@event.isolateId > 1 && IsolateSessions.ContainsKey(@event.isolateId))
+                        if (@event.isolateId > 1 && IsolateSessions.TryGetValue(@event.isolateId, out var ii))
                         {
-                            var ii = IsolateSessions[@event.isolateId];
                             if (!ii.i_Session.isSuspended()) continue;
-
                             var frames = ii.i_Session.getFrames();
                             Location loc = null;
                             if (frames.Length > 0) loc = frames[0].getLocation();
-
                             if (ii.i_Session.suspendReason() == 1) // SuspendReason_.Breakpoint
                             {
                                 if (loc != null &&
@@ -1022,18 +1019,18 @@ namespace FlashDebugger
             }
             if (files.Count > 0)
             {
-                // reverse loop to take latest loded swf first, and ignore old swf.
+                // reverse loop to take latest loaded swf first, and ignore old swf.
                 var swfInfo = (iSession != null) ? iSession.getSwfs() : Session.getSwfs();
                 for (int swfC = swfInfo.Length - 1; swfC >= 0; swfC--) 
                 {
-                    SwfInfo swf = swfInfo[swfC];
+                    var swf = swfInfo[swfC];
                     if (swf is null) continue;
                     try
                     {
-                        foreach (SourceFile src in swf.getSourceList(Session))
+                        foreach (var src in swf.getSourceList(Session))
                         {
-                            string localPath = PluginMain.debugManager.GetLocalPath(src);
-                            if (localPath != null && files.ContainsKey(localPath) && files[localPath] > src.getId())
+                            var localPath = PluginMain.debugManager.GetLocalPath(src);
+                            if (localPath != null && files.TryGetValue(localPath, out var value) && value > src.getId())
                             {
                                 files[localPath] = src.getId();
                             }
@@ -1047,26 +1044,22 @@ namespace FlashDebugger
             {
                 if (!breakpointLocations.ContainsKey(bp))
                 {
-                    if (bp.IsEnabled && !bp.IsDeleted)
+                    if (bp.IsEnabled && !bp.IsDeleted && files.TryGetValue(bp.FileFullPath, out var value) && value != int.MaxValue)
                     {
-                        if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != int.MaxValue)
+                        var l = iSession != null
+                            ? iSession.setBreakpoint(value, bp.Line + 1)
+                            : Session.setBreakpoint(value, bp.Line + 1);
+                        if (l != null)
                         {
-                            var l = (iSession != null) ? iSession.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
-                            if (l != null)
-                            {
-                                breakpointLocations.Add(bp, l);
-                            }
+                            breakpointLocations.Add(bp, l);
                         }
                     }
                 }
-                else
+                else if (bp.IsDeleted || !bp.IsEnabled)
                 {
-                    if (bp.IsDeleted || !bp.IsEnabled)
-                    {
-                        // todo, i_Session does not have a clearBreakpoint method, m_Session clears them all. optimize out extra loops
-                        Session.clearBreakpoint(breakpointLocations[bp]);
-                        breakpointLocations.Remove(bp);
-                    }
+                    // todo, i_Session does not have a clearBreakpoint method, m_Session clears them all. optimize out extra loops
+                    Session.clearBreakpoint(breakpointLocations[bp]);
+                    breakpointLocations.Remove(bp);
                 }
             }
         }

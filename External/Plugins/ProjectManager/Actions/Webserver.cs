@@ -47,15 +47,15 @@ namespace ProjectManager.Actions
 
         static void CreateServer()
         {
-            var ToolsWebserver = Path.Combine(PathHelper.ToolDir, "webserver");
-            var config = GetServerConfig(Path.Combine(ToolsWebserver, "server.ini"));
+            var toolsWebserver = Path.Combine(PathHelper.ToolDir, "webserver");
+            var config = GetServerConfig(Path.Combine(toolsWebserver, "server.ini"));
             if (config is null) return;
 
-            var server = Path.Combine(ToolsWebserver, config["executable"]);
+            var server = Path.Combine(toolsWebserver, config["executable"]);
             var arguments = config["arguments"].Replace("{doc}", pathServed).Replace("{port}", Port.ToString());
 
             TraceManager.Add("Web Server starting with root: " + pathServed);
-            if (config.ContainsKey("verbose") && config["verbose"].ToLower() == "true")
+            if (config.TryGetValue("verbose", out var verbose) && verbose.ToLower() == "true")
                 TraceManager.Add("Server process: " + server + " " + arguments);
 
             StartProcess(server, arguments);
@@ -83,12 +83,11 @@ namespace ProjectManager.Actions
         static Dictionary<string, string> GetServerConfig(string configPath)
         {
             var ini = ConfigHelper.Parse(configPath, true);
-            if (!ini.ContainsKey("Default"))
+            if (!ini.TryGetValue("Default", out var config))
             {
                 TraceManager.Add("Missing " + configPath, 3);
                 return null;
             }
-            var config = ini["Default"];
             if (!config.ContainsKey("executable"))
             {
                 TraceManager.Add("Missing 'executable' entry in in " + configPath, 3);

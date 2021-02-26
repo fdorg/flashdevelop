@@ -341,8 +341,8 @@ namespace HaXeContext
             var platform = project.MovieOptions.PlatformSupport;
             var version = platform.GetVersion(project.MovieOptions.Version);
             if (version.Commands is null) throw new Exception($"No external commands found for target {project.MovieOptions.Platform} and version {project.MovieOptions.Version}");
-            if (!version.Commands.ContainsKey(name)) return null;
-            var cmd = version.Commands[name].Value;
+            if (!version.Commands.TryGetValue(name, out var command)) return null;
+            var cmd = command.Value;
             cmd = platform.ExternalToolchain switch
             {
                 "haxelib" => "run " + cmd,

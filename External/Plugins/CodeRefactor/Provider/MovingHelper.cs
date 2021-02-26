@@ -76,8 +76,8 @@ namespace CodeRefactor.Provider
                 {
                     var column = match.Column;
                     var lineNumber = match.Line;
-                    var changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
-                    var offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
+                    var changedLine = lineChanges.TryGetValue(lineNumber, out var newChangedLine) ? newChangedLine : match.LineText;
+                    lineOffsets.TryGetValue(lineNumber, out var offset);
                     column += offset;
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (match.Value.Length - match.Length);

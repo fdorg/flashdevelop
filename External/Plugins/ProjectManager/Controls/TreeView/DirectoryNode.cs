@@ -182,9 +182,9 @@ namespace ProjectManager.Controls.TreeView
                     continue;
 
                 DirectoryNode node;
-                if (Tree.NodeMap.ContainsKey(directory))
+                if (Tree.NodeMap.TryGetValue(directory, out var projectTreeNode))
                 {
-                    node = Tree.NodeMap[directory] as DirectoryNode;
+                    node = projectTreeNode as DirectoryNode;
                     if (node != null) // ASClassWizard injects SimpleDirectoryNode != DirectoryNode
                     {
                         if (recursive) node.Refresh(recursive);
@@ -208,37 +208,30 @@ namespace ProjectManager.Controls.TreeView
             var files = Directory.GetFiles(BackingPath);
             foreach (string file in files)
             {
-                if (IsFileExcluded(file))
-                    continue;
-
-                if (Tree.NodeMap.ContainsKey(file))
+                if (IsFileExcluded(file)) continue;
+                if (Tree.NodeMap.TryGetValue(file, out var genericNode))
                 {
-                    GenericNode node = Tree.NodeMap[file];
-                    node.Refresh(recursive);
-                    nodesToDie.Remove(node);
+                    genericNode.Refresh(recursive);
+                    nodesToDie.Remove(genericNode);
                 }
                 else
                 {
-                    FileNode node = FileNode.Create(file, project);
+                    var node = FileNode.Create(file, project);
                     InsertNode(Nodes, node);
                     node.Refresh(recursive);
                     nodesToDie.Remove(node);
                 }
             }
-
             var mapping = GetFileMapping(files);
             if (mapping is null) return;
-
             foreach (string file in files)
             {
                 if (IsFileExcluded(file)) continue;
                 var node = Tree.NodeMap[file];
-
                 // ensure this file is in the right spot
-                if (mapping.ContainsKey(file) && Tree.NodeMap.ContainsKey(mapping[file]))
-                    EnsureParentedBy(node, Tree.NodeMap[mapping[file]]);
-                else
-                    EnsureParentedBy(node, this);
+                if (mapping.TryGetValue(file, out var fileName) && Tree.NodeMap.TryGetValue(fileName, out var genericNode))
+                    EnsureParentedBy(node, genericNode);
+                else EnsureParentedBy(node, this);
             }
         }
 

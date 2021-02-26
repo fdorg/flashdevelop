@@ -388,9 +388,9 @@ namespace ProjectManager.Actions
                         }
                 }
             }
-            else if (PlatformData.SupportedLanguages.ContainsKey("as3"))
+            else if (PlatformData.SupportedLanguages.TryGetValue("as3", out var language))
             {
-                var targets = PlatformData.SupportedLanguages["as3"].Platforms;
+                var targets = language.Platforms;
                 var flashPlatform = targets[PlatformData.FLASHPLAYER_PLATFORM];
                 version = flashPlatform.LastVersion.Value;
             }

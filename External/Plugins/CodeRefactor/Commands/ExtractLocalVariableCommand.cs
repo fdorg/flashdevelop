@@ -172,8 +172,8 @@ namespace CodeRefactor.Commands
                 {
                     var column = match.Column;
                     var lineNumber = match.Line;
-                    var changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
-                    var offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
+                    var changedLine = lineChanges.TryGetValue(lineNumber, out var newChangedLine) ? newChangedLine : match.LineText;
+                    lineOffsets.TryGetValue(lineNumber, out var offset);
                     column += offset;
                     changedLine = changedLine.Substring(0, column) + newName + changedLine.Substring(column + match.Length);
                     lineChanges[lineNumber] = changedLine;

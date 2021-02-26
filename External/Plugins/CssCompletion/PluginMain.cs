@@ -107,7 +107,7 @@ namespace CssCompletion
                     if (IsSupported(sci))
                     {
                         var ext = Path.GetExtension(sci.FileName).ToLower();
-                        features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
+                        enabledLanguages.TryGetValue(ext, out features);
                         completion ??= new Completion(config, settingObject);
                         completion.OnFileChanged(features);
                         if (features?.Syntax != null)
@@ -183,11 +183,11 @@ namespace CssCompletion
             foreach (var def in config)
             {
                 var section = def.Value;
-                if (!section.ContainsKey("ext")) continue;
-                var exts = section["ext"].Trim().Split(',');
+                if (!section.TryGetValue("ext", out var ext)) continue;
+                var exts = ext.Split(',');
                 var features = new CssFeatures(def.Key, section);
-                foreach (var ext in exts)
-                    enabledLanguages.Add("." + ext, features);
+                foreach (var it in exts)
+                    enabledLanguages.Add("." + it, features);
             }
         }
 

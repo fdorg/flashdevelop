@@ -30,14 +30,12 @@ namespace SourceControl.Sources.Mercurial
 
         StatusNode? FindNode(string path, string rootPath)
         {
-            if (statusCache.ContainsKey(rootPath))
+            if (statusCache.TryGetValue(rootPath, out var status))
             {
-                var status = statusCache[rootPath];
                 var len = path.Length;
                 var rlen = rootPath.Length + 1;
                 if (len < rlen) path = ".";
                 else path = path.Substring(rlen);
-
                 return status.Get(path);
             }
             return null;
@@ -102,10 +100,10 @@ namespace SourceControl.Sources.Mercurial
         public bool SetPathDirty(string path, string rootPath)
         {
             if (ignoreDirty) return false;
-            if (statusCache.ContainsKey(rootPath))
+            if (statusCache.TryGetValue(rootPath, out var status))
             {
                 if (reIgnore.IsMatch(path)) return false;
-                return statusCache[rootPath].SetPathDirty(path);
+                return status.SetPathDirty(path);
             }
             return false;
         }

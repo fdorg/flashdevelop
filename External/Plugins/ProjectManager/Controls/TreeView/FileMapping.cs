@@ -13,14 +13,10 @@ namespace ProjectManager.Controls.TreeView
 
     public class FileMappingRequest
     {
-        public FileMappingRequest(string[] files)
-        {
-            Files = files;
-            Mapping = new FileMapping();
-        }
+        public FileMappingRequest(string[] files) => Files = files;
 
         public string[] Files { get; set; }
 
-        public FileMapping Mapping { get; set; }
+        public FileMapping Mapping { get; set; } = new FileMapping();
     }
 }

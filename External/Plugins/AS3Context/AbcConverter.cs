@@ -17,7 +17,7 @@ namespace AS3Context
 
     public class AbcConverter
     {
-        public static List<string> ExcludedASDocs = getDefaultExcludedASDocs();
+        public static List<string> ExcludedASDocs = new() {"helpid", "keyword"};
 
         public static Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
         static readonly Regex reDocFile = new Regex("[/\\\\]([-_.$a-z0-9]+)\\.xml", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -31,16 +31,9 @@ namespace AS3Context
         static Dictionary<string, ASDocItem> thisDocs;
         static string docPath;
 
-        ///
-        static List<string> getDefaultExcludedASDocs()
-        {
-            return new List<string> {"helpid", "keyword"};
-        }
-
         /// <summary>
         /// Extract documentation from XML included in ASDocs-enriched SWCs
         /// </summary>
-        /// <param name="rawDocs"></param>
         static void ParseDocumentation(ContentParser parser)
         {
             if (parser.Catalog != null)
@@ -55,21 +48,17 @@ namespace AS3Context
                         continue;
                     try
                     {
-                        Match m = reDocFile.Match(docFile);
+                        var m = reDocFile.Match(docFile);
                         if (!m.Success) continue;
-                        string package = m.Groups[1].Value;
-                        var packageDocs = Docs.ContainsKey(package)
-                            ? Docs[package]
-                            : new Dictionary<string, ASDocItem>();
-
-                        byte[] rawDoc = parser.Docs[docFile];
-                        ASDocsReader dr = new ASDocsReader(rawDoc);
-                        dr.ExcludedASDocs = ExcludedASDocs;
+                        var package = m.Groups[1].Value;
+                        if (!Docs.TryGetValue(package, out var packageDocs))
+                            packageDocs = new Dictionary<string, ASDocItem>();
+                        var rawDoc = parser.Docs[docFile];
+                        var dr = new ASDocsReader(rawDoc) {ExcludedASDocs = ExcludedASDocs};
                         dr.Parse(packageDocs);
-
                         Docs[package] = packageDocs;
                     }
-                    catch (Exception)
+                    catch
                     {
                     }
                 }
@@ -78,7 +67,7 @@ namespace AS3Context
         /// <summary>
         /// Create virtual FileModel objects from Abc bytecode
         /// </summary>
-        /// <param name="abcs"></param>
+        /// <param name="parser"></param>
         /// <param name="path"></param>
         /// <param name="context"></param>
         public static void Convert(ContentParser parser, PathModel path, IASContext context)
@@ -89,10 +78,12 @@ namespace AS3Context
             ParseDocumentation(parser);
 
             // extract models
-            Dictionary<string, FileModel> models = new Dictionary<string, FileModel>();
-            FileModel privateClasses = new FileModel(Path.Combine(path.Path, "__Private.as"));
-            privateClasses.Version = 3;
-            privateClasses.Package = "private";
+            var models = new Dictionary<string, FileModel>();
+            var privateClasses = new FileModel(Path.Combine(path.Path, "__Private.as"))
+            {
+                Version = 3,
+                Package = "private"
+            };
             genericTypes = new Dictionary<string, FileModel>();
             imports = new Dictionary<string, string>();
             conflicts = new Dictionary<string, string>();
@@ -140,10 +131,9 @@ namespace AS3Context
                     if (thisDocs != null)
                     {
                         docPath = (model.Package.Length > 0 ? model.Package + ":" : "globalClassifier:") + type.Name;
-                        if (thisDocs.ContainsKey(docPath))
+                        if (thisDocs.TryGetValue(docPath, out var doc))
                         {
-                            ASDocItem doc = thisDocs[docPath];
-                            applyASDoc(doc, type);
+                            ApplyASDoc(doc, type);
                             if (doc.Meta != null) type.MetaDatas = doc.Meta;
                         }
                         if (model.Package.Length == 0) docPath = type.Name;
@@ -179,10 +169,10 @@ namespace AS3Context
                             type.Name = itype[0] + "$" + itype[1];
                             type.IndexType = itype[1];
                         }
-                        if (genericTypes.ContainsKey(genType))
+                        if (genericTypes.TryGetValue(genType, out var inFile))
                         {
                             model.Classes.Clear();
-                            type.InFile = genericTypes[genType];
+                            type.InFile = inFile;
                             genericTypes[genType].Classes.Add(type);
                         }
                         else genericTypes[genType] = model;
@@ -263,14 +253,12 @@ namespace AS3Context
                         if (model is null || model.Package != info.name.uri)
                         {
                             AddImports(model, imports);
-
-                            string package = info.name.uri ?? "";
-                            string filename = package.Length > 0 ? "package.as" : "toplevel.as";
+                            var package = info.name.uri ?? "";
+                            var filename = package.Length > 0 ? "package.as" : "toplevel.as";
                             filename = Path.Combine(path.Path, package.Replace('.', Path.DirectorySeparatorChar), filename);
-                            if (models.ContainsKey(filename)) model = models[filename];
-                            else
+                            if (!models.TryGetValue(filename, out model))
                             {
-                                model = new FileModel("")
+                                model = new FileModel
                                 {
                                     Context = context,
                                     Package = package,
@@ -292,15 +280,12 @@ namespace AS3Context
                                 docPath += member.Namespace + ":";
                             if ((member.Flags & FlagType.Setter) > 0) docPath += ":set";
                             else if ((member.Flags & FlagType.Getter) > 0) docPath += ":get";
-
-                            if (thisDocs.ContainsKey(docPath)) applyASDoc(thisDocs[docPath], member);
+                            if (thisDocs.TryGetValue(docPath, out var doc)) ApplyASDoc(doc, member);
                         }
-
                         member.InFile = model;
                         member.IsPackageLevel = true;
                         model.Members.Add(member);
                     }
-
                     AddImports(model, imports);
                 }
             }
@@ -327,71 +312,62 @@ namespace AS3Context
         /// <summary>
         /// old name: setDoc()
         /// </summary>
-        static void applyASDoc(ASDocItem doc, MemberModel model)
+        static void ApplyASDoc(ASDocItem doc, MemberModel model)
         {
             model.Comments = doc.LongDesc;
-
-            if (doc.IsFinal)
-                model.Flags |= FlagType.Final;
-
-            if (doc.IsDynamic && model is ClassModel)
-                model.Flags |= FlagType.Dynamic;
-
-            if (doc.Value != null)
-                model.Value = doc.Value;
-
+            if (doc.IsFinal) model.Flags |= FlagType.Final;
+            if (doc.IsDynamic && model is ClassModel) model.Flags |= FlagType.Dynamic;
+            if (doc.Value != null) model.Value = doc.Value;
             // TODO  Extract features in comments
-            applyTypeComment(doc, model);
-            applyTypeCommentToParams(doc, model);
+            ApplyTypeComment(doc, model);
+            ApplyTypeCommentToParams(doc, model);
         }
 
-        static void applyTypeComment(ASDocItem doc, MemberModel model)
+        static void ApplyTypeComment(ASDocItem doc, MemberModel model)
         {
             if (doc is null || model  is null) return;
             ASFileParserUtils.ParseTypeDefinitionInto(doc.ApiType, model, true, true);
         }
 
-        static void applyTypeCommentToParams(ASDocItem doc, MemberModel model)
+        static void ApplyTypeCommentToParams(ASDocItem doc, MemberModel model)
         {
             if (doc is null || model?.Parameters is null) return;
             foreach (var param in model.Parameters)
-                if (doc.ParamTypes != null && doc.ParamTypes.ContainsKey(param.Name))
-                    ASFileParserUtils.ParseTypeDefinitionInto(doc.ParamTypes[param.Name], param, true, true);
+                if (doc.ParamTypes != null && doc.ParamTypes.TryGetValue(param.Name, out var typeDefinition))
+                    ASFileParserUtils.ParseTypeDefinitionInto(typeDefinition, param, true, true);
         }
 
         static void CustomFixes(string path, IDictionary<string, FileModel> models)
         {
-            string file = Path.GetFileName(path);
-            if (file == "playerglobal.swc" || file == "airglobal.swc")
+            var file = Path.GetFileName(path);
+            if (file != "playerglobal.swc" && file != "airglobal.swc") return;
+            var mathPath = Path.Combine(path, "Math");
+            if (models.TryGetValue(mathPath, out var model))
             {
-                string mathPath = Path.Combine(path, "Math");
-                if (models.ContainsKey(mathPath))
+                var @class = model.GetPublicClass();
+                foreach (var member in @class.Members)
                 {
-                    ClassModel mathModel = models[mathPath].GetPublicClass();
-                    foreach (MemberModel member in mathModel.Members)
+                    if (!member.Parameters.IsNullOrEmpty() && member.Parameters[0].Name == "x")
                     {
-                        if (!member.Parameters.IsNullOrEmpty() && member.Parameters[0].Name == "x")
+                        string n = member.Name;
+                        if (member.Parameters.Count > 1)
                         {
-                            string n = member.Name;
-                            if (member.Parameters.Count > 1)
-                            {
-                                if (n == "atan2") member.Parameters.Reverse();
-                                else if (n == "min" || n == "max") { member.Parameters[0].Name = "val1"; member.Parameters[1].Name = "val2"; }
-                                else if (n == "pow") { member.Parameters[0].Name = "base"; member.Parameters[1].Name = "pow"; }
-                            }
-                            else if (n == "sin" || n == "cos" || n == "tan") member.Parameters[0].Name = "angleRadians";
-                            else member.Parameters[0].Name = "val";
+                            if (n == "atan2") member.Parameters.Reverse();
+                            else if (n == "min" || n == "max") { member.Parameters[0].Name = "val1"; member.Parameters[1].Name = "val2"; }
+                            else if (n == "pow") { member.Parameters[0].Name = "base"; member.Parameters[1].Name = "pow"; }
                         }
+                        else if (n == "sin" || n == "cos" || n == "tan") member.Parameters[0].Name = "angleRadians";
+                        else member.Parameters[0].Name = "val";
                     }
                 }
-                var objPath = Path.Combine(path, "Object");
-                if (models.ContainsKey(objPath))
+            }
+            var objPath = Path.Combine(path, "Object");
+            if (models.TryGetValue(objPath, out model))
+            {
+                var @class = model.GetPublicClass();
+                if (!@class.Members.Contains("prototype"))
                 {
-                    var objModel = models[objPath].GetPublicClass();
-                    if (!objModel.Members.Contains("prototype"))
-                    {
-                        objModel.Members.Add(new MemberModel("prototype", "Object", FlagType.Dynamic | FlagType.Variable, Visibility.Public));
-                    }
+                    @class.Members.Add(new MemberModel("prototype", "Object", FlagType.Dynamic | FlagType.Variable, Visibility.Public));
                 }
             }
         }
@@ -399,18 +375,16 @@ namespace AS3Context
         static void AddImports(FileModel model, Dictionary<string, string> imports)
         {
             if (model is null) return;
-            foreach (string import in imports.Keys)
-                model.Imports.Add(new MemberModel(imports[import], import, FlagType.Import, 0));
-                
+            foreach (var pair in imports)
+                model.Imports.Add(new MemberModel(pair.Value, pair.Key, FlagType.Import, 0));
             imports.Clear();
         }
 
         static Dictionary<string, ASDocItem> GetDocs(string package)
         {
             var docPackage = package == "" ? "__Global__" : package;
-            return Docs.ContainsKey(docPackage)
-                ? Docs[docPackage]
-                : null;
+            Docs.TryGetValue(docPackage, out var result);
+            return result;
         }
 
         static MemberList GetMembers(IEnumerable<MemberInfo> abcMembers, FlagType baseFlags, QName instName)
@@ -561,8 +535,7 @@ namespace AS3Context
             dPath += member.Name;
             if ((member.Flags & FlagType.Getter) > 0) dPath += ":get";
             else if ((member.Flags & FlagType.Setter) > 0) dPath += ":set";
-
-            if (thisDocs.ContainsKey(dPath)) applyASDoc(thisDocs[dPath], member);
+            if (thisDocs.TryGetValue(dPath, out var doc)) ApplyASDoc(doc, member);
         }
 
         static string ImportType(QName type) => type is null ? "*" : ImportType(type.ToTypeString());
@@ -579,7 +552,7 @@ namespace AS3Context
                 return qname.Substring(0, q + 1) + ImportType(qname.Substring(q + 1, p - q - 1)) + qname.Substring(p);
             }
             if (p < 0) return qname;
-            if (imports.ContainsKey(qname)) return imports[qname];
+            if (imports.TryGetValue(qname, out var import)) return import;
             string cname = qname.Substring(p + 1);
             if (!conflicts.ContainsKey(cname)) conflicts.Add(cname, qname);
             else if (conflicts[cname] != qname) 

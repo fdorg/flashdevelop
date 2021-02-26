@@ -160,7 +160,7 @@ namespace FileExplorer
                     BridgeManager.RemoteOpen(path);
                     return;
                 }
-                Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
+                var config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("explorer")) config["explorer"] = explorerAction;
                 string explorer = PluginBase.MainForm.ProcessArgString(config["explorer"]);
                 int start = explorer.StartsWith('\"') ? explorer.IndexOf('\"', 2) : 0;

@@ -211,9 +211,8 @@ namespace SourceControl.Helpers
             var longestInfo = string.Empty;
             foreach (var annotation in annotations)
             {
-                if (commits.ContainsKey(annotation.Hash))
+                if (commits.TryGetValue(annotation.Hash, out var def))
                 {
-                    var def = commits[annotation.Hash];
                     annotation.Author = def.Author;
                     annotation.AuthorMail = def.AuthorMail;
                     annotation.AuthorTime = def.AuthorTime;

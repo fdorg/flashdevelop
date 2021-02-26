@@ -147,9 +147,8 @@ namespace SourceControl.Sources.Mercurial
 
             var p = path.IndexOf(Path.DirectorySeparatorChar);
             var childName = p < 0 ? path : path.Substring(0, p);
-            if (HasChildren && Children.ContainsKey(childName))
+            if (HasChildren && Children.TryGetValue(childName, out var child))
             {
-                var child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
                 return child;
             }
@@ -195,9 +194,9 @@ namespace SourceControl.Sources.Mercurial
                 HasChildren = true;
                 Children = new Dictionary<string, StatusNode> {{name, node}};
             }
-            else if (Children.ContainsKey(name))
+            else if (Children.TryGetValue(name, out var child))
             {
-                return Children[name];
+                return child;
             }
             else Children.Add(name, node);
             return node;

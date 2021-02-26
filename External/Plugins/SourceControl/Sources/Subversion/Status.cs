@@ -125,14 +125,12 @@ namespace SourceControl.Sources.Subversion
         public StatusNode FindPath(string path)
         {
             if (path == ".") return this;
-
             var p = path.IndexOf(Path.DirectorySeparatorChar);
             var childName = p < 0 ? path : path.Substring(0, p);
-            if (HasChildren && Children.ContainsKey(childName))
+            if (HasChildren && Children.TryGetValue(childName, out var child))
             {
-                var child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }

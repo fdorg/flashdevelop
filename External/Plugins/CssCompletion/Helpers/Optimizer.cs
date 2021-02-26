@@ -62,22 +62,23 @@ namespace CssCompletion
                 TraceManager.Add(parts[0] + " command not found");
                 return;
             }
-            string outFile = Path.GetFileNameWithoutExtension(fileName) + ".css";
-            string args = parts[1].Replace("$(options)", options)
+            var outFile = Path.GetFileNameWithoutExtension(fileName) + ".css";
+            var args = parts[1].Replace("$(options)", options)
                 .Replace("$(in)", Path.GetFileName(fileName))
                 .Replace("$(out)", outFile);
             TraceManager.Add(Path.GetFileNameWithoutExtension(cmd) + " " + args.Trim());
-
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = cmd;
-            info.Arguments = args;
+            var info = new ProcessStartInfo
+            {
+                FileName = cmd,
+                Arguments = args,
+                CreateNoWindow = true,
+                WorkingDirectory = Path.GetDirectoryName(fileName),
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             if (info.EnvironmentVariables.ContainsKey("path")) info.EnvironmentVariables["path"] += ";" + toolsDir;
             else info.EnvironmentVariables["path"] = toolsDir;
-            info.CreateNoWindow = true;
-            info.WorkingDirectory = Path.GetDirectoryName(fileName);
-            info.UseShellExecute = false;
-            info.RedirectStandardOutput = true;
-            info.RedirectStandardError = true;
             var p = Process.Start(info);
             if (p.WaitForExit(3000))
             {

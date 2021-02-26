@@ -63,12 +63,9 @@ namespace ASCompletion.Model
         public static PathModel GetModel(string path, IASContext context)
         {
             if (context?.Settings is null) return null;
-
-            PathModel result;
             var modelName = context.Settings.LanguageId + "|" + path.ToUpper();
-            if (pathes.ContainsKey(modelName))
+            if (pathes.TryGetValue(modelName, out var result))
             {
-                result = pathes[modelName];
                 if (result.IsTemporaryPath || !result.IsValid || result.FilesCount == 0)
                 {
                     pathes[modelName] = result = new PathModel(path, context);
@@ -86,7 +83,7 @@ namespace ASCompletion.Model
         public bool IsValid;
         public bool IsVirtual;
         public bool ValidatePackage;
-        readonly object lockObject = new object();
+        readonly object lockObject = new();
         bool inited;
         bool inUse;
         WatcherEx watcher;
@@ -298,17 +295,14 @@ namespace ASCompletion.Model
                 return;
             }
             // file change: schedule for update
-            if (IsVirtual)
-            {
-                SetTimer();
-            }
+            if (IsVirtual) SetTimer();
             else
             {
                 lock (lockObject)
                 {
-                    if (files.ContainsKey(e.FullPath.ToUpper()))
+                    if (files.TryGetValue(e.FullPath.ToUpper(), out var model))
                     {
-                        files[e.FullPath.ToUpper()].OutOfDate = true;
+                        model.OutOfDate = true;
                         SetTimer();
                     }
                     else ParseNewFile(e.FullPath);
@@ -337,10 +331,7 @@ namespace ASCompletion.Model
                 return;
             }
             // file deleted
-            if (IsVirtual)
-            {
-                SetTimer();
-            }
+            if (IsVirtual) SetTimer();
             else if (files.ContainsKey(e.FullPath.ToUpper()))
             {
                 RemoveFile(e.FullPath);
@@ -412,17 +403,16 @@ namespace ASCompletion.Model
             var explored = new List<string>();
             var foundFiles = new List<string>();
             ExploreFolder(path, masks, explored, foundFiles);
-            foreach (string fileName in foundFiles)
+            foreach (var fileName in foundFiles)
                 if (!files.ContainsKey(fileName.ToUpper()))
                 {
-                    //TraceManager.Add("add: " + fileName);
                     var newModel = new FileModel(fileName) {Context = Owner, OutOfDate = true};
                     if (Owner.IsModelValid(newModel, this))
                         files[fileName.ToUpper()] = newModel;
                 }
         }
 
-        void ExploreFolder(string path, string[] masks, ICollection<string> explored, List<string> foundFiles)
+        static void ExploreFolder(string path, string[] masks, ICollection<string> explored, List<string> foundFiles)
         {
             if (!Directory.Exists(path)) return;
             explored.Add(path);
@@ -454,7 +444,6 @@ namespace ASCompletion.Model
                 watcher.EnableRaisingEvents = false;
                 watcher.Dispose();
                 watcher = null;
-                //TraceManager.Add("Release: " + Path);
             }
         }
 
@@ -472,17 +461,13 @@ namespace ASCompletion.Model
         /// </summary>
         public void EnableWatcher()
         {
-            if (watcher != null)
-                watcher.EnableRaisingEvents = true;
+            if (watcher != null) watcher.EnableRaisingEvents = true;
         }
 
         public bool HasFile(string fileName)
         {
             if (!IsValid || files.Count == 0) return false;
-            lock (lockObject) 
-            {
-                return files.ContainsKey(fileName.ToUpper());
-            }
+            lock (lockObject) return files.ContainsKey(fileName.ToUpper());
         }
 
         public bool TryGetFile(string fileName, out FileModel value)

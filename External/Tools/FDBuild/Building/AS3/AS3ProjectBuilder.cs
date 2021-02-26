@@ -92,8 +92,8 @@ namespace ProjectManager.Building.AS3
             }
 
             jvmConfig = JvmConfigHelper.ReadConfig(flexsdkPath);
-            if (jvmConfig.ContainsKey("java.args") && jvmConfig["java.args"].Trim().Length > 0)
-                VMARGS = jvmConfig["java.args"];
+            if (jvmConfig.TryGetValue("java.args", out var args) && args.Trim().Length > 0)
+                VMARGS = args;
         }
 
         private bool ShouldCopyASCSH(string lib, string ascsh)

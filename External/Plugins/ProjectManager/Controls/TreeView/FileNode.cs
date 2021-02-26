@@ -33,18 +33,14 @@ namespace ProjectManager.Controls.TreeView
         {
             if (project != null) 
             {
-                if (project.IsOutput(filePath))
-                    return new ProjectOutputNode(filePath);
-                if (project.IsInput(filePath))
-                    return new InputSwfNode(filePath);
+                if (project.IsOutput(filePath)) return new ProjectOutputNode(filePath);
+                if (project.IsInput(filePath)) return new InputSwfNode(filePath);
             }
-
-            string ext = Path.GetExtension(filePath).ToLower();
-
+            var ext = Path.GetExtension(filePath).ToLower();
             if (FileInspector.IsSwf(ext) || FileInspector.IsSwc(filePath, ext))
                 return new SwfFileNode(filePath);
-            if (FileAssociations.ContainsKey(ext)) // custom nodes building
-                return FileAssociations[ext](filePath);
+            if (FileAssociations.TryGetValue(ext, out var factory)) // custom nodes building
+                return factory(filePath);
             return new FileNode(filePath);
         }
 
