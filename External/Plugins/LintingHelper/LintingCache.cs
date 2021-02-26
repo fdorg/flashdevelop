@@ -1,5 +1,4 @@
-﻿using LintingHelper.Helpers;
-using PluginCore;
+﻿using PluginCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,12 +6,7 @@ namespace LintingHelper
 {
     internal class LintingCache
     {
-        readonly Dictionary<string, List<LintingResult>> results;
-
-        public LintingCache()
-        {
-            results = new Dictionary<string, List<LintingResult>>();
-        }
+        readonly Dictionary<string, List<LintingResult>> results = new();
 
         /// <summary>
         /// Returns all cached results of all files that are still in the cache
@@ -22,7 +16,7 @@ namespace LintingHelper
         public List<LintingResult> GetResultsFromPosition(ITabbedDocument document, int position)
         {
             var sci = document.SciControl;
-            if (!results.TryGetValue(sci.FileName, out var list)) return null;
+            if (sci is null || !results.TryGetValue(sci.FileName, out var list)) return null;
             var line = sci.LineFromPosition(position);
 
             var localResults = new List<LintingResult>();
@@ -31,16 +25,9 @@ namespace LintingHelper
                 var start = sci.PositionFromLine(result.Line - 1);
                 var len = sci.LineLength(result.Line - 1);
                 start += result.FirstChar;
-                if (result.Length > 0)
-                {
-                    len = result.Length;
-                }
-                else
-                {
-                    len -= result.FirstChar;
-                }
+                if (result.Length > 0) len = result.Length;
+                else len -= result.FirstChar;
                 var end = start + len;
-                    
                 if (start <= position && (end >= position || result.Length == -1 && result.Line == line + 1))
                 {
                     //suitable result
@@ -68,13 +55,7 @@ namespace LintingHelper
                 list.Add(result);
         }
 
-        public void RemoveDocument(string document)
-        {
-            if (results.ContainsKey(document))
-            {
-                results.Remove(document);
-            }
-        }
+        public void RemoveDocument(string document) => results.Remove(document);
 
         /// <summary>
         /// Clears the whole cache

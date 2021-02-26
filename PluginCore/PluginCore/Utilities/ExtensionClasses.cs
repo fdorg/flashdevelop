@@ -207,5 +207,19 @@ namespace PluginCore
                 action(@this[i]);
             }
         }
+
+        /// <summary>
+        /// Helper method for a dictionary containing lists,
+        /// Returns either the list of the given <paramref name="key"/> or a new list, if the key does not exist.
+        /// </summary>
+        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : new()
+        {
+            if (!dict.TryGetValue(key, out var list))
+            {
+                list = new TValue();
+                dict[key] = list;
+            }
+            return list;
+        }
     }
 }
