@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LintingHelper.Helpers;
 using PluginCore;
 using PluginCore.Managers;
 
@@ -9,8 +8,8 @@ namespace LintingHelper.Managers
     {
         internal const string TraceGroup = "LintingManager";
 
-        static readonly Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
-        internal static LintingCache Cache = new LintingCache();
+        static readonly Dictionary<string, List<ILintProvider>> linters = new();
+        internal static LintingCache Cache = new();
 
         /// <summary>
         /// Registers a new linter for the specified language. There can be more than one linter
@@ -20,14 +19,8 @@ namespace LintingHelper.Managers
         public static void RegisterLinter(string language, ILintProvider provider)
         {
             language = language.ToLower();
-
             var list = linters.GetOrCreate(language);
-
-            if (!list.Contains(provider))
-            {
-                list.Add(provider);
-            }
-
+            if (!list.Contains(provider)) list.Add(provider);
             EventManager.DispatchEvent(provider, new DataEvent(EventType.Command, "LintingManager.LinterRegistered", language));
         }
 
@@ -65,7 +58,6 @@ namespace LintingHelper.Managers
         public static void LintFiles(IEnumerable<string> files, string language)
         {
             language = language.ToLower();
-
             foreach (var linter in GetLinters(language))
             {
                 linter.LintAsync(files, results => PluginBase.RunAsync(() =>
@@ -103,10 +95,7 @@ namespace LintingHelper.Managers
         public static void LintProject(IProject project)
         {
             var language = project.Language.ToLower();
-
-            //remove cache
             Cache.RemoveAll();
-
             foreach (var linter in GetLinters(language))
             {
                 linter.LintProjectAsync(project, results => PluginBase.RunAsync(() =>
@@ -120,9 +109,9 @@ namespace LintingHelper.Managers
         public static void LintDocument(ITabbedDocument doc)
         {
             var sci = doc.SciControl;
+            if (sci is null) return;
             var files = new [] { sci.FileName };
             var language = sci.ConfigurationLanguage;
-
             LintFiles(files, language);
         }
 

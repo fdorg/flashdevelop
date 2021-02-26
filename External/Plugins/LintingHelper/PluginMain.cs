@@ -7,7 +7,6 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using System.ComponentModel;
 using System.IO;
-using LintingHelper.Helpers;
 using LintingHelper.Managers;
 using PluginCore.Localization;
 using ProjectManager;
