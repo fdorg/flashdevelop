@@ -321,9 +321,9 @@ namespace CodeRefactor.Commands
                 }
             }
 
-            if (results.ContainsKey(oldFileName))
+            if (results.TryGetValue(oldFileName, out var oldSearchMatches))
             {
-                results[newFileName] = results[oldFileName];
+                results[newFileName] = oldSearchMatches;
                 results.Remove(oldFileName);
             }
             if (reopen) PluginBase.MainForm.OpenEditableDocument(newFileName);
@@ -351,8 +351,8 @@ namespace CodeRefactor.Commands
                     var column = match.Column;
                     var lineNumber = match.Line;
                     // if we've already modified the line, we use the data from the last change
-                    var changedLine = (lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText);
-                    var offset = (lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0);
+                    var changedLine = lineChanges.TryGetValue(lineNumber, out var newChangedLine) ? newChangedLine : match.LineText;
+                    lineOffsets.TryGetValue(lineNumber, out var offset);
                     // offsets our column references to take into account previous changes to the line
                     column += offset;
                     // determines what the newly formed line will look like

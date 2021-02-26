@@ -68,7 +68,7 @@ namespace ProjectManager.Projects
             if (HasSupport)
             {
                 var platforms = LanguageSupport.Platforms;
-                if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].VersionNames;
+                if (platform != null && platforms.TryGetValue(platform, out var result)) return result.VersionNames;
             }
             return new[] { "0.0" };
         }
@@ -78,7 +78,7 @@ namespace ProjectManager.Projects
             if (HasSupport)
             {
                 var platforms = LanguageSupport.Platforms;
-                if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].LastVersion.Value;
+                if (platform != null && platforms.TryGetValue(platform, out var result)) return result.LastVersion.Value;
             }
             return "0.0";
         }
@@ -107,7 +107,7 @@ namespace ProjectManager.Projects
             if (HasSupport)
             {
                 var platforms = LanguageSupport.Platforms;
-                if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].IsGraphical;
+                if (platform != null && platforms.TryGetValue(platform, out var result)) return result.IsGraphical;
             }
             return false;
         }

@@ -428,10 +428,12 @@ namespace ProjectManager
 
                 case EventType.FileSave:
                     // refresh the tree to update any included <mx:Script> tags
-                    string path = PluginBase.MainForm.CurrentDocument.FileName;
-                    if (Settings.EnableMxmlMapping && FileInspector.IsMxml(Path.GetExtension(path).ToLower()) && Tree.NodeMap.ContainsKey(path))
+                    var path = PluginBase.MainForm.CurrentDocument!.FileName;
+                    if (Settings.EnableMxmlMapping
+                        && FileInspector.IsMxml(Path.GetExtension(path).ToLower())
+                        && Tree.NodeMap.TryGetValue(path, out var node))
                     {
-                        Tree.RefreshNode(Tree.NodeMap[path]);
+                        Tree.RefreshNode(node);
                     }
                     TabColors.UpdateTabColors(Settings);
                     break;
@@ -837,8 +839,8 @@ namespace ProjectManager
             // try to open with the same icon that the treeview is using
             if (doc.FileName is { } fileName)
             {
-                if (Tree.NodeMap.ContainsKey(fileName))
-                    bitmap = Tree.ImageList.Images[Tree.NodeMap[fileName].ImageIndex] as Bitmap;
+                if (Tree.NodeMap.TryGetValue(fileName, out var node))
+                    bitmap = Tree.ImageList.Images[node.ImageIndex] as Bitmap;
                 else
                     bitmap = Icons.GetImageForFile(fileName).Img as Bitmap;
             }

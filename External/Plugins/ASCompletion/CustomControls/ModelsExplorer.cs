@@ -216,7 +216,7 @@ namespace ASCompletion
         TreeNodeCollection FindPackage(string package)
         {
             if (package.IsNullOrEmpty()) return rootNodes;
-            if (packages.ContainsKey(package)) return packages[package];
+            if (packages.TryGetValue(package, out var result)) return result;
             var p = package.LastIndexOf('.');
             var newPackage = p < 0 ? package : package.Substring(p+1);
             var parentPackage = p < 0 ? "" : package.Substring(0, p);

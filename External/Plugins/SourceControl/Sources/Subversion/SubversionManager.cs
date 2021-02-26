@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Subversion
@@ -37,8 +38,7 @@ namespace SourceControl.Sources.Subversion
 
         StatusNode? FindNode(string path, string rootPath)
         {
-            if (!statusCache.ContainsKey(rootPath)) return null;
-            var status = statusCache[rootPath];
+            if (!statusCache.TryGetValue(rootPath, out var status)) return null;
             var len = path.Length;
             var rlen = rootPath.Length + 1;
             if (len < rlen) path = ".";
@@ -50,13 +50,11 @@ namespace SourceControl.Sources.Subversion
         {
             var root = FindNode(path, rootPath);
             if (root is null) return null;
-
             var children = new List<StatusNode>();
             GetChildren(root, children);
-            var result = new List<VCStatusReport>();
-            foreach (var child in children)
-                result.Add(new VCStatusReport(GetNodePath(child, rootPath), child.Status));
-            return result;
+            return children
+                .Select(child => new VCStatusReport(GetNodePath(child, rootPath), child.Status))
+                .ToList();
         }
 
         static string GetNodePath(StatusNode child, string rootPath)
@@ -104,10 +102,10 @@ namespace SourceControl.Sources.Subversion
         public bool SetPathDirty(string path, string rootPath)
         {
             if (ignoreDirty) return false;
-            if (statusCache.ContainsKey(rootPath))
+            if (statusCache.TryGetValue(rootPath, out var status))
             {
                 if (reIgnore.IsMatch(path)) return false;
-                return statusCache[rootPath].SetPathDirty(path);
+                return status.SetPathDirty(path);
             }
             return false;
         }

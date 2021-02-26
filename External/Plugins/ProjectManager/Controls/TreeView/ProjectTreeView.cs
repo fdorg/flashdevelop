@@ -84,7 +84,7 @@ namespace ProjectManager.Controls.TreeView
 
         public void Select(string path)
         {
-            if (nodeMap.ContainsKey(path)) SelectedNode = nodeMap[path];
+            if (nodeMap.TryGetValue(path, out var node)) SelectedNode = node;
             else
             {
                 var index = 0;
@@ -94,10 +94,10 @@ namespace ProjectManager.Controls.TreeView
                     index = path.IndexOfOrdinal(separator, index);
                     if (index == -1) break; // Stop, not found
                     var subPath = path.Substring(0, index);
-                    if (nodeMap.ContainsKey(subPath)) nodeMap[subPath].Expand();
+                    if (nodeMap.TryGetValue(subPath, out node)) node.Expand();
                     index++;
                 }
-                if (nodeMap.ContainsKey(path)) SelectedNode = nodeMap[path];
+                if (nodeMap.TryGetValue(path, out node)) SelectedNode = node;
             }
         }
 
@@ -225,14 +225,6 @@ namespace ProjectManager.Controls.TreeView
                 foreach (GenericNode node in selectedNodes)
                 {
                     result.Add(node.BackingPath);
-
-                    // if this is a "mapped" file, that is a file that "hides" other related files,
-                    // make sure we select the related files also.
-                    // DISABLED - causes inconsistent behavior
-                    /*if (node is FileNode)
-                        foreach (GenericNode mappedNode in node.Nodes)
-                            if (mappedNode is FileNode)
-                                paths.Add(mappedNode.BackingPath);*/
                 }
                 return result.ToArray();
             }
@@ -259,20 +251,17 @@ namespace ProjectManager.Controls.TreeView
             set
             {
                 foreach (var path in value)
-                    if (nodeMap.ContainsKey(path))
+                    if (nodeMap.TryGetValue(path, out var node))
                     {
-                        var node = nodeMap[path];
-                        if (!(node is SwfFileNode) && !(node is ProjectNode))
+                        if (node is not SwfFileNode && node is not ProjectNode)
                         {
                             node.Expand();
-                            //if (!(node is ReferencesNode))
-                            //    node.Refresh(false);
                         }
                     }
             }
         }
 
-        void AddExpanded(IEnumerable nodes, ICollection<string> list)
+        static void AddExpanded(IEnumerable nodes, ICollection<string> list)
         {
             foreach (GenericNode node in nodes)
                 if (node.IsExpanded)
@@ -307,8 +296,8 @@ namespace ProjectManager.Controls.TreeView
                 
                 // restore tree state
                 ExpandedPaths = previouslyExpanded;
-                if (currentPath != null && NodeMap.ContainsKey(currentPath))
-                    SelectedNode = NodeMap[currentPath];
+                if (currentPath != null && NodeMap.TryGetValue(currentPath, out var node))
+                    SelectedNode = node;
                 else
                     SelectedNode = Nodes[0] as GenericNode;// projectNode;
             }
@@ -376,9 +365,9 @@ namespace ProjectManager.Controls.TreeView
                 else
                 {
                     // selective refresh
-                    foreach (string path in paths)
-                        if (nodeMap.ContainsKey(path))
-                            nodeMap[path].Refresh(false);
+                    foreach (var path in paths)
+                        if (nodeMap.TryGetValue(path, out var node))
+                            node.Refresh(false);
                 }
             }
             catch { }

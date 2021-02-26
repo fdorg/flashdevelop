@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text.RegularExpressions;
-using FlashDevelop.Controls;
 using System.Windows.Forms;
-using PluginCore.Localization;
-using PluginCore.Controls;
+using FlashDevelop.Controls;
 using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Localization;
 
 namespace FlashDevelop.Dialogs
 {
@@ -155,7 +155,7 @@ namespace FlashDevelop.Dialogs
                 {
                     var value = "";
                     if (match.Groups.Count == 3) value = match.Groups[2].Value;
-                    var editor = new ArgEditor(argument, value.Split(",".ToCharArray())) {Name = argument};
+                    var editor = new ArgEditor(argument, value.Split(',')) {Name = argument};
                     argsPanel.Controls.Add(editor);
                 }
                 match = match.NextMatch();

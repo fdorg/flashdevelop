@@ -22,11 +22,7 @@ namespace FDBuild.Building.AS3
             mxmlcPath = Path.Combine(compilerPath, "js", "lib", "mxmlc.jar");
             if (!File.Exists(mxmlcPath)) throw new Exception("Could not locate js\\lib\\mxmlc.jar in FlexJS SDK.");
             jvmConfig = JvmConfigHelper.ReadConfig(compilerPath);
-            if (jvmConfig.ContainsKey("java.args"))
-            {
-                var args = jvmConfig["java.args"];
-                if (args.Trim().Length > 0) jvmArgs = args;
-            }
+            if (jvmConfig.TryGetValue("java.args", out var args) && args.Trim().Length > 0) jvmArgs = args;
         }
 
         protected override void DoBuild(string[] extraClassPaths, bool noTrace)

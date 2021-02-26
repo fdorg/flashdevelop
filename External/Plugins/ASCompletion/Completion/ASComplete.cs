@@ -1773,16 +1773,12 @@ namespace ASCompletion.Completion
                 var comments = meta.Comments;
                 if (name.Length > 0 && type.Length > 0)
                 {
-                    ClassModel evClass;
-                    if (!eventTypes.ContainsKey(type))
+                    if (!eventTypes.TryGetValue(type, out var evClass))
                     {
                         evClass = ResolveType(type.Replace(':', '.'), null);
                         eventTypes.Add(type, evClass);
                     }
-                    else evClass = eventTypes[type];
-                    if (evClass.IsVoid()) 
-                        continue;
-
+                    if (evClass.IsVoid()) continue;
                     bool typeFound = false;
                     foreach (MemberModel member in evClass.Members)
                     {
@@ -2104,14 +2100,15 @@ namespace ASCompletion.Completion
             currentClassHash = classScope?.QualifiedName;
 
             // if the completion history has a matching entry, it means the user has previously completed from this class.
-            if (currentClassHash is null || !completionHistory.ContainsKey(currentClassHash)) return;
+            if (currentClassHash is null) return;
+            if (!completionHistory.TryGetValue(currentClassHash, out var history)) return;
             // If the last-completed member for the class starts with the currently typed text (tail), select it!
             // Note that if the tail is currently empty (i.e., the user has just typed the first dot), this still passes.
             // This allows it to highlight the last-completed member instantly just by hitting the dot.
             // Also does a check if the tail matches exactly the currently selected item; don't change it!
-            if (CompletionList.SelectedLabel != tail && completionHistory[currentClassHash].ToLower().StartsWithOrdinal(tail.ToLower()))
+            if (CompletionList.SelectedLabel != tail && history.ToLower().StartsWithOrdinal(tail.ToLower()))
             {
-                CompletionList.SelectItem(completionHistory[currentClassHash]);
+                CompletionList.SelectItem(history);
             }
         }
 

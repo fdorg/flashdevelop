@@ -227,11 +227,9 @@ namespace ProjectManager.Controls
 
         public static FDImage ExtractIconIfNecessary(string file)
         {
-            string extension = Path.GetExtension(file);
-            if (extensionIcons.ContainsKey(extension))
-            {
-                return extensionIcons[extension];
-            }
+            var extension = Path.GetExtension(file);
+            if (extensionIcons.TryGetValue(extension, out var result))
+                return result;
 
             Icon icon = IconExtractor.GetFileIcon(file, true);
             Image image = ScaleHelper.Scale(icon.ToBitmap());

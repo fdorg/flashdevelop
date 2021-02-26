@@ -248,18 +248,18 @@ namespace ASCompletion.Model
                     }
                 }
 
-                string pVal = pMatches[i].Groups["pVal"].Value;
+                var pVal = pMatches[i].Groups["pVal"].Value;
                 if (!string.IsNullOrEmpty(pVal))
                 {
-                    if (qStrRepls.ContainsKey(pVal))
+                    if (qStrRepls.TryGetValue(pVal, out var newPValue))
                     {
-                        pVal = qStrRepls[pVal];
+                        pVal = newPValue;
                     }
                     else
                     {
-                        foreach (KeyValuePair<string,string> replEntry in qStrRepls)
+                        foreach (var pair in qStrRepls)
                         {
-                            if (pVal.Contains(replEntry.Key))
+                            if (pVal.Contains(pair.Key))
                             {
                                 pVal = "[COLOR=#F00][I]InvalidValue[/I][/COLOR]";
                                 break;
@@ -267,18 +267,15 @@ namespace ASCompletion.Model
                         }
                     }
                 }
-                else
+                else pVal = null;
+                MemberModel pModel = new MemberModel
                 {
-                    pVal = null;
-                }
-
-                MemberModel pModel = new MemberModel();
-                pModel.Name = pName;
-                pModel.Type = pType;
-                pModel.Value = pVal;
-                pModel.Flags = FlagType.ParameterVar;
-                pModel.Access = Visibility.Default;
-
+                    Name = pName,
+                    Type = pType,
+                    Value = pVal,
+                    Flags = FlagType.ParameterVar,
+                    Access = Visibility.Default
+                };
                 fm.Parameters.Add(pModel);
             }
             return fm;

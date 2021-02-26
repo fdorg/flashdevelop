@@ -1505,14 +1505,14 @@ namespace CodeFormatter.Handlers
                             }
                         }
 
+                        // TODO slavara, possible BUG: mb if (!groupMap.ContainsKey(Attr_Group_Other))
                         if (groupMap.ContainsKey(Attr_Group_Other))
                         {
-                            List<AttrMapping> attrsForGroup = new List<AttrMapping>();
+                            var attrsForGroup = new List<AttrMapping>();
                             groupMap[Attr_Group_Other] = attrsForGroup;
-                            for (int k = 0; k < attrs.Count; k++)
+                            foreach (var it in attrs)
                             {
-                                string attrName = attrs[k].mName;
-                                attrsForGroup.Add(new AttrMapping(attrs[k], ""));
+                                attrsForGroup.Add(new AttrMapping(it, ""));
                             }
                             attrs.Clear();
                         }

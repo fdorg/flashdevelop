@@ -52,7 +52,7 @@ namespace XMLCompletion
                 var ext = Path.GetExtension(value);
                 if (ext.Length == 0) return;
                 ext = ext.Substring(1);
-                var lang = PluginBase.MainForm.CurrentDocument?.SciControl.ConfigurationLanguage;
+                var lang = PluginBase.MainForm.CurrentDocument?.SciControl?.ConfigurationLanguage;
                 if (lang == "html") ext = "html";
                 languageTags ??= new Dictionary<string, LanguageDef>();
                 if (!languageTags.ContainsKey(ext)) TryLoadDeclaration(ext);
@@ -174,8 +174,8 @@ namespace XMLCompletion
                                 {
                                     if (attribute.StartsWith('@'))
                                     {
-                                        if (groups.ContainsKey(attribute))
-                                            temp += "," + groups[attribute];
+                                        if (groups.TryGetValue(attribute, out var group))
+                                            temp += "," + group;
                                         continue;
                                     }
                                     temp += "," + attribute;

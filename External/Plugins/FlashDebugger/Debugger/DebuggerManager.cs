@@ -213,7 +213,7 @@ namespace FlashDebugger
         {
             if (file is null) return null;
             string fileFullPath = file.getFullPath();
-            if (m_PathMap.ContainsKey(fileFullPath)) return m_PathMap[fileFullPath];
+            if (m_PathMap.TryGetValue(fileFullPath, out var result)) return result;
             if (File.Exists(fileFullPath))
             {
                 m_PathMap[fileFullPath] = fileFullPath;

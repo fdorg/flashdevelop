@@ -45,10 +45,7 @@ namespace CssCompletion
         }
 
         static string GetParam(string name, IDictionary<string, string> config)
-        {
-            if (!config.ContainsKey(name)) return "";
-            return config[name].Trim();
-        }
+            => config.TryGetValue(name, out var result) ? result.Trim() : string.Empty;
     }
 
     internal class LocalContext

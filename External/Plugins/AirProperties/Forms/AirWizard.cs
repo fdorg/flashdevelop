@@ -818,19 +818,19 @@ namespace AirProperties
             foreach (string file in files)
                 if (LooksLikeAIRProperties(file)) return file;
 
-            // look if we stored a custom path in the project's lcoal storage
-            Project project = PluginBase.CurrentProject as Project;
-            if (project.Storage.ContainsKey("air-descriptor"))
-                path = project.GetAbsolutePath(project.Storage["air-descriptor"]);
+            // look if we stored a custom path in the project's local storage
+            var project = (Project) PluginBase.CurrentProject;
+            if (project.Storage.TryGetValue("air-descriptor", out var descriptor))
+                path = project.GetAbsolutePath(descriptor);
 
             return path; // not found
         }
 
-        bool LooksLikeAIRProperties(string file)
+        static bool LooksLikeAIRProperties(string file)
         {
             try
             {
-                string src = File.ReadAllText(file);
+                var src = File.ReadAllText(file);
                 if (src.IndexOfOrdinal("xmlns=\"http://ns.adobe.com/air/") > 0) return true;
             }
             catch { }
@@ -839,180 +839,175 @@ namespace AirProperties
 
         void SaveProperties()
         {
-            string supportedProfilesProperty = string.Empty;
-            if (File.Exists(_propertiesFile))
+            if (!File.Exists(_propertiesFile)) return;
+            // Details tab
+            PropertyManager.SetProperty("id", IDField);
+            PropertyManager.SetProperty("name", NameField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
+            PropertyManager.SetProperty("description", DescriptionField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
+            PropertyManager.SetProperty("copyright", CopyrightField);
+            if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
-                // Details tab
-                PropertyManager.SetProperty("id", IDField);
-                PropertyManager.SetProperty("name", NameField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
-                PropertyManager.SetProperty("description", DescriptionField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
-                PropertyManager.SetProperty("copyright", CopyrightField);
-                if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
+                PropertyManager.SetProperty("version", VersionField);
+            }
+            else
+            {
+                PropertyManager.SetProperty("versionLabel", VersionLabelField);
+                PropertyManager.SetProperty("versionNumber", VersionNoField);
+                // will cause any existing version property to be removed
+                PropertyManager.SetProperty("version", string.Empty);
+            }
+            // Installation tab
+            PropertyManager.SetAttribute("minimumPatchLevel", MinimumPatchLevelField);
+            PropertyManager.SetProperty("filename", FileNameField);
+            PropertyManager.SetProperty("installFolder", InstallFolderField);
+            PropertyManager.SetProperty("programMenuFolder", ProgramMenuFolderField);
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V153)
+            {
+                PropertyManager.SetProperty("publisherID", PublisherIdField);
+            }
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
+            {
+                var supportedProfilesProperty = string.Empty;
+                if (DesktopField.Checked) supportedProfilesProperty += "desktop";
+                if (ExtendedDesktopField.Checked)
                 {
-                    PropertyManager.SetProperty("version", VersionField);
+                    if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
+                    supportedProfilesProperty += "extendedDesktop";
                 }
-                else
+                if (MobileDeviceField.Checked)
                 {
-                    PropertyManager.SetProperty("versionLabel", VersionLabelField);
-                    PropertyManager.SetProperty("versionNumber", VersionNoField);
-                    // will cause any existing version property to be removed
-                    PropertyManager.SetProperty("version", string.Empty);
+                    if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
+                    supportedProfilesProperty += "mobileDevice";
                 }
-                // Installation tab
-                PropertyManager.SetAttribute("minimumPatchLevel", MinimumPatchLevelField);
-                PropertyManager.SetProperty("filename", FileNameField);
-                PropertyManager.SetProperty("installFolder", InstallFolderField);
-                PropertyManager.SetProperty("programMenuFolder", ProgramMenuFolderField);
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V153)
+                if (TvField.Checked)
                 {
-                    PropertyManager.SetProperty("publisherID", PublisherIdField);
+                    if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
+                    supportedProfilesProperty += "tv";
                 }
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
+                if (ExtendedTvField.Checked)
                 {
-                    if (DesktopField.Checked) supportedProfilesProperty += "desktop";
-                    if (ExtendedDesktopField.Checked)
-                    {
-                        if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
-                        supportedProfilesProperty += "extendedDesktop";
-                    }
-                    if (MobileDeviceField.Checked)
-                    {
-                        if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
-                        supportedProfilesProperty += "mobileDevice";
-                    }
-                    if (TvField.Checked)
-                    {
-                        if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
-                        supportedProfilesProperty += "tv";
-                    }
-                    if (ExtendedTvField.Checked)
-                    {
-                        if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
-                        supportedProfilesProperty += "extendedTV";
-                    }
-                    PropertyManager.SetProperty("supportedProfiles", supportedProfilesProperty);
+                    if (supportedProfilesProperty.Length > 0) supportedProfilesProperty += " ";
+                    supportedProfilesProperty += "extendedTV";
                 }
-                // Application tab
-                PropertyManager.SetProperty("allowBrowserInvocation", BrowserInvocationField);
-                PropertyManager.SetProperty("customUpdateUI", CustomUpdateUIField);
-                foreach (PropertyManager.AirApplicationIconField icon in _iconFields)
+                PropertyManager.SetProperty("supportedProfiles", supportedProfilesProperty);
+            }
+            // Application tab
+            PropertyManager.SetProperty("allowBrowserInvocation", BrowserInvocationField);
+            PropertyManager.SetProperty("customUpdateUI", CustomUpdateUIField);
+            foreach (var icon in _iconFields)
+            {
+                if (icon.MinVersion <= PropertyManager.MajorVersion)
                 {
-                    if (icon.MinVersion <= PropertyManager.MajorVersion)
-                    {
-                        PropertyManager.SetProperty("icon/image" + icon.Size + "x" + icon.Size, icon.Field);
-                    }
+                    PropertyManager.SetProperty("icon/image" + icon.Size + "x" + icon.Size, icon.Field);
                 }
-                // Initial Window tab
-                PropertyManager.SetProperty("initialWindow/content", System.Web.HttpUtility.UrlPathEncode(ContentField.Text));
-                PropertyManager.SetProperty("initialWindow/title", TitleField);
-                PropertyManager.SetProperty("initialWindow/systemChrome", SystemChromeField);
-                PropertyManager.SetProperty("initialWindow/transparent", TransparentField);
-                PropertyManager.SetProperty("initialWindow/visible", VisibleField);
-                PropertyManager.SetProperty("initialWindow/resizable", ResizableField);
-                PropertyManager.SetProperty("initialWindow/minimizable", MinimizableField);
-                PropertyManager.SetProperty("initialWindow/maximizable", MaximizableField);
-                PropertyManager.SetProperty("initialWindow/x", XField);
-                PropertyManager.SetProperty("initialWindow/y", YField);
-                PropertyManager.SetProperty("initialWindow/width", WidthField);
-                PropertyManager.SetProperty("initialWindow/height", HeightField);
-                PropertyManager.SetProperty("initialWindow/minSize", (MinSizeXField.Text + " " + MinSizeYField.Text).Trim());
-                PropertyManager.SetProperty("initialWindow/maxSize", (MaxSizeXField.Text + " " + MaxSizeYField.Text).Trim());
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
+            }
+            // Initial Window tab
+            PropertyManager.SetProperty("initialWindow/content", System.Web.HttpUtility.UrlPathEncode(ContentField.Text));
+            PropertyManager.SetProperty("initialWindow/title", TitleField);
+            PropertyManager.SetProperty("initialWindow/systemChrome", SystemChromeField);
+            PropertyManager.SetProperty("initialWindow/transparent", TransparentField);
+            PropertyManager.SetProperty("initialWindow/visible", VisibleField);
+            PropertyManager.SetProperty("initialWindow/resizable", ResizableField);
+            PropertyManager.SetProperty("initialWindow/minimizable", MinimizableField);
+            PropertyManager.SetProperty("initialWindow/maximizable", MaximizableField);
+            PropertyManager.SetProperty("initialWindow/x", XField);
+            PropertyManager.SetProperty("initialWindow/y", YField);
+            PropertyManager.SetProperty("initialWindow/width", WidthField);
+            PropertyManager.SetProperty("initialWindow/height", HeightField);
+            PropertyManager.SetProperty("initialWindow/minSize", (MinSizeXField.Text + " " + MinSizeYField.Text).Trim());
+            PropertyManager.SetProperty("initialWindow/maxSize", (MaxSizeXField.Text + " " + MaxSizeYField.Text).Trim());
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
+            {
+                PropertyManager.SetProperty("initialWindow/aspectRatio", AspectRatioField);
+                PropertyManager.SetProperty("initialWindow/renderMode", RenderModeField);
+                PropertyManager.SetProperty("initialWindow/autoOrients", AutoOrientsField);
+                PropertyManager.SetProperty("initialWindow/fullScreen", FullScreenField);
+            }
+            // File Types tab
+            PropertyManager.SetFileTypes(_fileTypes);
+            // Extensions tab
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
+            {
+                PropertyManager.SetExtensions(_extensions);
+                bool refreshProject = false;
+                var project = (Project) PluginBase.CurrentProject;
+                foreach (var extension in _extensions)
                 {
-                    PropertyManager.SetProperty("initialWindow/aspectRatio", AspectRatioField);
-                    PropertyManager.SetProperty("initialWindow/renderMode", RenderModeField);
-                    PropertyManager.SetProperty("initialWindow/autoOrients", AutoOrientsField);
-                    PropertyManager.SetProperty("initialWindow/fullScreen", FullScreenField);
-                }
-                // File Types tab
-                PropertyManager.SetFileTypes(_fileTypes);
-                // Extensions tab
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
-                {
-                    PropertyManager.SetExtensions(_extensions);
-
-                    bool refreshProject = false;
-                    var project = PluginBase.CurrentProject as Project;
-                    foreach (var extension in _extensions)
+                    if (!string.IsNullOrEmpty(extension.Path))
                     {
-                        if (!string.IsNullOrEmpty(extension.Path))
+                        if (!project.IsLibraryAsset(extension.Path))
                         {
-                            if (!project.IsLibraryAsset(extension.Path))
-                            {
-                                refreshProject = true;  // Just in case in the future the following condition isn't anymore needed...
-                                project.SetLibraryAsset(extension.Path, true);
-                            }
-                            var asset = project.GetAsset(extension.Path);
-                            if (asset.SwfMode != SwfAssetMode.ExternalLibrary)
-                            {
-                                asset.SwfMode = SwfAssetMode.ExternalLibrary;
-                                refreshProject = true;
-                            }
+                            refreshProject = true;  // Just in case in the future the following condition isn't anymore needed...
+                            project.SetLibraryAsset(extension.Path, true);
                         }
-                    }
-
-                    foreach (var extension in _removedExtensions)
-                    {
-                        var asset = project.GetAsset(extension);
-                        if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                        var asset = project.GetAsset(extension.Path);
+                        if (asset.SwfMode != SwfAssetMode.ExternalLibrary)
                         {
-                            project.SetLibraryAsset(extension, false);
+                            asset.SwfMode = SwfAssetMode.ExternalLibrary;
                             refreshProject = true;
                         }
                     }
+                }
 
-                    if (refreshProject) project.Save();
-                }
-                // Mobile Additions tab
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
+                foreach (var extension in _removedExtensions)
                 {
-                    PropertyManager.SetPropertyCData("iPhone/InfoAdditions", IPhoneInfoAdditionsField);
-                    PropertyManager.SetPropertyCData("iPhone/Entitlements", IPhoneEntitlementsField);
+                    var asset = project.GetAsset(extension);
+                    if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                    {
+                        project.SetLibraryAsset(extension, false);
+                        refreshProject = true;
+                    }
                 }
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
-                {
-                    PropertyManager.SetPropertyCData("android/manifestAdditions", AndroidManifestAdditionsField);
-                    PropertyManager.SetProperty("android/colorDepth", AndroidColorDepthCombo);
-                }
-                if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V25)
-                {
-                    PropertyManager.SetProperty("iPhone/requestedDisplayResolution", IPhoneResolutionCombo);
-                    PropertyManager.SetProperty("initialWindow/softKeyboardBehavior", SoftKeyboardField);
-                }
-                if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V32)
-                {
-                    PropertyManager.SetProperty("supportedLanguages", SupportedLanguagesField);
-                    PropertyManager.SetProperty("initialWindow/depthAndStencil", DepthStencilField);
-                }
-                if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V35)
-                {
-                    PropertyManager.SetProperty("initialWindow/requestedDisplayResolution", DesktopResolutionCombo);
-                    if (IPhoneResolutionExcludeButton.Enabled)
-                        PropertyManager.SetAttribute("iPhone/requestedDisplayResolution/@excludeDevices", IPhoneResolutionExcludeButton.Tag as string);
-                }
-                if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V36)
-                {
-                    PropertyManager.SetProperty("iPhone/forceCPURenderModeForDevices", IPhoneForceCPUField);
-                    PropertyManager.SetProperty("iPhone/externalSwfs", IPhoneExternalSWFsField);
-                }
-                PropertyManager.CommitProperties(_propertiesFile);
+
+                if (refreshProject) project.Save();
             }
+            // Mobile Additions tab
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
+            {
+                PropertyManager.SetPropertyCData("iPhone/InfoAdditions", IPhoneInfoAdditionsField);
+                PropertyManager.SetPropertyCData("iPhone/Entitlements", IPhoneEntitlementsField);
+            }
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
+            {
+                PropertyManager.SetPropertyCData("android/manifestAdditions", AndroidManifestAdditionsField);
+                PropertyManager.SetProperty("android/colorDepth", AndroidColorDepthCombo);
+            }
+            if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V25)
+            {
+                PropertyManager.SetProperty("iPhone/requestedDisplayResolution", IPhoneResolutionCombo);
+                PropertyManager.SetProperty("initialWindow/softKeyboardBehavior", SoftKeyboardField);
+            }
+            if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V32)
+            {
+                PropertyManager.SetProperty("supportedLanguages", SupportedLanguagesField);
+                PropertyManager.SetProperty("initialWindow/depthAndStencil", DepthStencilField);
+            }
+            if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V35)
+            {
+                PropertyManager.SetProperty("initialWindow/requestedDisplayResolution", DesktopResolutionCombo);
+                if (IPhoneResolutionExcludeButton.Enabled)
+                    PropertyManager.SetAttribute("iPhone/requestedDisplayResolution/@excludeDevices", IPhoneResolutionExcludeButton.Tag as string);
+            }
+            if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V36)
+            {
+                PropertyManager.SetProperty("iPhone/forceCPURenderModeForDevices", IPhoneForceCPUField);
+                PropertyManager.SetProperty("iPhone/externalSwfs", IPhoneExternalSWFsField);
+            }
+            PropertyManager.CommitProperties(_propertiesFile);
         }
 
         void SelectAndLoadPropertiesFile()
         {
-            if (OpenPropertiesFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                _propertiesFile = OpenPropertiesFileDialog.FileName;
-                LoadProperties(false);
+            if (OpenPropertiesFileDialog.ShowDialog() != DialogResult.OK) return;
+            _propertiesFile = OpenPropertiesFileDialog.FileName;
+            LoadProperties(false);
 
-                if (_isPropertiesLoaded)
-                {
-                    // store custom property file location in project's local storage
-                    Project project = PluginBase.CurrentProject as Project;
-                    project.Storage.Add("air-descriptor", project.GetRelativePath(_propertiesFile));
-                    project.Save();
-                }
+            if (_isPropertiesLoaded)
+            {
+                // store custom property file location in project's local storage
+                var project = (Project) PluginBase.CurrentProject;
+                project.Storage.Add("air-descriptor", project.GetRelativePath(_propertiesFile));
+                project.Save();
             }
         }
 
@@ -1044,7 +1039,6 @@ namespace AirProperties
 
         void UpdateIcon(string fileName, ref TextBox fileNameTextBox, Point dimensions, bool isApplicationIcon)
         {
-
             string projectPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             string iconFolder = _pluginMain.Settings.ProjectIconsFolder;
             string destinationPath = projectPath + @"\" + iconFolder;
@@ -1319,8 +1313,7 @@ namespace AirProperties
             WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIStatusBarStyle") as string,
                                          IPhoneStatusBarStyleCombo, 0);
 
-            object minimumVersion;
-            if (iPhoneAdditions.TryGetValue("MinimumOSVersion", out minimumVersion))
+            if (iPhoneAdditions.TryGetValue("MinimumOSVersion", out var minimumVersion))
                 MinimumiOsVersionField.Text = minimumVersion.ToString();
 
         }
@@ -1330,7 +1323,6 @@ namespace AirProperties
             if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V33)
                 WizardHelper.SetControlValue(iPhoneEntitlements.ValueOrNull("aps-environment") as string,
                      IPhonePushNotifcationsCombo, 0);
-
         }
 
         void FillAndroidManifestFields()
@@ -1398,19 +1390,15 @@ namespace AirProperties
 
         void FileTypeIconButtonClick(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
-            string size = btn.Name.Replace("FileTypeIconButton", "");
-            if (CheckUniformFileNamePrefix(false) && OpenIconFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                Control[] controls = FileTypeIconsPanel.Controls.Find("FileTypeIconField" + size, true);
-                if (controls.Length > 0)
-                {
-                    TextBox filePath = (TextBox)controls[0];
-                    UpdateIcon(OpenIconFileDialog.FileName, ref filePath, new Point(Convert.ToInt32(size), Convert.ToInt32(size)), false);
-                    PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-                    selectedFileType?.SetIconPath(Convert.ToInt16(size), filePath.Text);
-                }
-            }
+            var btn = (Button)sender;
+            var size = btn.Name.Replace("FileTypeIconButton", "");
+            if (!CheckUniformFileNamePrefix(false) || OpenIconFileDialog.ShowDialog() != DialogResult.OK) return;
+            var controls = FileTypeIconsPanel.Controls.Find("FileTypeIconField" + size, true);
+            if (controls.Length == 0) return;
+            TextBox filePath = (TextBox)controls[0];
+            UpdateIcon(OpenIconFileDialog.FileName, ref filePath, new Point(Convert.ToInt32(size), Convert.ToInt32(size)), false);
+            PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
+            selectedFileType?.SetIconPath(Convert.ToInt16(size), filePath.Text);
         }
 
         void LocalesField_SelectedIndexChanged(object sender, EventArgs e)
@@ -1488,11 +1476,11 @@ namespace AirProperties
         void NewFileTypeButton_Click(object sender, EventArgs e)
         {
             //create new file type and call validate file types to set validation flags
-            PropertyManager.AirFileType fileType = new PropertyManager.AirFileType();
+            var fileType = new PropertyManager.AirFileType();
             _fileTypes.Add(fileType);
             ValidateFileTypes();
             //add the item to the list view and select it
-            ListViewItem fileTypeListItem = new ListViewItem(fileType.Name);
+            var fileTypeListItem = new ListViewItem(fileType.Name);
             fileTypeListItem.SubItems.Add(fileType.Extension);
             FileTypesListView.Items.Add(fileTypeListItem);
             FileTypesListView.SelectedIndices.Clear();

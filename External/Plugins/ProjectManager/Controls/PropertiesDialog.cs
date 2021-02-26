@@ -1396,12 +1396,10 @@ namespace ProjectManager.Controls
 
         LanguagePlatform GetLanguagePlatform(string platformName)
         {
-            if (PlatformData.SupportedLanguages.ContainsKey(BaseProject.Language))
-            {
-                var lang = PlatformData.SupportedLanguages[BaseProject.Language];
-                if (lang.Platforms.ContainsKey(platformName)) return lang.Platforms[platformName];
-            }
-            return null;
+            return PlatformData.SupportedLanguages.TryGetValue(BaseProject.Language, out var language)
+                   && language.Platforms.TryGetValue(platformName, out var result)
+                ? result
+                : null;
         }
 
     }

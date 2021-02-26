@@ -263,7 +263,7 @@ namespace HaXeContext
         {
             try
             {
-                return (GetCurrentSDK()?.IsHaxeShim ?? false) ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
+                return GetCurrentSDK()?.IsHaxeShim ?? false ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
             }
             catch
             {
@@ -271,10 +271,10 @@ namespace HaXeContext
             }
         }
 
-        List<string> LookupHaxeLibLibrary(string lib)
+        public List<string> LookupHaxeLibLibrary(string lib)
         {
-            if (haxelibsCache.ContainsKey(lib))
-                return haxelibsCache[lib];
+            if (haxelibsCache.TryGetValue(lib, out var result))
+                return result;
 
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
@@ -318,7 +318,7 @@ namespace HaXeContext
             return paths;
         }
 
-        List<string> LookupLixLibrary(string lib)
+        IEnumerable<string> LookupLixLibrary(string lib)
         {
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (Directory.Exists(haxePath))
@@ -656,8 +656,7 @@ namespace HaXeContext
 
         public string GetHaxeTarget(string platformName)
         {
-            if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
-            var haxeLang = PlatformData.SupportedLanguages["haxe"];
+            if (!PlatformData.SupportedLanguages.TryGetValue("haxe", out var haxeLang)) return null;
             if (haxeLang is null) return null;
             foreach (var platform in haxeLang.Platforms.Values)
                 if (platform.Name == platformName) return platform.HaxeTarget;

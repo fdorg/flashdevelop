@@ -26,9 +26,8 @@ namespace SourceControl.Sources.Git
 
         StatusNode? FindNode(string path, string rootPath)
         {
-            if (statusCache.ContainsKey(rootPath))
+            if (statusCache.TryGetValue(rootPath, out var status))
             {
-                var status = statusCache[rootPath];
                 var len = path.Length;
                 var rlen = rootPath.Length + 1;
                 if (len < rlen) path = ".";
