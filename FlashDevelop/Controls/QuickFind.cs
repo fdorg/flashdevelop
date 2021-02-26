@@ -340,7 +340,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         void FindTextBoxTextChanged(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument?.SciControl is {} sci && sci.TextLength > 30000)
+            if (PluginBase.MainForm.CurrentDocument?.SciControl is {TextLength: > 30000})
             {
                 typingTimer.Stop();
                 typingTimer.Start();

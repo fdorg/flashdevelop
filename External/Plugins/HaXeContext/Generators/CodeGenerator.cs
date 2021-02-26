@@ -476,7 +476,7 @@ namespace HaXeContext.Generators
 
         protected override string CheckEventType(MemberModel handler, string eventName)
         {
-            if (handler?.Parameters is { } parameters && parameters.Count > 1 && parameters[1]?.Type is { } type)
+            if (handler?.Parameters is {Count: > 1} parameters && parameters[1]?.Type is { } type)
             {
                 if (type == "haxe.Constraints.Function") return string.Empty;
                 if (FileParser.IsFunctionType(type))

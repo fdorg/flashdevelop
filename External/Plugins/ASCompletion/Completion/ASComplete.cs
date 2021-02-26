@@ -710,8 +710,7 @@ namespace ASCompletion.Completion
             model.Members.Sort();
             foreach (var aClass in model.Classes) aClass.Members.Sort();
             var src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
-            if (PluginBase.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp
-                && tmp.SciControl is { } sci) 
+            if (PluginBase.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument {SciControl: { } sci})
             {
                 // The model document will be read only
                 sci.IsReadOnly = true;
@@ -2864,7 +2863,7 @@ namespace ASCompletion.Completion
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
                 {
-                    if (features.hasInference && result.Member is { } member && member.Type is null)
+                    if (features.hasInference && result.Member is {Type: null} member)
                     {
                         ctx.CodeComplete.InferType(PluginBase.MainForm.CurrentDocument?.SciControl, local, member);
                         if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
@@ -4546,7 +4545,7 @@ namespace ASCompletion.Completion
         {
             var result = ASContext.Context.GetVisibleExternalElements();
             if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid()
-                && GetVisibleTypeParameters() is { } @params && @params.Count > 0)
+                                                       && GetVisibleTypeParameters() is {Count: > 0} @params)
             {
                 @params.Sort();
                 @params.Merge(result);

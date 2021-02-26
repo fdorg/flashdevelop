@@ -41,12 +41,17 @@ namespace CodeRefactor.Provider
                     || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
                     || expr.IsPackage;
             });
-            DefaultFactory.RegisterValidator(typeof(OrganizeImports), expr => expr.InFile.Imports.Count > 0);
-            DefaultFactory.RegisterValidator(typeof(DelegateMethods), expr => expr != null && !expr.IsNull() && expr.InFile != null && expr.InClass != null
-                                                                              && expr.Type is { } type && !type.IsVoid()
-                                                                              && expr.Member is { } member && member.Flags is { } flags
+            DefaultFactory.RegisterValidator(typeof(OrganizeImports), static expr => expr.InFile.Imports.Count > 0);
+            DefaultFactory.RegisterValidator(typeof(DelegateMethods), static expr => expr != null
+                                                                              && !expr.IsNull()
+                                                                              && expr.InFile != null
+                                                                              && expr.InClass != null
+                                                                              && expr.Type is { } type
+                                                                              && !type.IsVoid()
+                                                                              && expr.Member is {Flags: { } flags}
                                                                               && flags.HasFlag(FlagType.Variable)
-                                                                              && !flags.HasFlag(FlagType.LocalVar) && !flags.HasFlag(FlagType.ParameterVar)
+                                                                              && !flags.HasFlag(FlagType.LocalVar)
+                                                                              && !flags.HasFlag(FlagType.ParameterVar)
                                                                               && expr.Type != ASContext.Context.CurrentClass);
         }
 

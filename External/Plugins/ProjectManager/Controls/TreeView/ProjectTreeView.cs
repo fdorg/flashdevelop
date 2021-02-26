@@ -424,12 +424,12 @@ namespace ProjectManager.Controls.TreeView
         protected override void OnAfterSelect(TreeViewEventArgs e)
         {
             base.OnAfterSelect(e);
-            HideSelection = (SelectedNode is ProjectNode);
+            HideSelection = SelectedNode is ProjectNode;
         }
 
         protected override void OnItemDrag(ItemDragEventArgs e)
         {
-            if (e.Item is GenericNode node && node.IsDraggable)
+            if (e.Item is GenericNode {IsDraggable: true})
                 base.OnItemDrag(e);
         }
 

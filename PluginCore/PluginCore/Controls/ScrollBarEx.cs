@@ -23,29 +23,25 @@ namespace PluginCore.Controls
         /// <summary>
         /// Attaches the custom scrollbars to the specified controls, requires restart.
         /// </summary>
-        public static IDisposable Attach(object obj)
-        {
-            return Attach(obj, false);
-        }
+        public static IDisposable Attach(object obj) => Attach(obj, false);
+
         public static IDisposable Attach(object obj, bool childrenToo)
         {
             if (!Win32.ShouldUseWin32() && !PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false)) return null;
-            if (obj is Control parent && childrenToo)
+            switch (obj)
             {
-                foreach (Control ctrl in parent.Controls) Attach(ctrl);
-                return null;
+                case Control control when childrenToo:
+                    foreach (Control ctrl in control.Controls) Attach(ctrl);
+                    return null;
+                case ListBox control: return new ListBoxScroller(control);
+                case ListView control: return new ListViewScroller(control);
+                case TreeView control: return new TreeViewScroller(control);
+                case RichTextBox control: return new RichTextBoxScroller(control);
+                case DataGridView control: return new DataGridViewScroller(control);
+                case PropertyGrid control: return new PropertyGridScroller(control);
+                case TextBox {Multiline: true, WordWrap: true} control: return new TextBoxScroller(control as TextBoxEx);
+                default: return null;
             }
-            if (obj is ListBox listBox) return new ListBoxScroller(listBox);
-            if (obj is ListView listView) return new ListViewScroller(listView);
-            if (obj is TreeView treeView) return new TreeViewScroller(treeView);
-            if (obj is RichTextBox richTextBox) return new RichTextBoxScroller(richTextBox);
-            if (obj is DataGridView dataGridView) return new DataGridViewScroller(dataGridView);
-            if (obj is PropertyGrid propertyGrid) return new PropertyGridScroller(propertyGrid);
-            if (obj is TextBox textBox && textBox.Multiline && textBox.WordWrap)
-            {
-                return new TextBoxScroller(textBox as TextBoxEx);
-            }
-            return null;
         }
 
         /// <summary>

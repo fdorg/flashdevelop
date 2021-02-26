@@ -2375,7 +2375,7 @@ namespace HaXeContext
             if (IsFileValid)
             {
                 if (cFile.Comments != null) mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
-                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is { } cClass && cClass.Comments != null)
+                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is {Comments: { }} cClass)
                     mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             }
 

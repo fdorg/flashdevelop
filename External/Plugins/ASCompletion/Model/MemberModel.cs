@@ -294,16 +294,39 @@ namespace ASCompletion.Model
         /// Return all MemberModel instance matches in the MemberList
         /// </summary>
         /// <param name="name">Member name to match</param>
-        /// <param name="mask">Flags mask</param>
-        /// <param name="access">Visibility mask</param>
+        /// <param name="mask">Flags mask to match</param>
+        /// <param name="access">Visibility mask to match</param>
         /// <returns>All matches</returns>
         public MemberList MultipleSearch(string name, FlagType mask, Visibility access) 
         {
             var result = new MemberList();
-            foreach (var m in items)
-                if ((m.Flags & mask) == mask
-                    && (access == 0 || (m.Access & access) > 0)
-                    && m.Name == name) result.Add(m);
+            var count = items.Count;
+            for (var i = 0; i < count; i++)
+            {
+                var item = items[i];
+                if ((item.Flags & mask) == mask
+                    && (access == 0 || (item.Access & access) > 0)
+                    && item.Name == name) result.Add(item);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Return all MemberModel instance matches in the MemberList
+        /// </summary>
+        /// <param name="mask">Flags mask to match</param>
+        /// <param name="access">Visibility mask to match</param>
+        /// <returns>All matches</returns>
+        public MemberList MultipleSearch(FlagType mask, Visibility access) 
+        {
+            var result = new MemberList();
+            var count = items.Count;
+            for (var i = 0; i < count; i++)
+            {
+                var item = items[i];
+                if ((item.Flags & mask) == mask && (access == 0 || (item.Access & access) > 0))
+                    result.Add(item);
+            }
             return result;
         }
         

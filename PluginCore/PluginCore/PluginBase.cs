@@ -47,7 +47,7 @@ namespace PluginCore
         /// <param name="action"></param>
         public static void RunAsync(Action action)
         {
-            if (MainForm is Form ui && ui.InvokeRequired) ui.BeginInvoke(action);
+            if (MainForm is Form {InvokeRequired: true} ui) ui.BeginInvoke(action);
             else action.Invoke();
         }
     }

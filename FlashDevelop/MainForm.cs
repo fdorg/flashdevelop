@@ -526,7 +526,7 @@ namespace FlashDevelop
             }
             try
             {
-                if (CurrentDocument is { } doc && doc.IsUntitled && !doc.IsModified && DocumentsLength() == 1)
+                if (CurrentDocument is {IsUntitled: true, IsModified: false} doc && DocumentsLength() == 1)
                 {
                     closingForOpenFile = true;
                     doc.Close();
@@ -2086,7 +2086,7 @@ namespace FlashDevelop
                 contents = Regex.Replace(contents, @"\r\n?|\n", lineEndChar);
                 var processed = ProcessArgString(contents);
                 var actionPoint = SnippetHelper.ProcessActionPoint(processed);
-                if (DocumentsLength() == 1 && Documents[0] is { } doc && doc.IsUntitled)
+                if (DocumentsLength() == 1 && Documents[0] is {IsUntitled: true} doc)
                 {
                     closingForOpenFile = true;
                     doc.Close();

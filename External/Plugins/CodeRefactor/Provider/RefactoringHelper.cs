@@ -424,7 +424,7 @@ namespace CodeRefactor.Provider
             else
             {
                 var lookupPaths = project.SourcePaths.Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language));
-                if (project is Project p && p.AdditionalPaths != null) lookupPaths = lookupPaths.Concat(p.AdditionalPaths);
+                if (project is Project {AdditionalPaths: { }} p) lookupPaths = lookupPaths.Concat(p.AdditionalPaths);
                 lookupPaths = lookupPaths.Select(project.GetAbsolutePath).Distinct();
                 foreach (var path in lookupPaths)
                 {
@@ -453,16 +453,16 @@ namespace CodeRefactor.Provider
         /// </summary>
         internal static FRSearch GetFRSearch(string memberName, bool includeComments, bool includeStrings)
         {
-            var search = new FRSearch(memberName);
-            search.IsRegex = false;
-            search.IsEscaped = false;
-            search.WholeWord = true;
-            search.NoCase = false;
-            search.Filter = SearchFilter.None;
-
+            var search = new FRSearch(memberName)
+            {
+                IsRegex = false,
+                IsEscaped = false,
+                WholeWord = true,
+                NoCase = false,
+                Filter = SearchFilter.None
+            };
             if (!includeComments) search.Filter |= SearchFilter.OutsideCodeComments;
             if (!includeStrings) search.Filter |= SearchFilter.OutsideStringLiterals;
-
             return search;
         }
 
@@ -667,9 +667,7 @@ namespace CodeRefactor.Provider
         {
             if (target.IsPackage) return false;
             if (target.Member is {} member) return member.Access == Visibility.Private && !target.InFile.haXe || (member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0;
-            return target.Type is {} type
-                   && type.Access == Visibility.Private
-                   && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version) < "4.0.0");
+            return target.Type is {Access: Visibility.Private} type && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version) < "4.0.0");
         }
     }
 }

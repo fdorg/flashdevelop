@@ -121,9 +121,9 @@ namespace FlashDebugger.Helpers
                 // then skip it from opening and closing { } the output
                 if (parent.Nodes.Count == 1 || parent.Nodes.Count == 2)
                 {
-                    if (parent is ValueNode pNode && pNode.ClassPath == "Array")
+                    if (parent is ValueNode {ClassPath: "Array"})
                     {
-                        var child1 = (DataNode)parent.Nodes[0];
+                        var child1 = (DataNode) parent.Nodes[0];
                         if (child1.Text == "[static]" || child1.Text == "length")
                         {
                             return false;
