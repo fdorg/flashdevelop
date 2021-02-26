@@ -1090,7 +1090,7 @@ namespace ASCompletion
             findTextTxt.Text = "";
             FindProcTxtLeave(null, null);
             OutlineTree.Focus();
-            if (PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable) doc.SciControl?.Focus();
+            if (PluginBase.MainForm.CurrentDocument is {IsEditable: true} doc) doc.SciControl?.Focus();
         }
 
         // Update colors on start after theme engine
@@ -1125,9 +1125,9 @@ namespace ASCompletion
                 findTextTxt.Text = "";
                 FindProcTxtLeave(null, null);
                 OutlineTree.Focus();
-                if (PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable)
+                if (PluginBase.MainForm.CurrentDocument is {IsEditable: true, SciControl: {} sci})
                 {
-                    doc.SciControl?.Focus();
+                    sci.Focus();
                 }
                 return true;
             }

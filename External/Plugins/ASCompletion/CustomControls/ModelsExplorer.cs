@@ -45,10 +45,8 @@ namespace ASCompletion
         {
             public readonly string Path;
             public ClasspathTreeNode(string path, int count)
-                : base(path + " (" + count + ")", PluginUI.ICON_FOLDER_CLOSED, PluginUI.ICON_FOLDER_OPEN) 
-            {
-                Path = path;
-            }
+                : base(path + " (" + count + ")", PluginUI.ICON_FOLDER_CLOSED, PluginUI.ICON_FOLDER_OPEN)
+                => Path = path;
         }
 
         class ExploreTreeNode : TreeNode
@@ -62,9 +60,9 @@ namespace ASCompletion
 
         class TypeTreeNode : TreeNode
         {
-            public TypeTreeNode(ClassModel model) : base(model.FullName)
+            public TypeTreeNode(MemberModel model) : base(model.FullName)
             {
-                Tag = model.InFile.FileName + "@" + model.Name;
+                Tag = $"{model.InFile.FileName}@{model.Name}";
                 if ((model.Flags & FlagType.Interface) > 0) ImageIndex = SelectedImageIndex = PluginUI.ICON_INTERFACE;
                 else ImageIndex = SelectedImageIndex = PluginUI.ICON_TYPE;
             }
@@ -127,19 +125,23 @@ namespace ASCompletion
             else
             {
                 outlineTreeView.SelectedNode = node;
-                if (node is ClasspathTreeNode || node is PackageTreeNode)
+                switch (node)
                 {
-                    editToolStripMenuItem.Visible = false;
-                    exploreToolStripMenuItem.Visible = true;
-                    convertToolStripMenuItem.Visible = true;
+                    case ClasspathTreeNode:
+                    case PackageTreeNode:
+                        editToolStripMenuItem.Visible = false;
+                        exploreToolStripMenuItem.Visible = true;
+                        convertToolStripMenuItem.Visible = true;
+                        break;
+                    case TypeTreeNode:
+                        editToolStripMenuItem.Visible = true;
+                        exploreToolStripMenuItem.Visible = false;
+                        convertToolStripMenuItem.Visible = true;
+                        break;
+                    default:
+                        e.Cancel = true;
+                        break;
                 }
-                else if (node is TypeTreeNode)
-                {
-                    editToolStripMenuItem.Visible = true;
-                    exploreToolStripMenuItem.Visible = false;
-                    convertToolStripMenuItem.Visible = true;
-                }
-                else e.Cancel = true;
             }
         }
 
@@ -169,7 +171,6 @@ namespace ASCompletion
         /// <summary>
         /// Display types in each classpath
         /// </summary>
-        /// <param name="context">Language context to explore</param>
         public void UpdateTree()
         {
             DetectContext();
@@ -187,12 +188,13 @@ namespace ASCompletion
 
                 foreach (PathModel path in current.Classpath)
                 {
-                    ClasspathTreeNode node = new ClasspathTreeNode(path.Path, path.FilesCount);
+                    var node = new ClasspathTreeNode(path.Path, path.FilesCount);
                     outlineTreeView.Nodes.Add(node);
                     rootNodes = node.Nodes;
 
                     packages = new Dictionary<string, TreeNodeCollection>();
-                    path.ForeachFile((model) => {
+                    path.ForeachFile(model =>
+                    {
                         AddModel(FindPackage(model.Package), model);
                         return true;
                     });
@@ -213,14 +215,12 @@ namespace ASCompletion
         /// <returns>Nodes collection</returns>
         TreeNodeCollection FindPackage(string package)
         {
-            if (package == "") return rootNodes;
+            if (package.IsNullOrEmpty()) return rootNodes;
             if (packages.ContainsKey(package)) return packages[package];
-
-            int p = package.LastIndexOf('.');
-            string newPackage = (p < 0) ? package : package.Substring(p+1);
-            string parentPackage = (p < 0) ? "" : package.Substring(0, p);
-
-            TreeNodeCollection nodes = FindPackage(parentPackage);
+            var p = package.LastIndexOf('.');
+            var newPackage = p < 0 ? package : package.Substring(p+1);
+            var parentPackage = p < 0 ? "" : package.Substring(0, p);
+            var nodes = FindPackage(parentPackage);
             TreeNode node = new PackageTreeNode(newPackage);
             node.Expand();
             nodes.Add(node);
@@ -236,13 +236,12 @@ namespace ASCompletion
         /// <param name="model">Model information</param>
         void AddModel(TreeNodeCollection nodes, FileModel model)
         {
-            if (model.Members != null)
-                PluginUI.AddMembers(nodes, model.Members);
-
-            if (model.Classes != null)
-                foreach (ClassModel aClass in model.Classes) if (aClass.IndexType is null)
+            if (model.Members is not null) PluginUI.AddMembers(nodes, model.Members);
+            if (model.Classes is null) return;
+            foreach (var aClass in model.Classes)
+                if (aClass.IndexType is null)
                 {
-                    TypeTreeNode node = new TypeTreeNode(aClass);
+                    var node = new TypeTreeNode(aClass);
                     AddExplore(node);
                     allTypes.Add(node);
                     nodes.Add(node);
@@ -253,51 +252,35 @@ namespace ASCompletion
         /// Create a subnode to a type node to be populated later
         /// </summary>
         /// <param name="node"></param>
-        void AddExplore(TypeTreeNode node)
-        {
-            node.Nodes.Add(new ExploreTreeNode());
-        }
+        static void AddExplore(TreeNode node) => node.Nodes.Add(new ExploreTreeNode());
 
         /// <summary>
         /// Describe types on user selection
         /// </summary>
-        /// <param name="node"></param>
         void outlineTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0] is ExploreTreeNode)
+            if (e.Node.Nodes.Count != 1 || e.Node.Nodes[0] is not ExploreTreeNode) return;
+            outlineTreeView.BeginUpdate();
+            try
             {
-                outlineTreeView.BeginUpdate();
-                try
-                {
-                    e.Node.Nodes.Clear();
-                    ClassModel theClass = ResolveClass(e.Node);
-                    if (theClass.IsVoid())
-                        return;
-                    PluginUI.AddMembers(e.Node.Nodes, SelectMembers(theClass.Members, FlagType.Variable));
-                    PluginUI.AddMembers(e.Node.Nodes, SelectMembers(theClass.Members, FlagType.Getter|FlagType.Setter));
-                    PluginUI.AddMembers(e.Node.Nodes, SelectMembers(theClass.Members, FlagType.Function));
-                }
-                finally
-                {
-                    outlineTreeView.EndUpdate();
-                }
+                e.Node.Nodes.Clear();
+                var @class = ResolveClass(e.Node);
+                if (@class.IsVoid()) return;
+                PluginUI.AddMembers(e.Node.Nodes, SelectMembers(@class.Members, FlagType.Variable));
+                PluginUI.AddMembers(e.Node.Nodes, SelectMembers(@class.Members, FlagType.Getter | FlagType.Setter));
+                PluginUI.AddMembers(e.Node.Nodes, SelectMembers(@class.Members, FlagType.Function));
+            }
+            finally
+            {
+                outlineTreeView.EndUpdate();
             }
         }
 
-        MemberList SelectMembers(MemberList list, FlagType mask)
+        static MemberList SelectMembers(MemberList list, FlagType mask)
         {
-            MemberList filtered = new MemberList();
-            Visibility acc = Visibility.Public | Visibility.Internal;
-            //MemberModel lastAdded = null;
-            foreach (MemberModel item in list)
-                if ((item.Access & acc) > 0 && (item.Flags & mask) > 0)
-                {
-                    //if (lastAdded != null && lastAdded.Name == item.Name) continue;
-                    //lastAdded = item;
-                    filtered.Add(item);
-                }
-            filtered.Sort();
-            return filtered;
+            var result = list.MultipleSearch(mask, Visibility.Public | Visibility.Internal);
+            result.Sort();
+            return result;
         }
 
         void outlineTreeView_Click(object sender, EventArgs e)
@@ -373,23 +356,12 @@ namespace ASCompletion
 
         ClassModel ResolveClass(TreeNode node)
         {
-            if (!(node is TypeTreeNode) || node.Tag is null)
-                return ClassModel.VoidClass;
-
-            ResolvedPath resolved = ResolvePath(node);
+            if (!(node is TypeTreeNode) || node.Tag is null) return ClassModel.VoidClass;
+            var resolved = ResolvePath(node);
             if (resolved.model is null) return ClassModel.VoidClass;
-
-            string[] info = ((string) node.Tag).Split('@');
-            FileModel model = resolved.model.GetFile(info[0]);
-            return model.GetClassByName(info[1]);
-        }
-
-        int ResolveMemberLine(TreeNode node)
-        {
-            if (!(node is MemberTreeNode) || node.Tag is null)
-                return 0;
             var info = ((string) node.Tag).Split('@');
-            return int.TryParse(info[1], out var line) ? line : 0;
+            var model = resolved.model.GetFile(info[0]);
+            return model.GetClassByName(info[1]);
         }
 
         #endregion
@@ -402,10 +374,7 @@ namespace ASCompletion
             updateTimer.Start();
         }
 
-        void filterTextBox_Leave(object sender, EventArgs e)
-        {
-            SetMatch(null);
-        }
+        void filterTextBox_Leave(object sender, EventArgs e) => SetMatch(null);
 
         void updateTimer_Tick(object sender, EventArgs e)
         {
@@ -422,7 +391,7 @@ namespace ASCompletion
                 if (typeIndex <= 0) typeIndex = allTypes.Count;
                 while (typeIndex > 0)
                 {
-                    TreeNode node = allTypes[--typeIndex];
+                    var node = allTypes[--typeIndex];
                     if (node.Text.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         SetMatch(node);
@@ -484,7 +453,7 @@ namespace ASCompletion
                     return true;
                 case Keys.Escape:
                     if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
-                    if (PluginBase.MainForm.CurrentDocument.SciControl is { } sci)
+                    if (PluginBase.MainForm.CurrentDocument is {SciControl: { } sci})
                         sci.Focus();
                     break;
             }
@@ -493,12 +462,13 @@ namespace ASCompletion
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == Keys.Escape)
+            switch (keyData)
             {
-                OnShortcut(keyData);
-                return true;
+                case Keys.Escape:
+                    OnShortcut(keyData);
+                    return true;
+                default: return base.ProcessCmdKey(ref msg, keyData);
             }
-            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         void ModelsExplorer_KeyDown(object sender, KeyEventArgs e)
@@ -514,15 +484,9 @@ namespace ASCompletion
             else OnShortcut(e.KeyData);
         }
 
-        void SearchButton_Click(object sender, EventArgs e)
-        {
-            FindNextMatch(filterTextBox.Text);
-        }
+        void SearchButton_Click(object sender, EventArgs e) => FindNextMatch(filterTextBox.Text);
 
-        void RefreshButton_Click(object sender, EventArgs e)
-        {
-            UpdateTree();
-        }
+        void RefreshButton_Click(object sender, EventArgs e) => UpdateTree();
 
         void RebuildButton_Click(object sender, EventArgs e)
         {
@@ -535,24 +499,18 @@ namespace ASCompletion
 
         void ExploreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode node = outlineTreeView.SelectedNode;
-            if (node is null) return;
-
-            string path = GetPathFromNode(node);
-            if (path != null)
+            if (outlineTreeView.SelectedNode is {} node && GetPathFromNode(node) is {} path)
                 PluginBase.MainForm.CallCommand("RunProcess", $"explorer.exe;/e,\"{path}\"");
         }
 
         void EditToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode node = outlineTreeView.SelectedNode;
-            if (node is null) return;
-            outlineTreeView_Click(null, null);
+            if (outlineTreeView.SelectedNode is not null) outlineTreeView_Click(null, null);
         }
 
         void ConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode node = outlineTreeView.SelectedNode;
+            var node = outlineTreeView.SelectedNode;
             if (node is null || current?.Classpath is null) return;
 
             ResolvedPath resolved = ResolvePath(node);
@@ -562,7 +520,7 @@ namespace ASCompletion
 
             if (node is TypeTreeNode)
             {
-                string filename = (node.Tag as string).Split('@')[0];
+                string filename = ((string) node.Tag).Split('@')[0];
                 FileModel theModel = thePath.GetFile(filename);
                 if (theModel is null) return;
 
@@ -598,7 +556,7 @@ namespace ASCompletion
                         string targetPath = folderBrowserDialog.SelectedPath + Path.DirectorySeparatorChar;
                         string packagep = (package.Length > 0) ? package + "." : "";
 
-                        thePath.ForeachFile((aModel) =>
+                        thePath.ForeachFile(aModel =>
                         {
                             if (aModel.Package == package || aModel.Package.StartsWithOrdinal(packagep))
                             {
@@ -639,37 +597,36 @@ namespace ASCompletion
             return result;
         }
 
-        void WriteIntrinsic(FileModel theModel, string filename)
+        static void WriteIntrinsic(FileModel theModel, string filename)
         {
             if (filename.EndsWithOrdinal("$.as")) filename = filename.Replace("$.as", ".as"); // SWC virtual models
             Directory.CreateDirectory(Path.GetDirectoryName(filename));
             File.WriteAllText(filename, theModel.GenerateIntrinsic(false), Encoding.UTF8);
         }
 
-        string GetPathFromNode(TreeNode node)
+        static string GetPathFromNode(TreeNode node)
         {
             string path = null;
-            if (node is ClasspathTreeNode)
+            switch (node)
             {
-                path = (node as ClasspathTreeNode).Path;
-            }
-            else if (node is PackageTreeNode)
-            {
-                path = node.Text;
-                node = node.Parent;
-                while (node != null && !(node is ClasspathTreeNode))
-                {
-                    path = Path.Combine(node.Text, path);
+                case ClasspathTreeNode treeNode:
+                    path = treeNode.Path;
+                    break;
+                case PackageTreeNode:
+                    path = node.Text;
                     node = node.Parent;
-                }
-                if (node != null) path = Path.Combine(((ClasspathTreeNode) node).Path, path);
-            }
-            else if (node is TypeTreeNode)
-            {
-                return ((string) node.Tag).Split('@')[0];
+                    while (node != null && !(node is ClasspathTreeNode))
+                    {
+                        path = Path.Combine(node.Text, path);
+                        node = node.Parent;
+                    }
+                    if (node != null) path = Path.Combine(((ClasspathTreeNode) node).Path, path);
+                    break;
+                case TypeTreeNode:
+                    return ((string) node.Tag).Split('@')[0];
             }
 
-            while (path.Length > 2 && !Directory.Exists(path)) path = Path.GetDirectoryName(path);
+            while (path!.Length > 2 && !Directory.Exists(path)) path = Path.GetDirectoryName(path);
             return path;
         }
 

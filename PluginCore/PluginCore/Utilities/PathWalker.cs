@@ -51,7 +51,7 @@ namespace PluginCore.Utilities
 
         void bg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (PluginBase.MainForm is Form owner && owner.InvokeRequired)
+            if (PluginBase.MainForm is Form {InvokeRequired: true} owner)
             {
                 owner.BeginInvoke((Action)delegate { bg_RunWorkerCompleted(sender, e); });
                 return;

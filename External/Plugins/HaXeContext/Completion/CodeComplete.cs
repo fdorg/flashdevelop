@@ -174,7 +174,7 @@ namespace HaXeContext.Completion
                     // for example: case EnumValue | <complete> or case EnumValue, <complete>
                     if (c == '|' || c == ',')
                     {
-                        while (GetExpressionType(sci, pos + 1, false, true) is { } expr && expr.Type != null && !expr.Type.IsVoid())
+                        while (GetExpressionType(sci, pos + 1, false, true) is {Type: { }} expr && !expr.Type.IsVoid())
                         {
                             if (expr.Context.WordBefore == "case") return HandleSwitchCaseCompletion(sci, pos, autoHide);
                             if (expr.Context.Separator is { } separator && (separator == "|" || separator == ","))
@@ -281,8 +281,8 @@ namespace HaXeContext.Completion
             var pos = position - 1;
             var paramIndex = FindParameterIndex(sci, ref pos);
             if (pos != -1 && ResolveFunction(sci, pos, autoHide)
-                && calltipMember?.Parameters is { } parameters && paramIndex < parameters.Count
-                && parameters[paramIndex] is { } parameter && parameter.Type is { } parameterType)
+                          && calltipMember?.Parameters is { } parameters && paramIndex < parameters.Count
+                          && parameters[paramIndex] is {Type: { } parameterType})
             {
                 ClassModel type;
                 if (FileParser.IsFunctionType(parameterType))
@@ -1561,7 +1561,7 @@ namespace HaXeContext.Completion
                 var returnType = member.Type;
                 var template = member.Template;
                 var subExpressions = context.SubExpressions;
-                if (!string.IsNullOrEmpty(template) && subExpressions?.LastOrDefault() is { } subExpression && subExpression.Length > 2)
+                if (!string.IsNullOrEmpty(template) && subExpressions?.LastOrDefault() is {Length: > 2} subExpression)
                 {
                     var subExpressionPosition = context.SubExpressionPositions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
@@ -1820,7 +1820,7 @@ namespace HaXeContext.Completion
             // Utils
             static List<ICompletionListItem> GetCompletionList(IASContext ctx, ASResult expr)
             {
-                if (expr.Member is { } m && m.Type is { } typeName)
+                if (expr.Member is {Type: { } typeName})
                 {
                     typeName = CleanNullableType(typeName);
                     if (typeName == ctx.Features.booleanKey)
@@ -1833,13 +1833,13 @@ namespace HaXeContext.Completion
                     }
                     var type = ResolveType(typeName, ctx.CurrentModel);
                     if (type.Members.Count == 0) return null;
-                    if ((type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(tag => tag.Name == ":enum")))
+                    if (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(static tag => tag.Name == ":enum"))
                     {
-                        return type.Members.Select(it => new MemberItem(it)).ToList<ICompletionListItem>();
+                        return type.Members.Select(static it => new MemberItem(it)).ToList<ICompletionListItem>();
                     }
                     if (type.Flags.HasFlag(FlagType.Enum))
                     {
-                        return type.Members.Select(it =>
+                        return type.Members.Select(static it =>
                         {
                             var pattern = it.Name;
                             if (it.Parameters != null)

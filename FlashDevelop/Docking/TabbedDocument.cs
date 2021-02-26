@@ -111,7 +111,7 @@ namespace FlashDevelop.Docking
                     switch (ctrl)
                     {
                         case ScintillaControl control when !Disposing && !IsDisposed: return control;
-                        case SplitContainer container when container.Name == "fdSplitView" && !Disposing && !IsDisposed:
+                        case SplitContainer {Name: "fdSplitView"} container when !Disposing && !IsDisposed:
                             var sci2 = (ScintillaControl) container.Panel2.Controls[0];
                             if (sci2.IsFocus) return sci2;
                             var sci1 = (ScintillaControl) container.Panel1.Controls[0];
@@ -226,8 +226,8 @@ namespace FlashDevelop.Docking
             SplitContainer.Dock = DockStyle.Fill;
             SplitContainer.Panel2Collapsed = true;
             SplitSci2.DocPointer = SplitSci1.DocPointer;
-            SplitSci1.SavePointLeft += sender => Globals.MainForm.OnDocumentModify(this);
-            SplitSci1.SavePointReached += sender =>
+            SplitSci1.SavePointLeft += _ => Globals.MainForm.OnDocumentModify(this);
+            SplitSci1.SavePointReached += _ =>
             {
                 SplitSci1.MarkerDeleteAll(2);
                 IsModified = false;
@@ -266,8 +266,8 @@ namespace FlashDevelop.Docking
         {
             if (!sender.IsFocus) return;
             lastEditor = sender;
-            SplitSci1.DisableAllSciEvents = (sender == SplitSci2);
-            SplitSci2.DisableAllSciEvents = (sender == SplitSci1);
+            SplitSci1.DisableAllSciEvents = sender == SplitSci2;
+            SplitSci2.DisableAllSciEvents = sender == SplitSci1;
         }
 
         /// <summary>
@@ -448,10 +448,9 @@ namespace FlashDevelop.Docking
         /// </summary> 
         void BackupTimerTick(object sender, EventArgs e)
         {
-            if (SciControl is { } sci
+            if (SciControl is {Text: { } text} sci
                 && !IsUntitled
                 && IsModified
-                && sci.Text is { } text
                 && text != previousText)
             {
                 RecoveryManager.SaveTemporaryFile(sci.FileName, text, sci.Encoding);

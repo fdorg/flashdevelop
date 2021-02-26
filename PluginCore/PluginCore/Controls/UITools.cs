@@ -90,7 +90,7 @@ namespace PluginCore.Controls
         #endregion
 
         WeakReference lockedSciControl;
-        Point lastMousePos = new Point(0,0);
+        Point lastMousePos = Point.Empty;
 
         #region SciControls & MainForm Events
 
@@ -346,22 +346,14 @@ namespace PluginCore.Controls
             // list/tip shortcut dispatching
             if ((key == (Keys.Control | Keys.Space)) || (key == (Keys.Shift | Keys.Control | Keys.Space)))
             {
-                /*if (CompletionList.Active || callTip.CallTipActive)
-                {
-                    UnlockControl();
-                    CompletionList.Hide();
-                    codeTip.Hide();
-                    callTip.Hide();
-                }*/
                 // offer to handle the shortcut
                 ignoreKeys = true;
-                KeyEvent ke = new KeyEvent(EventType.Keys, key);
+                var ke = new KeyEvent(EventType.Keys, key);
                 EventManager.DispatchEvent(this, ke);
                 ignoreKeys = false;
                 // if not handled - show snippets
                 if (!ke.Handled
-                    && PluginBase.MainForm.CurrentDocument?.SciControl is { } scintilla
-                    && !scintilla.IsSelectionRectangle)
+                    && PluginBase.MainForm.CurrentDocument?.SciControl is {IsSelectionRectangle: false})
                 {
                     PluginBase.MainForm.CallCommand("InsertSnippet", "null");
                 }

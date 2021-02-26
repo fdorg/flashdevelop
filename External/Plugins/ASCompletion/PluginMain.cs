@@ -921,15 +921,12 @@ namespace ASCompletion
             {
                 var ctx = ASContext.Context;
                 var model = ctx.GetCodeModel(ctx.CreateFileModel(sci.FileName), sci.Text);
-                if (model.Version == 1 && PluginBase.CurrentProject is {} project)
+                switch (model.Version)
                 {
-                    var lang = project.Language;
-                    return lang == "*"
-                        ? "as2"
-                        : lang;
+                    case 1 when PluginBase.CurrentProject is {Language: {} language}: return language == "*" ? "as2" : language;
+                    case > 2: return "as3";
+                    case > 1: return "as2";
                 }
-                if (model.Version > 2) return "as3";
-                if (model.Version > 1) return "as2";
             }
             if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWithOrdinal("as"))
             {
@@ -978,7 +975,7 @@ namespace ASCompletion
         /// </summary>
         public void MakeIntrinsic(object sender, EventArgs e)
         {
-            if (PluginBase.MainForm.CurrentDocument.IsEditable)
+            if (PluginBase.MainForm.CurrentDocument is {IsEditable: true})
                 ASContext.Context.MakeIntrinsic(null);
         }
 
@@ -987,12 +984,10 @@ namespace ASCompletion
         /// </summary>
         static void PeekDefinition(object sender, EventArgs e)
         {
-            if (ASComplete.CurrentResolvedContext?.Result is { } result && !result.IsNull())
-            {
-                var code = ASComplete.GetCodeTipCode(result);
-                if (code is null) return;
-                UITools.CodeTip.Show(PluginBase.MainForm.CurrentDocument?.SciControl, result.Context.PositionExpression, code);
-            }
+            if (ASComplete.CurrentResolvedContext?.Result is not { } result || result.IsNull()) return;
+            var code = ASComplete.GetCodeTipCode(result);
+            if (code is null) return;
+            UITools.CodeTip.Show(PluginBase.MainForm.CurrentDocument?.SciControl, result.Context.PositionExpression, code);
         }
 
         /// <summary>
@@ -1003,7 +998,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
-        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
+        static void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(PluginBase.MainForm.CurrentDocument?.SciControl);
 
         /// <summary>
         /// Menu item command: Back From Declaration or Type Declaration
@@ -1048,21 +1043,19 @@ namespace ASCompletion
                 }
 
                 var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
-                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
-
                 if (sci1 != null)
                 {
                     sci1.MarkerDeleteAll(MarkerUp);
                     sci1.MarkerDeleteAll(MarkerDown);
                     sci1.MarkerDeleteAll(MarkerUpDown);
                 }
+                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
                 if (sci2 != null)
                 {
                     sci2.MarkerDeleteAll(MarkerUp);
                     sci2.MarkerDeleteAll(MarkerDown);
                     sci2.MarkerDeleteAll(MarkerUpDown);
                 }
-
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
             });
         }

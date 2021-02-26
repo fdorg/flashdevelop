@@ -18,8 +18,7 @@ namespace FlashDevelop.Managers
         public static void InitializePolling()
         {
             CheckSettingValues();
-            FilePollTimer = new Timer();
-            FilePollTimer.Interval = ((SettingObject)PluginBase.Settings).FilePollInterval;
+            FilePollTimer = new Timer {Interval = ((SettingObject) PluginBase.Settings).FilePollInterval};
             FilePollTimer.Tick += FilePollTimerTick;
             FilePollTimer.Start();
         }
@@ -38,9 +37,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         static void CheckFileChange(ITabbedDocument document)
         {
-            if (document is TabbedDocument doc
-                && doc.SciControl is { } sci
-                && doc.CheckFileChange())
+            if (document is TabbedDocument {SciControl: { } sci} doc && doc.CheckFileChange())
             {
                 if (PluginBase.Settings.AutoReloadModifiedFiles)
                 {

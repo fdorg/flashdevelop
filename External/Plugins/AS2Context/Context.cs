@@ -1203,18 +1203,16 @@ namespace AS2Context
                 return completionCache.AllTypes;
 
             var result = new MemberList();
-            ClassModel aClass;
-            MemberModel item;
             // public classes
             foreach (var aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     aPath.ForeachFile(aFile =>
                     {
-                        aClass = aFile.GetPublicClass();
+                        var aClass = aFile.GetPublicClass();
                         if (!aClass.IsVoid() && aClass.IndexType is null && aClass.Access == Visibility.Public)
                         {
-                            item = aClass.ToMemberModel();
+                            var item = aClass.ToMemberModel();
                             item.Name = item.Type;
                             result.Add(item);
                         }
@@ -1359,9 +1357,9 @@ namespace AS2Context
                 trustFileWanted = false;
 
                 // get SWF url
-                MatchCollection mPar = re_SplitParams.Matches(command + "-eof");
-                int mPlayIndex = -1;
-                bool noPlay = false;
+                var mPar = re_SplitParams.Matches(command + "-eof");
+                var mPlayIndex = -1;
+                var noPlay = false;
                 if (mPar.Count > 0)
                 {
                     for (int i = 0; i < mPar.Count; i++)
@@ -1405,24 +1403,21 @@ namespace AS2Context
                         }
                     }
                 }
-                if (outputFile.Length == 0) outputFile = null;
+                if (outputFile.IsNullOrEmpty()) outputFile = null;
 
                 // cleaning custom switches
                 if (mPlayIndex >= 0)
                 {
                     command = command.Substring(0, mPar[mPlayIndex].Index) + command.Substring(mPar[mPlayIndex + 1].Index);
                 }
-                if (trustFileWanted)
-                {
-                    command = command.Replace("-trust", "");
-                }
+                if (trustFileWanted) command = command.Replace("-trust", "");
                 if (noPlay || !settings.PlayAfterBuild)
                 {
                     command = command.Replace("-noplay", "");
                     outputFile = null;
                     runAfterBuild = false;
                 }
-                else runAfterBuild = (outputFile != null);
+                else runAfterBuild = outputFile != null;
 
                 // fixing output path
                 if (runAfterBuild)

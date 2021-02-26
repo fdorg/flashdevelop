@@ -101,7 +101,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurDir()
         {
-            return PluginBase.MainForm.CurrentDocument is {} doc && doc.IsEditable
+            return PluginBase.MainForm.CurrentDocument is {IsEditable: true}
                 ? Path.GetDirectoryName(GetCurFile())
                 : PluginBase.MainForm.WorkingDirectory;
         }
@@ -111,7 +111,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilename()
         {
-            return PluginBase.MainForm.CurrentDocument is { } doc && doc.IsEditable
+            return PluginBase.MainForm.CurrentDocument is {IsEditable: true}
                 ? Path.GetFileName(GetCurFile())
                 : string.Empty;
         }
@@ -121,7 +121,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetCurFilenameNoExt()
         {
-            return PluginBase.MainForm.CurrentDocument is { } doc && doc.IsEditable
+            return PluginBase.MainForm.CurrentDocument is {IsEditable: true}
                 ? Path.GetFileNameWithoutExtension(GetCurFile())
                 : string.Empty;
         }
@@ -219,7 +219,6 @@ namespace FlashDevelop.Utilities
             {
                 return PluginBase.CurrentProject.Language.ToLower();
             }
-
             if (PluginBase.MainForm.CurrentDocument?.SciControl is {} sci)
             {
                 return sci.ConfigurationLanguage.ToLower();

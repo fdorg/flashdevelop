@@ -43,10 +43,8 @@ namespace AS3Context.Controls
             if (File.Exists(fileToOpen))
             {
                 PluginBase.MainForm.OpenEditableDocument(fileToOpen, false);
-                if (PluginBase.MainForm.CurrentDocument is {} doc
-                    && doc.IsEditable
-                    && doc.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase)
-                    && doc.SciControl is {} sci)
+                if (PluginBase.MainForm.CurrentDocument is {IsEditable: true, SciControl: { } sci} doc
+                    && doc.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase))
                 {
                     var pos = sci.PositionFromLine(lineToOpen);
                     sci.SetSel(pos, pos);

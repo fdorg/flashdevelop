@@ -790,7 +790,7 @@ namespace ASCompletion.Completion
 
         protected virtual string CheckEventType(MemberModel handler, string eventName)
         {
-            if (handler?.Parameters is { } parameters && parameters.Count > 1)
+            if (handler?.Parameters is {Count: > 1} parameters)
             {
                 var parameter = parameters[1];
                 if (parameter != null)
