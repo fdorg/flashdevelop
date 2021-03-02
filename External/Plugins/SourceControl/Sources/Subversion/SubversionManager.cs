@@ -53,7 +53,7 @@ namespace SourceControl.Sources.Subversion
             var children = new List<StatusNode>();
             GetChildren(root, children);
             return children
-                .Select(child => new VCStatusReport(GetNodePath(child, rootPath), child.Status))
+                .Select(it => new VCStatusReport(GetNodePath(it, rootPath), it.Status))
                 .ToList();
         }
 

@@ -30,7 +30,7 @@ namespace Mono.GetOptions
             Initialize(optionBundle);
         }
 
-        private void AddArgumentProcessor(MemberInfo memberInfo)
+        void AddArgumentProcessor(MemberInfo memberInfo)
         {
             if (argumentProcessor != null)
             {
@@ -112,19 +112,19 @@ namespace Mono.GetOptions
             return list1.ToArray();
         }
 
-        private object[] GetAssemblyAttributes(Type type) => entry.GetCustomAttributes(type, false);
+        object[] GetAssemblyAttributes(Type type) => entry.GetCustomAttributes(type, false);
 
-        private string[] GetAssemblyAttributeStrings(Type type)
+        string[] GetAssemblyAttributeStrings(Type type)
         {
-            object[] objArray1 = GetAssemblyAttributes(type);
+            var objArray1 = GetAssemblyAttributes(type);
             if ((objArray1 is null) || (objArray1.Length == 0))
             {
                 return Array.Empty<string>();
             }
-            return objArray1.Select(it => it.ToString()).ToArray();
+            return objArray1.Select(static it => it.ToString()).ToArray();
         }
 
-        private void GetAssemblyAttributeValue(Type type, ref string var)
+        void GetAssemblyAttributeValue(Type type, ref string var)
         {
             object[] objArray1 = GetAssemblyAttributes(type);
             if (objArray1 != null && objArray1.Length > 0)
@@ -133,7 +133,7 @@ namespace Mono.GetOptions
             }
         }
 
-        private void GetAssemblyAttributeValue(Type type, string propertyName, ref string var)
+        void GetAssemblyAttributeValue(Type type, string propertyName, ref string var)
         {
             object[] objArray1 = GetAssemblyAttributes(type);
             if (objArray1 != null && objArray1.Length > 0)
@@ -142,9 +142,9 @@ namespace Mono.GetOptions
             }
         }
 
-        private static int IndexOfAny(string where, params char[] what) => where.IndexOfAny(what);
+        static int IndexOfAny(string where, params char[] what) => where.IndexOfAny(what);
 
-        private void Initialize(Options optionBundle)
+        void Initialize(Options optionBundle)
         {
             entry = Assembly.GetEntryAssembly();
             appExeName = entry.GetName().Name;
@@ -343,7 +343,7 @@ namespace Mono.GetOptions
             return null;
         }
 
-        private void ProcessNonOption(string argument)
+        void ProcessNonOption(string argument)
         {
             if (OptionDetails.Verbose)
             {
@@ -360,7 +360,7 @@ namespace Mono.GetOptions
             }
         }
 
-        private void ShowAbout()
+        void ShowAbout()
         {
             ShowTitleLines();
             Console.WriteLine(appAboutDetails);
@@ -392,7 +392,7 @@ namespace Mono.GetOptions
             bannerAlreadyShown = true;
         }
 
-        private void ShowHelp(bool showSecondLevelHelp)
+        void ShowHelp(bool showSecondLevelHelp)
         {
             ShowTitleLines();
             Console.WriteLine(Usage);
@@ -459,14 +459,14 @@ namespace Mono.GetOptions
             }
         }
 
-        private void ShowTitleLines()
+        void ShowTitleLines()
         {
             ShowBanner();
             Console.WriteLine(appDescription);
             Console.WriteLine();
         }
 
-        private void ShowUsage()
+        void ShowUsage()
         {
             Console.WriteLine(Usage);
             Console.Write("Short Options: ");
@@ -489,7 +489,7 @@ namespace Mono.GetOptions
             Console.WriteLine();
         }
 
-        private void ShowUsage(string errorMessage)
+        void ShowUsage(string errorMessage)
         {
             Console.WriteLine("ERROR: " + errorMessage.TrimEnd());
             ShowUsage();
@@ -503,24 +503,24 @@ namespace Mono.GetOptions
 
 
         // Fields
-        private string appAboutDetails;
-        private string[] appAuthors;
-        private string appCopyright;
-        private string appDescription;
-        private string appExeName;
-        private string appTitle;
-        private string appUsageComplement;
-        private string appVersion;
-        private MethodInfo argumentProcessor;
-        private readonly List<string> arguments;
-        private readonly List<string> argumentsTail;
-        private bool bannerAlreadyShown;
-        private bool breakSingleDashManyLettersIntoManyOptions;
-        private bool endOptionProcessingWithDoubleDash;
-        private Assembly entry;
-        private bool HasSecondLevelHelp;
-        private readonly List<OptionDetails> list;
-        private Options optionBundle;
-        private OptionsParsingMode parsingMode;
+        string appAboutDetails;
+        string[] appAuthors;
+        string appCopyright;
+        string appDescription;
+        string appExeName;
+        string appTitle;
+        string appUsageComplement;
+        string appVersion;
+        MethodInfo argumentProcessor;
+        readonly List<string> arguments;
+        readonly List<string> argumentsTail;
+        bool bannerAlreadyShown;
+        bool breakSingleDashManyLettersIntoManyOptions;
+        bool endOptionProcessingWithDoubleDash;
+        Assembly entry;
+        bool HasSecondLevelHelp;
+        readonly List<OptionDetails> list;
+        Options optionBundle;
+        OptionsParsingMode parsingMode;
     }
 }

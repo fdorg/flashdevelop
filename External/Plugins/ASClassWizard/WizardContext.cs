@@ -303,7 +303,7 @@ namespace ASClassWizard
         static void AddImports(IASContext ctx, MemberModel member, FileModel inFile, ICollection<string> result)
         {
             var types = new List<string> {member.Type};
-            if (member.Parameters != null) types.AddRange(member.Parameters.Select(it => it.Type));
+            if (member.Parameters != null) types.AddRange(member.Parameters.Select(static it => it.Type));
             foreach (var type in ASContext.Context.DecomposeTypes(types))
             {
                 AddImport(ctx, type, inFile, result);

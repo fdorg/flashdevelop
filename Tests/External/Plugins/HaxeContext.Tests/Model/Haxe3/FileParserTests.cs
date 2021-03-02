@@ -431,7 +431,7 @@ namespace HaXeContext.Model.Haxe3
             {
                 yield return new TestCaseData("Issue2550_1")
                     .Returns(new List<MemberModel> {new MemberModel("a", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private)}
-                        .Concat(new MemberModel[1022].Select(it => new MemberModel("i", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private)))
+                        .Concat(new MemberModel[1022].Select(static it => new MemberModel("i", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private)))
                         .Concat(new List<MemberModel> {new MemberModel("i", "Array<Int>", FlagType.Dynamic | FlagType.Variable, Visibility.Private)})
                         .ToList()
                     )
@@ -1755,7 +1755,7 @@ namespace HaXeContext.Model.Haxe3
         {
             var model = ASContext.Context.GetCodeModel(sourceText);
             var member = model.Members.First();
-            return member.Parameters.Select(it => it.Type);
+            return member.Parameters.Select(static it => it.Type);
         }
 
         [Test]

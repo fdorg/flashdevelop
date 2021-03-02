@@ -146,50 +146,6 @@ namespace PluginCore.FRService
             }
         }
 
-        /** TODO : needs something like SearchOptions flags to be functional
-        
-        /// <summary>
-        /// Quick search
-        /// </summary>
-        /// <param name="pattern">Search pattern</param>
-        /// <param name="input">Source text</param>
-        /// <returns>First result</returns>
-        static public SearchMatch Match(string pattern, string input, SearchOptions options)
-        {
-            Search search = new Search(pattern);
-            // eval options
-            return search.Match(input);
-        }
-
-        /// <summary>
-        /// Quick search
-        /// </summary>
-        /// <param name="pattern">Search pattern</param>
-        /// <param name="input">Source text</param>
-        /// <returns>All results</returns>
-        static public List<SearchMatch> Matches(string pattern, string input, SearchOptions options)
-        {
-            Search search = new Search(pattern);
-            // eval options
-            return search.Matches(input);
-        }
-
-        /// <summary>
-        /// Quick replace
-        /// </summary>
-        /// <param name="pattern">Search pattern</param>
-        /// <param name="input">Source text</param>
-        /// <param name="replacement">Replacement pattern</param>
-        /// <returns></returns>
-        static public string Replace(string pattern, string input, string replacement, SearchOptions options)
-        {
-            Search search = new Search(pattern);
-            // eval options
-            List<SearchMatch> matches = search.Matches(input);
-            return search.ReplaceAll(input, replacement, matches);
-        }
-        */
-
         #endregion
 
         #region Public Replace Methods

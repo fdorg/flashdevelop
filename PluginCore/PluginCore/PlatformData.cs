@@ -124,7 +124,7 @@ namespace PluginCore
                 HaxeTarget = GetAttribute(node, "haxe-target"),
                 DebuggerSupported = GetList(node, "debugger"),
                 RawData = node,
-                VersionNames = versions.Select(it => it.Value).ToArray()
+                VersionNames = versions.Select(static it => it.Value).ToArray()
             };
             return platform;
         }

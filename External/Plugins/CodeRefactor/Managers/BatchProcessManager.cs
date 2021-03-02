@@ -33,7 +33,7 @@ namespace CodeRefactor.Managers
         /// Returns a list of available batch processors
         /// </summary>
         /// <returns></returns>
-        public static IList<IBatchProcessor> GetAvailableProcessors() => processors.Where(processor => processor.IsAvailable).ToList();
+        public static IList<IBatchProcessor> GetAvailableProcessors() => processors.Where(static it => it.IsAvailable).ToList();
 
         public static IEnumerable<string> GetAllProjectFiles(IProject project)
         {

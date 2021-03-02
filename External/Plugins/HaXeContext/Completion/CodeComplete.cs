@@ -227,7 +227,7 @@ namespace HaXeContext.Completion
         static bool HandleMetadataCompletion(bool autoHide)
         {
             var list = ASContext.Context.Features.metadata
-                .Select(it => new MemberItem(new MemberModel {Name = it.Key, Comments = it.Value, Type = "Compiler Metadata"}))
+                .Select(static it => new MemberItem(new MemberModel {Name = it.Key, Comments = it.Value, Type = "Compiler Metadata"}))
                 .ToArray<ICompletionListItem>();
             CompletionList.Show(list, autoHide);
             return true;
@@ -267,10 +267,10 @@ namespace HaXeContext.Completion
                 {
                     var names = @params["Default"]
                         .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(it => it.Trim()).ToArray();
+                        .Select(static it => it.Trim()).ToArray();
                     if (names.Length != 0) list.Items.RemoveAll(it => names.Contains(it.Name));
                 }
-                if (list.Count > 0) CompletionList.Show(list.Select(it => new MemberItem(it)).ToArray<ICompletionListItem>(), autoHide);
+                if (list.Count > 0) CompletionList.Show(list.Select(static it => new MemberItem(it)).ToArray<ICompletionListItem>(), autoHide);
                 return true;
             }
             return false;
@@ -1753,7 +1753,7 @@ namespace HaXeContext.Completion
         {
             var voidKey = ASContext.Context.Features.voidKey;
             var dynamicTypeName = ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
-            var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+            var parameters = member.Parameters?.Select(static it => it.Type).ToList() ?? new List<string> {voidKey};
             parameters.Add(member.Type ?? voidKey);
             var sb = new StringBuilder();
             for (var i = 0; i < parameters.Count; i++)

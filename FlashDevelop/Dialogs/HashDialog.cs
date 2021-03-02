@@ -255,7 +255,7 @@ namespace FlashDevelop.Dialogs
             }
             else if (encodingComboBox.SelectedIndex == 2)
             {
-                var output = string.Join(", ", hashBytes.Select(entry => entry.ToString()).ToArray());
+                var output = string.Join(", ", hashBytes.Select(static it => it.ToString()).ToArray());
                 outputTextBox.Text = output;
                 HashResultText = output;
             }
