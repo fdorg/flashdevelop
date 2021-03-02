@@ -822,7 +822,7 @@ namespace AirProperties
             {
                 get
                 {
-                    if (Icons.Any(icon => !icon.IsValid)) return false;
+                    if (Icons.Any(static it => !it.IsValid)) return false;
                     return NameIsValid && ExtensionIsValid && DescriptionIsValid && ContentTypeIsValid;
                 }
             }

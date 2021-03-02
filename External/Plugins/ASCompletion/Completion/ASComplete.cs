@@ -1131,35 +1131,33 @@ namespace ASCompletion.Completion
             int curPos = sci.CurrentPos;
             int startPos = sci.PositionFromLine(line);
             int offset = sci.MBSafeLengthFromBytes(txt, position - startPos);
-            
-            ReformatOptions options = new ReformatOptions();
-            options.Newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-            options.CondenseWhitespace = ASContext.CommonSettings.CondenseWhitespace;
-            options.BraceAfterLine = ASContext.CommonSettings.ReformatBraces 
-                && PluginBase.Settings.CodingStyle == CodingStyle.BracesAfterLine;
-            options.CompactChars = ASContext.CommonSettings.CompactChars;
-            options.SpacedChars = ASContext.CommonSettings.SpacedChars;
-            options.SpaceBeforeFunctionCall = ASContext.CommonSettings.SpaceBeforeFunctionCall;
-            options.AddSpaceAfter = !string.IsNullOrEmpty(ASContext.Context.Settings.AddSpaceAfter)
-                ? ASContext.Context.Settings.AddSpaceAfter.Split(' ')
-                : ASContext.CommonSettings.AddSpaceAfter.Split(' ');
-            options.IsPhp = ASContext.Context.Settings.LanguageId == "PHP";
-            options.IsHaXe = ASContext.Context.Settings.LanguageId == "HAXE";
 
+            var options = new ReformatOptions
+            {
+                Newline = LineEndDetector.GetNewLineMarker(sci.EOLMode),
+                CondenseWhitespace = ASContext.CommonSettings.CondenseWhitespace,
+                BraceAfterLine = ASContext.CommonSettings.ReformatBraces && PluginBase.Settings.CodingStyle == CodingStyle.BracesAfterLine,
+                CompactChars = ASContext.CommonSettings.CompactChars,
+                SpacedChars = ASContext.CommonSettings.SpacedChars,
+                SpaceBeforeFunctionCall = ASContext.CommonSettings.SpaceBeforeFunctionCall,
+                AddSpaceAfter = !string.IsNullOrEmpty(ASContext.Context.Settings.AddSpaceAfter)
+                    ? ASContext.Context.Settings.AddSpaceAfter.Split(' ')
+                    : ASContext.CommonSettings.AddSpaceAfter.Split(' '),
+                IsPhp = ASContext.Context.Settings.LanguageId == "PHP",
+                IsHaXe = ASContext.Context.Settings.LanguageId == "HAXE"
+            };
             if (options.IsHaXe)
             {
                 var initialStyle = sci.BaseStyleAt(startPos);
                 options.InString = initialStyle switch
                 {
-                    6 => 1,
-                    7 => 2,
+                    (int) CPP.STRING => 1,
+                    (int) CPP.CHARACTER => 2,
                     _ => options.InString
                 };
             }
-
             int newOffset = offset;
-            string replace = Reformater.ReformatLine(txt, options, ref newOffset);
-
+            var replace = Reformater.ReformatLine(txt, options, ref newOffset);
             if (replace != txt)
             {
                 position = curPos + newOffset - offset;
@@ -1297,7 +1295,7 @@ namespace ASCompletion.Completion
         {
             int position = sci.CurrentPos;
             int line = sci.LineFromPosition(position);
-            if (sci.CharAt(position - 1) <= 32) tail = "";
+            if (sci.CharAt(position - 1) <= ' ') tail = "";
 
             // completion support
             var ctx = ASContext.Context;
@@ -3763,7 +3761,7 @@ namespace ASCompletion.Completion
                         continue;
                     }
                     // build expression
-                    if (c <= 32)
+                    if (c <= ' ')
                     {
                         if (genCount == 0) hadWS = true;
                         else
@@ -4192,33 +4190,33 @@ namespace ASCompletion.Completion
         /// </summary>
         public static bool IsTextStyle(int style)
         {
-            return style == 0
-                   || style == 10 /*punctuation*/
-                   || style == 11 /*identifier*/
-                   || style == (int) CPP.WORD2 /*word2 (secondary keywords: class name)*/
-                   || style == (int) CPP.WORD4 /*word4 (add keywords4)*/
-                   || style == (int) CPP.WORD5 /*word5 (add keywords5)*/
-                   || style == 127 /*PHP*/;
+            return style == (int) CPP.DEFAULT
+                   || style == (int) CPP.OPERATOR
+                   || style == (int) CPP.IDENTIFIER
+                   || style == (int) CPP.WORD2
+                   || style == (int) CPP.WORD4
+                   || style == (int) CPP.WORD5
+                   || style == (int) HTML.PHP_OPERATOR;
         }
 
         /// <summary>
         /// Text is word or keyword
         /// </summary>
         public static bool IsTextStyleEx(int style)
-        {
-            return IsTextStyle(style)
-                   || style == 5 /*word (secondary keywords)*/
-                   || style == 19 /*globalclass (primary keywords)*/
-                   || style == (int) CPP.WORD3 /*word3 (add keywords3)*/;
-        }
+            => IsTextStyle(style)
+               || style == (int) CPP.WORD
+               || style == (int) CPP.GLOBALCLASS
+               || style == (int) CPP.WORD3;
 
         public static bool IsCommentStyle(int style)
-        {
-            return style == 1 || style == 2 || style == 3 /*comments*/
-                || style == 17 || style == 18 /*javadoc tags*/;
-        }
+            => style == (int) CPP.COMMENT
+               || style == (int) CPP.COMMENTLINE
+               || style == (int) CPP.COMMENTDOC
+               || style == (int) CPP.COMMENTDOCKEYWORD
+               || style == (int) CPP.COMMENTDOCKEYWORDERROR;
 
-        public virtual bool IsRegexStyle(ScintillaControl sci, int position) => sci.BaseStyleAt(position) == 14;
+        public virtual bool IsRegexStyle(ScintillaControl sci, int position)
+            => sci.BaseStyleAt(position) == (int) CPP.REGEX;
 
         public static string GetWordLeft(ScintillaControl sci, int position) => GetWordLeft(sci, ref position);
 

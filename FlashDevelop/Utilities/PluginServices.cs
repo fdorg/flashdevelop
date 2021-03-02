@@ -47,7 +47,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Finds a plugin from the plugin collection
         /// </summary>
-        public static AvailablePlugin Find(string guid) => AvailablePlugins.FirstOrDefault(plugin => plugin.Instance.Guid == guid);
+        public static AvailablePlugin Find(string guid) => AvailablePlugins.FirstOrDefault(it => it.Instance.Guid == guid);
 
         /// <summary>
         /// Disposes all available plugins that are active

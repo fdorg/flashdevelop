@@ -33,7 +33,7 @@ namespace ProjectManager.Controls
             return result;
         }
 
-        bool Matches(MergableItem item) => this.Any(existingItem => existingItem.Item == item.Item && existingItem.Checked == item.Checked);
+        bool Matches(MergableItem item) => this.Any(it => it.Item == item.Item && it.Checked == item.Checked);
 
         /// <summary>
         /// Add the contents of this MergableMenu to a CommandBarMenu

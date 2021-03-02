@@ -480,7 +480,7 @@ namespace HaXeContext.Completion
             // Utils
             static bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
                                          || (t.Flags.HasFlag(FlagType.Abstract) && !t.Members.IsNullOrEmpty()
-                                             && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
+                                             && t.MetaDatas != null && t.MetaDatas.Any(static it => it.Name == ":enum"));
 
             static bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
 
@@ -675,13 +675,10 @@ namespace HaXeContext.Completion
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + member.Name + "\\s*in\\s*");
             if (!m.Success)
             {
-                if (inferingMembers.Any(it =>
-                {
-                    return it.Name == member.Name
-                           && it.Flags == member.Flags
-                           && it.LineFrom == member.LineFrom && it.LineTo == member.LineTo
-                           && it.StartPosition == member.StartPosition;
-                }))
+                if (inferingMembers.Any(it => it.Name == member.Name
+                                              && it.Flags == member.Flags
+                                              && it.LineFrom == member.LineFrom && it.LineTo == member.LineTo
+                                              && it.StartPosition == member.StartPosition))
                 {
                     var msg = $"Possible Stack Overflow Exception in {ctx.CurrentFile}" +
                               "\nPlease contact the developers via https://github.com/fdorg/flashdevelop/issues/new" +
@@ -1348,7 +1345,7 @@ namespace HaXeContext.Completion
                         foreach (var member in leftExprType.Members)
                         {
                             if ((rightExpr.Type is null || (member.Parameters?.Count >= 2 && member.Parameters[1].Type == rightExpr.Type.Name))
-                                && member.MetaDatas?.FirstOrDefault(it => it.Name == ":op") is { } meta
+                                && member.MetaDatas?.FirstOrDefault(static it => it.Name == ":op") is { } meta
                                 && meta.Params.TryGetValue("Default", out var value)
                                 && Regex.IsMatch(value, $"\\w((\\s)|(?!\\s))+{Regex.Escape(@operator)}((\\s)|(?!\\s))+\\w"))
                             {
@@ -1446,7 +1443,7 @@ namespace HaXeContext.Completion
                 }
                 if (!string.IsNullOrEmpty(exprType.ExtendsType)
                     // for example: @:enum abstract
-                    && exprType.MetaDatas is var metaDatas && (metaDatas is null || metaDatas.All(it => it.Name != ":enum"))
+                    && exprType.MetaDatas is var metaDatas && (metaDatas is null || metaDatas.All(static it => it.Name != ":enum"))
                     // for example: abstract Null<T> from T to T
                     && (string.IsNullOrEmpty(exprType.Template) || exprType.ExtendsType != exprType.IndexType))
                 {
@@ -1733,7 +1730,7 @@ namespace HaXeContext.Completion
                 else if (result.RelClass?.IndexType is { } indexType
                          && result.RelClass.Template != '<' + indexType + '>'
                          && member.Flags.HasFlag(FlagType.Function)
-                         && (member.Type.Contains('<') || (member.Parameters?.Any(it => it.Type.Contains('<')) ?? false)))
+                         && (member.Type.Contains('<') || (member.Parameters?.Any(static it => it.Type.Contains('<')) ?? false)))
                 {
                 }
             }
@@ -1833,7 +1830,7 @@ namespace HaXeContext.Completion
                     }
                     var type = ResolveType(typeName, ctx.CurrentModel);
                     if (type.Members.Count == 0) return null;
-                    if (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(static tag => tag.Name == ":enum"))
+                    if (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(static it => it.Name == ":enum"))
                     {
                         return type.Members.Select(static it => new MemberItem(it)).ToList<ICompletionListItem>();
                     }
@@ -1902,7 +1899,7 @@ namespace HaXeContext.Completion
                     var member = members[i];
                     sb.Append(SnippetHelper.BOUNDARY);
                     sb.Append("\n\t");
-                    if (member.MetaDatas != null && member.MetaDatas.Any(it => it.Name == ":optional"))
+                    if (member.MetaDatas != null && member.MetaDatas.Any(static it => it.Name == ":optional"))
                     {
                         sb.Append("//");
                         sb.Append(member.Name);

@@ -222,15 +222,15 @@ namespace MacroManager
             if (!File.Exists(settingFilename)) SaveSettings();
             else AppSettings = ObjectSerializer.Deserialize(settingFilename, AppSettings);
             AppSettings.UserMacros.RemoveAll(it => it.Label.IsNullOrEmpty() && it.Entries.IsNullOrEmpty());
-            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "ExecuteScript|Development;$(OpenFile)"))
+            if (AppSettings.UserMacros.All(static it => it.Entries?[0] != "ExecuteScript|Development;$(OpenFile)"))
                 AppSettings.UserMacros.Add(new Macro("&Execute Script", new[] {"ExecuteScript|Development;$(OpenFile)"}));
-            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)"))
+            if (AppSettings.UserMacros.All(static it => it.Entries?[0] != "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)"))
                 AppSettings.UserMacros.Add(new Macro("E&xecute Command", new[] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }));
-            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "RunProcess|$(CurFile)"))
+            if (AppSettings.UserMacros.All(static it => it.Entries?[0] != "RunProcess|$(CurFile)"))
                 AppSettings.UserMacros.Add(new Macro("Execu&te Current File", new[] { "RunProcess|$(CurFile)" }));
-            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "RunProcess|$(SelText)"))
+            if (AppSettings.UserMacros.All(static it => it.Entries?[0] != "RunProcess|$(SelText)"))
                 AppSettings.UserMacros.Add(new Macro("Execute &Selected Text", new[] { "RunProcess|$(SelText)" }));
-            if (AppSettings.UserMacros.All(it => it.Entries?[0] != "Browse|$(CurFile)"))
+            if (AppSettings.UserMacros.All(static it => it.Entries?[0] != "Browse|$(CurFile)"))
                 AppSettings.UserMacros.Add(new Macro("&Browse Current File", new[] { "Browse|$(CurFile)" }));
             if (AppSettings.UserMacros.All(it => it.Entries?[0] != "ScintillaCommand|CopyRTF"))
                 AppSettings.UserMacros.Add(new Macro("&Copy Text As RTF", new[] { "ScintillaCommand|CopyRTF" }));

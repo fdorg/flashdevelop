@@ -545,7 +545,7 @@ namespace FileExplorer
             string[] files = GetSelectedFiles();
             if (files != null && e.Button == MouseButtons.Left)
             {
-                DataObject data = new DataObject(DataFormats.FileDrop, files);
+                var data = new DataObject(DataFormats.FileDrop, files);
                 fileView.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
             }
         }
@@ -553,7 +553,7 @@ namespace FileExplorer
         /// <summary>
         /// Checks if the path list contains only files
         /// </summary> 
-        bool ContainsOnlyFiles(IEnumerable<string> files) => files.All(it => !Directory.Exists(it));
+        bool ContainsOnlyFiles(IEnumerable<string> files) => files.All(static it => !Directory.Exists(it));
 
         /// <summary>
         /// Handles the event when the drag is over the control

@@ -215,7 +215,7 @@ namespace ASCompletion.Helpers
             if (cls.ExtendsType != null && cls.ExtendsType != "Dynamic" && cls.ExtendsType != "Void" && cls.Extends.IsVoid()) return true;
             var missingInterfaces = cls.Implements != null
                                     && ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) is { } ctx
-                                    && cls.Implements.Any(i => GetCachedModel(ctx.ResolveType(i, cls.InFile)) is null);
+                                    && cls.Implements.Any(it => GetCachedModel(ctx.ResolveType(it, cls.InFile)) is null);
             return !missingInterfaces
                    && (cls.Implements is null || ResolveInterfaces(cls).All(IsCompletelyResolvable))
                    && IsCompletelyResolvable(cls.Extends);

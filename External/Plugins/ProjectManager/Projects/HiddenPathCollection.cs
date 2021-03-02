@@ -37,10 +37,10 @@ namespace ProjectManager.Projects
         }
 
         public bool IsHidden(string path)
-            => this.Any(hiddenPath => hiddenPath == path || path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal));
+            => this.Any(it => it == path || path.StartsWith(it + Path.DirectorySeparatorChar, StringComparison.Ordinal));
 
         public bool IsHiddenIgnoreCase(string path)
-            => this.Any(hiddenPath => hiddenPath.Equals(path, StringComparison.OrdinalIgnoreCase) || path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase));
+            => this.Any(it => it.Equals(path, StringComparison.OrdinalIgnoreCase) || path.StartsWith(it + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase));
 
         public string[] ToArray() => Enumerable.ToArray(this);
     }

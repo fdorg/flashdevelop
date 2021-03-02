@@ -212,7 +212,7 @@ namespace CodeRefactor
                 && Regex.Match(fileNameWithoutExtension, REG_IDENTIFIER, RegexOptions.Singleline).Success
                 && ((Directory.Exists(file) && !IsEmpty(file, project.DefaultSearchFilter)) || FileHelper.FileMatchesSearchFilter(file, project.DefaultSearchFilter));
             // Utils
-            static bool IsEmpty(string directoryPath, string searchPattern) => searchPattern.Split(';').All(pattern => !Directory.EnumerateFiles(directoryPath, pattern, SearchOption.AllDirectories).Any());
+            static bool IsEmpty(string directoryPath, string searchPattern) => searchPattern.Split(';').All(it => !Directory.EnumerateFiles(directoryPath, it, SearchOption.AllDirectories).Any());
         }
 
         #endregion

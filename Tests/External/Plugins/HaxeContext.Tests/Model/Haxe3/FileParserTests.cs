@@ -1007,7 +1007,7 @@ namespace HaXeContext.Model.Haxe3
             var classModel = model.Classes.First();
             Assert.IsNotNull(classModel.MetaDatas);
             Assert.AreEqual(2, classModel.MetaDatas.Count);
-            Assert.IsTrue(classModel.MetaDatas.Any(it => it.Name == ":forwardStatic"));
+            Assert.IsTrue(classModel.MetaDatas.Any(static it => it.Name == ":forwardStatic"));
             Assert.AreEqual("length, get, set", classModel.MetaDatas.Find(it => it.Name == ":forward").Params["Default"]);
         }
 

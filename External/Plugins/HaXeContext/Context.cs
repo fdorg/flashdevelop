@@ -573,7 +573,7 @@ namespace HaXeContext
                 if (majorVersion < 9)
                 {
                     // for example: HXML MultipTarget
-                    var value = project.CompilerOptions.Additional.FirstOrDefault(it => it.StartsWithOrdinal("-swf-version "));
+                    var value = project.CompilerOptions.Additional.FirstOrDefault(static it => it.StartsWithOrdinal("-swf-version "));
                     if (value != null) ParseVersion(value.Substring("-swf-version ".Length), ref majorVersion, ref minorVersion);
                 }
                 if (majorVersion >= 9)
@@ -772,7 +772,7 @@ namespace HaXeContext
                     if ((flags & FlagType.Abstract) != 0)
                     {
                         var meta = @class.MetaDatas;
-                        if (meta is null || meta.All(it => it.Name != ":enum")) continue;
+                        if (meta is null || meta.All(static it => it.Name != ":enum")) continue;
                         /**
                          * transform
                          * @:enum abstract AType(T) {
@@ -2160,7 +2160,7 @@ namespace HaXeContext
             else if (model.Flags.HasFlag(FlagType.Abstract))
             {
                 var meta = model.MetaDatas;
-                if (meta is null || meta.All(it => it.Name != ":enum")) return;
+                if (meta is null || meta.All(static it => it.Name != ":enum")) return;
                 foreach (var member in model.Members)
                 {
                     if (member.Flags.HasFlag(FlagType.Variable)) result.Add(member);
