@@ -11,19 +11,18 @@ namespace ASCompletion.Model
         /// <param name="flags">Flags mask</param>
         /// <param name="recursive"></param>
         /// <returns>All matches</returns>
-        public static MemberList? SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
+        public static MemberList SearchMembers(this ClassModel @this, FlagType flags, bool recursive)
         {
-            if (@this.SearchMembers(flags) is {Count: > 0} list) return list;
-            if (!recursive) return null; 
+            var result = @this.SearchMembers(flags);
+            if (!recursive) return result;
             if (@this.Extends.IsVoid()) @this.ResolveExtends();
             var type = @this.Extends;
             while (!type.IsVoid())
             {
-                var result = type.SearchMembers(flags);
-                if (result.Count > 0) return result;
+                result.Add(type.SearchMembers(flags));
                 type = type.Extends;
             }
-            return null;
+            return result;
         }
 
         /// <summary>
