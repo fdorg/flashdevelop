@@ -1996,7 +1996,7 @@ namespace ASCompletion.Completion
                 mix.Merge(ctx.CurrentModel.GetSortedMembersList());
                 IEnumerable<MemberModel> topLevelElements = ctx.GetTopLevelElements();
                 if (expr.ContextFunction != null && expr.ContextFunction.Flags.HasFlag(FlagType.Static))
-                    topLevelElements = topLevelElements.Where(it => it.Flags.HasFlag(FlagType.Static));
+                    topLevelElements = topLevelElements.Where(static it => it.Flags.HasFlag(FlagType.Static));
                 mix.Merge(topLevelElements);
                 if (!ctx.Settings.LazyClasspathExploration && ctx.Settings.CompletionListAllTypes)
                     mix.Merge(ctx.GetAllProjectClasses());
