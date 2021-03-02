@@ -59,7 +59,7 @@ namespace ProjectManager.Controls
         static void UpdateTabColor(ITabbedDocument doc, IEnumerable<string> paths, ProjectManagerSettings settings)
         {
             var fileName = doc.FileName;
-            var isMatch = paths.Any(path => fileName.StartsWith(path, StringComparison.OrdinalIgnoreCase));
+            var isMatch = paths.Any(it => fileName.StartsWith(it, StringComparison.OrdinalIgnoreCase));
             var tab = (DockContent) doc;
             if (!isMatch && settings.TabHighlightType == HighlightType.ExternalFiles)
             {

@@ -257,7 +257,7 @@ namespace FlashDevelop
         /// <summary>
         /// Does FlashDevelop hold modified documents?
         /// </summary> 
-        public bool HasModifiedDocuments => Documents.Any(document => document.IsModified);
+        public bool HasModifiedDocuments => Documents.Any(static it => it.IsModified);
 
         /// <summary>
         /// Gets or sets the WorkingDirectory

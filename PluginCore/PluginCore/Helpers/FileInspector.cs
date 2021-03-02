@@ -50,7 +50,7 @@ namespace PluginCore.Helpers
         {
             if (ExecutableFileTypes is null) return false;
             string ext = Path.GetExtension(path).ToLower();
-            return ExecutableFileTypes.Any(type => type == ext);
+            return ExecutableFileTypes.Any(it => it == ext);
         }
 
         public static bool IsHtml(string ext) => ext == ".html" || ext == ".htm" || ext == ".mtt";

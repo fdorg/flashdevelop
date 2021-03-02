@@ -681,8 +681,8 @@ namespace HaXeContext.Generators
             }
             var type = ctx.ResolveType(member.Type, expr.InFile);
             return (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
-                   || (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum")
-                       && type.Members.Any(it => it.Flags.HasFlag(FlagType.Variable)));
+                   || (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(static it => it.Name == ":enum")
+                       && type.Members.Any(static it => it.Flags.HasFlag(FlagType.Variable)));
         }
 
         static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, ASResult expr)

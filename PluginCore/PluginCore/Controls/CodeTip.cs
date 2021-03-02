@@ -18,13 +18,9 @@ namespace PluginCore.Controls
 
         public CodeTip(IMainForm mainForm)
         {
-            editor = new ScintillaControl();
-            editor.Enabled = false;
-            editor.IsUseTabs = false;
-            codeTip = new Panel();
-            codeTip.BorderStyle = BorderStyle.FixedSingle;
+            editor = new ScintillaControl {Enabled = false, IsUseTabs = false};
+            codeTip = new Panel {BorderStyle = BorderStyle.FixedSingle, Visible = false};
             codeTip.Controls.Add(editor);
-            codeTip.Visible = false;
             mainForm.Controls.Add(codeTip);
         }
 
@@ -34,7 +30,6 @@ namespace PluginCore.Controls
             ReduceIndentation();
             SizeEditor();
             PositionEditor(sci, position);
-
             codeTip.Visible = true;
             codeTip.BringToFront();
         }
@@ -44,20 +39,15 @@ namespace PluginCore.Controls
         void ConfigureEditor(ScintillaControl sci, string code)
         {
             editor.SetMarginWidthN(1, 0);
-
             editor.ConfigurationLanguage = sci.ConfigurationLanguage;
-
             editor.Text = "  ";
             columnWidth = editor.PointXFromPosition(1) - editor.PointXFromPosition(0);
             rowHeight = editor.TextHeight(0);
-
             editor.TabWidth = sci.TabWidth;
             editor.Text = code;
-
             editor.SetProperty("lexer.cpp.track.preprocessor", "0");
-
             var language = GetLanguage(editor.ConfigurationLanguage);
-            var defaultStyle = language?.usestyles.FirstOrDefault(useStyle => useStyle.name == "default");
+            var defaultStyle = language?.usestyles.FirstOrDefault(static it => it.name == "default");
             if (defaultStyle is null) return;
             codeTip.BackColor = DataConverter.BGRToColor(defaultStyle.BackgroundColor);
         }
@@ -113,18 +103,12 @@ namespace PluginCore.Controls
         void PositionEditor(ScintillaControl sci, int position)
         {
             var p = new Point(sci.PointXFromPosition(position), sci.PointYFromPosition(position));
-            var mainForm = ((Form)PluginBase.MainForm);
+            var mainForm = (Form) PluginBase.MainForm;
             p = mainForm.PointToClient(sci.PointToScreen(p));
-
-            if (p.Y > codeTip.Height)
-                codeTip.Top = p.Y - codeTip.Height;
-            else
-                codeTip.Top = p.Y + rowHeight;
-
-            if (p.X + codeTip.Width < mainForm.ClientSize.Width)
-                codeTip.Left = p.X;
-            else
-                codeTip.Left = mainForm.ClientSize.Width - codeTip.Width;
+            if (p.Y > codeTip.Height) codeTip.Top = p.Y - codeTip.Height;
+            else codeTip.Top = p.Y + rowHeight;
+            if (p.X + codeTip.Width < mainForm.ClientSize.Width) codeTip.Left = p.X;
+            else codeTip.Left = mainForm.ClientSize.Width - codeTip.Width;
         }
 
         static Language GetLanguage(string name) => PluginBase.MainForm?.SciConfig?.GetLanguage(name);
