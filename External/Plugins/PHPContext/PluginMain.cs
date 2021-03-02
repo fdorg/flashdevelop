@@ -46,7 +46,7 @@ namespace PHPContext
         /// <summary>
         /// Web address for help
         /// </summary>
-        public string Help { get; } = "www.flashdevelop.org/community/";
+        public string Help { get; } = "https://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
