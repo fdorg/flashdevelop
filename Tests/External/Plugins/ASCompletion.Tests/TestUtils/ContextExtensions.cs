@@ -139,7 +139,7 @@ namespace ASCompletion.TestUtils
             if (!(PluginBase.CurrentProject is AS3Project)) PluginBase.CurrentProject = new AS3Project("as3");
             ctx.BuildClassPath();
             var intrinsicPath = $"{PathHelper.LibraryDir}{Path.DirectorySeparatorChar}AS3{Path.DirectorySeparatorChar}intrinsic";
-            ctx.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(static it => new PathModel(it, ctx)));
+            ctx.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(it => new PathModel(it, ctx)));
             foreach (var it in ctx.Classpath)
             {
                 if (it.IsVirtual) ctx.ExploreVirtualPath(it);
