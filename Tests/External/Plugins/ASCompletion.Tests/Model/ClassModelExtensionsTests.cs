@@ -22,12 +22,17 @@ namespace ASCompletion.Model
                 yield return new TestCaseData("Issue3179_1", FlagType.Variable, false)
                     .Returns(new MemberList
                     {
-                        new MemberModel("a", "int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Private),
+                        new MemberModel("a", "int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
                     });
                 yield return new TestCaseData("Issue3179_2", FlagType.Variable, true)
                     .Returns(new MemberList
                     {
-                        new MemberModel("x", "int", FlagType.Variable, Visibility.Private),
+                        new MemberModel("x", "Number", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("y", "Number", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("width", "Number", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("height", "Number", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("length", "int", FlagType.Static | FlagType.Constant | FlagType.Variable, Visibility.Public),
+                        new MemberModel("prototype", "Object", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
                     });
             }
         }
@@ -38,8 +43,8 @@ namespace ASCompletion.Model
         ]
         public MemberList SearchMember(string fileName, FlagType flags, bool recursive)
         {
-            var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
-            return model.Classes[0].SearchMembers(flags, recursive);
+            SetSrc(sci, ReadAllText(fileName));
+            return ASContext.Context.CurrentClass.SearchMembers(flags, recursive);
         }
     }
 }
