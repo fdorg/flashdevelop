@@ -99,7 +99,7 @@ namespace ScintillaNet.Configuration
 
         public virtual object LoadConfiguration(string[] files)
         {
-            var result = new Scintilla {includes = files.Select(file => new include {file = file}).ToArray()};
+            var result = new Scintilla {includes = files.Select(static it => new include {file = it}).ToArray()};
             result.init(this, null);
             return result;
         }

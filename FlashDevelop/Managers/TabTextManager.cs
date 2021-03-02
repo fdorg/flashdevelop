@@ -82,7 +82,7 @@ namespace FlashDevelop.Managers
         static IEnumerable<ExplodePath> Discriminate(IEnumerable<string> tabs)
         {
             ExplodePath.Longer = 0;
-            var paths = tabs.Select(tab => new ExplodePath(tab)).ToList();
+            var paths = tabs.Select(static it => new ExplodePath(it)).ToList();
             paths.Sort(ExplodePath.LongerFirst);
             bool hadDiff = false;
             bool hadMatch = false;

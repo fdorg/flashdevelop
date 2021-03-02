@@ -187,7 +187,10 @@ namespace ProjectManager.Projects
                     case "defaultBuildTargets":
                         if (!string.IsNullOrEmpty(Value.Trim()) && Value.Contains(","))
                         {
-                            string[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<string>();
+                            var cleaned = Value.Trim()
+                                .Split(',')
+                                .Select(static it => it.Trim())
+                                .ToArray();
                             Project.MovieOptions.DefaultBuildTargets = cleaned;
                         }
                         break;

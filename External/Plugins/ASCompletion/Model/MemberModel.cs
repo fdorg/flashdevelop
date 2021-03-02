@@ -64,7 +64,7 @@ namespace ASCompletion.Model
                 Namespace = Namespace,
                 InFile = InFile,
                 IsPackageLevel = IsPackageLevel,
-                Parameters = Parameters?.Select(it => it.Clone()).ToList(),
+                Parameters = Parameters?.Select(static it => it.Clone()).ToList(),
                 Type = Type,
                 Comments = Comments,
                 Value = Value,

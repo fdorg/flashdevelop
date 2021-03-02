@@ -101,7 +101,7 @@ namespace ASCompletion.Controls
 
         internal static IEnumerable<Reference> ConvertClassCache(IEnumerable<ClassModel> list)
         {
-            return list.Select(m => new Reference
+            return list.Select(static m => new Reference
             {
                 File = m.InFile.FileName,
                 Line = m.LineFrom,

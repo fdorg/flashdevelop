@@ -1326,7 +1326,7 @@ namespace ASCompletion.Completion
                 tempLine--;
             }
             if (tab > 0) sci.SetLineIndentation(line, tab);
-            var list = support.Select(token => new DeclarationItem(token)).ToArray<ICompletionListItem>();
+            var list = support.Select(static it => new DeclarationItem(it)).ToArray<ICompletionListItem>();
             CompletionList.Show(list, autoHide, tail);
             return true;
         }
@@ -2229,7 +2229,7 @@ namespace ASCompletion.Completion
                 // Consolidate known classes
                 var known = GetVisibleElements();
                 list = known
-                    .Select(member => new MemberItem(new MemberModel(member.Type, member.Type, member.Flags, member.Access)))
+                    .Select(static it => new MemberItem(new MemberModel(it.Type, it.Type, it.Flags, it.Access)))
                     .ToList<ICompletionListItem>();
             }
             return ASContext.Context.CodeComplete.HandleNewCompletion(sci, tail, autoHide, keyword, list);
@@ -2288,7 +2288,7 @@ namespace ASCompletion.Completion
             {
                 // list visible classes
                 var known = GetVisibleElements();
-                var list = known.Select(member => new MemberItem(member)).ToArray<ICompletionListItem>();
+                var list = known.Select(static it => new MemberItem(it)).ToArray<ICompletionListItem>();
                 CompletionList.Show(list, autoHide, tail);
             }
             return true;
@@ -2313,7 +2313,7 @@ namespace ASCompletion.Completion
                 var outOfDate = ctx.UnsetOutOfDate();
                 // list visible classes
                 var known = GetVisibleElements();
-                var list = known.Select(member => new MemberItem(member)).ToArray<ICompletionListItem>();
+                var list = known.Select(static it => new MemberItem(it)).ToArray<ICompletionListItem>();
                 CompletionList.Show(list, autoHide, tail);
                 if (outOfDate) ctx.SetOutOfDate();
             }
@@ -2416,7 +2416,7 @@ namespace ASCompletion.Completion
             else members.Merge(ctx.CurrentClass.GetSortedInheritedMembersList());
             members.Merge(ParseLocalVars(expr));
             if (!expressions) members.RemoveAllWithFlag(FlagType.Function);
-            var list = members.Select(member => new MemberItem(member)).ToArray<ICompletionListItem>();
+            var list = members.Select(static it => new MemberItem(it)).ToArray<ICompletionListItem>();
             CompletionList.Show(list, autoHide);
             return true;
         }
@@ -5192,7 +5192,7 @@ namespace ASCompletion.Completion
 
             // show types
             var imports = context.ResolvePackage(package, false).Imports;
-            var list = imports.Select(import => new MemberItem(import)).ToArray<ICompletionListItem>();
+            var list = imports.Select(static it => new MemberItem(it)).ToArray<ICompletionListItem>();
             CompletionList.Show(list, false);
             return true;
         }

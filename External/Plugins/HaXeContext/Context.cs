@@ -2497,8 +2497,8 @@ namespace HaXeContext
 
             var cwd = Directory.GetCurrentDirectory();
             nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
-                .ToList()
-                .ForEach(it => PluginBase.MainForm.CallCommand("RunProcessCaptured", it));
+                .ToArray()
+                .ForEach(static it => PluginBase.MainForm.CallCommand("RunProcessCaptured", it));
         }
 
         internal void InstallLixLibrary(Dictionary<string, string> nameToVersion)

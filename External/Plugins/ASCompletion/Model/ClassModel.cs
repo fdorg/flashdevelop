@@ -182,11 +182,11 @@ namespace ASCompletion.Model
                 Constructor = Constructor,
                 ExtendsType = ExtendsType,
                 IndexType = IndexType,
-                Members = new MemberList(Members.Items.Select(it => it.Clone())),
+                Members = new MemberList(Members.Items.Select(static it => it.Clone())),
                 LineFrom = LineFrom,
                 LineTo = LineTo
             };
-            if (Parameters != null) result.Parameters = Parameters.Select(it => it.Clone()).ToList();
+            if (Parameters != null) result.Parameters = Parameters.Select(static it => it.Clone()).ToList();
             if (Implements != null) result.Implements = new List<string>(Implements);
             if (MetaDatas != null)
             {

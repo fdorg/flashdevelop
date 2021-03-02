@@ -116,12 +116,12 @@ namespace Mono.GetOptions
 
         private string[] GetAssemblyAttributeStrings(Type type)
         {
-            object[] objArray1 = GetAssemblyAttributes(type);
+            var objArray1 = GetAssemblyAttributes(type);
             if ((objArray1 is null) || (objArray1.Length == 0))
             {
                 return Array.Empty<string>();
             }
-            return objArray1.Select(it => it.ToString()).ToArray();
+            return objArray1.Select(static it => it.ToString()).ToArray();
         }
 
         private void GetAssemblyAttributeValue(Type type, ref string var)

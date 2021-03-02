@@ -189,10 +189,10 @@ namespace ASCompletion.Helpers
             if (cls is null || cls.IsVoid()) return new HashSet<ClassModel>();
             if (cls.Implements is null) return ResolveInterfaces(cls.Extends);
 
-            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            var ctx = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
             return cls.Implements
-                .Select(it => context.ResolveType(it, cls.InFile))
-                .Where(it => !it.IsVoid())
+                .Select(it => ctx.ResolveType(it, cls.InFile))
+                .Where(static it => !it.IsVoid())
                 .SelectMany(it => //take the interfaces we found already and add all interfaces they extend
                 {
                     it.ResolveExtends();

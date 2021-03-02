@@ -323,7 +323,7 @@ namespace BasicCompletion
                     if (!words.Contains(it)) words.Add(it);
                 }
             }
-            return words.Select(it => new CompletionItem(it)).ToList<ICompletionListItem>();
+            return words.Select(static it => new CompletionItem(it)).ToList<ICompletionListItem>();
         }
 
         /// <summary>

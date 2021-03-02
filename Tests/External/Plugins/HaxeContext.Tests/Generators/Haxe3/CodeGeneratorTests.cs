@@ -2530,13 +2530,13 @@ namespace HaXeContext.Generators.Haxe3
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFileName(fileName);
-            var context = (Context)ASContext.GetLanguageContext("haxe");
-            context.CurrentModel = ASContext.Context.CurrentModel;
-            context.completionCache.IsDirty = true;
-            context.GetTopLevelElements();
-            var visibleExternalElements = context.GetVisibleExternalElements();
+            var ctx = (Context)ASContext.GetLanguageContext("haxe");
+            ctx.CurrentModel = ASContext.Context.CurrentModel;
+            ctx.completionCache.IsDirty = true;
+            ctx.GetTopLevelElements();
+            var visibleExternalElements = ctx.GetVisibleExternalElements();
             ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
-            var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
+            var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(static it => it.result.Type ?? it.result.Member).ToList();
             return result;
         }
 

@@ -86,14 +86,14 @@ namespace FlashDevelop.Managers
             var walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
             var files = walker.GetFiles();
             var items = files
-                .Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file))
+                .Select(static it => new SnippetItem(Path.GetFileNameWithoutExtension(it), it))
                 .ToList<ICompletionListItem>();
             var path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
             if (Directory.Exists(path))
             {
                 walker = new PathWalker(path, "*.fds", false);
                 files = walker.GetFiles();
-                items.AddRange(files.Select(file => new SnippetItem(Path.GetFileNameWithoutExtension(file), file)));
+                items.AddRange(files.Select(static it => new SnippetItem(Path.GetFileNameWithoutExtension(it), it)));
             }
             if (items.Count == 0) return false;
             items.Sort();

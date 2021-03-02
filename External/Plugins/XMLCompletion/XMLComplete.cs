@@ -415,7 +415,7 @@ namespace XMLCompletion
                     if (PluginSettings.EnableXMLCompletion && cType == XMLType.Known)
                     {
                         string previous = null;
-                        var items = namespaces.Select(ns => new NamespaceItem(ns)).ToList<ICompletionListItem>();
+                        var items = namespaces.Select(static it => new NamespaceItem(it)).ToList<ICompletionListItem>();
                         foreach (HTMLTag tag in knownTags) 
                             if (tag.Name != previous && (tag.NS == "" || tag.NS == defaultNS)) 
                             {

@@ -287,7 +287,7 @@ namespace FlashDevelop.Dialogs
         void InitializeShortcutListItems()
         {
             var collection = ShortcutManager.RegisteredItems.Values;
-            shortcutListItems = collection.Select(it => new ShortcutListItem(it)).ToArray();
+            shortcutListItems = collection.Select(static it => new ShortcutListItem(it)).ToArray();
             Array.Sort(shortcutListItems, new ShortcutListItemComparer());
             UpdateAllShortcutsConflicts();
         }

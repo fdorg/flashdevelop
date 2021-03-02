@@ -600,7 +600,7 @@ namespace CssCompletion
         static List<ICompletionListItem> MakeList(string raw, ItemKind kind)
         {
             return Regex.Split(raw, "\\s+")
-                .Select(def => new CompletionItem(def, kind))
+                .Select(it => new CompletionItem(it, kind))
                 .ToList<ICompletionListItem>();
         }
 

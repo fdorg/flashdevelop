@@ -752,7 +752,7 @@ namespace HaXeContext.Generators
             }
             value = value.Replace(".[", "[");
             if (ctx.WordBefore == "new") value = "new " + value;
-            var statement = value + "." + member.Name + "(" + string.Join(", ", parameters.Skip(1).Select(it =>
+            var statement = value + "." + member.Name + "(" + string.Join(", ", parameters.Skip(1).Select(static it =>
             {
                 if (it.result.Member is { } model) return model.ToDeclarationString();
                 return it.result.Context.Value;
@@ -870,13 +870,13 @@ namespace HaXeContext.Generators
             var position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
             if (ASContext.Context.Settings.GenerateImports && parameters.Count > 0)
             {
-                var types = GetQualifiedTypes(parameters.Select(it => it.paramQualType), inClass.InFile);
+                var types = GetQualifiedTypes(parameters.Select(static it => it.paramQualType), inClass.InFile);
                 position += AddImportsByName(types, sci.LineFromPosition(position));
             }
             sci.SetSel(position, position);
             var member = new MemberModel(contextToken, inClass.Type, FlagType.Constructor, Visibility.Public)
             {
-                Parameters = parameters.Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
+                Parameters = parameters.Select(static it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
             };
             var declaration = member.Name;
             if (parameters.Count > 0) declaration += $"({member.ParametersString()})";
