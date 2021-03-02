@@ -26,7 +26,7 @@ namespace LintingHelper
 
         public string Guid => "279C4926-5AC6-49E1-A0AC-66B7275C13DB";
 
-        public string Help => "www.flashdevelop.org/community/";
+        public string Help => "https://www.flashdevelop.org/community/";
 
         public string Name => nameof(LintingHelper);
 

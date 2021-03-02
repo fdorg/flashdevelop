@@ -92,7 +92,7 @@ namespace ASCompletion
 
         public string Description { get; set; } = "Code completion engine for FlashDevelop.";
 
-        public string Help { get; } = "www.flashdevelop.org/community/";
+        public string Help { get; } = "https://www.flashdevelop.org/community/";
 
         [Browsable(false)]
         public virtual object Settings => settingObject;

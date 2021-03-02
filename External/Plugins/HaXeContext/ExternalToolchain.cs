@@ -21,9 +21,9 @@ namespace HaXeContext
 
         internal static bool HandleProject(IProject project)
         {
-            return project is HaxeProject hxproj
-                   && hxproj.MovieOptions.HasPlatformSupport
-                   && hxproj.MovieOptions.PlatformSupport.ExternalToolchain != null;
+            return project is HaxeProject haxeProject
+                   && haxeProject.MovieOptions.HasPlatformSupport
+                   && haxeProject.MovieOptions.PlatformSupport.ExternalToolchain != null;
         }
 
         /// <summary>
@@ -35,22 +35,17 @@ namespace HaXeContext
         {
             if (!string.IsNullOrEmpty(command)) // project has custom run command
                 return false;
-
-            var hxproj = PluginBase.CurrentProject as HaxeProject;
-            if (!HandleProject(hxproj)) return false;
-
+            if (!HandleProject(PluginBase.CurrentProject)) return false;
+            var hxproj = (HaxeProject) PluginBase.CurrentProject;
             var platform = hxproj.MovieOptions.PlatformSupport;
             var toolchain = platform.ExternalToolchain;
             var exe = GetExecutable(toolchain);
             if (exe is null) return false;
-
             var args = GetCommand(hxproj, "run");
             if (args is null) return false;
-
             var config = hxproj.TargetBuild;
             if (string.IsNullOrEmpty(config)) config = "flash";
             else if (config.Contains("android")) CheckADB();
-            
             if (config.StartsWithOrdinal("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {
                 foreach (var line in hxproj.RawHXML)
@@ -64,9 +59,7 @@ namespace HaXeContext
                     return true;
                 }
             }
-
-            TraceManager.Add(toolchain + " " + args);
-
+            TraceManager.Add($"{toolchain} {args}");
             if (hxproj.TraceEnabled && hxproj.EnableInteractiveDebugger) // debugger
             {
                 DataEvent de;
@@ -89,12 +82,12 @@ namespace HaXeContext
             }
             else
             {
-                var infos = new ProcessStartInfo(exe, args)
+                var info = new ProcessStartInfo(exe, args)
                 {
                     WorkingDirectory = hxproj.Directory,
                     WindowStyle = ProcessWindowStyle.Hidden
                 };
-                Process.Start(infos);
+                Process.Start(info);
             }
             return true;
         }
@@ -106,42 +99,40 @@ namespace HaXeContext
         /// </summary>
         static void CheckADB()
         {
-            if (Process.GetProcessesByName("adb").Length > 0)
-                return;
-
+            if (Process.GetProcessesByName("adb").Length > 0) return;
             var adb = Environment.ExpandEnvironmentVariables("%ANDROID_SDK%/platform-tools");
             if (adb.StartsWith('%') || !Directory.Exists(adb))
                 adb = Path.Combine(PathHelper.ToolDir, "android/platform-tools");
             if (!Directory.Exists(adb)) return;
             adb = Path.Combine(adb, "adb.exe");
-            var p = new ProcessStartInfo(adb, "get-state");
-            p.UseShellExecute = true;
-            p.WindowStyle = ProcessWindowStyle.Hidden;
-            Process.Start(p);
+            var info = new ProcessStartInfo(adb, "get-state")
+            {
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            Process.Start(info);
         }
 
         internal static bool Clean(IProject project)
         {
             if (!HandleProject(project)) return false;
             var hxproj = (HaxeProject) project;
-
             var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
             var exe = GetExecutable(toolchain);
             if (exe is null) return false;
-
             var args = GetCommand(hxproj, "clean");
             if (args is null) return false;
-
-            TraceManager.Add(toolchain + " " + args);
-
-            var pi = new ProcessStartInfo();
-            pi.FileName = Environment.ExpandEnvironmentVariables(exe);
-            pi.Arguments = args;
-            pi.UseShellExecute = false;
-            pi.CreateNoWindow = true;
-            pi.WorkingDirectory = Path.GetDirectoryName(hxproj.ProjectPath);
-            pi.WindowStyle = ProcessWindowStyle.Hidden;
-            var p = Process.Start(pi);
+            TraceManager.Add($"{toolchain} {args}");
+            var info = new ProcessStartInfo
+            {
+                FileName = Environment.ExpandEnvironmentVariables(exe),
+                Arguments = args,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Path.GetDirectoryName(hxproj.ProjectPath),
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            var p = Process.Start(info);
             p.WaitForExit(5000);
             p.Close();
             return true;
@@ -155,16 +146,16 @@ namespace HaXeContext
         {
             if (updater is null)
             {
-                updater = new System.Timers.Timer();
-                updater.Interval = 200;
-                updater.SynchronizingObject = (System.Windows.Forms.Form) PluginBase.MainForm;
+                updater = new System.Timers.Timer
+                {
+                    Interval = 200,
+                    SynchronizingObject = (System.Windows.Forms.Form) PluginBase.MainForm,
+                    AutoReset = false
+                };
                 updater.Elapsed += updater_Elapsed;
-                updater.AutoReset = false;
             }
-
             hxproj = null;
             StopWatcher();
-
             if (project is HaxeProject haxeProject)
             {
                 hxproj = haxeProject;
@@ -250,7 +241,6 @@ namespace HaXeContext
             };
             var p = Process.Start(pi);
             p.WaitForExit(5000);
-
             var hxml = p.StandardOutput.ReadToEnd();
             var err = p.StandardError.ReadToEnd();
             p.Close();

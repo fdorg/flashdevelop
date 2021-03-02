@@ -158,7 +158,7 @@ namespace ProjectManager
 
         public string Description { get; private set; } = "Adds project management and building to FlashDevelop.";
 
-        public string Help => "www.flashdevelop.org/community/";
+        public string Help => "https://www.flashdevelop.org/community/";
 
         [Browsable(false)] // explicit implementation so we can reuse the "Settings" var name
         object IPlugin.Settings => Settings;

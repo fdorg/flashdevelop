@@ -176,7 +176,7 @@ namespace PluginCore.Helpers
         /// - relative to a specified path, or 
         /// - relative to base path
         /// </summary>
-        public static string ResolvePath(string path, string relativeTo)
+        public static string? ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
             bool isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");

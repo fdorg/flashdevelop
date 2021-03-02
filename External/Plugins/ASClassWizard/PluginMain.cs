@@ -45,7 +45,7 @@ namespace ASClassWizard
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public string Help => "www.flashdevelop.org/community/";
+        public string Help => "https://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings

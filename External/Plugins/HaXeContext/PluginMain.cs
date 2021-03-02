@@ -63,7 +63,7 @@ namespace HaXeContext
         /// <summary>
         /// Web address for help
         /// </summary>
-        public string Help { get; } = "www.flashdevelop.org/community/";
+        public string Help { get; } = "https://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
@@ -105,7 +105,7 @@ namespace HaXeContext
             switch (e.Type)
             {
                 case EventType.Command:
-                    if (!(e is DataEvent de)) return;
+                    if (e is not DataEvent de) return;
                     var action = de.Action;
                     if (action == ProjectManagerEvents.RunCustomCommand)
                     {
@@ -153,7 +153,7 @@ namespace HaXeContext
                     break;
                 case EventType.Trace:
                 {
-                    if (!(PluginBase.CurrentProject is HaxeProject project)) return;
+                    if (PluginBase.CurrentProject is not HaxeProject project) return;
                     var traceLog = TraceManager.TraceLog;
                     var count = traceLog.Count;
                     if (count <= logCount)
@@ -309,13 +309,7 @@ namespace HaXeContext
                 }
                 settingObject.InstalledSDKs = sdks.ToArray();
             }
-            else
-            {
-                foreach (var sdk in settingObject.InstalledSDKs)
-                {
-                    ValidateSDK(sdk);
-                }
-            }
+            else settingObject.InstalledSDKs.ForEach(ValidateSDK);
             if (settingObject.CompletionServerPort == 0)
             {
                 settingObject.CompletionServerPort = 6000;
@@ -374,15 +368,12 @@ namespace HaXeContext
         {
             sdk.Owner = this;
             sdk.ClassPath = null;
-
             var path = GetSDKPath(sdk);
-            if (path == "") return false;
-
+            if (path.IsNullOrEmpty()) return false;
             var result = ValidateHaxeShimSDK(sdk, path)
                          || ValidateHaxeSDK(sdk, path)
                          || ValidateUnknownHaxeSDK(sdk, path);
-
-            if (!result) ErrorManager.ShowInfo("Unable to identify a Haxe SDK at path:\n" + sdk.Path);
+            if (!result) ErrorManager.ShowInfo($"Unable to identify a Haxe SDK at path:\n{sdk.Path}");
             return result;
         }
 
@@ -393,30 +384,24 @@ namespace HaXeContext
             path = project != null
                 ? PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath))
                 : PathHelper.ResolvePath(path);
-
             try
             {
-                if (!Directory.Exists(path))
-                {
-                    //ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
-                    return "";
-                }
+                if (!Directory.Exists(path)) return string.Empty;
             }
             catch (Exception ex)
             {
-                ErrorManager.ShowInfo("Invalid path (" + ex.Message + "):\n" + sdk.Path);
-                return "";
+                ErrorManager.ShowInfo($"Invalid path ({ex.Message}):\n{sdk.Path}");
+                return string.Empty;
             }
-
             return path;
         }
 
         bool ValidateHaxeShimSDK(InstalledSDK sdk, string path, string projectPath = "")
         {
-            var result = false;
             var haxePath = Path.Combine(path, "haxe.exe");
             if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
-            if (!File.Exists(haxePath)) return result;
+            if (!File.Exists(haxePath)) return false;
+            var result = false;
             var p = StartHiddenProcess(haxePath, "--run show-version", projectPath);
             var output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
@@ -512,16 +497,18 @@ namespace HaXeContext
 
         public Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
-            var pi = new ProcessStartInfo();
-            pi.FileName = fileName;
-            pi.Arguments = arguments;
-            pi.WorkingDirectory = workingDirectory;
-            pi.RedirectStandardOutput = true;
-            pi.RedirectStandardError = true;
-            pi.UseShellExecute = false;
-            pi.CreateNoWindow = true;
-            pi.WindowStyle = ProcessWindowStyle.Hidden;
-            return Process.Start(pi);
+            var info = new ProcessStartInfo
+            {
+                FileName = fileName,
+                Arguments = arguments,
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            return Process.Start(info);
         }
 
         #endregion
