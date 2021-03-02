@@ -22,7 +22,7 @@ namespace ASCompletion.Model
                 result.Add(type.SearchMembers(flags));
                 type = type.Extends;
             }
-            return result;
+            return result.Count == 0 ? null : result;
         }
 
         /// <summary>
