@@ -88,6 +88,8 @@
 	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_5.as" />
 	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_6.as" />
 	  <None Remove="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_7.as" />
+	  <None Remove="Test Files\model\Issue3179_1.as" />
+	  <None Remove="Test Files\model\Issue3179_2.as" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="System" />
@@ -112,6 +114,8 @@
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_3.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_2.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\BeforeMoveLocalUp_issue3183_1.as" />
+		<EmbeddedResource Include="Test Files\model\Issue3179_2.as" />
+		<EmbeddedResource Include="Test Files\model\Issue3179_1.as" />
 		<EmbeddedResource Include="Test Files\parser\OverrideFunctionTest.as" />
 		<EmbeddedResource Include="Test Files\parser\SimpleClassTest.as" />
 		<EmbeddedResource Include="Test Files\generated\as3\ImplementInterfaceNoMembers.as" />
