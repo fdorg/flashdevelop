@@ -1423,9 +1423,11 @@ namespace ProjectManager
             var de = new DataEvent(EventType.Command, "FileExplorer.PromptHere", Tree.SelectedPath);
             EventManager.DispatchEvent(this, de);
             if (de.Handled) return;
-            var info = new ProcessStartInfo();
-            info.FileName = PluginBase.MainForm.CommandPromptExecutable;
-            info.WorkingDirectory = Tree.SelectedPath;
+            var info = new ProcessStartInfo
+            {
+                FileName = PluginBase.MainForm.CommandPromptExecutable,
+                WorkingDirectory = Tree.SelectedPath
+            };
             Process.Start(info);
         }
 
@@ -1470,7 +1472,7 @@ namespace ProjectManager
 
         void BackgroundBuild()
         {
-            foreach (string path in Tree.SelectedPaths)
+            foreach (var path in Tree.SelectedPaths)
             {
                 if (IsBuildable(path) && !buildQueue.Contains(path))
                 {

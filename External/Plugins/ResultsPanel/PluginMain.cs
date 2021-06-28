@@ -36,17 +36,17 @@ namespace ResultsPanel
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = nameof(ResultsPanel);
+        public string Name => nameof(ResultsPanel);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public string Guid { get; } = "24df7cd8-e5f0-4171-86eb-7b2a577703ba";
+        public string Guid => "24df7cd8-e5f0-4171-86eb-7b2a577703ba";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public string Author { get; } = "FlashDevelop Team";
+        public string Author => "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
@@ -56,7 +56,7 @@ namespace ResultsPanel
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public string Help { get; } = "https://www.flashdevelop.org/community/";
+        public string Help => "https://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
