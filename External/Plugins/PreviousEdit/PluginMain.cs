@@ -143,20 +143,8 @@ namespace PreviousEdit
         {
             var startPosition = sciPrevPosition < position ? sciPrevPosition : position;
             if (linesAdded < 0) length = -length;
-#if DEBUG
-            TraceManager.Add(nameof(SciControlModified));
-            TraceManager.Add(behavior.ToString());
-            TraceManager.Add(sci.FileName);
-            TraceManager.Add("startPosition: " + startPosition);
-            TraceManager.Add("length: " + length);
-            TraceManager.Add("linesAdded: " + linesAdded);
-#endif
             behavior.Change(sci.FileName, startPosition, length, linesAdded);
             sciPrevPosition = sci.CurrentPos;
-#if DEBUG
-            TraceManager.Add(nameof(SciControlModified));
-            TraceManager.Add(behavior.ToString());
-#endif
         }
 
         void SciControlUpdateUI(ScintillaControl sci)
