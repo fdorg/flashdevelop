@@ -6359,4 +6359,12 @@ AND - All conditions are met.</value>
     <value>Open &amp;Folder...</value>
     <comment>Added after 5.3.1</comment>
   </data>
+  <data name="PreviousEdit.Label.NavigateBackward" xml:space="preserve">
+    <value>Navigate Backward</value>
+    <comment>5.3.4</comment>
+  </data>
+  <data name="PreviousEdit.Label.NavigateForward" xml:space="preserve">
+    <value>Navigate Forward</value>
+    <comment>5.3.4</comment>
+  </data>
 </root>

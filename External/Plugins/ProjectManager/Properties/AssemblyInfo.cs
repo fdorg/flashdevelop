@@ -8,7 +8,7 @@ using PluginCore;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("ProjectManager")]
-[assembly: AssemblyCopyright(DistroConfig.DISTRIBUTION_COPYRIGHT)]
+[assembly: AssemblyCopyright("FlashDevelop.org 2005-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.0.0.0")]

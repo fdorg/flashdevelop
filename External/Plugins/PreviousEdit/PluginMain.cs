@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PreviousEdit.Behavior;
@@ -77,8 +78,8 @@ namespace PreviousEdit
         {
             var menu = (ToolStripMenuItem) PluginBase.MainForm.FindMenuItem("SearchMenu");
             menu.DropDownItems.Add(new ToolStripSeparator());
-            backwardMenuItems = CreateMenuItem(menu, "1", "Navigate Backward", NavigateBackward, $"{Name}.NavigateBackward", 0);
-            forwardMenuItems = CreateMenuItem(menu, "9", "Navigate Forward", NavigateForward, $"{Name}.NavigateForward", 1);
+            backwardMenuItems = CreateMenuItem(menu, "1", TextHelper.GetString("Label.NavigateBackward"), NavigateBackward, $"{Name}.NavigateBackward", 0);
+            forwardMenuItems = CreateMenuItem(menu, "9", TextHelper.GetString("Label.NavigateForward"), NavigateForward, $"{Name}.NavigateForward", 1);
             PluginBase.MainForm.ToolStrip.Items.Insert(2, new ToolStripSeparator());
         }
 
