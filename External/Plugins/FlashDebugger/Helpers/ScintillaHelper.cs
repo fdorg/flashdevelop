@@ -152,77 +152,75 @@ namespace FlashDebugger
         public static void AddHighlight(ScintillaControl sci, int line, int indicator, int value)
         {
             if (sci is null) return;
-            int start = sci.PositionFromLine(line);
-            int length = sci.LineLength(line);
+            var start = sci.PositionFromLine(line);
+            var length = sci.LineLength(line);
             if (start < 0 || length < 1) return;
-            int es = sci.EndStyled;
-            int mask = (1 << sci.StyleBits) - 1;
-            Language lang = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
-            if (indicator == indicatorDebugCurrentLine)
+            var es = sci.EndStyled;
+            var lang = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
+            switch (indicator)
             {
-                sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
-                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
-            }
-            else if (indicator == indicatorDebugEnabledBreakpoint)
-            {
-                sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
-                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
-            }
-            else if (indicator == indicatorDebugDisabledBreakpoint)
-            {
-                sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
-                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                case indicatorDebugCurrentLine:
+                    sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
+                    sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                    break;
+                case indicatorDebugEnabledBreakpoint:
+                    sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
+                    sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                    break;
+                case indicatorDebugDisabledBreakpoint:
+                    sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
+                    sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                    break;
             }
             sci.SetIndicStyle(indicator, 7);
             sci.CurrentIndicator = indicator;
             sci.IndicatorValue = value;
             sci.IndicatorFillRange(start, length);
-            sci.StartStyling(es, mask);
+            sci.StartStyling(es, 0xff);
         }
 
         public static void RemoveHighlight(ScintillaControl sci, int line, int indicator)
         {
             if (sci is null) return;
-            int start = sci.PositionFromLine(line);
-            int length = sci.LineLength(line);
+            var start = sci.PositionFromLine(line);
+            var length = sci.LineLength(line);
             if (start < 0 || length < 1) return;
-            int es = sci.EndStyled;
-            int mask = (1 << sci.StyleBits) - 1;
-            Language lang = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
-            if (indicator == indicatorDebugCurrentLine)
+            var es = sci.EndStyled;
+            var lang = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
+            switch (indicator)
             {
-                sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
-                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
-            }
-            else if (indicator == indicatorDebugEnabledBreakpoint)
-            {
-                sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
-                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
-            }
-            else if (indicator == indicatorDebugDisabledBreakpoint)
-            {
-                sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
-                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                case indicatorDebugCurrentLine:
+                    sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
+                    sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                    break;
+                case indicatorDebugEnabledBreakpoint:
+                    sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
+                    sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                    break;
+                case indicatorDebugDisabledBreakpoint:
+                    sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
+                    sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
+                    break;
             }
             sci.SetIndicStyle(indicator, 7);
             sci.CurrentIndicator = indicator;
             sci.IndicatorClearRange(start, length);
-            sci.StartStyling(es, mask);
+            sci.StartStyling(es, 0xff);
         }
 
         public static void RemoveAllHighlights(ScintillaControl sci)
         {
             if (sci is null) return;
-            int es = sci.EndStyled;
+            var es = sci.EndStyled;
             int[] indics = { indicatorDebugCurrentLine, indicatorDebugDisabledBreakpoint, indicatorDebugEnabledBreakpoint };
-            foreach (int indicator in indics)
+            foreach (var indicator in indics)
             {
                 sci.CurrentIndicator = indicator;
-                for (int position = 0; position < sci.Length;)
+                for (var position = 0; position < sci.Length;)
                 {
-                    int start = sci.IndicatorStart(indicator, position);
-                    int end = sci.IndicatorEnd(indicator, start);
-                    int length = end - start;
+                    var start = sci.IndicatorStart(indicator, position);
+                    var end = sci.IndicatorEnd(indicator, start);
+                    var length = end - start;
                     if (length > 0)
                     {
                         sci.IndicatorClearRange(start, length);
@@ -231,7 +229,7 @@ namespace FlashDebugger
                     else break;
                 }
             }
-            sci.StartStyling(es, (1 << sci.StyleBits) - 1);
+            sci.StartStyling(es, 0xff);
         }
 
         #endregion

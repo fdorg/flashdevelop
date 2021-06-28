@@ -232,7 +232,7 @@ namespace ScintillaNet
             {
                 fullPath = Path.Combine(PathHelper.AppDir, fullPath);
                 var lib = LoadLibrary(fullPath);
-                HandleSci = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, Width, Height, Handle, 0, new IntPtr(0), null);
+                HandleSci = CreateWindowEx(0, "Scintilla", string.Empty, WS_CHILD_VISIBLE_TABSTOP, 0, 0, Width, Height, Handle, 0, IntPtr.Zero, null);
                 directPointer = SlowPerform(2185, IntPtr.Zero, IntPtr.Zero);
                 var pointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
                 if (pointer == IntPtr.Zero) pointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
@@ -264,19 +264,13 @@ namespace ScintillaNet
         {
             int vsbWidth = Controls.Contains(vScrollBar) && vScrollBar.Visible ? vScrollBar.Width : 0;
             int hsbHeight = Controls.Contains(hScrollBar) && hScrollBar.Visible ? hScrollBar.Height : 0;
-            if (Win32.ShouldUseWin32())
-            {
-                SetWindowPos(HandleSci, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
-            }
+            if (Win32.ShouldUseWin32()) SetWindowPos(HandleSci, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
             if (Controls.Contains(vScrollBar))
             {
                 vScrollBar.SetBounds(ClientRectangle.Width - vsbWidth, 0, vScrollBar.Width, ClientRectangle.Height - hsbHeight);
                 hScrollBar.SetBounds(0, ClientRectangle.Height - hsbHeight, ClientRectangle.Width - vsbWidth, hScrollBar.Height);
                 scrollerCorner.Visible = vScrollBar.Visible && hScrollBar.Visible;
-                if (scrollerCorner.Visible)
-                {
-                    scrollerCorner.Location = new Point(vScrollBar.Location.X, hScrollBar.Location.Y);
-                }
+                if (scrollerCorner.Visible) scrollerCorner.Location = new Point(vScrollBar.Location.X, hScrollBar.Location.Y);
             }
         }
 
@@ -404,7 +398,6 @@ namespace ScintillaNet
                 lang.lexer.key = (int) key;
             configLanguage = value;
             Lexer = lang.lexer.key;
-            if (lang.lexer.stylebits > 0) StyleBits = lang.lexer.stylebits;
             if (lang.editorstyle != null)
             {
                 EdgeColour = lang.editorstyle.PrintMarginColor;
@@ -886,10 +879,13 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve number of bits in style bytes used to hold the lexical state.
         /// </summary>
+        [Obsolete("Deprecated by 4.0.1. Please use `mask = 0xff` instead of `mask = ((1 << StyleBits) - 1)`")]
         public int StyleBits
         {
-            get => SPerform(2091).ToInt32();
-            set => SPerform(2090, value);
+            get => 8;
+            set
+            {
+            }
         }
 
         /// <summary>
@@ -1487,7 +1483,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Set extra descent for each line
+        /// Gets or sets extra descent for each line
         /// </summary>
         public int ExtraDescent
         {
@@ -1496,7 +1492,16 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Get the start of the range of style numbers used for margin text
+        /// Gets or sets number of margins
+        /// </summary>
+        public int Margins
+        {
+            get => (int) SPerform(2253);
+            set => SPerform(2252, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the start of the range of style numbers used for margin text
         /// </summary>
         public int MarginStyleOffset
         {
@@ -1505,7 +1510,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Get the start of the range of style numbers used for annotations
+        /// Get or sets the start of the range of style numbers used for annotations
         /// </summary>
         public int AnnotationStyleOffset
         {
@@ -1514,7 +1519,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Get the start of the range of style numbers used for annotations
+        /// Get or sets the start of the range of style numbers used for annotations
         /// </summary>
         public bool AnnotationVisible
         {
@@ -1523,7 +1528,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Sets whether the maximum width line displayed is used to set scroll width.
+        /// Gets or sets whether the maximum width line displayed is used to set scroll width.
         /// </summary>
         public bool ScrollWidthTracking
         {
@@ -1678,10 +1683,7 @@ namespace ScintillaNet
         /// <summary>
         /// Sets a style to be italic or not.
         /// </summary>
-        public void StyleSetItalic(int style, bool italic)
-        {
-            SPerform(2054, style, italic ? 1 : 0);
-        }
+        public void StyleSetItalic(int style, bool italic) => SPerform(2054, style, italic ? 1 : 0);
 
         /// <summary>
         /// Gets whether a style is italic or not.
@@ -1806,6 +1808,7 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the number of bits the current lexer needs for styling.
         /// </summary>
+        [Obsolete("Deprecated by 4.0.1")]
         public int GetStyleBitsNeeded() => SPerform(4011).ToInt32();
 
         /// <summary>
@@ -1955,6 +1958,16 @@ namespace ScintillaNet
         /// Set the cursor of a margin.
         /// </summary>
         public void SetMarginCursorN(int margin, int cursor) => SPerform(2248, margin, cursor);
+
+        /// <summary>
+        /// Gets the color of a margin.
+        /// </summary>
+        public int GetMarginBackN(int margin) => (int) SPerform(2251, margin);
+
+        /// <summary>
+        /// Set the color of a margin.
+        /// </summary>
+        public void SetMarginBackN(int margin, int color) => SPerform(2250, margin, color);
 
         /// <summary>
         /// Retrieve the style of an indicator.
@@ -2714,6 +2727,14 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldFlags(int flags) => SPerform(2233, flags);
 
+        public void ToggleFoldShowText(int line, char ch) => SPerform(2700, line, ch);
+
+        public int FoldDisplayTextStyle
+        {
+            get => (int) SPerform(2707);
+            set => SPerform(2701, value);
+        }
+
         /// <summary>
         /// Ensure a particular line is visible by expanding any header line hiding it.
         /// Use the currently set visibility policy to determine which range to display.
@@ -2723,10 +2744,7 @@ namespace ScintillaNet
         /// <summary>
         /// Get position of start of word.
         /// </summary>
-        public int WordStartPosition(int pos, bool onlyWordCharacters)
-        {
-            return SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
-        }
+        public int WordStartPosition(int pos, bool onlyWordCharacters) => SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
 
         /// <summary>
         /// Get position of end of word.
@@ -3781,23 +3799,19 @@ namespace ScintillaNet
         public delegate IntPtr Perform(IntPtr sci, int iMessage, IntPtr wParam, IntPtr lParam);
 
         public uint SlowPerform(uint message, uint wParam, uint lParam)
-        {
-            return (uint) SendMessage(HandleSci, (int) message, (IntPtr)wParam, (IntPtr)lParam);
-        }
+            => (uint) SendMessage(HandleSci, (int) message, (IntPtr)wParam, (IntPtr)lParam);
 
         public IntPtr SlowPerform(int message, IntPtr wParam, IntPtr lParam) => SendMessage(HandleSci, message, wParam, lParam);
 
         public int SPerform(int message, int wParam, uint lParam)
-        {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
-            return Encoding.ASCII.CodePage;
-        }
+            => Win32.ShouldUseWin32()
+                ? (int) _sciFunction(directPointer, message, (IntPtr) wParam, (IntPtr) lParam)
+                : Encoding.ASCII.CodePage;
 
         public int SPerform(int message, int wParam, int lParam)
-        {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
-            return Encoding.ASCII.CodePage;
-        }
+            => Win32.ShouldUseWin32()
+                ? (int) _sciFunction(directPointer, message, (IntPtr) wParam, (IntPtr) lParam)
+                : Encoding.ASCII.CodePage;
 
         public IntPtr SPerform(int message) => SPerform(message, IntPtr.Zero);
 
@@ -3811,33 +3825,32 @@ namespace ScintillaNet
                 : (IntPtr) Encoding.ASCII.CodePage;
 
         public int SPerform(int message, int wParam, IntPtr lParam)
-        {
-            if (Win32.ShouldUseWin32()) return (int)_sciFunction(directPointer, message, (IntPtr)wParam, lParam);
-            return Encoding.ASCII.CodePage;
-        }
+            => Win32.ShouldUseWin32()
+                ? (int) _sciFunction(directPointer, message, (IntPtr) wParam, lParam)
+                : Encoding.ASCII.CodePage;
 
         public override bool PreProcessMessage(ref Message m)
         {
             switch (m.Msg)
             {
                 case WM_KEYDOWN:
+                    var keys = (int) ModifierKeys + (int) m.WParam;
+                    if (!IsFocus || IgnoreAllKeys || ignoredKeys.ContainsKey(keys))
                     {
-                        int keys = (int)ModifierKeys + (int)m.WParam;
-                        if (!IsFocus || IgnoreAllKeys || ignoredKeys.ContainsKey(keys))
-                        {
-                            if (ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
-                        }
-                        if (((ModifierKeys & Keys.Control) != 0) && ((ModifierKeys & Keys.Alt) == 0))
-                        {
-                            int code = (int)m.WParam;
-                            if ((code >= 65) && (code <= 90)) return true; // Eat non-writable characters
-                            if ((code == 9) || (code == 33) || (code == 34)) // Transmit Ctrl with Tab, PageUp/PageDown
-                            {
-                                return base.PreProcessMessage(ref m);
-                            }
-                        }
-                        break;
+                        if (ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
                     }
+                    if (((ModifierKeys & Keys.Control) != 0) && ((ModifierKeys & Keys.Alt) == 0))
+                    {
+                        var code = (int) m.WParam;
+                        switch (code)
+                        {
+                            case >= 65 and <= 90: return true; // Eat non-writable characters
+                            case 9:
+                            case 33:
+                            case 34: return base.PreProcessMessage(ref m); // Transmit Ctrl with Tab, PageUp/PageDown
+                        }
+                    }
+                    break;
                 case WM_SYSKEYDOWN:
                 case WM_SYSCHAR: return base.PreProcessMessage(ref m);
             }
@@ -3848,7 +3861,7 @@ namespace ScintillaNet
         {
             if (m.Msg == WM_COMMAND)
             {
-                int message = (m.WParam.ToInt32() >> 16) & 0xffff;
+                var message = ((int)m.WParam >> 16) & 0xffff;
                 if (message == (int)Enums.Command.SetFocus || message == (int)Enums.Command.KillFocus)
                 {
                     FocusChanged?.Invoke(this);
@@ -3866,7 +3879,10 @@ namespace ScintillaNet
                         break;
 
                     case (uint)Enums.ScintillaEvents.CharAdded:
-                        CharAdded?.Invoke(this, scn.ch);
+                        var ch = scn.ch == 0 && scn.modifiers != 0
+                            ? scn.modifiers // x64
+                            : scn.ch;
+                        CharAdded?.Invoke(this, ch);
                         break;
 
                     case (uint)Enums.ScintillaEvents.SavePointReached:
@@ -4972,6 +4988,17 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Gets of set the tab draw mode
+        /// 0 - The "long arrow" which is the normal/default way
+        /// 1 - The "strike out" is a single horizontal line (like the arrow but with no arrow head). This is how Sublime text does and maybe others. 
+        /// </summary>
+        public int TabDrawMode
+        {
+            get => (int) SPerform(2698);
+            set => SPerform(2699, value);
+        }
+
+        /// <summary>
         /// Insert text with wide-char to byte position conversion
         /// </summary>
         public void MBSafeInsertText(int position, string text)
@@ -5168,7 +5195,7 @@ namespace ScintillaNet
         /// <summary>
         /// Returns the base style (without indicators) byte at the position.
         /// </summary>
-        public int BaseStyleAt(int pos) => (SPerform(2010, pos, 0) & ((1 << StyleBits) - 1));
+        public int BaseStyleAt(int pos) => SPerform(2010, pos, 0) & 0xff;
 
         /// <summary>
         /// Adds the specified highlight to the control
@@ -5177,8 +5204,7 @@ namespace ScintillaNet
         {
             var doc = DocumentManager.FindDocument(this);
             if (doc is null) return;
-            int es = EndStyled;
-            int mask = (1 << StyleBits) - 1;
+            var es = EndStyled;
             // Define indics in both controls...
             doc.SplitSci1.SetIndicStyle(indicator, indicStyle);
             doc.SplitSci1.SetIndicFore(indicator, highlightColor);
@@ -5189,12 +5215,11 @@ namespace ScintillaNet
             CurrentIndicator = indicator;
             IndicatorValue = 1;
             IndicatorFillRange(start, length);
-            StartStyling(es, mask);
+            StartStyling(es, 0xff);
         }
-        public void AddHighlight(int indicStyle, int highlightColor, int start, int length)
-        {
-            AddHighlight(0, indicStyle, highlightColor, start, length);
-        }
+        
+        public void AddHighlight(int indicStyle, int highlightColor, int start, int length) => AddHighlight(0, indicStyle, highlightColor, start, length);
+
         public void AddHighlight(int highlightColor, int start, int length)
         {
             int indicStyle = (int)Enums.IndicatorStyle.RoundBox;
@@ -5209,11 +5234,10 @@ namespace ScintillaNet
             if (matches is null) return;
             var doc = DocumentManager.FindDocument(this);
             if (doc is null) return;
-            foreach (SearchMatch match in matches)
+            foreach (var match in matches)
             {
-                int es = EndStyled;
-                int mask = (1 << StyleBits) - 1;
-                int start = MBSafePosition(match.Index);
+                var es = EndStyled;
+                var start = MBSafePosition(match.Index);
                 // Define indics in both controls...
                 doc.SplitSci1.SetIndicStyle(indicator, (int)Enums.IndicatorStyle.RoundBox);
                 doc.SplitSci1.SetIndicFore(indicator, highlightColor);
@@ -5224,7 +5248,7 @@ namespace ScintillaNet
                 CurrentIndicator = indicator;
                 IndicatorValue = 1;
                 IndicatorFillRange(start, MBSafeTextLength(match.Value));
-                StartStyling(es, mask);
+                StartStyling(es, 0xff);
             }
         }
         public void AddHighlights(int indicator, List<SearchMatch> matches, int highlightColor)
@@ -5243,11 +5267,10 @@ namespace ScintillaNet
         /// </summary>
         public void RemoveHighlight(int indicator, int start, int length)
         {
-            int es = EndStyled;
-            int mask = (1 << StyleBits) - 1;
+            var es = EndStyled;
             CurrentIndicator = indicator;
             IndicatorClearRange(start, length);
-            StartStyling(es, mask);
+            StartStyling(es, 0xff);
         }
         public void RemoveHighlight(int start, int length) => RemoveHighlight(0, start, length);
 
@@ -5256,11 +5279,10 @@ namespace ScintillaNet
         /// </summary>
         public void RemoveHighlights(int indicator)
         {
-            int es = EndStyled;
-            int mask = (1 << StyleBits) - 1;
+            var es = EndStyled;
             CurrentIndicator = indicator;
             IndicatorClearRange(0, Length);
-            StartStyling(es, mask);
+            StartStyling(es, 0xff);
         }
         public void RemoveHighlights() => RemoveHighlights(0);
 
