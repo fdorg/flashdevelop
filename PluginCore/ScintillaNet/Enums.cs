@@ -80,7 +80,8 @@ namespace ScintillaNet.Enums
         Back = 2,
         Fore = 3,
         Text = 4,
-        Rtext = 5
+        Rtext = 5,
+        Color = 6,
     }
     
     public enum WhiteSpace
@@ -106,6 +107,7 @@ namespace ScintillaNet.Enums
         ControlChar = 36,
         IndentGuide = 37,
         Calltip = 38,
+        FoldDisplayText = 39,
         LastPredefined = 39,
         Max = 255
     }
@@ -504,5 +506,11 @@ namespace ScintillaNet.Enums
         SelectionOrPosition,
         SelectedWord,
         None
+    }
+
+    public enum TabDrawMode
+    {
+        LongArrow = 0,
+        StrikeOut = 1,
     }
 }

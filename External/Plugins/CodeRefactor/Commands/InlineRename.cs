@@ -908,13 +908,12 @@ namespace CodeRefactor.Commands
         /// <param name="length">The length of the highlight.</param>
         void Highlight(int startIndex, int length)
         {
-            int es = sci.EndStyled;
-            int mask = (1 << sci.StyleBits) - 1;
+            var es = sci.EndStyled;
             sci.SetIndicStyle(Indicator, (int) IndicatorStyle.Container);
             sci.SetIndicFore(Indicator, 0x00FF00);
             sci.CurrentIndicator = Indicator;
             sci.IndicatorFillRange(startIndex, length);
-            sci.StartStyling(es, mask);
+            sci.StartStyling(es, 0xff);
         }
 
         /// <summary>
@@ -925,11 +924,7 @@ namespace CodeRefactor.Commands
         {
             // Delete redo history
             int excessCount = history.Count - ++historyIndex;
-            if (excessCount > 0)
-            {
-                history.RemoveRange(historyIndex, excessCount);
-            }
-
+            if (excessCount > 0) history.RemoveRange(historyIndex, excessCount);
             history.Add(value);
 
             // Trim beginning of history

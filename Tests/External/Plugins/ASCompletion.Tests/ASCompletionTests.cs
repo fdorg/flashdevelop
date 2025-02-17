@@ -75,7 +75,6 @@ namespace ASCompletion
             CodePage = 65001,
             Indent = settings.IndentSize,
             Lexer = 3,
-            StyleBits = 7,
             IsTabIndents = settings.TabIndents,
             IsUseTabs = settings.UseTabs,
             TabWidth = settings.TabWidth

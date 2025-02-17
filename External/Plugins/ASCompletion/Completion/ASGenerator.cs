@@ -16,6 +16,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
+using ScintillaNet.Lexers;
 
 namespace ASCompletion.Completion
 {
@@ -71,7 +72,7 @@ namespace ASCompletion.Completion
                 // for example: new NewClass$(EntryPoint)/*comment*/();
                 && sci.PositionIsOnComment(--position)) return false;
             var style = sci.BaseStyleAt(position);
-            if (style == 19 || style == 24) // on keyword
+            if (style == 19 || style == (int) CPP.WORD4) // on keyword
                 return false;
             contextMatch = null;
             contextToken = sci.GetWordFromPosition(position);

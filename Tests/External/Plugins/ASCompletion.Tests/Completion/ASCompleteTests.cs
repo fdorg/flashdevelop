@@ -1177,7 +1177,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("$(EntryPoint)120").Returns(false);
                     yield return new TestCaseData("\"$(EntryPoint)120\"").Returns(true);
                     yield return new TestCaseData("$(EntryPoint)\"120\"").Returns(true);
-                    yield return new TestCaseData("$(EntryPoint)\"").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)\"").Returns(false);
                     yield return new TestCaseData("'$(EntryPoint)\"'").Returns(false);
                     yield return new TestCaseData("'$(EntryPoint)120'").Returns(false);
                     yield return new TestCaseData("$(EntryPoint)'120'").Returns(false);
@@ -1204,7 +1204,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("'$(EntryPoint)\"'").Returns(true);
                     yield return new TestCaseData("'$(EntryPoint)120'").Returns(true);
                     yield return new TestCaseData("$(EntryPoint)'120'").Returns(true);
-                    yield return new TestCaseData("$(EntryPoint)'").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)'").Returns(false);
                     yield return new TestCaseData("some_$(EntryPoint)120").Returns(false);
                 }
             }
@@ -1217,6 +1217,54 @@ namespace ASCompletion.Completion
             }
             
             static IEnumerable<TestCaseData> IsTextStyleTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("$(EntryPoint)120").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)\"120\"").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)'120'").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)some").Returns(true);
+                    yield return new TestCaseData("//$(EntryPoint)some").Returns(false);
+                    yield return new TestCaseData("/*$(EntryPoint)some*/").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)/\\s/gm")
+                        .SetDescription("Is regex text?")
+                        .Returns(true);
+                    yield return new TestCaseData("/$(EntryPoint)\\s/gm")
+                        .SetDescription("Is regex text?")
+                        .Returns(true);
+                    yield return new TestCaseData("'$(EntryPoint),'").Returns(false);
+                    yield return new TestCaseData("\"$(EntryPoint),\"").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)+").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)=").Returns(true);
+                    yield return new TestCaseData("thi$(EntryPoint)s").Returns(true);
+                    yield return new TestCaseData("publ$(EntryPoint)ic").Returns(false);
+                    yield return new TestCaseData("functi$(EntryPoint)on").Returns(false);
+                    yield return new TestCaseData("sta$(EntryPoint)tic").Returns(false);
+                    yield return new TestCaseData("clas$(EntryPoint)s").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)final").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)new").Returns(false);
+                    yield return new TestCaseData("$(EntryPoint)var").Returns(false);
+                    yield return new TestCaseData("ret$(EntryPoint)urn").Returns(false);
+                    yield return new TestCaseData("class Na$(EntryPoint)me").Returns(true);
+                    yield return new TestCaseData("var $(EntryPoint)name").Returns(true);
+                    yield return new TestCaseData("var name:$(EntryPoint)Type").Returns(true);
+                    yield return new TestCaseData("var name:$(EntryPoint)Type").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint),").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint);").Returns(true);
+                    yield return new TestCaseData("$(EntryPoint)AS3").Returns(true);
+                    yield return new TestCaseData("nu$(EntryPoint)ll").Returns(false);
+                    yield return new TestCaseData("N$(EntryPoint)aN").Returns(false);
+                }
+            }
+
+            [Test, TestCaseSource(nameof(IsTextStyleTestCases))]
+            public bool IsTextStyle(string text)
+            {
+                SetSrc(sci, text);
+                return ASComplete.IsTextStyle(sci.StyleAt(sci.CurrentPos));
+            }
+            
+            static IEnumerable<TestCaseData> IsTextStyleExTestCases
             {
                 get
                 {
@@ -1257,11 +1305,11 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource(nameof(IsTextStyleTestCases))]
-            public bool IsTextStyle(string text)
+            [Test, TestCaseSource(nameof(IsTextStyleExTestCases))]
+            public bool IsTextStyleEx(string text)
             {
                 SetSrc(sci, text);
-                return ASComplete.IsTextStyle(sci.StyleAt(sci.CurrentPos));
+                return ASComplete.IsTextStyleEx(sci.StyleAt(sci.CurrentPos));
             }
             
             static IEnumerable<TestCaseData> IsCommentStyleTestCases
